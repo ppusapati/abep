@@ -1,0 +1,34 @@
+[package]
+name = "abep-assess"
+description = "Assessment layer of the ABEP Rust simulator (SC-WP-11): HC gates, the RFP P_bus gate, statewise requirement mapping, RVM rules, GNG-ICP-01, HC-05 and the RFP constraint matrix. Consumes raw physics records; never modifies them."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "abep-assess-parity"
+path = "src/bin/abep_assess_parity.rs"
+
+[[bin]]
+name = "abep-assess-matrix"
+path = "src/bin/abep_assess_matrix.rs"
+
+[dependencies]
+abep-types.workspace = true
+abep-provenance.workspace = true
+abep-config.workspace = true
+abep-data.workspace = true
+abep-hall.workspace = true
+abep-atmos.workspace = true
+# Admitted physics crates consumed (never duplicated): only this crate and abep-cli use them as plain path dependencies.
+abep-mission = { path = "../abep-mission" }
+abep-gaspath = { path = "../abep-gaspath" }
+abep-subsystems = { path = "../abep-subsystems" }
+abep-icp = { path = "../abep-icp" }
+
+[dev-dependencies]
+# crate-graph test (cargo metadata JSON) and the CI replay of the gzip-captured reference outputs.
+serde_json.workspace = true
+flate2.workspace = true

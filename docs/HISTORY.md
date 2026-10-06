@@ -4908,3 +4908,30 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   The IK-07 remainder is retired in favour of exact identities and CONS-I3. Every other v1 criterion is inherited.
 - **Open:** OQ-NPICP-05 (Xe / Ar sources); VER-19..25; D0(N2) registration; v2 consumer paths in
   `abep_subsystems::power` (additive). No code, Python or frozen data was changed.
+
+## 2026-10-06 — SC-WP-11 assessment: crate abep-assess, two contracts ADMITTED, RFP constraint matrix ACCEPTED (no Python, config or frozen data changed)
+
+- **Contracts**, each committed alone before any comparison: design gates `0dfe17e2…` (design_gates.py plus the parts
+  other lanes left for SC-WP-11: bus_boundary_a9_v2.rfp_power_gate, design_synthesis.bus_power gate_verdict,
+  upstream_a9_13.statewise_envelope, p1_reducer.icp45a_margin; DIV-01 = A9.31 sec. 10 HC-05 rule), RVM rules + GNG-ICP-01
+  `f67e2fc8…`. Acceptance prereg ACCEPT-NI-ABEP-ASSESS-RFP-MATRIX-V1 `ed5bf752…` (A9.31 sec. 17 matrix, HC-05 evaluator).
+- **Rust:** new crate `crates/abep-assess` (gates, power_gate, statewise, pareto, propellant, rvm, icp_gate,
+  owner_state, neutralization, matrix). Thresholds come only from config through abep-config. It reuses the admitted
+  abep-mission statewise quantifier (called, not moved: its admitted contract places it in abep-mission), abep-gaspath
+  vocabulary, abep-config architecture, abep-subsystems power / mass and abep-icp. Crate-graph test: no physics crate
+  depends on abep-assess.
+- **Scored once: both PARITY_PASS / ADMITTED.** 5199 and 2813 vectors, 0 failures, 0 ulp. All 60 committed RVM cells
+  and the committed GNG-ICP-01 status (NOT_EVALUATED) replay exactly. CI replay `tests/captured_replay.rs`.
+- **Acceptance: ACCEPTED** (AC-01..AC-10; execution 1 aborted on a full shared disk before any report). Matrix on
+  today's admitted raw results: 7 of 8 requirements NOT_EVALUATED; wet mass DOES_NOT_CLOSE at the governed 2 / 5 /
+  10 kg Xe cases (40.35 / 43.35 / 48.35 kg planning values, evidence INCOMPLETE_EVIDENCE); P_bus official ledger
+  PARTIAL_BOUNDARY (24 TBD terms, lower bound 0 W, no start-up ledgers); HC-05 and GNG-ICP-01 NOT_EVALUATED.
+- **Not ported:** gate_snapshot (wraps the F8 snapshot, SC-WP-10), the RVM document builder and the RFP registration
+  builder (PYTHON_REFERENCE). hard_gates / arch_constraints / closure_checks are class H.
+- **Results:** `cargo test --workspace --locked` 427 passed, 0 failed, 2 ignored (registered PT-01 / PT-02). fmt and
+  clippy are clean. `ci_checks` 12/12. The full pytest run stopped at ~78 % when the shared disk filled during
+  concurrent full runs (disk rule of 2026-10-06). The affected files (layer separation, RVM, ICP gate, gate thresholds,
+  dependency rule, bid guard, repo integrity, Rust CI) pass: 303 passed.
+- **Ledger request** (in each report; the ledger was not edited): partial admissions of design_gates, bus boundary v2
+  (rfp_power_gate), design_synthesis (gate_verdict), upstream_a9_13 (statewise_envelope), P1 bench (icp45a_margin) and
+  RVM (rules, GNG-ICP-01); NI-ABEP-ASSESS-RFP-MATRIX ACCEPTED.
