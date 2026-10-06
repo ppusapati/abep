@@ -4403,3 +4403,64 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
   refused as MODEL_ERROR. Integration needs IF-ICP-THERMAL-v2 on both sides.
 - **Results.** cargo test --workspace --locked: 78 passed, 0 ignored (abep-subsystems: 45). fmt and clippy are clean.
   `ci_checks`: 12/12. No Python changed, so the full pytest suite was not rerun.
+
+## 2026-10-06 — Migration ledger update 1: committed admission evidence applied (ES-1 / ES-2 / ES-3 parity admissions, partial admissions, NP items)
+
+Bookkeeping only (`docs/rust_migration/migration_state_v1.json`, owner lane A1). No Python, physics, contract, report or
+Rust source changed. Every sha256 in the ledger is computed from the committed file; every requested change names an
+existing evidence file. Contracts are unchanged since their registration commits (checked), the Python reference files
+equal the pins recorded in the contracts, and each recorded Rust commit is an ancestor of the integration head. The only
+code touched is the fixtures of `crates/abep-ci/tests/ledger.rs`: the negative cases moved from rows that are now
+admitted (C-ABEP_SIM_CONSTANTS_PY, NP-THERMAL-CATHODELESS) to rows that stay un-admitted (C-ABEP_SIM_COMPRESSOR_PY,
+NP-MISSION-INTEGRATION), and the expected counts are (6 admitted rows, 7 admitted partial admissions, 1 admitted new
+item).
+
+- **Row transitions** (full admissions; each PYTHON_REFERENCE -> PREREG_PARITY -> RUST_IMPL -> PARITY_PASS -> ADMITTED,
+  recorded in the row `status_history`, evidence = the parity report):
+  - `C-ABEP_SIM_ATMOSPHERE_PY` (PARITY-C-ABEP_SIM_ATMOSPHERE_PY-V1): frozen-scenario reader; the live NRLMSIS / table /
+    build branches are not ported (RM-OQ-02).
+  - `C-ABEP_SIM_CONSTANTS_PY`: G0, E_CHARGE, AMU, K_B, MU_EARTH, R_EARTH, M_SPECIES; RFPConstraints / RFP stays with its
+    assessment-layer successor (RM-R14).
+  - `C-ABEP_SIM_ATMOSPHERE_ORBIT_PY`: load, state, node_state, orbit_states, design_states_v2, load_design_states, Domain,
+    check (frozen-data part); producers, the v1 selection rule and the metadata helpers are not ported.
+  - `C-ABEP_SIM_CONFIGURATION_PY` and `C-SCRIPTS_CONFIG_BUILD_CONFIG_PY` (one coupled contract
+    PARITY-C-ABEP_SIM_CONFIGURATION_PY-V1): the loaders and `abep-config build [--check]`; `load_rfp_constraints_compat`
+    stays PYTHON_REFERENCE.
+  - `C-ABEP_SIM_INTAKE_PY` (PARITY-C-ABEP_SIM_INTAKE_PY-V1): whole module. The harness flagged git_dirty=true (every Rust
+    source sha256 is recorded in the report).
+  - Python stays at its paths as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested for any row.
+- **Partial admissions** (Kernel-1 pattern: row status stays PYTHON_REFERENCE, one ADMITTED `partial_admissions` entry
+  each, no row transition):
+  - `C-ABEP_SIM_INTAKE_TPMC_PY`: second entry, the intake response layer and the frozen intake surface reader /
+    interpolant (Kernel 1 stays the first entry). The report discloses the deviation from the registered evaluation
+    text (Rust replicates scipy's simplex walk) and finding B2-OF-01 (owner question open).
+  - `C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY`: the named function subset (architecture load and hash pin,
+    require_flight_configuration, refuse_hollow_cathode_elements, hollow_cathode_elements, ground_reference,
+    verify_decision_records); registered divergence DIV-A01.
+  - `C-ABEP_SIM_MISSION_ENV_PY`: constants kernel (J2, OMEGA_E, Spacecraft defaults, sso_inclination_deg).
+  - `C-ABEP_SIM_ATMOSPHERE_ORBIT_V2_PY`: load, wind, state; relative_flow, flow_state and orbit_states (v2) are pending
+    their own contract or an owner retirement.
+  - `C-ABEP_SIM_DESIGN_INTAKE_SYNTHESIS_PY`: the design-state set loader kernel (load_design_state_set,
+    DesignState.atm / record, required_states).
+  - `C-SCRIPTS_CI_CHECKS_PY`: the provenance-verifier subset (verify_sha_map, check_prereg_lock, check_audit_manifest,
+    check_hallthruster_pin, check_h2_6_live_sources). The Python checks stay in active CI.
+- **New items.**
+  - `NP-THERMAL-CATHODELESS`: NOT_STARTED -> PREREG_MODEL (prereg + lock) -> RUST_IMPL (`crates/abep-subsystems`,
+    `fedc15a`) -> **VERIFIED** (ADM-03; `verification_report_v1.json`). Not ADMITTED (ADM-04 open: ledger flip, CI job
+    bound to the prereg sha256) and NOT_VALIDATED. CONS-L1 is deferred to the SC-WP-05 system ledger by the prereg
+    itself (Q-02).
+  - `NP-ICP-NEUTRALIZER`: NOT_STARTED -> PREREG_MODEL (prereg + lock `e98747e0`) -> RUST_IMPL (`crates/abep-icp`,
+    `f4b615f`). IMPLEMENTED_UNVERIFIED, NOT_ADMITTED, NOT_VALIDATED; **never VERIFIED here**. Contract = prereg +
+    addenda 01 / 02; the NP-ICP-CHEM-AIR v1 prereg and lock are pinned inside that contract.
+- **Not applied.**
+  - `NP-ICP-CHEM-AIR` as a new item (PREREG_MODEL): the ledger checker requires `new_items` ids to equal the inventory
+    v3_1 `new_items_no_python_reference` ids, and that inventory is sha256-pinned. It needs a new inventory version (or a
+    checker change) first.
+  - `C-DOCS_HARDWARE_H2_H2_6_DIAGNOSTICS_FIXTURE` (verify_sources check semantics, in the C-PROVENANCE-VERIFIER
+    report): a class-G row that stays GROUND_REFERENCE_ON_DEMAND (the builder is not ported; a G-to-PREREG_PARITY
+    transition needs a recorded toolchain requirement).
+  - `NI-BID-SOURCE-GUARD` is already ADMITTED in the ledger with this report's sha256; unchanged.
+- **Follow-up for the integrator (not done here).** CI_PLAN sec. 1 principle 4: with the first non-Kernel-1 component
+  admitted, the Rust workflow jobs become required status checks and `docs/ci/BRANCH_PROTECTION.md` is updated. The
+  A9_19 report also asks that the principle-6 forbidden-identifier scan allow-list
+  `crates/abep-config/src/architecture.rs`.

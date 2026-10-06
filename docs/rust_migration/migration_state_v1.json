@@ -90,9 +90,10 @@
    "HISTORICAL_LEGACY_REGRESSION": 82
   },
   "by_status": {
+   "ADMITTED": 6,
    "GROUND_REFERENCE_ON_DEMAND": 7,
    "NOT_PORTED_RETIREMENT_PENDING": 82,
-   "PYTHON_REFERENCE": 137,
+   "PYTHON_REFERENCE": 131,
    "RUST_BINDING_TO_RETIRE": 1
   },
   "by_port_disposition": {
@@ -126,16 +127,17 @@
    "none": 89
   },
   "by_authoritative_kind": {
-   "python": 226,
-   "rust": 1
+   "python": 220,
+   "rust": 7
   },
-  "rows_admitted": 0,
-  "partial_admissions_admitted": 1,
-  "rows_with_contract": 0,
+  "rows_admitted": 6,
+  "partial_admissions_admitted": 7,
+  "rows_with_contract": 6,
   "new_items_by_status": {
    "ADMITTED": 1,
-   "NOT_STARTED": 10,
-   "RUST_IMPL": 3
+   "NOT_STARTED": 8,
+   "RUST_IMPL": 4,
+   "VERIFIED": 1
   },
   "computed": "every count is recomputed from the rows / new_items by crates/abep-ci (ledger check)"
  },
@@ -144,11 +146,68 @@
    "id": "NP-THERMAL-CATHODELESS",
    "method": "NEW_PHYSICS",
    "simulation_completion_wp": "SC-WP-06",
-   "status": "NOT_STARTED",
-   "contract": null,
+   "status": "VERIFIED",
+   "contract": {
+    "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json",
+    "id": "NP-THERMAL-CATHODELESS_prereg_v1",
+    "sha256": "e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c",
+    "prereg_md": {
+     "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/PREREG.md",
+     "sha256": "e3337c8fece492f40eea7452b9834c9678d6fd52696d018588f542a801cc28aa"
+    },
+    "lock": {
+     "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_lock_v1.json",
+     "sha256": "3421e28c959dc5ac7de600acd8e94d83b1ded605bcc6095a81fccd4905470fc7"
+    }
+   },
    "admission_evidence": null,
-   "implementation": [],
-   "note": "preregistration lanes C / D run in parallel; their commits request PREREG_MODEL"
+   "implementation": [
+    "crates/abep-subsystems"
+   ],
+   "note": "VERIFIED (ADM-03) only; NOT ADMITTED and NOT_VALIDATED. CONS-L1 (system energy ledger, CLAUDE.md rule 4) is deferred to the SC-WP-05 system energy-ledger check by the prereg itself (\"evaluated by that system check, not inside the thermal equations\"); the report records it DEFERRED_TO_SYSTEM_LEDGER_CHECK (open question Q-02). ADM-04 is still open: the migration-ledger flip to ADMITTED, a CI job bound to the prereg sha256 (CI_PLAN principle 9) and the HISTORY entry. Open: Q-01 (IF-ICP-THERMAL v2 key agreement), Q-02, OQ-NPT-01..10; anode and coupled H-1/ICP thermal closure stay UNRESOLVED, no thermal result is PASS; absolute Hall / ICP heat loads are NOT_EVALUATED.",
+   "rust_commit": "fedc15ac1404ec8bf887b8a1d9ee346780b65048",
+   "validation_status": "NOT_VALIDATED",
+   "verification_evidence": {
+    "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification_report_v1.json",
+    "sha256": "7a355efd6e3ccd926f04afec5487f1cc42f5bedeffa4bcab63bdeb16a96bbb7e",
+    "verification_status": "VERIFIED (ADM-03, registered synthetic cases; SYNTHETIC_TEST_DATA_NOT_EVIDENCE)",
+    "software_admission": "NOT_ADMITTED_YET (ADM-04 steps outstanding)",
+    "validation_status": "NOT_VALIDATED",
+    "admitted_claimed": false
+   },
+   "status_history": [
+    {
+     "from": "NOT_STARTED",
+     "to": "PREREG_MODEL",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json",
+      "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_lock_v1.json",
+      "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/PREREG.md"
+     ],
+     "history_entry": "Preregistration v1 (model_version 1.0.0) committed and sha256-locked 2026-10-05 before any Rust code (A9.29 sec. 13 lane D; merge 35c06e4, lock e3e6859c / e3337c8f); both locked files match the lock."
+    },
+    {
+     "from": "PREREG_MODEL",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-subsystems",
+      "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification_report_v1.json"
+     ],
+     "history_entry": "Rust implementation crates/abep-subsystems (module thermal) at fedc15a, scored run on a clean tree; the VS-NET registration (c3086e4) precedes the implementation commit and the scored run."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "VERIFIED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification_report_v1.json",
+      "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification/vs_net_v1.json"
+     ],
+     "history_entry": "Verification report v1 (sha256 7a355efd6e3c...): VERIFIED under ADM-03 on the registered synthetic cases (AL, CONS, FT, DET, IV-01/02); IV-03 not performed (allowed). Not ADMITTED (ADM-04 open) and NOT_VALIDATED (no EV-01..EV-05 data)."
+    }
+   ]
   },
   {
    "id": "NP-MISSION-INTEGRATION",
@@ -163,11 +222,82 @@
    "id": "NP-ICP-NEUTRALIZER",
    "method": "NEW_PHYSICS",
    "simulation_completion_wp": "SC-WP-03",
-   "status": "NOT_STARTED",
-   "contract": null,
+   "status": "RUST_IMPL",
+   "contract": {
+    "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v1.json",
+    "id": "NP-ICP-NEUTRALIZER_prereg_v1",
+    "sha256": "5d496ea6538ef65999c3cb8b1f4274622dc060889b1cf14f46a0a02a855a91a8",
+    "prereg_md": {
+     "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/PREREG.md",
+     "sha256": "3af97940032b2ebff530d92c886a6690ceca30a21ed6d8bf5354d7cca79f36cc"
+    },
+    "lock": {
+     "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_lock_v1.json",
+     "sha256": "e98747e04694bf849164350be3ef4c7b458fccc918777c224066eebf55fa82af"
+    },
+    "addenda": [
+     {
+      "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/addendum_01_a9_30.json",
+      "id": "NP-ICP-NEUTRALIZER_addendum_01_a9_30",
+      "sha256": "f8e122492bde654d74a155f4544e51ce0b13ed639b2f510aa453384e333569c9"
+     },
+     {
+      "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/addendum_02_chem_air.json",
+      "id": "NP-ICP-NEUTRALIZER_addendum_02_chem_air",
+      "sha256": "7c1dd1f70e5e93f810e655fd7b8e177fd3032fbe39fca95954f6b35aec1c2279"
+     }
+    ],
+    "chemistry_contract": {
+     "note": "NP-ICP-CHEM-AIR v1 is the chemistry contract named by addendum_02_chem_air (A9.30); it is pinned here as a dependency of the contract, not as a ledger item (the ledger checker restricts new_items to the inventory list)",
+     "prereg": {
+      "path": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_v1.json",
+      "sha256": "24b74bc6e485e9156059b132c8f5ccb4b854b971a58b879eb34a960b76f70e9a"
+     },
+     "lock": {
+      "path": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json",
+      "sha256": "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef"
+     }
+    }
+   },
    "admission_evidence": null,
-   "implementation": [],
-   "note": "preregistration lanes C / D run in parallel; their commits request PREREG_MODEL"
+   "implementation": [
+    "crates/abep-icp"
+   ],
+   "note": "RUST_IMPL: IMPLEMENTED_UNVERIFIED / NOT_ADMITTED / NOT_VALIDATED per verification_report_v1; never VERIFIED here. Open admission-rule items: 3 abep-chem rate evaluator not admitted (AIR_PRIMARY is INCOMPLETE_EVIDENCE, NP_ICP_CHEM_AIR_NOT_ADMITTED), 4 verify items (VER-01, VER-12, VER-06, VER-02, VER-07, VER-08, VER-11; CM-PRED additionally VER-03, VER-04, VER-05, VER-13) not cleared by addenda, 5 admission record. LC-11 not exercisable, NV-06 partial. The report keeps prereg findings PF-01 / PF-02 and gaps GAP-01..05 for the owner.",
+   "rust_commit": "f4b615fb43172658485d4c78b0f83c2b67f318ac",
+   "verification_evidence": {
+    "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v1.json",
+    "sha256": "11ddb2a2684f1803b7a5fac94cb3307f59cb60e4e9a8e46d2abc2c449f4e5284",
+    "verification_status": "IMPLEMENTED_UNVERIFIED",
+    "software_admission": "NOT_ADMITTED",
+    "validation_status": "NOT_VALIDATED",
+    "verified_claimed": false
+   },
+   "status_history": [
+    {
+     "from": "NOT_STARTED",
+     "to": "PREREG_MODEL",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v1.json",
+      "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_lock_v1.json",
+      "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/PREREG.md"
+     ],
+     "history_entry": "Preregistration v1 committed and sha256-locked 2026-10-05 (lock e98747e0...) before any Rust code (A9.29 sec. 13 lane C); both locked files match the lock; addenda 01 (A9.30) and 02 (chemistry re-pointing) leave prereg_v1 unedited."
+    },
+    {
+     "from": "PREREG_MODEL",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-icp",
+      "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v1.json",
+      "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/addendum_01_a9_30.json",
+      "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/addendum_02_chem_air.json"
+     ],
+     "history_entry": "Rust implementation crates/abep-icp at f4b615f; verification report v1: IMPLEMENTED_UNVERIFIED, software admission NOT_ADMITTED, validation NOT_VALIDATED. VERIFIED is not claimed; admission-rule items 3 (abep-chem not admitted), 4 (verify items VER-01.. not cleared by addenda) and 5 (admission record) are open."
+    }
+   ]
   },
   {
    "id": "NP-RELIABILITY",
@@ -463,17 +593,78 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-atmos (abep_atmos::msis21) + abep-data (abep_data::msis21_v1)",
     "paths": [
+     "crates/abep-atmos/src/msis21.rs",
+     "crates/abep-data/src/msis21_v1.rs"
+    ],
+    "admitted_scope": "frozen-scenario reader: atmosphere (frozen branch), _interp_frozen, _frozen, orbital_velocity",
+    "not_ported": "live NRLMSIS branch, ABEP_ALLOW_TABLE_ATMOSPHERE table branch, `build` (RM-OQ-02, A9.29 sec. 6): proposed FORMALLY_RETIRED_NOT_PORTED with the module",
+    "python_reference": [
      "abep_sim/atmosphere.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_PY/parity_prereg_v1.json",
+    "id": "PARITY-C-ABEP_SIM_ATMOSPHERE_PY-V1",
+    "sha256": "37bcef92084273c587f8cdf852f031e4bca952cc1289b685cf405c85dc14eead"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_PY/parity_report_v1.json",
+    "sha256": "d54967c49cd945f2190c192324a4fafde4220a77bb91f8a5771adc517939f411",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-01",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_PY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-ABEP_SIM_ATMOSPHERE_PY-V1 (sha256 37bcef920842...) committed alone in 481570d before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-atmos/src/msis21.rs",
+      "crates/abep-data/src/msis21_v1.rs",
+      "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-atmos (abep_atmos::msis21) + abep-data (abep_data::msis21_v1) at 7caaca2; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-05T13:37:32Z, master seed 731905201): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 d54967c49cd9...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_PY/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06, crate tests in rust-workspace.yml. Admitted scope: frozen-scenario reader: atmosphere (frozen branch), _interp_frozen, _frozen, orbital_velocity. Not ported / out of scope: live NRLMSIS branch, ABEP_ALLOW_TABLE_ATMOSPHERE table branch, `build` (RM-OQ-02, A9.29 sec. 6): proposed FORMALLY_RETIRED_NOT_PORTED with the module."
+    }
+   ],
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-ABEP_SIM_ATMOSPHERE_ORBIT_PY",
@@ -482,17 +673,83 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-atmos (abep_atmos::{orbit, design_states}) + abep-data (abep_data::{orbit_v1, design_states})",
     "paths": [
+     "crates/abep-atmos/src/orbit.rs",
+     "crates/abep-atmos/src/design_states.rs",
+     "crates/abep-data/src/orbit_v1.rs",
+     "crates/abep-data/src/design_states.rs"
+    ],
+    "admitted_scope": "load, state, node_state, orbit_states, design_states_v2, load_design_states, Domain, check (frozen-data part)",
+    "not_ported": "build / msis_points / correct-metadata / write_design_states_v2 / producer re-run (rule-1 regeneration, live NRLMSIS: RM-OQ-02), v1 design_states() selection rule (immutable traceability set), orbit_coverage / mission_env_orbit_assumption (metadata helpers)",
+    "python_reference": [
      "abep_sim/atmosphere_orbit.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested",
+    "contract_note": "coupled-group contract (RM-R01): also scores the C-ABEP_SIM_ATMOSPHERE_ORBIT_V2_PY and C-ABEP_SIM_DESIGN_INTAKE_SYNTHESIS_PY partial scopes recorded as partial_admissions on those rows"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_prereg_v1.json",
+    "id": "PARITY-C-ABEP_SIM_ATMOSPHERE_ORBIT_PY-V1",
+    "sha256": "fd7b9f750228939d4c768402abd13d1979b5b0b7f68df6ab27e12e4e40d40c46"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_report_v1.json",
+    "sha256": "489800cd46f5e8729efa9e04de300b1caed956169cffaba3fb74045970d9e9ba",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-01",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-ABEP_SIM_ATMOSPHERE_ORBIT_PY-V1 (sha256 fd7b9f750228...) committed alone in a5a84e6 before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-atmos/src/orbit.rs",
+      "crates/abep-atmos/src/design_states.rs",
+      "crates/abep-data/src/orbit_v1.rs",
+      "crates/abep-data/src/design_states.rs",
+      "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-atmos (abep_atmos::{orbit, design_states}) + abep-data (abep_data::{orbit_v1, design_states}) at ace0a7a; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-05T13:41:03Z, master seed 731905204): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 489800cd46f5...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06, crate tests in rust-workspace.yml. Admitted scope: load, state, node_state, orbit_states, design_states_v2, load_design_states, Domain, check (frozen-data part). Not ported / out of scope: build / msis_points / correct-metadata / write_design_states_v2 / producer re-run (rule-1 regeneration, live NRLMSIS: RM-OQ-02), v1 design_states() selection rule (immutable traceability set), orbit_coverage / mission_env_orbit_assumption (metadata helpers)."
+    }
+   ],
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-ABEP_SIM_ATMOSPHERE_ORBIT_V2_PY",
@@ -506,12 +763,43 @@
     "kind": "python",
     "paths": [
      "abep_sim/atmosphere_orbit_v2.py"
-    ]
+    ],
+    "admitted_subset": "load, wind, state -> abep-atmos abep_atmos::wind + abep-data abep_data::hwm14_v2 (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-01",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "PARTIAL (load, wind, state admitted): the frozen HWM14 orbit v2 wind paths the 196-state execution needs",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-atmos (abep_atmos::wind) + abep-data (abep_data::hwm14_v2)",
+      "paths": [
+       "crates/abep-atmos/src/wind.rs",
+       "crates/abep-data/src/hwm14_v2.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_ATMOSPHERE_ORBIT_PY-V1",
+      "sha256": "fd7b9f750228939d4c768402abd13d1979b5b0b7f68df6ab27e12e4e40d40c46"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_report_v1.json",
+      "sha256": "489800cd46f5e8729efa9e04de300b1caed956169cffaba3fb74045970d9e9ba",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "pending": "relative_flow, flow_state, orbit_states (v2): own contract or owner retirement before SC-WP-01 completion",
+     "not_in_scope": "HWM14Runner / build / fetch / check re-run (RM-OQ-02)",
+     "contract_note": "coupled-group contract (RM-R01) shared with C-ABEP_SIM_ATMOSPHERE_ORBIT_PY",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when all its functions are admitted (RM-R17)"
   },
   {
    "id": "C-ABEP_SIM_BREAKEVEN_PY",
@@ -634,17 +922,78 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-config (abep_config::loaders, abep_config::assessment)",
     "paths": [
+     "crates/abep-config/src/loaders.rs",
+     "crates/abep-config/src/assessment.rs"
+    ],
+    "admitted_scope": "the configuration loaders of abep_sim/configuration.py (coupled group with C-SCRIPTS_CONFIG_BUILD_CONFIG_PY)",
+    "not_ported": "abep_sim/configuration.py::load_rfp_constraints_compat (the abep_sim.constants.RFP compatibility record, assessment data; goes with C-ABEP_SIM_CONSTANTS_PY) stays PYTHON_REFERENCE; PYTHON_RETIRED_FROM_ACTIVE not requested (the module stays the migration reference until its consumers are re-pointed)",
+    "python_reference": [
      "abep_sim/configuration.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_prereg_v1.json",
+    "id": "PARITY-C-ABEP_SIM_CONFIGURATION_PY-V1",
+    "sha256": "69cf94488ada482c50eb31e7f205a89be073e585eacd7859be76c28da594b236"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json",
+    "sha256": "5f7592f66dd74f58e19b772f729b0e8bec4d0e3693d50a8a58ca72737ffed5d9",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-12",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-ABEP_SIM_CONFIGURATION_PY-V1 (sha256 69cf94488ada...) committed alone in d7b51d8 before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-config/src/loaders.rs",
+      "crates/abep-config/src/assessment.rs",
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-config (abep_config::loaders, abep_config::assessment) at b249a58 (crate commit e26c18f); the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-05T13:32:47Z, master seed 8251946031): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 5f7592f66dd7...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06, crate tests in rust-workspace.yml. Admitted scope: the configuration loaders of abep_sim/configuration.py (coupled group with C-SCRIPTS_CONFIG_BUILD_CONFIG_PY). Not ported / out of scope: abep_sim/configuration.py::load_rfp_constraints_compat (the abep_sim.constants.RFP compatibility record, assessment data; goes with C-ABEP_SIM_CONSTANTS_PY) stays PYTHON_REFERENCE; PYTHON_RETIRED_FROM_ACTIVE not requested (the module stays the migration reference until its consumers are re-pointed)."
+    }
+   ],
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-ABEP_SIM_CONSTANTS_PY",
@@ -653,17 +1002,76 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-types (abep_types::constants)",
     "paths": [
+     "crates/abep-types/src/constants.rs"
+    ],
+    "admitted_scope": "G0, E_CHARGE, AMU, K_B, MU_EARTH, R_EARTH, M_SPECIES",
+    "not_ported": "RFPConstraints / RFP: requirement data, assessment layer (RM-R14); stays with its assessment-layer successor",
+    "python_reference": [
      "abep_sim/constants.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_prereg_v1.json",
+    "id": "PARITY-C-ABEP_SIM_CONSTANTS_PY-V1",
+    "sha256": "1f7bef49973b985fad3fd9dcb86e63e272e3c438765f89c7e137bbfe479492c0"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_report_v1.json",
+    "sha256": "aecd5828750aa2c766cb68ec55c0a47f98245121cea9c441cf687e4fec5166bb",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-12",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-ABEP_SIM_CONSTANTS_PY-V1 (sha256 1f7bef49973b...) committed alone in 12df461 before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-types/src/constants.rs",
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-types (abep_types::constants) at 7f43b4f; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-05T13:37:47Z, master seed 0): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 aecd5828750a...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06, crate tests in rust-workspace.yml. Admitted scope: G0, E_CHARGE, AMU, K_B, MU_EARTH, R_EARTH, M_SPECIES. Not ported / out of scope: RFPConstraints / RFP: requirement data, assessment layer (RM-R14); stays with its assessment-layer successor."
+    }
+   ],
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-ABEP_SIM_CONVERGENCE_PY",
@@ -696,12 +1104,41 @@
     "kind": "python",
     "paths": [
      "abep_sim/design/a9_19_architecture.py"
-    ]
+    ],
+    "admitted_subset": "named function subset -> abep-config abep_config::architecture (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-12",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "named function subset (RM-R17): definition load + architecture hash pin, require_flight_configuration, refuse_hollow_cathode_elements, hollow_cathode_elements, ground_reference, verify_decision_records",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-config (abep_config::architecture)",
+      "paths": [
+       "crates/abep-config/src/architecture.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY-V1",
+      "sha256": "ddec7a18646d07fbb082aaf9c5d88ebf4ab89d2cdb6d179c007e813ea07c6ed2"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY/parity_report_v1.json",
+      "sha256": "57c17f049cc4dee2f0e34eeaaa39dceff85aa0790e1f54569ef14baed21875b9",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "require_decision_records, classify_gas, check_supply_mode, propellant_path_roles, applied_row, is_conditional_c1_text stay PYTHON_REFERENCE; the module retires only when all are admitted",
+     "report_disclosures": "registered divergence DIV-A01: Rust refuses a manifest-consistent edited architecture by the hash pin where Python accepts it (definition trees A-01 / A-02); the report asks that the CI_PLAN principle-6 forbidden-identifier scan allow-list crates/abep-config/src/architecture.rs",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when all its functions are admitted (RM-R17)"
   },
   {
    "id": "C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY",
@@ -810,12 +1247,43 @@
     "kind": "python",
     "paths": [
      "abep_sim/design/intake_synthesis.py"
-    ]
+    ],
+    "admitted_subset": "design-state set loader kernel (load_design_state_set, DesignState.atm / record, required_states) -> abep-data abep_data::design_states + abep-atmos abep_atmos::{design_state_set, execution} (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-02",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "KERNEL_ADMITTED (RM-R17) for load_design_state_set, DesignState.atm / record, required_states; module stays PYTHON_REFERENCE (SC-WP-02)",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-data (abep_data::design_states) + abep-atmos (abep_atmos::{design_state_set, execution})",
+      "paths": [
+       "crates/abep-data/src/design_states.rs",
+       "crates/abep-atmos/src/design_state_set.rs",
+       "crates/abep-atmos/src/execution.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_ATMOSPHERE_ORBIT_PY-V1",
+      "sha256": "fd7b9f750228939d4c768402abd13d1979b5b0b7f68df6ab27e12e4e40d40c46"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_report_v1.json",
+      "sha256": "489800cd46f5e8729efa9e04de300b1caed956169cffaba3fb74045970d9e9ba",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "every other intake_synthesis function stays PYTHON_REFERENCE for SC-WP-02",
+     "contract_note": "coupled-group contract (RM-R01) shared with C-ABEP_SIM_ATMOSPHERE_ORBIT_PY",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when all its functions are admitted (RM-R17)"
   },
   {
    "id": "C-ABEP_SIM_DESIGN_PLENUM_FEED_PY",
@@ -1090,17 +1558,77 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-intake (abep_intake::collection, abep_intake::surface::FrozenIntakeSurfaces)",
     "paths": [
+     "crates/abep-intake/src/collection.rs",
+     "crates/abep-intake/src/surface.rs"
+    ],
+    "admitted_scope": "whole module abep_sim/intake.py (it holds exactly the entry points collection, compress, passive_compression and their parameter records)",
+    "not_ported": "none requested by the report; its TPMC branch evaluates the frozen IntakeSurface, which is admitted separately as a partial admission of C-ABEP_SIM_INTAKE_TPMC_PY (response layer + frozen surface); the harness flagged git_dirty=true at git_head c30c051 (every Rust source sha256 is recorded in the report build_provenance)",
+    "python_reference": [
      "abep_sim/intake.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_PY/parity_prereg_v1.json",
+    "id": "PARITY-C-ABEP_SIM_INTAKE_PY-V1",
+    "sha256": "6d67d5e42dde864a7a9688a6a2955894e874a169510708912a427a7d2e172292"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_PY/parity_report_v1.json",
+    "sha256": "917f8d57ed7f0a2be9dd3709574da00ef820214375036f80fcf986820deb208a",
+    "verdict": "ADMITTED"
+   },
    "simulation_completion_wp": "SC-WP-02",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_PY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-ABEP_SIM_INTAKE_PY-V1 (sha256 6d67d5e42dde...) committed alone in a5a8e97 before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-intake/src/collection.rs",
+      "crates/abep-intake/src/surface.rs",
+      "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-intake (abep_intake::collection, abep_intake::surface::FrozenIntakeSurfaces) at c30c051; the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-05T13:38:50Z, master seed 2026100522): report verdict ADMITTED; report committed (sha256 917f8d57ed7f...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_PY/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06, crate tests in rust-workspace.yml. Admitted scope: whole module abep_sim/intake.py (it holds exactly the entry points collection, compress, passive_compression and their parameter records). Not ported / out of scope: none requested by the report; its TPMC branch evaluates the frozen IntakeSurface, which is admitted separately as a partial admission of C-ABEP_SIM_INTAKE_TPMC_PY (response layer + frozen surface); the harness flagged git_dirty=true at git_head c30c051 (every Rust source sha256 is recorded in the report build_provenance)."
+    }
+   ],
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-ABEP_SIM_INTAKE_SURFACE_V2_SPEC_PY",
@@ -1134,7 +1662,7 @@
     "paths": [
      "abep_sim/intake_tpmc.py"
     ],
-    "admitted_subset": "Kernel 1 trace kernels -> abep_core (partial_admissions)"
+    "admitted_subset": "Kernel 1 trace kernels -> abep_core; intake response layer + frozen intake surface reader / interpolant -> abep-intake (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
@@ -1171,6 +1699,31 @@
      "parity_class": "STATISTICAL (Rust xoshiro256++); never re-registered on the design / UQ EXACT_STREAM (A9.29 sec. 7)",
      "authority": "A9.14 S10.3 is SUPERSEDED_PER_COMPONENT_ON_ADMISSION (programme_v3_1 supersedes_per_a9_24); the Rust simulator calls abep_core directly (A9.29 sec. 5); the Python wrapper default backend stays 'python' during migration (RM-OQ-01)",
      "ci": ".github/workflows/rust-parity.yml (optional, A9.14 S10.4)"
+    },
+    {
+     "scope": "named function subset (kernel granularity, RM-R17): the intake response layer and the frozen intake surface reader / interpolant of abep_sim/intake_tpmc.py (intake_response, response_surface, clausing_transmission, IntakeSurface over the frozen v1 tables, the intake surface v2 fail-closed gate)",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-intake (calls the admitted abep_core Kernel 1 directly)",
+      "paths": [
+       "crates/abep-intake/src/tpmc_response.rs",
+       "crates/abep-intake/src/surface.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1",
+      "sha256": "1e6a80fbeb848b4e229ad35438f88f4d8f5041658ab71ade6a1d81aa87e66a6d"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/parity_report_v1.json",
+      "sha256": "18c13688f1b9029297df9a6dc4ad705d282096bcb4070d15e6ad24cde490f484",
+      "verdict": "ADMITTED"
+     },
+     "not_in_scope": "the trace kernels (Kernel 1, the first partial admission); build_frozen_surface and the build CLI (frozen-data rebuild, CLAUDE.md rule 1); frozen_surface_build_atmosphere; IntakeSurface.call_legacy_mass_weighted (historical evidence only); IntakeSurface over any table other than the frozen v1 point set (DIV-04); _check_hit_budget; abep_sim/intake_surface_v2_spec.py beyond its fail-closed gate (own contract)",
+     "report_disclosures": "the Rust simplex selection deviates from the evaluation text registered in the contract (it replicates scipy's _find_simplex over captured structures); finding B2-OF-01 (discontinuity of the frozen Python reference interpolant) is carried to the owner as an open question, parity is kept faithful; the report was annotated after scoring (scored sha256 d879b71b...); the harness flagged git_dirty=true at git_head ed6b27a",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
     }
    ],
    "status_note": "inventory status 'ADMITTED (Kernel 1) + PYTHON_REFERENCE (remainder)' is encoded as status PYTHON_REFERENCE for the remainder plus one partial admission; the module retires only when all its functions are admitted (RM-R17)"
@@ -1301,12 +1854,41 @@
     "kind": "python",
     "paths": [
      "abep_sim/mission_env.py"
-    ]
+    ],
+    "admitted_subset": "constants kernel (J2, OMEGA_E, Spacecraft defaults, sso_inclination_deg) -> abep-atmos abep_atmos::mission_env_kernel (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-09",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "named function subset (kernel granularity, RM-R17): J2, OMEGA_E, Spacecraft defaults, sso_inclination_deg",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-atmos (abep_atmos::mission_env_kernel)",
+      "paths": [
+       "crates/abep-atmos/src/mission_env_kernel.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL/parity_prereg_v1.json",
+      "id": "PARITY-C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL-V1",
+      "sha256": "83cc3513cccbab30b59c7fc4a4bd86e2b79574137755a64035d9786f1911c8e8"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL/parity_report_v1.json",
+      "sha256": "0d293cabbee06c43f8690a87baf68bb805775e4c9e2731a56ae7f8d970021e66",
+      "verdict": "ADMITTED",
+      "parity_verdict": "PARITY_PASS"
+     },
+     "not_in_scope": "SOLAR_CONST, ARRAY_AREAL_KG_M2, worst_eclipse_fraction, array_area_for, pointing_factors and every other function of abep_sim/mission_env.py stay PYTHON_REFERENCE for the W3 / SC-WP-09 contract",
+     "report_disclosures": "registered divergence DIV-C-01: Rust refuses (OUT_OF_DOMAIN) a sso_inclination_deg input the reference evaluates (DE-C-08)",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when all its functions are admitted (RM-R17)"
   },
   {
    "id": "C-ABEP_SIM_MISSION_UQ_PY",
@@ -4003,12 +4585,44 @@
     "kind": "python",
     "paths": [
      "scripts/ci_checks.py"
-    ]
+    ],
+    "admitted_subset": "provenance-verifier function subset (verify_sha_map, check_prereg_lock, check_audit_manifest, check_hallthruster_pin, check_h2_6_live_sources) -> abep-provenance verifier (partial_admissions)"
    },
    "contract": null,
    "admission_evidence": null,
    "simulation_completion_wp": "SC-WP-16",
-   "status_history": []
+   "status_history": [],
+   "partial_admissions": [
+    {
+     "scope": "function subset of scripts/ci_checks.py: verify_sha_map, check_prereg_lock, check_audit_manifest, check_hallthruster_pin, check_h2_6_live_sources",
+     "status": "ADMITTED",
+     "rust_implementation": {
+      "crate": "abep-provenance (abep_provenance::verifier, binary abep-provenance-verify)",
+      "paths": [
+       "crates/abep-provenance/src/verifier/mod.rs",
+       "crates/abep-provenance/src/verifier/checks.rs",
+       "crates/abep-provenance/src/verifier/live_sources.rs",
+       "crates/abep-provenance/src/verifier/sha_map.rs",
+       "crates/abep-provenance/src/bin/abep-provenance-verify.rs"
+      ]
+     },
+     "contract": {
+      "path": "docs/rust_migration/contracts/C-PROVENANCE-VERIFIER/parity_prereg_v1.json",
+      "id": "PARITY-C-PROVENANCE-VERIFIER-V1",
+      "sha256": "95f06eb3e9e31b3ba0019d4bacccbde6050d4b390dbfae64e5d015b453fb49e6"
+     },
+     "admission_evidence": {
+      "path": "docs/rust_migration/contracts/C-PROVENANCE-VERIFIER/parity_report_v1.json",
+      "sha256": "3d04ef328dd645c49b7d2111711cfc32855dd32bb58128a9737e00544c4f34d8",
+      "verdict": "PARITY_PASS",
+      "admission": "ADMITTED"
+     },
+     "not_in_scope": "the other seven ci_checks checks stay PYTHON_REFERENCE (report wording); the H2-6 diagnostics fixture builder stays class G, not ported; the Python checks stay in active CI until CI is re-pointed to abep-provenance-verify in a separate later step (SC-WP-12, RM-R29, CI_PLAN.md W16); the report changes no CI workflow and no Python check",
+     "recorded": "2026-10-06",
+     "ci": ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+    }
+   ],
+   "status_note": "status stays PYTHON_REFERENCE for the remainder plus the ADMITTED partial admission(s); the module retires only when all its functions are admitted (RM-R17)"
   },
   {
    "id": "C-SCRIPTS_CONFIG_BUILD_CONFIG_PY",
@@ -4017,17 +4631,80 @@
    "classification_confidence": "PROPOSED",
    "classification_confidence_v3_1": "PLAN_APPROVED_A9_29",
    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
-   "status": "PYTHON_REFERENCE",
+   "status": "ADMITTED",
    "authoritative_implementation": {
-    "kind": "python",
+    "kind": "rust",
+    "crate": "abep-config (build [--check]: abep_config::builder)",
     "paths": [
+     "crates/abep-config/src/builder.rs",
+     "crates/abep-config/src/builder_readme.rs",
+     "crates/abep-config/src/main.rs"
+    ],
+    "admitted_scope": "the config/** builder scripts/config/build_config.py: build_all and main --check (coupled group with C-ABEP_SIM_CONFIGURATION_PY)",
+    "not_ported": "scripts/config/build_config.py write mode (without --check): the Rust CLI writes the same bytes, but the scored observable is the in-memory build compared byte for byte (the Python write path is not run against the repository config/); the script stays the migration reference (the W13 CI job may use `abep-config build --check`)",
+    "python_reference": [
      "scripts/config/build_config.py"
-    ]
+    ],
+    "python_note": "the Python file stays at its path as the migration reference; PYTHON_RETIRED_FROM_ACTIVE is not requested"
    },
-   "contract": null,
-   "admission_evidence": null,
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_prereg_v1.json",
+    "id": "PARITY-C-ABEP_SIM_CONFIGURATION_PY-V1",
+    "sha256": "69cf94488ada482c50eb31e7f205a89be073e585eacd7859be76c28da594b236"
+   },
+   "admission_evidence": {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json",
+    "sha256": "5f7592f66dd74f58e19b772f729b0e8bec4d0e3693d50a8a58ca72737ffed5d9",
+    "verdict": "ADMITTED",
+    "parity_verdict": "PARITY_PASS"
+   },
    "simulation_completion_wp": "SC-WP-12",
-   "status_history": []
+   "status_history": [
+    {
+     "from": "PYTHON_REFERENCE",
+     "to": "PREREG_PARITY",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_prereg_v1.json"
+     ],
+     "history_entry": "Parity contract PARITY-C-ABEP_SIM_CONFIGURATION_PY-V1 (sha256 69cf94488ada...) committed alone in d7b51d8 before any comparison; the committed file is unchanged since registration."
+    },
+    {
+     "from": "PREREG_PARITY",
+     "to": "RUST_IMPL",
+     "date": "2026-10-06",
+     "evidence": [
+      "crates/abep-config/src/builder.rs",
+      "crates/abep-config/src/builder_readme.rs",
+      "crates/abep-config/src/main.rs",
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Rust implementation abep-config (build [--check]: abep_config::builder) at b249a58 (crate commit e26c18f); the source sha256 values are recorded in the report build_provenance."
+    },
+    {
+     "from": "RUST_IMPL",
+     "to": "PARITY_PASS",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json"
+     ],
+     "history_entry": "Scoring execution of the registered contract (2026-10-05T13:32:47Z, master seed 8251946031): report verdict ADMITTED, parity_verdict PARITY_PASS; report committed (sha256 5f7592f66dd7...)."
+    },
+    {
+     "from": "PARITY_PASS",
+     "to": "ADMITTED",
+     "date": "2026-10-06",
+     "evidence": [
+      "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json",
+      "docs/HISTORY.md",
+      ".github/workflows/rust-workspace.yml"
+     ],
+     "history_entry": "Ledger flip on the committed admission evidence (the parity report), HISTORY entry 2026-10-06, crate tests in rust-workspace.yml. Admitted scope: the config/** builder scripts/config/build_config.py: build_all and main --check (coupled group with C-ABEP_SIM_CONFIGURATION_PY). Not ported / out of scope: scripts/config/build_config.py write mode (without --check): the Rust CLI writes the same bytes, but the scored observable is the in-memory build compared byte for byte (the Python write path is not run against the repository config/); the script stays the migration reference (the W13 CI job may use `abep-config build --check`)."
+    }
+   ],
+   "ci": [
+    ".github/workflows/rust-workspace.yml: cargo test --workspace --locked (the crate tests); not yet a required status check (CI_PLAN.md sec. 1 principle 4)"
+   ]
   },
   {
    "id": "C-SCRIPTS_CONFIG_BUILD_RESULT_SCHEMAS_PY",
