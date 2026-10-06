@@ -611,6 +611,60 @@ impl IntakeSurface {
             .collect())
     }
 
+    /// Authoritative species-row values at a point: per species (table order) the interpolated
+    /// [eta_c, C_D, CR_passive, K_back, mass_kg] in the simplex the replicated scipy walk selects (the same rows
+    /// [`IntakeSurface::eval`] recombines). Additive accessor for the B2-OF-01 diagnostic
+    /// (ACCEPT-DIAG-B2-OF-01-INTERP-SENSITIVITY-V1, SC-WP-10); outside the table range it refuses as `eval` does.
+    pub fn species_rows_at(&self, l_over_d: f64, phi: f64, alpha: f64, theta_deg: f64) -> AbepResult<Vec<[f64; 5]>> {
+        if !self.in_bounds(l_over_d, phi, alpha, theta_deg) {
+            return Err(refuse(
+                "OUT_OF_BOUNDS",
+                format!(
+                    "intake ROM extrapolation: L/d={l_over_d}, phi={phi}, alpha={alpha}, theta={theta_deg} outside {:?}",
+                    self.bounds
+                ),
+            ));
+        }
+        self.rows([l_over_d, phi, alpha, theta_deg])
+    }
+
+    /// Every non-degenerate captured simplex whose five barycentric coordinates of the rescaled point lie in
+    /// [-eps, 1 + eps] with the reference's own find-simplex tolerance eps = [`FIND_SIMPLEX_EPS`], and the species-row
+    /// values interpolated in each (the adjacent-simplex ambiguity envelope of finding B2-OF-01). Read only: the
+    /// authoritative value stays [`IntakeSurface::species_rows_at`]. Additive accessor (SC-WP-10 diagnostic).
+    pub fn containing_simplex_rows(
+        &self,
+        l_over_d: f64,
+        phi: f64,
+        alpha: f64,
+        theta_deg: f64,
+    ) -> Vec<(usize, Vec<[f64; N_COLS]>)> {
+        let x = [l_over_d, phi, alpha, theta_deg];
+        let xr: [f64; 4] = std::array::from_fn(|j| (x[j] - self.offset[j]) / self.scale[j]);
+        let eps = FIND_SIMPLEX_EPS;
+        let mut out = vec![];
+        for (s, t) in self.delaunay.transform.iter().enumerate() {
+            let Some(t) = t else { continue };
+            let c = barycentric(t, &xr);
+            if !c.iter().all(|ck| within(*ck, -eps, 1.0 + eps)) {
+                continue;
+            }
+            let rows = (0..self.species.len())
+                .map(|sp| {
+                    std::array::from_fn(|col| {
+                        let mut v = 0.0;
+                        for (ck, &k) in c.iter().zip(&self.delaunay.verts[s]) {
+                            v += ck * self.values[sp][col][k];
+                        }
+                        v
+                    })
+                })
+                .collect();
+            out.push((s, rows));
+        }
+        out
+    }
+
     /// Reference `IntakeSurface.__call__` on the species-resolved table with free-stream MASS fractions.
     pub fn eval(
         &self,

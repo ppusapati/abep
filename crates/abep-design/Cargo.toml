@@ -1,0 +1,19 @@
+[package]
+name = "abep-design"
+description = "Active F7 design synthesis of the ABEP Rust simulator (SC-WP-10): upstream design-vector contexts over the 196 design states, weak-dominance Pareto sets and the fail-closed full-system ranking refusals for hall_icp_neutralizer. Design layer only: never depends on assessment or evidence crates."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+abep-types.workspace = true
+abep-provenance.workspace = true
+abep-data.workspace = true
+abep-atmos.workspace = true
+abep-mission = { path = "../abep-mission" }
+abep-gaspath = { path = "../abep-gaspath" }
+abep-subsystems = { path = "../abep-subsystems" }
+abep-config = { path = "../abep-config" }
+serde_json.workspace = true
