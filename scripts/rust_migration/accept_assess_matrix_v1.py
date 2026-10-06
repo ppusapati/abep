@@ -82,6 +82,12 @@ def main() -> int:
         "config_manifest_sha256": manifest,
         "date_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
         "cases": cases, "matrix_runs_byte_identical": identical,
+        "campaign_history": [
+            {"execution": 1, "outcome": "ABORTED_BEFORE_REPORT",
+             "detail": "the shared filesystem ran out of space (ENOSPC): the second abep-assess-matrix write failed "
+                       "(exit 101) after the cargo tests; no report or record was written; nothing was changed "
+                       "afterwards except running the tests in the release profile (disk headroom)"},
+            {"execution": 2, "outcome": "THIS_REPORT"}],
         "matrix_record": {"path": str((ADIR / "rfp_constraint_matrix_run_v1.json").relative_to(ROOT)),
                           "sha256": sha(outs[0])},
         "matrix_summary": {"rows": rows, "assessment_status_counts": m["assessment_status_counts"],
