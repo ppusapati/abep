@@ -5,8 +5,12 @@
 //! through a sequence of events, the integrator restarted at each event. States (scaled): p_s / r0 (O, N2, O2), valve
 //! opening u, integral I, and three cumulative mass integrals for the conservation gate. The reference integrates with
 //! scipy LSODA (BDF for its convergence reference); this port uses a Radau IIA order-5 method (simplified Newton on
-//! the analytic Jacobian, step-doubling error estimate with local extrapolation, steps clamped to the output grid). An
-//! integrator failure is R_INTEGRATOR (MODEL_ERROR), never a half-converged trajectory (DIV-P-01).
+//! the analytic Jacobian, step-doubling error estimate with local extrapolation, steps clamped to the output grid). The
+//! valve command clip(u_cmd, 0, 1) makes the right-hand side only Lipschitz where u_cmd crosses 0 or 1: a step whose
+//! end changes that saturation state is shortened (bisection) to end just past the switch, so no step integrates
+//! across it (contract v4 RUST_DEFECT fix: without it the error control did not see the switch and the samples near
+//! it kept an rtol-independent error up to ~6e-7). An integrator failure is R_INTEGRATOR (MODEL_ERROR), never a
+//! half-converged trajectory (DIV-P-01).
 
 use crate::error::{value_error, PyResult};
 use crate::materials::MaterialsView;
@@ -275,6 +279,18 @@ impl Rhs {
         (eps, ucmd, hi || lo, usat)
     }
 
+    /// Branch of the valve-command clip at y: +1 (u_cmd > 1), -1 (u_cmd < 0), 0 (inside); the same tests as `ctrl`.
+    fn sat_state(&self, y: &[f64; N]) -> i8 {
+        let (_, ucmd, _, _) = self.ctrl(y[0] * self.r0 + y[1] * self.r0 + y[2] * self.r0, y[4]);
+        if ucmd > 1.0 {
+            1
+        } else if ucmd < 0.0 {
+            -1
+        } else {
+            0
+        }
+    }
+
     fn f(&self, t: f64, y: &[f64; N]) -> [f64; N] {
         let d = self.dens(t);
         let p = [y[0] * self.r0, y[1] * self.r0, y[2] * self.r0];
@@ -461,53 +477,86 @@ impl Integrator<'_> {
         None
     }
 
-    /// Integrate from t0 = 0 over the output grid `te` (te[0] = 0, increasing); None when the step size collapses.
+    /// One error-controlled trial of size hh from (t, y): the step-doubling solution with local extrapolation and its
+    /// scaled RMS error norm; None when a Newton iteration fails.
+    fn trial(&mut self, t: f64, y: &[f64; N], hh: f64) -> Option<([f64; N], f64)> {
+        let y1 = self.step(t, y, hh)?;
+        let ya = self.step(t, y, hh / 2.0)?;
+        let y2 = self.step(t + hh / 2.0, &ya, hh / 2.0)?;
+        let mut en = 0.0;
+        let mut out = y2;
+        for k in 0..N {
+            let err = (y2[k] - y1[k]) / 31.0;
+            let sc = self.atol + self.rtol * y[k].abs().max(y2[k].abs());
+            en += (err / sc).powi(2);
+            out[k] = y2[k] + err;
+        }
+        Some((out, (en / N as f64).sqrt()))
+    }
+
+    /// Integrate from t0 = 0 over the output grid `te` (te[0] = 0, increasing); Err when the step size collapses.
+    /// An accepted step never crosses a switch of the valve-command saturation state: the step is bisected to the
+    /// shortest one whose end has left the start state, which then ends within rounding of the switch.
     fn integrate(&mut self, y0: [f64; N], te: &[f64]) -> Result<Vec<[f64; N]>, String> {
         let mut out = vec![y0];
         let span = te[te.len() - 1];
+        let h_min = 1e-14 * span.max(1e-300);
         let mut t = 0.0;
         let mut y = y0;
         let mut h = if te.len() > 1 { te[1] } else { span };
         let mut steps = 0usize;
         for &t_out in &te[1..] {
+            let mut to_switch = false;
             while t < t_out {
                 steps += 1;
                 if steps > 2_000_000 {
                     return Err("step limit".into());
                 }
                 let hh = h.min(t_out - t);
-                if hh < 1e-14 * span.max(1e-300) {
+                if hh < h_min {
                     return Err(format!("step size collapsed at t = {t}"));
                 }
-                let full = self.step(t, &y, hh);
-                let half = self.step(t, &y, hh / 2.0).and_then(|ya| self.step(t + hh / 2.0, &ya, hh / 2.0));
-                let (Some(y1), Some(y2)) = (full, half) else {
+                let Some((y_new, en)) = self.trial(t, &y, hh) else {
                     h = hh * 0.25;
+                    to_switch = false;
                     continue;
                 };
-                let mut en = 0.0;
-                let mut err = [0.0; N];
-                for k in 0..N {
-                    err[k] = (y2[k] - y1[k]) / 31.0;
-                    let sc = self.atol + self.rtol * y[k].abs().max(y2[k].abs());
-                    en += (err[k] / sc).powi(2);
-                }
-                en = (en / N as f64).sqrt();
                 if !en.is_finite() {
                     h = hh * 0.25;
+                    to_switch = false;
                     continue;
                 }
                 let fac = if en == 0.0 { 4.0 } else { (0.9 * en.powf(-1.0 / 6.0)).clamp(0.2, 4.0) };
-                if en <= 1.0 {
-                    t = if hh == t_out - t { t_out } else { t + hh };
-                    for k in 0..N {
-                        y[k] = y2[k] + err[k];
-                    }
-                    // keep the proposed step when the output point clamped it
-                    h = if hh < h { h.max(hh * fac) } else { hh * fac };
-                } else {
+                if !(en <= 1.0) {
                     h = hh * fac.min(0.9);
+                    to_switch = false;
+                    continue;
                 }
+                let s0 = self.rhs.sat_state(&y);
+                if !to_switch && self.rhs.sat_state(&y_new) != s0 {
+                    let (mut lo, mut hi) = (0.0, hh);
+                    loop {
+                        let mid = 0.5 * (lo + hi);
+                        if !(lo < mid && mid < hi) {
+                            break;
+                        }
+                        match self.trial(t, &y, mid) {
+                            Some((ym, _)) if self.rhs.sat_state(&ym) == s0 => lo = mid,
+                            _ => hi = mid,
+                        }
+                    }
+                    // a switch within rounding of the step start is already behind it: the step is accepted
+                    if hi < hh && hi >= h_min && t + hi > t {
+                        h = hi;
+                        to_switch = true;
+                        continue;
+                    }
+                }
+                to_switch = false;
+                t = if hh == t_out - t { t_out } else { t + hh };
+                y = y_new;
+                // keep the proposed step when the output point clamped it
+                h = if hh < h { h.max(hh * fac) } else { hh * fac };
             }
             out.push(y);
         }
@@ -1192,6 +1241,47 @@ mod tests {
         assert_eq!(settling_time(&t, &[1.0, 1.0, 1.0, 1.0], 1.0, 0.02), Some(0.0));
         assert_eq!(settling_time(&t, &[2.0, 1.5, 1.01, 1.0], 1.0, 0.02), Some(2.0));
         assert_eq!(settling_time(&t, &[1.0, 1.0, 1.0, 1.5], 1.0, 0.02), None);
+    }
+
+    /// A plenum frozen at eps = 0.1: the unsaturated valve command u_cmd = 0.6 + 0.1 t crosses 1 at t* = 4 s and
+    /// stays saturated (u_cmd' = 1.1 - u_cmd > 0 there); u is a first-order lag of clip(u_cmd, 0, 1), so
+    /// u(t) = a + b (t - tau) + (u0 - a + b tau) exp(-t / tau) before t* and 1 + (u(t*) - 1) exp(-(t - t*) / tau) after.
+    #[test]
+    fn radau_resolves_the_valve_command_saturation_switch() {
+        let (c, a) = radau_coeffs();
+        let rhs = Rhs {
+            v: 1.0,
+            r0: 1.0,
+            c: EventCoeffs { q0: [0.0; 3], k: [0.0; 3], q0g: [0.0; 3], dq: [0.0; 3], l0: [0.0; 3], dl: [0.0; 3] },
+            g: [0.0; 3],
+            cl: [0.0; 3],
+            km: [1.0; 3],
+            kr: 0.0,
+            mr: 1.0,
+            orbit: false,
+            w: 0.0,
+            amp: 0.0,
+            d0: 1.0,
+            rset: 1.0,
+            kp: 2.0,
+            ti: 1.0,
+            tau: 0.5,
+            uff: 0.5,
+            ms: 1.0,
+        };
+        let (ua, ub, tau, ts, u0) = (0.6, 0.1, 0.5, 4.0, 0.6);
+        let u_lin = |t: f64| ua + ub * (t - tau) + (u0 - ua + ub * tau) * (-t / tau).exp();
+        let exact = |t: f64| if t <= ts { u_lin(t) } else { 1.0 + (u_lin(ts) - 1.0) * (-(t - ts) / tau).exp() };
+        let te = [0.0, 0.7, 1.9, 3.3, 4.6, 6.1, 8.0, 10.0];
+        for rtol in [1e-6, 1e-10] {
+            let mut integ = Integrator { rhs: &rhs, rtol, atol: 1e-12, nfev: 0, c, a };
+            let ys = integ.integrate([1.1, 0.0, 0.0, u0, 0.0, 0.0, 0.0, 0.0], &te).unwrap();
+            for (k, t) in te.iter().enumerate() {
+                let e = (ys[k][3] - exact(*t)).abs();
+                // before the fix: 3.4e-6 (rtol 1e-6) and 6.4e-10 (rtol 1e-10) at t = 4.6 s, after the switch
+                assert!(e <= rtol, "rtol {rtol:e}, t = {t}: |u - exact| = {e:e}");
+            }
+        }
     }
 
     #[test]
