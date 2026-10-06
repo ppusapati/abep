@@ -258,3 +258,42 @@ fn no_requirement_threshold_in_raw_gas_path_physics() {
         }
     }
 }
+
+fn basis_with_allowables(points: Vec<(f64, f64, f64)>) -> rs::RotorStrengthBasis {
+    use rs::Field::{Num, Text};
+    let t = |s: &str| Text(s.into());
+    rs::RotorStrengthBasis {
+        basis_id: t("TEST-BASIS"),
+        materials_db_key: t("Ti6Al4V"),
+        material_spec: t("TEST"),
+        product_form: t("TEST"),
+        condition: t("TEST"),
+        section_thickness_range_m: Some((Num(0.01), Num(0.2))),
+        design_temperature_k: Num(400.0),
+        allowable_basis: t("TEST"),
+        allowable_source: t("TEST"),
+        allowables: Some(points.into_iter().map(|(a, b, c)| (Num(a), Num(b), Num(c))).collect()),
+        density_kg_m3: Num(4430.0),
+        density_source: t("TEST"),
+        factor_yield: Num(1.5),
+        factor_ultimate: Num(1.5),
+        factors_source: t("TEST"),
+        max_design_speed_rpm: Num(6e4),
+        proof_spin_basis: t("TEST"),
+        registration: t("TEST"),
+        proof_spin_not_applicable_reason: rs::Field::Other,
+        notes: String::new(),
+    }
+}
+
+#[test]
+fn non_finite_allowable_temperature_is_reported_not_sorted() {
+    // a NaN / infinite table temperature is a basis problem (reference elif chain), never a panic
+    for bad in [f64::NAN, f64::INFINITY, -1.0] {
+        let b = basis_with_allowables(vec![(bad, 6e8, 7e8), (500.0, 8e8, 9e8)]);
+        assert_eq!(rs::basis_problems(&b), vec!["allowables contain non-finite or non-positive values".to_string()]);
+    }
+    let b = basis_with_allowables(vec![(500.0, 6e8, 7e8), (300.0, 8e8, 9e8)]);
+    assert_eq!(rs::basis_problems(&b), vec!["allowables must be strictly increasing in temperature".to_string()]);
+    assert!(rs::basis_problems(&basis_with_allowables(vec![(300.0, 6e8, 7e8), (500.0, 8e8, 9e8)])).is_empty());
+}

@@ -1320,12 +1320,21 @@ fn main() {
         let id = r["id"].clone();
         let entry = r["entry"].as_str().unwrap_or("").to_string();
         let t0 = Instant::now();
-        let out = dispatch(&env, &entry, &r["args"]);
+        // a panic is a Rust defect of that request: recorded as its outcome (never a Python class), the run goes on
+        let out = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| dispatch(&env, &entry, &r["args"])));
         let el = t0.elapsed().as_secs_f64();
         let _ = writeln!(err, "{}", json!({"id": id, "entry": entry, "elapsed_s": el}));
         results.push(match out {
-            Ok(v) => json!({"id": id, "entry": entry, "outcome": "OK", "value": v}),
-            Err(e) => json!({"id": id, "entry": entry, "outcome": "ERROR", "error_class": e.class.name(), "error_message": e.message}),
+            Ok(Ok(v)) => json!({"id": id, "entry": entry, "outcome": "OK", "value": v}),
+            Ok(Err(e)) => json!({"id": id, "entry": entry, "outcome": "ERROR", "error_class": e.class.name(), "error_message": e.message}),
+            Err(p) => {
+                let msg = p
+                    .downcast_ref::<&str>()
+                    .map(|x| x.to_string())
+                    .or_else(|| p.downcast_ref::<String>().cloned())
+                    .unwrap_or_default();
+                json!({"id": id, "entry": entry, "outcome": "ERROR", "error_class": "RUST_PANIC", "error_message": msg})
+            }
         });
     }
     let out = json!({"results": results});

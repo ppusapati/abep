@@ -171,13 +171,18 @@ pub fn basis_problems(b: &RotorStrengthBasis) -> Vec<String> {
             let pts = b.points();
             let ts: Vec<f64> = pts.iter().map(|a| a.t_k).collect();
             let all_pos = v.iter().all(|(t, y, u)| finite_pos(t) && finite_pos(y) && finite_pos(u));
-            let mut sorted = ts.clone();
-            sorted.sort_by(|a, c| a.partial_cmp(c).expect("finite"));
-            let mut uniq = sorted.clone();
-            uniq.dedup();
+            // sorted / set(Ts) are only evaluated once every value is finite and positive (reference order of the
+            // elif chain): a NaN temperature is reported, never sorted
+            let increasing = || {
+                let mut sorted = ts.clone();
+                sorted.sort_by(|a, c| a.total_cmp(c));
+                let mut uniq = sorted.clone();
+                uniq.dedup();
+                ts == sorted && uniq.len() == ts.len()
+            };
             if !all_pos {
                 p.push("allowables contain non-finite or non-positive values".into());
-            } else if ts != sorted || uniq.len() != ts.len() {
+            } else if !increasing() {
                 p.push("allowables must be strictly increasing in temperature".into());
             } else if pts.iter().any(|a| a.fty_pa > a.ftu_pa) {
                 p.push("allowables have Fty > Ftu".into());
