@@ -1,0 +1,185 @@
+{
+ "schema": "abep_new_infrastructure_acceptance_report_v1",
+ "id": "ACCEPT-NI-ABEP-ASSESS-RFP-MATRIX-V1-REPORT",
+ "acceptance": {
+  "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/acceptance_v1.json",
+  "sha256": "ed5bf752da42387576547c79aedaa855ec37af6d74a99b67dd6ba49b5eda081a",
+  "registered_in_commit": "7539c893e2856498007f0437dc7af5b29ca43eed"
+ },
+ "verdict": "ACCEPTED",
+ "head": "a7934e87fe0e136e470a28e4061006065e56ef22",
+ "git_dirty": [
+  "?? docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json"
+ ],
+ "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+ "binary_sha256": "6be9100e99ec1fa002988bb20540cdf89c89f5ac8ebf37dc67a008b92c5bb261",
+ "source_sha256": {
+  "crates/abep-assess/Cargo.toml": "e6e2ef7799a627a1dc27d8b01cfbb533f8556def57732a376f6ce429553f2da2",
+  "crates/abep-assess/src/bin/abep_assess_matrix.rs": "693cc3b99b4b08023373d0a524cd94fe87d13d99c6dd721935b7bbee5a384610",
+  "crates/abep-assess/src/bin/abep_assess_parity.rs": "518d2f0e7ae7a2ae1db26358ee4f7ab3eb8bca94f64a142e8b52b9cfb52d832f",
+  "crates/abep-assess/src/error.rs": "4773e11f3f2ae7ee01f667099e11b3b467cd27cfce4f81b44fda9fb5e7f89904",
+  "crates/abep-assess/src/gates.rs": "c6984e427cc9de5f967fe2c3ecfa82c253cf9861c2da13bb4f4165af99682fc9",
+  "crates/abep-assess/src/icp_gate.rs": "30f174bbca5717ac3f22b87f57d6b71cd8fc11edce012c3c8f144c5377ad7ede",
+  "crates/abep-assess/src/lib.rs": "0563d6504072b4cd971ce8c78232ec2949fcdaccd63accce4bcf0065ad89d308",
+  "crates/abep-assess/src/matrix.rs": "0dac246043cbdee0cd4d668c7fc0258b0691e5e10d61154248808e5e60e11ce6",
+  "crates/abep-assess/src/neutralization.rs": "c29a3da1a57022ef3a8a67af25155a9958b1271626e50fda0fb0fa19a77b27df",
+  "crates/abep-assess/src/owner_state.rs": "835c5afbb8353f149035f54452f29089c0625f09b35418d507bad1dc7fe085fa",
+  "crates/abep-assess/src/pareto.rs": "db023f10304101aa63705d190c146a7a6897aa38cb4648fe36e86c317062adaf",
+  "crates/abep-assess/src/parity.rs": "c942f7e8489ce64eb70c9411af5bb5013c143579b9d4a97f336f9683ea3c3838",
+  "crates/abep-assess/src/power_gate.rs": "11a49e14c93a8b4803502abad59e6ec4f79b9a810334157dfc79c683ac5e2969",
+  "crates/abep-assess/src/propellant.rs": "a170251c9251dcf568ef31cca76d0636fb7a66d42564e7c0e7b397be3dac2d5d",
+  "crates/abep-assess/src/py.rs": "69a999fc512f732ca06d6f29fdb4e584a404fc7b2c4bd32133cc3877c1994d54",
+  "crates/abep-assess/src/rvm.rs": "6959989ee2553e5f7ae3cca5c30448896e9b20fa621fc14dbdbdab7f88f9a439",
+  "crates/abep-assess/src/statewise.rs": "b1d13fb5f7238e4b03bdb58dffb8974313f4a9932984985ac135211cd3113d18",
+  "crates/abep-assess/src/thresholds.rs": "5d4ba0cdc38258061843814294332a86f0f497ce4e140539f0acfb25e1f15ed5",
+  "crates/abep-assess/tests/captured_replay.rs": "bf5acfa5bf1ff86167c633c44dd5f64722c3f1ded450320e3f77c557b59237c5",
+  "crates/abep-assess/tests/crate_graph.rs": "2cd71abffc5be8a5f01c436dea06fa2f2e234e524e5ba8f1dd6599e9a5dccfd6",
+  "crates/abep-assess/tests/matrix_acceptance.rs": "f47fa91c43b70cbcc16f34f34557de4537ab06a4a2ff53f05ea8408ef5ae1a82"
+ },
+ "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+ "date_utc": "2026-10-06T18:28:24+00:00",
+ "cases": {
+  "AC-01": {
+   "test": "ac01_four_separate_fields_and_no_assessment_word_in_raw",
+   "result": "ok"
+  },
+  "AC-02": {
+   "test": "ac02_threshold_change_moves_assessment_never_raw_physics",
+   "result": "ok"
+  },
+  "AC-03": {
+   "test": "ac03_todays_raw_results_are_fail_closed",
+   "result": "ok"
+  },
+  "AC-04": {
+   "test": "ac04_hc05_rule_order",
+   "result": "ok"
+  },
+  "AC-05": {
+   "test": "no_physics_crate_depends_on_abep_assess",
+   "result": "ok"
+  },
+  "AC-06": {
+   "test": "ac06_no_requirement_parsing_in_raw_physics",
+   "result": "ok"
+  },
+  "AC-07": {
+   "test": "ac07_ac08_deterministic_and_raw_unchanged",
+   "result": "ok"
+  },
+  "AC-08": {
+   "test": "ac07_ac08_deterministic_and_raw_unchanged",
+   "result": "ok"
+  },
+  "AC-09": {
+   "test": "ac09_non_determining_records_never_comply",
+   "result": "ok"
+  },
+  "AC-10": {
+   "test": "ac10_tampered_records_fail_closed",
+   "result": "ok"
+  }
+ },
+ "matrix_runs_byte_identical": true,
+ "campaign_history": [
+  {
+   "execution": 1,
+   "outcome": "ABORTED_BEFORE_REPORT",
+   "detail": "the shared filesystem ran out of space (ENOSPC): the second abep-assess-matrix write failed (exit 101) after the cargo tests; no report or record was written; nothing was changed afterwards except running the tests in the release profile (disk headroom)"
+  },
+  {
+   "execution": 2,
+   "outcome": "THIS_REPORT"
+  }
+ ],
+ "matrix_record": {
+  "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+  "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622"
+ },
+ "matrix_summary": {
+  "rows": [
+   {
+    "id": "RFP-ALT",
+    "raw_status": "EVALUATED",
+    "evidence_status": "NOT_EVALUATED",
+    "rfp_assessment_status": "NOT_EVALUATED",
+    "basis": "operation over the band is assessed statewise (HC-08 over 196 required states): thrust and / or spacecraft drag not evaluated at every required state (no admitted Hall member / host-spacecraft ICD); NOT_EVALUATED, never counted as satisfied"
+   },
+   {
+    "id": "RFP-ATM-PRIMARY",
+    "raw_status": "NOT_EVALUATED",
+    "evidence_status": "NOT_EVALUATED",
+    "rfp_assessment_status": "NOT_EVALUATED",
+    "basis": "needs a delivered-flow record, an admitted Hall evaluation on the delivered air and an admitted ICP AIR chemistry"
+   },
+   {
+    "id": "RFP-XE-CONTINGENCY",
+    "raw_status": "NOT_EVALUATED",
+    "evidence_status": "NOT_EVALUATED",
+    "rfp_assessment_status": "NOT_EVALUATED",
+    "basis": "Xe capability not demonstrated (HC-10 capability evidence absent)"
+   },
+   {
+    "id": "RFP-THRUST-12MN-SUSTAINED",
+    "raw_status": "NOT_EVALUATED",
+    "evidence_status": "NOT_EVALUATED",
+    "rfp_assessment_status": "NOT_EVALUATED",
+    "basis": "HC-01 and HC-08 statewise; no evaluable value (fail closed: never counted as satisfied)"
+   },
+   {
+    "id": "RFP-THRUST-25MN-CAPABILITY",
+    "raw_status": "NOT_EVALUATED",
+    "evidence_status": "NOT_EVALUATED",
+    "rfp_assessment_status": "NOT_EVALUATED",
+    "basis": "HC-02; no evaluable value (fail closed: never counted as satisfied)"
+   },
+   {
+    "id": "RFP-PBUS-LT-1500W",
+    "raw_status": "INCOMPLETE_EVIDENCE",
+    "evidence_status": "INCOMPLETE_EVIDENCE",
+    "rfp_assessment_status": "NOT_EVALUATED",
+    "basis": "HC-03: no evaluable value (fail closed: never counted as satisfied)"
+   },
+   {
+    "id": "RFP-WET-MASS-LT-40KG",
+    "raw_status": "INCOMPLETE_EVIDENCE",
+    "evidence_status": "INCOMPLETE_EVIDENCE",
+    "rfp_assessment_status": "DOES_NOT_CLOSE",
+    "basis": "wet planning mass >= 40 kg at every governed Xe case (3 of 3)"
+   },
+   {
+    "id": "RFP-ATM-XE-COMPATIBILITY",
+    "raw_status": "NOT_EVALUATED",
+    "evidence_status": "NOT_EVALUATED",
+    "rfp_assessment_status": "NOT_EVALUATED",
+    "basis": "HC-10: no evaluable value (fail closed: never counted as satisfied); paths TWO_SEPARATE_PATHS_DECLARED"
+   }
+  ],
+  "assessment_status_counts": {
+   "COMPLIES": 0,
+   "DOES_NOT_COMPLY": 0,
+   "DOES_NOT_CLOSE": 1,
+   "INCOMPLETE_EVIDENCE": 0,
+   "NOT_EVALUATED": 7,
+   "OUT_OF_DOMAIN": 0,
+   "MODEL_ERROR": 0
+  },
+  "HC-05": "NOT_EVALUATED",
+  "GNG-ICP-01": "NOT_EVALUATED",
+  "rvm_replay": {
+   "cells": 60,
+   "reproduce_committed": 60
+  }
+ },
+ "ledger_update_requested": [
+  {
+   "component": "NI-ABEP-ASSESS-RFP-MATRIX",
+   "request": "ACCEPTED (lifecycle PREREG_ACCEPTANCE -> RUST_IMPL -> ACCEPTED) on this report; crate crates/abep-assess (abep_assess::{matrix, neutralization::hc05}); ADMITTED additionally needs the workspace CI run of the acceptance tests"
+  }
+ ],
+ "what_this_is_not": [
+  "not an architecture verdict: the conclusion (A9.31 sec. 20) is the decisive run's, with SC-WP-09 / SC-WP-10 results",
+  "not a relabelling of any raw status: NOT_EVALUATED / INCOMPLETE_EVIDENCE stay what they are",
+  "not a threshold change; not RFP document work"
+ ]
+}
