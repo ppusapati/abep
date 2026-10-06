@@ -4481,3 +4481,33 @@ row stays PYTHON_REFERENCE (kind python for the remainder).
   admitted, the Rust workflow jobs become required status checks and `docs/ci/BRANCH_PROTECTION.md` is updated. The
   A9_19 report also asks that the principle-6 forbidden-identifier scan allow-list
   `crates/abep-config/src/architecture.rs`.
+
+## 2026-10-06 — SC-WP-05 electrical: bus boundary a9_v2, magnet loads and RF matching admitted in Rust; CONS-L1 system energy ledger (A9.30 sec. 5; no Python or frozen data changed)
+
+- **Contracts** (each committed alone before any comparison): `C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY` `d3336303…` (`5c2ce06`),
+  `C-ABEP_SIM_MAGNET_POWER_PY` `d89bd3fd…` (`f800ec0`), `C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP` `3486ec4d…` (`433eb4a`).
+- **Implementation** (`b35420c`): `crates/abep-subsystems`, module `power` only (no thermal API change, no new
+  dependency, Cargo.toml / Cargo.lock untouched).
+  - Active boundary `bus_power_boundary_a9_v2` only (v1 not ported). Flight ledger = selected-architecture slots; C1
+    slots, events, start-up rule and `booked_W` are GROUND_REFERENCE_ONLY and refused as unknown (DIV-A02 / A03).
+  - The 1.5 kW limit is not in the crate (INV-A05); the gate verdict stays with abep-assess (SC-WP-11).
+  - Missing upstream inputs give NOT_EVALUATED / INCOMPLETE_EVIDENCE; IF-ICP-BUS-v1 consumed at JSON level (no
+    abep-icp dependency); impedance-map gate `rf_chain_status` = NOT_EVALUATED (TBD_AFTER_IMPEDANCE_MAP) without a
+    measured map point.
+- **Scored once each, all ADMITTED** (0 mismatches, 0 ulp): A 1999 calls (`5ccff78`), B 1469 calls (`4e10db6`),
+  C 1081 calls (`63d449e`). Every registered invariant and conservation check passes (CONS-A1/A2, CONS-B1..B3,
+  CONS-C1..C3).
+- **CONS-L1** (system energy ledger, threshold 2 %): SYS-01..SYS-08 meet their registered statuses.
+  - SYS-01: EVALUATED, r = 0.37 %. The -3.0 W mismatch is on THERMAL_CONTROL: VS-NET deposits 3 W, LS-01 books 0 W.
+  - SYS-02: MODEL_ERROR, r = 4.3 %.
+  - The official flight ledger stays PARTIAL_BOUNDARY (24 TBD), so flight CONS-L1 is INCOMPLETE_EVIDENCE.
+- **Findings / owner questions.**
+  - The IF-ICP-BUS-v1 `P_icp_bus_W` mixes planes: supply-input for the bias slot, load-plane for the RF and match
+    slots. NP-THERMAL IK-07 reads it as spacecraft-DC demand (IF-ICP-BUS-v2 / IF-ICP-THERMAL-v2).
+  - Contract B's `vector_totals` text says 1570 randomized calls; the registered per-family counts sum to 1370, and
+    1370 were drawn.
+  - `verify_line_match_loss` is deferred. Two document builders were not contracted: power_boundary_a9_v2 comparison
+    and magnet_coil.
+- **Results.** cargo test --workspace --locked: 255 passed, 0 ignored. fmt (abep-subsystems) and clippy are clean.
+  `ci_checks`: 12/12. pytest: 4232 passed, 5 skipped, 1 xfailed. The ledger is not edited;
+  `ledger_update_requested` is in each report.
