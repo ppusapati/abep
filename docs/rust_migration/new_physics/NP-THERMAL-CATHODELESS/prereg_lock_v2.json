@@ -1,0 +1,23 @@
+{
+ "id": "np_thermal_cathodeless_prereg_lock_v2",
+ "model_id": "NP-THERMAL-CATHODELESS",
+ "prereg_version": 2,
+ "model_version": "2.0.0",
+ "locked": "2026-10-06",
+ "note": "sha256 of the NP-THERMAL-CATHODELESS v2 preregistration (A9.31 sec. 7: consumer of the matched IF-ICP-THERMAL-v2; RX-H1-FACE receiver interface; B_PPU_RF booking by key; every other v1 criterion inherited; docs only, status PREREGISTERED_NOT_IMPLEMENTED); any change after this lock is a new, dated addendum or version, never an edit. prereg_lock_v1.json and every v1 record stay immutable history.",
+ "base_commit": "7a26d39 (NP-ICP-NEUTRALIZER prereg v2) on 0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/",
+ "files": {
+  "prereg_v2.json": "6828f3e257e38a588c9513f2531658035fa904b6c51e3b28831681d871adfa78",
+  "PREREG_v2.md": "b94b95fa9941b239c88294a286386da8b27b57b0fec8bb036d42527aff194ca0"
+ },
+ "predecessor_lock": {
+  "path": "prereg_lock_v1.json",
+  "sha256": "3421e28c959dc5ac7de600acd8e94d83b1ded605bcc6095a81fccd4905470fc7"
+ },
+ "producer_anchor": {
+  "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_lock_v2.json",
+  "sha256": "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287"
+ },
+ "matched_key_table_sha256": "33e495adadbe94a5113c5f6b9040156ec8309295cca15b812714038beaa51161"
+}

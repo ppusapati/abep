@@ -4872,6 +4872,43 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   parallel and sets the primary objective: the hall_icp_neutralizer architecture proof (decisive 196-state run, RFP
   constraint matrix, controlled comparison, one of conclusions A-D).
 
+## 2026-10-06 — RF/ICP v2 preregistration lane: NP-ICP-NEUTRALIZER prereg v2 and NP-THERMAL-CATHODELESS prereg v2 (A9.31 secs. 7-10; docs only)
+
+- **NP-ICP-NEUTRALIZER v2** (`7a26d39`, lock `a180ceef…`, prereg_v2.json `3f0df5b8…`, PREREG_v2.md `2a4ff426…`). v1, its
+  addenda and both verification reports are unchanged. Every v1 item not replaced or retired is inherited verbatim.
+  - PF-01: γ is per collision (AIR-WALL-02/03), so the atom sink is γ ¼ n v̄ A. γ comes per (species, material) from the
+    {0, 1} vertex set unless sourced.
+  - PF-02: background inflow carries τ_j (Chiggiato Q = C Δp; detailed balance). Flight hyperthermal ambient needs a
+    registered exposure model.
+  - GAP-01..03: energy classes X / N / A with registered destination vertex sets (RAD, WALL per material, OUT; end split
+    ∝ A_j τ_j or the UP/DOWN pair). There is no point split. Atom formation uses the registered D0 (D0(N2) still to
+    register, otherwise the partition is INCOMPLETE_EVIDENCE).
+  - GAP-04: λ_i,s = 1/Σ n_k σ_s,k, with members H-MS / H-LO / H-HI; all three equal v1 for one ion species.
+  - GAP-05: CC-03 is scaled by the largest current component.
+  - INT-16/17/18 are adopted as approved. The sec. 10 rulings are applied: HC-05 only inside a VALIDATED_BENCH cell,
+    with a measured value superseding the model; ω_ce/ν_m and r_ce/R reported with no threshold; CA-ICP-v1 as a screen
+    where an unbounded omission blocks; a frozen CAL/VAL partition; ASSUMED_GEOMETRIC_TUBE; measured p_ICP determining
+    for validation.
+- **IF-ICP-BUS-v2**: load-plane values only, mapped onto `bus_power_boundary_a9_v2` slots. `P_icp_bus_W` (mixed planes,
+  SC-WP-05 finding), η_bias and `Q_icp_bias_supply_loss_W` are retired, because the bias-supply loss is the ledger's
+  P_loss. There is no flight cathode key, and 1.5 kW stays in assessment.
+- **CPL-HALL-ON-v1**: the Hall-ON coupling contract, preregistered with execution gated on an admitted Hall member.
+  CFG-FLIGHT-HALL-ON stays NOT_EVALUATED. HI-04..06 (exit neutrals and their transfer, beam/CEX ions, plume potential)
+  have no producer. Per-surface supply attribution of the jointly powered circuit energy is not identifiable, so it goes
+  into coupling keys, never into ICP keys.
+- **NP-THERMAL-CATHODELESS v2** (`37939f5`, lock `727689fe…`, prereg_v2.json `6828f3e2…`, PREREG_v2.md `b94b95fa…`)
+  consumes IF-ICP-THERMAL-v2 byte for byte (key-table sha256 `33e495ad…`). Destinations:
+  - RF-source losses → B_PPU_RF RF_SOURCE;
+  - line / match / actuator → N_MATCH or RF_CHAIN;
+  - collector deposition → N_COLLECTOR;
+  - upstream outflow → RX-H1-FACE, a registered partition over existing H-1 / mount / housing nodes and EXPORT, with no
+    new node;
+  - downstream outflow, extraction and bias export → EXPORT.
+
+  The IK-07 remainder is retired in favour of exact identities and CONS-I3. Every other v1 criterion is inherited.
+- **Open:** OQ-NPICP-05 (Xe / Ar sources); VER-19..25; D0(N2) registration; v2 consumer paths in
+  `abep_subsystems::power` (additive). No code, Python or frozen data was changed.
+
 ## 2026-10-06 — SC-WP-11 assessment: crate abep-assess, two contracts ADMITTED, RFP constraint matrix ACCEPTED (no Python, config or frozen data changed)
 
 - **Contracts**, each committed alone before any comparison: design gates `0dfe17e2…` (design_gates.py plus the parts
