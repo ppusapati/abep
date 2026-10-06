@@ -4481,3 +4481,33 @@ row stays PYTHON_REFERENCE (kind python for the remainder).
   admitted, the Rust workflow jobs become required status checks and `docs/ci/BRANCH_PROTECTION.md` is updated. The
   A9_19 report also asks that the principle-6 forbidden-identifier scan allow-list
   `crates/abep-config/src/architecture.rs`.
+
+## 2026-10-06 — Hall bridge lane: abep-hall and abep-julia-bridge admitted by parity (SC-WP-03; HallThruster.jl unchanged)
+
+- **Contracts**, each committed alone before any comparison:
+  - `C-HALL-MAP-ENSEMBLE-REGISTRY` v1 (`aa0910d9…`, `a41cf44`): `hall_map.py`, `hall_ensemble.py`, `hallmap_registry.py`
+    and `architecture_optimizer.hall_response_status`. 164 registered cases from the Python tests plus 240 seeded random maps.
+  - `C-JULIA-BRIDGE-LAUNCH` v1 (`aad2eabf…`, `78d1f7b`): launch-manifest build / check, shard launch specifications against
+    the committed manifest commands and `julia-smoke.yml`, the pin read and the nine-field run sidecar.
+- **Implementation.** `crates/abep-hall` (`7de3476`) and `crates/abep-julia-bridge` (`115d67e`). No Hall physics is in Rust:
+  maps are read, gated and interpolated (scipy's linear `RegularGridInterpolator`, operation for operation), and Julia runs
+  only across the process boundary. The environment is an allow-list (PATH / HOME / TMPDIR / JULIA_DEPOT_PATH), thread /
+  BLAS settings are pinned and recorded, and a pin mismatch is MODEL_ERROR.
+- **Scoring**, once per contract:
+  - (a) PARITY_PASS at `a8f906c`: 404 cases, 522 steps, no disagreement. All 30,061 interpolated floats are bitwise
+    identical.
+  - (b) PARITY_PASS at `d9009d3`: 143 cases, 332 steps. The 19 launch manifests are byte-identical to the Python build and
+    to the committed files.
+  - Each report carries one interpretation note on input construction: (a) G-22 `@gzc` on a plain file; (b) CK-15
+    indices taken on the unmutated record set.
+- **Governed state, asserted in tests:** the credible transport set is EMPTY. `HallGate` gives NOT_EVALUATED with the reason
+  "credible Hall transport set EMPTY", and sgb-screen-01..09 are refused. The P5-N2 v1 decision is read unchanged
+  (INCONCLUSIVE).
+- **Platform tests.** PT-01 (smoke run + sidecar) and PT-02 (run records EXACT_BYTES, Rust vs reference launch line) are
+  registered in `platform_tests_v1.json`; they were NOT_RUN because there is no Julia here. The abep-ci rule now requires
+  every ignored test to be exactly one registered platform test.
+- **Left for later contracts:** `hall_admissibility` (with `h1_geometry`) and `hall_gated_thrust` / `thrust_minus_drag`
+  (SC-WP-10). The Python refusal text "credible Hall set is EMPTY" differs in wording from the programme phrase.
+  `identify_p5_transport.py` is proposed FORMALLY_RETIRED_NOT_PORTED (P5-Xe identification CLOSED).
+- **Results.** cargo test --workspace --locked: 255 passed, 0 failed, 2 ignored (PT-01 / PT-02). fmt and clippy are clean.
+  `ci_checks`: 12/12. Full pytest: 4232 passed, 5 skipped, 1 xfailed.

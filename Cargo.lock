@@ -43,6 +43,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-hall"
+version = "0.1.0"
+dependencies = [
+ "abep-provenance",
+ "abep-types",
+ "flate2",
+ "serde_json",
+ "sha2",
+]
+
+[[package]]
 name = "abep-icp"
 version = "0.1.0"
 dependencies = [
@@ -62,6 +73,18 @@ dependencies = [
  "abep_core",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "abep-julia-bridge"
+version = "0.1.0"
+dependencies = [
+ "abep-hall",
+ "abep-provenance",
+ "abep-types",
+ "serde",
+ "serde_json",
+ "toml",
 ]
 
 [[package]]

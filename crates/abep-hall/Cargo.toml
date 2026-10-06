@@ -1,0 +1,15 @@
+[package]
+name = "abep-hall"
+description = "Hall-map typing, the transport-ensemble admission gate and the Hall-map registry of the ABEP Rust simulator (HallThruster.jl stays the Hall solver; no Hall physics here)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+abep-types.workspace = true
+abep-provenance.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+flate2.workspace = true

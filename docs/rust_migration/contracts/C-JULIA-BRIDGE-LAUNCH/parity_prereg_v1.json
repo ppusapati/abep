@@ -1,0 +1,3918 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-JULIA-BRIDGE-LAUNCH-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "governing_records": {
+  "programme": {
+   "path": "docs/rust_migration/programme_v3_1.json",
+   "sha256": "b595c4fc740223cb8da10886c358410ffab2cfd38befbe97543237d1b4dee70f",
+   "rules": "RM-R01..RM-R42, in particular RM-R02, RM-R10, RM-R11, RM-R12, RM-R13, RM-R39, RM-R40; julia_bridge"
+  },
+  "simulation_completion": {
+   "path": "docs/rust_migration/simulation_completion_programme_v1_1.json",
+   "sha256": "5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a",
+   "work_package": "SC-WP-03",
+   "element": "HallThruster.jl bridge (process boundary, pin, ...): the launch / pin / sidecar part",
+   "admission_criterion": "bridge: launch equivalence (argv, environment allow-list, input bytes) and EXACT_BYTES run records against the Python-launched job; pin checked in Rust (PINNED.toml / Manifest.toml) and in Julia (check_pin)",
+   "hall_physics_boundary": "process_boundary, determinism and provenance_sidecar_per_run of simulation_completion_programme_v1_1.json"
+  },
+  "ci_plan": "docs/rust_migration/CI_PLAN.md section 4 (Julia bridge compatibility, W8) and section 7 (registered platform tests)",
+  "owner_decisions": "A9.28 msg 2 sec. 7 (HallThruster.jl authoritative, no Hall physics rewritten in Rust); A9.29 secs. 9, 13, 14; CLAUDE.md rule 7 (pin) and next-work 3 (execution provenance: thread / BLAS, Julia version, HallThruster commit per run)"
+ },
+ "component": {
+  "inventory_id": "C-SCRIPTS_MAKE_P5_N2_LAUNCH_MANIFESTS_PY (+ the launch semantics of the committed manifests and of julia-smoke.yml): coupled group named by SC-WP-03 element 'HallThruster.jl bridge'",
+  "inventory_rows": [
+   {
+    "id": "C-SCRIPTS_MAKE_P5_N2_LAUNCH_MANIFESTS_PY",
+    "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+    "port_disposition": "MIGRATE_UNDER_PREREG_PARITY",
+    "role_here": "whole module (_inputs, manifest, build, check)"
+   }
+  ],
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W8",
+  "scope": "job generation and launch orchestration of the pinned HallThruster.jl bridge: the P5-N2 launch manifests (build), their structural gate (check), the per-shard launch specification (argv, working directory, environment allow-list, pinned thread / BLAS settings) of the campaign driver as the committed manifests and runner scripts execute it, the julia-smoke.yml construction smoke, the pin read from PINNED.toml / Manifest.toml, and the per-run provenance sidecar",
+  "functions_or_entry_points": [
+   "scripts/make_p5_n2_launch_manifests.py::_inputs / manifest / build (and the __main__ writer: json.dump indent=1)",
+   "scripts/make_p5_n2_launch_manifests.py::check",
+   "hallthruster_bridge/campaign/manifests/*.json (committed reference outputs; commands executed by docs/orchestration/runner_scripts/*.sh from the checkout root with the inherited environment)",
+   ".github/workflows/julia-smoke.yml: the pin read (tomllib: PINNED.toml [hallthruster] commit / version, Manifest.toml julia_version), NJOBS and the smoke command line with P5N2_SMOKE=1",
+   "scripts/ci_checks.py::check_hallthruster_pin (already admitted in Rust by C-PROVENANCE-VERIFIER v1; reused, not re-scored here; its pass / fail enters the pin observable)"
+  ],
+  "out_of_scope": [
+   "scripts/identify_p5_transport.py (C-SCRIPTS_IDENTIFY_P5_TRANSPORT_PY, MIGRATE_OR_FORMALLY_RETIRE): P5-Xe identification is CLOSED (2026-09-25); its job generator is not ported (no historical builder migration merely for completeness, A9.29 sec. 14); ledger request: FORMALLY_RETIRED_NOT_PORTED unless a reopening decision on new published evidence creates its own contract",
+   "the Julia scripts (run_cases.jl, identify_worker.jl, campaign/p5_n2_campaign.jl, checks/*.jl, bridge_lib.jl): authoritative and unchanged; the actual Julia execution is a registered platform test (PT-01, PT-02)",
+   "scoring / freeze / forensics scripts (score_p5_n2_*.py, freeze_p5_n2_dataset.py): own components",
+   "docs/orchestration/runner_scripts/*.sh: class H executed campaign runners (CI_PLAN.md section 4); read only as the reference of the launch-line semantics"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE (class A only)",
+  "excluded_legacy_paths": [
+   "no 0-D legacy Hall, archengine family or cathode code is reachable from the launch path"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE (the inventory row carries no owner_disposition_a9_28 field)",
+  "simulation_completion_wp": "SC-WP-03",
+  "owner_disposition_a9_29": "NOT_APPLICABLE (the inventory row carries no owner_disposition_a9_29 field)"
+ },
+ "date": "2026-10-05",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component group was executed (no abep-julia-bridge code existed when it was written). The registration commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": "first version"
+ },
+ "reference_implementation": {
+  "python_commit": "a2ed848911dba03b0c8de98023ab38ef64dc3716",
+  "files": [
+   {
+    "path": "scripts/make_p5_n2_launch_manifests.py",
+    "sha256_at_registration": "d7f3f97ff76c52d2a42d0eb2dbfad796c1a68c3008d5206b505679eeff5b9097"
+   },
+   {
+    "path": "scripts/ci_checks.py",
+    "sha256_at_registration": "c07b2c49c57fdb4e67b271f61746712cd6de36067ee16a05f821d768b98cc300"
+   },
+   {
+    "path": ".github/workflows/julia-smoke.yml",
+    "sha256_at_registration": "7f8596ac68793e9c1eafd215888d208b23be9065e4ef0faddef666d795a3ba2a"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 in the scoring tree differs from sha256_at_registration; a changed reference requires a new contract version",
+  "invocation": "the harness imports scripts/make_p5_n2_launch_manifests.py and scripts/ci_checks.py of the scoring tree unmodified (importlib, python3 -B) and calls build() / check() / check_hallthruster_pin(); for check() with a case bridge directory it sets the module global BR to that directory for the call (monkeypatch semantics, the file is not modified); the julia-smoke.yml reference is read from the workflow text: the NJOBS one-liner is executed with cwd = the scoring tree and the julia command line is taken verbatim with $RUNNER_TEMP/p5n2_smoke/smoke.jsonl replaced by the case out_path",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "not used (standard library only)",
+   "thread_env": {
+    "OMP_NUM_THREADS": "recorded at scoring (unset expected)",
+    "OPENBLAS_NUM_THREADS": "recorded at scoring (unset expected)"
+   }
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-julia-bridge",
+  "functions_or_entry_points": [
+   "abep_julia_bridge::manifests::{build, Manifest::to_json_bytes, check}",
+   "abep_julia_bridge::jobs::{JobSpec, ThreadSettings, campaign_shard_job, smoke_job, shard_keys, JobSpec::command}",
+   "abep_julia_bridge::pin::{read_pin, verify_pin}",
+   "abep_julia_bridge::sidecar::JuliaRunSidecar",
+   "abep_julia_bridge::launch::launch (std::process::Command; never invoked by normal tests)",
+   "binary `abep-julia-bridge` (crates/abep-julia-bridge/src/bin/): `cases` executes one registered step (JSON on stdin); `pin-check`, `manifests --check`, `smoke`, `run-shard` for the platform tests and dispatch jobs"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/lib.rs",
+   "crates/abep-provenance/src/lib.rs",
+   "crates/abep-hall/Cargo.toml",
+   "crates/abep-hall/src/**",
+   "crates/abep-julia-bridge/Cargo.toml",
+   "crates/abep-julia-bridge/src/**"
+  ],
+  "design_constraints": [
+   "process boundary only (hall_physics_boundary.process_boundary): `julia --project=hallthruster_bridge <script>.jl ...` through std::process::Command with env_clear() and the allow-list below; no in-process embedding",
+   "environment allow-list: pass-through from the parent when present: PATH, HOME, TMPDIR, JULIA_DEPOT_PATH; pinned thread / BLAS settings (JULIA_NUM_THREADS, OPENBLAS_NUM_THREADS, OMP_NUM_THREADS, MKL_NUM_THREADS) set explicitly from the job's ThreadSettings (ThreadSettings::from_parent takes the parent's values; absent stays absent) and recorded; job variables only where the job defines them: P5N2_SMOKE = '1' for the construction smoke; nothing else reaches the child",
+   "the working directory is the repository root (the runner scripts' `cd $W`); argv = the manifest command with <out> replaced, split on whitespace",
+   "pin: PINNED.toml [hallthruster] commit / version and Manifest.toml julia_version read with the toml crate (TOML 1.0, as tomllib); verify_pin additionally requires the admitted hallthruster_pin check (abep_provenance::verifier) to pass and commit / version / julia_version to equal the hall_physics_boundary pin (bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5, 0.23.1, 1.11.7); any mismatch is MODEL_ERROR",
+   "launch fails closed: the job's input files are re-hashed against the manifest (driver_sha256, prereg_lock_sha256, chemistry pins) before the child starts; `julia --version` must report the Manifest julia_version; a non-zero exit is MODEL_ERROR; every run writes the sidecar <output>.sidecar.json with exactly the nine hall_physics_boundary fields",
+   "manifest JSON written as Python json.dump(m, f, indent=1) (insertion order, ensure_ascii, no trailing newline)",
+   "the crate never writes into hallthruster_bridge/ (outputs go to a caller-given directory)"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it (A9.14 S10.4 RUSTCI-1, generalised)"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "both implementations read the same scoring tree and byte-identical case trees; the scoring tree's pinned inputs must match pinned_inputs_sha256 (else INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "hallthruster_bridge/PINNED.toml": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280",
+  "hallthruster_bridge/Manifest.toml": "a98c1a6e9cdf491ef602ef7cd1d08371b2bbe3da4e1df74e45a1c9d84f6c5634",
+  "hallthruster_bridge/Project.toml": "6abb74e3e4fd8078904b0035391ba63fa20d27a358f39b085708bb6a8ae6f617",
+  "hallthruster_bridge/campaign/p5_n2_campaign.jl": "3321972938d891813da4dd44c2137a73acab57815c7d065e44fae4c8e47c5a30",
+  "hallthruster_bridge/bridge_lib.jl": "cf26aab8607b640ebb78be9715f2c7c5d957f145ac17f52c1b23db2e980e21ab",
+  "hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json": "8ca75ae2fac3a47ba008474f706cdfa8b60e3d1cf27429e1a4ad55dc47068462",
+  "hallthruster_bridge/prereg/p5_n2_prereg_lock_v1.json": "71ecd39fa25ea60e2e4aff9474bdd700ec8cd718e819dfdae774594709e805be",
+  "hallthruster_bridge/cases/p5_n2.json": "03f8e838adbb9074f03d8e916b09f84bacc81c3efe9afa2947c6b4dbb73ab1df",
+  "hallthruster_bridge/ensemble/transport_ensemble_v0.json": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_exc_johnsonlow_di_lower.json": "7ac49ceffd08292b724ce934e78dbe849eb3d93763510259fa5f21f00608bd07",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang.json": "466b143abccebbabce2841006410928cfeea83c5b1a4999c8781b301dddbc914",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_exc_johnsonlow_nel_wang.json": "ce07e16862cb58375fcb0dc1c9876ce8d27ec8053d735eecc10b0386c943974c",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_n2dication_nel_wang.json": "ed98c139547392ee5f661e538db7fdf262b919092897ac6090ff43442664e6f7",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_ndd_hmshigh_di_lower.json": "41289c827328213891bf2fe0b18c1a67f0944b2757ac050bba6c92728dc12b7d",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang.json": "9a0ce72762796c8d8cf37829a3ce510debc58889ccbe9db1b50aa648fc7b9bc6",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_ndd_hmshigh_nel_wang.json": "9a95bc03f97bdad0ab8c727e1adf38cef7f827eaf552ff067c3806add9dbbc1d",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_ndd_hmslow_di_lower.json": "dd102d704ee162d05be6228269d2deca750d58e9ab6f3f9c4c9af671fc93f76d",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_ndd_hmslow_di_lower_nel_wang.json": "76a7ce2c0dca71cd6fcc4febc7193fd3c6f7875cf41f8bf42f361244841a0319",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_ndd_hmslow_nel_wang.json": "a3a7a213e635e5598be7166dd10655da96588472e6f9771090e8cb0e18f953ce",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_rot_off_di_lower.json": "7d89deb5c40138d398a7c02d7803b106ff41011d8e42f36b21b71a0b8b73a332",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_rot_off_di_lower_nel_wang.json": "000c806a380599b743887f5eba15f928ffb2b33440e82dd6c0f22d16e7c539df",
+  "hallthruster_bridge/campaign/manifests/escalation_n2_n_rot_off_nel_wang.json": "3aedf2be0900e8874d198f929d0e6e5d7f3893579ee6c182be998d3dc02a1f4c",
+  "hallthruster_bridge/campaign/manifests/facility_mandatory.json": "df62bab2f48d728bb167e4b2de44f97e4596c3dfde1c4706f679aa9ac72fd25f",
+  "hallthruster_bridge/campaign/manifests/staged_n2_n_exc_johnsonlow.json": "398a541c42e855a83e84d26ec25705ff0b45ce42b2e88494755dea215d93c9c6",
+  "hallthruster_bridge/campaign/manifests/staged_n2_n_n2dication.json": "282b76a0531e21ce1c9b4136fa4a5685f1c1217b716f3a16987cd6af8990a352",
+  "hallthruster_bridge/campaign/manifests/staged_n2_n_ndd_hmshigh.json": "812c1b3db1254c7fa66a4b585b78dff6a6482d7aa1f0cd87620bb77cc8632e28",
+  "hallthruster_bridge/campaign/manifests/staged_n2_n_ndd_hmslow.json": "d7bfe94c599dbfa1fbcacce4eadae6f52913cbd8844d11c639f1ae79cc938f93",
+  "hallthruster_bridge/campaign/manifests/staged_n2_n_rot_off.json": "52f7beaaeff904e3198e0fbd1389a2aac747df6bc37e70db7e1de35cb0c6402b"
+ },
+ "frozen_data_read_only": [
+  "every repository file above is read, never written; the prereg lock, criteria, cases, ensemble and chemistry configs are the pre-registered P5-N2 inputs and are only hashed",
+  "no Julia run, no campaign record and no score is produced by this contract's scoring"
+ ],
+ "parent_environments": {
+  "rule": "synthetic parent environments (registered values, not a real machine); the harness passes the same mapping to both sides",
+  "ENV-A": {
+   "PATH": "/usr/local/bin:/usr/bin:/bin",
+   "HOME": "/home/runner",
+   "LANG": "C.UTF-8",
+   "SECRET_TOKEN": "not-passed"
+  },
+  "ENV-B": {
+   "PATH": "/usr/local/bin:/usr/bin:/bin",
+   "HOME": "/home/runner",
+   "LANG": "C.UTF-8",
+   "SECRET_TOKEN": "not-passed",
+   "JULIA_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1",
+   "JULIA_DEPOT_PATH": "/opt/julia-depot",
+   "TMPDIR": "/tmp/abep-run"
+  },
+  "ENV-C": {
+   "PATH": "/usr/local/bin:/usr/bin:/bin",
+   "HOME": "/home/runner",
+   "LANG": "C.UTF-8",
+   "SECRET_TOKEN": "not-passed",
+   "JULIA_NUM_THREADS": "4",
+   "OPENBLAS_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1",
+   "JULIA_DEPOT_PATH": "/opt/julia-depot",
+   "TMPDIR": "/tmp/abep-run",
+   "P5N2_SMOKE": "1",
+   "ABEP_ALLOW_HISTORICAL": "1",
+   "JULIA_LOAD_PATH": "@:/elsewhere",
+   "LD_PRELOAD": "/x.so"
+  }
+ },
+ "case_language": {
+  "tree": "each case runs in a fresh temporary directory T per implementation, built from `files` in order; R = scoring tree",
+  "file_specs": {
+   "text": "UTF-8 bytes",
+   "repo_copy": "bytes of R/<rel>",
+   "repo_text_replace": "R/<rel> decoded UTF-8, str.replace(old, new, count), encoded UTF-8",
+   "remove": "the file is removed after the earlier entries were written",
+   "records": "SYNTHETIC campaign records (each carries evidence_status 'SYNTHETIC_TEST_ONLY_NOT_EVIDENCE'; never evidence): for every expected key of the committed manifest, in expected_keys order, {key, mode: manifest mode, smoke: false, prereg_lock_sha256: manifest value, hallthruster_commit: the repository pin, retcode: 'success', evidence_status}; then the mutations in order: [drop, i] removes record i, [duplicate, i] appends a copy of record i, [unexpected, i, key] appends a copy of record i with that key, [set, i, field, value], [del, i, field], [retcode, i, value], [retcode_drop, i] deletes retcode, [keep_none] removes all, [blank_lines] marks the set; then written as JSONL (json.dumps(record) + newline) into `files` files s0.jsonl .. s{files-1}.jsonl, record r (after mutations) into file r % files, and with [blank_lines] an empty line and a line of two spaces written before every record whose index is a multiple of 50; `files` 0 writes nothing"
+  },
+  "steps": {
+   "build_manifests": "ok = [[name, json.dumps(m, indent=1)] ...] in build() order (the bytes the script writes)",
+   "launch_spec": "ok = {program, args, cwd, env, env_clear}: Rust = the JobSpec's std::process::Command (get_program, get_args, get_current_dir, get_envs) without spawning; reference = argv from the committed manifest command (campaign) or the julia-smoke.yml command (smoke), cwd = R, env = the allow-list projection of the parent environment (+ P5N2_SMOKE '1' for the smoke), env_clear true",
+   "shard_partition": "ok = [[shard, sorted keys] ...]; reference = the driver rule evaluated by the harness (no Python implementation exists; invariant, see INV-02)",
+   "check": "check(json.load(committed manifest), sorted(T/rec/*.jsonl) + extra_paths) with the module global BR = bridge (null = repository bridge); ok = the returned dict",
+   "pin": "bridge = root/hallthruster_bridge; ok = {commit, version, julia_version, manifest_consistent, pinned_constants}: reference commit / version from tomllib PINNED.toml ['hallthruster'] and julia_version from Manifest.toml ['julia_version'] read first (julia-smoke.yml; an exception there is the step's err), then manifest_consistent = (ci_checks.check_hallthruster_pin(bridge) returns no problem and raises nothing), pinned_constants = (commit, version, julia_version) == the hall_physics_boundary pin; Rust: read_pin(root) for the three values, the admitted verifier check hallthruster_pin(root) for manifest_consistent, and verify_pin(root) succeeding iff manifest_consistent and pinned_constants (scored as a sixth field verify_pin_ok, reference = manifest_consistent and pinned_constants)"
+  }
+ },
+ "case_catalogue": [
+  {
+   "id": "MB-01",
+   "group": "MANIFEST",
+   "note": "build() of every launch manifest: bytes as written by the script (json.dump indent=1), equal to the committed files, no orphan",
+   "files": [],
+   "steps": [
+    {
+     "op": "build_manifests"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_exc_johnsonlow_di_lower-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_exc_johnsonlow_di_lower, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_exc_johnsonlow_di_lower-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_exc_johnsonlow_di_lower, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_exc_johnsonlow_di_lower-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_exc_johnsonlow_di_lower, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_exc_johnsonlow_di_lower_nel_wang-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_exc_johnsonlow_di_lower_nel_wang, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_exc_johnsonlow_di_lower_nel_wang-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_exc_johnsonlow_di_lower_nel_wang, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_exc_johnsonlow_di_lower_nel_wang-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_exc_johnsonlow_di_lower_nel_wang, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_exc_johnsonlow_nel_wang-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_exc_johnsonlow_nel_wang, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_nel_wang",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_exc_johnsonlow_nel_wang-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_exc_johnsonlow_nel_wang, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_nel_wang",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_exc_johnsonlow_nel_wang-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_exc_johnsonlow_nel_wang, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_exc_johnsonlow_nel_wang",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_n2dication_nel_wang-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_n2dication_nel_wang, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_n2dication_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_n2dication_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_n2dication_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_n2dication_nel_wang",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_n2dication_nel_wang-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_n2dication_nel_wang, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_n2dication_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_n2dication_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_n2dication_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_n2dication_nel_wang",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_n2dication_nel_wang-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_n2dication_nel_wang, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_n2dication_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_n2dication_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_n2dication_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_n2dication_nel_wang",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmshigh_di_lower-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmshigh_di_lower, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmshigh_di_lower-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmshigh_di_lower, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmshigh_di_lower-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmshigh_di_lower, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmshigh_di_lower_nel_wang-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmshigh_di_lower_nel_wang, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmshigh_di_lower_nel_wang-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmshigh_di_lower_nel_wang, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmshigh_di_lower_nel_wang-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmshigh_di_lower_nel_wang, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmshigh_nel_wang-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmshigh_nel_wang, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_nel_wang",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmshigh_nel_wang-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmshigh_nel_wang, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_nel_wang",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmshigh_nel_wang-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmshigh_nel_wang, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmshigh_nel_wang",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmslow_di_lower-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmslow_di_lower, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmslow_di_lower-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmslow_di_lower, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmslow_di_lower-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmslow_di_lower, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmslow_di_lower_nel_wang-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmslow_di_lower_nel_wang, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmslow_di_lower_nel_wang-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmslow_di_lower_nel_wang, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmslow_di_lower_nel_wang-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmslow_di_lower_nel_wang, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmslow_nel_wang-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmslow_nel_wang, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_nel_wang",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmslow_nel_wang-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmslow_nel_wang, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_nel_wang",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_ndd_hmslow_nel_wang-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_ndd_hmslow_nel_wang, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_ndd_hmslow_nel_wang",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_rot_off_di_lower-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_rot_off_di_lower, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_rot_off_di_lower-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_rot_off_di_lower, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_rot_off_di_lower-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_rot_off_di_lower, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_rot_off_di_lower_nel_wang-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_rot_off_di_lower_nel_wang, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower_nel_wang",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_rot_off_di_lower_nel_wang-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_rot_off_di_lower_nel_wang, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower_nel_wang",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_rot_off_di_lower_nel_wang-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_rot_off_di_lower_nel_wang, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_di_lower_nel_wang",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_rot_off_nel_wang-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_rot_off_nel_wang, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_nel_wang",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_nel_wang",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_rot_off_nel_wang-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_rot_off_nel_wang, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_nel_wang",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_nel_wang",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-escalation_n2_n_rot_off_nel_wang-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of escalation_n2_n_rot_off_nel_wang, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_nel_wang",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/escalation_n2_n_rot_off_nel_wang",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-facility_mandatory-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of facility_mandatory, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "facility_mandatory",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/facility_mandatory",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "facility_mandatory",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/facility_mandatory",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "facility_mandatory",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/facility_mandatory",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "facility_mandatory",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/facility_mandatory",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-facility_mandatory-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of facility_mandatory, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "facility_mandatory",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/facility_mandatory",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "facility_mandatory",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/facility_mandatory",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "facility_mandatory",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/facility_mandatory",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "facility_mandatory",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/facility_mandatory",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-facility_mandatory-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of facility_mandatory, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "facility_mandatory",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/facility_mandatory",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "facility_mandatory",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/facility_mandatory",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "facility_mandatory",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/facility_mandatory",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "facility_mandatory",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/facility_mandatory",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_exc_johnsonlow-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_exc_johnsonlow, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_exc_johnsonlow",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_exc_johnsonlow",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_exc_johnsonlow",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_exc_johnsonlow",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_exc_johnsonlow-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_exc_johnsonlow, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_exc_johnsonlow",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_exc_johnsonlow",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_exc_johnsonlow",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_exc_johnsonlow",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_exc_johnsonlow-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_exc_johnsonlow, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_exc_johnsonlow",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_exc_johnsonlow",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_exc_johnsonlow",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_exc_johnsonlow",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_n2dication-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_n2dication, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_n2dication",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_n2dication",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_n2dication",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_n2dication",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_n2dication",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_n2dication",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_n2dication",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_n2dication",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_n2dication-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_n2dication, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_n2dication",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_n2dication",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_n2dication",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_n2dication",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_n2dication",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_n2dication",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_n2dication",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_n2dication",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_n2dication-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_n2dication, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_n2dication",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_n2dication",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_n2dication",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_n2dication",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_n2dication",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_n2dication",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_n2dication",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_n2dication",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_ndd_hmshigh-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_ndd_hmshigh, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmshigh",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmshigh",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmshigh",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmshigh",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_ndd_hmshigh-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_ndd_hmshigh, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmshigh",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmshigh",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmshigh",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmshigh",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_ndd_hmshigh-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_ndd_hmshigh, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmshigh",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmshigh",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmshigh",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmshigh",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_ndd_hmslow-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_ndd_hmslow, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmslow",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmslow",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmslow",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmslow",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_ndd_hmslow-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_ndd_hmslow, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmslow",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmslow",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmslow",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmslow",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_ndd_hmslow-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_ndd_hmslow, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmslow",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmslow",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmslow",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_ndd_hmslow",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_rot_off-ENV-A",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_rot_off, parent environment ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_rot_off",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_rot_off",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_rot_off",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_rot_off",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_rot_off",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_rot_off",
+     "parent_env": "ENV-A"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_rot_off",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_rot_off",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_rot_off-ENV-B",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_rot_off, parent environment ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_rot_off",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_rot_off",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_rot_off",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_rot_off",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_rot_off",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_rot_off",
+     "parent_env": "ENV-B"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_rot_off",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_rot_off",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-staged_n2_n_rot_off-ENV-C",
+   "group": "LAUNCH",
+   "note": "campaign shards of staged_n2_n_rot_off, parent environment ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_rot_off",
+     "shard": 0,
+     "out_dir": "/abep-bridge-out/staged_n2_n_rot_off",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_rot_off",
+     "shard": 1,
+     "out_dir": "/abep-bridge-out/staged_n2_n_rot_off",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_rot_off",
+     "shard": 2,
+     "out_dir": "/abep-bridge-out/staged_n2_n_rot_off",
+     "parent_env": "ENV-C"
+    },
+    {
+     "op": "launch_spec",
+     "kind": "campaign",
+     "manifest": "staged_n2_n_rot_off",
+     "shard": 3,
+     "out_dir": "/abep-bridge-out/staged_n2_n_rot_off",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "LS-smoke-ENV-A",
+   "group": "LAUNCH",
+   "note": "julia-smoke.yml construction smoke, parent ENV-A",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "smoke",
+     "out_path": "/abep-bridge-out/smoke/smoke.jsonl",
+     "parent_env": "ENV-A"
+    }
+   ]
+  },
+  {
+   "id": "LS-smoke-ENV-B",
+   "group": "LAUNCH",
+   "note": "julia-smoke.yml construction smoke, parent ENV-B",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "smoke",
+     "out_path": "/abep-bridge-out/smoke/smoke.jsonl",
+     "parent_env": "ENV-B"
+    }
+   ]
+  },
+  {
+   "id": "LS-smoke-ENV-C",
+   "group": "LAUNCH",
+   "note": "julia-smoke.yml construction smoke, parent ENV-C",
+   "files": [],
+   "steps": [
+    {
+     "op": "launch_spec",
+     "kind": "smoke",
+     "out_path": "/abep-bridge-out/smoke/smoke.jsonl",
+     "parent_env": "ENV-C"
+    }
+   ]
+  },
+  {
+   "id": "SP-01",
+   "group": "SHARD",
+   "note": "per-shard key sets of the driver rule (ij - 1) % nshards == shard over candidates x chemistry x cases",
+   "files": [],
+   "steps": [
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_rot_off_di_lower",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "escalation_n2_n_rot_off_nel_wang",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "facility_mandatory",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "staged_n2_n_exc_johnsonlow",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "staged_n2_n_n2dication",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "staged_n2_n_ndd_hmshigh",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "staged_n2_n_ndd_hmslow",
+     "nshards": 4
+    },
+    {
+     "op": "shard_partition",
+     "manifest": "staged_n2_n_rot_off",
+     "nshards": 4
+    }
+   ]
+  },
+  {
+   "id": "CK-01",
+   "group": "CHECK",
+   "note": "complete, all success",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [],
+      "files": 1
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-02",
+   "group": "CHECK",
+   "note": "mixed return codes",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [
+       [
+        "retcode",
+        0,
+        "failure"
+       ],
+       [
+        "retcode",
+        1,
+        "error"
+       ],
+       [
+        "retcode_drop",
+        2
+       ]
+      ],
+      "files": 1
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-03",
+   "group": "CHECK",
+   "note": "one key missing",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [
+       [
+        "drop",
+        5
+       ]
+      ],
+      "files": 1
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-04",
+   "group": "CHECK",
+   "note": "two duplicates (order of first occurrence)",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [
+       [
+        "duplicate",
+        7
+       ],
+       [
+        "duplicate",
+        3
+       ]
+      ],
+      "files": 1
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-05",
+   "group": "CHECK",
+   "note": "unexpected key",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [
+       [
+        "unexpected",
+        0,
+        "sgb-screen-10|n2_n_rot_off.toml|N1-L32-anode-1p6kW|vacuum"
+       ]
+      ],
+      "files": 1
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-06",
+   "group": "CHECK",
+   "note": "one record in another mode",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [
+       [
+        "set",
+        11,
+        "mode",
+        "facility"
+       ]
+      ],
+      "files": 1
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-07",
+   "group": "CHECK",
+   "note": "one smoke record",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [
+       [
+        "set",
+        12,
+        "smoke",
+        true
+       ]
+      ],
+      "files": 1
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-08",
+   "group": "CHECK",
+   "note": "smoke flag absent",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [
+       [
+        "del",
+        13,
+        "smoke"
+       ]
+      ],
+      "files": 1
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-09",
+   "group": "CHECK",
+   "note": "lock hash differs",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [
+       [
+        "set",
+        14,
+        "prereg_lock_sha256",
+        "0000000000000000000000000000000000000000000000000000000000000000"
+       ]
+      ],
+      "files": 1
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-10",
+   "group": "CHECK",
+   "note": "HallThruster commit differs",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [
+       [
+        "set",
+        15,
+        "hallthruster_commit",
+        "1111111111111111111111111111111111111111"
+       ]
+      ],
+      "files": 1
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-11",
+   "group": "CHECK",
+   "note": "four shard files (driver shard rule)",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [],
+      "files": 4
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-12",
+   "group": "CHECK",
+   "note": "no record file",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [
+       [
+        "keep_none"
+       ]
+      ],
+      "files": 0
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-13",
+   "group": "CHECK",
+   "note": "blank and whitespace-only lines are skipped",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [
+       [
+        "blank_lines"
+       ]
+      ],
+      "files": 2
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-14",
+   "group": "CHECK",
+   "note": "facility mandatory, complete",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "facility_mandatory",
+      "mutations": [],
+      "files": 4
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "facility_mandatory",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-15",
+   "group": "CHECK",
+   "note": "escalation dataset with gaps",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "escalation_n2_n_n2dication_nel_wang",
+      "mutations": [
+       [
+        "drop",
+        0
+       ],
+       [
+        "drop",
+        269
+       ],
+       [
+        "retcode",
+        5,
+        "failure"
+       ]
+      ],
+      "files": 3
+     }
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "escalation_n2_n_n2dication_nel_wang",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-16",
+   "group": "CHECK",
+   "note": "a top-level PINNED commit takes precedence",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [],
+      "files": 1
+     }
+    },
+    {
+     "path": "hb/PINNED.toml",
+     "text": "commit = \"2222222222222222222222222222222222222222\"\n[hallthruster]\ncommit = \"bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5\"\n"
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": "T/hb"
+    }
+   ]
+  },
+  {
+   "id": "CK-17",
+   "group": "CHECK",
+   "note": "an unreadable record line",
+   "files": [
+    {
+     "path": "rec/s0.jsonl",
+     "text": "{\"key\": \"a\"}\n{not json\n"
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-18",
+   "group": "CHECK",
+   "note": "a record without key",
+   "files": [
+    {
+     "path": "rec/s0.jsonl",
+     "text": "{\"mode\": \"vacuum\"}\n"
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null
+    }
+   ]
+  },
+  {
+   "id": "CK-19",
+   "group": "CHECK",
+   "note": "a listed record file is missing",
+   "files": [
+    {
+     "path": "rec/s0.jsonl",
+     "text": "{\"key\": \"a\"}\n"
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": null,
+     "extra_paths": [
+      "T/rec/absent.jsonl"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "CK-20",
+   "group": "CHECK",
+   "note": "PINNED.toml missing",
+   "files": [
+    {
+     "path": "rec",
+     "records": {
+      "manifest": "staged_n2_n_rot_off",
+      "mutations": [],
+      "files": 1
+     }
+    },
+    {
+     "path": "hb/x.txt",
+     "text": "x"
+    }
+   ],
+   "steps": [
+    {
+     "op": "check",
+     "manifest": "staged_n2_n_rot_off",
+     "records_dir": "T/rec",
+     "bridge": "T/hb"
+    }
+   ]
+  },
+  {
+   "id": "PN-01",
+   "group": "PIN",
+   "note": "repository pin",
+   "files": [],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "R"
+    }
+   ]
+  },
+  {
+   "id": "PN-02",
+   "group": "PIN",
+   "note": "unchanged copy",
+   "files": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_copy": "hallthruster_bridge/PINNED.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_copy": "hallthruster_bridge/Manifest.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_copy": "hallthruster_bridge/Project.toml"
+    }
+   ],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "T"
+    }
+   ]
+  },
+  {
+   "id": "PN-03",
+   "group": "PIN",
+   "note": "consistent files on another commit (manifest-consistent, not the pinned commit)",
+   "files": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_copy": "hallthruster_bridge/PINNED.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_copy": "hallthruster_bridge/Manifest.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_copy": "hallthruster_bridge/Project.toml"
+    },
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_text_replace": "hallthruster_bridge/PINNED.toml",
+     "old": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+     "new": "1111111111111111111111111111111111111111",
+     "count": -1
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_text_replace": "hallthruster_bridge/Manifest.toml",
+     "old": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+     "new": "1111111111111111111111111111111111111111",
+     "count": -1
+    }
+   ],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "T"
+    }
+   ]
+  },
+  {
+   "id": "PN-04",
+   "group": "PIN",
+   "note": "Manifest repo-rev differs",
+   "files": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_copy": "hallthruster_bridge/PINNED.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_copy": "hallthruster_bridge/Manifest.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_copy": "hallthruster_bridge/Project.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_text_replace": "hallthruster_bridge/Manifest.toml",
+     "old": "repo-rev = \"bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+     "new": "repo-rev = \"3333333333333333333333333333333333333333",
+     "count": 1
+    }
+   ],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "T"
+    }
+   ]
+  },
+  {
+   "id": "PN-05",
+   "group": "PIN",
+   "note": "Manifest HallThruster version differs",
+   "files": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_copy": "hallthruster_bridge/PINNED.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_copy": "hallthruster_bridge/Manifest.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_copy": "hallthruster_bridge/Project.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_text_replace": "hallthruster_bridge/Manifest.toml",
+     "old": "version = \"0.23.1\"",
+     "new": "version = \"0.23.2\"",
+     "count": 1
+    }
+   ],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "T"
+    }
+   ]
+  },
+  {
+   "id": "PN-06",
+   "group": "PIN",
+   "note": "Manifest julia_version differs",
+   "files": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_copy": "hallthruster_bridge/PINNED.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_copy": "hallthruster_bridge/Manifest.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_copy": "hallthruster_bridge/Project.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_text_replace": "hallthruster_bridge/Manifest.toml",
+     "old": "julia_version = \"1.11.7\"",
+     "new": "julia_version = \"1.11.8\"",
+     "count": 1
+    }
+   ],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "T"
+    }
+   ]
+  },
+  {
+   "id": "PN-07",
+   "group": "PIN",
+   "note": "Project compat not exact",
+   "files": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_copy": "hallthruster_bridge/PINNED.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_copy": "hallthruster_bridge/Manifest.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_copy": "hallthruster_bridge/Project.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_text_replace": "hallthruster_bridge/Project.toml",
+     "old": "=0.23.1",
+     "new": "0.23",
+     "count": 1
+    }
+   ],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "T"
+    }
+   ]
+  },
+  {
+   "id": "PN-08",
+   "group": "PIN",
+   "note": "PINNED.toml without commit",
+   "files": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_copy": "hallthruster_bridge/PINNED.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_copy": "hallthruster_bridge/Manifest.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_copy": "hallthruster_bridge/Project.toml"
+    },
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_text_replace": "hallthruster_bridge/PINNED.toml",
+     "old": "commit = \"bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5\"   # recovered from the release tarball (git get-tar-commit-id)\n",
+     "new": "",
+     "count": 1
+    }
+   ],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "T"
+    }
+   ]
+  },
+  {
+   "id": "PN-09",
+   "group": "PIN",
+   "note": "Manifest without HallThruster",
+   "files": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_copy": "hallthruster_bridge/PINNED.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_copy": "hallthruster_bridge/Manifest.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_copy": "hallthruster_bridge/Project.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "text": "julia_version = \"1.11.7\"\n"
+    }
+   ],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "T"
+    }
+   ]
+  },
+  {
+   "id": "PN-10",
+   "group": "PIN",
+   "note": "two HallThruster entries",
+   "files": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_copy": "hallthruster_bridge/PINNED.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_copy": "hallthruster_bridge/Manifest.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_copy": "hallthruster_bridge/Project.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "text": "julia_version = \"1.11.7\"\n[[deps.HallThruster]]\nrepo-rev = \"bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5\"\nversion = \"0.23.1\"\nrepo-url = \"https://github.com/UM-PEPL/HallThruster.jl\"\n[[deps.HallThruster]]\nrepo-rev = \"bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5\"\n"
+    }
+   ],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "T"
+    }
+   ]
+  },
+  {
+   "id": "PN-11",
+   "group": "PIN",
+   "note": "PINNED.toml is not TOML",
+   "files": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_copy": "hallthruster_bridge/PINNED.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_copy": "hallthruster_bridge/Manifest.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_copy": "hallthruster_bridge/Project.toml"
+    },
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "text": "[hallthruster\ncommit = 1\n"
+    }
+   ],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "T"
+    }
+   ]
+  },
+  {
+   "id": "PN-12",
+   "group": "PIN",
+   "note": "Manifest.toml missing",
+   "files": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_copy": "hallthruster_bridge/PINNED.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_copy": "hallthruster_bridge/Manifest.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_copy": "hallthruster_bridge/Project.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "remove": true
+    }
+   ],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "T"
+    }
+   ]
+  },
+  {
+   "id": "PN-13",
+   "group": "PIN",
+   "note": "Manifest without julia_version",
+   "files": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "repo_copy": "hallthruster_bridge/PINNED.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_copy": "hallthruster_bridge/Manifest.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Project.toml",
+     "repo_copy": "hallthruster_bridge/Project.toml"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "repo_text_replace": "hallthruster_bridge/Manifest.toml",
+     "old": "julia_version = \"1.11.7\"\n",
+     "new": "",
+     "count": 1
+    }
+   ],
+   "steps": [
+    {
+     "op": "pin",
+     "root": "T"
+    }
+   ]
+  }
+ ],
+ "random_check_procedure": {
+  "count": 48,
+  "draw": "for i in 0..47, tag t = f'RC|{i}': manifest = sorted manifest names[U(t|m) % 19]; records = one success record per expected key (expected_keys order), then k = U(t|k) % 4 mutations, mutation j of kind ['drop', 'duplicate', 'unexpected', 'mode', 'smoke', 'lock', 'commit', 'retcode'][U(t|j|kind) % 8] at record index U(t|j|idx) % len(records) (unexpected appends a record whose key is the chosen key with '|x' appended; mode sets 'facility' if the manifest mode is vacuum else 'vacuum'; smoke sets true; lock sets '0' * 64; commit sets '1' * 40; retcode sets 'failure'); records written in order to f = 1 + U(t|files) % 4 files, record r to file r % f",
+  "U": "U(tag) = int.from_bytes(hashlib.sha256(f'{master_seed}|{tag}'.encode()).digest()[:8], 'big')"
+ },
+ "inputs": {
+  "golden_vectors": {
+   "source": "the committed launch manifests and the case catalogue",
+   "count": 95,
+   "list_or_generator": "case_catalogue (manifests: every committed manifest; launch: 19 manifests x 4 shards x 3 parent environments + 3 smoke specs)"
+  },
+  "edge_cases": "the CHECK and PIN refusal / failure cases of the catalogue",
+  "randomized_domain": {
+   "count": 48,
+   "draw": "random_check_procedure",
+   "domain_note": "structural-gate parity domain only; synthetic records, not evidence"
+  },
+  "vector_totals": {
+   "cases": 95,
+   "steps": 284,
+   "random check sets": 48,
+   "manifests": 19
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 8049142698439059425,
+  "development_master_seed": 1581125771628526889,
+  "derivation": "random_check_procedure U(tag)",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE",
+   "other_streams": "record-set generation stream: the sha256 counter above, drawn only by the harness",
+   "migration_parity_dataset": "seeds and captured outcomes stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (v3 field; replaced by rng_stream_roles)",
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "outcome_identity": {
+  "outcome": "{ok: value} or {err: {kind, message}}",
+  "python_kind": [
+   "KeyError -> KEY_ERROR (message = str(e))",
+   "FileNotFoundError -> FILE_NOT_FOUND",
+   "json.JSONDecodeError, tomllib.TOMLDecodeError, UnicodeDecodeError -> DECODE_ERROR",
+   "TypeError, AttributeError -> TYPE_ERROR",
+   "IndexError -> INDEX_ERROR",
+   "other -> OTHER:<class>"
+  ],
+  "message_compared_for": [
+   "KEY_ERROR",
+   "FILE_NOT_FOUND"
+  ],
+  "normalisation": "the implementation's tree root -> '<T>', repository root -> '<R>'"
+ },
+ "observables": {
+  "build_manifests": {
+   "list": [
+    {
+     "name": "manifest bytes",
+     "units": "-",
+     "tolerance_class": "EXACT_BYTES",
+     "tolerance": "equal (Rust == Python build == committed file)",
+     "definition": "json.dump(m, indent=1) of every manifest, in build() order, file name m['name'] + '.json'; no committed manifest without a built one"
+    }
+   ]
+  },
+  "launch_spec": {
+   "list": [
+    {
+     "name": "program and argv",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal sequence",
+     "definition": "launch equivalence with the Python-launched job"
+    },
+    {
+     "name": "working directory",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "R"
+    },
+    {
+     "name": "child environment (allow-list) and env_clear",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal mapping",
+     "definition": "design_constraints environment allow-list; thread / BLAS values equal the Python-launched job's inherited values"
+    }
+   ]
+  },
+  "check": {
+   "list": [
+    {
+     "name": "structural gate result",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal JSON value (list order significant; dict key order not)",
+     "definition": "check()"
+    }
+   ]
+  },
+  "pin": {
+   "list": [
+    {
+     "name": "commit, version, julia_version, manifest_consistent, pinned_constants, verify_pin_ok (or the refusal kind)",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "case_language pin"
+    }
+   ]
+  },
+  "shard_partition": {
+   "list": [
+    {
+     "name": "per-shard key sets",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "driver rule (invariant INV-02)"
+    }
+   ]
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "files / serialized outputs byte-identical (sha256 equal)",
+  "EXACT_VALUE": "equal",
+  "ULP_BOUNDED": "NOT_APPLICABLE",
+  "SOLVER_TOLERANCE": "NOT_APPLICABLE",
+  "STATISTICAL": "NOT_APPLICABLE",
+  "EXACT_STREAM": "NOT_APPLICABLE"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-01",
+   "statement": "determinism: the Rust manifests and launch specs of two runs are byte-identical",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-02",
+   "statement": "for every manifest the four shard key sets are disjoint, their union equals expected_keys and their sizes differ by at most one",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-03",
+   "statement": "the scoring tree is unchanged (sha256 manifest of tracked files before and after)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-04",
+   "statement": "no launch spec passes P5N2_SMOKE / ABEP_ALLOW_HISTORICAL / JULIA_LOAD_PATH / LD_PRELOAD / any variable outside the allow-list, whatever the parent sets (ENV-C)",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-05",
+   "statement": "the sidecar field set equals hall_physics_boundary.provenance_sidecar_per_run (nine fields, in order; Rust unit test)",
+   "required_in_both": false
+  }
+ ],
+ "conservation_checks": {
+  "applicable": false,
+  "reason": "orchestration only",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "cases": "every err outcome of the catalogue",
+  "mapping_rule": "every Python exception class used by the component maps to exactly one Rust kind; inside the registered domain no Rust path returns a value where Python fails or fails where Python returns",
+  "documented_divergence": [
+   {
+    "id": "DIV-01",
+    "statement": "the Python-launched jobs (runner scripts, julia-smoke.yml, identify_p5_transport.py Popen) inherit the whole parent environment; the Rust launcher passes only the allow-list",
+    "disposition": "deliberate (hall_physics_boundary: 'environment allow-list fixed per job'); equivalence is defined on the allow-list; ENV-C shows the dropped variables, including P5N2_SMOKE, which a Python-launched campaign job would inherit"
+   },
+   {
+    "id": "DIV-02",
+    "statement": "verify_pin also requires the hall_physics_boundary pin constants; the Python campaign path checks the pin only inside Julia (check_pin) and ci_checks checks file consistency",
+    "disposition": "deliberate double lock (CI_PLAN.md section 4: 'checks that the commit is bfb3019f... and that the Julia version equals the manifest's'); visible as pinned_constants"
+   },
+   {
+    "id": "DIV-03",
+    "statement": "JSON beyond RFC 8259 in record files (NaN / Infinity, integers beyond 64 bits) is refused by Rust as DECODE_ERROR",
+    "disposition": "outside the registered domain; fail closed"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE: the launch manifests have no JSON schema; their byte identity is the check"
+  ],
+  "rules": [
+   "manifest keys and order identical (EXACT_BYTES)"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "hallthruster_bridge/campaign/manifests/*.json (committed)",
+   "the captured Python outcomes of the scoring execution"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/reference_outputs/",
+   "captured_at_python_commit": "the scoring commit (recorded in the report)",
+   "sha256_manifest": "recorded in the report",
+   "purpose": "CI checks Rust against the reference after Python is retired"
+  },
+  "historical_golden_rule": "RM-R28: no golden case is involved"
+ },
+ "julia_bridge": {
+  "applicable": true,
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "julia_version": "1.11.7 (hallthruster_bridge/Manifest.toml julia_version)",
+  "launch_equivalence": "argv, environment allow-list and input bytes identical between the Python and Rust launchers (scored here without Julia: the launch specification is compared, the child is never spawned)",
+  "record_comparison": "run records EXACT_BYTES for deterministic Julia outputs under identical Julia version / threads / BLAS: registered platform test PT-02 (needs the pinned Julia toolchain, which normal CI and this scoring session do not have); NOT_RUN in this contract version and reported as such",
+  "execution_provenance": "per-run sidecar: exactly the nine fields of hall_physics_boundary.provenance_sidecar_per_run (Julia version, HallThruster commit, threads / BLAS, host, argv, input sha256, output sha256, rust_commit, contract_id)",
+  "platform_tests": [
+   {
+    "id": "PT-01",
+    "what": "the construction smoke job launched by abep-julia-bridge with the pinned toolchain: pin verified, one smoke record, smoke true, no target field, sidecar written and complete"
+   },
+   {
+    "id": "PT-02",
+    "what": "the same smoke job launched through the reference launch line (bash, inherited environment restricted to the same values) and through the Rust launcher: record bytes identical"
+   }
+  ],
+  "platform_register": "docs/rust_migration/test_register/platform_tests_v1.json"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion",
+  "workloads": [
+   {
+    "id": "MANIFESTS",
+    "description": "build of the 19 manifests"
+   }
+  ],
+  "repeats": 1,
+  "statistic": "wall-clock per implementation in the scoring session",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every step meets its tolerance class",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": false,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "PARITY_PASS (ADMITTED) iff every step of every case and random set agrees, every invariant holds, cargo fmt / clippy / test pass, and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED. Admission covers the launch specification, manifests, structural gate, pin and sidecar; the run-record comparison stays a registered platform test (PT-02) whose result is recorded when it runs",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "meaning_of_ADMITTED": "Rust becomes authoritative for generating P5-N2 launch manifests and launch specifications and for the pre-launch pin check; HallThruster.jl stays authoritative for the Hall physics; it is NOT physics validation",
+  "no_retuning": "tolerances, observables, inputs, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays",
+  "disagreement_rule": "never rewrite a committed manifest, prereg input or Python result to make Rust pass (RM-R11)",
+  "observable_scope": "retained selected-architecture orchestration only (RM-R20)",
+  "single_scoring": "the harness refuses to score when parity_report_v1.json exists"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output may be cited by the bid package unless the owner re-freezes",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (A9.29 sec. 3)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not a Julia run, not a campaign, not a score: no P5-N2 result is produced or changed; the P5-N2 v1 outcome stays INCONCLUSIVE permanently",
+  "not an admission of any transport member: the credible set stays EMPTY",
+  "not physics validation; HallThruster.jl stays authoritative and unchanged",
+  "not a pin move: the pin is read and checked, never written"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/parity_report_v1.json (+ .md)",
+  "runner": "docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/parity_harness.py (written after this contract; its sha256 is recorded in the report)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance",
+   "environment",
+   "per-step results",
+   "invariants",
+   "domain/error",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "platform_tests",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "the inventory row is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS - PASS",
+   "no observable, input or code path belongs to an excluded legacy path - PASS",
+   "the Rust implementation contains none of the forbidden identifiers - checked in the report",
+   "abep-julia-bridge is a flight-runtime crate: it depends on no abep-groundtest / assessment crate"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "value_status_preservation": {
+  "rule": "RM-R27",
+  "inputs": "NOT_APPLICABLE (no provisional input)",
+  "check": "NOT_APPLICABLE"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS",
+  "status": "NOT_APPLICABLE"
+ }
+}

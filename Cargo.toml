@@ -28,6 +28,7 @@ abep-provenance = { path = "crates/abep-provenance" }
 abep-data = { path = "crates/abep-data" }
 abep-atmos = { path = "crates/abep-atmos" }
 abep-config = { path = "crates/abep-config" }
+abep-hall = { path = "crates/abep-hall" }
 # Admitted Kernel-1 TPMC library (parity_report_v2), consumed as a plain rlib: no `python` / `extension-module` feature
 # (A9.29 secs. 5, 11; build equivalence: docs/rust_migration/contracts/C-ABEP_CORE_BUILD_EQUIVALENCE/).
 abep_core = { path = "abep_core", default-features = false }
