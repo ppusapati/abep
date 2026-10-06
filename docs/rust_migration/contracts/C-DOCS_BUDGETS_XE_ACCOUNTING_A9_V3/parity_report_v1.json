@@ -1,0 +1,240 @@
+{
+ "schema": "abep_rust_parity_report_v3_1",
+ "id": "PARITY-REPORT-C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3-V1",
+ "lane": "SC-WP-07 mass (A9.29)",
+ "contract": {
+  "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3/parity_prereg_v1.json",
+  "id": "PARITY-C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3-V1",
+  "sha256": "c3685cb3405474a77b8bd87f3afd9170ec0aa3d3deadebb0e89a611665e1723b"
+ },
+ "verdict": "ADMITTED",
+ "parity": "PARITY_PASS",
+ "verdict_rule": "ADMITTED (= PARITY_PASS) iff every call, every invariant (INV-X01..X04) and every conservation check passes and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL). ADMITTED covers the X1-X6 function subset only (partial admission); the record regeneration stays PYTHON_REFERENCE (BLOCKED_GOVERNANCE_CONFLICT, component.out_of_scope)",
+ "python_commit": "1e2f66d72c01d3d0d413ff85c62de17f528d8f31",
+ "reference_sha256": {
+  "docs/budgets/xe_accounting_a9_v3/build_xe_accounting_a9_v3.py": {
+   "registered": "2dad9dd167c798f212efe72455e9ccffe2c6590f8389a28b74bcb3c9b7854509",
+   "now": "2dad9dd167c798f212efe72455e9ccffe2c6590f8389a28b74bcb3c9b7854509"
+  }
+ },
+ "reference_unchanged_at_scoring": true,
+ "pinned_inputs_verified": true,
+ "rust_commit": "966a2bf0953b1c3911a9e456cb306ac2e43531bc",
+ "rust_tree_clean_at_scoring": true,
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "profile": "release (cargo build --release --locked -p abep-subsystems --bin abep-mass)",
+  "cargo_lock_sha256": "c5f63f31f0a27610c0326d45d5188cfbd0dd214f8a6c293dc57063053b8868c8",
+  "source_sha256": {
+   "Cargo.toml": "35d63d9a1b6bda67d978b0eb2a3c10f48b4b3247f2789b0701bdd6e09f6ca98f",
+   "Cargo.lock": "c5f63f31f0a27610c0326d45d5188cfbd0dd214f8a6c293dc57063053b8868c8",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499",
+   "crates/abep-types/Cargo.toml": "a210ee487a186c6edc28a87868e1b2c84094e890586ad159b8d77e16e7e7511f",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "0a067299e38d3dac702c3eb23ee3e34a55f844b389ec54b7463962c65d6a4b0e",
+   "crates/abep-types/src/pyjson.rs": "5ce15fdb06043a01ce8bd441a8e8f1906e74a0c4dd9fea2b9e4505f182a8d88e",
+   "crates/abep-types/src/pyjson_unicode.rs": "c6f59e0936c35051ef1f7d45a6611d3a7269a8d972c900805463f5f0bf6b2a75",
+   "crates/abep-types/tests/data/pyjson_vectors_v1.json": "8d7f76445f758714dd436cb208b243883b38bd95afd8e0e94156ecebed9d12ef",
+   "crates/abep-types/tests/pyjson_vectors.rs": "111021b67c74a663ec4b86baa768de21e19681b8774062d5ac90860a65951c24",
+   "crates/abep-provenance/Cargo.toml": "7e13a3433579dc2f097d16e614a7b941a91d0c4889cc34d2e8beabdda35a8bbf",
+   "crates/abep-provenance/build.rs": "7ab9c6440456ad997ce15816576814bc7c26c857af07045aaceca06921940e27",
+   "crates/abep-provenance/src/bid_guard/acceptance.rs": "187739f27b297b6183928a3f951dc68127708072cb915173539b4582118a6693",
+   "crates/abep-provenance/src/bid_guard.rs": "6f13a31a479deea38caafd78491be295c12f40a41dc39139a4af4e86a3553c7d",
+   "crates/abep-provenance/src/bin/abep-provenance-verify.rs": "99350805d9b01876b29b3e8cdcefe3c9f893c5bc0fd16d8f43b6327549d4cfbe",
+   "crates/abep-provenance/src/git.rs": "68fdacdf9514432ec890fcb153c6ba5d02fbb2e44e6accb0ff5e3d2b918ef69e",
+   "crates/abep-provenance/src/lib.rs": "0beec4429b0d6cc891389d6bc83584b693c7f1698700b03ffac4defe43919761",
+   "crates/abep-provenance/src/run_record.rs": "c36e400a38d411c6fdfad5cf26e962c4dbb074631b4d6e81d1688b3fec9a6a53",
+   "crates/abep-provenance/src/verifier/checks.rs": "8462b1704b9ca0091ade566217db5c77b34c3f074721e0d95c8b9b4e6ccfac1d",
+   "crates/abep-provenance/src/verifier/live_sources.rs": "bab4b17e1900dede61c23ce8bc0407ed021b2ab79458af2c3b6dd0747083d1b1",
+   "crates/abep-provenance/src/verifier/load.rs": "0b9ba7424fc2fe586218fffb66d3073a4ad26717e133364409fee2fcd10edab8",
+   "crates/abep-provenance/src/verifier/mod.rs": "7b7328197f8608d921aead7a0960611553a8b73e3d03bade01012c5cffdf0e25",
+   "crates/abep-provenance/src/verifier/pyliteral.rs": "6a5d3582cdbb41d96fea1cf0d87d8a8f6b1f45250a55892b784bc5c5a31a4537",
+   "crates/abep-provenance/src/verifier/pyvalue.rs": "acbd670dff4e9ea3b6cd5f893c9d001adc14d2883acfba7a66509fef878fc337",
+   "crates/abep-provenance/src/verifier/sha_map.rs": "d0589e3cc5269297407dc4f2f37930b362abe21a75481fb3430be9cc35812191",
+   "crates/abep-provenance/tests/bid_source_guard.rs": "e19ce7a19a6c49b6431a3f3d60260f1c435c4935d9c89c74b3403f94410328be",
+   "crates/abep-provenance/tests/config_manifest.rs": "2674591e5610b528764ec8094b8b1b8e5a94d6999889fd48394e1aaceedd4a34",
+   "crates/abep-provenance/tests/provenance_verifier.rs": "350e26de86bf844c8b4c78b7c6aaa2089613d09b989fdf2e463fe633df4b34f0",
+   "crates/abep-provenance/tests/run_record.rs": "2cd59402c0f52c0f6b8c47f23b991d70750b64f8c968f21fa4834010fd7c456e",
+   "crates/abep-subsystems/Cargo.toml": "803e38117df9dfa173a53028459fa3d8e665a354ed390e96bf46942227813582",
+   "crates/abep-subsystems/src/lib.rs": "17c67683558be66c115acbd6585cb93d66410153efb227a095d0041fb92a4754",
+   "crates/abep-subsystems/src/mass/eval.rs": "0d0334cb93dd44c0c2cdb1946908931435e5d6c7c353f96a8c8f45efeeb9a24e",
+   "crates/abep-subsystems/src/mass/mod.rs": "91ed1a46c9094ef6aab7368d01388d9439f299ad1f8942429212c87a94e00bd4",
+   "crates/abep-subsystems/src/mass/py.rs": "6632750f2c07294b9cfbabdb5124506f0c9a44a45f5233fc284246792ab79b57",
+   "crates/abep-subsystems/src/mass/pyfmt.rs": "3975403f94f2a362cde76ba7e52a285612536e49d055baf11b5675497bd0fd30",
+   "crates/abep-subsystems/src/mass/rules.rs": "201e5f6d6b5d64e2287b4d88e6b7114c94363cb99b912107ab6ed87d97ca9109",
+   "crates/abep-subsystems/src/mass/v5.rs": "6da56f8c0344c7f9ddf8e3c92787245296f077e28eef2ffdc3e0a14133be9d55",
+   "crates/abep-subsystems/src/mass/wet_mass.rs": "7e627e6f5a3b4c37f6bb20f2f4866b011418e2ff763aec4c0429142a015a2de4",
+   "crates/abep-subsystems/src/mass/xe.rs": "a0a46d509b653cdbfa6a5665aa4ef2aaf636d165279ea02166ddd625bbd28ca4",
+   "crates/abep-subsystems/src/bin/abep-mass.rs": "7f49cd96a0f11c6e04027d2454b423fc476e4e900ffb194d855a2491d06896d0"
+  }
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "platform": "Linux 6.18.44-fc-v70 x86_64",
+  "thread_env": {
+   "OMP_NUM_THREADS": null,
+   "OPENBLAS_NUM_THREADS": null
+  }
+ },
+ "harness_sha256": {
+  "scripts/rust_migration/parity_mass_v1.py": "d6084fa4bba9e3f5786331df490979bd6528224a87abf583a1a18ff656efc5e3",
+  "scripts/rust_migration/parity_common.py": "337b1c74847d21f92c17b5f59b34540d30b2aecefa2f20853e9bca1c4ee17e8c"
+ },
+ "scoring_execution": {
+  "scoring_master_seed": 255310965,
+  "utc": "2026-10-06T13:10:22+00:00",
+  "calls": 3590,
+  "case_file_sha256": "a37a7d0587ad26e4f3c838cfa97acc5a11f747cdbc43896ff8c40af33cfd3913",
+  "wall_s": 10.663
+ },
+ "per_test": {
+  "by_entry_point": {
+   "evaluate": {
+    "n": 501,
+    "pass": 501,
+    "fail": 0
+   },
+   "eval_line": {
+    "n": 116,
+    "pass": 116,
+    "fail": 0
+   },
+   "book_reserve_and_residual": {
+    "n": 622,
+    "pass": 622,
+    "fail": 0
+   },
+   "ground_supply": {
+    "n": 623,
+    "pass": 623,
+    "fail": 0
+   },
+   "case_split_loaded": {
+    "n": 1043,
+    "pass": 1043,
+    "fail": 0
+   },
+   "ignition_booking_s": {
+    "n": 685,
+    "pass": 685,
+    "fail": 0
+   }
+  },
+  "failures": [],
+  "passed": 3590,
+  "failed": 0
+ },
+ "aggregates": "NOT_APPLICABLE (no STATISTICAL entry point)",
+ "invariants": {
+  "determinism": {
+   "python_twice_identical": true,
+   "rust_twice_identical": true,
+   "note": "abep-mass eval evaluates the call list twice and exits 3 on a difference"
+  },
+  "INV-X02_rust": true,
+  "INV-X03_rust": true,
+  "INV-X04_rust": true,
+  "INV-X02_python": true,
+  "INV-X03_python": true,
+  "INV-X04_python": true
+ },
+ "conservation": {
+  "checked": 3611,
+  "violations": [],
+  "pass": true
+ },
+ "record_bytes_E1": "NOT_APPLICABLE",
+ "domain_and_error": {
+  "raised_python": 1531,
+  "raised_rust": 1531,
+  "classes_python": [
+   "BookingError",
+   "KeyError"
+  ],
+  "classes_rust": [
+   "BookingError",
+   "KeyError"
+  ]
+ },
+ "documented_divergence_observed": [],
+ "performance": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "PERF-X01": {
+   "python_s": 1.1796187270000473,
+   "rust_process_s": 5.689271571999939,
+   "note": "Rust: one `abep-mass eval` process evaluating the 500-call list twice incl. JSON I/O; Python: 500 in-process calls (incl. deep copies of the inputs)",
+   "speed_up_median_python_over_median_rust": 0.207
+  },
+  "machine": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+   "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+   "platform": "Linux 6.18.44-fc-v70 x86_64",
+   "thread_env": {
+    "OMP_NUM_THREADS": null,
+    "OPENBLAS_NUM_THREADS": null
+   }
+  }
+ },
+ "captured_reference_outputs": {
+  "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3/reference_outputs/",
+  "files": {
+   "python_outcomes_v1.json.gz": "7ae4350bf66a28b1d69a111fe4a8d63be1b547adf2140383da60b5bfc2e45700"
+  },
+  "uncompressed_sha256": "59b00396e3722d92f70dc31a3207716b99a0afb65a052a59a1ce0d2f50e8763c",
+  "entries": 3590,
+  "captured_at_python_commit": "1e2f66d72c01d3d0d413ff85c62de17f528d8f31",
+  "replay": "crates/abep-subsystems/tests/mass_captured_replay.rs (added after scoring; not a provenance source of the scored build)"
+ },
+ "campaign_history": [
+  {
+   "execution": "scoring",
+   "seed": 255310965,
+   "verdict": "ADMITTED",
+   "rust_commit": "966a2bf0953b1c3911a9e456cb306ac2e43531bc",
+   "utc": "2026-10-06T13:10:22+00:00"
+  }
+ ],
+ "development_runs": "development comparisons used development_master_seed 7109 and the registered deterministic vectors only; never scored",
+ "ledger_update_requested": [
+  {
+   "row": "C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3",
+   "partial_admission": {
+    "scope": "named function subset X1-X6: case_split_loaded, ignition_booking_s, book_reserve_and_residual, ground_supply, eval_line, evaluate",
+    "status": "ADMITTED",
+    "parity": "PARITY_PASS",
+    "rust_implementation": {
+     "crate": "abep-subsystems (abep_subsystems::mass::xe)",
+     "paths": [
+      "crates/abep-subsystems/src/mass/xe.rs"
+     ]
+    },
+    "contract": {
+     "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3/parity_prereg_v1.json",
+     "id": "PARITY-C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3-V1",
+     "sha256": "c3685cb3405474a77b8bd87f3afd9170ec0aa3d3deadebb0e89a611665e1723b"
+    },
+    "admission_evidence": "docs/rust_migration/contracts/C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3/parity_report_v1.json"
+   },
+   "not_in_scope": "build_doc / render_md / design_cases and the remaining builder functions stay PYTHON_REFERENCE: BLOCKED_GOVERNANCE_CONFLICT (principle-6 crate scan); v2 contract after the integrator / owner decision"
+  }
+ ],
+ "notes": [
+  "Function subset only: the record regeneration (build_doc / render_md) and design_cases are BLOCKED_GOVERNANCE_CONFLICT (contract component.out_of_scope): they emit verbatim C1 provenance / labelled-history strings that the crate-wide principle-6 scan of crates/abep-subsystems (tests/prereg_binding.rs, bound by the NP-THERMAL verification provenance) refuses; an integrator / owner decision is needed before a v2 contract can cover them.",
+  "INV-X02: the X1 split of the 2 / 5 / 10 kg cases reproduces the committed design_cases.loaded_split rows; INV-X03: evaluate on R-X01 reproduces every committed evaluation (all flight and ground totals REFUSED_TBD_INPUTS)."
+ ],
+ "meaning_of_ADMITTED": "A9.24 item 1: Rust (abep_subsystems::mass::xe) becomes authoritative for the Xe LOADED-case split, ignition / reserve / residual / ground-supply booking and ledger evaluation within the registered domain; NOT physics validation, not a Xe-load selection (no mission Xe load is frozen) and not a gate PASS",
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, budget record, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): AL-07 6.0 kg stays PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT / AFI-02-RA1_OPEN; no line becomes a CBE, measured mass or frozen flight truth",
+  "not a gate PASS: mass compliance stays INCOMPLETE_EVIDENCE / NOT_YET_CLOSED (DOES_NOT_CLOSE visible); absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE (RM-R31)",
+  "not a selection of the Xe load: 2 kg is a planning / reference case, 5 / 10 kg sensitivity cases (A9.26 sec. 5; A9.25 msg 8 sec. 7)"
+ ]
+}
