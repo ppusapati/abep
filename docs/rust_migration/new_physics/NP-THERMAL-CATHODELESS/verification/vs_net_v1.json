@@ -1,0 +1,5296 @@
+{
+  "schema": "abep_np_thermal_case_v1",
+  "case_id": "VS-NET-v1",
+  "case_class": "SYNTHETIC_VERIFICATION",
+  "topology_scope": "NP_THERMAL_NETWORK",
+  "configuration": "hall_icp_neutralizer",
+  "supply_mode": "AIR_PRIMARY",
+  "design_state_id": null,
+  "installed_variants": [],
+  "match_colocated": true,
+  "magnet_load_mode": "FIXED_POWER",
+  "anode_material_candidate_id": null,
+  "collector_material_candidate_id": null,
+  "bench_vacuum": null,
+  "solver": {
+    "mode": "STEADY",
+    "T_init_K": {
+      "H1_ANODE": 300.0,
+      "H1_BACKPLATE": 300.0,
+      "H1_COIL_IN": 300.0,
+      "H1_COIL_OUT": 300.0,
+      "H1_COIL_TRIM": 300.0,
+      "H1_POLE_IN": 300.0,
+      "H1_POLE_OUT": 300.0,
+      "H1_WALL_IN": 300.0,
+      "H1_WALL_OUT": 300.0,
+      "J_ISO": 300.0,
+      "N_ANTENNA": 300.0,
+      "N_COLLECTOR": 300.0,
+      "N_HOUSING": 300.0,
+      "N_MATCH": 300.0,
+      "N_MOUNT": 300.0,
+      "N_VESSEL": 300.0,
+      "R_HALL": 300.0,
+      "R_ICP": 300.0
+    },
+    "t_start_s": null,
+    "t_end_s": null,
+    "dt_s": null,
+    "orbit_period_s": null
+  },
+  "records": [
+    {
+      "id": "H1_ANODE.mass",
+      "quantity": "mass",
+      "value": 0.2,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_ANODE.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "T_K": [
+          1.0,
+          300.0,
+          1000.0,
+          3000.0
+        ],
+        "form": "PIECEWISE_LINEAR",
+        "values": [
+          300.0,
+          480.0,
+          560.0,
+          600.0
+        ]
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_ANODE.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_ANODE.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_ANODE.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_WALL_IN.mass",
+      "quantity": "mass",
+      "value": 0.15,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_WALL_IN.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "T0_K": 300.0,
+        "coefficients": [
+          800.0,
+          0.2
+        ],
+        "form": "POLYNOMIAL"
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_WALL_IN.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_WALL_IN.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_WALL_IN.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_WALL_OUT.mass",
+      "quantity": "mass",
+      "value": 0.25,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_WALL_OUT.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "T0_K": 300.0,
+        "coefficients": [
+          800.0,
+          0.2
+        ],
+        "form": "POLYNOMIAL"
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_WALL_OUT.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_WALL_OUT.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_WALL_OUT.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_POLE_IN.mass",
+      "quantity": "mass",
+      "value": 0.4,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_POLE_IN.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 450.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_POLE_IN.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_POLE_IN.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_POLE_IN.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_POLE_OUT.mass",
+      "quantity": "mass",
+      "value": 0.6,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_POLE_OUT.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 450.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_POLE_OUT.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_POLE_OUT.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_POLE_OUT.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_BACKPLATE.mass",
+      "quantity": "mass",
+      "value": 0.8,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_BACKPLATE.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 450.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_BACKPLATE.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_BACKPLATE.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_BACKPLATE.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_IN.mass",
+      "quantity": "mass",
+      "value": 0.1,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_IN.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 390.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_IN.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_IN.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_IN.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_OUT.mass",
+      "quantity": "mass",
+      "value": 0.2,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_OUT.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 390.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_OUT.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_OUT.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_OUT.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_TRIM.mass",
+      "quantity": "mass",
+      "value": 0.05,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_TRIM.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 390.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_TRIM.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_TRIM.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "H1_COIL_TRIM.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_VESSEL.mass",
+      "quantity": "mass",
+      "value": 0.1,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_VESSEL.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 750.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_VESSEL.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_VESSEL.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_VESSEL.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_ANTENNA.mass",
+      "quantity": "mass",
+      "value": 0.05,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_ANTENNA.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "T_K": [
+          1.0,
+          300.0,
+          1000.0,
+          3000.0
+        ],
+        "form": "PIECEWISE_LINEAR",
+        "values": [
+          300.0,
+          480.0,
+          560.0,
+          600.0
+        ]
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_ANTENNA.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_ANTENNA.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_ANTENNA.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_COLLECTOR.mass",
+      "quantity": "mass",
+      "value": 0.08,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_COLLECTOR.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 500.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_COLLECTOR.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_COLLECTOR.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_COLLECTOR.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_HOUSING.mass",
+      "quantity": "mass",
+      "value": 0.3,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_HOUSING.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 900.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_HOUSING.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_HOUSING.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_HOUSING.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_MATCH.mass",
+      "quantity": "mass",
+      "value": 0.1,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_MATCH.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 700.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_MATCH.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_MATCH.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_MATCH.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_MOUNT.mass",
+      "quantity": "mass",
+      "value": 0.3,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_MOUNT.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 900.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_MOUNT.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_MOUNT.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_MOUNT.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "R_HALL.mass",
+      "quantity": "mass",
+      "value": 5.0,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "R_HALL.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 900.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "R_HALL.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "R_HALL.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "R_HALL.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "R_ICP.mass",
+      "quantity": "mass",
+      "value": 0.3,
+      "units": "kg",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "R_ICP.cp",
+      "quantity": "specific_heat",
+      "value": {
+        "form": "CONSTANT",
+        "value": 900.0
+      },
+      "units": "J/(kg*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "R_ICP.V",
+      "quantity": "volume",
+      "value": 0.00001,
+      "units": "m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "R_ICP.As",
+      "quantity": "area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "R_ICP.kbiot",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 20.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_AN.area",
+      "quantity": "area",
+      "value": 0.01,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_AN.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.3
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_WI.area",
+      "quantity": "area",
+      "value": 0.012,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_WI.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.8
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_WO.area",
+      "quantity": "area",
+      "value": 0.016,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_WO.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.8
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_PI_F.area",
+      "quantity": "area",
+      "value": 0.004,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_PI_F.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.2
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_PO_F.area",
+      "quantity": "area",
+      "value": 0.008,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_PO_F.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.2
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_VE_IN.area",
+      "quantity": "area",
+      "value": 0.006,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_VE_IN.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.7
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_ANT.area",
+      "quantity": "area",
+      "value": 0.003,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_ANT.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.1
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_COL.area",
+      "quantity": "area",
+      "value": 0.004,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_COL.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.4
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_HO_IN.area",
+      "quantity": "area",
+      "value": 0.01,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_HO_IN.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.5
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_PO_X.area",
+      "quantity": "area",
+      "value": 0.03,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_PO_X.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.3
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_PO_X.alpha",
+      "quantity": "absorptance_solar",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.4
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_BP.area",
+      "quantity": "area",
+      "value": 0.02,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_BP.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.6
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_BP.alpha",
+      "quantity": "absorptance_solar",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.5
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_VE_X.area",
+      "quantity": "area",
+      "value": 0.005,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_VE_X.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.7
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_HO_X.area",
+      "quantity": "area",
+      "value": 0.02,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_HO_X.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.85
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_HO_X.alpha",
+      "quantity": "absorptance_solar",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.3
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_MO.area",
+      "quantity": "area",
+      "value": 0.01,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_MO.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.5
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_RH.area",
+      "quantity": "area",
+      "value": 0.15,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_RH.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.85
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_RH.alpha",
+      "quantity": "absorptance_solar",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.2
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_RI.area",
+      "quantity": "area",
+      "value": 0.08,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_RI.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.85
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_RI.alpha",
+      "quantity": "absorptance_solar",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.2
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_CO.area",
+      "quantity": "area",
+      "value": 0.004,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_CO.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.4
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "E_INT.vf",
+      "quantity": "view_factor_matrix",
+      "value": {
+        "view_factors": {
+          "S_AN": {
+            "FACILITY_INT": 0.21505376344086022,
+            "S_AN": 0.10752688172043011,
+            "S_ANT": 0.03225806451612903,
+            "S_COL": 0.043010752688172046,
+            "S_HO_IN": 0.10752688172043011,
+            "S_PI_F": 0.043010752688172046,
+            "S_PO_F": 0.08602150537634409,
+            "S_VE_IN": 0.06451612903225806,
+            "S_WI": 0.12903225806451613,
+            "S_WO": 0.17204301075268819
+          },
+          "S_ANT": {
+            "FACILITY_INT": 0.21505376344086022,
+            "S_AN": 0.10752688172043011,
+            "S_ANT": 0.03225806451612903,
+            "S_COL": 0.043010752688172046,
+            "S_HO_IN": 0.10752688172043011,
+            "S_PI_F": 0.043010752688172046,
+            "S_PO_F": 0.08602150537634409,
+            "S_VE_IN": 0.06451612903225806,
+            "S_WI": 0.12903225806451613,
+            "S_WO": 0.17204301075268819
+          },
+          "S_COL": {
+            "FACILITY_INT": 0.21505376344086022,
+            "S_AN": 0.10752688172043011,
+            "S_ANT": 0.03225806451612903,
+            "S_COL": 0.043010752688172046,
+            "S_HO_IN": 0.10752688172043011,
+            "S_PI_F": 0.043010752688172046,
+            "S_PO_F": 0.08602150537634409,
+            "S_VE_IN": 0.06451612903225806,
+            "S_WI": 0.12903225806451613,
+            "S_WO": 0.17204301075268819
+          },
+          "S_HO_IN": {
+            "FACILITY_INT": 0.21505376344086022,
+            "S_AN": 0.10752688172043011,
+            "S_ANT": 0.03225806451612903,
+            "S_COL": 0.043010752688172046,
+            "S_HO_IN": 0.10752688172043011,
+            "S_PI_F": 0.043010752688172046,
+            "S_PO_F": 0.08602150537634409,
+            "S_VE_IN": 0.06451612903225806,
+            "S_WI": 0.12903225806451613,
+            "S_WO": 0.17204301075268819
+          },
+          "S_PI_F": {
+            "FACILITY_INT": 0.21505376344086022,
+            "S_AN": 0.10752688172043011,
+            "S_ANT": 0.03225806451612903,
+            "S_COL": 0.043010752688172046,
+            "S_HO_IN": 0.10752688172043011,
+            "S_PI_F": 0.043010752688172046,
+            "S_PO_F": 0.08602150537634409,
+            "S_VE_IN": 0.06451612903225806,
+            "S_WI": 0.12903225806451613,
+            "S_WO": 0.17204301075268819
+          },
+          "S_PO_F": {
+            "FACILITY_INT": 0.21505376344086022,
+            "S_AN": 0.10752688172043011,
+            "S_ANT": 0.03225806451612903,
+            "S_COL": 0.043010752688172046,
+            "S_HO_IN": 0.10752688172043011,
+            "S_PI_F": 0.043010752688172046,
+            "S_PO_F": 0.08602150537634409,
+            "S_VE_IN": 0.06451612903225806,
+            "S_WI": 0.12903225806451613,
+            "S_WO": 0.17204301075268819
+          },
+          "S_VE_IN": {
+            "FACILITY_INT": 0.21505376344086022,
+            "S_AN": 0.10752688172043011,
+            "S_ANT": 0.03225806451612903,
+            "S_COL": 0.043010752688172046,
+            "S_HO_IN": 0.10752688172043011,
+            "S_PI_F": 0.043010752688172046,
+            "S_PO_F": 0.08602150537634409,
+            "S_VE_IN": 0.06451612903225806,
+            "S_WI": 0.12903225806451613,
+            "S_WO": 0.17204301075268819
+          },
+          "S_WI": {
+            "FACILITY_INT": 0.21505376344086022,
+            "S_AN": 0.10752688172043011,
+            "S_ANT": 0.03225806451612903,
+            "S_COL": 0.043010752688172046,
+            "S_HO_IN": 0.10752688172043011,
+            "S_PI_F": 0.043010752688172046,
+            "S_PO_F": 0.08602150537634409,
+            "S_VE_IN": 0.06451612903225806,
+            "S_WI": 0.12903225806451613,
+            "S_WO": 0.17204301075268819
+          },
+          "S_WO": {
+            "FACILITY_INT": 0.21505376344086022,
+            "S_AN": 0.10752688172043011,
+            "S_ANT": 0.03225806451612903,
+            "S_COL": 0.043010752688172046,
+            "S_HO_IN": 0.10752688172043011,
+            "S_PI_F": 0.043010752688172046,
+            "S_PO_F": 0.08602150537634409,
+            "S_VE_IN": 0.06451612903225806,
+            "S_WI": 0.12903225806451613,
+            "S_WO": 0.17204301075268819
+          }
+        }
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "FACILITY_INT.T",
+      "quantity": "temperature",
+      "value": 250.0,
+      "units": "K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "E_EXT.vf",
+      "quantity": "view_factor_matrix",
+      "value": {
+        "view_factors": {
+          "HOST_PANEL": {
+            "HOST_PANEL": 0.07047216349541931,
+            "SPACE_EXT": 0.704721634954193,
+            "S_BP": 0.014094432699083862,
+            "S_CO": 0.0028188865398167725,
+            "S_HO_X": 0.014094432699083862,
+            "S_MO": 0.007047216349541931,
+            "S_PO_X": 0.021141649048625793,
+            "S_RH": 0.10570824524312895,
+            "S_RI": 0.05637773079633545,
+            "S_VE_X": 0.0035236081747709656
+          },
+          "S_BP": {
+            "HOST_PANEL": 0.07047216349541931,
+            "SPACE_EXT": 0.704721634954193,
+            "S_BP": 0.014094432699083862,
+            "S_CO": 0.0028188865398167725,
+            "S_HO_X": 0.014094432699083862,
+            "S_MO": 0.007047216349541931,
+            "S_PO_X": 0.021141649048625793,
+            "S_RH": 0.10570824524312895,
+            "S_RI": 0.05637773079633545,
+            "S_VE_X": 0.0035236081747709656
+          },
+          "S_CO": {
+            "HOST_PANEL": 0.07047216349541931,
+            "SPACE_EXT": 0.704721634954193,
+            "S_BP": 0.014094432699083862,
+            "S_CO": 0.0028188865398167725,
+            "S_HO_X": 0.014094432699083862,
+            "S_MO": 0.007047216349541931,
+            "S_PO_X": 0.021141649048625793,
+            "S_RH": 0.10570824524312895,
+            "S_RI": 0.05637773079633545,
+            "S_VE_X": 0.0035236081747709656
+          },
+          "S_HO_X": {
+            "HOST_PANEL": 0.07047216349541931,
+            "SPACE_EXT": 0.704721634954193,
+            "S_BP": 0.014094432699083862,
+            "S_CO": 0.0028188865398167725,
+            "S_HO_X": 0.014094432699083862,
+            "S_MO": 0.007047216349541931,
+            "S_PO_X": 0.021141649048625793,
+            "S_RH": 0.10570824524312895,
+            "S_RI": 0.05637773079633545,
+            "S_VE_X": 0.0035236081747709656
+          },
+          "S_MO": {
+            "HOST_PANEL": 0.07047216349541931,
+            "SPACE_EXT": 0.704721634954193,
+            "S_BP": 0.014094432699083862,
+            "S_CO": 0.0028188865398167725,
+            "S_HO_X": 0.014094432699083862,
+            "S_MO": 0.007047216349541931,
+            "S_PO_X": 0.021141649048625793,
+            "S_RH": 0.10570824524312895,
+            "S_RI": 0.05637773079633545,
+            "S_VE_X": 0.0035236081747709656
+          },
+          "S_PO_X": {
+            "HOST_PANEL": 0.07047216349541931,
+            "SPACE_EXT": 0.704721634954193,
+            "S_BP": 0.014094432699083862,
+            "S_CO": 0.0028188865398167725,
+            "S_HO_X": 0.014094432699083862,
+            "S_MO": 0.007047216349541931,
+            "S_PO_X": 0.021141649048625793,
+            "S_RH": 0.10570824524312895,
+            "S_RI": 0.05637773079633545,
+            "S_VE_X": 0.0035236081747709656
+          },
+          "S_RH": {
+            "HOST_PANEL": 0.07047216349541931,
+            "SPACE_EXT": 0.704721634954193,
+            "S_BP": 0.014094432699083862,
+            "S_CO": 0.0028188865398167725,
+            "S_HO_X": 0.014094432699083862,
+            "S_MO": 0.007047216349541931,
+            "S_PO_X": 0.021141649048625793,
+            "S_RH": 0.10570824524312895,
+            "S_RI": 0.05637773079633545,
+            "S_VE_X": 0.0035236081747709656
+          },
+          "S_RI": {
+            "HOST_PANEL": 0.07047216349541931,
+            "SPACE_EXT": 0.704721634954193,
+            "S_BP": 0.014094432699083862,
+            "S_CO": 0.0028188865398167725,
+            "S_HO_X": 0.014094432699083862,
+            "S_MO": 0.007047216349541931,
+            "S_PO_X": 0.021141649048625793,
+            "S_RH": 0.10570824524312895,
+            "S_RI": 0.05637773079633545,
+            "S_VE_X": 0.0035236081747709656
+          },
+          "S_VE_X": {
+            "HOST_PANEL": 0.07047216349541931,
+            "SPACE_EXT": 0.704721634954193,
+            "S_BP": 0.014094432699083862,
+            "S_CO": 0.0028188865398167725,
+            "S_HO_X": 0.014094432699083862,
+            "S_MO": 0.007047216349541931,
+            "S_PO_X": 0.021141649048625793,
+            "S_RH": 0.10570824524312895,
+            "S_RI": 0.05637773079633545,
+            "S_VE_X": 0.0035236081747709656
+          }
+        }
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "SPACE_EXT.T",
+      "quantity": "temperature",
+      "value": 250.0,
+      "units": "K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "HOST_PANEL.area",
+      "quantity": "area",
+      "value": 0.1,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "HOST_PANEL.eps",
+      "quantity": "emittance_IR",
+      "value": {
+        "form": "CONSTANT",
+        "value": 0.8
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": true,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "HOST_PANEL.T",
+      "quantity": "temperature",
+      "value": 250.0,
+      "units": "K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "T_SC",
+      "quantity": "temperature",
+      "value": 250.0,
+      "units": "K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "T_FEED",
+      "quantity": "temperature",
+      "value": 250.0,
+      "units": "K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "T_PPU",
+      "quantity": "temperature",
+      "value": 250.0,
+      "units": "K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_AN_ISO.hc",
+      "quantity": "contact_conductance_coefficient",
+      "value": 2000.0,
+      "units": "W/(m^2*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_AN_ISO.Ac",
+      "quantity": "area",
+      "value": 0.0005,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_ISO_BP.G",
+      "quantity": "conductance",
+      "value": 0.8,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_WI_PI.A",
+      "quantity": "area",
+      "value": 0.0002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_WI_PI.L",
+      "quantity": "length",
+      "value": 0.01,
+      "units": "m",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_WI_PI.k",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "T_K": [
+          1.0,
+          400.0,
+          1200.0,
+          3000.0
+        ],
+        "form": "PIECEWISE_LINEAR",
+        "values": [
+          40.0,
+          30.0,
+          20.0,
+          18.0
+        ]
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_WO_PO.L",
+      "quantity": "length",
+      "value": 0.02,
+      "units": "m",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_WO_PO.ro",
+      "quantity": "length",
+      "value": 0.05,
+      "units": "m",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_WO_PO.ri",
+      "quantity": "length",
+      "value": 0.045,
+      "units": "m",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_WO_PO.k",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "T0_K": 300.0,
+        "coefficients": [
+          2.0,
+          0.0005
+        ],
+        "form": "POLYNOMIAL"
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_PI_BP.S",
+      "quantity": "shape_factor",
+      "value": 0.02,
+      "units": "m",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_PI_BP.k",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 60.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_PO_BP.G",
+      "quantity": "conductance",
+      "value": 1.5,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_CI_PI.hc",
+      "quantity": "contact_conductance_coefficient",
+      "value": 800.0,
+      "units": "W/(m^2*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_CI_PI.Ac",
+      "quantity": "area",
+      "value": 0.001,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_CO_PO.hc",
+      "quantity": "contact_conductance_coefficient",
+      "value": 800.0,
+      "units": "W/(m^2*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_CO_PO.Ac",
+      "quantity": "area",
+      "value": 0.0015,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_CT_PO.G",
+      "quantity": "conductance",
+      "value": 0.4,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_BP_RH.G",
+      "quantity": "conductance",
+      "value": 0.2,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_BP_SC.G",
+      "quantity": "conductance",
+      "value": 0.3,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_BP_FEED.G",
+      "quantity": "conductance",
+      "value": 0.05,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_VE_HO.hc",
+      "quantity": "contact_conductance_coefficient",
+      "value": 500.0,
+      "units": "W/(m^2*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_VE_HO.Ac",
+      "quantity": "area",
+      "value": 0.001,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_ANT_HO.G",
+      "quantity": "conductance",
+      "value": 0.3,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_ANT_PPU.G",
+      "quantity": "conductance",
+      "value": 0.05,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_COL_HO.G",
+      "quantity": "conductance",
+      "value": 0.4,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_HO_MO.A",
+      "quantity": "area",
+      "value": 0.0001,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_HO_MO.L",
+      "quantity": "length",
+      "value": 0.02,
+      "units": "m",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_HO_MO.k",
+      "quantity": "thermal_conductivity",
+      "value": {
+        "form": "CONSTANT",
+        "value": 150.0
+      },
+      "units": "W/(m*K)",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 1.0,
+        "T_max_K": 3000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_MA_MO.G",
+      "quantity": "conductance",
+      "value": 0.5,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_MO_BP.G",
+      "quantity": "conductance",
+      "value": 0.2,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_HO_RI.G",
+      "quantity": "conductance",
+      "value": 1.0,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_VE_FEED.G",
+      "quantity": "conductance",
+      "value": 0.02,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "L_MO_SC.G",
+      "quantity": "conductance",
+      "value": 0.1,
+      "units": "W/K",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": 0.0,
+        "T_max_K": 10000.0,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "F_SC_RI.q",
+      "quantity": "power",
+      "value": 1.5,
+      "units": "W",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "ENV.S",
+      "quantity": "solar_flux",
+      "value": 1300.0,
+      "units": "W/m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "ENV.one",
+      "quantity": "view_factor_env",
+      "value": 1.0,
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "ENV.half",
+      "quantity": "view_factor_env",
+      "value": 0.5,
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "ENV.nu",
+      "quantity": "illumination",
+      "value": 1.0,
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "ENV.albedo",
+      "quantity": "albedo",
+      "value": 0.3,
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "ENV.olr",
+      "quantity": "olr_flux",
+      "value": 230.0,
+      "units": "W/m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "ENV.rho",
+      "quantity": "density",
+      "value": 4e-10,
+      "units": "kg/m^3",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "ENV.V",
+      "quantity": "velocity",
+      "value": 7800.0,
+      "units": "m/s",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "ENV.alphaE",
+      "quantity": "energy_accommodation",
+      "value": 1.0,
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_RH.Aram",
+      "quantity": "projected_area",
+      "value": 0.0,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_RI.Aram",
+      "quantity": "projected_area",
+      "value": 0.0,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_HO_X.Aram",
+      "quantity": "projected_area",
+      "value": 0.002,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_BP.Aram",
+      "quantity": "projected_area",
+      "value": 0.0,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "S_PO_X.Aram",
+      "quantity": "projected_area",
+      "value": 0.004,
+      "units": "m^2",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "R_ICP.Qtc",
+      "quantity": "power",
+      "value": 2.0,
+      "units": "W",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "N_HOUSING.Qtc",
+      "quantity": "power",
+      "value": 1.0,
+      "units": "W",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "PART.pole",
+      "quantity": "partition",
+      "value": {
+        "weights": {
+          "H1_POLE_IN": 0.4,
+          "H1_POLE_OUT": 0.6
+        }
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "PART.plume",
+      "quantity": "partition",
+      "value": {
+        "weights": {
+          "N_COLLECTOR": 0.3,
+          "N_HOUSING": 0.2,
+          "N_MOUNT": 0.2,
+          "N_VESSEL": 0.3
+        }
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "PART.ohmic",
+      "quantity": "partition",
+      "value": {
+        "weights": {
+          "N_ANTENNA": 0.7,
+          "N_COLLECTOR": 0.2,
+          "N_HOUSING": 0.1
+        }
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    },
+    {
+      "id": "PART.icp_rad",
+      "quantity": "partition",
+      "value": {
+        "weights": {
+          "EXPORT": 0.2,
+          "H1_POLE_IN": 0.1,
+          "H1_POLE_OUT": 0.1,
+          "N_ANTENNA": 0.1,
+          "N_COLLECTOR": 0.1,
+          "N_HOUSING": 0.1,
+          "N_VESSEL": 0.3
+        }
+      },
+      "units": "1",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": {
+        "T_min_K": null,
+        "T_max_K": null,
+        "gray_in_band": null,
+        "text": "synthetic verification domain"
+      },
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "status": "REGISTERED"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "H1_ANODE",
+      "group": "HALL_BODY",
+      "represents": "VS-NET synthetic node",
+      "presence": "REQUIRED",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "H1_ANODE.part",
+          "material_record_id": "H1_ANODE.cp",
+          "mass_kg_record_id": "H1_ANODE.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_AN",
+          "area_record_id": "S_AN.area",
+          "eps_IR_record_id": "S_AN.eps",
+          "alpha_solar_record_id": null,
+          "enclosure_id": "E_INT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "H1_ANODE.V",
+        "conduction_area_record_id": "H1_ANODE.As",
+        "k_record_id": "H1_ANODE.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_hall_anode_W",
+        "Q_hall_plasma_radiation_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "H1_WALL_IN",
+      "group": "HALL_BODY",
+      "represents": "VS-NET synthetic node",
+      "presence": "REQUIRED",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "H1_WALL_IN.part",
+          "material_record_id": "H1_WALL_IN.cp",
+          "mass_kg_record_id": "H1_WALL_IN.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_WI",
+          "area_record_id": "S_WI.area",
+          "eps_IR_record_id": "S_WI.eps",
+          "alpha_solar_record_id": null,
+          "enclosure_id": "E_INT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "H1_WALL_IN.V",
+        "conduction_area_record_id": "H1_WALL_IN.As",
+        "k_record_id": "H1_WALL_IN.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_hall_wall_inner_W",
+        "Q_hall_plasma_radiation_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "H1_WALL_OUT",
+      "group": "HALL_BODY",
+      "represents": "VS-NET synthetic node",
+      "presence": "REQUIRED",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "H1_WALL_OUT.part",
+          "material_record_id": "H1_WALL_OUT.cp",
+          "mass_kg_record_id": "H1_WALL_OUT.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_WO",
+          "area_record_id": "S_WO.area",
+          "eps_IR_record_id": "S_WO.eps",
+          "alpha_solar_record_id": null,
+          "enclosure_id": "E_INT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "H1_WALL_OUT.V",
+        "conduction_area_record_id": "H1_WALL_OUT.As",
+        "k_record_id": "H1_WALL_OUT.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_hall_wall_outer_W",
+        "Q_hall_plasma_radiation_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "H1_POLE_IN",
+      "group": "HALL_BODY",
+      "represents": "VS-NET synthetic node",
+      "presence": "REQUIRED",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "H1_POLE_IN.part",
+          "material_record_id": "H1_POLE_IN.cp",
+          "mass_kg_record_id": "H1_POLE_IN.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_PI_F",
+          "area_record_id": "S_PI_F.area",
+          "eps_IR_record_id": "S_PI_F.eps",
+          "alpha_solar_record_id": null,
+          "enclosure_id": "E_INT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "H1_POLE_IN.V",
+        "conduction_area_record_id": "H1_POLE_IN.As",
+        "k_record_id": "H1_POLE_IN.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_hall_pole_W",
+        "Q_hall_plasma_radiation_W",
+        "Q_icp_radiation_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "H1_POLE_OUT",
+      "group": "HALL_BODY",
+      "represents": "VS-NET synthetic node",
+      "presence": "REQUIRED",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "H1_POLE_OUT.part",
+          "material_record_id": "H1_POLE_OUT.cp",
+          "mass_kg_record_id": "H1_POLE_OUT.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_PO_F",
+          "area_record_id": "S_PO_F.area",
+          "eps_IR_record_id": "S_PO_F.eps",
+          "alpha_solar_record_id": null,
+          "enclosure_id": "E_INT",
+          "external": true
+        },
+        {
+          "surface_id": "S_PO_X",
+          "area_record_id": "S_PO_X.area",
+          "eps_IR_record_id": "S_PO_X.eps",
+          "alpha_solar_record_id": "S_PO_X.alpha",
+          "enclosure_id": "E_EXT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "H1_POLE_OUT.V",
+        "conduction_area_record_id": "H1_POLE_OUT.As",
+        "k_record_id": "H1_POLE_OUT.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_hall_pole_W",
+        "Q_hall_plasma_radiation_W",
+        "Q_icp_radiation_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "H1_BACKPLATE",
+      "group": "HALL_BODY",
+      "represents": "VS-NET synthetic node",
+      "presence": "REQUIRED",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "H1_BACKPLATE.part",
+          "material_record_id": "H1_BACKPLATE.cp",
+          "mass_kg_record_id": "H1_BACKPLATE.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_BP",
+          "area_record_id": "S_BP.area",
+          "eps_IR_record_id": "S_BP.eps",
+          "alpha_solar_record_id": "S_BP.alpha",
+          "enclosure_id": "E_EXT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "H1_BACKPLATE.V",
+        "conduction_area_record_id": "H1_BACKPLATE.As",
+        "k_record_id": "H1_BACKPLATE.kbiot"
+      },
+      "receives_interface_keys": [],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "H1_COIL_IN",
+      "group": "HALL_MAGNET",
+      "represents": "VS-NET synthetic node",
+      "presence": "REQUIRED",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "H1_COIL_IN.part",
+          "material_record_id": "H1_COIL_IN.cp",
+          "mass_kg_record_id": "H1_COIL_IN.mass"
+        }
+      ],
+      "surfaces": [],
+      "biot_geometry": {
+        "volume_record_id": "H1_COIL_IN.V",
+        "conduction_area_record_id": "H1_COIL_IN.As",
+        "k_record_id": "H1_COIL_IN.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_hall_coil_inner_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "H1_COIL_OUT",
+      "group": "HALL_MAGNET",
+      "represents": "VS-NET synthetic node",
+      "presence": "REQUIRED",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "H1_COIL_OUT.part",
+          "material_record_id": "H1_COIL_OUT.cp",
+          "mass_kg_record_id": "H1_COIL_OUT.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_CO",
+          "area_record_id": "S_CO.area",
+          "eps_IR_record_id": "S_CO.eps",
+          "alpha_solar_record_id": null,
+          "enclosure_id": "E_EXT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "H1_COIL_OUT.V",
+        "conduction_area_record_id": "H1_COIL_OUT.As",
+        "k_record_id": "H1_COIL_OUT.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_hall_coil_outer_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "H1_COIL_TRIM",
+      "group": "HALL_MAGNET",
+      "represents": "VS-NET synthetic node",
+      "presence": "CONDITIONAL",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "H1_COIL_TRIM.part",
+          "material_record_id": "H1_COIL_TRIM.cp",
+          "mass_kg_record_id": "H1_COIL_TRIM.mass"
+        }
+      ],
+      "surfaces": [],
+      "biot_geometry": {
+        "volume_record_id": "H1_COIL_TRIM.V",
+        "conduction_area_record_id": "H1_COIL_TRIM.As",
+        "k_record_id": "H1_COIL_TRIM.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_hall_coil_trim_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "N_VESSEL",
+      "group": "ICP_NEUTRALIZER",
+      "represents": "VS-NET synthetic node",
+      "presence": "REQUIRED",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "N_VESSEL.part",
+          "material_record_id": "N_VESSEL.cp",
+          "mass_kg_record_id": "N_VESSEL.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_VE_IN",
+          "area_record_id": "S_VE_IN.area",
+          "eps_IR_record_id": "S_VE_IN.eps",
+          "alpha_solar_record_id": null,
+          "enclosure_id": "E_INT",
+          "external": true
+        },
+        {
+          "surface_id": "S_VE_X",
+          "area_record_id": "S_VE_X.area",
+          "eps_IR_record_id": "S_VE_X.eps",
+          "alpha_solar_record_id": null,
+          "enclosure_id": "E_EXT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "N_VESSEL.V",
+        "conduction_area_record_id": "N_VESSEL.As",
+        "k_record_id": "N_VESSEL.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_icp_plasma_wall_W",
+        "Q_icp_radiation_W",
+        "Q_hall_plume_to_icp_W",
+        "Q_hall_plasma_radiation_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "N_ANTENNA",
+      "group": "ICP_NEUTRALIZER",
+      "represents": "VS-NET synthetic node",
+      "presence": "REQUIRED",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "N_ANTENNA.part",
+          "material_record_id": "N_ANTENNA.cp",
+          "mass_kg_record_id": "N_ANTENNA.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_ANT",
+          "area_record_id": "S_ANT.area",
+          "eps_IR_record_id": "S_ANT.eps",
+          "alpha_solar_record_id": null,
+          "enclosure_id": "E_INT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "N_ANTENNA.V",
+        "conduction_area_record_id": "N_ANTENNA.As",
+        "k_record_id": "N_ANTENNA.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_icp_coil_ohmic_W",
+        "Q_icp_plasma_wall_W",
+        "Q_icp_radiation_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "N_COLLECTOR",
+      "group": "ICP_NEUTRALIZER",
+      "represents": "VS-NET synthetic node",
+      "presence": "CONDITIONAL",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "N_COLLECTOR.part",
+          "material_record_id": "N_COLLECTOR.cp",
+          "mass_kg_record_id": "N_COLLECTOR.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_COL",
+          "area_record_id": "S_COL.area",
+          "eps_IR_record_id": "S_COL.eps",
+          "alpha_solar_record_id": null,
+          "enclosure_id": "E_INT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "N_COLLECTOR.V",
+        "conduction_area_record_id": "N_COLLECTOR.As",
+        "k_record_id": "N_COLLECTOR.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_icp_plasma_wall_W",
+        "Q_icp_coil_ohmic_W",
+        "Q_icp_radiation_W",
+        "Q_hall_return_to_icp_W",
+        "Q_hall_plume_to_icp_W",
+        "Q_hall_plasma_radiation_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "N_HOUSING",
+      "group": "ICP_NEUTRALIZER",
+      "represents": "VS-NET synthetic node",
+      "presence": "CONDITIONAL",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "N_HOUSING.part",
+          "material_record_id": "N_HOUSING.cp",
+          "mass_kg_record_id": "N_HOUSING.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_HO_IN",
+          "area_record_id": "S_HO_IN.area",
+          "eps_IR_record_id": "S_HO_IN.eps",
+          "alpha_solar_record_id": null,
+          "enclosure_id": "E_INT",
+          "external": true
+        },
+        {
+          "surface_id": "S_HO_X",
+          "area_record_id": "S_HO_X.area",
+          "eps_IR_record_id": "S_HO_X.eps",
+          "alpha_solar_record_id": "S_HO_X.alpha",
+          "enclosure_id": "E_EXT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "N_HOUSING.V",
+        "conduction_area_record_id": "N_HOUSING.As",
+        "k_record_id": "N_HOUSING.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_icp_coil_ohmic_W",
+        "Q_icp_plasma_wall_W",
+        "Q_icp_radiation_W",
+        "Q_hall_plume_to_icp_W",
+        "Q_hall_plasma_radiation_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "N_MATCH",
+      "group": "ICP_NEUTRALIZER",
+      "represents": "VS-NET synthetic node",
+      "presence": "CONDITIONAL",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "N_MATCH.part",
+          "material_record_id": "N_MATCH.cp",
+          "mass_kg_record_id": "N_MATCH.mass"
+        }
+      ],
+      "surfaces": [],
+      "biot_geometry": {
+        "volume_record_id": "N_MATCH.V",
+        "conduction_area_record_id": "N_MATCH.As",
+        "k_record_id": "N_MATCH.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_icp_match_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "N_MOUNT",
+      "group": "ICP_NEUTRALIZER",
+      "represents": "VS-NET synthetic node",
+      "presence": "REQUIRED",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "N_MOUNT.part",
+          "material_record_id": "N_MOUNT.cp",
+          "mass_kg_record_id": "N_MOUNT.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_MO",
+          "area_record_id": "S_MO.area",
+          "eps_IR_record_id": "S_MO.eps",
+          "alpha_solar_record_id": null,
+          "enclosure_id": "E_EXT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "N_MOUNT.V",
+        "conduction_area_record_id": "N_MOUNT.As",
+        "k_record_id": "N_MOUNT.kbiot"
+      },
+      "receives_interface_keys": [
+        "Q_hall_plume_to_icp_W"
+      ],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "R_HALL",
+      "group": "RADIATOR",
+      "represents": "VS-NET synthetic node",
+      "presence": "CONDITIONAL",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "R_HALL.part",
+          "material_record_id": "R_HALL.cp",
+          "mass_kg_record_id": "R_HALL.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_RH",
+          "area_record_id": "S_RH.area",
+          "eps_IR_record_id": "S_RH.eps",
+          "alpha_solar_record_id": "S_RH.alpha",
+          "enclosure_id": "E_EXT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "R_HALL.V",
+        "conduction_area_record_id": "R_HALL.As",
+        "k_record_id": "R_HALL.kbiot"
+      },
+      "receives_interface_keys": [],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "R_ICP",
+      "group": "RADIATOR",
+      "represents": "VS-NET synthetic node",
+      "presence": "CONDITIONAL",
+      "role": "REGISTERED",
+      "refines": null,
+      "thermal_mass": "LUMPED_C_OF_T",
+      "parts": [
+        {
+          "part_id": "R_ICP.part",
+          "material_record_id": "R_ICP.cp",
+          "mass_kg_record_id": "R_ICP.mass"
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "S_RI",
+          "area_record_id": "S_RI.area",
+          "eps_IR_record_id": "S_RI.eps",
+          "alpha_solar_record_id": "S_RI.alpha",
+          "enclosure_id": "E_EXT",
+          "external": true
+        }
+      ],
+      "biot_geometry": {
+        "volume_record_id": "R_ICP.V",
+        "conduction_area_record_id": "R_ICP.As",
+        "k_record_id": "R_ICP.kbiot"
+      },
+      "receives_interface_keys": [],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    },
+    {
+      "id": "J_ISO",
+      "group": "HALL_BODY",
+      "represents": "massless series junction of the anode isolator stack (E-04)",
+      "presence": "CONDITIONAL",
+      "role": "MASSLESS_SERIES_JUNCTION",
+      "refines": null,
+      "thermal_mass": "MASSLESS_SERIES",
+      "parts": [],
+      "surfaces": [],
+      "biot_geometry": null,
+      "receives_interface_keys": [],
+      "case_classes_allowed": [
+        "SYNTHETIC_VERIFICATION",
+        "PARAMETRIC",
+        "BENCH_REPLICA",
+        "FLIGHT_CONDITIONAL"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "id": "L_AN_ISO",
+      "type": "CONTACT",
+      "a": {
+        "node": "H1_ANODE",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "J_ISO",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": "L_AN_ISO.hc",
+      "contact_area_record_id": "L_AN_ISO.Ac",
+      "G_record_id": null
+    },
+    {
+      "id": "L_ISO_BP",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "J_ISO",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "H1_BACKPLATE",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_ISO_BP.G"
+    },
+    {
+      "id": "L_WI_PI",
+      "type": "CONDUCTION",
+      "a": {
+        "node": "H1_WALL_IN",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "H1_POLE_IN",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": "L_WI_PI.k",
+      "shape": {
+        "kind": "SLAB",
+        "area_record_id": "L_WI_PI.A",
+        "length_record_id": "L_WI_PI.L",
+        "r_outer_record_id": null,
+        "r_inner_record_id": null,
+        "S_record_id": null
+      },
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": null
+    },
+    {
+      "id": "L_WO_PO",
+      "type": "CONDUCTION",
+      "a": {
+        "node": "H1_WALL_OUT",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "H1_POLE_OUT",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": "L_WO_PO.k",
+      "shape": {
+        "kind": "CYLINDRICAL_SHELL",
+        "area_record_id": null,
+        "length_record_id": "L_WO_PO.L",
+        "r_outer_record_id": "L_WO_PO.ro",
+        "r_inner_record_id": "L_WO_PO.ri",
+        "S_record_id": null
+      },
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": null
+    },
+    {
+      "id": "L_PI_BP",
+      "type": "CONDUCTION",
+      "a": {
+        "node": "H1_POLE_IN",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "H1_BACKPLATE",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": "L_PI_BP.k",
+      "shape": {
+        "kind": "SHAPE_FACTOR",
+        "area_record_id": null,
+        "length_record_id": null,
+        "r_outer_record_id": null,
+        "r_inner_record_id": null,
+        "S_record_id": "L_PI_BP.S"
+      },
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": null
+    },
+    {
+      "id": "L_PO_BP",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "H1_POLE_OUT",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "H1_BACKPLATE",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_PO_BP.G"
+    },
+    {
+      "id": "L_CI_PI",
+      "type": "CONTACT",
+      "a": {
+        "node": "H1_COIL_IN",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "H1_POLE_IN",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": "L_CI_PI.hc",
+      "contact_area_record_id": "L_CI_PI.Ac",
+      "G_record_id": null
+    },
+    {
+      "id": "L_CO_PO",
+      "type": "CONTACT",
+      "a": {
+        "node": "H1_COIL_OUT",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "H1_POLE_OUT",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": "L_CO_PO.hc",
+      "contact_area_record_id": "L_CO_PO.Ac",
+      "G_record_id": null
+    },
+    {
+      "id": "L_CT_PO",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "H1_COIL_TRIM",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "H1_POLE_OUT",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_CT_PO.G"
+    },
+    {
+      "id": "L_BP_RH",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "H1_BACKPLATE",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "R_HALL",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_BP_RH.G"
+    },
+    {
+      "id": "L_BP_SC",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "H1_BACKPLATE",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": null,
+        "boundary": "B_SC",
+        "temperature_record_id": "T_SC"
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_BP_SC.G"
+    },
+    {
+      "id": "L_BP_FEED",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "H1_BACKPLATE",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": null,
+        "boundary": "B_FEED",
+        "temperature_record_id": "T_FEED"
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_BP_FEED.G"
+    },
+    {
+      "id": "L_VE_HO",
+      "type": "CONTACT",
+      "a": {
+        "node": "N_VESSEL",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "N_HOUSING",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": "L_VE_HO.hc",
+      "contact_area_record_id": "L_VE_HO.Ac",
+      "G_record_id": null
+    },
+    {
+      "id": "L_ANT_HO",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "N_ANTENNA",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "N_HOUSING",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_ANT_HO.G"
+    },
+    {
+      "id": "L_ANT_PPU",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "N_ANTENNA",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": null,
+        "boundary": "B_PPU_RF",
+        "temperature_record_id": "T_PPU"
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_ANT_PPU.G"
+    },
+    {
+      "id": "L_COL_HO",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "N_COLLECTOR",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "N_HOUSING",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_COL_HO.G"
+    },
+    {
+      "id": "L_HO_MO",
+      "type": "CONDUCTION",
+      "a": {
+        "node": "N_HOUSING",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "N_MOUNT",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": "L_HO_MO.k",
+      "shape": {
+        "kind": "SLAB",
+        "area_record_id": "L_HO_MO.A",
+        "length_record_id": "L_HO_MO.L",
+        "r_outer_record_id": null,
+        "r_inner_record_id": null,
+        "S_record_id": null
+      },
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": null
+    },
+    {
+      "id": "L_MA_MO",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "N_MATCH",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "N_MOUNT",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_MA_MO.G"
+    },
+    {
+      "id": "L_MO_BP",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "N_MOUNT",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "H1_BACKPLATE",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_MO_BP.G"
+    },
+    {
+      "id": "L_HO_RI",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "N_HOUSING",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": "R_ICP",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_HO_RI.G"
+    },
+    {
+      "id": "L_VE_FEED",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "N_VESSEL",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": null,
+        "boundary": "B_FEED",
+        "temperature_record_id": "T_FEED"
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_VE_FEED.G"
+    },
+    {
+      "id": "L_MO_SC",
+      "type": "LUMPED_G",
+      "a": {
+        "node": "N_MOUNT",
+        "boundary": null,
+        "temperature_record_id": null
+      },
+      "b": {
+        "node": null,
+        "boundary": "B_SC",
+        "temperature_record_id": "T_SC"
+      },
+      "k_record_id": null,
+      "shape": null,
+      "h_c_record_id": null,
+      "contact_area_record_id": null,
+      "G_record_id": "L_MO_SC.G"
+    }
+  ],
+  "enclosures": [
+    {
+      "id": "E_INT",
+      "view_factor_record_id": "E_INT.vf",
+      "sinks": [
+        {
+          "surface_id": "FACILITY_INT",
+          "kind": "B_FACILITY",
+          "temperature_record_id": "FACILITY_INT.T"
+        }
+      ],
+      "host_surfaces": []
+    },
+    {
+      "id": "E_EXT",
+      "view_factor_record_id": "E_EXT.vf",
+      "sinks": [
+        {
+          "surface_id": "SPACE_EXT",
+          "kind": "SPACE",
+          "temperature_record_id": "SPACE_EXT.T"
+        }
+      ],
+      "host_surfaces": [
+        {
+          "surface_id": "HOST_PANEL",
+          "area_record_id": "HOST_PANEL.area",
+          "eps_IR_record_id": "HOST_PANEL.eps",
+          "temperature_record_id": "HOST_PANEL.T"
+        }
+      ]
+    }
+  ],
+  "boundary_fluxes": [
+    {
+      "id": "F_SC_RI",
+      "boundary": "B_SC",
+      "node": "R_ICP",
+      "q_record_id": "F_SC_RI.q"
+    }
+  ],
+  "environment": [
+    {
+      "surface_id": "S_RH",
+      "solar_flux_record_id": "ENV.S",
+      "F_sun_record_id": "ENV.one",
+      "illumination_record_id": "ENV.nu",
+      "albedo_record_id": "ENV.albedo",
+      "F_alb_record_id": "ENV.half",
+      "olr_flux_record_id": "ENV.olr",
+      "F_earth_record_id": "ENV.half",
+      "rho_record_id": "ENV.rho",
+      "V_rel_record_id": "ENV.V",
+      "alpha_E_record_id": "ENV.alphaE",
+      "A_ram_record_id": "S_RH.Aram"
+    },
+    {
+      "surface_id": "S_RI",
+      "solar_flux_record_id": "ENV.S",
+      "F_sun_record_id": "ENV.half",
+      "illumination_record_id": "ENV.nu",
+      "albedo_record_id": "ENV.albedo",
+      "F_alb_record_id": "ENV.half",
+      "olr_flux_record_id": "ENV.olr",
+      "F_earth_record_id": "ENV.half",
+      "rho_record_id": "ENV.rho",
+      "V_rel_record_id": "ENV.V",
+      "alpha_E_record_id": "ENV.alphaE",
+      "A_ram_record_id": "S_RI.Aram"
+    },
+    {
+      "surface_id": "S_HO_X",
+      "solar_flux_record_id": "ENV.S",
+      "F_sun_record_id": "ENV.half",
+      "illumination_record_id": "ENV.nu",
+      "albedo_record_id": "ENV.albedo",
+      "F_alb_record_id": "ENV.half",
+      "olr_flux_record_id": "ENV.olr",
+      "F_earth_record_id": "ENV.half",
+      "rho_record_id": "ENV.rho",
+      "V_rel_record_id": "ENV.V",
+      "alpha_E_record_id": "ENV.alphaE",
+      "A_ram_record_id": "S_HO_X.Aram"
+    },
+    {
+      "surface_id": "S_BP",
+      "solar_flux_record_id": "ENV.S",
+      "F_sun_record_id": "ENV.half",
+      "illumination_record_id": "ENV.nu",
+      "albedo_record_id": "ENV.albedo",
+      "F_alb_record_id": "ENV.half",
+      "olr_flux_record_id": "ENV.olr",
+      "F_earth_record_id": "ENV.half",
+      "rho_record_id": "ENV.rho",
+      "V_rel_record_id": "ENV.V",
+      "alpha_E_record_id": "ENV.alphaE",
+      "A_ram_record_id": "S_BP.Aram"
+    },
+    {
+      "surface_id": "S_PO_X",
+      "solar_flux_record_id": "ENV.S",
+      "F_sun_record_id": "ENV.one",
+      "illumination_record_id": "ENV.nu",
+      "albedo_record_id": "ENV.albedo",
+      "F_alb_record_id": "ENV.half",
+      "olr_flux_record_id": "ENV.olr",
+      "F_earth_record_id": "ENV.half",
+      "rho_record_id": "ENV.rho",
+      "V_rel_record_id": "ENV.V",
+      "alpha_E_record_id": "ENV.alphaE",
+      "A_ram_record_id": "S_PO_X.Aram"
+    }
+  ],
+  "thermal_control": [
+    {
+      "node": "R_ICP",
+      "record_id": "R_ICP.Qtc"
+    },
+    {
+      "node": "N_HOUSING",
+      "record_id": "N_HOUSING.Qtc"
+    }
+  ],
+  "coil_resistance_relations": {},
+  "interfaces": {
+    "IF-HALL-THERMAL-v1": {
+      "interface_id": "IF-HALL-THERMAL-v1",
+      "interface_version": "v1",
+      "producer_id": "SYNTHETIC_HALL_PRODUCER",
+      "producer_version": "synthetic-1",
+      "producer_prereg_sha256": "e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c",
+      "case_id": "VS-NET-v1",
+      "case_class": "SYNTHETIC_VERIFICATION",
+      "supply_mode": "AIR_PRIMARY",
+      "design_state_id": null,
+      "operating_point_id": "VS-NET-OP-1",
+      "time_basis": {
+        "kind": "STEADY",
+        "breakpoints_s": null
+      },
+      "keys": {
+        "P_hall_discharge_W": {
+          "value": 600.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "P_hall_jet_W": {
+          "value": 300.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_hall_anode_W": {
+          "value": 60.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_hall_coil_inner_W": {
+          "value": 6.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_hall_coil_outer_W": {
+          "value": 9.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_hall_coil_trim_W": {
+          "value": 2.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_hall_plasma_radiation_W": {
+          "value": 20.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_hall_plume_to_icp_W": {
+          "value": 5.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_hall_pole_W": {
+          "value": 10.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_hall_return_to_icp_W": {
+          "value": 8.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_hall_wall_inner_W": {
+          "value": 40.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_hall_wall_outer_W": {
+          "value": 50.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        }
+      },
+      "partitions": {
+        "Q_hall_plasma_radiation_W": {
+          "EXPORT": 0.25,
+          "H1_ANODE": 0.1,
+          "H1_POLE_IN": 0.05,
+          "H1_POLE_OUT": 0.05,
+          "H1_WALL_IN": 0.2,
+          "H1_WALL_OUT": 0.2,
+          "N_COLLECTOR": 0.05,
+          "N_HOUSING": 0.05,
+          "N_VESSEL": 0.05
+        }
+      },
+      "rf_powered_only": null
+    },
+    "IF-ICP-THERMAL-v1": {
+      "interface_id": "IF-ICP-THERMAL-v1",
+      "interface_version": "v1",
+      "producer_id": "SYNTHETIC_ICP_PRODUCER",
+      "producer_version": "synthetic-1",
+      "producer_prereg_sha256": "e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c",
+      "case_id": "VS-NET-v1",
+      "case_class": "SYNTHETIC_VERIFICATION",
+      "supply_mode": "AIR_PRIMARY",
+      "design_state_id": null,
+      "operating_point_id": "VS-NET-OP-1",
+      "time_basis": {
+        "kind": "STEADY",
+        "breakpoints_s": null
+      },
+      "keys": {
+        "P_icp_bus_W": {
+          "value": 55.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "P_icp_rf_forward_W": {
+          "value": 40.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_icp_coil_ohmic_W": {
+          "value": 7.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_icp_extraction_W": {
+          "value": 4.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_icp_match_W": {
+          "value": 3.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_icp_plasma_wall_W": {
+          "value": 12.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        },
+        "Q_icp_radiation_W": {
+          "value": 2.0,
+          "units": "W",
+          "status": "EVALUATED",
+          "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+          "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+          "uncertainty": "none: synthetic verification input",
+          "applicability_domain": "synthetic verification domain",
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+          "hall_map": null
+        }
+      },
+      "partitions": {
+        "Q_icp_plasma_wall_W": {
+          "N_ANTENNA": 0.1,
+          "N_COLLECTOR": 0.3,
+          "N_HOUSING": 0.1,
+          "N_VESSEL": 0.5
+        }
+      },
+      "rf_powered_only": true
+    }
+  },
+  "partitions": {
+    "Q_hall_plume_to_icp_W": "PART.plume",
+    "Q_hall_pole_W": "PART.pole",
+    "Q_icp_coil_ohmic_W": "PART.ohmic",
+    "Q_icp_radiation_W": "PART.icp_rad"
+  }
+}

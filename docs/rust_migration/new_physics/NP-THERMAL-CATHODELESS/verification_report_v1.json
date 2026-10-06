@@ -1,0 +1,979 @@
+{
+  "schema": "abep_new_physics_verification_report_v1",
+  "id": "np_thermal_cathodeless_verification_report_v1",
+  "model_id": "NP-THERMAL-CATHODELESS",
+  "model_version": "1.0.0",
+  "date": "2026-10-05",
+  "prereg": {
+    "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json",
+    "sha256": "e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c",
+    "md_sha256": "e3337c8fece492f40eea7452b9834c9678d6fd52696d018588f542a801cc28aa",
+    "lock": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_lock_v1.json",
+    "lock_sha256": "3421e28c959dc5ac7de600acd8e94d83b1ded605bcc6095a81fccd4905470fc7",
+    "lock_verified": "the two locked files hash to the lock values (tests/prereg_binding.rs; checked before implementation)"
+  },
+  "vs_net": {
+    "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification/vs_net_v1.json",
+    "sha256": "64c4bf335354bd9ffc7e4de602156d3ca26b1b6ee614e30558ccc94c897ec9a9",
+    "registration": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification/vs_net_registration_v1.json",
+    "registration_commit": "c3086e4",
+    "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+    "registered_before": "the implementation commit and the scored run"
+  },
+  "lifecycle": {
+    "PREREG_MODEL": "35c06e4 (prereg merge; lock e3e6859c / e3337c8f)",
+    "RUST_IMPL": "fedc15a (crate abep-subsystems, module thermal)",
+    "scored_run": "fedc15a, clean tree (run_record.git_dirty = false)"
+  },
+  "verdict": "VERIFIED",
+  "verdict_rule": "ADM-03: VERIFIED iff AL-01..AL-11, every CONS criterion, FT-01..FT-18, DET-01..DET-03, IV-01 and IV-02 meet their criteria (IV-03 when performed).",
+  "verdict_scope_note": "Every criterion evaluable inside the model is met. CONS-L1 is, by its own text, evaluated by the SC-WP-05 system energy-ledger check, which does not exist yet; it is recorded DEFERRED_TO_SYSTEM_LEDGER_CHECK (open question Q-02). IV-03 is NOT_PERFORMED (allowed by ADM-03).",
+  "validation_status": "NOT_VALIDATED",
+  "validation_note": "Verification is not validation (ADM-05). EV-01..EV-05: no data. Anode and coupled H-1/ICP thermal closure stay UNRESOLVED; no thermal result is PASS.",
+  "admission": {
+    "status": "NOT_ADMITTED_YET (VERIFIED; ADM-04 steps outstanding)",
+    "missing_for_ADM-04": [
+      "migration-ledger flip in docs/rust_migration/migration_state_v1.json (owned by lane A1; requested below)",
+      "a CI job bound to the prereg sha256 (CI_PLAN principle 9): the rust-workspace workflow already runs cargo test, which includes tests/prereg_binding.rs (lock and constants bound to e3e6859c) and every verification case; a named step / required check for this component is to be added by the CI owner in the admission PR",
+      "the docs/HISTORY.md entry (added with this report)"
+    ],
+    "missing_for_validation": [
+      "EV-01 P3 / S1a coupled bench data (NO_DATA)",
+      "EV-02 P1 ICP bench capacity records (NO_DATA)",
+      "EV-03 published Hall thermal data: applicability V-10 and OQ-NPT-06",
+      "EV-04 RF / ICP source thermal data to locate (V-11)",
+      "P3-C-01..05 correlation plan and the owner residual band (VC-04)"
+    ]
+  },
+  "build_provenance": {
+    "implementation": "rust",
+    "rust_commit": "fedc15ac1404ec8bf887b8a1d9ee346780b65048",
+    "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+    "cargo_lock_sha256": "742561092de71b7f4900cca00275de290231cbef1d7f1e769f570567f5881894",
+    "source_sha256": {
+      "crates/abep-subsystems/Cargo.toml": "7b85b7ce9aeff610ed1843d61c27f56691f1063d68ed4e166c7f68d6a8b0271f",
+      "crates/abep-subsystems/examples/np_thermal.rs": "01e347981fcfe58eb173b5c55a86e21c518b87b9176e99a97f165afaca60e8ce",
+      "crates/abep-subsystems/src/lib.rs": "7df6d382a3e2cf361fe285e1ea6bd4fb72bdd67e6cfb9afea7aa644f0cb1670b",
+      "crates/abep-subsystems/src/thermal/assemble.rs": "c2f99aad18eb03e08806a71b38ee6279702ab11a84eedf225e73174edb5df927",
+      "crates/abep-subsystems/src/thermal/case.rs": "d2961d4ca0b5196d782737c3a9c29cd40a6559bec70b024efaae82514ab71548",
+      "crates/abep-subsystems/src/thermal/governance.rs": "13d55531d4a3be3bc85c118be339f997b95ca375362e8758f0d9ce108af5cfd0",
+      "crates/abep-subsystems/src/thermal/linalg.rs": "ffe669457fbd4610a5fe49ec69f1b7f180952f26c49f9d52824dfdb7060582e3",
+      "crates/abep-subsystems/src/thermal/mod.rs": "4d45dc2fd7c20bd79397708618a3c4c09756a1e5d9dcb98be818f7aa8691deb7",
+      "crates/abep-subsystems/src/thermal/network.rs": "f7793b05fe8d3eaf70ff4009469c1b5eb5a21573a8ea996454488071ab222282",
+      "crates/abep-subsystems/src/thermal/output.rs": "965482f35f877ac84972f99abb13d4c755594881241aee1b660a8cd7958bfa09",
+      "crates/abep-subsystems/src/thermal/props.rs": "0b3802e441e289c2d4fec68b665493d5c9380723e622bbadc79438922c301555",
+      "crates/abep-subsystems/src/thermal/series.rs": "9d083d50f2304b0c708e92280a315066e5ef49d299ffcb34ad98529aa27c1a92",
+      "crates/abep-subsystems/src/thermal/solver.rs": "8cde5a675a4d02d31193eb7bfe5d089c83538c71af338acef9ad9a450c6118b0",
+      "crates/abep-subsystems/src/thermal/tests.rs": "4830bfcfccb6537eca44280063d95a68962358ebbdc4735fb91b1314a3cbe872",
+      "crates/abep-subsystems/src/thermal/vocab.rs": "47ecae98c3c7e68f68f795dcbefa3b3a64425273f1ec23ed6c13f16f879502fa",
+      "crates/abep-subsystems/tests/analytic_cases.rs": "110c74cb4459f08039c5bf380446872bddc89693d52822fd2b9b052dc50c696c",
+      "crates/abep-subsystems/tests/fail_closed.rs": "c3239c029e0f9e351bf837610c5fb514914fb401dbc2839f86cd9fdfc94b729f",
+      "crates/abep-subsystems/tests/prereg_binding.rs": "402772dfa3938ef3ff119641208252bb3bda957efcd7eb60682732ca199d2f2e",
+      "crates/abep-subsystems/tests/support/mod.rs": "43ff73ccd550a7970ba42874bf3a33be4eec1157cf595fdbc745d985056ea01a",
+      "crates/abep-subsystems/tests/support/verify.rs": "6c69654567334aecf5c8ed2a8cf920eec4842c754c48dd997e86676d449ce18a",
+      "crates/abep-subsystems/tests/support/vs_net.rs": "707fe9d1ba126adccaee21881d12d0bb4225d99ba80568ba5aa5284694549bc6",
+      "crates/abep-subsystems/tests/vs_net.rs": "5fa00ce29e34153672034df3c5e6ad9b2bbf5ecae3b1363a07d5a08ae5a0b09b"
+    },
+    "workspace_dependencies_added": [],
+    "run_record": {
+      "architecture": {
+        "path": "config/architecture/hall_icp_neutralizer_v1.json",
+        "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3"
+      },
+      "cargo_lock_sha256": "742561092de71b7f4900cca00275de290231cbef1d7f1e769f570567f5881894",
+      "config_manifest": {
+        "path": "config/MANIFEST.json",
+        "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+      },
+      "contract_id": "NP-THERMAL-CATHODELESS/prereg_v1",
+      "design_state_set": {
+        "n_states": 196,
+        "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+        "reference": {
+          "path": "config/environment/design_state_set_ref_v1.json",
+          "sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484"
+        },
+        "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+      },
+      "git_commit": "fedc15ac1404ec8bf887b8a1d9ee346780b65048",
+      "git_dirty": false,
+      "hallthruster": {
+        "commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+        "pinned_toml": {
+          "path": "hallthruster_bridge/PINNED.toml",
+          "sha256": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280"
+        },
+        "version": "0.23.1"
+      },
+      "implementation": "rust",
+      "model_set": {
+        "path": "config/model_set/physics_model_set_v1.json",
+        "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1"
+      },
+      "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+      "schema": "abep_run_record_v1",
+      "threads": {
+        "available_parallelism": 4,
+        "env": {
+          "BLIS_NUM_THREADS": null,
+          "JULIA_NUM_THREADS": null,
+          "MKL_NUM_THREADS": null,
+          "NUMEXPR_NUM_THREADS": null,
+          "OMP_NUM_THREADS": null,
+          "OPENBLAS_NUM_THREADS": null,
+          "RAYON_NUM_THREADS": null,
+          "VECLIB_MAXIMUM_THREADS": null
+        }
+      }
+    }
+  },
+  "test_counts": {
+    "cargo_test_workspace_locked": [
+      "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s",
+      "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s",
+      "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.40s",
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+      "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s",
+      "test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.06s",
+      "test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.89s",
+      "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s",
+      "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.16s",
+      "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    ],
+    "abep_subsystems": "45 passed, 0 ignored (lib 6, analytic_cases 11, fail_closed 18, prereg_binding 6, vs_net 4)",
+    "workspace_total": "78 passed, 0 ignored",
+    "fmt": "cargo fmt -- --check clean",
+    "clippy": "cargo clippy --workspace --all-targets --locked -- -D warnings clean",
+    "python_side": "scripts/ci_checks.py 12/12; the full pytest suite was not rerun because no Python file changed"
+  },
+  "cases": [
+    {
+      "id": "AL-01",
+      "case": "single isothermal radiator",
+      "criterion": "|T - T_exact| <= 1e-6 K for all 54 combinations",
+      "observed": {
+        "max_abs_dT_K": 4.547473508864641e-13
+      },
+      "sub_cases": 54,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/analytic_cases.rs"
+    },
+    {
+      "id": "AL-02",
+      "case": "two-node series conduction",
+      "criterion": "|dT| <= 1e-6 K at both nodes; |link flow - Q| <= 1e-9 * Q + 1e-9 W",
+      "observed": {
+        "max_abs_dT_K": 5.684341886080802e-14,
+        "max_flow_error_over_bound": 0.00017053025658242404
+      },
+      "sub_cases": 54,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/analytic_cases.rs"
+    },
+    {
+      "id": "AL-02b",
+      "case": "conduction with linear k(T) (Kirchhoff transform)",
+      "criterion": "|dT| <= 1e-6 K",
+      "observed": {
+        "max_abs_dT_K": 0.0
+      },
+      "sub_cases": 24,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/analytic_cases.rs"
+    },
+    {
+      "id": "AL-03",
+      "case": "first-order transient",
+      "criterion": "(a) with dt = tau / 1000: max over t of |T - T_exact| <= 1e-3 * |T_inf - T0|; (b) observed order p_obs = log2(e(dt) / e(dt / 2)) with dt = tau / 100 satisfies |p_obs - 1| <= 0.1; (c) CONS-T1 at every step",
+      "observed": {
+        "max_abs_p_obs_minus_1": 0.0029925332794981108,
+        "max_error_over_bound_a": 0.18386311734047922
+      },
+      "sub_cases": 48,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/analytic_cases.rs"
+    },
+    {
+      "id": "AL-04",
+      "case": "radiative two-surface enclosure",
+      "criterion": "(a) |Q12 - exact| <= 1e-9 * |exact| + 1e-12 W; (b) |T1 - T1_exact| <= 1e-6 K, with T1_exact = (Q R_tot / sigma + T2^4)^(1/4) and R_tot the denominator above",
+      "observed": {
+        "a_max_error_over_bound": 2.255303638970938e-06,
+        "b_max_abs_dT_K": 4.547473508864641e-13
+      },
+      "sub_cases": 225,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/analytic_cases.rs"
+    },
+    {
+      "id": "AL-05",
+      "case": "zero load gives sink equilibrium",
+      "criterion": "|T_i - T_s| <= 1e-6 K; |link flow| <= 1e-9 W",
+      "observed": {
+        "max_abs_T_minus_Ts_K": 0.0,
+        "max_abs_link_flow_W": 0.0,
+        "tau_max_at_250K_s": 6903.344387399833
+      },
+      "sub_cases": 3,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/vs_net.rs"
+    },
+    {
+      "id": "AL-06",
+      "case": "energy conservation under a step load",
+      "criterion": "CONS-T1 at every step and cumulatively; |T_i(t_end) - T_i,steady| <= 1e-3 K for every node",
+      "observed": {
+        "accepted_steps": 6152,
+        "cumulative_energy_residual_J": 7.19679519534111e-07,
+        "dt_s": 34.51672193699917,
+        "max_abs_T_end_minus_T_steady_K": 2.7853275241795927e-12,
+        "t_end_s": 207100.331621995,
+        "u_num_t_K": 0.009917643954565847
+      },
+      "sub_cases": 2,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/vs_net.rs"
+    },
+    {
+      "id": "AL-07",
+      "case": "view-factor reciprocity and enclosure summation",
+      "criterion": "(a) accepted; (b) and (c) refused with MODEL_ERROR (D-07)",
+      "observed": {
+        "F12_C41": 0.35532483292210615,
+        "a": "Converged",
+        "b": "ModelError [\"VIEW_FACTOR_RECIPROCITY\"]",
+        "b_uncompensated": "ModelError [\"VIEW_FACTOR_RECIPROCITY\", \"VIEW_FACTOR_SUMMATION\"]",
+        "c": "ModelError [\"VIEW_FACTOR_SUMMATION\"]"
+      },
+      "sub_cases": 4,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/analytic_cases.rs"
+    },
+    {
+      "id": "AL-08",
+      "case": "isothermal closed enclosure and black-body limit",
+      "criterion": "(a) |q_k| <= 1e-12 * sigma A_k T^4; (b) |Q_kl - exact| <= 1e-9 * |exact|",
+      "observed": {
+        "a_max_q_over_bound": 0.0,
+        "b_max_error_over_bound": 2.0626815543502586e-07
+      },
+      "sub_cases": 2,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/analytic_cases.rs"
+    },
+    {
+      "id": "AL-09",
+      "case": "environment bookkeeping on a one-sided plate",
+      "criterion": "|T - T_exact| <= 1e-6 K; the reported Q_env_abs_W components equal their closed forms within 1e-12 relative",
+      "observed": {
+        "max_abs_dT_K": 1.1368683772161603e-13,
+        "max_component_relative_error": 1.4210854715202004e-16
+      },
+      "sub_cases": 64,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/analytic_cases.rs"
+    },
+    {
+      "id": "AL-10",
+      "case": "interface bookkeeping and refusals",
+      "criterion": "consistent set: CONS-I2 holds and every key lands on its registered receivers with its registered weights; violating sets: MODEL_ERROR; missing key: MODEL_ERROR; TBD: INCOMPLETE_EVIDENCE; NOT_EVALUATED: NOT_EVALUATED",
+      "observed": {
+        "consistent_max_relative_deposition_error": 1.8503717077085943e-16,
+        "refusals": {
+          "IFH-2": "ModelError IFH-2_VIOLATED",
+          "IFH-3": "ModelError IFH-3_VIOLATED",
+          "IFH-4": "ModelError IFH-4_VIOLATED",
+          "IFI-2": "ModelError IFI-2_VIOLATED",
+          "IFI-3": "ModelError IFI-3_VIOLATED",
+          "IFI-4": "ModelError IFI-4_VIOLATED",
+          "IFI-5": "ModelError IFI-5_VIOLATED",
+          "NOT_EVALUATED key": "NotEvaluated INTERFACE_KEY_NOT_EVALUATED",
+          "TBD key": "IncompleteEvidence INTERFACE_KEY_INCOMPLETE_EVIDENCE",
+          "missing key": "ModelError INTERFACE_KEY_MISSING"
+        }
+      },
+      "sub_cases": 12,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/vs_net.rs"
+    },
+    {
+      "id": "AL-11",
+      "case": "winding self-heating with R(T) (CONSTANT_CURRENT_R_OF_T)",
+      "criterion": "|dT| <= 1e-6 K for the 8 regular combinations; the runaway case returns OUT_OF_DOMAIN (relation domain bound reached), never an extrapolated temperature",
+      "observed": {
+        "max_abs_dT_K": 5.684341886080802e-14,
+        "runaway": "OutOfDomain [\"PROPERTY_RANGE_EXCEEDED\"]"
+      },
+      "sub_cases": 9,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/analytic_cases.rs"
+    },
+    {
+      "id": "CONS-S1",
+      "case": "steady per-node residual",
+      "criterion": "|R_i| <= 1e-9 * Q_scale + 1e-9 W for every solved node",
+      "observed": {
+        "max_observed_over_bound": 0.0006560677926847287
+      },
+      "status": "CRITERION_MET",
+      "evaluated_in": "every converged steady run (AL-01, -02, -02b, -04, -05, -06 steady, -07, -08, -09, -10, -11, IV-02, FT-07/12/15/16 converged companions)"
+    },
+    {
+      "id": "CONS-S2",
+      "case": "steady global balance",
+      "criterion": "|sum of deposited interface heat + sum Q_tc + sum Q_env - net radiation to the sink - sum boundary outflows| <= 1e-9 * Q_scale + 1e-9 W",
+      "observed": {
+        "max_observed_over_bound": 0.0006560677926847287
+      },
+      "status": "CRITERION_MET",
+      "evaluated_in": "as CONS-S1"
+    },
+    {
+      "id": "CONS-T1",
+      "case": "transient energy integral (stored energy change = integrated net heat)",
+      "criterion": "for every step and cumulatively from t0: |dH_total - sum_n dt_n * Q_net,n| <= 1e-8 * max(sum_n dt_n * Q_abs,n, |dH_total|) + 1e-6 J, with dH_total = sum_i (H_i(T_i(t)) - H_i(T_i(t0))) evaluated exactly from the registered c_p forms and Q_net,n the scheme-consistent net inflow of step n (Q_abs,n the sum of magnitudes)",
+      "observed": {
+        "max_step_observed_over_bound": 2.842530498208795e-05,
+        "max_cumulative_observed_over_bound": 2.2469342978978173e-05,
+        "AL-06_cumulative_energy_residual_J": 7.19679519534111e-07
+      },
+      "status": "CRITERION_MET",
+      "evaluated_in": "every transient / periodic run (AL-03, AL-06, E-12, DET transient); checked at every accepted step and cumulatively inside the solver (a violation is MODEL_ERROR)"
+    },
+    {
+      "id": "CONS-T2",
+      "case": "time-step refinement",
+      "criterion": "max over nodes and accepted output times of |T_dt - T_dt/2| <= 1e-2 K; the value is reported as u_num,t",
+      "observed": {
+        "max_u_num_t_over_bound": 0.9917643954565847,
+        "AL-06_u_num_t_K": 0.009917643954565847
+      },
+      "status": "CRITERION_MET",
+      "evaluated_in": "step doubling enforces it on every accepted step (NUM-04)"
+    },
+    {
+      "id": "CONS-T3",
+      "case": "periodic steady state",
+      "criterion": "max over nodes and orbit phase of |T_i(t + P) - T_i(t)| <= 1e-3 K",
+      "observed": {
+        "max_observed_over_bound": 0.3709908111773075,
+        "E-12_periodic_max_dT_K": 0.0003709908111773075
+      },
+      "status": "CRITERION_MET",
+      "evaluated_in": "ORBIT_TRANSIENT_PERIODIC runs (E-12 check; FT-08 periodic cap)"
+    },
+    {
+      "id": "CONS-I1",
+      "case": "interface identities",
+      "criterion": "IFH-3, IFH-4, IFI-3, IFI-4, IFI-5 with eps_if (NUM-09)",
+      "observed": {
+        "consistent_set": "IFH-3 / IFH-4 / IFI-3 / IFI-4 / IFI-5 hold on VS-NET (CONVERGED)",
+        "violations": {
+          "IFH-2": "ModelError IFH-2_VIOLATED",
+          "IFH-3": "ModelError IFH-3_VIOLATED",
+          "IFH-4": "ModelError IFH-4_VIOLATED",
+          "IFI-2": "ModelError IFI-2_VIOLATED",
+          "IFI-3": "ModelError IFI-3_VIOLATED",
+          "IFI-4": "ModelError IFI-4_VIOLATED",
+          "IFI-5": "ModelError IFI-5_VIOLATED",
+          "NOT_EVALUATED key": "NotEvaluated INTERFACE_KEY_NOT_EVALUATED",
+          "TBD key": "IncompleteEvidence INTERFACE_KEY_INCOMPLETE_EVIDENCE",
+          "missing key": "ModelError INTERFACE_KEY_MISSING"
+        }
+      },
+      "status": "CRITERION_MET",
+      "evaluated_in": "AL-10 / FT-13"
+    },
+    {
+      "id": "CONS-I2",
+      "case": "deposition bookkeeping",
+      "criterion": "sum over keys of (deposited + exported + boundary-booked) = sum of interface key inputs, within 1e-12 relative + 1e-12 W (E-07 weights sum to 1)",
+      "observed": {
+        "max_observed_over_bound": 0.0
+      },
+      "status": "CRITERION_MET",
+      "evaluated_in": "every converged run with interface records (VS-NET cases, AL-11, unit gate test)"
+    },
+    {
+      "id": "CONS-L1",
+      "case": "system energy ledger (CLAUDE.md rule 4)",
+      "criterion": "the thermal model's booked flows reconcile with the SC-WP-05 bus ledger in the system energy-ledger check with residual < 2 %; evaluated by that system check, not inside the thermal equations",
+      "observed": "the thermal-side obligation is met: booked flows (B_PPU_RF links and booked Q_icp_boundary_W / non-co-located Q_icp_match_W, B_SC, B_FEED, P_exported_W) are reported raw (O-11, O-13)",
+      "status": "DEFERRED_TO_SYSTEM_LEDGER_CHECK",
+      "note": "CONS-L1 is evaluated by the SC-WP-05 system energy-ledger check, not inside the thermal equations (its own text); that check does not exist yet. See open question Q-02."
+    },
+    {
+      "id": "FT-01",
+      "case": "FLIGHT_CONDITIONAL case whose Hall keys must come from the credible transport set (EMPTY)",
+      "criterion": "NOT_EVALUATED, reason CREDIBLE_HALL_TRANSPORT_SET_EMPTY, asserted explicitly (A9.29 sec. 9: not an xfail, not a skip)",
+      "observed": {
+        "reasons": [
+          "CREDIBLE_HALL_TRANSPORT_SET_EMPTY",
+          "INPUT_NOT_REGISTERED",
+          "INTERFACE_KEY_NOT_EVALUATED",
+          "SPACECRAFT_THERMAL_ICD_ABSENT"
+        ],
+        "run_status": "NotEvaluated"
+      },
+      "sub_cases": 1,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-02",
+      "case": "Hall value from a screening candidate (sgb-screen-*) / from a non-pinned HallThruster.jl commit",
+      "criterion": "NOT_EVALUATED / MODEL_ERROR",
+      "observed": {
+        "non_pinned": "ModelError [\"HALLTHRUSTER_COMMIT_NOT_PINNED\", \"CREDIBLE_HALL_TRANSPORT_SET_EMPTY\", \"SCREENING_CANDIDATE_NOT_ADMITTED\"]",
+        "screening": "NotEvaluated [\"CREDIBLE_HALL_TRANSPORT_SET_EMPTY\", \"SCREENING_CANDIDATE_NOT_ADMITTED\"]"
+      },
+      "sub_cases": 2,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-03",
+      "case": "a needed input with status TBD, TBD_AFTER_EVIDENCE or OPEN",
+      "criterion": "INCOMPLETE_EVIDENCE listing the input ids",
+      "observed": {
+        "OPEN": "IncompleteEvidence",
+        "TBD": "IncompleteEvidence",
+        "TBD_AFTER_EVIDENCE": "IncompleteEvidence"
+      },
+      "sub_cases": 3,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-04",
+      "case": "record missing evidence_class, uncertainty, applicability_domain or validation_status, or with wrong units",
+      "criterion": "MODEL_ERROR",
+      "observed": {
+        "applicability_domain": "ModelError [\"RECORD_FIELD_MISSING\"]",
+        "evidence_class": "ModelError [\"RECORD_FIELD_MISSING\"]",
+        "uncertainty": "ModelError [\"RECORD_FIELD_MISSING\"]",
+        "units": "ModelError [\"RECORD_UNITS_MISMATCH\"]",
+        "validation_status": "ModelError [\"RECORD_FIELD_MISSING\"]"
+      },
+      "sub_cases": 5,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-05",
+      "case": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE record in a non-synthetic case",
+      "criterion": "MODEL_ERROR",
+      "observed": {
+        "evidence_in_synthetic": "ModelError",
+        "synthetic_in_parametric": "ModelError"
+      },
+      "sub_cases": 2,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-06",
+      "case": "property evaluation outside its validity range",
+      "criterion": "OUT_OF_DOMAIN, no temperature emitted",
+      "observed": {
+        "solution_outside": [
+          "PROPERTY_RANGE_EXCEEDED"
+        ],
+        "t_init_outside": [
+          "PROPERTY_RANGE_EXCEEDED"
+        ]
+      },
+      "sub_cases": 2,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-07",
+      "case": "Bi > 0.1 at a node of a non-synthetic case",
+      "criterion": "OUT_OF_DOMAIN naming the node",
+      "observed": {
+        "high_k_case_nodes_named": [
+          "H1_ANODE",
+          "H1_BACKPLATE",
+          "H1_COIL_IN",
+          "H1_COIL_OUT",
+          "H1_POLE_IN",
+          "H1_POLE_OUT",
+          "H1_WALL_IN",
+          "H1_WALL_OUT",
+          "N_HOUSING",
+          "N_MOUNT",
+          "R_HALL",
+          "R_ICP"
+        ],
+        "low_case_max_Bi": 0.00014715464371951243,
+        "low_case_status": "Converged"
+      },
+      "sub_cases": 2,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-08",
+      "case": "Newton or step-refinement or periodic cap reached",
+      "criterion": "MODEL_ERROR",
+      "observed": {
+        "periodic": [
+          "PERIODIC_CAP_REACHED"
+        ],
+        "steady": [
+          "NEWTON_CAP_REACHED"
+        ],
+        "step": [
+          "STEP_HALVING_CAP_REACHED"
+        ]
+      },
+      "sub_cases": 3,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-09",
+      "case": "floating node",
+      "criterion": "MODEL_ERROR",
+      "observed": {
+        "reduced": [
+          "FLOATING_NODE"
+        ],
+        "vs_net_without_L_MA_MO": [
+          "FLOATING_NODE"
+        ]
+      },
+      "sub_cases": 2,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-10",
+      "case": "topology, interface record or case containing a cathode / keeper / emitter / Q_cath / LaB6 / C1 node, key or link",
+      "criterion": "MODEL_ERROR (refusal)",
+      "observed": {
+        "C1": "ModelError/ModelError/ModelError",
+        "CATHODE": "ModelError/ModelError/ModelError",
+        "CB": "ModelError",
+        "CE": "ModelError",
+        "CK": "ModelError",
+        "EMITTER": "ModelError/ModelError/ModelError",
+        "KEEPER": "ModelError/ModelError/ModelError",
+        "LAB6": "ModelError/ModelError/ModelError",
+        "Q_CATH": "ModelError/ModelError/ModelError"
+      },
+      "sub_cases": 21,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-11",
+      "case": "configuration other than hall_icp_neutralizer (e.g. hall_c1_reference)",
+      "criterion": "MODEL_ERROR (refusal)",
+      "observed": [
+        "CONFIGURATION_REFUSED",
+        "FORBIDDEN_IDENTIFIER"
+      ],
+      "sub_cases": 1,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-12",
+      "case": "bus variant active_cooling or icp_assist_magnet installed",
+      "criterion": "OUT_OF_DOMAIN",
+      "observed": {
+        "active_cooling": "OutOfDomain",
+        "icp_assist_magnet": "OutOfDomain"
+      },
+      "sub_cases": 3,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-13",
+      "case": "IFH-3, IFH-4, IFI-3, IFI-4 or IFI-5 violated",
+      "criterion": "MODEL_ERROR",
+      "observed": {
+        "IFH-2": "ModelError IFH-2_VIOLATED",
+        "IFH-3": "ModelError IFH-3_VIOLATED",
+        "IFH-4": "ModelError IFH-4_VIOLATED",
+        "IFI-2": "ModelError IFI-2_VIOLATED",
+        "IFI-3": "ModelError IFI-3_VIOLATED",
+        "IFI-4": "ModelError IFI-4_VIOLATED",
+        "IFI-5": "ModelError IFI-5_VIOLATED",
+        "NOT_EVALUATED key": "NotEvaluated INTERFACE_KEY_NOT_EVALUATED",
+        "TBD key": "IncompleteEvidence INTERFACE_KEY_INCOMPLETE_EVIDENCE",
+        "missing key": "ModelError INTERFACE_KEY_MISSING"
+      },
+      "sub_cases": 5,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs (asserted in AL-10 refusal sets)"
+    },
+    {
+      "id": "FT-14",
+      "case": "view-factor set violating D-07",
+      "criterion": "MODEL_ERROR",
+      "observed": {
+        "F12_C41": 0.35532483292210615,
+        "a": "Converged",
+        "b": "ModelError [\"VIEW_FACTOR_RECIPROCITY\"]",
+        "b_uncompensated": "ModelError [\"VIEW_FACTOR_RECIPROCITY\", \"VIEW_FACTOR_SUMMATION\"]",
+        "c": "ModelError [\"VIEW_FACTOR_SUMMATION\"]"
+      },
+      "sub_cases": 3,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs (asserted in AL-07 (b), (c))"
+    },
+    {
+      "id": "FT-15",
+      "case": "design state outside design_states_v2",
+      "criterion": "OUT_OF_DOMAIN",
+      "observed": {
+        "n_design_states": 196,
+        "outside": [
+          "DESIGN_STATE_OUTSIDE_DESIGN_STATES_V2"
+        ],
+        "registered": "Converged"
+      },
+      "sub_cases": 2,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-16",
+      "case": "anode candidate CAND-01 (316L) in a FLIGHT_CONDITIONAL case",
+      "criterion": "MODEL_ERROR (REJECTED_AS_CURRENT_BASELINE); allowed and labelled in BENCH_REPLICA / PARAMETRIC engineering cases",
+      "observed": {
+        "flight": "ModelError",
+        "parametric": "Converged",
+        "parametric_labels": [
+          "ANODE_CAND-01_316L_REJECTED_AS_CURRENT_BASELINE_ENGINEERING_CASE_ONLY",
+          "PARAMETRIC_NOT_A_PREDICTION"
+        ]
+      },
+      "sub_cases": 2,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-17",
+      "case": "static scan of the output schema",
+      "criterion": "no key named margin, limit, pass, fail, compliant or feasible; no key prefixed chk_, rfp_ or ic_; validation_status present and NOT_VALIDATED",
+      "observed": {
+        "keys_scanned": 2583,
+        "outputs_scanned": 3
+      },
+      "sub_cases": 3,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "FT-18",
+      "case": "interface key with status NOT_EVALUATED",
+      "criterion": "run NOT_EVALUATED; the key is never replaced by zero",
+      "observed": {
+        "not_evaluated": [
+          "INTERFACE_KEY_NOT_EVALUATED"
+        ],
+        "value_with_not_evaluated_status": [
+          "VALUE_RECORD_VALUE_SHAPE",
+          "INTERFACE_KEY_NOT_EVALUATED"
+        ]
+      },
+      "sub_cases": 2,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/fail_closed.rs"
+    },
+    {
+      "id": "DET-01",
+      "criterion": "Byte-identical outputs on two runs of the same inputs.",
+      "observed": {
+        "cases": 3
+      },
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/vs_net.rs"
+    },
+    {
+      "id": "DET-02",
+      "criterion": "Byte-identical outputs across thread counts.",
+      "observed": {
+        "cases": 3,
+        "threads": 4
+      },
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/vs_net.rs"
+    },
+    {
+      "id": "DET-03",
+      "criterion": "Every output carries implementation = rust, rust_commit, the prereg sha256 and the input hashes (O-17).",
+      "observed": {
+        "cases": 3
+      },
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/vs_net.rs"
+    },
+    {
+      "id": "IV-01",
+      "authoritative": false,
+      "source": "Python scratch cross-check: an independent evaluation of the closed forms of AL-01..AL-11 and an independent steady and transient solve of VS-NET with a different algorithm (fixed-point relaxation for the steady state; a different implicit integrator for the transient)",
+      "criterion": "steady temperatures 1e-6 K; transient temperatures at matched refinement 1e-2 K; energy totals 1e-8 relative",
+      "observed": {
+        "AL-01_max_abs_dT_K": 4.547473508864641e-13,
+        "AL-02_max_abs_dT_K": 5.684341886080802e-14,
+        "AL-04b_max_abs_dT_K": 4.547473508864641e-13,
+        "AL-11_max_abs_dT_K": 5.684341886080802e-14,
+        "AL-03_max_abs_diff_vs_python_IE_recursion_K": 1.0231815394945443e-12,
+        "C-41_F12_relative_diff": 6.249059574558578e-16,
+        "VS-NET_steady_max_abs_dT_K": 6.775735528208315e-11,
+        "VS-NET_steady_gauss_seidel_sweeps": 212,
+        "VS-NET_steady_energy_totals_relative_diff": {
+          "deposited_incl_tc_and_SCI-B": 0.0,
+          "environment_absorbed": 1.2119929103380195e-16,
+          "radiation_to_sinks": 3.164531825385873e-13,
+          "radiation_to_host_surfaces": 2.782958545880705e-13,
+          "boundary_link_outflow": 2.288446039748193e-13
+        },
+        "VS-NET_transient_max_abs_dT_vs_BDF2_K": 0.0022631303428397587,
+        "VS-NET_transient_rust_dt_s": 0.025,
+        "VS-NET_transient_python_bdf2_dt_s": 0.25,
+        "VS-NET_transient_dH_python_vs_rust_relative": 0.0,
+        "VS-NET_transient_energy_integral_relative_residual": 2.59211767727427e-15,
+        "environment": {
+          "python": "3.11.15",
+          "numpy": "2.4.4"
+        }
+      },
+      "status": "CRITERION_MET",
+      "method": "Python scratch (not committed, never a CI / reference / active-path dependency): independent closed forms; VS-NET steady by nonlinear Gauss-Seidel relaxation; VS-NET transient by BDF2 (dt 0.25 s, finite-difference Jacobian) against Rust implicit Euler at dt 0.025 s over 300 s; the Rust energy integral recomputed with the Python model from the Rust states",
+      "script_sha256": "c5cc50dd08e781174ef5cce9310497747327b83e8e43dbb81330a6cd574affae"
+    },
+    {
+      "id": "IV-02",
+      "authoritative": false,
+      "source": "published closed-form benchmark: two parallel coaxial gray disks closed by SPACE with Howell catalog factors C-40 / C-41 (registered EXT-HOWELL-CATALOG); the three-surface radiosity system solved by hand in closed form",
+      "criterion": "net exchange 1e-9 relative",
+      "observed": {
+        "max_relative_error": 4.218847493575595e-15
+      },
+      "sub_cases": 40,
+      "status": "CRITERION_MET",
+      "test": "crates/abep-subsystems/tests/analytic_cases.rs"
+    },
+    {
+      "id": "IV-03",
+      "authoritative": false,
+      "source": "worked examples of a standard heat-transfer text (radiation exchange, composite wall, lumped transient), transcribed with page locators (verify V-01)",
+      "criterion": "the text's reported precision",
+      "status": "NOT_PERFORMED",
+      "note": "IV-03 rule: NOT_PERFORMED if the text cannot be accessed lawfully; no licensed copy is available in this environment. ADM-03 requires IV-03 only when performed."
+    }
+  ],
+  "additional_checks_not_required_by_ADM-03": [
+    {
+      "id": "E-12/CONS-T3",
+      "purpose": "orbit modes: CONS-T3 and the E-12 mean definition (implicit-Euler right-end mean of a linear periodic solution equals the orbit-average steady state)",
+      "criterion": "ORBIT_TRANSIENT_PERIODIC of a linear node with a ZOH load meets CONS-T3; its orbit mean equals the ORBIT_AVERAGE_STEADY temperature within 1e-3 K (identity of the implicit-Euler right-end mean for a linear network)",
+      "observed": {
+        "labels_steady": [
+          "ANALYTIC_REDUCED_NETWORK",
+          "BIOT_NOT_APPLICABLE_SYNTHETIC",
+          "ORBIT_MEAN_LOAD_STEADY_STATE_NOT_TIME_MEAN_OR_EXTREMES",
+          "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
+        ],
+        "max_K": 344.68793443186763,
+        "min_K": 318.29059132400465,
+        "orbit_average_steady_K": 333.3333333333333,
+        "orbit_mean_K": 333.3333237706928,
+        "orbits": 6,
+        "periodic_max_dT_K": 0.0003709908111773075
+      },
+      "status": "CRITERION_MET"
+    },
+    {
+      "id": "D-04/D-05/B_FACILITY",
+      "purpose": "BENCH_REPLICA domain rules (D-04 vacuum registration, D-05 bench supply modes, B_FACILITY replaces SPACE and ENV, facility sink measured)",
+      "criterion": "BENCH_REPLICA domain: facility vacuum and A-04 criterion registered (D-04, else OUT_OF_DOMAIN); bench supply modes only (D-05); B_FACILITY replaces SPACE and ENV; facility sink measured per run",
+      "observed": {
+        "base": "NotEvaluated",
+        "environment": "ModelError",
+        "flight_supply_mode": "NotEvaluated",
+        "space_sink": "ModelError"
+      },
+      "status": "CRITERION_MET"
+    }
+  ],
+  "not_evaluated_outputs": [
+    {
+      "output": "absolute Hall heat loads (IF-HALL-THERMAL-v1 map-derived keys)",
+      "status": "NOT_EVALUATED",
+      "code": "CREDIBLE_HALL_TRANSPORT_SET_EMPTY / SCREENING_CANDIDATE_NOT_ADMITTED",
+      "reason": "NE-01: credible Hall transport set EMPTY (transport_ensemble_v0 members []), read sha256-verified by GovernedContext; asserted by FT-01, FT-02 and tests/prereg_binding.rs"
+    },
+    {
+      "output": "Hall quantities with no producer (Q_hall_anode_W, Q_hall_pole_W, Q_hall_plasma_radiation_W, Q_hall_return_to_icp_W, Q_hall_plume_to_icp_W)",
+      "status": "NOT_EVALUATED",
+      "code": "INTERFACE_KEY_NOT_EVALUATED",
+      "reason": "NE-11 / CF-07: not hall_map_schema_v1 fields; a producer NOT_EVALUATED key propagates and is never zero-filled (FT-18)"
+    },
+    {
+      "output": "absolute RF/ICP heat loads (IF-ICP-THERMAL-v1) in flight cases",
+      "status": "NOT_EVALUATED",
+      "code": "NP_ICP_NEUTRALIZER_NOT_ADMITTED",
+      "reason": "NE-02: NP-ICP-NEUTRALIZER not implemented or admitted (no admission record)"
+    },
+    {
+      "output": "spacecraft thermal interface and every FLIGHT_CONDITIONAL run",
+      "status": "NOT_EVALUATED",
+      "code": "SPACECRAFT_THERMAL_ICD_ABSENT",
+      "reason": "NE-07 / NE-12: no host-spacecraft thermal ICD (OQ-NPT-01)"
+    },
+    {
+      "output": "flight environment view factors and attitude",
+      "status": "NOT_EVALUATED / INCOMPLETE_EVIDENCE",
+      "code": "INPUT_NOT_EVALUATED / INPUT_NOT_REGISTERED",
+      "reason": "NE-08: registered per case as NOT_EVALUATED or TBD records until SC-WP-09 and a spacecraft ICD exist"
+    },
+    {
+      "output": "geometry, optical properties, conductances, partitions (H-1, ICP module)",
+      "status": "INCOMPLETE_EVIDENCE",
+      "code": "INPUT_NOT_REGISTERED / PARTITION_MISSING",
+      "reason": "NE-03, NE-04, NE-05, NE-10: P3-G / P3-R / P3-K / RI-PART records TBD"
+    },
+    {
+      "output": "anode and collector material properties",
+      "status": "INCOMPLETE_EVIDENCE (MODEL_ERROR for CAND-01 in flight)",
+      "code": "INPUT_NOT_REGISTERED / ANODE_CANDIDATE_REJECTED_AS_CURRENT_BASELINE",
+      "reason": "NE-06: FINAL_ANODE_MATERIAL and FINAL_COLLECTOR_MATERIAL OPEN; 316L REJECTED_AS_CURRENT_BASELINE (FT-16)"
+    },
+    {
+      "output": "measured thermal validation",
+      "status": "NOT_EVALUATED",
+      "code": "validation_status NOT_VALIDATED on every output",
+      "reason": "NE-09: no data; anode and coupled H-1/ICP thermal closure UNRESOLVED, never PASS"
+    }
+  ],
+  "implementation_interpretations": [
+    {
+      "id": "IMPL-01",
+      "item": "Reduced analytic setups (AL-01..AL-04, AL-07..AL-09, AL-11, IV-02) run with topology_scope ANALYTIC_REDUCED_NETWORK, allowed only in SYNTHETIC_VERIFICATION. Every PARAMETRIC / BENCH_REPLICA / FLIGHT_CONDITIONAL case uses NP_THERMAL_NETWORK, where every REQUIRED node is enforced (nodes.rule). The prereg registers the reduced setups and the REQUIRED-node rule side by side; this scope keeps both."
+    },
+    {
+      "id": "IMPL-02",
+      "item": "The value_record status vocabulary has no TBD; the 'key status TBD' of AL-10 / IFH-1 is the producer status INCOMPLETE_EVIDENCE (on_failure 'INCOMPLETE_EVIDENCE (TBD)')."
+    },
+    {
+      "id": "IMPL-03",
+      "item": "A-15 allows a temperature-dependent contact conductance but registers no evaluation temperature for h_c; v1 accepts only a temperature-independent h_c record (with its validity range checked at both link ends); a temperature-dependent form is refused (MODEL_ERROR). A v2 rule is needed before one is registered."
+    },
+    {
+      "id": "IMPL-04",
+      "item": "Step doubling (NUM-04): the accepted state is the full step T_dt; two half steps give the CONS-T2 estimate u_num,t = max |T_dt - T_dt/2|; a rejected step halves the step for the rest of its nominal interval; at most 20 successive halvings."
+    },
+    {
+      "id": "IMPL-05",
+      "item": "D-01 without extrapolation: Newton iterates stay inside each node's intersection of property ranges; a Newton direction blocked at a range end returns OUT_OF_DOMAIN with the node, record, bound and value (the AL-11 runaway mechanism). It is conservative: no temperature is ever emitted from outside a range."
+    },
+    {
+      "id": "IMPL-06",
+      "item": "Transient and periodic runs report the heat-flow outputs (O-07..O-13) at the final accepted state (heat_flows_at_t_s); temperatures at every accepted step (O-04)."
+    },
+    {
+      "id": "IMPL-07",
+      "item": "Case and output schemas (abep_np_thermal_case_v1 / abep_np_thermal_output_v1), the record quantity vocabulary and unit spellings (W/K, m^2, J/(kg*K), ...) are implementation choices; the prereg fixes no spelling."
+    },
+    {
+      "id": "IMPL-08",
+      "item": "O-16 internal-gradient estimate Q_i L_c / (k A): Q_i is the node throughput, half the sum of the magnitudes of its heat terms."
+    },
+    {
+      "id": "IMPL-09",
+      "item": "D-02 h_eff link term: dQ/dT_i of each link (G, h_c A_c, or S k(T_i) for a Kirchhoff link) plus 4 eps sigma T^3 A per surface; Biot is the maximum over the evaluated states."
+    },
+    {
+      "id": "IMPL-10",
+      "item": "D-05 bench supply modes: only the names D-05 gives (BENCH_AR_ENGINEERING_GROUND_ONLY, N2) plus NON_FIRING; further bench gases need registration."
+    },
+    {
+      "id": "IMPL-11",
+      "item": "GovernedContext reads the credible Hall set, screening candidates, HallThruster.jl pin, design states, flight configuration, P4 candidate ids and bus variants from sha256-verified records. NP-ICP admission and the host thermal ICD have no record yet and are held empty / absent in code; admitting either needs a code and test change."
+    },
+    {
+      "id": "IMPL-12",
+      "item": "Flight cases raise CREDIBLE_HALL_TRANSPORT_SET_EMPTY whenever a Hall discharge key is not measured while the set is empty (FT-01), independently of how the producer marks the key."
+    },
+    {
+      "id": "IMPL-13",
+      "item": "ORBIT_AVERAGE_STEADY averages loads only (E-12): products of held series are integrated exactly; time-varying fixed temperatures or coil reference values are refused (MODEL_ERROR)."
+    },
+    {
+      "id": "IMPL-14",
+      "item": "Sinks (SPACE, B_FACILITY) carry no view-factor row (no registered area); D-07 checks every non-sink row's summation and reciprocity between non-sink members; radiation to a sink is A_k F_ks (J_k - J_s)."
+    },
+    {
+      "id": "IMPL-15",
+      "item": "Structural checks (floating node, enclosure membership, environment surfaces) use the registered structure, so a TBD record yields INCOMPLETE_EVIDENCE without cascading structural MODEL_ERRORs."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-01",
+      "kind": "interface conflict (integration, not this lane)",
+      "text": "NP-ICP-NEUTRALIZER prereg v1 publishes IF-ICP-THERMAL-v1 with the seven prescribed keys plus eight additional keys (P_icp_rf_reflected_W, Q_icp_line_W, P_icp_abs_W, P_icp_collector_bias_W, Q_icp_bias_collector_W, Q_icp_bias_export_W, Q_icp_outflow_upstream_W, Q_icp_outflow_downstream_W) and an induced Q_icp_coil_ohmic_W share to N_MOUNT. This consumer implements the thermal prereg: exactly IK-01..IK-07, IK-02 shares to N_COLLECTOR / N_HOUSING only, and an unknown key is MODEL_ERROR (INTERFACE_KEY_NOT_REGISTERED; 'never a silent remap'). The two records share the label IF-ICP-THERMAL-v1 with different key sets; integration needs IF-ICP-THERMAL-v2 on both sides (CC-02; OQ-NPT-02, CF-04)."
+    },
+    {
+      "id": "F-02",
+      "kind": "criterion scope",
+      "text": "CONS-L1 cannot be evaluated inside the thermal model (its text assigns it to the SC-WP-05 system energy-ledger check). Whether ADM-03 'every CONS criterion' requires that system check before VERIFIED is an owner question (Q-02)."
+    },
+    {
+      "id": "F-03",
+      "kind": "observation",
+      "text": "D-07 accepts reciprocity errors up to 1e-9 relative, while CONS-S2 (1e-9 Q_scale + 1e-9 W) counts internal radiative exchange only through its reciprocity defect. A view-factor set at the D-07 limit with large internal exchange could therefore miss CONS-S2 and end MODEL_ERROR (fail-closed). Registered view factors built with exact reciprocity (VS-NET, the analytic cases) are unaffected."
+    },
+    {
+      "id": "F-04",
+      "kind": "verification design",
+      "text": "AL-06 presumes that tau_max (largest node C_i / G_i,lin) bounds the slowest relaxation of the network. A first VS-NET draft violated this (collective mode ~2.6e3 s vs tau_max 217 s; 0.50 K left at 30 tau_max); VS-NET was redesigned before registration (heavy, weakly coupled R_HALL). Recorded in vs_net_registration_v1.json."
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "Q-01",
+      "question": "Version the IF-ICP-THERMAL interface (v2) so that the NP-ICP producer keys and the thermal consumer keys agree (F-01)? Until then an NP-ICP record with its additional keys is refused by this model."
+    },
+    {
+      "id": "Q-02",
+      "question": "Does ADM-03 require CONS-L1 (system energy ledger, SC-WP-05) before VERIFIED, or is CONS-L1 checked at system integration (F-02)?"
+    },
+    {
+      "id": "Q-03",
+      "question": "OQ-NPT-01..OQ-NPT-10 remain open (unchanged); they block only the affected absolute outputs (IG-05)."
+    }
+  ],
+  "ledger_update_requested": {
+    "component": "NP-THERMAL-CATHODELESS",
+    "from": "NOT_STARTED (migration_state_v1.json new_items)",
+    "to": "VERIFIED",
+    "history": [
+      "PREREG_MODEL: 35c06e4 (lock e3e6859c / e3337c8f)",
+      "RUST_IMPL: fedc15a",
+      "VERIFIED: verification_report_v1.json (this commit)"
+    ],
+    "implementation": [
+      "crates/abep-subsystems (module thermal)"
+    ],
+    "contract": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json (sha256 e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c)",
+    "admission_evidence": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification_report_v1.json",
+    "note": "ADMITTED needs the ADM-04 steps listed under admission.missing_for_ADM-04; validation_status stays NOT_VALIDATED."
+  }
+}

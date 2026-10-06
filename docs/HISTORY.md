@@ -4375,3 +4375,31 @@ main, and the bid record `5eee4b8` / `b5849af` / `2de86ab`. `git diff 2de86ab..H
   - GAP-01..05, including the EQ-16 neutral-energy split that withholds the partition for every real gas;
   - OBS-01 (route-dependent N²⁺ formation energy in the N2/N headers).
 - `scripts/ci_checks.py` 12/12.
+
+## 2026-10-05 — NP-THERMAL-CATHODELESS v1 implemented in Rust and VERIFIED (lane D, ES-4 / SC-WP-06; new physics, synthetic verification only)
+
+- **Prereg.** `prereg_v1.json` `e3e6859c…` and `PREREG.md` `e3337c8f…` were verified against `prereg_lock_v1.json` before any
+  code. The prereg is unchanged.
+- **VS-NET v1** (`verification/vs_net_v1.json`, sha256 `64c4bf33…`). It is the synthetic full-topology network and was
+  registered alone (`c3086e4`) before the implementation and the scored run.
+  - Before registration it was redesigned so that τ_max bounds its slowest mode, which is the AL-06 premise (finding F-04).
+- **Implementation.** `crates/abep-subsystems`, module `thermal`, commit `fedc15a`. No dependency was added to the workspace.
+  - Records and topology, with no default value.
+  - E-01..E-14, IF-HALL-THERMAL-v1 / IF-ICP-THERMAL-v1 and the governance gates, read sha256-verified:
+    - the credible Hall set is EMPTY, so map-derived Hall heat is NOT_EVALUATED;
+    - the HallThruster.jl pin is enforced.
+  - Fail-closed precedence; raw outputs only, every one carrying `validation_status = NOT_VALIDATED`.
+- **Verification** (`verification_report_v1.{json,md}`; scored run at `fedc15a` on a clean tree): **VERIFIED** (ADM-03).
+  - AL-01..AL-11, the in-model CONS criteria, FT-01..FT-18, DET-01..DET-03 and IV-02 (Howell C-40 / C-41 hand solution,
+    4e-15) are all met.
+  - IV-01 (Python scratch, non-authoritative) is within tolerance:
+    - steady VS-NET by Gauss–Seidel, 6.8e-11 K;
+    - transient against BDF2, 2.3e-3 K;
+    - energy totals, at most 3.2e-13 relative.
+  - CONS-L1 is deferred to the SC-WP-05 system ledger (Q-02). IV-03 was not performed.
+- **Not admitted yet.** ADM-04 still needs the ledger flip (lane A1) and a named CI step bound to the prereg sha256.
+  Validation stays NOT_VALIDATED, and anode and coupled H-1/ICP thermal closure stay UNRESOLVED.
+- **Finding F-01.** The NP-ICP v1 `IF-ICP-THERMAL-v1` carries eight more keys than this consumer's IK-01..IK-07. They are
+  refused as MODEL_ERROR. Integration needs IF-ICP-THERMAL-v2 on both sides.
+- **Results.** cargo test --workspace --locked: 78 passed, 0 ignored (abep-subsystems: 45). fmt and clippy are clean.
+  `ci_checks`: 12/12. No Python changed, so the full pytest suite was not rerun.
