@@ -1,0 +1,658 @@
+{
+ "report_schema": "abep_rust_parity_report_v3_1",
+ "id": "PARITY-REPORT-C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY-V1",
+ "lane": "SC-WP-05",
+ "contract": {
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_prereg_v1.json",
+  "sha256": "d3336303a8f4d62ec146706b3f85f2abaffe6c053238910af3cf4c97c1bf75f6",
+  "id": "PARITY-C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY-V1"
+ },
+ "verdict": "ADMITTED",
+ "parity": "PARITY_PASS",
+ "verdict_rule": "ADMITTED (= PARITY_PASS) iff every call, every invariant INV-A01..INV-A07, CONS-A1 / CONS-A2 / CONS-L1 and the registered divergence outcomes pass and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+ "python_commit": "fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73",
+ "reference_sha256": {
+  "abep_sim/bus_boundary_a9.py": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a",
+  "abep_sim/bus_boundary_a9_v2.py": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26",
+  "abep_sim/design/architecture_optimizer.py": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af",
+  "abep_sim/programme/design_synthesis.py": "a9ee90672ad99c352e4ce77f74a5078ec742119dfd347ebbd485f22894838455",
+  "abep_sim/assessment/design_gates.py": "394c8d04e86bfc90a9c0fcfd5b1c0efffed3c0bb769fdeed023fd9bf4606dd93"
+ },
+ "reference_unchanged_at_scoring": true,
+ "pinned_inputs_verified": true,
+ "rust_commit": "b35420c69e3a59f79005a80d4272dc0e0e2bcaec",
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "profile": "release (cargo build --release --locked -p abep-subsystems --example power_eval --example power_cons_l1)",
+  "cargo_lock_sha256": "299069299d0917b1ff78f776a07eaca3125811f88ee327f4959ef35b21593038",
+  "source_sha256": {
+   "Cargo.toml": "336294f8d4f7774540d4c49d681d997d5cd0fd6fa67b99aea9c2cc3b5c6f5ff3",
+   "Cargo.lock": "299069299d0917b1ff78f776a07eaca3125811f88ee327f4959ef35b21593038",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499",
+   "crates/abep-types/Cargo.toml": "a210ee487a186c6edc28a87868e1b2c84094e890586ad159b8d77e16e7e7511f",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "0a067299e38d3dac702c3eb23ee3e34a55f844b389ec54b7463962c65d6a4b0e",
+   "crates/abep-types/src/pyjson.rs": "5ce15fdb06043a01ce8bd441a8e8f1906e74a0c4dd9fea2b9e4505f182a8d88e",
+   "crates/abep-types/src/pyjson_unicode.rs": "c6f59e0936c35051ef1f7d45a6611d3a7269a8d972c900805463f5f0bf6b2a75",
+   "crates/abep-types/tests/data/pyjson_vectors_v1.json": "8d7f76445f758714dd436cb208b243883b38bd95afd8e0e94156ecebed9d12ef",
+   "crates/abep-types/tests/pyjson_vectors.rs": "111021b67c74a663ec4b86baa768de21e19681b8774062d5ac90860a65951c24",
+   "crates/abep-provenance/Cargo.toml": "7e13a3433579dc2f097d16e614a7b941a91d0c4889cc34d2e8beabdda35a8bbf",
+   "crates/abep-provenance/build.rs": "7ab9c6440456ad997ce15816576814bc7c26c857af07045aaceca06921940e27",
+   "crates/abep-provenance/src/bid_guard/acceptance.rs": "187739f27b297b6183928a3f951dc68127708072cb915173539b4582118a6693",
+   "crates/abep-provenance/src/bid_guard.rs": "6f13a31a479deea38caafd78491be295c12f40a41dc39139a4af4e86a3553c7d",
+   "crates/abep-provenance/src/bin/abep-provenance-verify.rs": "99350805d9b01876b29b3e8cdcefe3c9f893c5bc0fd16d8f43b6327549d4cfbe",
+   "crates/abep-provenance/src/git.rs": "68fdacdf9514432ec890fcb153c6ba5d02fbb2e44e6accb0ff5e3d2b918ef69e",
+   "crates/abep-provenance/src/lib.rs": "0beec4429b0d6cc891389d6bc83584b693c7f1698700b03ffac4defe43919761",
+   "crates/abep-provenance/src/run_record.rs": "c36e400a38d411c6fdfad5cf26e962c4dbb074631b4d6e81d1688b3fec9a6a53",
+   "crates/abep-provenance/src/verifier/checks.rs": "8462b1704b9ca0091ade566217db5c77b34c3f074721e0d95c8b9b4e6ccfac1d",
+   "crates/abep-provenance/src/verifier/live_sources.rs": "bab4b17e1900dede61c23ce8bc0407ed021b2ab79458af2c3b6dd0747083d1b1",
+   "crates/abep-provenance/src/verifier/load.rs": "0b9ba7424fc2fe586218fffb66d3073a4ad26717e133364409fee2fcd10edab8",
+   "crates/abep-provenance/src/verifier/mod.rs": "7b7328197f8608d921aead7a0960611553a8b73e3d03bade01012c5cffdf0e25",
+   "crates/abep-provenance/src/verifier/pyliteral.rs": "6a5d3582cdbb41d96fea1cf0d87d8a8f6b1f45250a55892b784bc5c5a31a4537",
+   "crates/abep-provenance/src/verifier/pyvalue.rs": "acbd670dff4e9ea3b6cd5f893c9d001adc14d2883acfba7a66509fef878fc337",
+   "crates/abep-provenance/src/verifier/sha_map.rs": "d0589e3cc5269297407dc4f2f37930b362abe21a75481fb3430be9cc35812191",
+   "crates/abep-provenance/tests/bid_source_guard.rs": "e19ce7a19a6c49b6431a3f3d60260f1c435c4935d9c89c74b3403f94410328be",
+   "crates/abep-provenance/tests/config_manifest.rs": "2674591e5610b528764ec8094b8b1b8e5a94d6999889fd48394e1aaceedd4a34",
+   "crates/abep-provenance/tests/provenance_verifier.rs": "350e26de86bf844c8b4c78b7c6aaa2089613d09b989fdf2e463fe633df4b34f0",
+   "crates/abep-provenance/tests/run_record.rs": "2cd59402c0f52c0f6b8c47f23b991d70750b64f8c968f21fa4834010fd7c456e",
+   "crates/abep-subsystems/Cargo.toml": "7b85b7ce9aeff610ed1843d61c27f56691f1063d68ed4e166c7f68d6a8b0271f",
+   "crates/abep-subsystems/examples/np_thermal.rs": "01e347981fcfe58eb173b5c55a86e21c518b87b9176e99a97f165afaca60e8ce",
+   "crates/abep-subsystems/examples/power_cons_l1.rs": "e1b9383982b8a7b4432ad22f14af8228e8172f97008f2301f5ca4ce811051884",
+   "crates/abep-subsystems/examples/power_eval.rs": "9128ddfd667c89a493965346e7d3e9bcc5d991065a70bd0dcc5b7e645e9b6d9f",
+   "crates/abep-subsystems/src/lib.rs": "f829a8d908ebd46a20fbe24bd580c0d1bff44894f76caf1bb1fcee70d4c8a411",
+   "crates/abep-subsystems/src/power/allocation.rs": "fe610237d8ee5279f740fe12f5fd324f5df64478cadd728b91632ef78535e35b",
+   "crates/abep-subsystems/src/power/cplx.rs": "71cdeabfcfa40472fe4fcbe3b340628f97f980a640a227482bd2ca247bdc7003",
+   "crates/abep-subsystems/src/power/demand.rs": "c6f5a7df80ba94c7e00578e0233f1fe8b1ca4198f3817da38259951f147731ad",
+   "crates/abep-subsystems/src/power/eval.rs": "610f6dc48894c6f7b4c4d5dfbcefce45c42cb88bc6c429ec219ce5ed0fd0b212",
+   "crates/abep-subsystems/src/power/icp_bus.rs": "5492b0f207b06cdf6d8de8c717db740946177225f2f45ba3ee88e35172853218",
+   "crates/abep-subsystems/src/power/ledger.rs": "633021ff4884fdd8e82db540c6b238e6eb1d5687e102321121ed4fef4f1fb2c2",
+   "crates/abep-subsystems/src/power/magnet.rs": "a1328fccb4d1e2870e7fde23350c499ca4713de137fcc17d4cc46a92fabd81c3",
+   "crates/abep-subsystems/src/power/mod.rs": "57c31bea7b9197f84448e2f933e9bc1009849c9b7147e5cc9961b4aa6ab70021",
+   "crates/abep-subsystems/src/power/objective.rs": "2ff7d3d6cfa408159e4e56a04ce54d2b8a5d29e0f143392f64aa2bca0ae975df",
+   "crates/abep-subsystems/src/power/official.rs": "551efd843e471700221e2b2ec852e74f88c3cb30c6f5ea3c337ef6ad875f33e9",
+   "crates/abep-subsystems/src/power/pyfmt.rs": "f5e81e75f2c11409c55946db3f2d34528a8f068e1a789ed491a5227a657e946f",
+   "crates/abep-subsystems/src/power/rf_match.rs": "487efe6b620753fe73ea0d568dfea95c7451bdba11c85183eb7ae9fb3d436bd0",
+   "crates/abep-subsystems/src/power/rf_planes.rs": "d10a1be7cddb12120399b6fa4f7eff1798593f30f6ac08edd8b82aa5a5113857",
+   "crates/abep-subsystems/src/power/sampling.rs": "bacac10ae0f34946de2ae73923d8a390fd546180b47cdc9c48794223cfbdcbbf",
+   "crates/abep-subsystems/src/power/sequence.rs": "593e42e1083a7a66707029c23340922c5bcc707e896bce4df05347756dcc048d",
+   "crates/abep-subsystems/src/power/slots.rs": "98e281b4bd1ee525f762d3d000957f8ea97adbcce1ff9aa9862d3a83a05814e3",
+   "crates/abep-subsystems/src/power/system_ledger.rs": "993adfc4fe3d78b33f1d2ec404b85defcdcfb08e470adc8c6f3513f79acc6bc4",
+   "crates/abep-subsystems/src/thermal/assemble.rs": "c2f99aad18eb03e08806a71b38ee6279702ab11a84eedf225e73174edb5df927",
+   "crates/abep-subsystems/src/thermal/case.rs": "d2961d4ca0b5196d782737c3a9c29cd40a6559bec70b024efaae82514ab71548",
+   "crates/abep-subsystems/src/thermal/governance.rs": "13d55531d4a3be3bc85c118be339f997b95ca375362e8758f0d9ce108af5cfd0",
+   "crates/abep-subsystems/src/thermal/linalg.rs": "ffe669457fbd4610a5fe49ec69f1b7f180952f26c49f9d52824dfdb7060582e3",
+   "crates/abep-subsystems/src/thermal/mod.rs": "4d45dc2fd7c20bd79397708618a3c4c09756a1e5d9dcb98be818f7aa8691deb7",
+   "crates/abep-subsystems/src/thermal/network.rs": "f7793b05fe8d3eaf70ff4009469c1b5eb5a21573a8ea996454488071ab222282",
+   "crates/abep-subsystems/src/thermal/output.rs": "965482f35f877ac84972f99abb13d4c755594881241aee1b660a8cd7958bfa09",
+   "crates/abep-subsystems/src/thermal/props.rs": "0b3802e441e289c2d4fec68b665493d5c9380723e622bbadc79438922c301555",
+   "crates/abep-subsystems/src/thermal/series.rs": "9d083d50f2304b0c708e92280a315066e5ef49d299ffcb34ad98529aa27c1a92",
+   "crates/abep-subsystems/src/thermal/solver.rs": "8cde5a675a4d02d31193eb7bfe5d089c83538c71af338acef9ad9a450c6118b0",
+   "crates/abep-subsystems/src/thermal/tests.rs": "4830bfcfccb6537eca44280063d95a68962358ebbdc4735fb91b1314a3cbe872",
+   "crates/abep-subsystems/src/thermal/vocab.rs": "47ecae98c3c7e68f68f795dcbefa3b3a64425273f1ec23ed6c13f16f879502fa",
+   "crates/abep-subsystems/tests/analytic_cases.rs": "110c74cb4459f08039c5bf380446872bddc89693d52822fd2b9b052dc50c696c",
+   "crates/abep-subsystems/tests/fail_closed.rs": "c3239c029e0f9e351bf837610c5fb514914fb401dbc2839f86cd9fdfc94b729f",
+   "crates/abep-subsystems/tests/power.rs": "510c6e1baf6212649238a2e83d19691419c4fd57c65dc8bd3b4724787994f2d4",
+   "crates/abep-subsystems/tests/power_sys/mod.rs": "09f232ec1c609a11ea4afad6ecc2673979d6c37c2b0b3708fc00d4cf5d528aa1",
+   "crates/abep-subsystems/tests/power_system_ledger.rs": "123423c878bc675282622b8524185a8df1b33fd6791f26d1d05ee215c5a82bb1",
+   "crates/abep-subsystems/tests/prereg_binding.rs": "402772dfa3938ef3ff119641208252bb3bda957efcd7eb60682732ca199d2f2e",
+   "crates/abep-subsystems/tests/support/mod.rs": "43ff73ccd550a7970ba42874bf3a33be4eec1157cf595fdbc745d985056ea01a",
+   "crates/abep-subsystems/tests/support/verify.rs": "6c69654567334aecf5c8ed2a8cf920eec4842c754c48dd997e86676d449ce18a",
+   "crates/abep-subsystems/tests/support/vs_net.rs": "707fe9d1ba126adccaee21881d12d0bb4225d99ba80568ba5aa5284694549bc6",
+   "crates/abep-subsystems/tests/vs_net.rs": "5fa00ce29e34153672034df3c5e6ad9b2bbf5ecae3b1363a07d5a08ae5a0b09b"
+  },
+  "source_sha256_digest": "7a5ecf717ed8027b6832371bb569f6806fe3bb53b00a189bb4d887497e5af530"
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "platform": "Linux 6.18.44-fc-v70 x86_64",
+  "thread_env": {
+   "OMP_NUM_THREADS": null,
+   "OPENBLAS_NUM_THREADS": null
+  },
+  "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312"
+ },
+ "harness": {
+  "path": "scripts/rust_migration/parity_bus_boundary_v1.py",
+  "sha256": "d762396e69705c5438755874cf577d7f9c386646146653ba057d88de19d7c18a",
+  "common": {
+   "scripts/rust_migration/parity_power_common.py": "beef00a2114bc4ff5ef7f74d265786947090da691d1bb6d3d3540ef215ab8f3f",
+   "scripts/rust_migration/parity_common.py": "337b1c74847d21f92c17b5f59b34540d30b2aecefa2f20853e9bca1c4ee17e8c"
+  }
+ },
+ "scoring_execution": {
+  "utc": "2026-10-06T13:13:30Z",
+  "git_dirty": false,
+  "master_seed": 3254949622,
+  "comparison_reference": "FLIGHT_RESTRICTED_REFERENCE (contract reference_implementation.comparison_reference)",
+  "rust_calls_sha256": "84ec7faf54acef04a7c41254c9a2c48a4a44211dcf2b7b1844fd57fccc7cf015"
+ },
+ "per_test": {
+  "counts": {
+   "calls_total": 1999,
+   "registered_calls": 259,
+   "randomized_calls": 1740,
+   "python_RETURNED": 1839,
+   "python_RAISED": 160,
+   "calls installed_slots": 7,
+   "calls ledger": 494,
+   "calls p_bus_1ms_max": 61,
+   "calls rf_power_planes": 216,
+   "calls allocation_checks": 431,
+   "calls icp_power_allocation_check": 432,
+   "calls check_startup_sequence": 175,
+   "calls official_ledger": 11,
+   "calls bus_power": 172
+  },
+  "mismatches": 0,
+  "failures": [],
+  "max_ulp_distance": 0.0,
+  "floats_compared": 43064,
+  "tolerance": "EXACT_VALUE structure / strings / ints / statuses; ULP_BOUNDED floats (4 ulp or 1e-12 relative)"
+ },
+ "aggregates": "NOT_APPLICABLE",
+ "invariants": {
+  "INV-A01": {
+   "pass": true,
+   "detail": "restriction inert on 1996 calls without ground-reference input; violations []"
+  },
+  "INV-A02": {
+   "pass": true,
+   "detail": "1740 removed group-'c1' rows, every one the registered NOT_INSTALLED zero row; violations []"
+  },
+  "INV-A03": {
+   "pass": true,
+   "detail": "Rust outputs of two separate processes byte-identical"
+  },
+  "INV-A04": {
+   "pass": true,
+   "detail": "cargo test -p abep-subsystems --test power flight_taxonomy_equals_the_boundary_record (part of the scored tree's test run, see test_run)"
+  },
+  "INV-A05": {
+   "pass": true,
+   "detail": "cargo test -p abep-subsystems --test power rfp_gate_is_not_in_the_physics_crate"
+  },
+  "INV-A06": {
+   "pass": true,
+   "detail": "cargo test -p abep-subsystems --test prereg_binding forbidden_identifier_scan_of_this_crate"
+  },
+  "INV-A07": {
+   "pass": true,
+   "detail": "no restricted-reference E7 / E9 refusal raised inside rfp_power_gate other than the two structural input refusals named in DIV-A04; violations []"
+  }
+ },
+ "conservation": {
+  "CONS-A1/CONS-A2 (Rust)": {
+   "pass": true,
+   "detail": "148 COMPLETE Rust ledgers; violations []"
+  },
+  "CONS-A1/CONS-A2 (Python, recorded)": {
+   "pass": true,
+   "detail": "violations []"
+  },
+  "CONS-L1": {
+   "pass": true,
+   "detail": "SYS-01 EVALUATED (expected EVALUATED, r 0.0036738751195189534); SYS-02 MODEL_ERROR (expected MODEL_ERROR, r 0.04300144880078532); SYS-03 NOT_EVALUATED (expected NOT_EVALUATED, r None); SYS-04 NOT_EVALUATED (expected NOT_EVALUATED, r None); SYS-05 MODEL_ERROR (expected MODEL_ERROR, r None); SYS-06 INCOMPLETE_EVIDENCE (expected INCOMPLETE_EVIDENCE, r None); SYS-07 NOT_EVALUATED (expected NOT_EVALUATED, r None); SYS-08 MODEL_ERROR (expected MODEL_ERROR, r None); SYS-01b (not registered) EVALUATED (expected EVALUATED, r 0.0)"
+  }
+ },
+ "cons_l1_cases": [
+  {
+   "P_bus_W": 816.5764764461595,
+   "accounts": [
+    {
+     "account_id": "HALL_DISCHARGE",
+     "accounted_W": 600.0,
+     "ledger_W": 600.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 57.89473684210532
+    },
+    {
+     "account_id": "HALL_MAGNET_hall_magnet_inner",
+     "accounted_W": 6.0,
+     "ledger_W": 6.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 0.9444444444444438
+    },
+    {
+     "account_id": "HALL_MAGNET_hall_magnet_outer",
+     "accounted_W": 9.0,
+     "ledger_W": 9.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 1.4166666666666679
+    },
+    {
+     "account_id": "HALL_MAGNET_hall_magnet_trim",
+     "accounted_W": 2.0,
+     "ledger_W": 2.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 0.3148148148148149
+    },
+    {
+     "account_id": "ICP",
+     "accounted_W": 55.0,
+     "ledger_W": 55.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 2.2916666666666674
+    },
+    {
+     "account_id": "THERMAL_CONTROL",
+     "accounted_W": 3.0,
+     "ledger_W": 0.0,
+     "mismatch_W": -3.0,
+     "supply_loss_outside_W": 0.0
+    },
+    {
+     "account_id": "GAS_PATH",
+     "accounted_W": 40.0,
+     "ledger_W": 40.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 5.289855072463773
+    },
+    {
+     "account_id": "VALVES",
+     "accounted_W": 5.0,
+     "ledger_W": 5.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 0.7870370370370368
+    },
+    {
+     "account_id": "PPU_HOUSEKEEPING",
+     "accounted_W": 25.0,
+     "ledger_W": 25.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 5.637254901960787
+    }
+   ],
+   "case": "SYS-01",
+   "expected_status": "EVALUATED",
+   "labels": [
+    "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
+   ],
+   "met": true,
+   "reasons": [],
+   "relative_residual": 0.0036738751195189534,
+   "residual_W": -3.0,
+   "sinks_W": 819.5764764461595,
+   "status": "EVALUATED"
+  },
+  {
+   "P_bus_W": 860.4361255689665,
+   "accounts": [
+    {
+     "account_id": "HALL_DISCHARGE",
+     "accounted_W": 600.0,
+     "ledger_W": 640.0,
+     "mismatch_W": 40.0,
+     "supply_loss_outside_W": 61.75438596491233
+    },
+    {
+     "account_id": "HALL_MAGNET_hall_magnet_inner",
+     "accounted_W": 6.0,
+     "ledger_W": 6.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 0.9444444444444438
+    },
+    {
+     "account_id": "HALL_MAGNET_hall_magnet_outer",
+     "accounted_W": 9.0,
+     "ledger_W": 9.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 1.4166666666666679
+    },
+    {
+     "account_id": "HALL_MAGNET_hall_magnet_trim",
+     "accounted_W": 2.0,
+     "ledger_W": 2.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 0.3148148148148149
+    },
+    {
+     "account_id": "ICP",
+     "accounted_W": 55.0,
+     "ledger_W": 55.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 2.2916666666666674
+    },
+    {
+     "account_id": "THERMAL_CONTROL",
+     "accounted_W": 3.0,
+     "ledger_W": 0.0,
+     "mismatch_W": -3.0,
+     "supply_loss_outside_W": 0.0
+    },
+    {
+     "account_id": "GAS_PATH",
+     "accounted_W": 40.0,
+     "ledger_W": 40.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 5.289855072463773
+    },
+    {
+     "account_id": "VALVES",
+     "accounted_W": 5.0,
+     "ledger_W": 5.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 0.7870370370370368
+    },
+    {
+     "account_id": "PPU_HOUSEKEEPING",
+     "accounted_W": 25.0,
+     "ledger_W": 25.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 5.637254901960787
+    }
+   ],
+   "case": "SYS-02",
+   "expected_status": "MODEL_ERROR",
+   "labels": [
+    "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
+   ],
+   "met": true,
+   "reasons": [
+    "CONS-L1_RESIDUAL: |R| / P_bus = 0.04300144880078532 >= 0.02"
+   ],
+   "relative_residual": 0.04300144880078532,
+   "residual_W": 37.0,
+   "sinks_W": 823.4361255689665,
+   "status": "MODEL_ERROR"
+  },
+  {
+   "P_bus_W": null,
+   "accounts": [],
+   "case": "SYS-03",
+   "expected_status": "NOT_EVALUATED",
+   "labels": [
+    "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
+   ],
+   "met": true,
+   "reasons": [
+    "CONS-L1_ACCOUNT_STATUS: GAS_PATH is NOT_EVALUATED"
+   ],
+   "relative_residual": null,
+   "residual_W": null,
+   "sinks_W": null,
+   "status": "NOT_EVALUATED"
+  },
+  {
+   "P_bus_W": null,
+   "accounts": [],
+   "case": "SYS-04",
+   "expected_status": "NOT_EVALUATED",
+   "labels": [
+    "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
+   ],
+   "met": true,
+   "reasons": [
+    "CONS-L1_UNCOVERED_LOAD: housekeeping_controls has no downstream account"
+   ],
+   "relative_residual": null,
+   "residual_W": null,
+   "sinks_W": null,
+   "status": "NOT_EVALUATED"
+  },
+  {
+   "P_bus_W": null,
+   "accounts": [],
+   "case": "SYS-05",
+   "expected_status": "MODEL_ERROR",
+   "labels": [
+    "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
+   ],
+   "met": true,
+   "reasons": [
+    "CONS-L1_DOUBLE_COUNT: compressor in GAS_PATH and VALVES"
+   ],
+   "relative_residual": null,
+   "residual_W": null,
+   "sinks_W": null,
+   "status": "MODEL_ERROR"
+  },
+  {
+   "P_bus_W": null,
+   "accounts": [],
+   "case": "SYS-06",
+   "expected_status": "INCOMPLETE_EVIDENCE",
+   "labels": [
+    "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
+   ],
+   "met": true,
+   "reasons": [
+    "CONS-L1_LEDGER_NOT_COMPLETE: bus ledger PARTIAL_BOUNDARY (P_bus unknown)"
+   ],
+   "relative_residual": null,
+   "residual_W": null,
+   "sinks_W": null,
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "P_bus_W": null,
+   "accounts": [],
+   "case": "SYS-07",
+   "expected_status": "NOT_EVALUATED",
+   "labels": [
+    "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
+   ],
+   "met": true,
+   "reasons": [
+    "CONS-L1_ACCOUNT_STATUS: HALL_DISCHARGE is NOT_EVALUATED",
+    "CONS-L1_ACCOUNT_STATUS: HALL_MAGNET_hall_magnet_inner is NOT_EVALUATED",
+    "CONS-L1_ACCOUNT_STATUS: HALL_MAGNET_hall_magnet_outer is NOT_EVALUATED",
+    "CONS-L1_ACCOUNT_STATUS: HALL_MAGNET_hall_magnet_trim is NOT_EVALUATED",
+    "CONS-L1_ACCOUNT_STATUS: ICP is NOT_EVALUATED",
+    "CONS-L1_ACCOUNT_STATUS: THERMAL_CONTROL is NOT_EVALUATED"
+   ],
+   "relative_residual": null,
+   "residual_W": null,
+   "sinks_W": null,
+   "status": "NOT_EVALUATED"
+  },
+  {
+   "P_bus_W": null,
+   "accounts": [],
+   "case": "SYS-08",
+   "expected_status": "MODEL_ERROR",
+   "labels": [
+    "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
+   ],
+   "met": true,
+   "reasons": [
+    "CONS-L1_ACCOUNT_AMOUNT: GAS_PATH deposited_W = -1"
+   ],
+   "relative_residual": null,
+   "residual_W": null,
+   "sinks_W": null,
+   "status": "MODEL_ERROR"
+  },
+  {
+   "P_bus_W": 820.0486986683817,
+   "accounts": [
+    {
+     "account_id": "HALL_DISCHARGE",
+     "accounted_W": 600.0,
+     "ledger_W": 600.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 57.89473684210532
+    },
+    {
+     "account_id": "HALL_MAGNET_hall_magnet_inner",
+     "accounted_W": 6.0,
+     "ledger_W": 6.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 0.9444444444444438
+    },
+    {
+     "account_id": "HALL_MAGNET_hall_magnet_outer",
+     "accounted_W": 9.0,
+     "ledger_W": 9.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 1.4166666666666679
+    },
+    {
+     "account_id": "HALL_MAGNET_hall_magnet_trim",
+     "accounted_W": 2.0,
+     "ledger_W": 2.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 0.3148148148148149
+    },
+    {
+     "account_id": "ICP",
+     "accounted_W": 55.0,
+     "ledger_W": 55.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 2.2916666666666674
+    },
+    {
+     "account_id": "THERMAL_CONTROL",
+     "accounted_W": 3.0,
+     "ledger_W": 3.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 0.4722222222222219
+    },
+    {
+     "account_id": "GAS_PATH",
+     "accounted_W": 40.0,
+     "ledger_W": 40.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 5.289855072463773
+    },
+    {
+     "account_id": "VALVES",
+     "accounted_W": 5.0,
+     "ledger_W": 5.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 0.7870370370370368
+    },
+    {
+     "account_id": "PPU_HOUSEKEEPING",
+     "accounted_W": 25.0,
+     "ledger_W": 25.0,
+     "mismatch_W": 0.0,
+     "supply_loss_outside_W": 5.637254901960787
+    }
+   ],
+   "case": "SYS-01b (not registered)",
+   "expected_status": "EVALUATED",
+   "labels": [
+    "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
+   ],
+   "met": true,
+   "reasons": [],
+   "relative_residual": 0.0,
+   "residual_W": 0.0,
+   "sinks_W": 820.0486986683817,
+   "status": "EVALUATED"
+  }
+ ],
+ "domain_and_error": {
+  "python_raised_by_class": {
+   "BoundaryA9Error": 155,
+   "OverflowError": 1,
+   "KeyError": 4
+  },
+  "divergences_observed": {
+   "DIV-A02": 3,
+   "DIV-A03": 1,
+   "DIV-A04": 3
+  },
+  "message_classes_scored": [
+   "BoundaryA9Error",
+   "OverflowError"
+  ]
+ },
+ "schema": {
+  "pass": true,
+  "detail": "field names, order and types compared on every returned value (value_structure observable)"
+ },
+ "test_run": {
+  "command": "cargo test --release --locked -p abep-subsystems --test power --test prereg_binding --test power_system_ledger",
+  "passed": true,
+  "tail": [
+   "test governed_state_read_by_the_gates ... ok",
+   "",
+   "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s"
+  ]
+ },
+ "performance": {
+  "PERF-A01": {
+   "python_s": 0.38836936499990315,
+   "rust_s": 0.047880215,
+   "speedup": 8.111270281470189,
+   "note": "1000 evaluations; Rust timed inside power_eval (no process start)"
+  },
+  "PERF-A02": {
+   "python_s": 0.7872148879999941,
+   "rust_s": 0.027830631,
+   "speedup": 28.28591590323604,
+   "note": "10 evaluations; Rust timed inside power_eval (no process start)"
+  }
+ },
+ "captured_reference_outputs": {
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/reference_outputs",
+  "manifest_sha256": "2f48bc6fe57e5d27727960d47c25720b6219e14b2b937cf331ca3e69e7fafbf6",
+  "files": {
+   "calls_v1.json.gz": {
+    "sha256": "10bc31012994aa37fb7d503bf1655e4ca435a8b951e2cd6c47b15ea226944973",
+    "uncompressed_sha256": "8da9d0f885c324a1167cffce4d54eb3483508f3bea48aeb99c8c27d8acc68f49"
+   },
+   "python_results_v1.json.gz": {
+    "sha256": "1ed1c15f5bdeb25da911c8186582400f100be34067a6033ef33ecb6e7ad08299",
+    "uncompressed_sha256": "d16eb7b9751b5d673481835743d15f19d367f058bf0e4bf50ebc059c9c3678ea"
+   }
+  }
+ },
+ "campaign_history": [
+  {
+   "utc": "2026-10-06T13:13:30Z",
+   "git_head": "b35420c69e3a59f79005a80d4272dc0e0e2bcaec",
+   "git_dirty": false,
+   "master_seed": 3254949622,
+   "contract_sha256": "d3336303a8f4d62ec146706b3f85f2abaffe6c053238910af3cf4c97c1bf75f6",
+   "source_sha256_digest": "7a5ecf717ed8027b6832371bb569f6806fe3bb53b00a189bb4d887497e5af530",
+   "verdict": "ADMITTED",
+   "wall_s": 24.1
+  }
+ ],
+ "development_runs": "development seed 5051 runs were not scored or reported (contract development_rule)",
+ "findings": [
+  "CONS-L1 SYS-01 as registered (LS-01 thermal_control 0.0 W) closes with a -3.0 W mismatch on the THERMAL_CONTROL account because VS-NET deposits Q_thermal_control_W = 3.0 W; r = 0.37 % < 2 % (EVALUATED, the registered status). The contract text's 'r of order 1e-15' assumed no thermal control in VS-NET; the registered case is unchanged. SYS-01b (not registered, LS-01 with 3.0 W) closes to rounding; SYS-02's residual is 37 W (r 4.3 %, MODEL_ERROR as registered) for the same reason",
+  "IF-ICP-BUS-v1 plane finding (contract rust_only_registered_interfaces): the NP-ICP producer's P_icp_bus_W is a supply-input sum for the bias slot and a load-plane value for the RF and match slots, while NP-THERMAL IK-07 calls it the demand at the spacecraft DC boundary; alignment is for the owner / NP-ICP lane (IF-ICP-BUS-v2 / IF-ICP-THERMAL-v2)",
+  "INV-A07 exception set read as the two structural input refusals named in DIV-A04 (non-empty start-up sequence; 'not a bus_power_boundary_a9_v2 ledger'), the second scored with the reference text"
+ ],
+ "ledger_update_requested": [
+  {
+   "component": "C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY",
+   "status": "ADMITTED",
+   "parity": "PARITY_PASS",
+   "scope": "whole module for the flight configuration except rfp_power_gate (abep-assess, SC-WP-11) and GROUND_REFERENCE_TEST_METADATA (GROUND_REFERENCE_ONLY): installed_slots, ledger, p_bus_1ms_max, rf_power_planes, allocation_checks, icp_power_allocation_check, check_startup_sequence (without the transient_gate field)",
+   "authoritative_implementation": "rust: crates/abep-subsystems (abep_subsystems::power)",
+   "python": "rfp_power_gate stays PYTHON_REFERENCE until abep-assess admits it (SC-WP-11)"
+  },
+  {
+   "component": "C-ABEP_SIM_BUS_BOUNDARY_A9_PY",
+   "status": "PARTIAL_ADMISSION",
+   "scope": "the v1 functions as rebound by v2 for hall_icp_neutralizer (same code objects); the v1 boundary module itself (bus_power_boundary_a9_v1, hall_c1_reference) is immutable history and is not ported for the active line (A9.30 sec. 5)"
+  },
+  {
+   "component": "C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY",
+   "status": "PARTIAL_ADMISSION",
+   "scope": "official_ledger only (row stays SC-WP-10)"
+  },
+  {
+   "component": "C-ABEP_SIM_PROGRAMME_DESIGN_SYNTHESIS_PY",
+   "status": "PARTIAL_ADMISSION",
+   "scope": "bus_power without its gate_verdict field (row stays SC-WP-10; the gate verdict is SC-WP-11)"
+  }
+ ],
+ "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for the bus_power_boundary_a9_v2 ledger, start-up sequence rules, RF power planes, P_bus,1ms,max evaluation, owner-allocation arithmetic, the official A9-02 ledger and the raw P_bus objective within the registered domain; it is NOT physics validation, not a gate PASS and no RFP gate verdict (that is abep-assess, SC-WP-11)",
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): every TBD load / efficiency of the official ledger stays TBD with its mass/power v5 text",
+  "not a gate PASS: the official flight ledger stays PARTIAL_BOUNDARY, the bus demand NOT_EVALUATED, CONS-L1 INCOMPLETE_EVIDENCE for flight (RM-R31)",
+  "not an RFP power-gate implementation (abep-assess, SC-WP-11)"
+ ]
+}
