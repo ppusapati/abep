@@ -1088,7 +1088,7 @@ def hw_calls(contract, seed):
             elif t == 6:
                 f = r.choice(list(TL.HALLMAP_FIELDS_USED))
                 if r.random() < 0.3:
-                    del a["point"][f]
+                    a["point"].pop(f, None)
                 else:
                     a["point"][f] = r.choice(pools["value"])
             else:
@@ -1200,6 +1200,12 @@ CONTRACTS = {
     "C-ABEP_SIM_THERMAL_LIFE_PY-HALLMAP_WALL_INPUTS": dict(
         calls=hw_calls, py=hw_py, inv=hw_inv, msg={"ValueError"}, div=None,
         perf=lambda rows: [("PERF-W01", "hallwall.hallmap_wall_inputs", hw_base(), 5000)],
+        aborted=[{"utc": "2026-10-06T14:17Z", "git_head": "f8799a3", "git_dirty": False, "master_seed": 1657292530,
+                  "verdict": "ABORTED_BEFORE_COMPARISON",
+                  "detail": "harness defect: the randomized generator deleted an already-deleted point field "
+                            "(KeyError 'discharge_power_W' in hw_calls.draw) while building the call list; no Python "
+                            "reference call and no Rust call was executed. Fixed by pop(f, None), which consumes no "
+                            "random draw, so every other generated input is unchanged; scoring then ran once"}],
         ledger=ledger("C-ABEP_SIM_THERMAL_LIFE_PY", "partial admission: hallmap_wall_inputs (W1); the other "
                       "thermal_life functions are SC-WP-06's",
                       "rust: crates/abep-subsystems (abep_subsystems::life::hall_wall)")),
@@ -1382,7 +1388,7 @@ def run(cid: str, mode: str, work: Path) -> dict:
     }, contract["reference_implementation"]["python_commit"], gs["git_head"])
     bp = build_provenance()
     rep_path = cdir / "parity_report_v1.json"
-    prev = json.loads(rep_path.read_text())["campaign_history"] if rep_path.exists() else []
+    prev = json.loads(rep_path.read_text())["campaign_history"] if rep_path.exists() else spec_.get("aborted", [])
     hist = prev + [{"utc": utc(), "git_head": gs["git_head"], "git_dirty": gs["git_dirty"], "master_seed": seed,
                     "contract_sha256": PC.sha_bytes(contract_bytes), "source_sha256_digest": bp["source_sha256_digest"],
                     "verdict": verdict, "wall_s": summary["wall_s"]}]
@@ -1418,7 +1424,8 @@ def run(cid: str, mode: str, work: Path) -> dict:
         "performance": perf, "captured_reference_outputs": cap, "campaign_history": hist,
         "development_runs": f"development seed {seeds['development_master_seed']} runs were not scored or reported "
                             "(contract development_rule)",
-        "findings": [], "ledger_update_requested": ledger_req,
+        "findings": [f"aborted scoring execution recorded in campaign_history: {x['detail']}"
+                     for x in spec_.get("aborted", [])], "ledger_update_requested": ledger_req,
         "meaning_of_ADMITTED": contract["decision_rules"]["meaning_of_ADMITTED"],
         "what_this_is_not": contract["what_this_is_not"],
     }
