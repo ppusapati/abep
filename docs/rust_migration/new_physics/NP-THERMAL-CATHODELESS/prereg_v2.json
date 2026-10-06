@@ -1,0 +1,957 @@
+{
+ "schema": "abep_new_physics_prereg_v1",
+ "id": "NP-THERMAL-CATHODELESS",
+ "prereg_version": 2,
+ "model_version": "2.0.0",
+ "title": "Cathodeless thermal model of hall_icp_neutralizer - preregistration v2: consumer of the matched IF-ICP-THERMAL-v2 (A9.31 sec. 7)",
+ "status": "PREREGISTERED_NOT_IMPLEMENTED",
+ "method": "NEW_PHYSICS",
+ "contract_kind": "new_physics",
+ "lifecycle_state": "PREREG_MODEL",
+ "validation_status": "NOT_VALIDATED",
+ "date": "2026-10-06",
+ "work_package": "SC-WP-06",
+ "execution_step": "ES-4",
+ "lane": "A9.31 batch 3: RF/ICP v2 preregistration lane (matched consumer side)",
+ "target_crate": "abep-subsystems::thermal",
+ "base": {
+  "branch": "integration/simulation-complete",
+  "commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+  "producer_commit": "7a26d39 (NP-ICP-NEUTRALIZER prereg v2, committed alone before this record)"
+ },
+ "files": {
+  "machine_readable": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v2.json",
+  "human_readable": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/PREREG_v2.md",
+  "lock": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_lock_v2.json"
+ },
+ "authority_rule": "The JSON governs; a difference with PREREG_v2.md is a defect fixed only by a new version.",
+ "scope_of_change": "A9.31 sec. 7 and the brief: v2 changes only what the matched interface requires (IF-ICP-THERMAL-v2 consumption, the RX-H1-FACE receiver interface, B_PPU_RF booking by key, the signed electrode-circuit keys and the checks, outputs and tests that touch them). Every other v1 criterion applies unchanged.",
+ "predecessor": {
+  "status": "IMMUTABLE_HISTORY (A9.31 sec. 7: 'Preserve IF-ICP-THERMAL-v1 and NP-THERMAL-CATHODELESS v1 as immutable history.')",
+  "files": [
+   {
+    "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json",
+    "sha256": "e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/PREREG.md",
+    "sha256": "e3337c8fece492f40eea7452b9834c9678d6fd52696d018588f542a801cc28aa"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_lock_v1.json",
+    "sha256": "3421e28c959dc5ac7de600acd8e94d83b1ded605bcc6095a81fccd4905470fc7"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification_report_v1.json",
+    "sha256": "7a355efd6e3ccd926f04afec5487f1cc42f5bedeffa4bcab63bdeb16a96bbb7e"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification_report_v1.md",
+    "sha256": "80d69b1765f378c70f45f63cec3b333fa4ac4296babf5861d6686feff091daef"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification/vs_net_v1.json",
+    "sha256": "64c4bf335354bd9ffc7e4de602156d3ca26b1b6ee614e30558ccc94c897ec9a9"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification/vs_net_registration_v1.json",
+    "sha256": "71a146ef304e5bb6b19b6f972b8ba3bdd44e02390bdc811024244b26861a68c0"
+   }
+  ]
+ },
+ "inheritance_rule": "Every item of prereg_v1.json (by id) applies verbatim in v2 unless listed under replaced_items or retired_items; added_items extend it. In particular the nodes and their presence rules, every equation E-01..E-14 except E-07, every link type, IF-HALL-THERMAL-v1 (HK-01..HK-11, IFH-1..IFH-4), the spacecraft interface, registered-input rules and case classes, every assumption, domain D-01..D-10, every numeric setting NUM-01..NUM-09, CONS-S1..CONS-T3, CONS-I2, AL-01..AL-09 and AL-11, FT-01..FT-12 and FT-14..FT-18, determinism, IV-01..IV-03, the validation plan, the admission rule ADM-01..ADM-06 (read with v2 ids), uncertainty U-01..U-08, the verify items and OQ-NPT-01, -03..-10 are unchanged. Nothing inherited is relaxed.",
+ "governing_records": [
+  {
+   "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+   "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+   "message_text_sha256": "ab7705efeb0835b9443cebd86018cd5c29bdbc3f29d6f618c147dab1e7dec75a",
+   "role": "A9.31 sec. 7 (matched interface v2) and sec. 8 (bus boundary), word for word"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+   "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f",
+   "role": "A9.30 sec. 5: bus_power_boundary_a9_v2, flight C1 loads NONE, 1.5 kW assessment only"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v2.json",
+   "sha256": "3f0df5b85286bfc82ce99ec9bfafb81ec785021b1668d5bc95fe0d29679631e9",
+   "role": "producer record: IF-ICP-THERMAL-v2 (system_coupling_interfaces), IF-ICP-BUS-v2, CPL-HALL-ON-v1"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/PREREG_v2.md",
+   "sha256": "2a4ff4261120befa38714d99db4cc94eec3542f604d72b98739bea0efdba0247",
+   "role": "producer record, human-readable"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_lock_v2.json",
+   "sha256": "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287",
+   "role": "producer lock (matched-interface anchor)"
+  },
+  {
+   "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+   "sha256": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980",
+   "role": "slot load planes; ledger P_loss (true PPU conversion loss)"
+  },
+  {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_report_v1.json",
+   "sha256": "e416e76757eac1ab8a5be5c2b6ee9fe55da31f3d6ff814a62c75727fbeb2c1f0",
+   "role": "SC-WP-05 plane finding (IK-07 read P_icp_bus_W as spacecraft-DC demand)"
+  },
+  {
+   "path": "crates/abep-subsystems/src/power/system_ledger.rs",
+   "sha256": "993adfc4fe3d78b33f1d2ec404b85defcdcfb08e470adc8c6f3513f79acc6bc4",
+   "role": "admitted CONS-L1 (read, not changed): planes Load / SupplyInput / Bus; ledger P_loss outside the accounts"
+  }
+ ],
+ "matched_interface": {
+  "interface_id": "IF-ICP-THERMAL-v2",
+  "producer": "NP-ICP-NEUTRALIZER prereg_v2.json system_coupling_interfaces.IF-ICP-THERMAL-v2 (lock a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287)",
+  "key_table_rule": "keys below are the producer's key table byte for byte (same ids, keys, roles, planes, powered_by, signs, receivers); canonical sha256 = sha256 of json.dumps(keys, sort_keys=True, separators=(',', ':'), ensure_ascii=False) of either record",
+  "key_table_sha256": "33e495adadbe94a5113c5f6b9040156ec8309295cca15b812714038beaa51161",
+  "keys": [
+   {
+    "id": "TK-R1",
+    "key": "P_icp_slot_load_sum_W",
+    "role": "REFERENCE",
+    "meaning": "sum of the installed ICP slot loads at their bus_power_boundary_a9_v2 load planes (icp_rf_source + icp_matching_network + icp_collector_bias, + an installed variant slot). NOT a spacecraft-side bus draw (that is the bus ledger's P_bus_W).",
+    "plane": "LOAD_PLANE_SUM",
+    "powered_by": "-",
+    "sign": ">= 0",
+    "receiver": "none (closure reference IFI2-07, CONS-I3)"
+   },
+   {
+    "id": "TK-R2",
+    "key": "P_icp_rf_source_DC_W",
+    "role": "REFERENCE",
+    "meaning": "RF generator DC input (= slot icp_rf_source load plane generator_dc_input)",
+    "plane": "LOAD (icp_rf_source)",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "none (closure reference IFI2-03)"
+   },
+   {
+    "id": "TK-R3",
+    "key": "P_icp_rf_forward_W",
+    "role": "REFERENCE",
+    "meaning": "forward RF power at RP-CPL (generator / 50-ohm side of the local match); measurement plane, never plasma power",
+    "plane": "RF_FORWARD",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "none (closure reference IFI2-03 / IFI2-04)"
+   },
+   {
+    "id": "TK-R4",
+    "key": "P_icp_abs_W",
+    "role": "REFERENCE",
+    "meaning": "RF power absorbed by the plasma electrons (OUT-01)",
+    "plane": "PLASMA",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "none (closure reference IFI2-04 / IFI2-05)"
+   },
+   {
+    "id": "TK-R5",
+    "key": "P_icp_collector_bias_W",
+    "role": "REFERENCE",
+    "meaning": "power delivered by the registered electrode-bias supplies into the plasma-electrode circuit, -sum_j I_j V_j over bias-connected surfaces (= slot icp_collector_bias load plane 'supply output V_bias x I_collector' when the only supply is the flight-type ICP collector supply)",
+    "plane": "LOAD (icp_collector_bias)",
+    "powered_by": "ICP_BIAS_SUPPLY (+ GROUND_FACILITY_ONLY supplies in a bench case, flagged)",
+    "sign": ">= 0 (a sinking supply is OUT_OF_DOMAIN, BUS2-08)",
+    "receiver": "none (closure reference IFI2-06)"
+   },
+   {
+    "id": "TK-01",
+    "key": "Q_icp_rf_conversion_loss_W",
+    "role": "BOOKED",
+    "meaning": "RF generator DC-to-RF conversion loss = P_icp_rf_source_DC_W - P_icp_rf_forward_W (declared assumption kept from v1 CC-06: the source does not recover reflected power)",
+    "plane": "inside the RF source (load side of the slot plane)",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "B_PPU_RF sub-account RF_SOURCE (or a registered electronics node)"
+   },
+   {
+    "id": "TK-02",
+    "key": "P_icp_rf_reflected_W",
+    "role": "BOOKED",
+    "meaning": "reflected RF power at RP-CPL, absorbed in the RF source",
+    "plane": "RF_REFLECTED",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "B_PPU_RF sub-account RF_SOURCE (or a registered electronics node)"
+   },
+   {
+    "id": "TK-03",
+    "key": "Q_icp_line_W",
+    "role": "BOOKED_OR_DEPOSITED",
+    "meaning": "50-ohm line / feedthrough loss between RP-CPL and RP-MIN",
+    "plane": "RF line",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "B_PPU_RF sub-account RF_CHAIN, or N_MATCH for a registered co-located segment"
+   },
+   {
+    "id": "TK-04",
+    "key": "Q_icp_match_W",
+    "role": "BOOKED_OR_DEPOSITED",
+    "meaning": "RF loss inside the matching network (P2 two-port); the line loss is not inside it",
+    "plane": "RF match",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "N_MATCH iff match_colocated (ICD ICP-13), else B_PPU_RF sub-account RF_CHAIN"
+   },
+   {
+    "id": "TK-05",
+    "key": "P_icp_matching_DC_W",
+    "role": "BOOKED_OR_DEPOSITED",
+    "meaning": "matching-network tuning actuator / controller DC draw (= slot icp_matching_network load plane; 0 W explicit for a registered fixed passive match), dissipated in the actuator / controller",
+    "plane": "LOAD (icp_matching_network)",
+    "powered_by": "ICP_MATCH_ACTUATOR",
+    "sign": ">= 0",
+    "receiver": "N_MATCH iff match_colocated, else B_PPU_RF sub-account RF_CHAIN"
+   },
+   {
+    "id": "TK-06",
+    "key": "Q_icp_coil_ohmic_W",
+    "role": "DEPOSITED",
+    "meaning": "I_ant^2 R_ant: the whole non-plasma antenna-circuit loss at RP-ANT, incl. induced (eddy) loss in nearby conductors (RP-ANT convention)",
+    "plane": "RP-ANT",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "registered conductor split over {N_ANTENNA, N_COLLECTOR, N_HOUSING, N_MOUNT}, weights summing to 1 (a registration may state N_ANTENNA 1.0 with its evidence); unregistered -> INCOMPLETE_EVIDENCE on both sides (no default split)"
+   },
+   {
+    "id": "TK-07",
+    "key": "Q_icp_plasma_wall_W",
+    "role": "DEPOSITED",
+    "meaning": "RF-powered plasma heat on ICP-module surfaces in contact with the plasma: sum over those surfaces of L_j + F_j + W_j (EQ-16 v2)",
+    "plane": "PLASMA -> surfaces",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "producer per-surface partition over the IN-10 v2 surface -> node map {N_VESSEL, N_ANTENNA (if exposed), N_MOUNT, N_COLLECTOR, N_HOUSING}; always emitted with the key"
+   },
+   {
+    "id": "TK-08",
+    "key": "Q_icp_radiation_W",
+    "role": "DEPOSITED_OR_EXPORTED",
+    "meaning": "optical / UV radiation leaving the plasma volume (optically thin)",
+    "plane": "PLASMA",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "consumer-registered partition f_rad over ICP nodes, H-1 pole faces and EXPORT (unchanged from v1 IK-05)"
+   },
+   {
+    "id": "TK-09",
+    "key": "Q_icp_extraction_W",
+    "role": "EXPORTED",
+    "meaning": "RF-powered energy arriving at the registered electron sink: L_ec + F_ec + W_ec (bench: dedicated electron collector, facility hardware; flight: Hall plume)",
+    "plane": "PLASMA -> electron sink",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "EXPORT"
+   },
+   {
+    "id": "TK-10",
+    "key": "Q_icp_outflow_upstream_W",
+    "role": "DEPOSITED_OR_EXPORTED",
+    "meaning": "RF-powered ion, electron, formation and neutral-borne energy leaving through the upstream open end (toward the H-1 exit face)",
+    "plane": "PLASMA -> OPEN_UPSTREAM",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "RX-H1-FACE: registered H-1-facing receiver interface (consumer partition f_up)"
+   },
+   {
+    "id": "TK-11",
+    "key": "Q_icp_outflow_downstream_W",
+    "role": "EXPORTED",
+    "meaning": "the same through the downstream open end (plume / space), excluding the electron-sink term",
+    "plane": "PLASMA -> OPEN_DOWNSTREAM",
+    "powered_by": "RF_SOURCE",
+    "sign": ">= 0",
+    "receiver": "EXPORT (never internal heat)"
+   },
+   {
+    "id": "TK-12",
+    "key": "Q_icp_bias_collector_W",
+    "role": "DEPOSITED",
+    "meaning": "electrode-circuit energy deposited on ICP-module electrodes: sum of C_j = I_j (phi_p - V_j) over bias-connected module surfaces (ion collector -> N_COLLECTOR)",
+    "plane": "bias circuit -> surfaces",
+    "powered_by": "ICP_BIAS_SUPPLY",
+    "sign": "signed (per-surface Q_j check IFI2-08)",
+    "receiver": "N_COLLECTOR (producer per-surface partition; another bias-connected module surface only through its IN-10 v2 node)"
+   },
+   {
+    "id": "TK-13",
+    "key": "Q_icp_bias_export_W",
+    "role": "EXPORTED",
+    "meaning": "electrode-circuit energy at the electron sink, C_ec",
+    "plane": "bias circuit -> electron sink",
+    "powered_by": "ICP_BIAS_SUPPLY",
+    "sign": "signed",
+    "receiver": "EXPORT"
+   },
+   {
+    "id": "TK-14",
+    "key": "P_icp_flow_control_W",
+    "role": "VARIANT",
+    "meaning": "dedicated ICP feed valve driver output (slot flow_control_icp_feed). G-REUSE: NOT_INSTALLED, a full record with value 0 exactly (evidence DEFINITION, A9.1 HIQ-06)",
+    "plane": "LOAD (flow_control_icp_feed)",
+    "powered_by": "ICP_FEED_VALVE_DRIVER",
+    "sign": ">= 0",
+    "receiver": "installed variant -> INCOMPLETE_EVIDENCE until its receiver node is registered"
+   },
+   {
+    "id": "TK-15",
+    "key": "P_icp_assist_magnet_W",
+    "role": "VARIANT",
+    "meaning": "ICP assist-magnet coil load (slot icp_assist_magnet). First build unmagnetized: NOT_INSTALLED, full record with value 0 exactly (evidence DEFINITION)",
+    "plane": "LOAD (icp_assist_magnet)",
+    "powered_by": "ICP_ASSIST_MAGNET_SUPPLY",
+    "sign": ">= 0",
+    "receiver": "installed variant -> OUT_OF_DOMAIN (thermal D-05; NP-ICP DOM-06)"
+   }
+  ],
+  "consumer_deposition": [
+   {
+    "id": "TK-R1..TK-R5",
+    "consumer": "references only: closures IFI2-03..IFI2-07 and CONS-I3; never deposited"
+   },
+   {
+    "id": "TK-01",
+    "consumer": "booked at B_PPU_RF, sub-account RF_SOURCE (reported raw, not solved; an optional registered electronics link as v1)"
+   },
+   {
+    "id": "TK-02",
+    "consumer": "booked at B_PPU_RF, sub-account RF_SOURCE (absorbed in the generator); never on a neutralizer node; never counted a second time"
+   },
+   {
+    "id": "TK-03",
+    "consumer": "B_PPU_RF sub-account RF_CHAIN; N_MATCH only for a registered co-located segment"
+   },
+   {
+    "id": "TK-04",
+    "consumer": "N_MATCH iff match_colocated, else B_PPU_RF sub-account RF_CHAIN"
+   },
+   {
+    "id": "TK-05",
+    "consumer": "N_MATCH iff match_colocated, else B_PPU_RF sub-account RF_CHAIN"
+   },
+   {
+    "id": "TK-06",
+    "consumer": "registered split over {N_ANTENNA, N_COLLECTOR, N_HOUSING, N_MOUNT} (RI-PART; weights sum to 1); unregistered -> INCOMPLETE_EVIDENCE (the v1 implicit 'all to N_ANTENNA when no induced share is declared' is retired)"
+   },
+   {
+    "id": "TK-07",
+    "consumer": "producer per-node partition (from per-surface L_j + F_j + W_j); the v1 consumer fallback f_pw is retired"
+   },
+   {
+    "id": "TK-08",
+    "consumer": "registered f_rad over {N_VESSEL, N_ANTENNA, N_COLLECTOR, N_HOUSING, H1_POLE_IN, H1_POLE_OUT, EXPORT} (v1 IK-05, unchanged)"
+   },
+   {
+    "id": "TK-09",
+    "consumer": "EXPORT; reported raw in P_exported_W"
+   },
+   {
+    "id": "TK-10",
+    "consumer": "RX-H1-FACE: registered partition f_up over H1_POLE_IN, H1_POLE_OUT, H1_WALL_IN, H1_WALL_OUT, H1_ANODE, N_MOUNT, N_HOUSING, EXPORT (RI-PART); unregistered with TK-10 > 0 -> INCOMPLETE_EVIDENCE; TK-10 = 0 exactly needs no partition"
+   },
+   {
+    "id": "TK-11",
+    "consumer": "EXPORT; reported raw in P_exported_W; never internal heat"
+   },
+   {
+    "id": "TK-12",
+    "consumer": "N_COLLECTOR (producer per-node partition of the signed C_j; another bias-connected module surface only through its producer node)"
+   },
+   {
+    "id": "TK-13",
+    "consumer": "EXPORT; reported raw in P_exported_W"
+   },
+   {
+    "id": "TK-14",
+    "consumer": "G-REUSE: full NOT_INSTALLED record, exactly 0; an installed variant -> INCOMPLETE_EVIDENCE (receiver not registered)"
+   },
+   {
+    "id": "TK-15",
+    "consumer": "NOT_INSTALLED record, exactly 0; installed -> OUT_OF_DOMAIN (D-05, FT-12)"
+   }
+  ],
+  "checks": [
+   {
+    "id": "IFI2-01",
+    "check": "every key TK-R1..TK-R5, TK-01..TK-15 present with a complete value_record (units W); interface_id IF-ICP-THERMAL-v2; producer lock sha256 equal to the anchor above",
+    "on_failure": "MODEL_ERROR (missing key / malformed); a non-EVALUATED key propagates its status (no zero-fill, FT-18)"
+   },
+   {
+    "id": "IFI2-02",
+    "check": "every key >= 0 except TK-12 and TK-13 (signed)",
+    "on_failure": "MODEL_ERROR"
+   },
+   {
+    "id": "IFI2-03",
+    "check": "RF-S: P_icp_rf_source_DC_W = Q_icp_rf_conversion_loss_W + P_icp_rf_forward_W",
+    "on_failure": "MODEL_ERROR"
+   },
+   {
+    "id": "IFI2-04",
+    "check": "RF: P_icp_rf_forward_W = P_icp_rf_reflected_W + Q_icp_line_W + Q_icp_match_W + Q_icp_coil_ohmic_W + P_icp_abs_W",
+    "on_failure": "MODEL_ERROR"
+   },
+   {
+    "id": "IFI2-05",
+    "check": "PL: P_icp_abs_W = Q_icp_plasma_wall_W + Q_icp_radiation_W + Q_icp_extraction_W + Q_icp_outflow_upstream_W + Q_icp_outflow_downstream_W",
+    "on_failure": "MODEL_ERROR"
+   },
+   {
+    "id": "IFI2-06",
+    "check": "B: P_icp_collector_bias_W = Q_icp_bias_collector_W + Q_icp_bias_export_W",
+    "on_failure": "MODEL_ERROR"
+   },
+   {
+    "id": "IFI2-07",
+    "check": "S: P_icp_slot_load_sum_W = P_icp_rf_source_DC_W + P_icp_matching_DC_W + P_icp_collector_bias_W (+ installed variants)",
+    "on_failure": "MODEL_ERROR"
+   },
+   {
+    "id": "IFI2-08",
+    "check": "per node: the TK-07 share + the TK-12 share >= -eps_if (the producer's per-surface Q_j = L_j + F_j + W_j + C_j >= 0 makes it hold); every producer partition sums to its key",
+    "on_failure": "MODEL_ERROR"
+   },
+   {
+    "id": "IFI2-09",
+    "check": "every partition used (producer or registered) has weights summing to exactly 1 (E-07 v2)",
+    "on_failure": "MODEL_ERROR"
+   },
+   {
+    "id": "IFI2-10",
+    "check": "a record with interface_id IF-ICP-THERMAL-v1, or carrying a retired key (P_icp_bus_W, Q_icp_boundary_W, Q_icp_rf_generator_loss_W, Q_icp_bias_supply_loss_W), or any CPL-HALL-ON circuit key / Hall-powered key",
+    "on_failure": "MODEL_ERROR (INTERFACE_VERSION_MISMATCH / RETIRED_KEY / ENERGY_SOURCE_RULE)"
+   },
+   {
+    "id": "IFI2-11",
+    "check": "configuration CFG-CAP-OFF, SYNTHETIC or PARAMETRIC",
+    "on_failure": "a CFG-FLIGHT-HALL-ON record -> NOT_EVALUATED (CPL_HALL_ON_CONSUMER_VERSION_NOT_REGISTERED; the producer's CPL-HON-08 coupling keys need a matched consumer version before execution)"
+   }
+  ],
+  "tolerances": "IFI2-03..IFI2-08 identities within eps_if (NUM-09, unchanged); the producer meets them to 1e-10 (its CC-05 / CC-06 v2)",
+  "scenario_members": "one thermal run per producer scenario member (ED-08); the consumer runs at least the members the producer flags as extreme per key / node, and for TK-08 / TK-10 every member is combined with the registered f_rad / f_up; temperatures are reported per member and as the raw envelope (U-02); no member is a nominal"
+ },
+ "rx_h1_face": {
+  "id": "RX-H1-FACE",
+  "kind": "registered receiver interface (a partition record), not a node",
+  "why_no_new_node": "v1 already registers every H-1 node that faces the ICP's upstream open end (H1_POLE_IN, H1_POLE_OUT, H1_WALL_IN, H1_WALL_OUT, H1_ANODE) and the ICP mount / housing; A9.31 sec. 7 asks for 'a registered H-1-facing receiver / interface', which this partition is. No node group, link type or property value is added.",
+  "receivers": [
+   "H1_POLE_IN",
+   "H1_POLE_OUT",
+   "H1_WALL_IN",
+   "H1_WALL_OUT",
+   "H1_ANODE",
+   "N_MOUNT",
+   "N_HOUSING",
+   "EXPORT"
+  ],
+  "input": "f_up weights per receiver, summing to exactly 1, as an RI-PART record with source (geometry / view-factor or particle-interception computation under its own contract such as K-P3-RAYS, or bench evidence), evidence class, uncertainty, applicability domain and validation status; registered per configuration and geometry id",
+  "no_default": "no f_up value is set here; unregistered with Q_icp_outflow_upstream_W > 0 -> INCOMPLETE_EVIDENCE (FT-20)",
+  "uncertainty": "carried as registered bounds (U-04); never fitted"
+ },
+ "replaced_items": {
+  "heat_sources": [
+   {
+    "id": "HS-00",
+    "rule": "Each watt enters the model through the interface of the supply that powers it, once; the model creates none. Hall discharge supply -> IF-HALL-THERMAL-v1 discharge keys (incl. return-current heating at the neutralizer HK-08 and plume interception HK-09). Hall magnet supplies -> IF-HALL-THERMAL-v1 coil keys. RF/ICP chain (generator, reflected power, line, match, antenna circuit, ICP plasma) -> IF-ICP-THERMAL-v2 TK-01..TK-04, TK-06..TK-11; matching actuator -> TK-05; ICP electrode-bias supply -> TK-12, TK-13. PPU supply conversion loss of every slot -> the bus ledger's P_loss_W (never an interface key here; CONS-L1 counts it as supply loss outside the accounts). Thermal-control dissipation -> Q_thermal_control_W. Environment -> ENV inputs."
+   },
+   {
+    "id": "IF-ICP-THERMAL-v1",
+    "rule": "replaced by IF-ICP-THERMAL-v2 (matched_interface). IK-01..IK-07 and IFI-1..IFI-5 stay v1 history; a v1 record is refused (IFI2-10)."
+   }
+  ],
+  "equations": [
+   {
+    "id": "E-07",
+    "name": "interface deposition (v2)",
+    "form": "Q_src,i = sum over interface keys of w_key,i * Q_key; for every key sum_i w_key,i + w_key,EXPORT + w_key,BOUNDARY = 1 exactly",
+    "rule": "weights are producer partitions (TK-07, TK-12), registered RI-PART partitions (TK-06 split, f_rad, f_up, Hall shares) or the fixed receivers of matched_interface.consumer_deposition; a missing weight set is INCOMPLETE_EVIDENCE; never fitted. Signed keys are allowed only for TK-12 and TK-13, with IFI2-08."
+   }
+  ],
+  "nodes_receives_interface_keys": [
+   {
+    "node": "N_VESSEL",
+    "receives": [
+     "Q_icp_plasma_wall_W (producer share)",
+     "Q_icp_radiation_W (f_rad share)",
+     "Q_hall_plume_to_icp_W (share)",
+     "Q_hall_plasma_radiation_W (registered share, if registered)"
+    ]
+   },
+   {
+    "node": "N_ANTENNA",
+    "receives": [
+     "Q_icp_coil_ohmic_W (registered split)",
+     "Q_icp_plasma_wall_W (producer share, only if exposed)",
+     "Q_icp_radiation_W (f_rad share)"
+    ]
+   },
+   {
+    "node": "N_COLLECTOR",
+    "receives": [
+     "Q_icp_plasma_wall_W (producer share)",
+     "Q_icp_bias_collector_W (producer share, signed)",
+     "Q_icp_coil_ohmic_W (registered split)",
+     "Q_icp_radiation_W (f_rad share)",
+     "Q_hall_return_to_icp_W",
+     "Q_hall_plume_to_icp_W (share)",
+     "Q_hall_plasma_radiation_W (registered share, if registered)"
+    ]
+   },
+   {
+    "node": "N_HOUSING",
+    "receives": [
+     "Q_icp_coil_ohmic_W (registered split)",
+     "Q_icp_plasma_wall_W (producer share)",
+     "Q_icp_radiation_W (f_rad share)",
+     "Q_icp_outflow_upstream_W (f_up share)",
+     "Q_hall_plume_to_icp_W (share)",
+     "Q_hall_plasma_radiation_W (registered share, if registered)"
+    ]
+   },
+   {
+    "node": "N_MATCH",
+    "receives": [
+     "Q_icp_match_W (if match_colocated)",
+     "P_icp_matching_DC_W (if match_colocated)",
+     "Q_icp_line_W (registered co-located segment only)"
+    ]
+   },
+   {
+    "node": "N_MOUNT",
+    "receives": [
+     "Q_icp_coil_ohmic_W (registered split)",
+     "Q_icp_plasma_wall_W (producer share, if a wetted surface maps to it)",
+     "Q_icp_outflow_upstream_W (f_up share)",
+     "Q_hall_plume_to_icp_W (share, if registered)"
+    ]
+   },
+   {
+    "node": "H1_POLE_IN, H1_POLE_OUT",
+    "receives": [
+     "v1 Hall keys unchanged",
+     "Q_icp_radiation_W (f_rad share)",
+     "Q_icp_outflow_upstream_W (f_up share)"
+    ]
+   },
+   {
+    "node": "H1_WALL_IN, H1_WALL_OUT, H1_ANODE",
+    "receives": [
+     "v1 Hall keys unchanged",
+     "Q_icp_outflow_upstream_W (f_up share)"
+    ]
+   }
+  ],
+  "boundaries": [
+   {
+    "id": "B_PPU_RF",
+    "represents": "PPU / RF-generator interface",
+    "kind": "BOOKING BOUNDARY (v2): heat booked here is reported raw by key and sub-account, never as a remainder: RF_SOURCE = Q_icp_rf_conversion_loss_W + P_icp_rf_reflected_W; RF_CHAIN = Q_icp_line_W (unless a co-located segment is registered) + Q_icp_match_W and P_icp_matching_DC_W (unless match_colocated). The true PPU conversion loss of each slot is the bus ledger's P_loss_W (the power model's PPU heat); it is not an interface key of this model and is not booked here a second time. An optional registered conductive link to a registered interface temperature may be declared (unchanged); there is none by default."
+   }
+  ],
+  "energy_boundaries": [
+   {
+    "id": "EB-03",
+    "crossing_terms": "In: deposited interface heat, Q_thermal_control_W, absorbed environment, inflow through boundary links. Out: net radiation to SPACE / B_FACILITY, conduction to B_SC / B_PPU_RF / B_FEED. Exported, never deposited: P_hall_exported_W (incl. the jet), Q_icp_extraction_W, Q_icp_outflow_downstream_W, Q_icp_bias_export_W, the EXPORT shares of Q_hall_plasma_radiation_W, Q_icp_radiation_W and Q_icp_outflow_upstream_W. Booked at B_PPU_RF by key (RF_SOURCE, RF_CHAIN), not solved."
+   },
+   {
+    "id": "EB-04",
+    "text": "There is no electrical model inside. Electrical powers (P_hall_discharge_W, P_icp_slot_load_sum_W, P_icp_rf_source_DC_W, P_icp_rf_forward_W, P_icp_abs_W, P_icp_collector_bias_W) are references for the interface identities only; none is a spacecraft-side bus draw."
+   }
+  ],
+  "conservation": [
+   {
+    "id": "CONS-I1",
+    "name": "interface identities",
+    "criterion": "IFH-3, IFH-4 (unchanged) and IFI2-03..IFI2-08 with eps_if (NUM-09)"
+   },
+   {
+    "id": "CONS-L1",
+    "name": "system energy ledger (CLAUDE.md rule 4)",
+    "criterion": "evaluated by the SC-WP-05 system check, not inside the thermal equations (unchanged); the v2 ICP account takes slots icp_rf_source, icp_matching_network and icp_collector_bias at Plane::Load; deposited = node deposits of TK-03..TK-08, TK-10 and TK-12; exported = TK-08 / TK-10 EXPORT shares, TK-09, TK-11, TK-13; booked = B_PPU_RF RF_SOURCE + RF_CHAIN; the ledger P_loss of those slots is the supply loss outside the account. Residual < 2 %."
+   }
+  ],
+  "analytic_limiting_cases": [
+   {
+    "id": "AL-10",
+    "case": "interface bookkeeping and refusals (v2)",
+    "setup": "synthetic IF-HALL-THERMAL-v1 and IF-ICP-THERMAL-v2 records on the registered VS-NET (vs_net_v1.json, unchanged): one consistent set with match_colocated true and one with false, a registered f_up, a registered TK-06 split, a signed TK-12 with positive node totals; one set violating each of IFH-2, IFH-3, IFH-4, IFI2-02..IFI2-08; one with a missing key; one with a key INCOMPLETE_EVIDENCE; one with a key NOT_EVALUATED; one IF-ICP-THERMAL-v1 record; one carrying P_icp_bus_W; one with TK-10 > 0 and no f_up; one with no TK-06 split; one CFG-FLIGHT-HALL-ON record; one whose N_COLLECTOR total (TK-07 + TK-12 shares) is negative. The synthetic interface records are registered alone with their sha256 before the scored run.",
+    "closed_form": "CONS-I2 and CONS-I3; TK-09, TK-11, TK-13 deposited on no node; TK-01 / TK-02 booked at RF_SOURCE; TK-04 / TK-05 on N_MATCH iff match_colocated; TK-10 shares exactly f_up",
+    "pass_criterion": "consistent sets: CONS-I2 and CONS-I3 hold and every key lands on its receivers with its weights (1e-12 relative + 1e-12 W); violating sets, missing key, v1 record, retired key and negative node total: MODEL_ERROR; INCOMPLETE_EVIDENCE key, missing f_up, missing TK-06 split: INCOMPLETE_EVIDENCE; NOT_EVALUATED key and CFG-FLIGHT-HALL-ON: NOT_EVALUATED"
+   }
+  ],
+  "fail_closed_tests": [
+   {
+    "id": "FT-13",
+    "case": "IFH-3, IFH-4 or any of IFI2-02..IFI2-09 violated",
+    "expected": "MODEL_ERROR"
+   }
+  ],
+  "outputs": [
+   {
+    "id": "O-11",
+    "key": "Q_boundary_W",
+    "content": "Q_sc_interface_W per attachment; B_PPU_RF booked heat by key and sub-account (RF_SOURCE: Q_icp_rf_conversion_loss_W, P_icp_rf_reflected_W; RF_CHAIN: Q_icp_line_W, Q_icp_match_W, P_icp_matching_DC_W when booked) and link flows; B_FEED link flows. No remainder key."
+   },
+   {
+    "id": "O-13",
+    "key": "P_exported_W",
+    "content": "P_hall_exported_W, P_hall_unattributed_W, Q_icp_extraction_W, Q_icp_outflow_downstream_W, Q_icp_bias_export_W, and the EXPORT shares of Q_hall_plasma_radiation_W, Q_icp_radiation_W and Q_icp_outflow_upstream_W"
+   },
+   {
+    "id": "O-17",
+    "key": "provenance",
+    "content": "as v1, plus interface record ids and versions (IF-ICP-THERMAL-v2), the producer lock sha256, scenario_member_id and the RX-H1-FACE / f_rad / TK-06 partition record sha256"
+   }
+  ],
+  "registered_inputs": [
+   {
+    "id": "RI-PART",
+    "content": "interface partitions: f_rad, f_up (RX-H1-FACE), the TK-06 antenna-circuit split, Hall pole / radiation / plume shares, inner / outer wall split (the v1 f_pw is retired: the producer partitions TK-07)",
+    "future_suppliers": "NP-ICP (producer partitions), K-P3-RAYS, bench evidence",
+    "status_today": "TBD"
+   }
+  ],
+  "verification_cases_registration": "The v2 AL-10 synthetic interface records are registered alone with their sha256 before the scored run (the v1 VS-NET registration rule)."
+ },
+ "added_items": {
+  "conservation": [
+   {
+    "id": "CONS-I3",
+    "name": "ICP slot-load closure",
+    "criterion": "sum over TK-01..TK-13 of (deposited + exported + booked) = P_icp_slot_load_sum_W within eps_if: every watt of the ICP slot loads has exactly one destination (node, RX-H1-FACE receiver, EXPORT, B_PPU_RF)"
+   }
+  ],
+  "fail_closed_tests": [
+   {
+    "id": "FT-19",
+    "case": "IF-ICP-THERMAL-v1 record, or a record carrying a retired key (P_icp_bus_W, Q_icp_boundary_W, Q_icp_rf_generator_loss_W, Q_icp_bias_supply_loss_W), a CPL-HALL-ON circuit key or a Hall-powered key",
+    "expected": "MODEL_ERROR (IFI2-10)"
+   },
+   {
+    "id": "FT-20",
+    "case": "Q_icp_outflow_upstream_W > 0 without a registered f_up; Q_icp_coil_ohmic_W without a registered split",
+    "expected": "INCOMPLETE_EVIDENCE naming RX-H1-FACE / TK-06"
+   },
+   {
+    "id": "FT-21",
+    "case": "CFG-FLIGHT-HALL-ON IF-ICP-THERMAL-v2 record",
+    "expected": "NOT_EVALUATED (CPL_HALL_ON_CONSUMER_VERSION_NOT_REGISTERED)"
+   },
+   {
+    "id": "FT-22",
+    "case": "node total of the ICP electrode-circuit and plasma-wall shares below -eps_if",
+    "expected": "MODEL_ERROR (IFI2-08)"
+   },
+   {
+    "id": "FT-23",
+    "case": "every run of a producer scenario member",
+    "expected": "scenario_member_id in provenance; no member selected as nominal"
+   }
+  ]
+ },
+ "retired_items": [
+  {
+   "item": "IK-07 Q_icp_boundary_W = P_icp_bus_W - Sigma_I booked at B_PPU_RF",
+   "why": "A9.31 sec. 7: 'Do NOT accept the current approximation that sends the entire residual to B_PPU_RF.' Replaced by key-resolved booking (RF_SOURCE, RF_CHAIN) and CONS-I3."
+  },
+  {
+   "item": "P_icp_bus_W as a reference",
+   "why": "mixed planes (SC-WP-05 finding); replaced by P_icp_slot_load_sum_W, which is never read as a spacecraft-DC demand"
+  },
+  {
+   "item": "IFI-3 (P_forward <= P_bus), IFI-4 (Sigma_I <= P_bus), IFI-5 (Sigma_I <= P_forward under rf_powered_only)",
+   "why": "replaced by the exact identities IFI2-03..IFI2-07 and CONS-I3 (stricter: equalities instead of bounds)"
+  },
+  {
+   "item": "f_pw consumer fallback for Q_icp_plasma_wall_W",
+   "why": "the producer always partitions TK-07 per surface; a consumer fallback could not keep IFI2-08 with the signed TK-12"
+  },
+  {
+   "item": "implicit 100 % N_ANTENNA for an undeclared induced coil-loss share",
+   "why": "a convenience split (A9.31 sec. 9); TK-06 needs a registered split on both sides"
+  }
+ ],
+ "owner_questions_resolved": [
+  {
+   "id": "OQ-NPT-02",
+   "status": "RESOLVED (A9.31 sec. 7)",
+   "how": "(a) P_icp_slot_load_sum_W = icp_rf_source + icp_matching_network + icp_collector_bias at load planes, a reference only; (b) collector-bias power TK-R5 deposited by TK-12 (N_COLLECTOR) and TK-13 (EXPORT); (c) Hall-powered heat stays in HK-08 / HK-09 and is refused inside ICP keys (IFI2-10); (d) the line loss is its own key TK-03, not inside TK-04; (e) NP-ICP partitions TK-07 and TK-12; f_rad, f_up and the TK-06 split are registered RI-PART inputs"
+  },
+  {
+   "id": "CF-04",
+   "status": "RESOLVED",
+   "how": "reflected power (TK-02) and the collector-bias supply (TK-R5, TK-12, TK-13) have keys; Hall-powered heat stays on the Hall side"
+  },
+  {
+   "id": "Q-01 (verification_report_v1 F-01)",
+   "status": "RESOLVED",
+   "how": "IF-ICP-THERMAL-v2 is one key table on both sides (key_table_sha256)"
+  }
+ ],
+ "owner_questions_open": "OQ-NPT-01, OQ-NPT-03..OQ-NPT-10 and Q-02 stay open (unchanged); they block only the affected absolute outputs (IG-05).",
+ "not_evaluated_today_changes": [
+  {
+   "id": "NE-02",
+   "item": "absolute RF/ICP heat loads",
+   "status": "NOT_EVALUATED",
+   "why": "NP-ICP model_version 2 not implemented; IF-ICP-THERMAL-v2 values NOT_EVALUATED (producer NE-10)"
+  },
+  {
+   "id": "NE-10",
+   "item": "interface partitions incl. f_up (RX-H1-FACE) and the TK-06 split",
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "NE-13",
+   "item": "Hall-ON ICP coupling heat (CPL-HALL-ON-v1)",
+   "status": "NOT_EVALUATED",
+   "why": "credible Hall set EMPTY; consumer version of the coupling keys not registered"
+  }
+ ],
+ "implementation_gate": "No NP-THERMAL-CATHODELESS model_version 2.0.0 code before this record and its lock are committed (A9.29 sec. 13; plan v3.1 ES-4). The admitted v1 implementation (abep-subsystems::thermal, 1.0.0) is not changed; v2 is added beside it and verifies this lock and the producer anchor.",
+ "admission_rule_v2": "ADM-01..ADM-06 apply with v2 ids: VERIFIED needs AL-01..AL-11 (AL-10 v2), every CONS criterion incl. CONS-I3, FT-01..FT-23, DET, IV-01 / IV-02; and the producer key table hash equal to key_table_sha256.",
+ "ledger_update_requested": "none by this record (docs only). For lane A1: NP-THERMAL-CATHODELESS gains PREREG_MODEL 2.0.0 (this lock); v1 stays as recorded. Follow-on: thermal v2 consumer in abep-subsystems::thermal and the CONS-L1 v2 ICP account in abep-subsystems::power::system_ledger (additive, beside the admitted v1 paths).",
+ "scope_traceability": {
+  "source": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md secs. 7, 8, 9, 10 (sha256 ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc); sec. 9 / 10 items are owned by the producer record and listed with its field ids",
+  "SEC_7_ICP_THERMAL": [
+   {
+    "item": "S7-01",
+    "verbatim": "Create matched interface v2.",
+    "fields": [
+     "matched_interface (key_table_sha256 equal to the producer)",
+     "IFI2-01"
+    ]
+   },
+   {
+    "item": "S7-02",
+    "verbatim": "Do NOT accept the current approximation that sends the entire residual to B_PPU_RF.",
+    "fields": [
+     "retired_items IK-07",
+     "replaced_items.boundaries B_PPU_RF",
+     "CONS-I3"
+    ]
+   },
+   {
+    "item": "S7-03",
+    "verbatim": "The physically separated quantities already exposed by NP-ICP shall be consumed at their proper destinations.",
+    "fields": [
+     "matched_interface.consumer_deposition",
+     "nodes_receives_interface_keys"
+    ]
+   },
+   {
+    "item": "S7-04",
+    "verbatim": "Approve the additional ICP thermal keys including: reflected RF power; line loss; matching loss; antenna-circuit / coil loss; absorbed plasma power; collector-bias power; collector-bias deposition; exported bias power; upstream carried-out power; downstream carried-out power.",
+    "fields": [
+     "TK-02",
+     "TK-03",
+     "TK-04",
+     "TK-05",
+     "TK-06",
+     "TK-R4",
+     "TK-R5",
+     "TK-12",
+     "TK-13",
+     "TK-10",
+     "TK-11"
+    ]
+   },
+   {
+    "item": "S7-05",
+    "verbatim": "Approve the per-surface convention: Q_j = L_j + C_j subject to the registered sign convention and conservation check.",
+    "fields": [
+     "producer SG-01 / EQ-16 v2",
+     "IFI2-08",
+     "FT-22"
+    ]
+   },
+   {
+    "item": "S7-06a",
+    "verbatim": "RF-source / conversion losses -> B_PPU_RF or appropriate electronics node;",
+    "fields": [
+     "TK-01",
+     "TK-02",
+     "B_PPU_RF RF_SOURCE / RF_CHAIN",
+     "N_MATCH"
+    ]
+   },
+   {
+    "item": "S7-06b",
+    "verbatim": "collector deposition -> N_COLLECTOR;",
+    "fields": [
+     "TK-12",
+     "nodes_receives_interface_keys N_COLLECTOR"
+    ]
+   },
+   {
+    "item": "S7-06c",
+    "verbatim": "upstream plasma/outflow energy -> registered H-1-facing receiver / interface;",
+    "fields": [
+     "rx_h1_face",
+     "TK-10",
+     "FT-20"
+    ]
+   },
+   {
+    "item": "S7-06d",
+    "verbatim": "downstream exported power -> EXPORT, not internal heat;",
+    "fields": [
+     "TK-11",
+     "TK-09",
+     "EB-03 v2",
+     "O-13 v2"
+    ]
+   },
+   {
+    "item": "S7-06e",
+    "verbatim": "bias export -> EXPORT;",
+    "fields": [
+     "TK-13",
+     "O-13 v2"
+    ]
+   },
+   {
+    "item": "S7-06f",
+    "verbatim": "only true PPU conversion loss -> PPU heat.",
+    "fields": [
+     "HS-00 v2",
+     "B_PPU_RF v2 (ledger P_loss not re-booked)",
+     "CONS-L1 v2"
+    ]
+   },
+   {
+    "item": "S7-07",
+    "verbatim": "No energy may disappear.",
+    "fields": [
+     "CONS-I3",
+     "CONS-I2 (inherited)",
+     "IFI2-03..IFI2-07",
+     "E-07 v2"
+    ]
+   },
+   {
+    "item": "S7-08",
+    "verbatim": "No term may be double-counted.",
+    "fields": [
+     "HS-00 v2",
+     "IFI2-10",
+     "FT-19",
+     "CONS-L1 v2"
+    ]
+   },
+   {
+    "item": "S7-09",
+    "verbatim": "Preserve IF-ICP-THERMAL-v1 and NP-THERMAL-CATHODELESS v1 as immutable history.",
+    "fields": [
+     "predecessor",
+     "inheritance_rule"
+    ]
+   },
+   {
+    "item": "S7-10",
+    "verbatim": "Create versioned v2 records.",
+    "fields": [
+     "this record (prereg_v2.json, PREREG_v2.md, prereg_lock_v2.json)"
+    ]
+   }
+  ],
+  "SEC_8_ICP_BUS": [
+   {
+    "item": "S8-01",
+    "verbatim": "Use bus_power_boundary_a9_v2.",
+    "fields": [
+     "CONS-L1 v2 (slot planes)",
+     "governing_records bus_power_boundary_a9_v2"
+    ]
+   },
+   {
+    "item": "S8-02",
+    "verbatim": "Create a matched IF-ICP-BUS-v2 only if needed to make the v2 thermal interface and active ledger mapping explicit.",
+    "fields": [
+     "producer IF-ICP-BUS-v2",
+     "TK-R1..TK-R5 planes",
+     "CONS-L1 v2"
+    ]
+   },
+   {
+    "item": "S8-03",
+    "verbatim": "Do not reopen the old A5 bus boundary.",
+    "fields": [
+     "CONS-L1 v2"
+    ]
+   },
+   {
+    "item": "S8-04",
+    "verbatim": "Flight conventional cathode heater / keeper: NONE.",
+    "fields": [
+     "EX-01, EX-02, FT-10 (inherited)"
+    ]
+   },
+   {
+    "item": "S8-05",
+    "verbatim": "Raw bus ledger contains physical loads only.",
+    "fields": [
+     "EB-04 v2"
+    ]
+   },
+   {
+    "item": "S8-06",
+    "verbatim": "The RFP 1.5 kW value stays in assessment, never raw power physics.",
+    "fields": [
+     "EX-08 (inherited: no requirement parsing)",
+     "outputs rule (inherited)"
+    ]
+   }
+  ],
+  "SEC_9_NP_ICP_V2": [
+   {
+    "item": "S9-01..S9-10",
+    "verbatim": "PF-01 / PF-02 / GAP-01..05, bases, bounding / INCOMPLETE_EVIDENCE, no convenience split, INT-16/17/18",
+    "fields": [
+     "producer prereg_v2.json resolutions, energy_disposition, approved_interpretations",
+     "consumer: scenario_members (ED-08 members as separate runs)",
+     "retired_items (f_pw fallback, implicit N_ANTENNA split)"
+    ]
+   }
+  ],
+  "SEC_10_ICP_ASSESSMENT_USE": [
+   {
+    "item": "OQ-NPICP-08",
+    "verbatim": "APPROVED through the matched thermal-interface v2 decision above.",
+    "fields": [
+     "matched_interface"
+    ]
+   },
+   {
+    "item": "OQ-NPICP-15",
+    "verbatim": "Resolved by the matched thermal v2 decision.",
+    "fields": [
+     "owner_questions_resolved OQ-NPT-02",
+     "retired_items IK-07"
+    ]
+   },
+   {
+    "item": "OQ-NPICP-11",
+    "verbatim": "Preregister the v2 Hall-ON coupling now, but gate numerical execution on an admitted Hall member.",
+    "fields": [
+     "IFI2-11",
+     "FT-21",
+     "NE-13"
+    ]
+   },
+   {
+    "item": "OQ-NPICP-02, -03, -04, -07, -09, -10, -12, -13, -14",
+    "verbatim": "ICP assessment-use rulings",
+    "fields": [
+     "producer prereg_v2.json scope_traceability.SEC_10_ICP_ASSESSMENT_USE (no thermal field affected)"
+    ]
+   }
+  ]
+ }
+}
