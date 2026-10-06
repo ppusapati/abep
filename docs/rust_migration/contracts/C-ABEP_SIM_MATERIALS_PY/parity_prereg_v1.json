@@ -1,0 +1,394 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_MATERIALS_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_MATERIALS_PY",
+  "migration_wave": "W1E",
+  "scope": "named function subset (RM-R17): the Material record (fields, gamma_O, sputter_yield, see_yield), the DB contents and surface_ageing_alpha. Inventory row simulation_completion_wp is SC-WP-12 (shared W1E enabler); SC-WP-08 lists Material and surface_ageing_alpha in its AO element, names 'materials' in its admission criteria and targets abep-subsystems::materials, so the contract is registered here",
+  "functions_or_entry_points": [
+   "M0 DB rows: [dataclasses.asdict(m) for m in DB.values()] (the content of table() without pandas)",
+   "M1 Material(**fields) construction (dataclass defaults fidelity / source / notes)",
+   "M2 Material.gamma_O(T_K)",
+   "M3 Material.sputter_yield(E_eV)",
+   "M4 Material.see_yield(E_eV)",
+   "M5 surface_ageing_alpha(alpha0, fluence_atoms_m2, phi_c=1.0e26, alpha_inf=0.95)"
+  ],
+  "out_of_scope": [
+   "set_property: mutates the module-global DB in place (provenance setter); the Rust DB is immutable and coupon data replaces a record through a new versioned record. Stays Python reference",
+   "table(): pandas DataFrame presentation of the DB rows (its content is M0)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "owner_disposition_a9_29": "NOT_APPLICABLE",
+  "cross_wp_note": "SC-WP-12 owns the component in the inventory; this contract does not change that assignment. If SC-WP-12 registers its own contract for the same functions, the ledger owner reconciles (ledger_update_requested)",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "simulation_completion_wp": "SC-WP-08"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. No Rust code for the component exists at registration. The commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "reference_implementation": {
+  "python_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+  "files": [
+   {
+    "path": "abep_sim/materials.py",
+    "sha256_at_registration": "08e2ddddfc9380780e71bc15957fa82a9e879fc36046c266c669b037c2194feb"
+   },
+   {
+    "path": "abep_sim/constants.py",
+    "sha256_at_registration": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4 (not used by the component)",
+   "scipy": "1.17.1 (not used)",
+   "pandas": "3.0.2 (not used by the scored functions)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "NOT_APPLICABLE",
+   "thread_env": {
+    "OMP_NUM_THREADS": "NOT_APPLICABLE",
+    "OPENBLAS_NUM_THREADS": "NOT_APPLICABLE"
+   },
+   "stdlib": "math (glibc libm: exp, log, sqrt, pow through float ** float), json, hashlib; CPython 3.11 float repr and format(x, '.Ng') correctly rounded"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-subsystems",
+  "functions_or_entry_points": [
+   "abep_subsystems::materials::db::{Material, Num, db, lookup, surface_ageing_alpha}",
+   "`life_eval <calls.json>` (harness interface; crates/abep-subsystems/examples/life_eval.rs)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/**",
+   "crates/abep-provenance/**",
+   "crates/abep-data/**",
+   "crates/abep-hall/**",
+   "crates/abep-subsystems/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE (no configuration file is read; the single flight configuration is hall_icp_neutralizer, A9.19)",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "both implementations read the same pinned inputs (pinned_inputs_sha256); a mismatch voids the run (INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {},
+ "frozen_data_read_only": [],
+ "inputs": {
+  "argument_encoding": "material = {'name': n} (DB[n]; KeyError if absent) or {'fields': {...}} (Material(**fields); a missing required field raises TypeError); numbers keep their JSON int / float type",
+  "golden_vectors": {
+   "source": "the DB at the reference commit",
+   "count": "see vector_totals",
+   "list_or_generator": {
+    "R-M00": "db (one call)",
+    "R-M01": "for every DB material: gamma_O at T in [150.0, 293.15, 350.0, 600.0, 1200.0]; sputter_yield and see_yield at E in [0.0, 10.0, the material's Eth, Eth + 1e-9, 50.0, 100.0, 300.0, 1000.0]; record(fields of the DB row)",
+    "R-M02": "surface_ageing_alpha(a0, F) for a0 in [0.0, 0.6, 0.8, 1.0] and F in [0.0, 1e24, 1e26, 1e27, 1e28]; with phi_c 1e25 and alpha_inf 0.9"
+   }
+  },
+  "edge_cases": [
+   {
+    "id": "E-M01",
+    "inputs": "unknown material name",
+    "note": "KeyError"
+   },
+   {
+    "id": "E-M02",
+    "inputs": "fields missing 'density' / extra key 'bogus'",
+    "note": "TypeError"
+   },
+   {
+    "id": "E-M03",
+    "inputs": "gamma_O at T 0.0 and -1.0, -1e-3",
+    "note": "ZeroDivisionError / OverflowError"
+   },
+   {
+    "id": "E-M04",
+    "inputs": "sputter_yield with Eth 0 (int and float), Eth 300 (E 400), Eth 400 (E 500), E nan / inf",
+    "note": "ZeroDivisionError / max(x, 0.0) / IEEE"
+   },
+   {
+    "id": "E-M05",
+    "inputs": "see_yield with Emax 0, E -1e6",
+    "note": "ZeroDivisionError / OverflowError"
+   },
+   {
+    "id": "E-M06",
+    "inputs": "surface_ageing_alpha with phi_c 0.0, F -1e30, nan",
+    "note": "ZeroDivisionError / OverflowError / nan"
+   },
+   {
+    "id": "E-M07",
+    "inputs": "int-valued fields (Python keeps int in asdict)",
+    "note": "type preserved"
+   }
+  ],
+  "randomized_domain": {
+   "count": 2400,
+   "generators": {
+    "0 gamma_O": 600,
+    "1 sputter_yield": 600,
+    "2 see_yield": 600,
+    "3 surface_ageing_alpha": 300,
+    "4 record": 300
+   },
+   "draw": "material: a DB name (p 0.5) or random fields (cls / name strings; densities 1000..20000, moduli, gamma_min 1e-4..0.1, gamma0 1e-3..1, gamma_Ea 0.01..0.3 eV, Eth 10..80 eV, Y300 0.1..3, Emax 100..700 eV, dmax 0.5..7; each numeric field an int with probability 0.1); T uniform 100..2500 K; E uniform 0..2000 eV; alpha0 uniform 0..1; F log-uniform 1e20..1e29; phi_c log-uniform 1e24..1e28",
+   "domain_note": "numerical parity domain only"
+  },
+  "vector_totals": {
+   "R-M00..R-M02": "fixed",
+   "edge cases": "E-M01..E-M07",
+   "randomized": 2400
+  }
+ },
+ "campaign_seeds": {
+  "applicable": "true (input generation only; the component is deterministic)",
+  "scoring_master_seed": 2911594821,
+  "development_master_seed": 8101,
+  "derivation": "random.Random(master_seed * 1000 + k) per generator k (inputs.randomized_domain.generators)",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the admitted statistical contract; the roles are never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE",
+   "other_streams": "NOT_APPLICABLE: the harness's random.Random only generates input cases (the component is deterministic and draws no random numbers)",
+   "migration_parity_dataset": "seeds and the generated call file stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic component)",
+  "development_rule": "development comparisons use development_master_seed (and the registered deterministic vectors) only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "every call": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED"
+    },
+    {
+     "name": "value",
+     "units": "as the Python returns",
+     "tolerance_class": "EXACT_VALUE + ULP_BOUNDED (floats)",
+     "tolerance": "see tolerance_classes",
+     "definition": "the returned value (dicts in insertion order, tuples as lists)"
+    },
+    {
+     "name": "error_class",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "Python exception class name; Rust reports the mapped class name"
+    },
+    {
+     "name": "error_message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "str(exception) character for character for the message classes listed; class only otherwise"
+    }
+   ],
+   "message_classes": [],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "NOT_APPLICABLE",
+  "EXACT_VALUE": "strings, ints, booleans, None, statuses, dict key order, list lengths and the int-vs-float type of every value equal; error class equal; messages equal for the registered message classes",
+  "ULP_BOUNDED": "every float: |rust - py| <= 4 ulp(py) or <= 1e-12 * max(1, |py|); NaN matches NaN, +-inf exact",
+  "SOLVER_TOLERANCE": "NOT_APPLICABLE",
+  "STATISTICAL": "NOT_APPLICABLE",
+  "EXACT_STREAM": "NOT_APPLICABLE"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-DET",
+   "statement": "determinism: the Rust call list evaluated in two separate processes gives byte-identical output",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-M01",
+   "statement": "the DB has the reference names in insertion order and every row's fidelity is 'literature' and source 'literature-class prior' (both)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-M02",
+   "statement": "sputter_yield returns 0.0 for E <= Eth (both)",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": "false (property lookups and closed-form priors; no balance)",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "cases": "E-M01..E-M07",
+  "mapping": {
+   "KeyError": "KeyError (unknown material); class scored",
+   "TypeError": "TypeError (malformed record); class scored",
+   "ZeroDivisionError": "ZeroDivisionError (MODEL_ERROR); class scored",
+   "OverflowError": "OverflowError (math range error, OUT_OF_DOMAIN); class scored"
+  },
+  "documented_divergence": [
+   {
+    "id": "DIV-M00",
+    "statement": "none",
+    "disposition": "NOT_APPLICABLE"
+   }
+  ],
+  "mapping_rule": "every Python exception class maps to exactly one Rust class name; no Rust path may return a value where Python fails, or fail where Python returns, except the registered divergences (CLAUDE.md rule 3)"
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE"
+  ],
+  "rules": [
+   "DB row field names and order = the Material dataclass field order",
+   "int / float typing of every field preserved"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "the committed DB (R-M00..R-M02)"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_MATERIALS_PY/reference_outputs/",
+   "captured_at_python_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+   "sha256_manifest": "FILL at scoring",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: no golden_v1 / golden_v2 case is used"
+ },
+ "julia_bridge": {
+  "applicable": "false",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "julia_version": "NOT_APPLICABLE",
+  "launch_equivalence": "NOT_APPLICABLE",
+  "record_comparison": "NOT_APPLICABLE",
+  "execution_provenance": "NOT_APPLICABLE"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-M01",
+    "description": "gamma_O('SS316', 350.0), 20000 repeats"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine; speed-up = median_python / median_rust (Rust timed inside life_eval)",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every call meets its tolerance class",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": "true if conservation_checks.applicable",
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED (= PARITY_PASS) iff every call of every vector, every invariant, every conservation check and every registered divergence outcome passes and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays",
+  "disagreement_rule": "never rewrite a Python result, golden, evidence record or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "restricted to the retained selected-architecture functions listed (RM-R20)",
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust (abep_subsystems::materials::db) becomes authoritative for the materials property DB and its closed-form priors within the registered domain; every value stays a literature-class prior (fidelity 'literature'), never evidence"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output of this contract may be cited by the bid package unless the owner re-freezes",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (terminal package state, A9.29 sec. 3)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, evidence record, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): literature-class priors stay priors",
+  "not a gate PASS and not a life verdict: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31); no 15,000 h / 26,280 h comparison is made in raw physics (SC-WP-11)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_MATERIALS_PY/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_life_v1.py (Python harness calling `life_eval`)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance",
+   "environment",
+   "per-test results",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "captured reference outputs",
+   "ledger_update_requested"
+  ],
+  "ledger_scope_requested_on_admission": "ADMITTED for M0..M5 (abep_subsystems::materials::db); set_property / table stay Python reference"
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS in component_inventory_v3_1.json: PASS",
+   "the DB row 'LaB6' is a material-property prior record only; no cathode function, life or flight path is ported (C1 GROUND_REFERENCE_ONLY)",
+   "the Rust implementation contains none of the principle-6 forbidden identifiers (crates/abep-subsystems/tests/prereg_binding.rs scan)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {
+    "id": "MATERIALS-DB",
+    "value": "18 rows",
+    "value_status": "literature-class prior",
+    "open_action": "coupon data replaces a record",
+    "committed_labels": [
+     "fidelity = literature",
+     "source = literature-class prior"
+    ]
+   }
+  ],
+  "check": "VS-M01 = INV-M01: every row keeps fidelity 'literature' / source 'literature-class prior'"
+ },
+ "new_physics_verification": {
+  "applies_when": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY)"
+ }
+}
