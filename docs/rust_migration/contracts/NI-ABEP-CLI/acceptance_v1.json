@@ -1,0 +1,408 @@
+{
+ "schema": "abep_new_infrastructure_acceptance_v1",
+ "id": "ACCEPT-NI-ABEP-CLI-V1",
+ "item": "NI-ABEP-CLI",
+ "method": "NEW_INFRASTRUCTURE_ACCEPTANCE",
+ "simulation_completion_wp": "SC-WP-13",
+ "wave": "W14",
+ "date": "2026-10-06",
+ "status": "PREREGISTERED",
+ "base_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+ "registration_statement": "Committed alone, before any abep-cli code. Never edited after commit: a changed command, case, expectation, exit code or decision rule is acceptance_v2, and no case is removed or weakened after a failure.",
+ "governing_records": [
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md",
+   "sha256": "5c223f6df59f579deb1ef4788fecf5857c6fa3ff4f365f23738b2c1b7f251989",
+   "sections": "sec. 9 (Rust-era test rule), sec. 11 (no production Python dependency), sec. 14 (speed never weakens provenance, determinism, fail-closed semantics), sec. 15 (the active chain)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_29_rust_plan_v3_1_rulings_and_start_authorization.json",
+   "sha256": "51645f0ea6d0a2b02e029694ca6714854011be45cbe3d6adca53ce975453fc8d"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+   "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f",
+   "sections": "sec. 5 (bus_power_boundary_a9_v2; the 1.5 kW limit is assessment only)"
+  },
+  {
+   "path": "docs/rust_migration/simulation_completion_programme_v1_1.json",
+   "sha256": "5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a",
+   "sections": "work_packages SC-WP-13 (admission_criteria: double-run byte identity of every subcommand output and --threads 1 vs default; every output carries implementation = rust, rust_commit, contract_id and the four governing hashes; status vocabulary preserved; exit codes registered; gate: a subcommand reaching a non-admitted component is NOT_EVALUATED, never a silent Python fallback); method_vocabulary NEW_INFRASTRUCTURE_ACCEPTANCE; fail_closed_status_vocabulary"
+  },
+  {
+   "path": "docs/rust_migration/programme_v3_1.json",
+   "sha256": "b595c4fc740223cb8da10886c358410ffab2cfd38befbe97543237d1b4dee70f",
+   "sections": "cargo_workspace_proposal (crate abep-cli; dependency_rule types <- provenance <- config/data <- physics <- design/uq <- assess <- evidence <- cli)"
+  },
+  {
+   "path": "docs/rust_migration/CI_PLAN.md",
+   "sha256": "12e185d99f1e49ea92bd7a62bd47200adaa6374290c429f4dff5970cfacdf0bc",
+   "sections": "§ 2 determinism job (bitwise double run, --threads 1 vs default); § 4 abep hall pin-check; § 5 deterministic output over CLI end-to-end runs"
+  },
+  {
+   "path": "docs/rust_migration/component_inventory_v3_1.json",
+   "sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+   "sections": "new_items_no_python_reference NI-ABEP-CLI"
+  },
+  {
+   "path": "docs/rust_migration/contracts/BID_SOURCE_GUARD/acceptance_v1.json",
+   "sha256": "8d23e1f16d63dcbe2ce27f1ad48712d118808270d0ae5ab2ab2a2a6eb60ab1c6",
+   "sections": "pattern of a NEW_INFRASTRUCTURE_ACCEPTANCE record (cases, decision rules, single acceptance run, report)"
+  }
+ ],
+ "scope": {
+  "what": "the deterministic `abep` binary (crate crates/abep-cli): a thin orchestration over the admitted Rust crates. It adds no physics, no requirement threshold and no PASS / FAIL; every result value and status comes from the crate that owns it.",
+  "command_set_rule": "v1 registers only the commands the admitted crates support today (below). The other SC-WP-13 element commands (sweep, run --states 196 over the full chain, robust, assess, golden check, build <id> --check, config build, hall smoke / schema-check, parity, ci, perf) are not in v1: their components are not admitted (design synthesis, UQ, assessment, the active golden of SC-WP-15, the zero-Python CI of SC-WP-16) or they need the pinned Julia (hall smoke, a registered platform test). Each enters through a later acceptance version when its component is admitted.",
+  "not_in_v1_and_why": {
+   "thermal": "NP-THERMAL-CATHODELESS is VERIFIED, not ADMITTED (ledger new_items); no command in v1",
+   "chemistry": "abep-chem has no registered CLI input vocabulary (rate files are consumed through abep-icp); no command in v1",
+   "julia_check_pin": "`abep hall pin-check` v1 performs the file-level pin check of the admitted abep-julia-bridge (PINNED.toml / Manifest.toml / Project.toml consistency and the hall_physics_boundary pin); the Julia-side check_pin() needs the pinned Julia and stays the registered platform test of C-JULIA-BRIDGE-LAUNCH. The record says so (julia_check_pin = NOT_EXECUTED_PLATFORM_TEST)."
+  },
+  "no_python": "the binary never runs python / python3 / pip; its only subprocess is `git` (abep_provenance::run_record::RunRecord::capture, abep_provenance::git); no dependency on pyo3 / maturin"
+ },
+ "implementation": {
+  "crate": "crates/abep-cli (library abep_cli + binary `abep`)",
+  "dependencies": "abep-types, abep-provenance, abep-config, abep-data, abep-atmos, abep-intake, abep-mission, abep-subsystems, abep-hall, abep-julia-bridge, abep-icp, serde, serde_json (workspace dependencies only); abep-cli sits at the top of the dependency rule and no crate depends on it",
+  "acceptance_runner": "crates/abep-cli/examples/cli_acceptance.rs (runs the cases below against a built `abep` binary and writes the report); the same cases run in cargo test as development regression (not the acceptance report)"
+ },
+ "invocation": {
+  "grammar": "abep [--repo DIR] --out DIR [--threads N] <group> <command> [command options]",
+  "repo": "--repo DIR must itself hold Cargo.toml and config/MANIFEST.json (no upward search); without --repo, the repository root is found upward from the working directory (abep_provenance::find_repo_root)",
+  "out": "--out DIR is required; the directory is created when absent; it must not lie inside the repository root (REFUSED_OUTPUT_LOCATION; compared after canonicalising the nearest existing ancestor, before anything is created): run outputs never overwrite repository content",
+  "threads": "--threads N, an integer >= 1; default std::thread::available_parallelism(). An execution parameter, never an input: it is recorded in the sidecar only",
+  "execution_parameters_not_inputs": "--repo, --out and --threads never appear in the result record",
+  "numbers": "numeric options are parsed as f64 from their decimal text; a non-finite value or unparsable text is a usage error",
+  "unknown": "an unknown group, command or option, a missing required option, a repeated option or a stray argument is a usage error"
+ },
+ "pipeline": [
+  {
+   "id": "S-1",
+   "step": "parse the command line",
+   "failure": "USAGE_ERROR (exit 2): message on stderr, no file written"
+  },
+  {
+   "id": "S-2",
+   "step": "resolve --out; refuse a location inside the repository root (the root given by --repo or discovered; compared after canonicalisation)",
+   "failure": "REFUSED_OUTPUT_LOCATION (exit 5): message on stderr, no file written"
+  },
+  {
+   "id": "S-3",
+   "step": "resolve the repository root",
+   "failure": "REFUSED_PROVENANCE code REPOSITORY_NOT_FOUND (exit 4): result record written with status MODEL_ERROR, no sidecar"
+  },
+  {
+   "id": "S-4",
+   "step": "verify config/MANIFEST.json and every file it pins (abep_provenance::ConfigManifest::load + verify_all: sha256 and bytes)",
+   "failure": "REFUSED_PROVENANCE code CONFIG_MANIFEST_UNVERIFIED (exit 4): result record written with status MODEL_ERROR, no sidecar"
+  },
+  {
+   "id": "S-5",
+   "step": "capture the run record (abep_provenance::run_record::RunRecord::capture with contract_id ACCEPT-NI-ABEP-CLI-V1): git commit and dirty state, rustc, Cargo.lock sha256, the four governing hashes verified while captured, the HallThruster.jl pin, thread settings",
+   "failure": "REFUSED_PROVENANCE code RUN_RECORD_UNAVAILABLE (exit 4): result record written with status MODEL_ERROR, no sidecar"
+  },
+  {
+   "id": "S-6",
+   "step": "check the command inputs against their registered vocabularies (design-state ids of the frozen design-state set v2; the ICP flight supply modes)",
+   "failure": "REFUSED_UNREGISTERED_INPUT (exit 3): result record with status NOT_EVALUATED and the sidecar"
+  },
+  {
+   "id": "S-7",
+   "step": "verify the admission evidence of every component the command uses (registry below): the evidence file exists, has the registered sha256 and its verdict fields are the registered admitted values",
+   "failure": "a component whose evidence does not verify is ADMISSION_EVIDENCE_UNVERIFIED: the command is not executed, status NOT_EVALUATED (exit 10), reason code COMPONENT_ADMISSION_UNVERIFIED, payload null. A component registered NOT_ADMITTED is executed only where the command registers it (icp status) and its result is never EVALUATED (below)."
+  },
+  {
+   "id": "S-8",
+   "step": "execute the command through the crate API and summarise its status by the command's registered status sources",
+   "failure": "a crate error is reported verbatim (reason code CRATE_ERROR, message = the crate's error text) with the crate's fail-closed status; payload null"
+  },
+  {
+   "id": "S-9",
+   "step": "write the result record, then the sidecar (which binds the result by sha256); each file written to a temporary name in --out and renamed",
+   "failure": "OUTPUT_WRITE_ERROR (exit 6) on stderr"
+  }
+ ],
+ "outputs": {
+  "files": "<out>/<group>-<command>.result.json and <out>/<group>-<command>.run_record.json",
+  "result_record": {
+   "schema": "abep_cli_result_v1",
+   "fields_in_order": [
+    "schema",
+    "command",
+    "arguments",
+    "implementation",
+    "abep_cli_version",
+    "rust_commit",
+    "git_dirty",
+    "rustc",
+    "contract_id",
+    "governing_hashes",
+    "components",
+    "status",
+    "exit_code",
+    "reason",
+    "payload_format",
+    "payload"
+   ],
+   "field_rules": {
+    "command": "'<group> <command>'",
+    "arguments": "the command options in registered order, numbers as parsed f64, strings verbatim",
+    "implementation": "\"rust\"",
+    "rust_commit": "RunRecord.git_commit (40 hex); null only on a REFUSED_PROVENANCE record",
+    "git_dirty": "RunRecord.git_dirty",
+    "contract_id": "\"ACCEPT-NI-ABEP-CLI-V1\"",
+    "governing_hashes": "{config_manifest, architecture, model_set, design_state_set} exactly as RunRecord captured and verified them (path + sha256; design_state_set with its reference record, frozen file path, sha256 and n_states); null only on a REFUSED_PROVENANCE record",
+    "components": "per component used: component, contract_id, admission_evidence {path, sha256}, admission ADMITTED | NOT_ADMITTED | ADMISSION_EVIDENCE_UNVERIFIED",
+    "status": "EVALUATED | NOT_EVALUATED | INCOMPLETE_EVIDENCE | OUT_OF_DOMAIN | MODEL_ERROR (abep_types::EvalStatus vocabulary; nothing else)",
+    "exit_code": "the process exit code (table below)",
+    "reason": "null when status is EVALUATED; else {code, message}",
+    "payload_format": "serde_json | python_json: the payload is the owning crate's own serialization (serde_json for Serialize types, abep_types::pyjson / abep_hall::py dumps for the Python-shaped values, which write NaN / Infinity as Python does)",
+    "payload": "the command payload, or null on a refusal / crate error"
+   },
+   "layout": "one top-level key per line, each value in compact JSON, the payload spliced verbatim; the file ends with a newline. The envelope adds no time stamp, host name, absolute path or thread count; crate texts (payload, reason.message) are verbatim"
+  },
+  "sidecar": {
+   "schema": "abep_cli_run_sidecar_v1",
+   "fields": [
+    "schema",
+    "command",
+    "result_file",
+    "result_sha256",
+    "threads_requested",
+    "threads_used",
+    "run_record"
+   ],
+   "run_record": "abep_provenance::run_record::RunRecord (schema abep_run_record_v1) as captured in S-5",
+   "rule": "every command that passes S-5 writes the sidecar; a REFUSED_PROVENANCE record has no sidecar because no run record can be captured truthfully, and USAGE_ERROR / REFUSED_OUTPUT_LOCATION / OUTPUT_WRITE_ERROR write nothing"
+  },
+  "stdout": "one line: '<status> <command> -> <result file name>'; never data"
+ },
+ "status_and_exit_codes": {
+  "decision": "fail-closed statuses map to distinct non-zero exit codes AND are written into the result record; no fail-closed result exits 0",
+  "table": [
+   {"exit": 0, "meaning": "EVALUATED", "record": "status EVALUATED"},
+   {"exit": 2, "meaning": "USAGE_ERROR", "record": "none"},
+   {"exit": 3, "meaning": "REFUSED_UNREGISTERED_INPUT", "record": "status NOT_EVALUATED, reason.code UNREGISTERED_INPUT, sidecar"},
+   {"exit": 4, "meaning": "REFUSED_PROVENANCE", "record": "status MODEL_ERROR, reason.code REPOSITORY_NOT_FOUND | CONFIG_MANIFEST_UNVERIFIED | RUN_RECORD_UNAVAILABLE, no sidecar"},
+   {"exit": 5, "meaning": "REFUSED_OUTPUT_LOCATION", "record": "none"},
+   {"exit": 6, "meaning": "OUTPUT_WRITE_ERROR", "record": "none (or incomplete)"},
+   {"exit": 10, "meaning": "NOT_EVALUATED", "record": "status NOT_EVALUATED"},
+   {"exit": 11, "meaning": "INCOMPLETE_EVIDENCE", "record": "status INCOMPLETE_EVIDENCE"},
+   {"exit": 12, "meaning": "OUT_OF_DOMAIN", "record": "status OUT_OF_DOMAIN"},
+   {"exit": 13, "meaning": "MODEL_ERROR", "record": "status MODEL_ERROR"}
+  ],
+  "aggregation": "where a command has several status sources, its status is the most severe: MODEL_ERROR > OUT_OF_DOMAIN > INCOMPLETE_EVIDENCE > NOT_EVALUATED > EVALUATED (the input-registration ranking of NP-ICP-NEUTRALIZER, INCOMPLETE_EVIDENCE above NOT_EVALUATED). Every source status also stays in the payload verbatim; the summary never relabels it.",
+  "non_admitted_component": "a command over a component registered NOT_ADMITTED reports the crate's own status when it is fail-closed; a crate result that is not fail-closed (e.g. CONVERGED) becomes NOT_EVALUATED with reason COMPONENT_NOT_ADMITTED. It is never EVALUATED."
+ },
+ "admission_registry": {
+  "rule": "compiled into the binary and verified at run time (S-7); the evidence files are immutable committed reports",
+  "admitted_predicate": "report.verdict == 'ADMITTED', or report.verdict == 'PARITY_PASS' and report.admission == 'ADMITTED'",
+  "entries": [
+   {"component": "C-ABEP_SIM_CONFIGURATION_PY", "contract_id": "PARITY-C-ABEP_SIM_CONFIGURATION_PY-V1", "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONFIGURATION_PY/parity_report_v1.json", "sha256": "5f7592f66dd74f58e19b772f729b0e8bec4d0e3693d50a8a58ca72737ffed5d9"},
+   {"component": "C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY", "contract_id": "PARITY-C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY-V1", "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY/parity_report_v1.json", "sha256": "57c17f049cc4dee2f0e34eeaaa39dceff85aa0790e1f54569ef14baed21875b9"},
+   {"component": "C-PROVENANCE-VERIFIER", "contract_id": "PARITY-C-PROVENANCE-VERIFIER-V1", "path": "docs/rust_migration/contracts/C-PROVENANCE-VERIFIER/parity_report_v1.json", "sha256": "3d04ef328dd645c49b7d2111711cfc32855dd32bb58128a9737e00544c4f34d8"},
+   {"component": "C-ABEP_SIM_ATMOSPHERE_PY", "contract_id": "PARITY-C-ABEP_SIM_ATMOSPHERE_PY-V1", "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_PY/parity_report_v1.json", "sha256": "d54967c49cd945f2190c192324a4fafde4220a77bb91f8a5771adc517939f411"},
+   {"component": "C-ABEP_SIM_ATMOSPHERE_ORBIT_PY", "contract_id": "PARITY-C-ABEP_SIM_ATMOSPHERE_ORBIT_PY-V1", "path": "docs/rust_migration/contracts/C-ABEP_SIM_ATMOSPHERE_ORBIT_PY/parity_report_v1.json", "sha256": "489800cd46f5e8729efa9e04de300b1caed956169cffaba3fb74045970d9e9ba"},
+   {"component": "C-ABEP_SIM_INTAKE_TPMC_PY", "contract_id": "PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1", "path": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/parity_report_v1.json", "sha256": "18c13688f1b9029297df9a6dc4ad705d282096bcb4070d15e6ad24cde490f484"},
+   {"component": "C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-DRAG_KERNEL", "contract_id": "PARITY-C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-DRAG_KERNEL-V1", "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-DRAG_KERNEL/parity_report_v1.json", "sha256": "e6f2ccc17b99d70f0059322a81dac6f0be596ce70b1d8a2598d62f6b5fa59859"},
+   {"component": "K-MASS-RULES", "contract_id": "PARITY-K-MASS-RULES-V1", "path": "docs/rust_migration/contracts/K-MASS-RULES/parity_report_v1.json", "sha256": "825f12ec897c108e038e767e5141a9da6ad31348e020c332f1fc2cf77011a676"},
+   {"component": "C-DOCS_BUDGETS_MASS_POWER_A9_V5", "contract_id": "PARITY-C-DOCS_BUDGETS_MASS_POWER_A9_V5-V1", "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_report_v1.json", "sha256": "b78de50a51ac80dcce0806c86e574ac254eee61c221ae5772950bcca7017cb85"},
+   {"component": "C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY", "contract_id": "PARITY-C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY-V1", "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_report_v1.json", "sha256": "e416e76757eac1ab8a5be5c2b6ee9fe55da31f3d6ff814a62c75727fbeb2c1f0"},
+   {"component": "C-HALL-MAP-ENSEMBLE-REGISTRY", "contract_id": "PARITY-C-HALL-MAP-ENSEMBLE-REGISTRY-V1", "path": "docs/rust_migration/contracts/C-HALL-MAP-ENSEMBLE-REGISTRY/parity_report_v1.json", "sha256": "a8b8888da5e7b47a489150594e7916d7df713507b5047540cf834df42dca3bd0"},
+   {"component": "C-JULIA-BRIDGE-LAUNCH", "contract_id": "PARITY-C-JULIA-BRIDGE-LAUNCH-V1", "path": "docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/parity_report_v1.json", "sha256": "46266d7d637b01856a046f367aebecbf544148e9dbefed6f8a6ebc6370f83588"},
+   {"component": "NP-ICP-NEUTRALIZER", "contract_id": "NP-ICP-NEUTRALIZER/prereg_v1+addendum_01_a9_30", "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v1.json", "sha256": "11ddb2a2684f1803b7a5fac94cb3307f59cb60e4e9a8e46d2abc2c449f4e5284", "registered_admission": "NOT_ADMITTED", "note": "ledger status RUST_IMPL (IMPLEMENTED_UNVERIFIED / NOT_ADMITTED / NOT_VALIDATED); the file is recorded as its current evidence, not as admission evidence"}
+  ]
+ },
+ "commands": [
+  {
+   "command": "config check",
+   "options": [],
+   "components": ["C-ABEP_SIM_CONFIGURATION_PY", "C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY"],
+   "crate_calls": "abep_config::builder::Builder::check (byte-identical reproduction of config/** and MANIFEST.json); abep_provenance::ConfigManifest::verify_all; abep_config::loaders::physics_configuration; abep_config::architecture::ArchitectureDefinition::load",
+   "payload": "{build_check: {exit, line}, manifest_files_verified, physics_configuration, architecture: {id, sha256}}",
+   "status_sources": "EVALUATED iff the build check exit is 0 and every load succeeds; a stale build or a loader refusal is MODEL_ERROR (ConfigError.status)"
+  },
+  {
+   "command": "provenance verify",
+   "options": [],
+   "components": ["C-PROVENANCE-VERIFIER"],
+   "crate_calls": "abep_provenance::verifier::run_checks over CheckName::ALL (prereg_lock, audit_manifest, hallthruster_pin, h2_6_live_sources)",
+   "payload": "{checks: [CheckReport...]}",
+   "status_sources": "each CheckReport.status (EVALUATED without findings, MODEL_ERROR with findings)"
+  },
+  {
+   "command": "env run-design-states",
+   "options": [],
+   "components": ["C-ABEP_SIM_ATMOSPHERE_ORBIT_PY"],
+   "crate_calls": "abep_atmos::execution::{Environment::load, run} for --threads 1; for N > 1 the required states (abep_atmos::design_state_set::required_states) are split into N contiguous chunks executed by abep_atmos::execution::execute_states on scoped threads and concatenated in file order with the global index restored; the DesignStateRun header is assembled from the same Environment fields `run` uses",
+   "payload": "abep_atmos::execution::DesignStateRun (serde_json)",
+   "status_sources": "the 196 per-state StateExecution.status values",
+   "thread_rule": "the payload bytes are identical for every N (checked against the crate's own run_design_state_set serialization, case DET-ENV-CRATE)"
+  },
+  {
+   "command": "intake surface-v1",
+   "options": ["--state ID", "--scattering maxwell|cll", "--l-over-d X", "--phi X", "--alpha X", "--theta-deg X"],
+   "components": ["C-ABEP_SIM_INTAKE_TPMC_PY", "C-ABEP_SIM_ATMOSPHERE_PY", "C-ABEP_SIM_ATMOSPHERE_ORBIT_PY"],
+   "registered_inputs": "--state must be a state id of the frozen design-state set v2 (UNREGISTERED_INPUT otherwise); --scattering is passed to the crate verbatim (an unknown kernel is the crate's OUT_OF_DOMAIN UNKNOWN_SCATTERING)",
+   "crate_calls": "free-stream mass fractions {O: fO, N2: fN2, O2: fO2} of the state (abep_atmos DesignState::atm); m_mean_build_kg = abep_atmos::msis21::atmosphere(frozen v1, 200 km, 'mean').m_mean (the reference frozen_surface_build_atmosphere); abep_intake::surface::FrozenIntakeSurfaces::load + IntakeSurface::eval; abep_intake::surface::surface_v2_gate",
+   "payload": "{state_id, mass_fractions, surface_v1: {scattering, eta_c, c_d, k_back, mass_kg, cr_passive, recombination, species}, surface_v2_gate}",
+   "status_sources": "the v1 evaluation: EVALUATED on success, the crate error's status on refusal (OUT_OF_DOMAIN with the crate's message key). The v2 gate (NOT_EVALUATED, BLOCKED_PENDING_AOCS_POINTING_ENVELOPE) is reported verbatim, not a source: v1 is the frozen reference surface the admitted contract covers."
+  },
+  {
+   "command": "drag statewise",
+   "options": ["--area-m2 X", "--l-over-d X", "--phi X", "--scenario S"],
+   "components": ["C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-DRAG_KERNEL", "C-ABEP_SIM_ATMOSPHERE_PY", "C-ABEP_SIM_ATMOSPHERE_ORBIT_PY"],
+   "crate_calls": "abep_mission::intake_drag::load_drag_table; abep_mission::objective::HallResponseStatus::load; abep_mission::statewise_td::statewise_t_minus_d over EnvelopeAtmospheres.required_ids",
+   "payload": "the StatewiseTMinusD record field by field (design_point, credible_set, n_states, n_t_minus_d_evaluated, states[{state_id, thrust, drag_intake, drag_body, t_minus_d_status, objective}])",
+   "status_sources": "the per-state t_minus_d_status values (the record's headline); the intake-drag term status (INCOMPLETE_EVIDENCE, PARAMETRIC_SENSITIVITY_ONLY) and the body / thrust terms stay in the payload verbatim",
+   "registered_inputs": "a design point absent from the F1 drag table is the crate's OUT_OF_DOMAIN"
+  },
+  {
+   "command": "mass rollup",
+   "options": [],
+   "components": ["K-MASS-RULES", "C-DOCS_BUDGETS_MASS_POWER_A9_V5"],
+   "crate_calls": "abep_subsystems::mass::v5::{check, build_doc, mass_gates(MissionXeLoad::NotAdmitted), al07_value_status}",
+   "payload": "{record: {path, reproduced, stale}, rollups, mass_status, mass_gates, al07_value_status}",
+   "status_sources": "the mass_gates statuses; a record that does not reproduce byte for byte (stale) is MODEL_ERROR"
+  },
+  {
+   "command": "power ledger",
+   "options": [],
+   "components": ["C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY"],
+   "crate_calls": "abep_subsystems::power::official::{MassPowerA9V5::load, official_flight_ledger}; Ledger::to_value",
+   "payload": "the official flight ledger value (bus_power_boundary_a9_v2; no RFP limit)",
+   "status_sources": "LedgerStatus::eval_status of the ledger"
+  },
+  {
+   "command": "hall status",
+   "options": [],
+   "components": ["C-HALL-MAP-ENSEMBLE-REGISTRY"],
+   "crate_calls": "abep_hall::status::{HallGate::from_repository, hall_response_status}",
+   "payload": "{gate: {status, reason, admitted_members}, hall_response_status}",
+   "status_sources": "HallGate.status (NOT_EVALUATED, 'credible Hall transport set EMPTY', while no member is admitted)"
+  },
+  {
+   "command": "hall pin-check",
+   "options": [],
+   "components": ["C-JULIA-BRIDGE-LAUNCH"],
+   "crate_calls": "abep_julia_bridge::pin::{pin_report, verify_pin}",
+   "payload": "{pin_report, julia_check_pin: 'NOT_EXECUTED_PLATFORM_TEST'}",
+   "status_sources": "verify_pin: EVALUATED when Ok, its error status (MODEL_ERROR) otherwise"
+  },
+  {
+   "command": "icp status",
+   "options": ["--supply-mode AIR_PRIMARY|XE_CONTINGENCY"],
+   "components": ["NP-ICP-NEUTRALIZER"],
+   "registered_inputs": "--supply-mode is one of the two flight supply modes (CLAUDE.md: AIR_PRIMARY, XE_CONTINGENCY); anything else is UNREGISTERED_INPUT",
+   "crate_calls": "abep_icp::IcpModel::load; IcpModel::evaluate(testkit::registered_today_case(mode, ChemistryRegistration::NotRegistered {gas: 'AIR' | 'XE'})): the case holding only what the repository registers today",
+   "payload": "the IcpResult JSON (IcpResult::to_json) verbatim",
+   "status_sources": "IcpResult.status, under the non_admitted_component rule"
+  }
+ ],
+ "expected_on_the_acceptance_tree": {
+  "governing_hashes": {
+   "config_manifest": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+   "architecture": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+   "model_set": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+   "design_state_set_reference": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+   "design_state_set": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+  },
+  "rule": "these are the values at the base commit; a governed configuration change before the acceptance run voids the run (INPUT_MISMATCH, not a verdict) and needs acceptance_v2"
+ },
+ "acceptance_cases": {
+  "trees": {
+   "REPOSITORY": "the repository working tree itself, read only",
+   "CLONE": "a fresh `git clone --shared --no-checkout` of the repository in a temporary directory, checked out (detached) at the repository HEAD, then the tamper operations applied in order; one clone per case or restored (git checkout -- . ; git clean -fdq) between cases"
+  },
+  "operations": {
+   "append_text": "append the UTF-8 text to path",
+   "delete": "remove path",
+   "manifest_rehash": "set config/MANIFEST.json files.<rel>.sha256 and .bytes to the sha256 and size of the (tampered) config/<rel> and re-serialise the manifest"
+  },
+  "out": "a fresh temporary directory outside the repository per run, unless the case says otherwise",
+  "run_set": {
+   "R1": "--threads 1",
+   "R2": "--threads 1 (repeat)",
+   "R3": "no --threads option (default = available_parallelism) with OMP_NUM_THREADS=4 RAYON_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 in the environment",
+   "R4": "--threads 4"
+  },
+  "command_cases": [
+   {"id": "CMD-01", "argv": ["config", "check"], "expected": {"status": "EVALUATED", "exit": 0, "payload_checks": ["build_check.exit == 0", "manifest_files_verified == 11"]}},
+   {"id": "CMD-02", "argv": ["provenance", "verify"], "expected": {"status": "EVALUATED", "exit": 0, "payload_checks": ["4 checks, each status EVALUATED with no finding"]}},
+   {"id": "CMD-03", "argv": ["env", "run-design-states"], "expected": {"status": "EVALUATED", "exit": 0, "payload_checks": ["n_states == 196", "n_evaluated == 196", "len(records) == 196"]}},
+   {"id": "CMD-04", "argv": ["intake", "surface-v1", "--state", "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47", "--scattering", "maxwell", "--l-over-d", "10", "--phi", "0.9", "--alpha", "0.5", "--theta-deg", "0"], "expected": {"status": "EVALUATED", "exit": 0, "payload_checks": ["surface_v1 present with finite eta_c and c_d", "surface_v2_gate.status == NOT_EVALUATED"]}},
+   {"id": "CMD-05", "argv": ["drag", "statewise", "--area-m2", "0.5", "--l-over-d", "10", "--phi", "0.9", "--scenario", "maxwell_a0.5"], "expected": {"status": "NOT_EVALUATED", "exit": 10, "payload_checks": ["n_states == 196", "n_t_minus_d_evaluated == 0", "credible_set == EMPTY", "every state thrust.status == NOT_EVALUATED", "every drag_intake.status == INCOMPLETE_EVIDENCE"]}},
+   {"id": "CMD-06", "argv": ["mass", "rollup"], "expected": {"status": "INCOMPLETE_EVIDENCE", "exit": 11, "payload_checks": ["record.reproduced == true", "mass_gates statuses == [NOT_EVALUATED, INCOMPLETE_EVIDENCE, INCOMPLETE_EVIDENCE]"]}},
+   {"id": "CMD-07", "argv": ["power", "ledger"], "expected": {"status": "INCOMPLETE_EVIDENCE", "exit": 11, "payload_checks": ["no key of the ledger payload starts with p_bus_max or contains limit (case-insensitive): the 1.5 kW limit is assessment only"]}},
+   {"id": "CMD-08", "argv": ["hall", "status"], "expected": {"status": "NOT_EVALUATED", "exit": 10, "payload_checks": ["gate.reason == 'credible Hall transport set EMPTY'", "gate.admitted_members == []", "hall_response_status.credible_set == EMPTY"]}},
+   {"id": "CMD-09", "argv": ["hall", "pin-check"], "expected": {"status": "EVALUATED", "exit": 0, "payload_checks": ["pin_report.commit == bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5", "pin_report.version == 0.23.1", "pin_report.verify_pin_ok == true", "julia_check_pin == NOT_EXECUTED_PLATFORM_TEST"]}},
+   {"id": "CMD-10", "argv": ["icp", "status", "--supply-mode", "AIR_PRIMARY"], "expected": {"status": "INCOMPLETE_EVIDENCE", "exit": 11, "payload_checks": ["payload status == INCOMPLETE_EVIDENCE (crate status verbatim)", "the payload contains the reason code NP_ICP_CHEM_AIR_NOT_ADMITTED", "components[0].admission == NOT_ADMITTED"]}},
+   {"id": "CMD-11", "argv": ["icp", "status", "--supply-mode", "XE_CONTINGENCY"], "expected": {"status": "INCOMPLETE_EVIDENCE", "exit": 11, "payload_checks": ["payload status == INCOMPLETE_EVIDENCE (crate status verbatim)", "the payload contains the reason code CHG-04_NO_XE_RATE_SET", "components[0].admission == NOT_ADMITTED"]}}
+  ],
+  "command_case_rule": "each command case runs R1..R4 on REPOSITORY",
+  "refusal_cases": [
+   {"id": "REF-01", "title": "tampered config hash: a manifest-pinned config file changed (one space appended)", "tree": "CLONE", "tamper": [{"op": "append_text", "path": "config/hardware/hardware_bounds_v1.json", "text": " "}], "argv": ["env", "run-design-states"], "expected": {"status": "MODEL_ERROR", "exit": 4, "reason_code": "CONFIG_MANIFEST_UNVERIFIED", "payload": null, "sidecar": false}},
+   {"id": "REF-02", "title": "tampered config hash: the same file changed again and the manifest re-hashed to match; preflight passes, the byte-identical config build check refuses", "tree": "CLONE", "tamper": [{"op": "append_text", "path": "config/hardware/hardware_bounds_v1.json", "text": " "}, {"op": "manifest_rehash", "rel": "hardware/hardware_bounds_v1.json"}], "argv": ["config", "check"], "expected": {"status": "MODEL_ERROR", "exit": 13, "reason_code": "CONFIG_BUILD_STALE", "payload_checks": ["build_check.exit != 0"], "sidecar": true}},
+   {"id": "REF-03", "title": "missing frozen data file (orbit-resolved NRLMSIS 2.1 dataset)", "tree": "CLONE", "tamper": [{"op": "delete", "path": "abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz"}], "argv": ["env", "run-design-states"], "expected": {"status": "MODEL_ERROR", "exit": 13, "reason_code": "CRATE_ERROR", "reason_message_contains": "atmosphere_msis21_orbit_v1", "payload": null, "sidecar": true}},
+   {"id": "REF-04", "title": "missing frozen data file (the design-state set the run record verifies)", "tree": "CLONE", "tamper": [{"op": "delete", "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json"}], "argv": ["hall", "status"], "expected": {"status": "MODEL_ERROR", "exit": 4, "reason_code": "RUN_RECORD_UNAVAILABLE", "payload": null, "sidecar": false}},
+   {"id": "REF-05", "title": "missing frozen data file (intake surface v1 table)", "tree": "CLONE", "tamper": [{"op": "delete", "path": "abep_sim/data/intake_surface_v1.csv"}], "argv": ["intake", "surface-v1", "--state", "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47", "--scattering", "maxwell", "--l-over-d", "10", "--phi", "0.9", "--alpha", "0.5", "--theta-deg", "0"], "expected": {"status": "MODEL_ERROR", "exit": 13, "reason_code": "CRATE_ERROR", "reason_message_contains": "intake_surface_v1.csv", "payload": null, "sidecar": true}},
+   {"id": "REF-06", "title": "unregistered input: a design-state id that is not in the frozen set", "tree": "REPOSITORY", "argv": ["intake", "surface-v1", "--state", "ds2:NOT_A_REGISTERED_STATE", "--scattering", "maxwell", "--l-over-d", "10", "--phi", "0.9", "--alpha", "0.5", "--theta-deg", "0"], "expected": {"status": "NOT_EVALUATED", "exit": 3, "reason_code": "UNREGISTERED_INPUT", "payload": null, "sidecar": true}},
+   {"id": "REF-07", "title": "unregistered input: an ICP supply mode outside the two flight modes", "tree": "REPOSITORY", "argv": ["icp", "status", "--supply-mode", "EM_N2"], "expected": {"status": "NOT_EVALUATED", "exit": 3, "reason_code": "UNREGISTERED_INPUT", "payload": null, "sidecar": true}},
+   {"id": "REF-08", "title": "registered input outside the model domain: intake L/d beyond the frozen surface bounds (crate refusal verbatim)", "tree": "REPOSITORY", "argv": ["intake", "surface-v1", "--state", "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47", "--scattering", "maxwell", "--l-over-d", "25", "--phi", "0.9", "--alpha", "0.5", "--theta-deg", "0"], "expected": {"status": "OUT_OF_DOMAIN", "exit": 12, "reason_code": "CRATE_ERROR", "reason_message_contains": "OUT_OF_BOUNDS", "payload": null, "sidecar": true}},
+   {"id": "REF-09", "title": "design point outside the F1 drag table (crate refusal verbatim)", "tree": "REPOSITORY", "argv": ["drag", "statewise", "--area-m2", "0.5", "--l-over-d", "7", "--phi", "0.9", "--scenario", "maxwell_a0.5"], "expected": {"status": "OUT_OF_DOMAIN", "exit": 12, "reason_code": "CRATE_ERROR", "payload": null, "sidecar": true}},
+   {"id": "REF-10", "title": "tampered admission evidence: a component's parity report changed (one LF appended); the command is not executed", "tree": "CLONE", "tamper": [{"op": "append_text", "path": "docs/rust_migration/contracts/C-JULIA-BRIDGE-LAUNCH/parity_report_v1.json", "text": "\n"}], "argv": ["hall", "pin-check"], "expected": {"status": "NOT_EVALUATED", "exit": 10, "reason_code": "COMPONENT_ADMISSION_UNVERIFIED", "payload": null, "sidecar": true}},
+   {"id": "REF-11", "title": "--repo is not a repository", "tree": "EMPTY_DIRECTORY", "argv": ["hall", "status"], "expected": {"status": "MODEL_ERROR", "exit": 4, "reason_code": "REPOSITORY_NOT_FOUND", "payload": null, "sidecar": false}},
+   {"id": "REF-12", "title": "usage: an unregistered command (a legacy entry point is not ported)", "tree": "REPOSITORY", "argv": ["sweep"], "expected": {"exit": 2, "files_written": 0}},
+   {"id": "REF-13", "title": "usage: a non-numeric number", "tree": "REPOSITORY", "argv": ["drag", "statewise", "--area-m2", "abc", "--l-over-d", "10", "--phi", "0.9", "--scenario", "maxwell_a0.5"], "expected": {"exit": 2, "files_written": 0}},
+   {"id": "REF-14", "title": "usage: --out missing", "tree": "REPOSITORY", "argv_without_out": ["hall", "status"], "expected": {"exit": 2, "files_written": 0}},
+   {"id": "REF-15", "title": "output location inside the repository", "tree": "REPOSITORY", "out": "<repository>/target/abep_cli_ref15", "argv": ["hall", "status"], "expected": {"exit": 5, "files_written": 0}}
+  ],
+  "refusal_case_rule": "each refusal case runs once with --threads 1 (REF-11 with --repo set to an empty temporary directory)"
+ },
+ "checks": {
+  "per_run": [
+   "EXIT: the process exit code equals the expected exit, and equals the registered code of the record's status (or refusal)",
+   "STATUS: result.status equals the expected status and is in the EvalStatus vocabulary; reason.code equals the expected code; reason is null iff status is EVALUATED",
+   "PAYLOAD: the case's payload_checks hold; payload is null where expected",
+   "FILES: files written exactly as the sidecar rule says (result + sidecar, result only, or nothing)",
+   "PROV: on every result record that is not REFUSED_PROVENANCE: implementation == 'rust', rust_commit == the HEAD of the evaluated tree (40 hex), contract_id == 'ACCEPT-NI-ABEP-CLI-V1', governing_hashes carry the five expected values above (REPOSITORY and CLONE trees alike: the tamper operations touch none of these files), components list the command's registered components with the registered contract ids; the sidecar's result_sha256 equals the sha256 of the result file and its run_record has schema abep_run_record_v1, implementation rust, the same git commit and governing hashes",
+   "NO_VERDICT: no string value anywhere in a result record (envelope or payload, parsed as Python JSON) equals PASS or FAIL; quoted decision texts are not values"
+  ],
+  "determinism": [
+   "DET-RUN: for every command case, R1 and R2 result files are byte-identical and their sidecars are byte-identical",
+   "DET-THREADS: for every command case, R1, R3 and R4 result files are byte-identical; the sidecars differ only in threads_requested, threads_used and run_record.threads",
+   "DET-ENV-CRATE: the payload of CMD-03 under R1 and R4 equals, byte for byte, serde_json::to_string of abep_atmos::execution::run_design_state_set(repository) computed by the runner in process"
+  ],
+  "static": [
+   "STATIC-DEP: cargo metadata: abep-cli depends on no pyo3 / maturin package and no workspace crate depends on abep-cli",
+   "STATIC-NOPY: no crates/abep-cli source file contains Command::new(\"python"
+  ]
+ },
+ "decision_rules": {
+  "per_case": "every run of the case meets every per_run check",
+  "verdict": "ACCEPTED iff every case meets per_case, every determinism check holds and every static check holds; otherwise NOT_ACCEPTED",
+  "verdict_vocabulary": ["ACCEPTED", "NOT_ACCEPTED", "NOT_RUN_INPUT_MISMATCH"],
+  "input_mismatch": "a governing hash of the repository different from expected_on_the_acceptance_tree voids the run (NOT_RUN_INPUT_MISMATCH), not a verdict",
+  "clean_tree": "the acceptance run is executed on a clean committed tree (git status --porcelain --untracked-files=no empty); otherwise it refuses (NOT_RUN_INPUT_MISMATCH)",
+  "once": "executed once for v1 at a recorded commit; the report is committed whatever the verdict; after NOT_ACCEPTED only a code fix plus acceptance_v2 may follow (no case is removed or weakened)",
+  "development": "cargo test executes the cases as development regression on every run; those runs are not the acceptance report"
+ },
+ "outputs_of_the_acceptance": {
+  "report": "docs/rust_migration/contracts/NI-ABEP-CLI/acceptance_report_v1.json + acceptance_report_v1.md (MD generated from the JSON)",
+  "report_records": [
+   "acceptance prereg sha256",
+   "repository HEAD and dirty state",
+   "rustc version and build profile of the `abep` binary, its sha256",
+   "sha256 of every crates/abep-cli source file",
+   "per-case, per-run exit code, status, reason code, check results and result / sidecar sha256",
+   "determinism and static check results",
+   "verdict",
+   "ledger_update_requested"
+  ]
+ },
+ "admission": "on ACCEPTED, NI-ABEP-CLI is requested ACCEPTED (lifecycle PREREG_ACCEPTANCE -> RUST_IMPL -> ACCEPTED -> ADMITTED) in docs/rust_migration/migration_state_v1.json by the ledger owner; ADMITTED additionally needs the CI job that runs the determinism checks (CI_PLAN § 5) and the docs/HISTORY.md entry",
+ "what_this_is_not": [
+  "not physics and not a gate verdict: the CLI never relabels a crate status; NOT_EVALUATED / INCOMPLETE_EVIDENCE stay what they are",
+  "not admission of any component it calls: NP-ICP-NEUTRALIZER stays NOT_ADMITTED; Hall thrust stays NOT_EVALUATED (credible set EMPTY)",
+  "not the full SC-WP-13 command set: later commands enter through acceptance versions as their components are admitted"
+ ]
+}
