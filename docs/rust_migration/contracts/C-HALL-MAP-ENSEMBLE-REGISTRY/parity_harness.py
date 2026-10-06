@@ -875,7 +875,11 @@ def score():
                                                                                "MKL_NUM_THREADS")},
                         "platform": platform.platform(), "cpu_count": os.cpu_count()},
         "campaign_seeds": {"scoring_master_seed": seed, "random_maps": 240},
-        "refusals": refusals, "decision": decision, "summary": s, "governed_state": gov,
+        "refusals": refusals,
+        "interpretation_notes": ["IN-01: '@gzc:<path>' on an uncompressed file (case G-22, 'plain (non-gzip) raw records') "
+                                 "is the sha256 of the file bytes (there is nothing to decompress); input construction "
+                                 "only, identical for both implementations"],
+        "decision": decision, "summary": s, "governed_state": gov,
         "classification_gate": {"forbidden_identifier_scan_crates_abep_hall": forbidden_scan() or "no hit"},
         "conservation": "NOT_APPLICABLE (contract conservation_checks.applicable = false)",
         "schema_parity": "REQUIRED_FIELDS / REQUIRED_META compared in S-01; record-key lists checked by abep-hall unit tests",
