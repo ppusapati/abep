@@ -126,6 +126,7 @@ version = "0.1.0"
 dependencies = [
  "abep-provenance",
  "abep-types",
+ "flate2",
  "serde",
  "serde_json",
 ]

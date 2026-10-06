@@ -1,0 +1,541 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-K-MASS-RULES-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "K-MASS-RULES",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "kernel_host_component": "C-DOCS_BUDGETS_MASS_POWER_A9_V3 (class HISTORICAL_LEGACY_REGRESSION; its extract_and_parity_kernels entry K-MASS-RULES is the only active part, consumed by the class-A C-DOCS_BUDGETS_MASS_POWER_A9_V5 and the F7 / F8 wet-mass objective)",
+  "migration_wave": "W11",
+  "scope": "named function subset (kernel granularity, RM-R17): the fail-closed mass roll-up rules of the pinned mass / power v3 builder (imported unchanged by the v4 and v5 builders) and the A9.26 bid-margin rules of the v5 builder (SC-WP-07 element 'margin / accounting rules (K-MASS-RULES and the v5 bid-margin reading)')",
+  "functions_or_entry_points": [
+   "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::rk",
+   "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::line_mev_value (with _kg, which it calls)",
+   "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::system_margin",
+   "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::harness_row60",
+   "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::closure_state",
+   "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::_unresolved",
+   "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::assert_no_margin_relaxation",
+   "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py::rollup",
+   "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py::system_margin_bid",
+   "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py::assert_bid_margin_reading"
+  ],
+  "out_of_scope": [
+   "every other function of the v3 builder (S / OD / build_lines / build_bom / budget_reference / al_c1_allocation / c1_xe_branch_booking / xe_hardware_required / rfp_propellant_clauses / import_xe / build_doc / render_md / main): the v3 record is history (class H, NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH)",
+   "the v5 builder's record functions (rollup_v5, unresolved_v5, set_al09, build_doc, render_md): contract PARITY-C-DOCS_BUDGETS_MASS_POWER_A9_V5-V1"
+  ],
+  "migration_class": "extract_and_parity_kernel K-MASS-RULES (component_inventory_v3_1.json extract_and_parity_kernels; active consumer class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS C-DOCS_BUDGETS_MASS_POWER_A9_V5)",
+  "extract_kernel_id": "K-MASS-RULES",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "v3 builder al_c1_allocation / c1_xe_branch_booking / HISTORY_LINE_NAMES / the hall_c1_reference history column: not ported (C1 GROUND_REFERENCE_ONLY, A9.19 / A9.20); none of the K-MASS-RULES functions traverses them"
+  ],
+  "owner_disposition_a9_28": [
+   "ACTIVE_SELECTED_ARCHITECTURE_ENGINEERING_ASSESSMENT",
+   "AL-07_VALUE_STATUS = PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT",
+   "AFI-02-RA1_OPEN",
+   "(host-record disposition of mass_power_a9_v5; A9.28 msg 1 sec. 2: 'The generic mass-accounting / margin / harness / roll-up logic is active and may eventually migrate to Rust.')"
+  ],
+  "simulation_completion_wp": "SC-WP-07",
+  "owner_disposition_a9_29": "NOT_APPLICABLE (the inventory row carries no owner_disposition_a9_29; A9.29 sec. 15 lists mass in the simulation-complete chain)"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this kernel was executed. No Rust code for the kernel exists at registration. The commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "reference_implementation": {
+  "python_commit": "1e2f66d72c01d3d0d413ff85c62de17f528d8f31",
+  "files": [
+   {
+    "path": "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py",
+    "sha256_at_registration": "b1df7537456d5334e8b051bb6ed9bca9626933497b3b52e916c9997338e6a572"
+   },
+   {
+    "path": "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py",
+    "sha256_at_registration": "669e5e5706d4b27c60214ad103b3276bfb1d983010eb482dbffaf9858ab013ee"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4 (not used by the component)",
+   "scipy": "1.17.1 (not used)",
+   "pandas": "3.0.2 (not used)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "NOT_APPLICABLE",
+   "thread_env": {
+    "OMP_NUM_THREADS": "NOT_APPLICABLE",
+    "OPENBLAS_NUM_THREADS": "NOT_APPLICABLE"
+   },
+   "stdlib": "json, hashlib, copy, math; builtin sum() over floats is sequential double addition in CPython 3.11 (3.12+ switched to compensated summation: a different interpreter is a different reference environment); format(x, '.10g') / '.6g' / 'g' / '.2f' / '.4f' are correctly rounded, ties to even"
+  },
+  "how_called": "the harness loads each builder by importlib from its path at the reference commit (as the v5 builder loads the pinned v3 builder) and calls the functions directly; system_margin_bid receives the loaded v3 module as its first argument, as in the v5 builder"
+ },
+ "rust_implementation": {
+  "crate": "abep-subsystems",
+  "functions_or_entry_points": [
+   "abep_subsystems::mass::rules::{rk, line_mev_value, system_margin, harness_row60, closure_state, unresolved, assert_no_margin_relaxation, rollup, system_margin_bid, assert_bid_margin_reading}",
+   "`abep-mass eval <calls.json>` (harness interface; crates/abep-subsystems/src/bin/abep-mass.rs)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/**",
+   "crates/abep-provenance/**",
+   "crates/abep-subsystems/Cargo.toml",
+   "crates/abep-subsystems/src/lib.rs",
+   "crates/abep-subsystems/src/mass/**",
+   "crates/abep-subsystems/src/bin/abep-mass.rs"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it",
+  "value_semantics": "the rules take JSON-shaped Python values (abep_types::pyjson::Value) so that int / float / bool / None inputs, dict key order and Python repr() in refusal messages are reproduced; numbers follow CPython 3.11 semantics (bool counts as int in sums, int + float -> float, sequential summation, '==' numeric across int / float)"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE (the component reads no configuration file; its single flight configuration label is hall_icp_neutralizer, config/architecture/hall_icp_neutralizer_v1.json sha256 7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3, A9.19)",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "both implementations read the same pinned inputs (pinned_inputs_sha256); a mismatch on the reference tree voids the run (INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json": "96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a",
+  "docs/budgets/mass_power_a9_v4/mass_power_a9_v4.json": "37264ab6c7cf5c422cb93356fcd9a8e67323f73b1257e1eb1426410229c8a6c4",
+  "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+  "tests/test_mass_power_a9_v3.py": "8f42ad1f1e50d4aea5c4e6b6bddb1f839df536e362f739c99900672640189d5d",
+  "tests/test_mass_power_a9_v4.py": "52ef50553f1bf221663546e66b6fb2ba8238317f510f928fabd7d21c8cb52a46",
+  "tests/test_mass_power_a9_v5.py": "cb923ba450a25ee67eb6a43db68e165b5774a9c196254a7e314ebefaf38e4dc6"
+ },
+ "frozen_data_read_only": [
+  "the committed mass_power_a9_v3 / v4 / v5 records (immutable history / frozen bid record): read as input vectors only, never regenerated here"
+ ],
+ "inputs": {
+  "golden_vectors": {
+   "source": "committed records and the registered test vectors, read at the reference commit",
+   "count": "see vector_totals",
+   "list_or_generator": {
+    "R-K01": "for each record of pinned_inputs (v3, v4, v5) and each line rec of lines['hall_icp_neutralizer']: _unresolved(rec); for each line other than AL-HAR also line_mev_value(rec.get('row54_allocation_kg'), rec.get('cbe_kg'), rec.get('evidence_floor_cbe_kg'))",
+    "R-K02": "for each record: rollup('hall_icp_neutralizer', lines, split, refs) with split / refs derived from that record's committed hall_icp_neutralizer roll-up exactly as build_mass_power_a9_v4._split_and_refs (split[w.xe_case_kg] = {loaded_kg: w.xe_loaded_kg, residual_kg: w.residual_inside_case_kg}; refs = unique (w.reference, w.reference_kg, w.comparator == '<') in first-seen order); system_margin(nominal_dry_known_kg) and harness_row60(nonharness_known_kg) of the committed roll-up; closure_state(w.wet_known_kg, w.reference_kg, w.comparator == '<', False) for every committed wet row; for v5 also system_margin_bid(nominal_dry_known_kg)",
+    "R-K03": "the registered test vectors: line_mev_value(3.5), (3.0, None, 3.504), (10.0, None, 3.504), (2.5, 4.0, 5.0), (), (1.0, equipment_margin=0.1), (-1.0); system_margin(24.0), (24.0, reserve_kg=4.0), (24.0, fraction=0.1), (30.0, fraction=0.1); harness_row60(19.0), (10.0, fraction=0.03); closure_state(40.0, 40.0, True, False), (39.0, 40.0, True, False), (39.0, 40.0, True, True), (34.0, 34.0, False, False), (nan, 40.0, True, False); system_margin_bid(30.0) and with fraction 0.0 / 0.05 / 0.2, (30.0, reserve_kg=4.0); assert_bid_margin_reading({allocations: MEV, system_margin: 0.05, reserve_kg: 0.0, xe_case: LOADED})"
+   }
+  },
+  "notation": "in edge_cases the strings 'nan', 'inf', '-inf' denote the IEEE float values; every other string ('3.5', 'MEV2', '0') is a str argument",
+  "edge_cases": [
+   {
+    "id": "E-K01",
+    "inputs": {
+     "fn": "rk",
+     "x": [
+      null,
+      0.0,
+      -0.0,
+      0,
+      1,
+      1234567890.5,
+      1234567891.5,
+      0.12345678905,
+      5e-324,
+      1.7976931348623157e+308,
+      "nan",
+      "inf",
+      "-inf",
+      12345678901234567,
+      -2.5
+     ]
+    },
+    "note": "None stays None; exact ties at the 11th digit round half to even; nan / inf pass through"
+   },
+   {
+    "id": "E-K02",
+    "inputs": {
+     "fn": "line_mev_value / system_margin / harness_row60 / closure_state",
+     "invalid_mass_values": [
+      -1.0,
+      -1e-300,
+      "nan",
+      "inf",
+      true,
+      false,
+      "3.5",
+      null,
+      [
+       1.0
+      ],
+      -0.0
+     ]
+    },
+    "note": "_kg refusals (MassError with the value repr) on every mass argument in turn; -0.0 is admitted (not < 0)"
+   },
+   {
+    "id": "E-K03",
+    "inputs": {
+     "fn": "system_margin / system_margin_bid / harness_row60 / line_mev_value",
+     "fraction_or_margin_values": [
+      0.1,
+      0.2,
+      0.05,
+      0.0,
+      0,
+      1,
+      true,
+      null,
+      0.30000000000000004
+     ],
+     "reserve_values": [
+      0,
+      0.0,
+      -0.0,
+      false,
+      4.0,
+      1e-09,
+      null,
+      "0"
+     ]
+    },
+    "note": "only 0.20 / 0.10 / 0.05 / 0.20 respectively, reserve in (0, 0.0)"
+   },
+   {
+    "id": "E-K04",
+    "inputs": {
+     "fn": "assert_no_margin_relaxation / assert_bid_margin_reading",
+     "readings": "the owner reading, each key dropped, each value replaced by 'MEV2' / 0.25 / 4.0 / 'USABLE_RESIDUAL_ON_TOP' / the other function's fraction, an extra key, reserve_kg 0 (int), a non-dict (None, [], 'MEV')"
+    },
+    "note": "dict equality as Python (0 == 0.0); message with repr(reading) and str(want)"
+   },
+   {
+    "id": "E-K05",
+    "inputs": {
+     "fn": "rollup",
+     "base": "v5 lines / split / refs (R-K02)",
+     "variants": [
+      "AL-09 value_kg None (v4 shape)",
+      "every non-harness value None",
+      "only AL-HAR",
+      "AL-HAR missing (StopIteration)",
+      "a line without 'value' (KeyError)",
+      "a value_kg string '5' (TypeError)",
+      "int values",
+      "bool value_kg True",
+      "a partial floor line (floor_is_partial True, a constituent with kg None)",
+      "Xe case loaded_kg != case (MassError)",
+      "a negative reference_kg (MassError)",
+      "a reference exactly equal to the wet mass (strict and non-strict)",
+      "int case keys",
+      "unsorted case keys"
+     ]
+    },
+    "note": "absence propagates (lines_without_value, partial harness note); malformed records raise the Python built-in class"
+   },
+   {
+    "id": "E-K06",
+    "inputs": {
+     "fn": "rollup",
+     "cases": [
+      "configuration 'hall_c1_reference'",
+      "configuration 'X'",
+      "v5 lines + an AL-C1 line with value None",
+      "v5 lines + an AL-C1 line with value 0.5 kg"
+     ]
+    },
+    "note": "registered divergences DIV-K01 / DIV-K02 (scored against the registered Rust outcome)"
+   }
+  ],
+  "randomized_domain": {
+   "count": 8400,
+   "draw": "one random.Random(master_seed * 100 + k) per entry point k (k = 0 rk, 1 line_mev_value, 2 system_margin, 3 harness_row60, 4 closure_state, 5 _unresolved, 6 rollup, 7 system_margin_bid, 8 assert_no_margin_relaxation, 9 assert_bid_margin_reading). Masses: 70 % log-uniform 1e-6..1e3 kg, 20 % uniform 0..60 kg rounded to 0..12 decimals, 10 % specials (0.0, -0.0, an int 0..40, an exact .5 tie 1e9..1e10, 5e-324); invalid values (negative, nan, inf, bool, str, None where a number is required) with probability 0.03 per argument; fractions / reserves the registered value with probability 0.9, else one of E-K03; closure_state: 20 % known == reference; _unresolved: random line records (id AL-01..AL-10 / AL-HAR; value_kg None or a mass; governs ALLOCATION_MEV / MEV_PLANNING_FLOOR / MEV_FROM_CBE / None; allocation_status present or absent; floor_is_partial absent / true / false; 1-4 floor constituents with kg None or a mass); rollup: an ordered random subset (0..10) of AL-01..AL-10 with random line records plus one AL-HAR line at a random position, 1-4 distinct Xe cases (0.5..20 kg, 0..4 decimals; loaded == case with probability 0.97, residual 0..0.5 kg), 1-3 references from (HARD_40_WET, 40.0, <), (INTERNAL_34, 34.0, <=), (INTERNAL_36, 36.0, <=) and random (R-n, 0..80 kg, strict random); readings: the owner reading with 0-2 random key mutations",
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim. Excluded: NaN Xe case keys and duplicate case keys (Python dict / sort semantics on them are not registered behaviour), ints beyond 2**53, non-dict line records"
+  },
+  "vector_totals": {
+   "R-K01..R-K03": "fixed by the committed records and tests (counted in the report)",
+   "edge cases": "E-K01..E-K06 expanded as listed (counted in the report)",
+   "randomized": {
+    "rk": 2000,
+    "line_mev_value": 1200,
+    "system_margin": 600,
+    "harness_row60": 600,
+    "closure_state": 800,
+    "_unresolved": 600,
+    "rollup": 1000,
+    "system_margin_bid": 600,
+    "assert_no_margin_relaxation": 500,
+    "assert_bid_margin_reading": 500
+   }
+  }
+ },
+ "campaign_seeds": {
+  "applicable": "true (input generation only; the kernel is deterministic)",
+  "scoring_master_seed": 3918911878,
+  "development_master_seed": 7101,
+  "derivation": "random.Random(master_seed * 100 + k) per entry point (inputs.randomized_domain.draw)",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE",
+   "other_streams": "NOT_APPLICABLE: the harness's random.Random only generates input cases (the component is deterministic and draws no random numbers)",
+   "migration_parity_dataset": "seeds and the generated case file stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic component)",
+  "development_rule": "development comparisons use development_master_seed (and the registered deterministic vectors) only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "every call": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED"
+    },
+    {
+     "name": "value",
+     "units": "kg / - (as the Python returns)",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "the returned value (dicts in insertion order, lists, floats, ints, strings, None)"
+    },
+    {
+     "name": "error_class",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "Python exception class name; Rust reports the mapped class name"
+    },
+    {
+     "name": "error_message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "str(exception) character for character for the component's own exception classes (listed per contract); class only for Python built-in exceptions (KeyError, TypeError, StopIteration, FileNotFoundError)"
+    }
+   ],
+   "message_classes": [
+    "MassError",
+    "MassPolicyError"
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "files / serialized outputs byte-identical (sha256 equal)",
+  "EXACT_VALUE": "json.dumps(value, ensure_ascii=False) of the Python result equal to json.dumps(json.loads(rust output), ensure_ascii=False): key order, int vs float type, every float bitwise (shortest repr, sign of zero included), strings, booleans, None; error classes and registered messages equal",
+  "ULP_BOUNDED": "NOT_APPLICABLE",
+  "SOLVER_TOLERANCE": "NOT_APPLICABLE",
+  "STATISTICAL": "NOT_APPLICABLE",
+  "EXACT_STREAM": "NOT_APPLICABLE"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-K01",
+   "statement": "determinism: the Rust call list evaluated twice in one process gives identical output; the Python call list evaluated twice gives identical output",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-K02",
+   "statement": "roll-up arithmetic on every returned rollup (both): nonharness_known_kg == rk(sum of the known non-harness parts in line order), harness_kg == rk(nonharness_known_kg x 0.05 / 0.95), nominal_dry_known_kg == rk(nonharness_known_kg + harness_kg), dry_known_kg == rk(nominal x 1.2), system_margin_kg == rk(0.2 x nominal); for system_margin_bid total_kg == rk(pre x 1.1): dry = non-harness x (1 / 0.95) x line factors x system margin, the line factors being inside the MEV line values (line_mev_value: MEV floor = rk(floor x 1.20))",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-K03",
+   "statement": "no PASS: every returned closure state is CLOSES / DOES_NOT_CLOSE / NOT_EVALUABLE, every rollup has all_terms_resolved false and a HARD_40_WET row is never CLOSES in a rollup (closure_state is called with all_resolved False)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-K04",
+   "statement": "margin readings: system_margin admits only fraction 0.20, system_margin_bid only 0.10, harness_row60 only 0.05, line_mev_value only equipment margin 0.20; reserve only 0 (E-K03) - in both",
+   "required_in_both": true
+  },
+  {
+   "id": "VS-K01",
+   "statement": "value-status preservation (RM-R27) on R-K02 v5: the AL-07 part is {line: AL-07, used: MEV_PLANNING_FLOOR, kg: 6.0} and its unresolved term reads 'AL-07: MEV planning floor from an analog / preliminary-design floor, not a CBE'; no output labels AL-07 MEV_FROM_CBE, measured or frozen",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": "true (mass accounting identities of the roll-up; CLAUDE.md rule 4 applied to the mass ledger)",
+  "checks": [
+   {
+    "id": "CONS-K01",
+    "statement": "harness + non-harness close to the nominal dry mass: |nominal_dry_known_kg - (nonharness_known_kg + harness_kg)| and |nominal_dry_known_kg - nonharness_known_kg / 0.95| <= 2e-9 x max(1, nominal) (10-significant-digit rounding only)",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "2e-9 relative"
+   },
+   {
+    "id": "CONS-K02",
+    "statement": "system margin closes: |system_margin_kg + nominal_dry_known_kg - dry_known_kg| <= 2e-9 x max(1, dry_known_kg)",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "2e-9 relative"
+   },
+   {
+    "id": "CONS-K03",
+    "statement": "Xe counted once: every wet row has residual_added_on_top_kg == 0.0 and wet_known_kg == rk(dry_known_kg + xe_loaded_kg) (the residual is inside the LOADED case, A9.14 MQ-09)",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "exact"
+   }
+  ]
+ },
+ "domain_and_error_parity": {
+  "cases": "E-K02..E-K06 and every randomized invalid value",
+  "mapping": {
+   "MassError": "class 'MassError' (MODEL_ERROR); message scored",
+   "MassPolicyError": "class 'MassPolicyError' (MODEL_ERROR); message scored",
+   "KeyError / TypeError / StopIteration": "the same class name (MODEL_ERROR, malformed record); class scored"
+  },
+  "mapping_rule": "every Python exception class maps to exactly one Rust class name; no Rust path may return a value where Python fails, or fail where Python returns, except the registered divergences",
+  "documented_divergence": [
+   {
+    "id": "DIV-K01",
+    "statement": "rollup() for a configuration other than 'hall_icp_neutralizer': Python sums the lines under any label; Rust refuses (C1 GROUND_REFERENCE_ONLY never enters a flight mass roll-up; A9.19 / A9.20, the v3 rule al_c1_allocation 'no AL-C1 exists in any flight roll-up'). Registered Rust outcome: RAISED MassError, message \"rollup configuration {cfg!r} refused: the only flight configuration is 'hall_icp_neutralizer' (A9.19 / A9.20: C1 is GROUND_REFERENCE_ONLY and never enters a flight mass roll-up)\" with {cfg!r} the Python repr of the configuration; checked after assert_no_margin_relaxation and before any line is read",
+    "disposition": "scored against this registered Rust outcome (E-K06); the Python outcome is recorded, not compared"
+   },
+   {
+    "id": "DIV-K02",
+    "statement": "rollup() over lines that contain a line 'AL-C1': Python sums it; Rust refuses before any line is summed. Registered Rust outcome: RAISED MassError, message 'AL-C1: C1 is GROUND_REFERENCE_ONLY (A9.19 / A9.20); no C1 line enters a flight mass roll-up'",
+    "disposition": "scored against this registered Rust outcome (E-K06); the Python outcome is recorded, not compared"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE (no JSON schema file; the record shape of mass_power_a9_v5 rollups / lines is the reference)"
+  ],
+  "rules": [
+   "returned dict field names, order and value types identical (EXACT_VALUE canonical comparison is order- and type-sensitive)",
+   "status labels identical: ALLOCATION_MEV, MEV_FROM_CBE, MEV_PLANNING_FLOOR, HARNESS_POLICY_ROW60, CLOSES / DOES_NOT_CLOSE / NOT_EVALUABLE, MEV_LEVEL_EVIDENCE_BASED (the single owner reading); never PASS"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "R-K01 / R-K02 from the committed mass_power_a9_v3 / v4 / v5 records; R-K03 from the registered tests"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/K-MASS-RULES/reference_outputs/",
+   "captured_at_python_commit": "1e2f66d72c01d3d0d413ff85c62de17f528d8f31",
+   "sha256_manifest": "FILL at scoring",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: not applicable (no golden case involved)"
+ },
+ "julia_bridge": {
+  "applicable": "false",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "julia_version": "NOT_APPLICABLE",
+  "launch_equivalence": "NOT_APPLICABLE",
+  "record_comparison": "NOT_APPLICABLE",
+  "execution_provenance": "NOT_APPLICABLE"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-K01",
+    "description": "rollup on the v5 lines / split / refs (R-K02), 2000 repeats in one process"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine; speed-up = median_python / median_rust",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every call meets EXACT_VALUE",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": true,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED (= PARITY_PASS) iff every call of every vector, every invariant (INV-K01..K04, VS-K01), every conservation check, and DIV-K01 / DIV-K02's registered Rust outcomes pass and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust (abep_subsystems::mass::rules) becomes authoritative for the K-MASS-RULES roll-up / margin / harness / closure rules within the registered domain; it is NOT physics validation, not a mass-compliance verdict and not a gate PASS",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, budget record, test or decision record to make Rust pass (RM-R11)",
+  "observable_scope": "restricted to the retained mass roll-up rules (RM-R20)"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output of this contract may be cited by the bid package unless the owner re-freezes; the mass / power v5 and Xe accounting v3 records are part of the frozen bid technical source and are only READ here (never rewritten)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (terminal package state, A9.29 sec. 3; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, budget record, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): AL-07 6.0 kg stays PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT / AFI-02-RA1_OPEN; no line becomes a CBE, measured mass or frozen flight truth",
+  "not a gate PASS: mass compliance stays INCOMPLETE_EVIDENCE / NOT_YET_CLOSED (DOES_NOT_CLOSE visible); absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/K-MASS-RULES/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_mass_v1.py k-mass-rules (Python harness calling `abep-mass eval`)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance",
+   "environment",
+   "per-test results",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "case file sha256",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "extract_and_parity_kernel id K-MASS-RULES of component_inventory_v3_1.json (the template admits kernel ids): PASS",
+   "no observable, input or code path belongs to an excluded legacy path: PASS (C1 enters only as the refusal of DIV-K01 / DIV-K02)",
+   "the harness traverses no legacy path: the pinned v3 builder is imported for its rule functions only (as the v5 builder does); its import runs no C1 code",
+   "the Rust implementation contains none of the principle-6 forbidden identifiers",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {
+    "id": "AL-07",
+    "value": 6.0,
+    "value_status": "PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT",
+    "open_action": "AFI-02-RA1_OPEN",
+    "committed_labels": [
+     "PROVISIONAL_CONSERVATIVE_OWNER_ANALOG_FLOOR",
+     "CONTAINS_LEGACY_FUNCTIONS_NOT_PRESENT_IN_CURRENT_FLIGHT_ARCHITECTURE",
+     "REBASE_REQUIRED_FROM_CURRENT_LOAD_CONVERTER_CBE"
+    ]
+   }
+  ],
+  "check": "VS-K01 (the kernel passes AL-07 through as an MEV planning floor, never as a CBE); the record-level check VS-01 is in PARITY-C-DOCS_BUDGETS_MASS_POWER_A9_V5-V1"
+ },
+ "new_physics_verification": {
+  "applies_when": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY)"
+ }
+}
