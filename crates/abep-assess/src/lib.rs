@@ -14,7 +14,11 @@
 //!
 //! New, under acceptance ACCEPT-NI-ABEP-ASSESS-RFP-MATRIX-V1: the HC-05 evaluator ([`neutralization::hc05`]) and the
 //! RFP constraint matrix ([`matrix`]).
+//!
+//! New, under preregistration NP-HALL-PARAMETRIC-ENVELOPE v1 (A9.32): the decisive 196-state two-layer closure run and
+//! the A9.32 classification ([`closure`]).
 
+pub mod closure;
 pub mod error;
 pub mod gates;
 pub mod icp_gate;

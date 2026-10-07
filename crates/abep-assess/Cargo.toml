@@ -15,6 +15,10 @@ path = "src/bin/abep_assess_parity.rs"
 name = "abep-assess-matrix"
 path = "src/bin/abep_assess_matrix.rs"
 
+[[bin]]
+name = "abep-assess-closure"
+path = "src/bin/abep_assess_closure.rs"
+
 [dependencies]
 abep-types.workspace = true
 abep-provenance.workspace = true
