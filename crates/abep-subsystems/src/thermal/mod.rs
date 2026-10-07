@@ -14,6 +14,7 @@
 pub mod assemble;
 pub mod case;
 pub mod governance;
+pub mod icp_v2_adapter;
 pub mod linalg;
 pub mod network;
 pub mod output;

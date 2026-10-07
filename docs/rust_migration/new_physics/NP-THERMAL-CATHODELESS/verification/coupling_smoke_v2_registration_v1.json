@@ -1,0 +1,13 @@
+{
+  "id": "model_v2_coupling_smoke_registration_v1",
+  "models": ["NP-ICP-NEUTRALIZER model_version 2 (lock a180ceef)", "NP-THERMAL-CATHODELESS 2.0.0 (lock 727689fe)"],
+  "registered": "2026-10-07",
+  "label": "SYNTHETIC",
+  "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+  "rule": "One registered synthetic coupling case of the model-v2 chain (lane brief item 5), committed alone with its sha256 before its scored run, as the VS-NET and AL-10 v2 registrations. Its numbers are verification inputs, never physical values.",
+  "case_path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification/coupling_smoke_v2_case_v1.json",
+  "case_sha256": "a08a263c357b517b548f18ce6786fe14c14041922afc9ea2106055cea2a67666",
+  "builder": "crates/abep-subsystems/tests/support/coupling_smoke.rs::build (the file is its byte-identical output; tests/coupling_smoke_v2.rs checks the bytes and this sha256 and reads every input from the file)",
+  "chain": "NP-ICP v2 -> IF-ICP-THERMAL-v2 adapter -> NP-THERMAL 2.0.0 (VS-NET, registered transformation of al10_v2_registration_v1.json with the case's f_up and TK-06 split) -> IF-ICP-BUS-v2 -> CONS-L1 v2",
+  "pass_criterion": "for every producer scenario member: the producer's closures within 1e-10; every IF-ICP-THERMAL-v2 key TK-01..TK-13 lands exactly once (deposited + exported + booked = key within 1e-12 relative + 1e-12 W) and nowhere else; the destinations sum to P_icp_slot_load_sum_W within eps_if and 1e-10; the IF-ICP-BUS-v2 load-plane values enter the ledger exactly; the CONS-L1 v2 ICP account closes within 1e-10 of the slot-load sum and CONS-L1 within 2 %. Fail-closed: a duplicated key, a key under a second name, a dropped key, an unmapped status, a duplicated member and a double-booked share or account are refused."
+}

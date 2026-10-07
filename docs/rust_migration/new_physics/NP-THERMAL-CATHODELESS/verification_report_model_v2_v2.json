@@ -1,0 +1,72 @@
+{
+  "schema": "abep_new_physics_verification_report_v1",
+  "id": "np_thermal_cathodeless_model_v2_verification_report_v2",
+  "model_id": "NP-THERMAL-CATHODELESS",
+  "model_version": "2.0.0",
+  "report_version": 2,
+  "date": "2026-10-07",
+  "lane": "A9.31: RF/ICP + thermal v2 implementation lane, follow-up (branch lane-icp-thermal-v2-impl on b533453)",
+  "previous_report": "verification_report_model_v2_v1.json (immutable). Correction: v1 gave IMPLEMENTED_UNVERIFIED 'pending the producer's verification'; admission_rule_v2 contains no such condition, so this version evaluates the rule as written.",
+  "prereg": {
+    "lock_v2_sha256": "727689fee6bd003295c53abfbc4185c93fab80620329c75062a956dbbb9742de",
+    "prereg_v2_json_sha256": "6828f3e257e38a588c9513f2531658035fa904b6c51e3b28831681d871adfa78",
+    "admission_rule_v2": "ADM-01..ADM-06 apply with v2 ids: VERIFIED needs AL-01..AL-11 (AL-10 v2), every CONS criterion incl. CONS-I3, FT-01..FT-23, DET, IV-01 / IV-02; and the producer key table hash equal to key_table_sha256."
+  },
+  "implementation": {
+    "commits": ["a18ceb5 (AL-10 v2 record registration)", "2f4b7fc", "6a4f961 (coupling smoke case registration)", "7d4bddb"],
+    "tests": "cargo test --workspace --locked: 507 passed, 0 failed, 2 ignored (registered PT-01 / PT-02); abep-ci test-register 0 violations; fmt and clippy -D warnings clean"
+  },
+  "verdict": "VERIFIED",
+  "validation_status": "NOT_VALIDATED",
+  "criteria": [
+    {"id": "AL-01..AL-04, AL-07, AL-08, AL-09, AL-11", "status": "CRITERION_MET in 2.0.0", "test": "crates/abep-subsystems/tests/thermal_v2_inherited.rs inherited_analytic_cases_hold_in_model_2 (the v1 case builders run through run_case_v2)"},
+    {"id": "AL-05, AL-06", "status": "CRITERION_MET in 2.0.0", "test": "same test; VS-NET consumes the registered AL-10 v2 record (inherited_to_v2: NON_FIRING zeros for AL-05); AL-05 |T - T_s| = 0, tau_max 6.9e3 s; AL-06 met"},
+    {"id": "AL-10 v2", "status": "CRITERION_MET", "test": "tests/thermal_v2.rs (consistent sets co-located / not, signed TK-12, every refusal set)"},
+    {"id": "CONS-S1, CONS-S2, CONS-T1, CONS-T2, CONS-T3", "status": "CRITERION_MET in 2.0.0", "evaluated_in": "every converged 2.0.0 run (the inherited cases, AL-10 v2, the coupling smoke case); a breach is MODEL_ERROR inside the solver"},
+    {"id": "CONS-I1 (IFH-3, IFH-4, IFI2-03..IFI2-08)", "status": "CRITERION_MET", "test": "tests/thermal_v2.rs"},
+    {"id": "CONS-I2", "status": "CRITERION_MET", "observed": "0.0 W residual on every consistent set and the smoke case"},
+    {"id": "CONS-I3", "status": "CRITERION_MET", "observed": "AL-10 v2: <= 1e-12 x 53.4 W; smoke case 1.4e-14 W against eps_if 3.6e-5 W"},
+    {"id": "CONS-L1", "status": "CRITERION_MET", "observed": "evaluated now by the system ledger (v1 report: DEFERRED): LC-18 and the coupling smoke case close with the v2 ICP account at the load planes (mismatch 0.0 W; relative residual 1.4e-16 < 2 %)", "tests": "tests/thermal_v2.rs lc18_*; crates/abep-mission/tests/coupling_smoke_v2.rs"},
+    {"id": "FT-01..FT-12, FT-14..FT-18", "status": "CRITERION_MET in 2.0.0", "test": "thermal_v2_inherited.rs inherited_fail_closed_cases_hold_in_model_2 (and the bench domain checks)"},
+    {"id": "FT-13", "status": "CRITERION_MET", "test": "the AL-10 v2 refusal sets (IFI2-02..IFI2-09 MODEL_ERROR)"},
+    {"id": "FT-19..FT-23", "status": "CRITERION_MET", "test": "tests/thermal_v2.rs"},
+    {"id": "DET-01, DET-02", "status": "CRITERION_MET in 2.0.0", "test": "thermal_v2_inherited.rs inherited_determinism_holds_in_model_2 (threaded runs under the process-wide 2.0.0 switch)"},
+    {"id": "DET-03", "status": "CRITERION_MET in 2.0.0", "observed": "every 2.0.0 output carries implementation rust, the Rust commit, the v2 prereg sha256 6828f3e2, the IF-ICP-THERMAL-v2 record hash, the producer lock, the scenario member and the governed hashes"},
+    {"id": "IV-01", "status": "CRITERION_MET", "authoritative": false, "source": "Python scratch cross-check (never a CI dependency), scripts sha256 1bf6c487 (steady, iv01_v2.py) and 2e879907 (transient, iv01_v2_transient.py), kept outside the repository as the v1 IV-01 scratch was", "observed": {
+      "analytic_cases": "the v1 IV-01 analytic results apply unchanged: the IV-01 analytic dump is identical under 1.0.0 and 2.0.0 (test iv01_analytic_dump_is_identical_in_model_2)",
+      "VS-NET_2.0.0_node_sources": "rebuilt independently from the registered records and the prereg v2 consumer_deposition table: identical to the Rust Q_source_node_W (max difference 0.0 W), both consistent sets",
+      "VS-NET_2.0.0_steady_max_abs_dT_K": {"colocated": 5.928768587182276e-11, "not_colocated": 6.514255801448599e-11},
+      "VS-NET_2.0.0_steady_method": "nonlinear Gauss-Seidel with a bracketed scalar root per node, radiosities solved directly (211 / 209 sweeps)",
+      "VS-NET_2.0.0_energy_totals_relative_diff": {"colocated": 2.4801395404338407e-13, "not_colocated": 2.6985737097961437e-13},
+      "VS-NET_2.0.0_transient_max_abs_dT_vs_Radau_K": 0.008983840919881914,
+      "VS-NET_2.0.0_transient_rust_dt_s": 0.1,
+      "VS-NET_2.0.0_transient_python": "Radau, rtol = atol = 1e-10, 3000 s from 250 K, every Rust output time",
+      "VS-NET_2.0.0_transient_dH_python_vs_rust_relative": 0.0,
+      "note": "at the registered verification step of 5 s the implicit-Euler global error against Radau is 0.35 K (first order; the per-step control CONS-T2 is met); at matched refinement (0.1 s) it is 0.009 K <= 1e-2 K, as v1 compared at 0.025 s"
+    }, "tolerances": "steady 1e-6 K; transient at matched refinement 1e-2 K; energy totals 1e-8 relative"},
+    {"id": "IV-02", "status": "CRITERION_MET in 2.0.0", "test": "thermal_v2_inherited.rs (iv_02 through run_case_v2)"},
+    {"id": "IV-03", "status": "NOT_PERFORMED (allowed by ADM-03: no lawful copy of the text in this environment)"},
+    {"id": "producer key table hash", "status": "MET", "observed": "GovernedContextV2 verifies 33e495ad on both preregistrations; the adapter and the consumer check every record's key_table_sha256"}
+  ],
+  "admission": {
+    "status": "NOT_ADMITTED_YET (VERIFIED; ADM-04 steps outstanding)",
+    "missing_for_ADM-04": [
+      "migration-ledger flip (lane A1; requested below)",
+      "a named CI step bound to the v2 prereg sha256 (tests/thermal_v2.rs the_v2_context_* already binds the lock, the producer anchor and the key table inside cargo test)",
+      "this report's HISTORY entry (added with it)"
+    ],
+    "scope_note": "Verification is software verification (ADM-05), not validation and not a gate PASS. Flight and bench ICP heat stays refused while the producer is not admitted (NP_ICP_NEUTRALIZER_NOT_ADMITTED; NP-ICP model_version 2 is IMPLEMENTED_UNVERIFIED with open verify items). Anode and coupled H-1/ICP thermal closure stay UNRESOLVED."
+  },
+  "adapter": {
+    "where": "crates/abep-subsystems/src/thermal/icp_v2_adapter.rs",
+    "rule": "NP-ICP v2 thermal member record (serialized) -> InterfaceRecordV2 by the locked key table; status CONVERGED -> EVALUATED, NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR unchanged, any other status refused; every table key exactly once (duplicated JSON keys, renamed or dropped keys refused); id / role / plane / powered_by equal to the locked row; evidence class SYNTHETIC_TEST_DATA_NOT_EVIDENCE for a SYNTHETIC producer record, else model-derived; validation_status NOT_VALIDATED; producer node shares only for CONVERGED shares of a CONVERGED key; the producer's TK-06 split returned for comparison with the consumer's registered split"
+  },
+  "inherited_case_transformation": "tests/support/vs_net_v2.rs inherited_to_v2: a v1 VS-NET-based verification case runs in 2.0.0 with the registered AL-10 v2 record replacing the retired IF-ICP-THERMAL-v1 record (the v1 record's case fields and evidence class; a withheld v1 key keeps its status and any value it carries on the same-named v2 key, every v2 key when all v1 keys are withheld; NON_FIRING zeros), the registered RECEIVES_ADDED declarations and PART.f_up (the case's own PART.ohmic record with the registered F_UP weights). Registered inputs are unchanged (vs_net_v1.json, al10_v2_icp_record_v1.json).",
+  "preregistration_consistency": "No conflict with prereg v2 found; no frozen record edited.",
+  "open": [
+    "real-configuration RI-PART f_up (RX-H1-FACE) and TK-06 split: TBD (no source registered; not invented)",
+    "CFG-FLIGHT-HALL-ON: NOT_EVALUATED (CPL-HALL-ON)",
+    "OQ-NPT-01, OQ-NPT-03..OQ-NPT-10 and Q-02 unchanged (block only affected absolute outputs)"
+  ],
+  "ledger_update_requested": "NP-THERMAL-CATHODELESS 2.0.0: VERIFIED (not admitted until ADM-04); v1 1.0.0 record unchanged."
+}

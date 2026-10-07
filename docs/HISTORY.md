@@ -5078,3 +5078,34 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   P_dev and 0.725 × mdot_scale, so the P45 test would be near-vacuous for the ~97 % stable held-out vectors. Decision
   (score v6 as registered, or a v7 with a per-vector stability class) is with the coordinator / owner. No Python, frozen
   data or admitted output changed.
+
+## 2026-10-07 — RF/ICP + thermal v2 follow-up: coupling smoke case, verify items, NP-THERMAL 2.0.0 VERIFIED
+
+- **Adapter** `abep_subsystems::thermal::icp_v2_adapter` maps the serialized NP-ICP v2 thermal member record to the
+  thermal 2.0.0 input by the locked key table. Status CONVERGED → EVALUATED; withheld statuses are kept; anything else
+  is refused, as are duplicated, renamed or dropped keys.
+- **Coupling smoke case:** one registered SYNTHETIC case, committed alone (`6a4f961`, sha256 `a08a263c…`). It runs
+  ICP v2 → adapter → thermal 2.0.0 → IF-ICP-BUS-v2 → CONS-L1 v2 in `crates/abep-mission/tests/coupling_smoke_v2.rs`.
+  abep-subsystems gains no dependency (INV-A05).
+  - Every energy key is booked exactly once: residual 0 per key; 1.4e-14 W against the 36.01 W slot-load sum; the ICP
+    account mismatch is 0.0 W.
+  - Duplicated, renamed and dropped keys, unmapped statuses and double counts are refused.
+- **Verify items (NP-ICP v2):**
+  - VER-23 is cleared by `verification_addendum_ver23_v1.json`, a read of the pinned HallThruster.jl `bfb3019f`. The
+    coupling potential is the right-boundary input `cathode_coupling_voltage`. CPL-HALL-ON-v1 keeps VER-24 only and
+    stays NOT_EVALUATED.
+  - Every other item stays open, each with its reason and what would close it. The sources are not registered and
+    publisher / NIST / arXiv hosts are blocked here. VER-02 is added to the list: report v1 had omitted it.
+  - The status stays IMPLEMENTED_UNVERIFIED.
+- **NP-THERMAL-CATHODELESS 2.0.0** is **VERIFIED** under `admission_rule_v2`:
+  - the inherited AL / FT / DET / IV-02 cases pass through `run_case_v2`;
+  - AL-10 v2, CONS-I3, FT-19..23 and the producer key-table hash are met;
+  - CONS-L1 is now evaluated;
+  - IV-01 was re-run in a non-authoritative scratch: steady 6.5e-11 K, transient 0.009 K at matched refinement,
+    energy 2.7e-13.
+
+  It is not admitted until ADM-04, and stays NOT_VALIDATED. Report v1's "pending the producer" condition was not part
+  of the rule.
+- **Reports:** `verification_report_model_v2_v2.json` / `.md` in both model directories, and `.md` companions for v1.
+- **Results:** workspace 507 passed, 0 failed, 2 ignored. D0(N2) and the real-configuration f_up / TK-06 partitions
+  stay open (no registered source).
