@@ -1051,8 +1051,14 @@ def accept(chain_file: Path):
                         pts.append((case["id"], tb, [math.nan if x == "NaN" else float(x) for x in p]))
         for c in case.get("cases", []):
             pts.append((case["id"], c["table"], c["point"]))
+    # AT-04: the AT-03 CR_passive point with theta_deg = the next f64 above 2.0
+    at03 = next(c for c in reg["acceptance_cases"] if c["id"] == "AT-03")
+    crp = next(c for c in at03["cases"] if c["field"] == "CR_passive")
+    pts.append(("AT-04", "cll", crp["point"][:3] + [math.nextafter(2.0, math.inf)]))
     calls = [{"entry": "interp_sensitivity", "args": {"table": tb, "point": jsonable(p)}} for _, tb, p in pts]
     rs = rust_eval(calls, "accept")
+    rs_again = rust_eval(calls, "accept_again")
+    at10 = json.dumps(rs, sort_keys=True) == json.dumps(rs_again, sort_keys=True)
     checks = []
     for (cid, tb, p), r in zip(pts, rs):
         rec = r.get("value", {})
@@ -1071,10 +1077,14 @@ def accept(chain_file: Path):
     chain = json.loads(chain_file.read_text())
     chain_summary = {k: chain[k] for k in ("interpolant_used_by_chain", "face_geometry_counts", "n_points",
                                            "n_non_conforming")}
+    grid_classes = sorted({p["record"].get("sensitivity_class") for p in chain["points"]
+                           if p["record"].get("face_geometry") == "GRID_NODE"})
+    chain_summary["grid_node_sensitivity_classes"] = grid_classes
     at08 = (chain["interpolant_used_by_chain"] is False and chain["n_non_conforming"] == 0
-            and set(chain["face_geometry_counts"]) <= {"GRID_NODE", "NOT_ON_KNOWN_FACE"})
-    ok = (t.returncode == 0 and all(v == "ok" for v in tests.values()) and all(c["agree"] for c in checks)
-          and all(c["within_1e-12"] for c in survey_cmp) and at08)
+            and set(chain["face_geometry_counts"]) <= {"GRID_NODE", "NOT_ON_KNOWN_FACE"}
+            and grid_classes in ([], ["ROUNDING_LEVEL"]))
+    ok = (t.returncode == 0 and bool(tests) and all(v == "ok" for v in tests.values()) and all(c["agree"] for c in checks)
+          and all(c["within_1e-12"] for c in survey_cmp) and at08 and at10)
     rep = {"schema": "abep_new_diagnostic_acceptance_report_v1", "id": reg["id"],
            "prereg": pre.relative_to(ROOT).as_posix(), "prereg_sha256": sha_file(pre),
            "registered_in": git("log", "--format=%H", "-1", "--", pre.relative_to(ROOT).as_posix()),
@@ -1082,6 +1092,7 @@ def accept(chain_file: Path):
            "cargo_test": {"command": "cargo test --locked -p abep-uq --test interp_sensitivity", "exit": t.returncode,
                           "tests": tests},
            "registered_points": checks, "survey_maxima": survey_cmp,
+           "at10_determinism_two_evaluations_identical": at10,
            "f7_f8_chain_application": dict(chain_summary, at08_prediction_holds=at08,
                                            source="the full-grid study of the SC-WP-10 scoring execution"),
            "verdict": "ACCEPTED" if ok else "NOT_ACCEPTED",
@@ -1105,6 +1116,7 @@ def accept(chain_file: Path):
            "|---|---|---|---|---|---|"]
     for c in survey_cmp:
         md.append(f"| {c['field']} | {c['table']} | {c['species']} | {c['survey']} | {c['rust']} | {c['abs_diff']:.2e} |")
+    md += ["", f"AT-10 determinism (two evaluations of every registered point identical): {at10}", ""]
     md += ["", "## F7 / F8 chain application (AT-08)", "", f"* {chain_summary}", f"* prediction holds: {at08}", "",
            "Software verification of a numerical diagnostic, not physics validation, not a change of the frozen "
            "surface and not a gate PASS.", ""]
