@@ -1,0 +1,195 @@
+{
+ "schema": "abep_rust_parity_report_v1",
+ "contract": {
+  "id": "PARITY-C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY-V1",
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY/parity_prereg_v1.json",
+  "sha256": "0dfe17e2ed3f1ddf5bdd486e5772bc9c810841b2a21f24c319c7378b427d6d9f",
+  "registered_in_commit": "e923e492fcd0b6ee42187d73c906ba3111a54dc9"
+ },
+ "parity": "PARITY_PASS",
+ "verdict": "ADMITTED",
+ "python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+ "python_commit_at_scoring_head": "b1884ea5417aee8a3d5693d5d08ef5b17cda978b",
+ "reference_sha256": {
+  "abep_sim/assessment/design_gates.py": "394c8d04e86bfc90a9c0fcfd5b1c0efffed3c0bb769fdeed023fd9bf4606dd93",
+  "abep_sim/bus_boundary_a9.py": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a",
+  "abep_sim/bus_boundary_a9_v2.py": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26",
+  "abep_sim/design/upstream_a9_13.py": "384b24086c1cc779707d7cb958b9ccd8cb58edf337d629727d923ab659a30af5",
+  "abep_sim/programme/design_synthesis.py": "a9ee90672ad99c352e4ce77f74a5078ec742119dfd347ebbd485f22894838455",
+  "abep_sim/statewise.py": "ec90f2282467e4877c4d10c32f12368f400102bd5889da49902077cdfb55e63e",
+  "abep_sim/design/a9_19_architecture.py": "8a4ccfb00fc2bb5a9f00b8a405e9c816e2d025d6d91c8bbef25f50300d4d226b",
+  "abep_sim/design/architecture_optimizer.py": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af",
+  "abep_sim/design/engineering_constraints.py": "c4f70d306ec4b2e8e5bfff8d8aac347df4961fd573e5a87ccd2dd4fc599bf5fd",
+  "abep_sim/configuration.py": "45900b79e3639ab382ec740bbd6b453d03e58ab7bd6368f93abdc17cabdacacc",
+  "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py": "140cc9cf68b40b585bd8b096fcd66b6fb9a3344608c88f4e759b0587d5da7a65"
+ },
+ "rust_commit": "b1884ea5417aee8a3d5693d5d08ef5b17cda978b",
+ "git_dirty": [],
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo_lock_sha256": "4dd0837a39ec5b912bd0e61f191184fc5ed95fb5fb5a7c649a6057a0ac6374b0",
+  "binary_sha256": "95aa58f2921667a113e1a0973242503073422eab67f1059433d206448219b669",
+  "source_sha256": {
+   "Cargo.toml": "ff8f4353a3e4313736de58204af2b36b147b75c826f19539551c997a93646fd0",
+   "Cargo.lock": "4dd0837a39ec5b912bd0e61f191184fc5ed95fb5fb5a7c649a6057a0ac6374b0",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "0a067299e38d3dac702c3eb23ee3e34a55f844b389ec54b7463962c65d6a4b0e",
+   "crates/abep-types/src/pyjson.rs": "5ce15fdb06043a01ce8bd441a8e8f1906e74a0c4dd9fea2b9e4505f182a8d88e",
+   "crates/abep-types/src/pyjson_unicode.rs": "c6f59e0936c35051ef1f7d45a6611d3a7269a8d972c900805463f5f0bf6b2a75",
+   "crates/abep-config/src/architecture.rs": "54430fead6036aeff28dfefef62024efaa07627d5f96071ea6d0f7d644213dc1",
+   "crates/abep-config/src/assessment.rs": "7eba9d4ffa86803d9a576567f8a78f584e1c86e237e828997d5ae3a714faff96",
+   "crates/abep-config/src/builder.rs": "1e4727d274eac17b46b227d399231e85223ec8a84291eb6f3c40c27fae5738b1",
+   "crates/abep-config/src/builder_readme.rs": "f406e9547baf670c84e0f5c8d4a3486d72ff9c59985047c1416f0fd5bbb8d877",
+   "crates/abep-config/src/eval.rs": "af2e75e1ac9a15d8eeacf6433d2f95a7212270358af7fcd12a4e7b9c74921948",
+   "crates/abep-config/src/lib.rs": "bd9ad70b5f0db892a907372845e1b878c39b0b6dd63645c68466eb4fd9fd764d",
+   "crates/abep-config/src/loaders.rs": "ddc990f2c18babf317ebbf15b50bbe8c7604e7a1d77355a742281a8ca8b26a0d",
+   "crates/abep-config/src/main.rs": "e4c1dab19f81714032d7e482ed1f9bacbcc1b57aa34f6527ad4eeb7d27005493",
+   "crates/abep-config/src/py.rs": "cb080db5707729ba6304d552a533ee2cf2058045ab15593146df1fcbf5377c94",
+   "crates/abep-config/src/pysrc.rs": "bd08212f226fb467f59ff04f070887e84fd8abd65e6f3d228eda6670cac0a1f9",
+   "crates/abep-config/src/textmatch.rs": "fc06f54b478b4b20c8df47ff3fe6a921c9f0c78c31da42a85b1f26960d505e3b",
+   "crates/abep-mission/src/bin/abep_mission_parity.rs": "4ad49c53d932d528f66d9fdfc6595b04b55435c8f8ac4421ec0142854c614dea",
+   "crates/abep-mission/src/bin/abep_reference_drag_record.rs": "5394baecddcab2f096371cd9c277575d74b3ab7960c91327a0d0150c2c2d0862",
+   "crates/abep-mission/src/intake_drag.rs": "12812f9326027ba86a41f4972c6be51be4524f0dc42515a0d4787352147527c2",
+   "crates/abep-mission/src/lib.rs": "d92a2247b271bfb34d506f85a272f0d6998c277705443f945001494ebef73f8e",
+   "crates/abep-mission/src/objective.rs": "a5ad767609d2262bdc8180484a33f62fc4f1f92cc06886ccf492192886a73c32",
+   "crates/abep-mission/src/parity.rs": "a2406352f4762086762a5a67401421f3ea05bfe1b5139d197bb0b8930f905fbb",
+   "crates/abep-mission/src/pyval.rs": "2138f192bbd9611e3497c83f77ae9dfd2f71133ec092a0b3fc8e9fc7617b4b94",
+   "crates/abep-mission/src/reference_drag.rs": "69c5890d45416fa1762931d98f88657df6779df815c9b69d55883a2e2090a769",
+   "crates/abep-mission/src/statewise.rs": "72acc9e536ed41c368936a9ab88aade19f940c9e27f04c4376083e94b76fb597",
+   "crates/abep-mission/src/statewise_td.rs": "4e540c2ce941e80fd83c89655d4d9de878d5bd16b06d0217186536e30d54179b",
+   "crates/abep-gaspath/src/bin/abep_gaspath_parity.rs": "11b8c1c5d0f5bac8835fd96e79a89906bed87b9ebaf7111aba361a28767b46de",
+   "crates/abep-gaspath/src/compressor.rs": "be1004378d16b3ef530a00a04384c1b14062a0e57a020c43c6621bfd70cbc734",
+   "crates/abep-gaspath/src/compressor_synthesis.rs": "02c4f923e55d75ce39456d1a3119fbfebf125d9c6e935624e30c67457819dc10",
+   "crates/abep-gaspath/src/error.rs": "d1f1afb4e024b97b89065100131420d6253360c2156e959c2753c7a1728b18eb",
+   "crates/abep-gaspath/src/filter.rs": "71beb5a77288a58716c22344105e8dbffa18d15b7df00324c18e885e46dcc338",
+   "crates/abep-gaspath/src/lib.rs": "07d6e477a9a9759692d3d9a0ea0bf24ef9be40fdb7924d3bdaab2e0004f32bef",
+   "crates/abep-gaspath/src/materials.rs": "2a4915a125d7d3fbebffc415da20114578675c9d98f34769456987309ec98377",
+   "crates/abep-gaspath/src/plenum_feed.rs": "6a17860c9e504fde292ac4975e10feae9f4a94625a745ab377b6e3b86251d2da",
+   "crates/abep-gaspath/src/pyops.rs": "9e350457a5ddd6ccd7089e3077a102795a7bbaff28c34933cd7e8f7d2844db38",
+   "crates/abep-gaspath/src/rec.rs": "80ec46981e10d3d1c7cd876d79e03c4fe5adf59c5d9ad1d93dfcf0278e467f29",
+   "crates/abep-gaspath/src/reservoir.rs": "4ef9cc5d40f631c6f8d69e2185d000d0cf2bcc4f574b39f5456c9b672e57f2f5",
+   "crates/abep-gaspath/src/rotor_strength.rs": "a6b6b1bf9f47721b992a99a05b7cc36b652ae36db1c9fb87bb53742bc3da196a",
+   "crates/abep-gaspath/src/transient.rs": "69a6d6025616c79de044845fb6b227cfee1a362bb4eb7703dca53ae95e570c0e",
+   "crates/abep-gaspath/src/upstream.rs": "d91db34beaa06a536cf876ef219a00d56921574e1162df4d08e174f143a410b3",
+   "crates/abep-assess/Cargo.toml": "e6e2ef7799a627a1dc27d8b01cfbb533f8556def57732a376f6ce429553f2da2",
+   "crates/abep-assess/src/bin/abep_assess_matrix.rs": "693cc3b99b4b08023373d0a524cd94fe87d13d99c6dd721935b7bbee5a384610",
+   "crates/abep-assess/src/bin/abep_assess_parity.rs": "518d2f0e7ae7a2ae1db26358ee4f7ab3eb8bca94f64a142e8b52b9cfb52d832f",
+   "crates/abep-assess/src/error.rs": "4773e11f3f2ae7ee01f667099e11b3b467cd27cfce4f81b44fda9fb5e7f89904",
+   "crates/abep-assess/src/gates.rs": "c6984e427cc9de5f967fe2c3ecfa82c253cf9861c2da13bb4f4165af99682fc9",
+   "crates/abep-assess/src/icp_gate.rs": "30f174bbca5717ac3f22b87f57d6b71cd8fc11edce012c3c8f144c5377ad7ede",
+   "crates/abep-assess/src/lib.rs": "0563d6504072b4cd971ce8c78232ec2949fcdaccd63accce4bcf0065ad89d308",
+   "crates/abep-assess/src/matrix.rs": "0dac246043cbdee0cd4d668c7fc0258b0691e5e10d61154248808e5e60e11ce6",
+   "crates/abep-assess/src/neutralization.rs": "c29a3da1a57022ef3a8a67af25155a9958b1271626e50fda0fb0fa19a77b27df",
+   "crates/abep-assess/src/owner_state.rs": "835c5afbb8353f149035f54452f29089c0625f09b35418d507bad1dc7fe085fa",
+   "crates/abep-assess/src/pareto.rs": "db023f10304101aa63705d190c146a7a6897aa38cb4648fe36e86c317062adaf",
+   "crates/abep-assess/src/parity.rs": "c942f7e8489ce64eb70c9411af5bb5013c143579b9d4a97f336f9683ea3c3838",
+   "crates/abep-assess/src/power_gate.rs": "11a49e14c93a8b4803502abad59e6ec4f79b9a810334157dfc79c683ac5e2969",
+   "crates/abep-assess/src/propellant.rs": "a170251c9251dcf568ef31cca76d0636fb7a66d42564e7c0e7b397be3dac2d5d",
+   "crates/abep-assess/src/py.rs": "69a999fc512f732ca06d6f29fdb4e584a404fc7b2c4bd32133cc3877c1994d54",
+   "crates/abep-assess/src/rvm.rs": "6959989ee2553e5f7ae3cca5c30448896e9b20fa621fc14dbdbdab7f88f9a439",
+   "crates/abep-assess/src/statewise.rs": "b1d13fb5f7238e4b03bdb58dffb8974313f4a9932984985ac135211cd3113d18",
+   "crates/abep-assess/src/thresholds.rs": "5d4ba0cdc38258061843814294332a86f0f497ce4e140539f0acfb25e1f15ed5",
+   "crates/abep-assess/tests/crate_graph.rs": "2cd71abffc5be8a5f01c436dea06fa2f2e234e524e5ba8f1dd6599e9a5dccfd6",
+   "crates/abep-assess/tests/matrix_acceptance.rs": "f47fa91c43b70cbcc16f34f34557de4537ab06a4a2ff53f05ea8408ef5ae1a82"
+  }
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "platform": "Linux 6.18.44-fc-v70 x86_64",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "thread_env": {
+   "OMP_NUM_THREADS": null,
+   "OPENBLAS_NUM_THREADS": null
+  }
+ },
+ "seed": 2026100611,
+ "date_utc": "2026-10-06T18:24:33+00:00",
+ "n_vectors": 5199,
+ "n_failures": 0,
+ "calls_per_entry": {
+  "E1": 1,
+  "E2": 665,
+  "E5": 567,
+  "E6": 151,
+  "E8": 324,
+  "E9": 309,
+  "E10": 309,
+  "E12": 309,
+  "E13": 1,
+  "E14": 900,
+  "E15": 301,
+  "E7": 760,
+  "E11": 302,
+  "E3": 150,
+  "E4": 150
+ },
+ "stats": {
+  "bit_identical": 4260,
+  "max_ulp": 0.0,
+  "raised_other": 2
+ },
+ "checks": {
+  "per_test": true,
+  "invariants": true,
+  "reference_unchanged": true,
+  "governing_hashes": true,
+  "all": true
+ },
+ "invariants": {
+  "INV-G-01 (no MET on non-evidence; no PASS / COMPLY status value in E2 / E7-E12)": true,
+  "INV-G-02 (HC-05 MET / VIOLATED only with a VALIDATED_BENCH / MEASURED basis, Rust)": true,
+  "INV-G-03 (inputs unchanged by every reference call; Rust borrows &Value immutably)": true,
+  "INV-G-04 (no requirement literal in crates/abep-assess/src)": true,
+  "INV-G-05 (statewise quantifier called, not re-implemented)": true,
+  "INV-G-06 (two Rust runs byte-identical)": true
+ },
+ "failures": [],
+ "notes": [
+  "INV-G-01 is checked on status-valued fields (keys 'status' / 'state_status'): the reference's own basis texts quote gate verdicts (e.g. 'rfp_power_gate verdict PASS (EVALUATED)') and are compared for equality, not scanned for words",
+  "DIV-01 (A9.31 sec. 10) applied to the reference output of every evaluate_constraints vector whose HC-05 record has an uncertainty basis without a VALIDATED_BENCH / MEASURED validation basis"
+ ],
+ "campaign_history": [
+  {
+   "execution": "scoring",
+   "seed": 2026100611,
+   "date_utc": "2026-10-06T18:24:33+00:00",
+   "parity": "PARITY_PASS",
+   "development_runs": "development-seed runs only, never reported (development_rule)"
+  }
+ ],
+ "ledger_update_requested": [
+  {
+   "component": "C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY",
+   "request": "PARTIAL admission on PARITY_PASS (contract PARITY-C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY-V1): HARD_CONSTRAINTS, evaluate_constraints (with DIV-01, A9.31 sec. 10), hard_constraint_partition, constraint_met_value_kinds, bus_power_gate, ripple_feed_quality, statewise_drag_compensation, feed_state_sufficiency, pareto_s6_17, propellant_paths_check, rvm_gate_snapshot, owner_state, status_label, apply_to_questions -> crates/abep-assess (abep_assess::{gates, power_gate, statewise, pareto, propellant, rvm, owner_state}); gate_snapshot stays PYTHON_REFERENCE (wraps the F8 robust_optimizer.design_gate_snapshot, SC-WP-10)"
+  },
+  {
+   "component": "C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY",
+   "request": "the pending rfp_power_gate (and the transient_gate field it produces) admitted in abep-assess (abep_assess::power_gate::rfp_power_gate; limit from config p_bus_max_W): with the SC-WP-05 partial admission the row's flight scope is complete (GROUND_REFERENCE_TEST_METADATA stays GROUND_REFERENCE_ONLY)"
+  },
+  {
+   "component": "C-ABEP_SIM_PROGRAMME_DESIGN_SYNTHESIS_PY",
+   "request": "the pending gate_verdict field of bus_power admitted in abep-assess (abep_assess::power_gate::bus_power_gate_verdict); every other function of design_synthesis stays with SC-WP-10"
+  },
+  {
+   "component": "C-ABEP_SIM_DESIGN_UPSTREAM_A9_13_PY",
+   "request": "partial admission of statewise_envelope and _rec_value (abep_assess::statewise; over the admitted abep_mission::statewise::statewise_quantifier)"
+  },
+  {
+   "component": "C-DOCS_EXPERIMENTS_HALL_ICP_P1_ICP_BENCH",
+   "request": "partial admission of the kernel icp45a_margin (abep_assess::neutralization::icp45a_margin; A9.29 sec. 4: M_n in assessment only); the P1 reducer stays PYTHON_REFERENCE (SC-WP-03)"
+  }
+ ],
+ "captured_reference_outputs": {
+  "captured_at_python_commit": "b1884ea5417aee8a3d5693d5d08ef5b17cda978b",
+  "files": {
+   "requests.json.gz": "35d7a2101a5ceef06659c6cf3c29c83305e5af205cc082581c466525066b1543",
+   "expected_rust_outputs.json.gz": "870cfcde53a907159012d679bfb2cdf233b1b628752a17bdc55961b065470942",
+   "python_outputs.json.gz": "9d09756231e2bf0e89577b2d0117e378227690e167d3613e28571189337aee9c",
+   "rust_outputs_at_scoring.json.gz": "870cfcde53a907159012d679bfb2cdf233b1b628752a17bdc55961b065470942"
+  },
+  "note": "expected_rust_outputs = python_outputs after the registered DIV transformations"
+ }
+}

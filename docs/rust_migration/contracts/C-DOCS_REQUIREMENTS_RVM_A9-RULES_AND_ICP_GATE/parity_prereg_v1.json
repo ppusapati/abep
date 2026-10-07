@@ -1,0 +1,388 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-DOCS_REQUIREMENTS_RVM_A9-RULES_AND_ICP_GATE-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-DOCS_REQUIREMENTS_RVM_A9",
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W15c",
+  "scope": "named function subset (RM-R17): the RVM status-assignment rules (rvm_rules.py, whole module) and the fail-closed GNG-ICP-01 evaluator of a9_21_icp_gate.py: the RVM-related engineering assessment the active simulator needs (SC-WP-11 element 'RVM mapping where needed by engineering assessment and GNG-ICP-01'), plus a replay of every committed RVM cell and of the committed GNG-ICP-01 status",
+  "functions_or_entry_points": [
+   "R1 docs/requirements/rvm_a9/rvm_rules.py::STATUSES, ROLES, ARTIFACT_KINDS, NOT_APPLICABLE_KIND, EVALUATING_KINDS, ARTIFACT_FIELDS (names / type names), RULES",
+   "R2 docs/requirements/rvm_a9/rvm_rules.py::validate_artifact",
+   "R3 docs/requirements/rvm_a9/rvm_rules.py::assign_status (+ is_not_applicable_cell)",
+   "R4 docs/requirements/rvm_a9/rvm_rules.py::floor_fail_check",
+   "R5 docs/requirements/rvm_a9/rvm_rules.py::assert_status_vocabulary, assert_no_pass_without_measurement",
+   "R6 replay: assign_status(cell artifacts without 'detail', row requirement_frozen) for every row x configuration of docs/requirements/rvm_a9/rvm_a9_v1.json, and both asserts on the committed document",
+   "R7 docs/requirements/rvm_a9/a9_21_icp_gate.py::evaluate (+ _uses_proposal, _pinned_file_ok, _norm)",
+   "R8 docs/requirements/rvm_a9/a9_21_icp_gate.py::lock1_release_reportable; replay: evaluate(gate.criteria, gate.evidence) of the committed owner_approved_gates[id=GNG-ICP-01]"
+  ],
+  "out_of_scope": [
+   "docs/requirements/rvm_a9/build_rvm_a9.py (build_doc / evaluate_rows: the RVM document builder), rvm_a9_rows.py, a9_16_rvm.py, a9_19_rvm.py, rfp_rebase.py: the RVM document and its regeneration are evidence tooling (byte-exact rebuild of rvm_a9_v1.json / RVM_A9.md); the active simulator consumes the committed, sha256-pinned record. They stay PYTHON_REFERENCE (a later contract of SC-WP-11 / SC-WP-14 tooling)",
+   "a9_21_icp_gate.py::owner_approval, proposal, proposed_criteria_for_owner_review, gate_record, apply_rvm (document assembly from the verbatim decision record): PYTHON_REFERENCE; the Rust evaluator reads the preserved recorder proposal text from the committed RVM (DIV-R01)",
+   "C-DOCS_REQUIREMENTS_RFP_OFFICIAL (rfp_clauses_v1.py, the RFP registration builder): not consumed; requirement thresholds come from config only (A9.23)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "docs/traceability/ RTM v1 (class H)",
+   "the RVM hall_c1_reference column is a GROUND_ONLY_LAB_REFERENCE marker; it is replayed as committed data, never evaluated as a flight configuration"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-11 (element 'RVM mapping (where needed by engineering assessment) and GNG-ICP-01')",
+  "owner_disposition_a9_29": "NOT_APPLICABLE"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of these functions (lane SC-WP-11, branch lane-wp11-assess). No Rust implementation exists at registration. The registration commit is recorded in the report.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "lane": {
+  "id": "SC-WP-11",
+  "work_package": "SC-WP-11",
+  "branch": "lane-wp11-assess (from origin/integration/simulation-complete 0d8922cfe39b5bb7f90ddf290702342182eb5d7c)",
+  "authority": "A9.21 item 4 (ICP_GATE: fail closed, NOT_EVALUATED without accepted criteria and evidence); A9.6 sec. 15 (six RVM states); A9.31 sec. 12"
+ },
+ "reference_implementation": {
+  "python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+  "python_commit_note": "origin/integration/simulation-complete at lane start; never the bid record",
+  "files": [
+   {
+    "path": "docs/requirements/rvm_a9/rvm_rules.py",
+    "sha256_at_registration": "e2662dad7477cd5f43a314d3a740777f4bffc58c2b636fc3f1c08c21df22d4c0",
+    "role": "reference (R1-R6)"
+   },
+   {
+    "path": "docs/requirements/rvm_a9/a9_21_icp_gate.py",
+    "sha256_at_registration": "93dba7bae2cc6783d1e1824a2620b1cadc9af457f70c341eb4343e64f484006d",
+    "role": "reference: evaluate, lock1_release_reportable (R7, R8)"
+   },
+   {
+    "path": "docs/requirements/rvm_a9/a9_19_rvm.py",
+    "sha256_at_registration": "da821ecc015302631a40f6c9b4c9827265643157690ed4737b4b13b2bae3d962",
+    "role": "reference: RECORDER_PROPOSALS[RP-A919-01] text read by a9_21_icp_gate.proposal()"
+   },
+   {
+    "path": "docs/decisions/application/a9_later_lib.py",
+    "sha256_at_registration": "a1fc0d878752ee6073b049d26e75660ff6b44aa3f0e0bad8743e9bc95c9ebeb3",
+    "role": "imported by a9_21_icp_gate (decision pins); not exercised by R7 / R8"
+   },
+   {
+    "path": "abep_sim/assessment/design_gates.py",
+    "sha256_at_registration": "394c8d04e86bfc90a9c0fcfd5b1c0efffed3c0bb769fdeed023fd9bf4606dd93",
+    "role": "context: rvm_gate_snapshot reads the same committed RVM (contract PARITY-C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY-V1)"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4 (not used by the reference)",
+   "blas": "not used",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+   }
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-assess (module rvm)",
+  "functions_or_entry_points": [
+   "abep_assess::rvm::{STATUSES, ROLES, ARTIFACT_KINDS, RULES, validate_artifact, assign_status, is_not_applicable_cell, floor_fail_check, assert_status_vocabulary, assert_no_pass_without_measurement}",
+   "abep_assess::rvm::RvmRecord (the committed rvm_a9_v1.json, sha256-verified) with replay_cells / gng_icp_01",
+   "abep_assess::icp_gate::{evaluate, lock1_release_reportable}",
+   "harness interface: `abep-assess-parity eval <calls.json>`"
+  ],
+  "rust_commit": "FILL at scoring time",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/**",
+   "crates/abep-provenance/src/**",
+   "crates/abep-assess/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "a mismatch voids the run (INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "docs/requirements/rvm_a9/rvm_a9_v1.json": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
+ },
+ "frozen_data_read_only": [
+  "docs/requirements/rvm_a9/rvm_a9_v1.json"
+ ],
+ "inputs": {
+  "harness": "scripts/rust_migration/parity_assess_v1.py (committed after this contract and before the scoring run)",
+  "transport": "JSON; non-finite floats wrapped as {'float': 'NaN' | '+inf' | '-inf'}; R7 file citations point into a scratch directory the harness writes (registered files with known sha256) and are evaluated with root = that directory in both implementations",
+  "golden_vectors": {
+   "source": "registered list",
+   "count": 5,
+   "list_or_generator": {
+    "GR-01": "R1 the vocabularies and rule table",
+    "GR-02": "R6 every row x configuration cell of the committed RVM (30 rows x 2 configurations)",
+    "GR-03": "R5 both asserts on the committed RVM document",
+    "GR-04": "R8 evaluate(criteria, evidence) of the committed GNG-ICP-01 gate (criteria PENDING_OWNER_ACCEPTANCE, evidence []) and lock1_release_reportable([that gate])",
+    "GR-05": "R7 evaluate('PENDING_OWNER_ACCEPTANCE', []) and evaluate(None, None)"
+   }
+  },
+  "edge_cases": [
+   {
+    "id": "ER-01",
+    "inputs": "R2 each ARTIFACT_FIELDS key missing; each wrong type (int for bool, bool for int, negative int, str for bool, float for int, list for str)",
+    "note": "RvmError messages"
+   },
+   {
+    "id": "ER-02",
+    "inputs": "R2 synthetic true; measured on a non-measurement; MEASUREMENT not measured; evaluated non-evaluating kind; meets without evaluation; meets True on a budget; lower_bound_verified / exceeds_limit_every_reading on a non-budget; empty path / id; unknown role / kind",
+    "note": "every refusal"
+   },
+   {
+    "id": "ER-03",
+    "inputs": "R3 requirement_frozen non-bool; no artifacts; NOT_APPLICABLE marker mixed with evidence; no DETERMINING artifact",
+    "note": "refusals"
+   },
+   {
+    "id": "ER-04",
+    "inputs": "R3 one vector per rule R1..R7 (numerical failure without measurement; measured violation; PASS frozen / not frozen; coverage incomplete; verified floor fail; all out of domain; evidenced partial; nothing evaluated)",
+    "note": "every rule"
+   },
+   {
+    "id": "ER-05",
+    "inputs": "R4 empty readings; NaN / inf / bool / str values; strict and non-strict limits; ties at the limit",
+    "note": "floor_fail_check"
+   },
+   {
+    "id": "ER-06",
+    "inputs": "R5 a document with a foreign status / a reordered vocabulary / a PASS cell with and without a verified measurement",
+    "note": "asserts"
+   },
+   {
+    "id": "ER-07",
+    "inputs": "R7 criteria not a dict / status not OWNER_ACCEPTED; criteria citing RP-A919-01 or 'recorder proposal'; an item without text; an item whose text is a substring of the proposal; owner decision without path / with a bad sha256 / with a sha256 that does not verify / outside root; empty / duplicate / missing ids; evidence missing, with a non-verifying source, with NOT_MET, all MET; non-dict evidence entries",
+    "note": "every branch"
+   },
+   {
+    "id": "ER-08",
+    "inputs": "R8 empty gate list; non-mandatory gates only; a gate without status",
+    "note": "lock1_release_reportable"
+   }
+  ],
+  "randomized_domain": {
+   "count": 2600,
+   "draw": "one generator per entry (campaign_seeds.derivation); R2 500, R3 1000, R4 400, R7 500, R8 200",
+   "distribution": {
+    "R2/R3": "1-5 artifacts each; every field drawn from its admissible values (kind / role uniformly, booleans 0.5, in_domain / meets / exceeds_limit_every_reading from {True, False, None}, evidenced_terms 0-4), with consistency repairs drawn so that about half the artifacts validate; requirement_frozen random",
+    "R4": "1-6 readings of floor_only_kg U(0, 80) (some ints), limit 40 or U(0, 80), strict random",
+    "R7": "criteria accepted / not, 1-4 items with random ids / texts (some proposal substrings), owner decision citations of registered scratch files (valid / tampered sha256 / outside root / missing), 0-6 evidence entries over the item ids with results MET / NOT_MET / other",
+    "R8": "0-5 gates with status from {GO, NO_GO, NOT_EVALUATED, absent} and mandatory from {True, False, absent, 0, 1}"
+   }
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 2026100612,
+  "development_master_seed": 2026100602,
+  "derivation": "rng_e = random.Random(master_seed * 1000 + e), e the entry index (R1..R8 -> 1..8); draws in the registered order; input values only",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7",
+   "design_uq_sampling_stream": "NOT_APPLICABLE",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE",
+   "other_streams": "NOT_APPLICABLE: neither implementation draws random numbers"
+  },
+  "development_rule": "development comparisons use development_master_seed only and are never scored; every scoring execution is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "all_entries": [
+   {
+    "name": "outcome, error class and message",
+    "tolerance_class": "EXACT_VALUE",
+    "tolerance": "equal",
+    "definition": "RETURNED or RAISED; RvmError class and message equal; any other Python class (KeyError / TypeError on shapes outside the documented artifact / document records): outcome RAISED only (DIV-R02)"
+   },
+   {
+    "name": "returned value",
+    "tolerance_class": "EXACT_VALUE",
+    "tolerance": "equal (canonical JSON; tuples as lists; floats by bit pattern)",
+    "definition": "assign_status -> [status, rule_id, reason]; floor_fail_check dict; evaluate dict; booleans"
+   }
+  ]
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "not used",
+  "EXACT_VALUE": "equal",
+  "ULP_BOUNDED": "not used",
+  "SOLVER_TOLERANCE": "not used",
+  "STATISTICAL": "not used",
+  "EXACT_STREAM": "not used"
+ },
+ "tolerance_basis": {
+  "independence": "fixed before any comparison",
+  "registered": "rules, comparisons and round(x, 6) (correctly rounded both sides)"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-R-01",
+   "statement": "assign_status never returns PASS unless a DETERMINING, verified, measured, in-domain MEASUREMENT meets and covers the requirement and requirement_frozen is True",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-R-02",
+   "statement": "the replay of every committed RVM cell reproduces its committed (status, rule, reason) exactly; GNG-ICP-01 replays to NOT_EVALUATED with its committed reason; lock1_release_reportable is False",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-R-03",
+   "statement": "evaluate never returns GO without an OWNER_ACCEPTED criteria record whose owner decision and every evidence source verify by sha256 under root",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-R-04",
+   "statement": "the recorder proposal text the Rust evaluator reads from the committed RVM equals a9_19_rvm.RECORDER_PROPOSALS[RP-A919-01]['proposal'] (harness check, DIV-R01)",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-R-05",
+   "statement": "double-run determinism of the Rust process",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": false,
+  "reason": "status rules",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "mapping": {
+   "RvmError": "OUT_OF_DOMAIN, class and message equal",
+   "other": "RAISED (DIV-R02)"
+  },
+  "cases": "ER-01..ER-08 and randomized refusals"
+ },
+ "documented_divergences": [
+  {
+   "id": "DIV-R01",
+   "entry": "R7",
+   "statement": "the reference reads the recorder proposal text from the module a9_19_rvm.RECORDER_PROPOSALS; Rust reads recorder_proposals_open_for_owner[id=RP-A919-01].proposal from the committed, sha256-pinned rvm_a9_v1.json (the same text: apply_rvm verifies equality when the RVM is built; INV-R-04 checks it)"
+  },
+  {
+   "id": "DIV-R02",
+   "entry": "all",
+   "statement": "inputs outside the documented record shapes (a non-dict cell, a readings entry without floor_only_kg, a criteria 'items' that is not a list) raise KeyError / TypeError in the reference; Rust refuses with MODEL_ERROR; outcome RAISED required, class not scored"
+  },
+  {
+   "id": "DIV-R03",
+   "entry": "R7",
+   "statement": "path resolution: Python Path.resolve() (non-strict) vs Rust std::fs::canonicalize; a path that does not exist is not a file in both, so the result (False) is identical; registered cases only use regular files and directories without symlink loops"
+  }
+ ],
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE"
+  ],
+  "rules": [
+   "six RVM states and the GO / NO_GO / NOT_EVALUATED gate vocabulary identical"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "captured Python outputs at python_commit"
+  ],
+  "rule": "read as committed; never regenerated (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-DOCS_REQUIREMENTS_RVM_A9-RULES_AND_ICP_GATE/reference_outputs/",
+   "captured_at_python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+   "sha256_manifest": "reference_outputs/MANIFEST.json, written by the scoring run",
+   "purpose": "CI replay after Python is retired"
+  },
+  "historical_golden_rule": "RM-R28: not used"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "reason": "no HallThruster.jl path"
+ },
+ "performance_measurement": {
+  "status": "NOT_APPLICABLE",
+  "workloads": [],
+  "repeats": 0
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every vector is equal",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": false,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED iff every per-test, invariant, domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "no_retuning": "a failure is reported; any change is v2 with fresh scoring seeds"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; not citable by the bid package unless the owner re-freezes",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2"
+ },
+ "what_this_is_not": [
+  "not a regeneration of the RVM document",
+  "not an RVM status change: the committed statuses are replayed, never rewritten",
+  "not an approval of GO / NO-GO criteria (A9.21: none approved; GNG-ICP-01 stays NOT_EVALUATED)",
+  "not a gate PASS (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-DOCS_REQUIREMENTS_RVM_A9-RULES_AND_ICP_GATE/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_assess_v1.py score rvm",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance",
+   "environment",
+   "per-test results",
+   "invariants",
+   "domain/error",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "no hollow-cathode flight path",
+  "checks": [
+   "migration_class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+   "no excluded legacy path"
+  ],
+  "failure": "REFUSED_CLASSIFICATION"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27",
+  "check": "committed RVM statuses are replayed exactly (INV-R-02)"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS",
+  "status": "NOT_APPLICABLE"
+ }
+}

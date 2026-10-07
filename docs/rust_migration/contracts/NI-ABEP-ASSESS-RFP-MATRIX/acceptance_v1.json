@@ -1,0 +1,228 @@
+{
+ "schema": "abep_new_infrastructure_acceptance_v1",
+ "id": "ACCEPT-NI-ABEP-ASSESS-RFP-MATRIX-V1",
+ "item": "NI-ABEP-ASSESS-RFP-MATRIX",
+ "method": "NEW_INFRASTRUCTURE_ACCEPTANCE (assessment tooling over admitted raw results; no Python reference exists, none is created: A9.31 sec. 17 postdates the Python layer)",
+ "simulation_completion_wp": "SC-WP-11",
+ "date": "2026-10-06",
+ "status": "PREREGISTERED",
+ "base_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+ "registration_statement": "Committed alone before the evaluator is implemented and before any acceptance run. Never edited after commit: a changed row, field, vocabulary, case, expectation or decision rule is acceptance_v2, and no case is removed or weakened after a failure.",
+ "supersedes": null,
+ "governing_records": [
+  {
+   "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+   "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+   "sections": "sec. 10 (HC-05: NOT_EVALUATED outside a VALIDATED_BENCH cell; measured supersedes; OQ-NPICP-03 no invented threshold), sec. 12 (assessment consumes raw results, never modifies them; no manufactured COMPLY / PASS), sec. 17 (RFP constraint matrix, four separate fields), sec. 18 Q3 / Q6 (M_n reporting; no favourable Xe load)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+   "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f",
+   "sections": "sec. 5 (1.5 kW limit assessment only; bus_power_boundary_a9_v2)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+   "sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77",
+   "sections": "layer separation (requirements -> engineering constraints -> physics; assessment separate)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+   "sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7",
+   "sections": "items 4-5 (threshold change changes assessment only; HC-05..HC-12)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md",
+   "sha256": "5c223f6df59f579deb1ef4788fecf5857c6fa3ff4f365f23738b2c1b7f251989",
+   "sections": "sec. 4 (M_n in assessment only), sec. 9, sec. 14"
+  },
+  {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY/parity_prereg_v1.json",
+   "sha256": "0dfe17e2ed3f1ddf5bdd486e5772bc9c810841b2a21f24c319c7378b427d6d9f",
+   "sections": "the ported gate functions the matrix calls"
+  },
+  {
+   "path": "docs/rust_migration/contracts/C-DOCS_REQUIREMENTS_RVM_A9-RULES_AND_ICP_GATE/parity_prereg_v1.json",
+   "sha256": "f67e2fc8f5edd64cb05c9892907b81549d982d538c91b207220b313ee9f57038",
+   "sections": "RVM replay and GNG-ICP-01"
+  }
+ ],
+ "scope": {
+  "what": "three new pieces of crates/abep-assess with no Python reference: (1) the RFP constraint-matrix evaluator abep_assess::matrix (A9.31 sec. 17), the assessment half of the decisive architecture run; (2) the HC-05 neutralization evaluator abep_assess::neutralization::hc05 under A9.31 sec. 10 and the P1-IT-29 margin form (M_n = I_e,cap / I_d,max,H1 - 1, u_M_n, M_n,LB = M_n - k u_M_n; the arithmetic kernel icp45a_margin is parity-scored in PARITY-C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY-V1 E15); (3) the layer rules of the crate: crate-graph isolation and the assessment-separation invariant",
+  "inputs_rule": "typed raw-physics records of the admitted crates only (abep-data design states, abep-hall HallGate, abep-subsystems power ledger / objective and mass v5 record / gates / wet-mass objective, abep-config architecture, abep-icp IF-ICP-HALL-v1 record when one exists); assessment borrows them immutably and never writes into them",
+  "threshold_rule": "every limit from abep_config (engineering constraints; gate thresholds) at evaluation time; never a literal, never from RFP text"
+ },
+ "matrix": {
+  "record_schema": "abep_assess_rfp_constraint_matrix_v1",
+  "row_fields_in_order": [
+   "id",
+   "requirement",
+   "threshold",
+   "raw_physics_result",
+   "uncertainty_model_domain",
+   "evidence_status",
+   "rfp_assessment_status"
+  ],
+  "four_fields": {
+   "raw_physics_result": "the raw quantities with their raw statuses and source (crate::function, record id / sha256); no threshold, no comparison result, no assessment word",
+   "uncertainty_model_domain": "model domain checks (e.g. state band coverage, chemistry domain, configuration mode separation) and the registered uncertainty statement (what is and is not quantified)",
+   "evidence_status": "status in the EvalStatus vocabulary {EVALUATED, NOT_EVALUATED, INCOMPLETE_EVIDENCE, OUT_OF_DOMAIN, MODEL_ERROR} plus the evidence class of the determining inputs (measured / validated / model-derived / planning-allocation / reference-parametric / none)",
+   "rfp_assessment_status": "status in the assessment vocabulary below, the HC gate rows it rests on (evaluate_constraints output), the basis text and the configured threshold"
+  },
+  "assessment_vocabulary": {
+   "COMPLIES": "only when the governing gate is MET_ON_SUPPLIED_VALUES on value status EVALUATED from determining evidence (measured, or a model validated in the domain cell) over every required state / governed case",
+   "DOES_NOT_COMPLY": "only when the governing gate is VIOLATED on determining evidence",
+   "DOES_NOT_CLOSE": "the governed model / budget evaluation (non-determining: planning, allocation or parametric basis) is on the wrong side of the configured limit at every governed case; not a demonstrated non-compliance",
+   "INCOMPLETE_EVIDENCE": "evidenced terms exist but cannot conclude (includes closure on planning values: never COMPLIES)",
+   "NOT_EVALUATED": "the determining quantity is not evaluated",
+   "OUT_OF_DOMAIN": "a raw input lies outside its registered domain",
+   "MODEL_ERROR": "raw records are inconsistent or fail verification"
+  },
+  "rows": [
+   {
+    "id": "RFP-ALT",
+    "requirement": "altitude 180-230 km",
+    "threshold": "engineering constraint altitude_band_km (config/constraints/engineering_constraints_v1.json)",
+    "raw_inputs": "frozen design-state set v2 (abep_data::design_states::DesignStateSet: 196 states, alt_km, required flag, scenario)",
+    "assessment": "every design state inside the configured band (else OUT_OF_DOMAIN), then HC-08 statewise T - D over the 196 required states through abep_assess statewise_drag_compensation with the governed thrust record (TBD while the Hall gate is NOT_EVALUATED) and spacecraft drag (TBD: no host-spacecraft drag ICD); operating over the band is not assessed from state coverage alone"
+   },
+   {
+    "id": "RFP-ATM-PRIMARY",
+    "requirement": "primary propellant: ambient atmospheric gas",
+    "threshold": "engineering constraint propellant_capability.ambient_atmosphere",
+    "raw_inputs": "architecture supply modes (abep_config::architecture: AIR_PRIMARY role), composition range over the 196 states (x_O, x_N2, x_O2), Hall gate (abep_hall::status::HallGate), ICP AIR chemistry status (A9.31 sec. 11 OQ-CHEM-02: INCOMPLETE_EVIDENCE until the NO bound exists), delivered-flow record (none registered for a selected design point)",
+    "assessment": "NOT_EVALUATED unless a delivered-flow record, an admitted Hall evaluation on the delivered air and an admitted ICP AIR chemistry exist; structure from propellant_paths_check (a declared path is not evidence)"
+   },
+   {
+    "id": "RFP-XE-CONTINGENCY",
+    "requirement": "contingency capability: Xe",
+    "threshold": "engineering constraint propellant_capability.xe",
+    "raw_inputs": "architecture XE_CONTINGENCY role and Xe path, Hall gate, Xe planning cases of the mass record (loaded 2 / 5 / 10 kg, not a selected load)",
+    "assessment": "NOT_EVALUATED until Xe operation is evaluated on admitted evidence (HC-10 capability)"
+   },
+   {
+    "id": "RFP-THRUST-12MN-SUSTAINED",
+    "requirement": "sustained thrust basis >= 12 mN",
+    "threshold": "HC-01 = thrust_sustained_min_mN x 1e-3 N",
+    "raw_inputs": "thrust objective (none while the Hall gate is NOT_EVALUATED: credible Hall transport set EMPTY)",
+    "assessment": "HC-01 by evaluate_constraints, and HC-08 statewise"
+   },
+   {
+    "id": "RFP-THRUST-25MN-CAPABILITY",
+    "requirement": "demonstrated / capability target 25 mN",
+    "threshold": "HC-02 = thrust_capability_mN x 1e-3 N",
+    "raw_inputs": "thrust-capability objective (none while the Hall gate is NOT_EVALUATED)",
+    "assessment": "HC-02 by evaluate_constraints"
+   },
+   {
+    "id": "RFP-PBUS-LT-1500W",
+    "requirement": "bus power < 1.5 kW",
+    "threshold": "HC-03 = p_bus_max_W (A9.30 sec. 5: assessment only; bus_power_boundary_a9_v2)",
+    "raw_inputs": "official flight ledger and bus objective (abep_subsystems::power::official_flight_ledger, objective::bus_power_official); registered start-up step ledgers (none today)",
+    "assessment": "HC-03 by evaluate_constraints on the bus objective; rfp_power_gate runs only on a steady ledger plus >= 1 registered start-up step ledger, otherwise it is reported as not run (row 108 needs start-up steps); the parametric lower bound is reported against the limit, never as a verdict"
+   },
+   {
+    "id": "RFP-WET-MASS-LT-40KG",
+    "requirement": "complete wet mass < 40 kg",
+    "threshold": "HC-04 = wet_mass_max_kg",
+    "raw_inputs": "mass_power_a9_v5 record (abep_subsystems::mass::v5): dry_known_kg and wet_known_kg per governed loaded Xe planning case; wet-mass objective (wet_mass::wet_mass_pinned)",
+    "assessment": "per governed Xe case: wet_known_kg < limit (strict); DOES_NOT_CLOSE iff no governed case closes (no favourable Xe load is selected: A9.31 sec. 18 Q6; mission Xe load not admitted); all cases closing on planning values gives INCOMPLETE_EVIDENCE, never COMPLIES (no CBE / measured mass); mixed gives INCOMPLETE_EVIDENCE with the per-case list; the governed record's own HARD_40_WET states are carried as assessment context, never rewritten; HC-04 on the wet-mass objective is reported alongside"
+   },
+   {
+    "id": "RFP-ATM-XE-COMPATIBILITY",
+    "requirement": "atmospheric + Xe compatibility",
+    "threshold": "HC-10 (gate_thresholds_v1, 1 = both demonstrated)",
+    "raw_inputs": "modelled propellant paths (AIR_PATH / XE_PATH of the A9.15 policy), supply modes, Hall gate",
+    "assessment": "propellant_paths_check (structure TWO_SEPARATE_PATHS_DECLARED; mixed Xe / air compositions OUT_OF_DOMAIN in chemistry v1, A9.31 OQ-CHEM-10) and HC-10 by evaluate_constraints on the propellant-capability record (none today)"
+   }
+  ],
+  "additional_blocks": {
+   "engineering_gates": "evaluate_constraints (HC-01..HC-12) over today's objective records; HC-05 by the A9.31 evaluator; GNG-ICP-01 replayed from the committed RVM; rvm_gate_snapshot; RVM replay check",
+   "neutralization": "A9.31 sec. 18 Q3: I_d, I_e,cap and M_n as raw / model quantities where legitimately available (today: none; CFG-FLIGHT-HALL-ON NOT_EVALUATED, I_d,max,H1 not registered), never turned into HC-05 PASS"
+  },
+  "determinism": "no time stamps, no environment-dependent field; key order fixed; the record carries the config MANIFEST sha256 and the sha256 of every raw input record it read"
+ },
+ "hc05": {
+  "inputs": "I_e,cap (value, standard uncertainty, basis MODEL or MEASURED, raw status), I_d,max,H1 (value, standard uncertainty, raw status, registration), validation cell (cell id, cell status, contains_point) and the margin rule (k_one_sided, alpha_one_sided, k_basis); constructor from an abep_icp IF-ICP-HALL-v1 record plus the registrations",
+  "rule_order": [
+   "H-01 no record -> NOT_EVALUATED (reason NO_NEUTRALIZATION_RECORD)",
+   "H-02 synthetic record -> NOT_EVALUATED (never evidence)",
+   "H-03 I_d,max,H1 not registered / not evaluated -> NOT_EVALUATED (I_D_MAX_H1_NOT_REGISTERED)",
+   "H-04 raw I_e,cap status OUT_OF_DOMAIN / MODEL_ERROR / INCOMPLETE_EVIDENCE / NOT_EVALUATED -> that status (propagated; OQ-NPICP-03 magnetization diagnostics keep the raw INCOMPLETE_EVIDENCE)",
+   "H-05 I_e,cap basis MODEL and no VALIDATED_BENCH cell containing the point -> NOT_EVALUATED (MODEL_NOT_VALIDATED_IN_DOMAIN; A9.31 sec. 10)",
+   "H-06 margin rule missing, alpha != 0.05, k below 1.6448536269514722 - 5e-5, blank k_basis, or an uncertainty missing / <= 0 -> NOT_EVALUATED (MARGIN_RULE_NOT_ADMISSIBLE)",
+   "H-07 otherwise M_n, u_M_n, M_n,LB by icp45a_margin; status MET_ON_SUPPLIED_VALUES iff M_n,LB > HC-05 threshold (config), else VIOLATED; value status EVALUATED (measured, or validated in domain)"
+  ],
+  "never": "the point difference I_e,cap - I_d,max and the point M_n never decide HC-05"
+ },
+ "acceptance_cases": [
+  {
+   "id": "AC-01",
+   "check": "every row has exactly the fields id, requirement, threshold, raw_physics_result, uncertainty_model_domain, evidence_status, rfp_assessment_status in this order; raw_physics_result contains none of the assessment words COMPLIES, DOES_NOT_COMPLY, DOES_NOT_CLOSE, CLOSES, MET_ON_SUPPLIED_VALUES, VIOLATED, PASS, FAIL, NOT_EVALUABLE and no threshold key"
+  },
+  {
+   "id": "AC-02",
+   "check": "threshold provenance: each row's threshold equals the abep_config value; with a temporary config root in which wet_mass_max_kg = 50 and HC-08 = 0.001 N (manifest re-hashed) the raw_physics_result fields of all rows are byte-identical to the repository run, the wet-mass row's rfp_assessment_status changes, and a 196-state synthetic T / D statewise run changes its per-state statuses while its inputs are hash-identical (A9.24 item 4 invariant on the 196-state set)"
+  },
+  {
+   "id": "AC-03",
+   "check": "today's admitted raw results (repository run): no row reads COMPLIES or DOES_NOT_COMPLY; RFP-WET-MASS-LT-40KG reads DOES_NOT_CLOSE with evidence_status INCOMPLETE_EVIDENCE at the three governed Xe cases (2 / 5 / 10 kg); RFP-ALT, RFP-ATM-PRIMARY, RFP-XE-CONTINGENCY, RFP-THRUST-12MN-SUSTAINED, RFP-THRUST-25MN-CAPABILITY, RFP-PBUS-LT-1500W and RFP-ATM-XE-COMPATIBILITY read NOT_EVALUATED; HC-05 NOT_EVALUATED; GNG-ICP-01 NOT_EVALUATED"
+  },
+  {
+   "id": "AC-04",
+   "check": "HC-05 cases H-01..H-07 each on a registered synthetic-labelled vector (H-07 with VALIDATED_BENCH and with MEASURED, M_n,LB above and below the threshold); a model-derived I_e,cap with full uncertainty but cell status NOT_VALIDATED stays NOT_EVALUATED"
+  },
+  {
+   "id": "AC-05",
+   "check": "crate graph (cargo metadata --locked --offline): no workspace crate other than abep-cli / abep-evidence / abep-parity / abep-perf depends on abep-assess (any kind, transitively); abep-assess depends on no abep-groundtest"
+  },
+  {
+   "id": "AC-06",
+   "check": "no requirement parsing in raw physics: the src trees of abep-data, abep-atmos, abep-intake, abep-gaspath, abep-chem, abep-mission, abep-subsystems, abep-hall, abep-julia-bridge and abep-icp do not name config/assessment/gate_thresholds, config/requirements/ or docs/requirements/rfp_official"
+  },
+  {
+   "id": "AC-07",
+   "check": "determinism: two runs of the matrix give byte-identical JSON"
+  },
+  {
+   "id": "AC-08",
+   "check": "immutability: the canonical serialization of every raw input record is byte-identical before and after the matrix evaluation"
+  },
+  {
+   "id": "AC-09",
+   "check": "no manufactured compliance: with PARAMETRIC / SYNTHETIC / REFERENCE thrust, power and mass records that would meet every limit, no row reads COMPLIES (constraint statuses are the *_PARAMETRIC / *_SYNTHETIC ones)"
+  },
+  {
+   "id": "AC-10",
+   "check": "fail closed on tampering: a raw record whose sha256 does not match its pin (RVM, mass v5 record) gives MODEL_ERROR for the dependent rows / blocks, never a silent value"
+  }
+ ],
+ "implementation_tests": "AC-01..AC-10 are cargo tests of crates/abep-assess (tests/matrix_acceptance.rs, tests/crate_graph.rs); `cargo test --workspace --locked` runs them with zero ignored tests",
+ "decision_rules": {
+  "verdict": "ACCEPTED iff every acceptance case holds on the acceptance run; otherwise NOT_ACCEPTED",
+  "verdict_vocabulary": [
+   "ACCEPTED",
+   "NOT_ACCEPTED",
+   "NOT_RUN_INPUT_MISMATCH"
+  ],
+  "input_mismatch": "a config MANIFEST sha256 different from 3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883 voids the run"
+ },
+ "outputs_of_the_acceptance": {
+  "report": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/acceptance_report_v1.json + .md",
+  "matrix_record": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json (the repository run on today's admitted raw results)",
+  "report_records": [
+   "acceptance prereg sha256",
+   "HEAD",
+   "rustc",
+   "sha256 of every crates/abep-assess source file",
+   "per-case result",
+   "verdict",
+   "ledger_update_requested"
+  ]
+ },
+ "admission": "on ACCEPTED, NI-ABEP-ASSESS-RFP-MATRIX is requested ACCEPTED in docs/rust_migration/migration_state_v1.json by the ledger owner",
+ "what_this_is_not": [
+  "not an architecture verdict: the conclusion (A9.31 sec. 20) is the decisive run's, with SC-WP-09 / SC-WP-10 results",
+  "not a relabelling of any raw status: NOT_EVALUATED / INCOMPLETE_EVIDENCE stay what they are",
+  "not a threshold change; not RFP document work"
+ ]
+}

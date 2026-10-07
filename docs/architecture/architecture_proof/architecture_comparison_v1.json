@@ -1,0 +1,3285 @@
+{
+ "schema": "abep_architecture_comparison_v1",
+ "id": "architecture_comparison_v1",
+ "date": "2026-10-06",
+ "lane": "architecture-comparison lane (branch lane-arch-compare)",
+ "base_commit": "442730fb (origin/integration/simulation-complete at lane start)",
+ "status": "ANALYSIS_RECORD_NOT_A_DECISION",
+ "governing": [
+  {
+   "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+   "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+   "locator": "secs. 15, 19, 20, 21 (verbatim)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_06_A9_31_next_batch_owner_rulings_and_architecture_proof.json",
+   "sha256": "6f7c82eac2ac6c07e09324934d94bce8ca7613c2dd80cb496222264b7afe5f86",
+   "locator": "companion"
+  }
+ ],
+ "what_this_is_not": [
+  "not the A9.31 sec. 20 conclusion (the coordinator writes it after the decisive 196-state run)",
+  "not a new physics model and not a new architecture search (A9.31 sec. 19)",
+  "not a hard-gate verdict: no row is verdict-bearing; every ranking is qualitative and scoped",
+  "not a use of any withdrawn absolute result",
+  "not a change to any decision, budget, frozen data, contract or admitted record"
+ ],
+ "common_basis": {
+  "rfp_envelope": {
+   "source": {
+    "path": "config/constraints/engineering_constraints_v1.json",
+    "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+    "locator": "altitude_band_km, thrust, p_bus_max_W, wet_mass_max_kg, propellant_capability, hall_preferred"
+   },
+   "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+   "thresholds": {
+    "altitude_km": [
+     180.0,
+     230.0
+    ],
+    "thrust_sustained_min_N": 0.012,
+    "thrust_capability_N": 0.025,
+    "p_bus_max_W": 1500.0,
+    "wet_mass_max_kg": 40.0,
+    "firing_h_min": 15000,
+    "mission_h": 26280,
+    "propellant": "ambient atmospheric gas primary; Xe capability required",
+    "hall_preferred": "RFP-P18-07 (preference flag, not a limit)"
+   },
+   "applied_to": "every alternative, as the comparison yardstick; no threshold is changed"
+  },
+  "environment": {
+   "design_state_set": "atmosphere_msis21_orbit_v1_design_states_v2",
+   "source": {
+    "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+    "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+    "locator": "196 states, 180-230 km"
+   },
+   "n_states": 196,
+   "applied_to": "ALT-B is evaluated on it by the admitted Rust assessment; no other alternative has ever been evaluated on it (see boundary_parity)"
+  },
+  "bus_boundary": {
+   "active": "bus_power_boundary_a9_v2 (ALT-B)",
+   "source": {
+    "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+    "sha256": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980",
+    "locator": "id, configurations"
+   },
+   "note": "A9.30: bus_power_boundary_v1 is history and superseded for active flight closure where it carries cathode heater / keeper loads; the 1.5 kW limit is assessment-only"
+  },
+  "boundary_parity": [
+   {
+    "alternative": "ALT-B",
+    "boundary": "bus_power_boundary_a9_v2",
+    "environment": "196 frozen design states",
+    "record": "admitted Rust assessment (SC-WP-11)"
+   },
+   {
+    "alternative": "ALT-A",
+    "boundary": "bus_power_boundary_a9_v1 hall_c1_reference column (numbers and slots identical to a9_v2; C1 heater / keeper slots added)",
+    "environment": "never evaluated on the 196 states (retired before the Rust chain)",
+    "record": "Python-era budgets (mass/power v2-v3)"
+   },
+   {
+    "alternative": "ALT-D1, ALT-D2 (and A5 hall_only)",
+    "boundary": "bus_power_boundary_v1",
+    "environment": "9-case feed envelope (180 / 230 km x solar activity), not the 196 states",
+    "record": "Bundle 1 v5, lane-24, veto layer, overlays"
+   },
+   {
+    "alternative": "ALT-C, ALT-D3",
+    "boundary": "none (0-D archengine at 200 km, 0.05 Pa, P_bus <= 2.5 kW in v1.5; not the RFP boundary)",
+    "environment": "one reference gas state / mission sweep of the 0-D engine",
+    "record": "docs/HISTORY.md v1.0-v1.6 (mechanism level only)"
+   }
+  ],
+  "consequence": "No cross-boundary numeric comparison is made. Rows compare mechanisms, architecture definitions and evidence status against the common RFP thresholds; the only numbers carried are quoted from their records with their evidence class."
+ },
+ "withdrawn_results_rule": {
+  "rule": "No withdrawn absolute result is used as evidence (CLAUDE.md 'Superseded / withdrawn'; A9.31 sec. 19).",
+  "not_used": [
+   "0-D Hall closure v1.2-v1.6: ABEP thrust, 2.5 kW closure, 110-120 kg, ECR+Hall P(success) 0.77 vs 0.63",
+   "every T, Isp, P_bus, T/D, MEV and life number of the v1.0 / v1.5 cross-family tables",
+   "v1.3 Hall hysteresis / low-mode collapse",
+   "screening candidates sgb-screen-01..09 (never members)"
+  ],
+  "used_as_mechanism_only": [
+   "grids life-limited by CEX + perveance window",
+   "magnetic nozzles excluded by energy per particle even at the energy bound",
+   "RF/helicon pre-ionisers add nothing (cited, and shown NOT confirmed by the later two-lens overlays)"
+  ],
+  "label": "MECHANISM_LEVEL_PROBABLY_ROBUST: cited as mechanism-level evidence, never as a hard-gate verdict"
+ },
+ "vocabulary": {
+  "basis_types": [
+   "MECHANISM_LEVEL",
+   "PUBLISHED_ANALOG",
+   "PLANNING_ALLOCATION",
+   "ADMITTED_RUST_ASSESSMENT_RECORD",
+   "OWNER_DECISION",
+   "ARCHITECTURE_DEFINITION",
+   "NONE"
+  ],
+  "ranking_rule": "a ranking is given only where the cited evidence orders the alternatives on that criterion; otherwise NO_RANKING_EVIDENCE_INSUFFICIENT; every ranking carries its scope and is never verdict-bearing"
+ },
+ "criteria": [
+  {
+   "id": "C01",
+   "name": "atmospheric-gas compatibility"
+  },
+  {
+   "id": "C02",
+   "name": "AO / cathode exposure risk"
+  },
+  {
+   "id": "C03",
+   "name": "neutralization feasibility"
+  },
+  {
+   "id": "C04",
+   "name": "thrust capability"
+  },
+  {
+   "id": "C05",
+   "name": "power"
+  },
+  {
+   "id": "C06",
+   "name": "mass"
+  },
+  {
+   "id": "C07",
+   "name": "intake / feed compatibility"
+  },
+  {
+   "id": "C08",
+   "name": "thermal risk"
+  },
+  {
+   "id": "C09",
+   "name": "lifetime risk"
+  },
+  {
+   "id": "C10",
+   "name": "controllability"
+  },
+  {
+   "id": "C11",
+   "name": "development / evidence maturity"
+  }
+ ],
+ "alternatives": [
+  {
+   "id": "ALT-A",
+   "sec19_class": "A",
+   "label": "Hall + conventional Xe-fed LaB6 hollow cathode",
+   "configuration_ids": [
+    "hall_c1_reference",
+    "A5 hall_only (extended Hall + shielded Xe-fed LaB6 cathode)"
+   ],
+   "description": "One Hall accelerator (H-1 class) with a heated Xe-fed LaB6 hollow cathode (C1) as electron source / neutralizer; atmospheric anode feed plus a continuous Xe cathode feed.",
+   "current_role": "GROUND_REFERENCE_ONLY (A9.20); retired as a flight configuration by A9.19; A5 proposal reference (2026-09-27) superseded for the primary line by A9."
+  },
+  {
+   "id": "ALT-B",
+   "sec19_class": "B",
+   "label": "Selected: Hall + downstream 13.56 MHz RF/ICP neutralizer (hall_icp_neutralizer)",
+   "configuration_ids": [
+    "hall_icp_neutralizer"
+   ],
+   "description": "One Hall accelerator and one downstream RF/ICP electron source / neutralizer; supply modes AIR_PRIMARY and XE_CONTINGENCY; no conventional hollow cathode (A9.19).",
+   "current_role": "active simulated architecture (A9.28 / A9.29); status INVESTIGATION_HYPOTHESIS (F9), not a frozen flight architecture."
+  },
+  {
+   "id": "ALT-C",
+   "sec19_class": "C",
+   "label": "RF / electrodeless-only propulsion (ECR, helicon or RF source + magnetic nozzle; no Hall)",
+   "configuration_ids": [
+    "archengine families 'ECR magnetic nozzle', 'helicon + nozzle' (v1.0 / v1.5, historical)"
+   ],
+   "description": "Electrodeless plasma source accelerated by an ambipolar / magnetic nozzle; no cathode, no Hall channel.",
+   "current_role": "screened in the 0-D cross-family trade (v1.0-v1.5); never retained as a proposal architecture."
+  },
+  {
+   "id": "ALT-D1",
+   "sec19_class": "D",
+   "label": "Upstream RF pre-ionizer + Hall + Xe-fed LaB6 cathode (rf_hall)",
+   "configuration_ids": [
+    "rf_hall"
+   ],
+   "description": "A5-era arm: RF (ICP / helicon) ionization stage between plenum and Hall ionization region; common Hall accelerator, feed state and cathode with hall_only (INV-CATH).",
+   "current_role": "historical (A9 governing decision 3: preserved, no new primary-campaign effort); lane-24 not eliminated; Bundle 1 v5 NO_BASELINE_YET."
+  },
+  {
+   "id": "ALT-D2",
+   "sec19_class": "D",
+   "label": "Upstream ECR pre-ionizer + Hall + Xe-fed LaB6 cathode (ecr_hall)",
+   "configuration_ids": [
+    "ecr_hall"
+   ],
+   "description": "A5-era alternate arm: ECR / microwave ionization stage ahead of the common Hall accelerator and cathode.",
+   "current_role": "historical (A9 governing decision 3); lane-24 not eliminated; Bundle 1 v5 NO_BASELINE_YET."
+  },
+  {
+   "id": "ALT-D3",
+   "sec19_class": "D",
+   "label": "Gridded ion engine (RF / ECR / DC source + electrostatic grids + neutralizer)",
+   "configuration_ids": [
+    "archengine families 'ECR + grids', 'RF + grids', 'DC + grids', 'helicon + grids' (historical)"
+   ],
+   "description": "Plasma source with two-grid electrostatic extraction; requires a separate neutralizer.",
+   "current_role": "screened in the 0-D cross-family trade (v1.0-v1.5 / gate 4); never retained as a proposal architecture."
+  },
+  {
+   "id": "ALT-D4",
+   "sec19_class": "D",
+   "label": "Parallel RF||Hall v2 branch (A8)",
+   "configuration_ids": [
+    "RF||Hall v2 / A8 (separate draft branch)"
+   ],
+   "description": "Parallel RF thrust branch beside the Hall discharge, drafted before A9.",
+   "current_role": "draft / historical alternative kept off the primary line (A9 governing decision 4); its records are not on this integration line."
+  }
+ ],
+ "rows": [
+  {
+   "alternative": "ALT-B",
+   "criterion": "C01",
+   "criterion_name": "atmospheric-gas compatibility",
+   "basis": {
+    "type": "ARCHITECTURE_DEFINITION + ADMITTED_RUST_ASSESSMENT_RECORD",
+    "statement": "Air mode runs the Hall and the ICP on the delivered atmospheric gas; the primary ICP gas mode is G-REUSE (Hall exhaust / residual), with G-ATM / G-XE as declared contingency ICP-feed variants. Xe is a separate contingency supply mode, so air operation consumes no Xe. Hall-on-delivered-air is NOT_EVALUATED (credible Hall transport set EMPTY (members = []); P5-Xe not identifiable; P5-N2 v1 INCONCLUSIVE (permanent); no design-specific Hall map exists for any geometry). ICP AIR chemistry is INCOMPLETE_EVIDENCE (12 tier-1 processes not verified; XE 4); the NO materiality bound is missing (A9.31 OQ-CHEM-02). The topology precedent is argon only; the authors' reactive-gas statement is a claim not shown in the paper (TK-30, TK-74). Hall sustainment on an O-bearing delivered feed cannot be supported by literature transfer (F-9; common to every Hall option)."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "model status (admitted Rust assessment) + published analog (Ar)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "rows[id=RFP-ATM-PRIMARY]"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+     "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+     "locator": "HIQ-06 (ICP gas modes)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "locator": "architecture, xenon_role"
+    },
+    {
+     "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+     "sha256": "e63865c55f79af6c809a9dc0b1d915927e5c58e7422f1072fa32ed6a1844cd95",
+     "locator": "sec. 2 TK-30, TK-74"
+    },
+    {
+     "path": "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json",
+     "sha256": "3381c88b81670c37836c04e1ee8dea78898718fa9219df12140f2dbe24f612bb",
+     "locator": "findings F-9"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+     "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+     "locator": "sec. 11 OQ-CHEM-02"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "B_FAVOURED_OVER_A_D1_D2 (architecture level: no Xe consumable in air mode)",
+    "scope": "architecture-level; not a performance ranking"
+   }
+  },
+  {
+   "alternative": "ALT-B",
+   "criterion": "C02",
+   "criterion_name": "AO / cathode exposure risk",
+   "basis": {
+    "type": "MECHANISM_LEVEL",
+    "statement": "No thermionic emitter: an RF / ICP electron source has 'no emitter to poison' (dossier, design rationale only). Exposed elements are the ICP dielectric tube, the shielded antenna, the ion-collecting electrode and the common Hall anode / channel. The topology precedent sputtered its stainless collector (sheath energies ~140-220 eV) and deposited metal films on the tube and Hall insulators (TK-70, TK-71). No accessed source measures dielectric, antenna or collector erosion under an air / AO plasma. AO life is a separate dedicated programme (owner row 132)."
+   },
+   "evidence_status": {
+    "status": "MECHANISM_LEVEL_NOT_MEASURED",
+    "evidence_class": "design rationale + published analog (Ar)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 3 table, row 'RF plasma cathode'"
+    },
+    {
+     "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+     "sha256": "e63865c55f79af6c809a9dc0b1d915927e5c58e7422f1072fa32ed6a1844cd95",
+     "locator": "sec. 2 TK-70, TK-71; sec. 6 lifetime_erosion"
+    },
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 7"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+     "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+     "locator": "row 132"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "B_FAVOURED_OVER_A_D1_D2_D3 (mechanism level: no thermionic emitter in the O-bearing plume)",
+    "scope": "mechanism-level; not verdict-bearing (no erosion or poisoning measurement on either side)"
+   }
+  },
+  {
+   "alternative": "ALT-B",
+   "criterion": "C03",
+   "criterion_name": "neutralization feasibility",
+   "basis": {
+    "type": "ADMITTED_RUST_ASSESSMENT_RECORD + PUBLISHED_ANALOG",
+    "statement": "Raw quantities I_d,max,H1 and I_e,cap are NOT_EVALUATED; M_n has no value; HC-05 stays NOT_EVALUATED outside a VALIDATED_BENCH cell (A9.31 OQ-NPICP-02); CFG-FLIGHT-HALL-ON NOT_EVALUATED until a Hall member exists (OQ-NPICP-11). NP-ICP-NEUTRALIZER v1 is IMPLEMENTED_UNVERIFIED / NOT_VALIDATED; ICP-45 PENDING. Published analog: a Hall discharge sustained by a downstream ICP on argon, ~1 A discharge current at 200 W forward RF (~20 W absorbed, authors' estimate); no discharge without RF; no electron-current balance reported (TK-21, TK-27, TK-51, TK-52, TK-56). RF cathodes on 50:50 N2/O2 reach <= 0.45 A at 90 W (preprint)."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "published analog (Ar topology; N2/O2 RF cathode preprint); model not validated",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "neutralization; engineering_gates HC-05"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v2.json",
+     "sha256": "cea8211649beafe0f0e6a7fd32c0e74d543f06765105442215cca00456168704",
+     "locator": "verification / validation status"
+    },
+    {
+     "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+     "sha256": "e63865c55f79af6c809a9dc0b1d915927e5c58e7422f1072fa32ed6a1844cd95",
+     "locator": "sec. 2 TK-21..TK-56; sec. 6 survey electron_current_per_rf_watt"
+    },
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 3.4"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+     "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+     "locator": "sec. 10 OQ-NPICP-02, OQ-NPICP-11"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "A_MORE_MATURE_EVIDENCE (Xe-fed LaB6: 2-19 A demonstrated on Xe; ICP: ~1 A topology on Ar)",
+    "scope": "evidence maturity only; neither capacity is evaluated at I_d,max,H1"
+   }
+  },
+  {
+   "alternative": "ALT-B",
+   "criterion": "C04",
+   "criterion_name": "thrust capability",
+   "basis": {
+    "type": "ADMITTED_RUST_ASSESSMENT_RECORD",
+    "statement": "Thrust NOT_EVALUATED (HC-01, HC-02, HC-08): credible Hall transport set EMPTY (members = []); P5-Xe not identifiable; P5-N2 v1 INCONCLUSIVE (permanent); no design-specific Hall map exists for any geometry. The accelerator is the same H-1 class as ALT-A. Architecture-specific coupling: in the topology precedent the discharge-current limit 'seems to be decided by the rf power of the ICP neutralizer' (authors' interpretation, no RF-power scan), so the neutralizer may cap I_d and therefore thrust at a given V_d; not quantified."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "none (no admitted Hall member, no measured H-1 thrust)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "rows[id=RFP-THRUST-12MN-SUSTAINED], rows[id=RFP-THRUST-25MN-CAPABILITY]"
+    },
+    {
+     "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+     "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
+     "locator": "members"
+    },
+    {
+     "path": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
+     "sha256": "0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c",
+     "locator": "P5-N2 v1 release"
+    },
+    {
+     "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+     "sha256": "e63865c55f79af6c809a9dc0b1d915927e5c58e7422f1072fa32ed6a1844cd95",
+     "locator": "sec. 2 TK-53"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "shared accelerator; neutralizer coupling unquantified"
+   }
+  },
+  {
+   "alternative": "ALT-B",
+   "criterion": "C05",
+   "criterion_name": "power",
+   "basis": {
+    "type": "ADMITTED_RUST_ASSESSMENT_RECORD + PUBLISHED_ANALOG",
+    "statement": "Boundary bus_power_boundary_a9_v2: official flight ledger PARTIAL_BOUNDARY, 24 TBD terms, P_bus lower bound 0 W (evidenced terms only), no registered start-up step ledger; flight cathode heater / keeper loads NONE (A9.30). HC-03 NOT_EVALUATED; ICP RF power closure PENDING_HARDWARE. Published analog: RF plasma cathodes cost about four times the electron power of a hollow cathode on Xe (Watanabe 2015, dossier); >= 200 W/A on N2/O2 (inferred, preprint); RF power transfer ~0.1 in the topology precedent (eddy heating of the collector)."
+   },
+   "evidence_status": {
+    "status": "INCOMPLETE_EVIDENCE",
+    "evidence_class": "ledger load classes (assumed) + published analog",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "rows[id=RFP-PBUS-LT-1500W]"
+    },
+    {
+     "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+     "sha256": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980",
+     "locator": "slots, configurations"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+     "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f",
+     "locator": "bus boundary rulings"
+    },
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 3.4"
+    },
+    {
+     "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+     "sha256": "e63865c55f79af6c809a9dc0b1d915927e5c58e7422f1072fa32ed6a1844cd95",
+     "locator": "sec. 2 TK-26, TK-27; LIM-02"
+    },
+    {
+     "path": "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
+     "sha256": "e372b78e117e871d31fff76081975260bdbbae645f70e6d4096010433ab8d4d2",
+     "locator": "AG-09, AG-10"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "A_FAVOURED_ON_NEUTRALIZER_ELECTRICAL_POWER_PER_AMPERE (published analog, Xe)",
+    "scope": "neutralizer electrical cost only; trades against ALT-A's continuous Xe mass (C06); no P_bus exists for either"
+   }
+  },
+  {
+   "alternative": "ALT-B",
+   "criterion": "C06",
+   "criterion_name": "mass",
+   "basis": {
+    "type": "ADMITTED_RUST_ASSESSMENT_RECORD + PLANNING_ALLOCATION",
+    "statement": "Governed record mass_power_a9_v5: dry planning mass 38.349 kg (10 % system margin); wet 40.349 / 43.349 / 48.349 kg at the 2 / 5 / 10 kg Xe planning cases; RFP assessment DOES_NOT_CLOSE at every governed Xe case; evidence INCOMPLETE_EVIDENCE (owner MEV allocations and planning floors, no CBE, no measured mass); mission Xe load NOT_ADMITTED. ICP hardware lines: AL-05 2.0 kg + AL-06 1.5 kg (owner MEV allocations). No continuous Xe consumption term (owner row 46)."
+   },
+   "evidence_status": {
+    "status": "INCOMPLETE_EVIDENCE (RFP assessment DOES_NOT_CLOSE on planning values)",
+    "evidence_class": "planning allocation",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "rows[id=RFP-WET-MASS-LT-40KG]"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v5/MASS_POWER_A9_V5.md",
+     "sha256": "50b4867e7e60e132db01e2213a2d3a87ab1ffdd5ca2f0fcf60a8ec3ae57e875e",
+     "locator": "roll-up table; 40 kg closure per Xe case"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+     "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+     "locator": "row 46"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "B_FAVOURED_OVER_A_CONDITIONAL (see ALT-A C06)",
+    "scope": "conditional, allocation-level; not verdict-bearing"
+   }
+  },
+  {
+   "alternative": "ALT-B",
+   "criterion": "C07",
+   "criterion_name": "intake / feed compatibility",
+   "basis": {
+    "type": "ARCHITECTURE_DEFINITION + ADMITTED_RUST_ASSESSMENT_RECORD",
+    "statement": "Common atmospheric path intake -> filter -> compressor -> atmospheric gas chamber -> valve; delivered atmospheric mass flow NOT_EVALUATED until an F7 / F8 selection exists (SC-WP-10). ICP gas: G-REUSE primary (dedicated port installed and capped); the ICP share of the flow is not separable in the precedent (TK-31); FLOW_BALANCE may supply ICP neutral density only with an admitted upstream conductance model (OQ-NPICP-14). Xe path (tank -> valve) is used only in the contingency mode. Common Hall item: the free-stream mass-flux span over the feed-envelope cases is x10.4 against x1.4 demonstrated (HS-A5)."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "architecture definition; no delivered-flow record",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "rows[id=RFP-ATM-PRIMARY]"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+     "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+     "locator": "HIQ-06"
+    },
+    {
+     "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+     "sha256": "e63865c55f79af6c809a9dc0b1d915927e5c58e7422f1072fa32ed6a1844cd95",
+     "locator": "sec. 2 TK-31"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+     "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+     "locator": "sec. 10 OQ-NPICP-14"
+    },
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 4.1 HS-A5"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "B_FAVOURED_OVER_A_D1_D2 (architecture level: no continuous Xe cathode branch in air mode)",
+    "scope": "feed-architecture complexity only; delivered flow unranked"
+   }
+  },
+  {
+   "alternative": "ALT-B",
+   "criterion": "C08",
+   "criterion_name": "thermal risk",
+   "basis": {
+    "type": "ADMITTED_RUST_ASSESSMENT_RECORD",
+    "statement": "Coupled H-1 / ICP thermal closure UNRESOLVED; anode thermal closure UNRESOLVED; HC-06 NOT_EVALUATED. NP-THERMAL-CATHODELESS 1.0.0 is VERIFIED (analytic / synthetic cases) but NOT_VALIDATED and not admitted. In the precedent ~90 % of the RF power heated the ion-collecting electrode (eddy currents), a design driver for the collector node. Common H-1 item: the verified H2-5 network gives an 11.2 K worst-case BN wall margin against the >= 50 K rule (recorder flag, A9 row 86)."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "verified model (not validated) + published analog",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "engineering_gates HC-06"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification_report_v1.json",
+     "sha256": "7a355efd6e3ccd926f04afec5487f1cc42f5bedeffa4bcab63bdeb16a96bbb7e",
+     "locator": "verdict, validation status"
+    },
+    {
+     "path": "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
+     "sha256": "e372b78e117e871d31fff76081975260bdbbae645f70e6d4096010433ab8d4d2",
+     "locator": "AG-05, AG-06"
+    },
+    {
+     "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+     "sha256": "e63865c55f79af6c809a9dc0b1d915927e5c58e7422f1072fa32ed6a1844cd95",
+     "locator": "sec. 2 TK-26, TK-27; LIM-02"
+    },
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "recorder_consistency_flags_for_owner[4]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "both neutralizer heat paths unquantified; H-1 margin is common"
+   }
+  },
+  {
+   "alternative": "ALT-B",
+   "criterion": "C09",
+   "criterion_name": "lifetime risk",
+   "basis": {
+    "type": "PUBLISHED_ANALOG + ADMITTED_RUST_ASSESSMENT_RECORD",
+    "statement": "No life test of any RF / ICP neutralizer was found; collector sputtering and metal deposition observed in the precedent; dielectric / antenna erosion under air unmeasured. HC-07 (> 15,000 h firing) NOT_EVALUATED. Common Hall risk indicators on O-bearing feed (channel erosion estimate 0.47-0.63 of the firing requirement and anode oxidation flame-out after ~314 h, both second-hand on PPS1350 with 10 % Xe; shielded-channel counter-indicator) are not verdict-bearing."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "published analog (qualitative) + risk indicators",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+     "sha256": "e63865c55f79af6c809a9dc0b1d915927e5c58e7422f1072fa32ed6a1844cd95",
+     "locator": "sec. 6 lifetime_erosion"
+    },
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "risk indicators RI-LIFE-HALL-*"
+    },
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "engineering_gates HC-07"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "no life evidence for either neutralizer in this environment"
+   }
+  },
+  {
+   "alternative": "ALT-B",
+   "criterion": "C10",
+   "criterion_name": "controllability",
+   "basis": {
+    "type": "PUBLISHED_ANALOG + OWNER_DECISION",
+    "statement": "Start: RF plasma first, then V_d (TK-73); no thermionic heater phase (owner row 112). The Hall discharge was not sustained without RF in the precedent (TK-51), so the single ICP is a series dependency (no ICP duplication, owner row 55). RF power is a candidate handle on I_d (TK-53). RF matching LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT, ratings TBD_AFTER_IMPEDANCE_MAP (P2 not run); an air-fed RF cathode needed generator retuning at low flow (RF-NO25-04). No restart statistics exist."
+   },
+   "evidence_status": {
+    "status": "INCOMPLETE_EVIDENCE",
+    "evidence_class": "published analog + owner decisions",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+     "sha256": "e63865c55f79af6c809a9dc0b1d915927e5c58e7422f1072fa32ed6a1844cd95",
+     "locator": "sec. 2 TK-51, TK-53, TK-73; sec. 6 restart"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+     "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+     "locator": "rows 55, 112"
+    },
+    {
+     "path": "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
+     "sha256": "e372b78e117e871d31fff76081975260bdbbae645f70e6d4096010433ab8d4d2",
+     "locator": "current statuses"
+    },
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 3"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "A_MORE_MATURE_EVIDENCE (hollow-cathode start / control heritage)",
+    "scope": "evidence maturity only"
+   }
+  },
+  {
+   "alternative": "ALT-B",
+   "criterion": "C11",
+   "criterion_name": "development / evidence maturity",
+   "basis": {
+    "type": "OWNER_DECISION + ADMITTED_RUST_ASSESSMENT_RECORD",
+    "statement": "Architecture status INVESTIGATION_HYPOTHESIS: F9 gates AG-01..AG-14 not sufficient (only AG-15, requirement basis, has determining evidence). One topology precedent (brief communication, argon). P1 / P2 benches not run; NP-ICP v1 IMPLEMENTED_UNVERIFIED; RFP matrix today: 7 of 8 rows NOT_EVALUATED, wet mass DOES_NOT_CLOSE."
+   },
+   "evidence_status": {
+    "status": "INCOMPLETE_EVIDENCE",
+    "evidence_class": "programme status",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
+     "sha256": "e372b78e117e871d31fff76081975260bdbbae645f70e6d4096010433ab8d4d2",
+     "locator": "architecture-level gates"
+    },
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "assessment_status_counts"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v2.json",
+     "sha256": "cea8211649beafe0f0e6a7fd32c0e74d543f06765105442215cca00456168704",
+     "locator": "status"
+    },
+    {
+     "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+     "sha256": "e63865c55f79af6c809a9dc0b1d915927e5c58e7422f1072fa32ed6a1844cd95",
+     "locator": "sec. 1, sec. 8"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "A_MORE_MATURE_EVIDENCE (Xe heritage of Hall + hollow cathode)",
+    "scope": "maturity of the neutralizer element"
+   }
+  },
+  {
+   "alternative": "ALT-A",
+   "criterion": "C01",
+   "criterion_name": "atmospheric-gas compatibility",
+   "basis": {
+    "type": "ARCHITECTURE_DEFINITION + OWNER_DECISION + PUBLISHED_ANALOG",
+    "statement": "The cathode runs on Xe; no source shows a thermionic hollow cathode running on air, N2 or O2 (UNRESOLVED). Air operation therefore consumes Xe continuously, which makes Xe a nominal co-consumable. A5 accepted that (cathode Xe reserved, continuous discharge augmentation forbidden); A9.19 replaced it: Xe is the contingency / emergency supply mode, consistent with RFP-P17-05 ('an extra input system to take care any problems on board unforeseen problems'). Hall-on-air NOT_EVALUATED (common accelerator)."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "published evidence (cathode) + owner architecture decision",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 1, sec. 3"
+    },
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+     "sha256": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+     "locator": "architecture, operating_modes, xe_mass_allocation"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "locator": "xenon_role, amends"
+    },
+    {
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "sha256": "c126be5eef7b9ec6340776ed035eeaa0ced1c4dd2ec585383f3d3a5977d174a0",
+     "locator": "RFP-P17-05"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "B_FAVOURED (architecture level)",
+    "scope": "architecture-level; not a performance ranking"
+   }
+  },
+  {
+   "alternative": "ALT-A",
+   "criterion": "C02",
+   "criterion_name": "AO / cathode exposure risk",
+   "basis": {
+    "type": "MECHANISM_LEVEL + PUBLISHED_ANALOG",
+    "statement": "LaB6 emission degrades at O2 ~1e-5 Torr below 1440 C and tolerates up to 1e-4 Torr at 1570 C; BaO-W poisons at ~1e-7 Torr O2. The ambient AO directed flux at 180-230 km equals a 300 K gas at 2.1e-6 to 1.65e-5 Torr, the same order as the O2 degradation range; the attenuation by the cathode Xe flow, orifice and keeper has no source, and no atomic-O or N2 threshold exists for LaB6. Secondary reports of erosion / embrittlement after air or N2/O2 exposure (RI-LIFE-CATHODE-AIR-EXPOSURE). Mitigation by a 1843 K emitter floor (owner row 95) and a non-graphite keeper (row 94) at unquantified life / power cost."
+   },
+   "evidence_status": {
+    "status": "MECHANISM_LEVEL_RISK_NOT_VERDICT_BEARING",
+    "evidence_class": "measured thresholds on other cathodes + model-derived AO flux",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "sec. 6"
+    },
+    {
+     "path": "docs/architecture_comparison/cathode_integration/cathode_integration_derived_v1.json",
+     "sha256": "a0c8c247d2f87654568da3c01fece2ad562c1ca8e2ba78140813394aed81c125",
+     "locator": "ambient_atomic_oxygen"
+    },
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 3, 3.1, 3.2"
+    },
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-LIFE-CATHODE-AIR-EXPOSURE"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+     "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+     "locator": "rows 94, 95"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "A_DISFAVOURED_VS_B (thermionic emitter exposed to O-bearing back-flow)",
+    "scope": "mechanism-level; not verdict-bearing"
+   }
+  },
+  {
+   "alternative": "ALT-A",
+   "criterion": "C03",
+   "criterion_name": "neutralization feasibility",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Xe-fed LaB6 hollow cathodes are the standard Hall electron source: 2-19 A demonstrated in diode mode on Xe at 0.2-0.6 mg/s; required emission I_emit = I_d + I_k with I_d NOT_EVALUATED. C1 is the ground reference that registers I_d,max,H1,Ar (A9.20)."
+   },
+   "evidence_status": {
+    "status": "PUBLISHED_EVIDENCE_ON_XE_NOT_VYOVRINDA",
+    "evidence_class": "measured on other hardware (Xe)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 2, 3.1"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "locator": "answer"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "A_MORE_MATURE_EVIDENCE",
+    "scope": "evidence maturity; capacity at I_d,max,H1 not evaluated"
+   }
+  },
+  {
+   "alternative": "ALT-A",
+   "criterion": "C04",
+   "criterion_name": "thrust capability",
+   "basis": {
+    "type": "NONE",
+    "statement": "Same H-1 class accelerator as ALT-B; thrust NOT_EVALUATED (credible Hall transport set EMPTY (members = []); P5-Xe not identifiable; P5-N2 v1 INCONCLUSIVE (permanent); no design-specific Hall map exists for any geometry). No neutralizer-imposed current cap is indicated for this current class (context: a 5 A nominal laboratory LaB6 cathode serves an SPT-100-class thruster)."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+     "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
+     "locator": "members"
+    },
+    {
+     "path": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "sha256": "2c82b3277067b22c85eabd25539b18101f429e6d34ee698d2f5d6e183aa44527",
+     "locator": "eliminated / not_eliminated"
+    },
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 2 context points"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "shared accelerator"
+   }
+  },
+  {
+   "alternative": "ALT-A",
+   "criterion": "C05",
+   "criterion_name": "power",
+   "basis": {
+    "type": "PUBLISHED_ANALOG + ARCHITECTURE_DEFINITION",
+    "statement": "Same slot set and numbers as bus_power_boundary_a9_v2 (a9_v1 is byte-identical except the configuration taxonomy) plus C1 heater / keeper / cathode-common slots INSTALLED in the retired hall_c1_reference column. Load-side analogs: heater 45-305 W at ignition (other LaB6 cathodes), keeper ~32-34 W (NEXT, inferred), laboratory heater left on 68-72 W (ECHT), low-power Hall cathodes up to 20 % of available power (secondary). P_bus NOT_EVALUATED."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "published analog (load side)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/power_boundary_a9_v2/BUS_POWER_BOUNDARY_A9_V2.md",
+     "sha256": "78ed6f131af0f0213bc79d94fdf91f61dfb5b203e5bfe9d69c4a6471e2a62f96",
+     "locator": "v1 -> v2 difference (TAXONOMY rows)"
+    },
+    {
+     "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "sha256": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+     "locator": "slots[*].configurations.hall_c1_reference"
+    },
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-STARTUP-CATHODE-HEATER"
+    },
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 3.2"
+    },
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "sec. 8"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "A_FAVOURED_ON_NEUTRALIZER_ELECTRICAL_POWER_PER_AMPERE (published analog)",
+    "scope": "see ALT-B C05"
+   }
+  },
+  {
+   "alternative": "ALT-A",
+   "criterion": "C06",
+   "criterion_name": "mass",
+   "basis": {
+    "type": "PLANNING_ALLOCATION + MECHANISM_LEVEL",
+    "statement": "A hollow cathode needs a continuous Xe flow. At the A5 design target 0.10 mg/s the cathode uses 5.4 kg Xe over 15,000 h (8.1 kg at the 0.15 mg/s test point); over the reference flows of other cathodes (P5 setpoint, SITAEL HC1 / HC3 ranges) 40 kg minus the cathode Xe spans -14 to 35.68 kg, so the indicator straddles the 40 kg limit (RI-MASS-CATHODE-XE, not verdict-bearing). In the mass/power v2 record the hall_c1_reference column's booked Xe terms exceed the 2 kg and 5 kg Xe cases (XE_CASE_BELOW_BOOKED_TERMS); only the 10 kg case has headroom. The C1 module itself has no allocation (partial 0.2 kg floor) and the dry columns are NOT comparable (mass v2). Conditional arithmetic (this lane): IF C1 flows at 0.10 mg/s, its Xe alone (5.4 kg) exceeds the 3.5 kg AL-05 + AL-06 allocation that ALT-B carries for the ICP and RF hardware, while ALT-B's 2 kg planning case is already 0.349 kg above 40 kg."
+   },
+   "evidence_status": {
+    "status": "INCOMPLETE_EVIDENCE",
+    "evidence_class": "planning allocation + inferred arithmetic on other cathodes' flows",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+     "sha256": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+     "locator": "xe_mass_allocation"
+    },
+    {
+     "path": "docs/architecture_comparison/cathode_integration/cathode_integration_derived_v1.json",
+     "sha256": "a0c8c247d2f87654568da3c01fece2ad562c1ca8e2ba78140813394aed81c125",
+     "locator": "xe_mass_vs_rfp"
+    },
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-MASS-CATHODE-XE"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v2/MASS_POWER_A9_V2.md",
+     "sha256": "6032ca8c15798460e6a67913c14a0413e12e3f4698730152a33f79d4230bba4e",
+     "locator": "Wet table (hall_c1_reference rows); comparability note"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "sha256": "96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a",
+     "locator": "c1_mass_check"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v5/MASS_POWER_A9_V5.md",
+     "sha256": "50b4867e7e60e132db01e2213a2d3a87ab1ffdd5ca2f0fcf60a8ec3ae57e875e",
+     "locator": "roll-up table AL-05, AL-06"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+     "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+     "locator": "row 46"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "A_DISFAVOURED_VS_B_CONDITIONAL (continuous cathode Xe)",
+    "scope": "conditional, allocation-level; not verdict-bearing"
+   }
+  },
+  {
+   "alternative": "ALT-A",
+   "criterion": "C07",
+   "criterion_name": "intake / feed compatibility",
+   "basis": {
+    "type": "ARCHITECTURE_DEFINITION + OWNER_DECISION",
+    "statement": "Common atmospheric path plus a continuous Xe cathode branch: two series isolation valves (owner row 90), filter / getter <= 17 W if the C1 branch is in scope (row 51), steady and start / diode flow controllers (row 125). The A9-era AL-08 floor still embeds the C1 branch valves (audit AFI-01)."
+   },
+   "evidence_status": {
+    "status": "ARCHITECTURE_DEFINITION",
+    "evidence_class": "owner answers (hardware definition)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+     "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+     "locator": "rows 51, 90, 125"
+    },
+    {
+     "path": "docs/audits/a9_24_cathode_path_audit_v1.md",
+     "sha256": "6b556bd787b093b53e9566bb76a73ffc5a6703f6794273d0ca512c89a9aa85ed",
+     "locator": "AFI-01"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "A_DISFAVOURED_VS_B (one more continuously used feed branch)",
+    "scope": "feed-architecture complexity only"
+   }
+  },
+  {
+   "alternative": "ALT-A",
+   "criterion": "C08",
+   "criterion_name": "thermal risk",
+   "basis": {
+    "type": "PUBLISHED_ANALOG + ARCHITECTURE_DEFINITION",
+    "statement": "Cathode heat 9-101 W enters the H-1 back-plate path in the H2-5 network (node CB, Q_cath); the emitter runs at >= 1843 K for O-bearing operation (owner row 95). H-1 BN wall margin 11.2 K vs >= 50 K is common to ALT-A/B."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "network inputs (ground article) + owner rule",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/audits/a9_24_cathode_path_audit_v1.md",
+     "sha256": "6b556bd787b093b53e9566bb76a73ffc5a6703f6794273d0ca512c89a9aa85ed",
+     "locator": "AFI-03"
+    },
+    {
+     "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+     "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083",
+     "locator": "Q_cath / node CB"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+     "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+     "locator": "row 95"
+    },
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "recorder_consistency_flags_for_owner[4]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "ALT-B collector heat is also unquantified"
+   }
+  },
+  {
+   "alternative": "ALT-A",
+   "criterion": "C09",
+   "criterion_name": "lifetime risk",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Xe heritage: BaO-W 27,800 h (ISS) and 51,184 h (NEXT LDT); LaB6 13,011 h heaterless test (title only, verify); LaB6 evaporation model 'tens of thousands of hours'. None on air / AO back-flow; developer life model > 1e4 h is a lower bound below the requirement (uninformative). P2 cathode-life gate is PROPOSED. Each start books Xe (<= 3 dwells x 120 s)."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "measured on other hardware (Xe), model-derived",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 3.1, 3.2"
+    },
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-LIFE-CATHODE-DEVELOPER-MODEL"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+     "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+     "locator": "row 93"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "Xe heritage vs unquantified O exposure"
+   }
+  },
+  {
+   "alternative": "ALT-A",
+   "criterion": "C10",
+   "criterion_name": "controllability",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Mature sequence heater -> keeper (pulsed 300-600 V class) -> discharge -> keeper off; spot / plume-mode minimum flow bounds the low-current end; a contaminated emitter enlarged the plume-mode region (Suzuki 2024), coupling poisoning to Xe use."
+   },
+   "evidence_status": {
+    "status": "PUBLISHED_EVIDENCE_ON_XE_NOT_VYOVRINDA",
+    "evidence_class": "published analog",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "sec. 6, sec. 7"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+     "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+     "locator": "rows 89, 92"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "A_MORE_MATURE_EVIDENCE",
+    "scope": "evidence maturity only"
+   }
+  },
+  {
+   "alternative": "ALT-A",
+   "criterion": "C11",
+   "criterion_name": "development / evidence maturity",
+   "basis": {
+    "type": "OWNER_DECISION + PUBLISHED_ANALOG",
+    "statement": "Highest component heritage (Hall + hollow cathode on Xe; > 300 flown Hall thrusters with LaB6, second-hand). The flight role was removed by owner decision (A9.19); C1 remains the ground laboratory reference (A9.20). Lane-24 never eliminated hall_only (all gates UNDETERMINED)."
+   },
+   "evidence_status": {
+    "status": "OWNER_RETIRED_FLIGHT_CONFIGURATION",
+    "evidence_class": "owner decision + published heritage",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "locator": "architecture, amends"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "locator": "answer"
+    },
+    {
+     "path": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "sha256": "2c82b3277067b22c85eabd25539b18101f429e6d34ee698d2f5d6e183aa44527",
+     "locator": "not_eliminated"
+    },
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 3.1"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "A_MORE_MATURE_EVIDENCE",
+    "scope": "component heritage on Xe; not RFP environment"
+   }
+  },
+  {
+   "alternative": "ALT-C",
+   "criterion": "C01",
+   "criterion_name": "atmospheric-gas compatibility",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "RF / helicon sources have operated on air, N2 and O2 (IPG6-S, IPT ignition on N2), far from a characterized ABEP thruster at RFP flow; RFP-P17-05 requires ionizing N2 and atomic O in the same thruster, which does not discriminate between families."
+   },
+   "evidence_status": {
+    "status": "PUBLISHED_ANALOG",
+    "evidence_class": "measured on other hardware",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 3"
+    },
+    {
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "sha256": "c126be5eef7b9ec6340776ed035eeaa0ced1c4dd2ec585383f3d3a5977d174a0",
+     "locator": "RFP-P17-05"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-C",
+   "criterion": "C02",
+   "criterion_name": "AO / cathode exposure risk",
+   "basis": {
+    "type": "MECHANISM_LEVEL",
+    "statement": "Cathodeless: no emitter. The dielectric tube faces the plasma; 'electrodeless, so erosion is eliminated' is an assumed claim; no air-plasma erosion measurement of a tube, antenna or Faraday shield."
+   },
+   "evidence_status": {
+    "status": "MECHANISM_LEVEL_NOT_MEASURED",
+    "evidence_class": "assumed / design claim",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 7"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "C_COMPARABLE_TO_B (no emitter)",
+    "scope": "mechanism-level"
+   }
+  },
+  {
+   "alternative": "ALT-C",
+   "criterion": "C03",
+   "criterion_name": "neutralization feasibility",
+   "basis": {
+    "type": "MECHANISM_LEVEL",
+    "statement": "A current-free ambipolar / magnetic-nozzle plume needs no separate neutralizer (recorded as 'cathode-less')."
+   },
+   "evidence_status": {
+    "status": "MECHANISM_LEVEL",
+    "evidence_class": "model-derived (0-D archengine)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.0 - Modular architecture engine (architecture trade table)"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "C_FAVOURED (no neutralizer needed)",
+    "scope": "mechanism-level"
+   }
+  },
+  {
+   "alternative": "ALT-C",
+   "criterion": "C04",
+   "criterion_name": "thrust capability",
+   "basis": {
+    "type": "MECHANISM_LEVEL",
+    "statement": "Mechanism-level exclusion recorded as probably robust: at ABEP flow the bus power leaves only ~20-60 eV per molecule, so an ambipolar / magnetic nozzle (~6 T_e) cannot reach the required exhaust energy even at the energy bound. The withdrawn absolute T/D and probability numbers of that trade are not used."
+   },
+   "evidence_status": {
+    "status": "MECHANISM_LEVEL_PROBABLY_ROBUST",
+    "evidence_class": "model-derived mechanism (0-D, independent of the Hall closure); not a hard-gate verdict",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.5 - Equal-footing physics for gridded ion and magnetic nozzle (cross-family table, closing paragraph)"
+    },
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.6-candidate gate-4 'Interpretation'"
+    },
+    {
+     "path": "CLAUDE.md",
+     "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3",
+     "locator": "## Superseded / withdrawn: 'Probably robust (mechanism-level ...)'"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "C_DISFAVOURED_MECHANISM_LEVEL",
+    "scope": "mechanism-level; family excluded, not hard-gate eliminated"
+   }
+  },
+  {
+   "alternative": "ALT-C",
+   "criterion": "C05",
+   "criterion_name": "power",
+   "basis": {
+    "type": "MECHANISM_LEVEL + PUBLISHED_ANALOG",
+    "statement": "The energy-per-particle limit is a power-per-flow limit at the bus cap. Magnet power is unreported by the best-reported magnetic-nozzle RF thruster (solenoid excluded); a third-party estimate puts it at >= 1 kW; a system model calls ionization-stage magnet power 'comparable to the discharge power'."
+   },
+   "evidence_status": {
+    "status": "MECHANISM_LEVEL_PROBABLY_ROBUST",
+    "evidence_class": "mechanism + secondary analog",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.5 - Equal-footing physics for gridded ion and magnetic nozzle (cross-family table, closing paragraph)"
+    },
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 6"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "C_DISFAVOURED_MECHANISM_LEVEL",
+    "scope": "mechanism-level"
+   }
+  },
+  {
+   "alternative": "ALT-C",
+   "criterion": "C06",
+   "criterion_name": "mass",
+   "basis": {
+    "type": "NONE",
+    "statement": "No accessed source states RF-stage hardware mass; magnet mass unbounded in repository evidence."
+   },
+   "evidence_status": {
+    "status": "NO_REPOSITORY_EVIDENCE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-MASS-RF-HARDWARE-UNKNOWN"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-C",
+   "criterion": "C07",
+   "criterion_name": "intake / feed compatibility",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "RF sources on air needed a magnetic field to ignite at the lowest flows and tripped on reflected power at some points; no source characterizes operation at ABEP delivered pressure."
+   },
+   "evidence_status": {
+    "status": "PUBLISHED_ANALOG",
+    "evidence_class": "measured on other hardware",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 3"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-C",
+   "criterion": "C08",
+   "criterion_name": "thermal risk",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Risk indicators: the water-cooled IPG6-S put most power into cooling water and its authors name passive cooling the biggest challenge; microwave-line heating capped a laboratory ECR thruster at 51 W transmitted."
+   },
+   "evidence_status": {
+    "status": "RISK_INDICATOR_NOT_VERDICT_BEARING",
+    "evidence_class": "measured on other hardware",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-THERMAL-RF-PASSIVE-COOLING, RI-THERMAL-ECR-MICROWAVE-LINE"
+    },
+    {
+     "path": "docs/evidence/ecr_source/ecr_evidence_matrix.json",
+     "sha256": "4a65dbeec34f16f048fa515ced3bb959c02a981113e25da89e8bb844337fec88",
+     "locator": "entries[ECR-E170]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-C",
+   "criterion": "C09",
+   "criterion_name": "lifetime risk",
+   "basis": {
+    "type": "NONE",
+    "statement": "No dielectric / antenna erosion rate under air; no life test of an electrodeless thruster on air."
+   },
+   "evidence_status": {
+    "status": "NO_REPOSITORY_EVIDENCE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 7"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-C",
+   "criterion": "C10",
+   "criterion_name": "controllability",
+   "basis": {
+    "type": "NONE",
+    "statement": "No repository evidence on throttling / control of an air-fed electrodeless thruster."
+   },
+   "evidence_status": {
+    "status": "NO_REPOSITORY_EVIDENCE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-C",
+   "criterion": "C11",
+   "criterion_name": "development / evidence maturity",
+   "basis": {
+    "type": "OWNER_DECISION + MECHANISM_LEVEL",
+    "statement": "Never retained as a proposal architecture; RFP-P18-07 states 'Hall effect preferable' (a preference flag, not a limit)."
+   },
+   "evidence_status": {
+    "status": "NOT_RETAINED",
+    "evidence_class": "requirement preference + mechanism",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "config/requirements/rfp_constraints_v1.json",
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "locator": "hall_preferred"
+    },
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.5 - Equal-footing physics for gridded ion and magnetic nozzle (cross-family table, closing paragraph)"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "C_DISFAVOURED",
+    "scope": "RFP preference + mechanism"
+   }
+  },
+  {
+   "alternative": "ALT-D1",
+   "criterion": "C01",
+   "criterion_name": "atmospheric-gas compatibility",
+   "basis": {
+    "type": "PUBLISHED_ANALOG + ARCHITECTURE_DEFINITION",
+    "statement": "Same Hall accelerator and Xe-fed cathode as ALT-A (INV-CATH), so the continuous-Xe conflict with A9.19 applies. No accessed open source measures an RF ionization stage feeding a Hall discharge on N2, O2 or air."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "published analog (absence of evidence)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 1"
+    },
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "header (common cathode)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "locator": "xenon_role"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "B_FAVOURED (architecture level, as for ALT-A)",
+    "scope": "architecture-level"
+   }
+  },
+  {
+   "alternative": "ALT-D1",
+   "criterion": "C02",
+   "criterion_name": "AO / cathode exposure risk",
+   "basis": {
+    "type": "MECHANISM_LEVEL",
+    "statement": "Carries the ALT-A thermionic emitter; in addition a pre-ionizer that dissociates O2 could raise the atomic-O share of the plume back-flow at the cathode and anode (no model or measurement)."
+   },
+   "evidence_status": {
+    "status": "MECHANISM_LEVEL_RISK_NOT_VERDICT_BEARING",
+    "evidence_class": "inferred",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "sec. 6 (plume back-flow)"
+    },
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-LIFE-CATHODE-AIR-EXPOSURE"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "DISFAVOURED_VS_B (thermionic emitter; possible O enrichment)",
+    "scope": "mechanism-level"
+   }
+  },
+  {
+   "alternative": "ALT-D1",
+   "criterion": "C03",
+   "criterion_name": "neutralization feasibility",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Identical to ALT-A (common cathode)."
+   },
+   "evidence_status": {
+    "status": "PUBLISHED_EVIDENCE_ON_XE_NOT_VYOVRINDA",
+    "evidence_class": "measured on other hardware (Xe)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "header"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "EQUAL_TO_ALT_A",
+    "scope": "common cathode"
+   }
+  },
+  {
+   "alternative": "ALT-D1",
+   "criterion": "C04",
+   "criterion_name": "thrust capability",
+   "basis": {
+    "type": "NONE",
+    "statement": "Thrust NOT_EVALUATED (credible Hall transport set EMPTY (members = []); P5-Xe not identifiable; P5-N2 v1 INCONCLUSIVE (permanent); no design-specific Hall map exists for any geometry). The 0-D note 'RF/helicon pre-ionisers add nothing' is mechanism-level; the later two-lens break-even overlay places no entry on either side (CLEARLY_ABOVE 0 / CLEARLY_BELOW 0 / STRADDLES 7 / NOT_PLACEABLE 11), so the power break-even gives no basis to set the arm aside and none to expect it to pay. The RF evidence audit neither supports nor withdraws the 0-D note. Withdrawn ECR+Hall probabilities are not used."
+   },
+   "evidence_status": {
+    "status": "UNDETERMINED",
+    "evidence_class": "break-even placement (not hard-gate evidence)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json",
+     "sha256": "ba739be2fdf431ac33900207cd8365d265456ad7b9d7e6a71e0875524c662359",
+     "locator": "placement counts"
+    },
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 3 overlay readings"
+    },
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 0"
+    },
+    {
+     "path": "CLAUDE.md",
+     "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3",
+     "locator": "## Superseded / withdrawn: 'Probably robust (mechanism-level ...)'"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "break-even straddles"
+   }
+  },
+  {
+   "alternative": "ALT-D1",
+   "criterion": "C05",
+   "criterion_name": "power",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Adds the RF source (and, for ECR, magnet) load to P_bus; historical records use bus_power_boundary_v1 (superseded for active flight closure by A9.30) with 0 of 6 aux-bus ledgers evaluable; Bundle 1 conditions C1-C5 (delivered-ion bus cost, eta_t, utilization gain, coupled response, complete ledger) are all undemonstrated."
+   },
+   "evidence_status": {
+    "status": "UNDETERMINED",
+    "evidence_class": "conditions only",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 4.1 architecture-specific conditions"
+    },
+    {
+     "path": "docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.json",
+     "sha256": "db4792bf65e041895e26206e122e54e944a742dc0aba467d7b0241706584bd57",
+     "locator": "ledger summary"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+     "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f",
+     "locator": "bus boundary"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D1",
+   "criterion": "C06",
+   "criterion_name": "mass",
+   "basis": {
+    "type": "PLANNING_ALLOCATION",
+    "statement": "ALT-A's continuous cathode Xe term plus RF stage hardware whose mass no accessed source states (RI-MASS-RF-HARDWARE-UNKNOWN)."
+   },
+   "evidence_status": {
+    "status": "INCOMPLETE_EVIDENCE",
+    "evidence_class": "none for the stage hardware",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-MASS-RF-HARDWARE-UNKNOWN, RI-MASS-CATHODE-XE"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "DISFAVOURED_VS_B_CONDITIONAL (inherits ALT-A cathode Xe)",
+    "scope": "conditional"
+   }
+  },
+  {
+   "alternative": "ALT-D1",
+   "criterion": "C07",
+   "criterion_name": "intake / feed compatibility",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "The ionizer-inlet feed state is TBD and the Hall solver has no inflow capability at HALL_INLET_Z0, so the interstage coupling cannot be simulated; plus ALT-A's Xe cathode branch."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 5 (ii) pre-ionizer physics at the common inlet"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "DISFAVOURED_VS_B (extra stage + Xe branch)",
+    "scope": "architecture-level"
+   }
+  },
+  {
+   "alternative": "ALT-D1",
+   "criterion": "C08",
+   "criterion_name": "thermal risk",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Architecture-specific risk indicator RI-THERMAL-RF-PASSIVE-COOLING (not verdict-bearing) plus the ALT-A cathode heat path."
+   },
+   "evidence_status": {
+    "status": "RISK_INDICATOR_NOT_VERDICT_BEARING",
+    "evidence_class": "measured on other hardware",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-THERMAL-RF-PASSIVE-COOLING"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D1",
+   "criterion": "C09",
+   "criterion_name": "lifetime risk",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "ALT-A cathode life questions plus dielectric-tube erosion statements that are assumed / review judgements only (RI-LIFE-RF-DIELECTRIC)."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "none / assumed",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "risk indicators"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D1",
+   "criterion": "C10",
+   "criterion_name": "controllability",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Adds a source-power control dimension and a sequencing choice (V1 after keeper-off / V2 seed before discharge ignition); in V2 the start-up peak exceeds the Hall-only preheat level by the pre-ionizer power."
+   },
+   "evidence_status": {
+    "status": "PROPOSED_VARIANTS_ONLY",
+    "evidence_class": "inferred",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "sec. 7"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "DISFAVOURED_VS_A (one more control loop)",
+    "scope": "complexity only"
+   }
+  },
+  {
+   "alternative": "ALT-D1",
+   "criterion": "C11",
+   "criterion_name": "development / evidence maturity",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "Lane-24 not eliminated (all gates UNDETERMINED, evidence register empty); Bundle 1 v5 NO_BASELINE_YET; superseded for the primary campaign by A9 governing decision 3 (programme decision, not a physical elimination)."
+   },
+   "evidence_status": {
+    "status": "HISTORICAL_NOT_ELIMINATED",
+    "evidence_class": "owner decision",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "sha256": "2c82b3277067b22c85eabd25539b18101f429e6d34ee698d2f5d6e183aa44527",
+     "locator": "not_eliminated"
+    },
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 4"
+    },
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[2]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D2",
+   "criterion": "C01",
+   "criterion_name": "atmospheric-gas compatibility",
+   "basis": {
+    "type": "PUBLISHED_ANALOG + ARCHITECTURE_DEFINITION",
+    "statement": "Same Hall accelerator and Xe-fed cathode as ALT-A (INV-CATH), so the continuous-Xe conflict with A9.19 applies. No accessed open source measures an ECR ionization stage feeding a Hall discharge on N2, O2 or air."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "published analog (absence of evidence)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/ecr_source/ecr_evidence_matrix.json",
+     "sha256": "4a65dbeec34f16f048fa515ced3bb959c02a981113e25da89e8bb844337fec88",
+     "locator": "entries"
+    },
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "header (common cathode)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "locator": "xenon_role"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "B_FAVOURED (architecture level, as for ALT-A)",
+    "scope": "architecture-level"
+   }
+  },
+  {
+   "alternative": "ALT-D2",
+   "criterion": "C02",
+   "criterion_name": "AO / cathode exposure risk",
+   "basis": {
+    "type": "MECHANISM_LEVEL",
+    "statement": "Carries the ALT-A thermionic emitter; in addition a pre-ionizer that dissociates O2 could raise the atomic-O share of the plume back-flow at the cathode and anode (no model or measurement)."
+   },
+   "evidence_status": {
+    "status": "MECHANISM_LEVEL_RISK_NOT_VERDICT_BEARING",
+    "evidence_class": "inferred",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "sec. 6 (plume back-flow)"
+    },
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-LIFE-CATHODE-AIR-EXPOSURE"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "DISFAVOURED_VS_B (thermionic emitter; possible O enrichment)",
+    "scope": "mechanism-level"
+   }
+  },
+  {
+   "alternative": "ALT-D2",
+   "criterion": "C03",
+   "criterion_name": "neutralization feasibility",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Identical to ALT-A (common cathode)."
+   },
+   "evidence_status": {
+    "status": "PUBLISHED_EVIDENCE_ON_XE_NOT_VYOVRINDA",
+    "evidence_class": "measured on other hardware (Xe)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "header"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "EQUAL_TO_ALT_A",
+    "scope": "common cathode"
+   }
+  },
+  {
+   "alternative": "ALT-D2",
+   "criterion": "C04",
+   "criterion_name": "thrust capability",
+   "basis": {
+    "type": "NONE",
+    "statement": "Thrust NOT_EVALUATED (credible Hall transport set EMPTY (members = []); P5-Xe not identifiable; P5-N2 v1 INCONCLUSIVE (permanent); no design-specific Hall map exists for any geometry). The 0-D note 'RF/helicon pre-ionisers add nothing' is mechanism-level; the later two-lens break-even overlay places no entry on either side (CLEARLY_ABOVE 0 / CLEARLY_BELOW 0 / STRADDLES 7 / NOT_PLACEABLE 6), so the power break-even gives no basis to set the arm aside and none to expect it to pay. The RF evidence audit neither supports nor withdraws the 0-D note. Withdrawn ECR+Hall probabilities are not used."
+   },
+   "evidence_status": {
+    "status": "UNDETERMINED",
+    "evidence_class": "break-even placement (not hard-gate evidence)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json",
+     "sha256": "3ee12e66f94204955f61cbb78d7c5036044cc59a9bc50f675704592bfbfabfcd",
+     "locator": "placement counts"
+    },
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 3 overlay readings"
+    },
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 0"
+    },
+    {
+     "path": "CLAUDE.md",
+     "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3",
+     "locator": "## Superseded / withdrawn: 'Probably robust (mechanism-level ...)'"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "break-even straddles"
+   }
+  },
+  {
+   "alternative": "ALT-D2",
+   "criterion": "C05",
+   "criterion_name": "power",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Adds the ECR source (and, for ECR, magnet) load to P_bus; historical records use bus_power_boundary_v1 (superseded for active flight closure by A9.30) with 0 of 6 aux-bus ledgers evaluable; Bundle 1 conditions C1-C5 (delivered-ion bus cost, eta_t, utilization gain, coupled response, complete ledger) are all undemonstrated."
+   },
+   "evidence_status": {
+    "status": "UNDETERMINED",
+    "evidence_class": "conditions only",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 4.1 architecture-specific conditions"
+    },
+    {
+     "path": "docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.json",
+     "sha256": "db4792bf65e041895e26206e122e54e944a742dc0aba467d7b0241706584bd57",
+     "locator": "ledger summary"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+     "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f",
+     "locator": "bus boundary"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D2",
+   "criterion": "C06",
+   "criterion_name": "mass",
+   "basis": {
+    "type": "PLANNING_ALLOCATION",
+    "statement": "ALT-A's continuous cathode Xe term plus ECR stage hardware whose mass no accessed source states (RI-MASS-ECR-AMPLIFIER-BREADBOARD)."
+   },
+   "evidence_status": {
+    "status": "INCOMPLETE_EVIDENCE",
+    "evidence_class": "none for the stage hardware",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-MASS-ECR-AMPLIFIER-BREADBOARD, RI-MASS-CATHODE-XE"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "DISFAVOURED_VS_B_CONDITIONAL (inherits ALT-A cathode Xe)",
+    "scope": "conditional"
+   }
+  },
+  {
+   "alternative": "ALT-D2",
+   "criterion": "C07",
+   "criterion_name": "intake / feed compatibility",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "The ionizer-inlet feed state is TBD and the Hall solver has no inflow capability at HALL_INLET_Z0, so the interstage coupling cannot be simulated; plus ALT-A's Xe cathode branch."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 5 (ii) pre-ionizer physics at the common inlet"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "DISFAVOURED_VS_B (extra stage + Xe branch)",
+    "scope": "architecture-level"
+   }
+  },
+  {
+   "alternative": "ALT-D2",
+   "criterion": "C08",
+   "criterion_name": "thermal risk",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Architecture-specific risk indicator RI-THERMAL-ECR-MICROWAVE-LINE (not verdict-bearing) plus the ALT-A cathode heat path."
+   },
+   "evidence_status": {
+    "status": "RISK_INDICATOR_NOT_VERDICT_BEARING",
+    "evidence_class": "measured on other hardware",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-THERMAL-ECR-MICROWAVE-LINE"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D2",
+   "criterion": "C09",
+   "criterion_name": "lifetime risk",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "ALT-A cathode life questions plus no ECR source life data on air."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "none / assumed",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "risk indicators"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D2",
+   "criterion": "C10",
+   "criterion_name": "controllability",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Adds a source-power control dimension and a sequencing choice (V1 after keeper-off / V2 seed before discharge ignition); in V2 the start-up peak exceeds the Hall-only preheat level by the pre-ionizer power."
+   },
+   "evidence_status": {
+    "status": "PROPOSED_VARIANTS_ONLY",
+    "evidence_class": "inferred",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "sec. 7"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "DISFAVOURED_VS_A (one more control loop)",
+    "scope": "complexity only"
+   }
+  },
+  {
+   "alternative": "ALT-D2",
+   "criterion": "C11",
+   "criterion_name": "development / evidence maturity",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "Lane-24 not eliminated (all gates UNDETERMINED, evidence register empty); Bundle 1 v5 NO_BASELINE_YET; superseded for the primary campaign by A9 governing decision 3 (programme decision, not a physical elimination)."
+   },
+   "evidence_status": {
+    "status": "HISTORICAL_NOT_ELIMINATED",
+    "evidence_class": "owner decision",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "sha256": "2c82b3277067b22c85eabd25539b18101f429e6d34ee698d2f5d6e183aa44527",
+     "locator": "not_eliminated"
+    },
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 4"
+    },
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[2]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D3",
+   "criterion": "C01",
+   "criterion_name": "atmospheric-gas compatibility",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "An RF gridded ion engine and an RF cathode ran on 50:50 N2/O2 (NewOrbit preprint): 62-160 W RF input for 100-300 mA beam at 6-14 sccm; RIT O2 / N2 / air experience available only in summary."
+   },
+   "evidence_status": {
+    "status": "PUBLISHED_ANALOG",
+    "evidence_class": "measured on other hardware (preprint)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 3"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D3",
+   "criterion": "C02",
+   "criterion_name": "AO / cathode exposure risk",
+   "basis": {
+    "type": "PUBLISHED_ANALOG + MECHANISM_LEVEL",
+    "statement": "Needs a neutralizer (thermionic as ALT-A or RF as ALT-B); grids face O: second-hand RIT report of accelerator-grid erosion by O2 within 10 h, with >= 60,000 h claimed after a material change (not inspectable)."
+   },
+   "evidence_status": {
+    "status": "RISK_INDICATOR_NOT_VERDICT_BEARING",
+    "evidence_class": "secondary",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 7"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D3",
+   "criterion": "C03",
+   "criterion_name": "neutralization feasibility",
+   "basis": {
+    "type": "ARCHITECTURE_DEFINITION",
+    "statement": "Requires a separate neutralizer; inherits the ALT-A or ALT-B neutralizer question."
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 3.4"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D3",
+   "criterion": "C04",
+   "criterion_name": "thrust capability",
+   "basis": {
+    "type": "MECHANISM_LEVEL",
+    "statement": "Child-Langmuir / perveance window limits extraction at ABEP flow; recorded as a mechanism-level, probably robust limitation together with grid life. Withdrawn absolute numbers of that trade are not used."
+   },
+   "evidence_status": {
+    "status": "MECHANISM_LEVEL_PROBABLY_ROBUST",
+    "evidence_class": "model-derived mechanism (0-D)",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.5 - Equal-footing physics for gridded ion and magnetic nozzle (cross-family table, closing paragraph)"
+    },
+    {
+     "path": "CLAUDE.md",
+     "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3",
+     "locator": "## Superseded / withdrawn: 'Probably robust (mechanism-level ...)'"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "D3_DISFAVOURED_MECHANISM_LEVEL",
+    "scope": "mechanism-level"
+   }
+  },
+  {
+   "alternative": "ALT-D3",
+   "criterion": "C05",
+   "criterion_name": "power",
+   "basis": {
+    "type": "PUBLISHED_ANALOG",
+    "statement": "Loose bound 207-1600 W per beam ampere on air (inferred from the preprint ranges)."
+   },
+   "evidence_status": {
+    "status": "PUBLISHED_ANALOG",
+    "evidence_class": "inferred",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 3"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D3",
+   "criterion": "C06",
+   "criterion_name": "mass",
+   "basis": {
+    "type": "NONE",
+    "statement": "No repository mass evidence for an air-fed gridded system."
+   },
+   "evidence_status": {
+    "status": "NO_REPOSITORY_EVIDENCE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 8"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D3",
+   "criterion": "C07",
+   "criterion_name": "intake / feed compatibility",
+   "basis": {
+    "type": "MECHANISM_LEVEL",
+    "statement": "Unionized air passes the grids; charge exchange with the actual neutral flux drives accel-grid erosion."
+   },
+   "evidence_status": {
+    "status": "MECHANISM_LEVEL_PROBABLY_ROBUST",
+    "evidence_class": "model-derived mechanism",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.5 - Equal-footing physics for gridded ion and magnetic nozzle (cross-family table, closing paragraph)"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "D3_DISFAVOURED_MECHANISM_LEVEL",
+    "scope": "mechanism-level"
+   }
+  },
+  {
+   "alternative": "ALT-D3",
+   "criterion": "C08",
+   "criterion_name": "thermal risk",
+   "basis": {
+    "type": "NONE",
+    "statement": "No repository thermal evidence for an air-fed gridded system."
+   },
+   "evidence_status": {
+    "status": "NO_REPOSITORY_EVIDENCE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 8"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D3",
+   "criterion": "C09",
+   "criterion_name": "lifetime risk",
+   "basis": {
+    "type": "MECHANISM_LEVEL + PUBLISHED_ANALOG",
+    "statement": "Grids are life-limited by CEX erosion and the perveance window (probably robust, mechanism-level); counter-indicator: an unverifiable claim of >= 60,000 h after a material change."
+   },
+   "evidence_status": {
+    "status": "MECHANISM_LEVEL_PROBABLY_ROBUST",
+    "evidence_class": "model-derived mechanism + secondary claim",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.5 - Equal-footing physics for gridded ion and magnetic nozzle (cross-family table, closing paragraph)"
+    },
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.6-candidate gate-4 'Interpretation'"
+    },
+    {
+     "path": "CLAUDE.md",
+     "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3",
+     "locator": "## Superseded / withdrawn: 'Probably robust (mechanism-level ...)'"
+    },
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 7"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "D3_DISFAVOURED_MECHANISM_LEVEL",
+    "scope": "mechanism-level"
+   }
+  },
+  {
+   "alternative": "ALT-D3",
+   "criterion": "C10",
+   "criterion_name": "controllability",
+   "basis": {
+    "type": "NONE",
+    "statement": "No repository evidence."
+   },
+   "evidence_status": {
+    "status": "NO_REPOSITORY_EVIDENCE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D3",
+   "criterion": "C11",
+   "criterion_name": "development / evidence maturity",
+   "basis": {
+    "type": "OWNER_DECISION + MECHANISM_LEVEL",
+    "statement": "Never retained as a proposal architecture; RFP-P18-07 prefers Hall effect; high heritage on Xe only."
+   },
+   "evidence_status": {
+    "status": "NOT_RETAINED",
+    "evidence_class": "requirement preference + mechanism",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "config/requirements/rfp_constraints_v1.json",
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "locator": "hall_preferred"
+    },
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.5 - Equal-footing physics for gridded ion and magnetic nozzle (cross-family table, closing paragraph)"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "D3_DISFAVOURED",
+    "scope": "RFP preference + mechanism"
+   }
+  },
+  {
+   "alternative": "ALT-D4",
+   "criterion": "C01",
+   "criterion_name": "atmospheric-gas compatibility",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "No RF||Hall v2 / A8 record is on this integration line; A9 keeps the branch as a draft / historical alternative and forbids inventing missing inputs to produce surfaces."
+   },
+   "evidence_status": {
+    "status": "NOT_COMPARABLE_NO_INPUTS_ON_THIS_LINE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]; not_authorized[1]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D4",
+   "criterion": "C02",
+   "criterion_name": "AO / cathode exposure risk",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "No RF||Hall v2 / A8 record is on this integration line; A9 keeps the branch as a draft / historical alternative and forbids inventing missing inputs to produce surfaces."
+   },
+   "evidence_status": {
+    "status": "NOT_COMPARABLE_NO_INPUTS_ON_THIS_LINE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]; not_authorized[1]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D4",
+   "criterion": "C03",
+   "criterion_name": "neutralization feasibility",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "No RF||Hall v2 / A8 record is on this integration line; A9 keeps the branch as a draft / historical alternative and forbids inventing missing inputs to produce surfaces."
+   },
+   "evidence_status": {
+    "status": "NOT_COMPARABLE_NO_INPUTS_ON_THIS_LINE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]; not_authorized[1]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D4",
+   "criterion": "C04",
+   "criterion_name": "thrust capability",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "No RF||Hall v2 / A8 record is on this integration line; A9 keeps the branch as a draft / historical alternative and forbids inventing missing inputs to produce surfaces."
+   },
+   "evidence_status": {
+    "status": "NOT_COMPARABLE_NO_INPUTS_ON_THIS_LINE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]; not_authorized[1]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D4",
+   "criterion": "C05",
+   "criterion_name": "power",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "No RF||Hall v2 / A8 record is on this integration line; A9 keeps the branch as a draft / historical alternative and forbids inventing missing inputs to produce surfaces."
+   },
+   "evidence_status": {
+    "status": "NOT_COMPARABLE_NO_INPUTS_ON_THIS_LINE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]; not_authorized[1]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D4",
+   "criterion": "C06",
+   "criterion_name": "mass",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "No RF||Hall v2 / A8 record is on this integration line; A9 keeps the branch as a draft / historical alternative and forbids inventing missing inputs to produce surfaces."
+   },
+   "evidence_status": {
+    "status": "NOT_COMPARABLE_NO_INPUTS_ON_THIS_LINE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]; not_authorized[1]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D4",
+   "criterion": "C07",
+   "criterion_name": "intake / feed compatibility",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "No RF||Hall v2 / A8 record is on this integration line; A9 keeps the branch as a draft / historical alternative and forbids inventing missing inputs to produce surfaces."
+   },
+   "evidence_status": {
+    "status": "NOT_COMPARABLE_NO_INPUTS_ON_THIS_LINE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]; not_authorized[1]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D4",
+   "criterion": "C08",
+   "criterion_name": "thermal risk",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "No RF||Hall v2 / A8 record is on this integration line; A9 keeps the branch as a draft / historical alternative and forbids inventing missing inputs to produce surfaces."
+   },
+   "evidence_status": {
+    "status": "NOT_COMPARABLE_NO_INPUTS_ON_THIS_LINE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]; not_authorized[1]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D4",
+   "criterion": "C09",
+   "criterion_name": "lifetime risk",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "No RF||Hall v2 / A8 record is on this integration line; A9 keeps the branch as a draft / historical alternative and forbids inventing missing inputs to produce surfaces."
+   },
+   "evidence_status": {
+    "status": "NOT_COMPARABLE_NO_INPUTS_ON_THIS_LINE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]; not_authorized[1]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D4",
+   "criterion": "C10",
+   "criterion_name": "controllability",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "No RF||Hall v2 / A8 record is on this integration line; A9 keeps the branch as a draft / historical alternative and forbids inventing missing inputs to produce surfaces."
+   },
+   "evidence_status": {
+    "status": "NOT_COMPARABLE_NO_INPUTS_ON_THIS_LINE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]; not_authorized[1]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  },
+  {
+   "alternative": "ALT-D4",
+   "criterion": "C11",
+   "criterion_name": "development / evidence maturity",
+   "basis": {
+    "type": "OWNER_DECISION",
+    "statement": "No RF||Hall v2 / A8 record is on this integration line; A9 keeps the branch as a draft / historical alternative and forbids inventing missing inputs to produce surfaces."
+   },
+   "evidence_status": {
+    "status": "NOT_COMPARABLE_NO_INPUTS_ON_THIS_LINE",
+    "evidence_class": "none",
+    "verdict_bearing": false
+   },
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]; not_authorized[1]"
+    }
+   ],
+   "qualitative_ranking": {
+    "ranking": "NO_RANKING_EVIDENCE_INSUFFICIENT",
+    "scope": "none"
+   }
+  }
+ ],
+ "alternative_dispositions": [
+  {
+   "alternative": "ALT-B",
+   "disposition": "RETAINED_SELECTED_INVESTIGATION_HYPOTHESIS",
+   "reason_type": "OWNER_DECISION",
+   "reason": "Owner selection (A9, A9.19); not eliminated by any physical result in the repository. Its distinguishing weaknesses (neutralizer current capacity, RF power per ampere, maturity) are evidence gaps, not demonstrated infeasibility.",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "locator": "architecture"
+    },
+    {
+     "path": "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
+     "sha256": "e372b78e117e871d31fff76081975260bdbbae645f70e6d4096010433ab8d4d2",
+     "locator": "architecture status"
+    }
+   ]
+  },
+  {
+   "alternative": "ALT-A",
+   "disposition": "NOT_PHYSICALLY_ELIMINATED; RETIRED_FROM_FLIGHT_BY_OWNER; GROUND_REFERENCE",
+   "reason_type": "OWNER_DECISION supported by MECHANISM_LEVEL / PLANNING_ALLOCATION indicators",
+   "reason": "A9.19 removed the hollow cathode from the flight architecture and made Xe a contingency mode; A9.20 keeps C1 as ground reference. Preserved physical / architecture reasons that favour B over A: (1) continuous Xe consumption in air mode (5.4 kg at the 0.10 mg/s design target over 15,000 h; booked Xe terms exceed the 2 and 5 kg cases), (2) a thermionic emitter exposed to O-bearing back-flow at AO flux-equivalent pressures of the same order as the LaB6 O2 degradation range, with no AO data, (3) one more continuously used feed branch. None is verdict-bearing: lane-24 eliminated nothing and the veto layer marks every cell UNDETERMINED. A is a valid rejection only as an owner architecture decision, not as a physics veto.",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "locator": "decision"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "locator": "answer"
+    },
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "RI-MASS-CATHODE-XE, RI-LIFE-CATHODE-AIR-EXPOSURE"
+    },
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "sec. 6"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v2/MASS_POWER_A9_V2.md",
+     "sha256": "6032ca8c15798460e6a67913c14a0413e12e3f4698730152a33f79d4230bba4e",
+     "locator": "Wet table"
+    },
+    {
+     "path": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "sha256": "2c82b3277067b22c85eabd25539b18101f429e6d34ee698d2f5d6e183aa44527",
+     "locator": "eliminated"
+    }
+   ],
+   "what_could_reverse": "ALT-B's ICP fails its capacity / neutralization / life evidence (ICP-45, P1, HC-05) while a measured C1 minimum flow and an O-exposure tolerance make the cathode Xe and life affordable; a reversal needs a new owner decision (A9.19 is binding)."
+  },
+  {
+   "alternative": "ALT-C",
+   "disposition": "NOT_RETAINED_MECHANISM_LEVEL",
+   "reason_type": "MECHANISM_LEVEL (probably robust, 0-D, independent of the Hall closure)",
+   "reason": "Energy per particle: at ABEP flow the bus power leaves ~20-60 eV per molecule, too little for an ambipolar / magnetic nozzle even at the energy bound; RFP prefers Hall. Not a hard-gate elimination.",
+   "sources": [
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.5 - Equal-footing physics for gridded ion and magnetic nozzle (cross-family table, closing paragraph)"
+    },
+    {
+     "path": "CLAUDE.md",
+     "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3",
+     "locator": "## Superseded / withdrawn: 'Probably robust (mechanism-level ...)'"
+    },
+    {
+     "path": "config/requirements/rfp_constraints_v1.json",
+     "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+     "locator": "hall_preferred"
+    }
+   ],
+   "what_could_reverse": "independent evidence of a nozzle energy channel beyond the energy-per-particle bound at ABEP flow"
+  },
+  {
+   "alternative": "ALT-D1",
+   "disposition": "HISTORICAL_NOT_ELIMINATED",
+   "reason_type": "OWNER_PROGRAMME_DECISION (no physical elimination)",
+   "reason": "Superseded for the primary campaign by A9 decision 3; break-even straddles; carries ALT-A's cathode and its Xe; the 0-D 'pre-ionisers add nothing' note is mechanism-level and is not confirmed by the later overlay.",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[2]"
+    },
+    {
+     "path": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json",
+     "sha256": "ba739be2fdf431ac33900207cd8365d265456ad7b9d7e6a71e0875524c662359",
+     "locator": "placement counts"
+    },
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 4, 5"
+    }
+   ]
+  },
+  {
+   "alternative": "ALT-D2",
+   "disposition": "HISTORICAL_NOT_ELIMINATED",
+   "reason_type": "OWNER_PROGRAMME_DECISION (no physical elimination)",
+   "reason": "Superseded for the primary campaign by A9 decision 3; no published ECR ion cost rules out a bus-power break-even; carries ALT-A's cathode. The withdrawn ECR+Hall P(success) is not used.",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[2]"
+    },
+    {
+     "path": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json",
+     "sha256": "3ee12e66f94204955f61cbb78d7c5036044cc59a9bc50f675704592bfbfabfcd",
+     "locator": "placement counts"
+    },
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 3"
+    }
+   ]
+  },
+  {
+   "alternative": "ALT-D3",
+   "disposition": "NOT_RETAINED_MECHANISM_LEVEL",
+   "reason_type": "MECHANISM_LEVEL (probably robust)",
+   "reason": "Grids life-limited by CEX erosion and the perveance window at ABEP flow; needs a separate neutralizer; RFP prefers Hall. Counter-claim (material change) not inspectable.",
+   "sources": [
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.5 - Equal-footing physics for gridded ion and magnetic nozzle (cross-family table, closing paragraph)"
+    },
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.6-candidate gate-4 'Interpretation'"
+    },
+    {
+     "path": "CLAUDE.md",
+     "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3",
+     "locator": "## Superseded / withdrawn: 'Probably robust (mechanism-level ...)'"
+    },
+    {
+     "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+     "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
+     "locator": "sec. 2 item 7"
+    }
+   ],
+   "what_could_reverse": "inspectable life evidence of O-resistant grids at ABEP-like neutral flux"
+  },
+  {
+   "alternative": "ALT-D4",
+   "disposition": "NOT_COMPARED_NO_INPUTS",
+   "reason_type": "OWNER_PROGRAMME_DECISION",
+   "reason": "Draft / historical branch off this line; missing inputs may not be invented (A9).",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]; not_authorized[1]"
+    }
+   ]
+  }
+ ],
+ "variants_not_separately_compared": [
+  {
+   "variant": "Hall + air-fed microwave plasma cathode (AMPCAT class)",
+   "status": "dossier: not baseline; <= 0.9 A on air, 2 h continuous, no life test",
+   "sources": [
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 1, sec. 3"
+    }
+   ]
+  },
+  {
+   "variant": "Hall + C12A7 electride cathode",
+   "status": "dossier: immature; oxidizes to an insulating ceramic at temperature",
+   "sources": [
+    {
+     "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b",
+     "locator": "sec. 3.3"
+    }
+   ]
+  },
+  {
+   "variant": "electrothermal (arcjet / MET / resistojet), MPD, PIT (v1.0 archengine families)",
+   "status": "screened in the 0-D trade only; never retained; their 0-D numbers are not used here",
+   "sources": [
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.0 - Modular architecture engine (architecture trade table)"
+    }
+   ]
+  }
+ ],
+ "cannot_yet_determine": [
+  {
+   "id": "CD-01",
+   "item": "absolute thrust, T - D, I_d, Hall discharge power and wall life for every Hall-based option (ALT-A, ALT-B, ALT-D1, ALT-D2)",
+   "why": "credible Hall transport set EMPTY (members = []); P5-Xe not identifiable; P5-N2 v1 INCONCLUSIVE (permanent); no design-specific Hall map exists for any geometry; no measured H-1 thrust",
+   "blocking": "an admitted Hall transport member with a design-specific map, or measured H-1 data",
+   "sources": [
+    {
+     "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+     "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
+     "locator": "members"
+    },
+    {
+     "path": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
+     "sha256": "0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c",
+     "locator": "release"
+    },
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "HC-01, HC-02, HC-08"
+    }
+   ]
+  },
+  {
+   "id": "CD-02",
+   "item": "neutralization margin M_n = I_e,cap / I_d,max,H1 - 1 (ALT-B) and cathode emission sizing (ALT-A)",
+   "why": "I_d,max,H1 and I_e,cap NOT_EVALUATED; HC-05 needs a VALIDATED_BENCH cell; NP-ICP v1 not verified / validated",
+   "blocking": "ICP-45 / P1 bench with H-1; admitted Hall member for CFG-FLIGHT-HALL-ON",
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "neutralization"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v2.json",
+     "sha256": "cea8211649beafe0f0e6a7fd32c0e74d543f06765105442215cca00456168704",
+     "locator": "status"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+     "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+     "locator": "sec. 10"
+    }
+   ]
+  },
+  {
+   "id": "CD-03",
+   "item": "bus power of any alternative",
+   "why": "bus_power_boundary_a9_v2 ledger PARTIAL_BOUNDARY with 24 TBD terms and no start-up step ledger; historical options sit on bus_power_boundary_v1 with 0 of 6 aux-bus ledgers evaluable",
+   "blocking": "TBD loads and supply efficiencies, I_d, RF absorbed power",
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "rows[id=RFP-PBUS-LT-1500W]"
+    },
+    {
+     "path": "docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.json",
+     "sha256": "db4792bf65e041895e26206e122e54e944a742dc0aba467d7b0241706584bd57",
+     "locator": "ledger summary"
+    }
+   ]
+  },
+  {
+   "id": "CD-04",
+   "item": "a like-for-like wet-mass ranking of ALT-A against ALT-B",
+   "why": "dry columns NOT comparable (no C1 allocation, partial floor only); cathode m_c,min(I_emit) unmeasured; mission Xe load NOT_ADMITTED; all lines are planning allocations",
+   "blocking": "CBEs / quotations, measured C1 minimum flow, admitted mission Xe load",
+   "sources": [
+    {
+     "path": "docs/budgets/mass_power_a9_v2/MASS_POWER_A9_V2.md",
+     "sha256": "6032ca8c15798460e6a67913c14a0413e12e3f4698730152a33f79d4230bba4e",
+     "locator": "comparability note"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v5/MASS_POWER_A9_V5.md",
+     "sha256": "50b4867e7e60e132db01e2213a2d3a87ab1ffdd5ca2f0fcf60a8ec3ae57e875e",
+     "locator": "mass status"
+    }
+   ]
+  },
+  {
+   "id": "CD-05",
+   "item": "Hall sustainment on the delivered O-bearing composition and flow span (all Hall options)",
+   "why": "no tested composition contains atomic O; air cases UNDETERMINED; flow span x10.4 vs x1.4 demonstrated",
+   "blocking": "hardware on the delivered composition (DM-2) or an admitted closure",
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json",
+     "sha256": "3381c88b81670c37836c04e1ee8dea78898718fa9219df12140f2dbe24f612bb",
+     "locator": "findings F-9"
+    },
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 4.1 HS-A1..HS-A7"
+    }
+   ]
+  },
+  {
+   "id": "CD-06",
+   "item": "ICP AIR / Xe chemistry admission (ALT-B)",
+   "why": "tier-1 gaps 12 (AIR) / 4 (Xe); NO materiality bound missing; Stage-E grid unregistered",
+   "blocking": "NP-ICP-CHEM-AIR completion (A9.31 sec. 11)",
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "rows[id=RFP-ATM-XE-COMPATIBILITY]"
+    }
+   ]
+  },
+  {
+   "id": "CD-07",
+   "item": "thermal closure (H-1 common; ICP collector; cathode node)",
+   "why": "coupled H-1 / ICP UNRESOLVED; H-1 BN wall margin 11.2 K vs >= 50 K; NP-THERMAL not validated",
+   "blocking": "P3 inputs from P1 / P2; H-1 revision",
+   "sources": [
+    {
+     "path": "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
+     "sha256": "e372b78e117e871d31fff76081975260bdbbae645f70e6d4096010433ab8d4d2",
+     "locator": "AG-05, AG-06"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification_report_v1.json",
+     "sha256": "7a355efd6e3ccd926f04afec5487f1cc42f5bedeffa4bcab63bdeb16a96bbb7e",
+     "locator": "status"
+    }
+   ]
+  },
+  {
+   "id": "CD-08",
+   "item": "life on O-bearing feed of any element (Hall channel / anode, ICP collector / tube, hollow cathode, grids, dielectric)",
+   "why": "only second-hand or qualitative indicators; no endurance data",
+   "blocking": "endurance / AO programme (owner row 132)",
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+     "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c",
+     "locator": "risk indicators"
+    }
+   ]
+  },
+  {
+   "id": "CD-09",
+   "item": "net benefit of an upstream pre-ionizer (ALT-D1 / ALT-D2)",
+   "why": "source ion cost on air, eta_t and response (alpha, chi, eta_v,S) unmeasured; no solver inflow at HALL_INLET_Z0; break-even straddles",
+   "blocking": "coupled measurement",
+   "sources": [
+    {
+     "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+     "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100",
+     "locator": "sec. 5 (ii)"
+    }
+   ]
+  },
+  {
+   "id": "CD-10",
+   "item": "emitter environment of a hollow cathode in the ABEP plume (ALT-A, ALT-D1, ALT-D2)",
+   "why": "AO / O2 attenuation at the emitter has no source; no LaB6 atomic-O threshold",
+   "blocking": "measurement",
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+     "locator": "sec. 6"
+    }
+   ]
+  },
+  {
+   "id": "CD-11",
+   "item": "delivered atmospheric mass flow over the 196 states (all options)",
+   "why": "no F7 / F8 selected design point yet (SC-WP-10)",
+   "blocking": "SC-WP-10",
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "rows[id=RFP-ATM-PRIMARY]"
+    }
+   ]
+  },
+  {
+   "id": "CD-12",
+   "item": "spacecraft drag and statewise T - D (all options)",
+   "why": "host-spacecraft drag ICD absent",
+   "blocking": "host ICD",
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622",
+     "locator": "rows[id=RFP-ALT]"
+    }
+   ]
+  },
+  {
+   "id": "CD-13",
+   "item": "quantitative status of ALT-C and ALT-D3 on the RFP boundary",
+   "why": "only 0-D mechanism-level records exist; no admitted Rust model and no common-boundary evaluation; their exclusion is mechanism-level, not a hard-gate elimination",
+   "blocking": "not planned (A9.31 sec. 19: no new architecture-search programme)",
+   "sources": [
+    {
+     "path": "docs/HISTORY.md",
+     "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd",
+     "locator": "## v1.5 - Equal-footing physics for gridded ion and magnetic nozzle (cross-family table, closing paragraph)"
+    }
+   ]
+  },
+  {
+   "id": "CD-14",
+   "item": "ALT-D4 (RF||Hall v2 / A8)",
+   "why": "no inputs on this line",
+   "blocking": "owner decision to bring the branch in",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+     "locator": "governing_decisions_verbatim[3]"
+    }
+   ]
+  }
+ ],
+ "conclusion_category_input": {
+  "role": "INPUT to the integrator for A9.31 sec. 20; this lane does not write the conclusion",
+  "findings": [
+   "No alternative has an admitted thrust, P_bus or closed mass; the comparison supplies no feasible region for any option, so it cannot by itself support category A or B.",
+   "No investigated alternative is better supported than ALT-B on any criterion with determining evidence; there is no determining evidence on any criterion for any option.",
+   "Where repository evidence supports a qualitative ordering, ALT-B is favoured on architecture / mechanism grounds for atmospheric-gas compatibility (no Xe consumable in air mode), AO / cathode exposure (no thermionic emitter), feed architecture (no continuous Xe branch) and, conditionally, Xe mass; ALT-A is favoured on evidence maturity for neutralization, controllability and neutralizer electrical power per ampere (Xe analogs).",
+   "ALT-C and ALT-D3 are excluded only on mechanism-level, probably robust grounds; ALT-D1 / ALT-D2 are historical and not physically eliminated; ALT-A is retired by owner decision, not by a physics veto.",
+   "The wet-mass DOES_NOT_CLOSE planning status of ALT-B is not relieved by switching to ALT-A: a continuous Xe cathode term at the 0.10 mg/s design target (5.4 kg) exceeds the 3.5 kg ICP / RF allocations it would replace, and ALT-A's booked Xe terms exceed the 2 and 5 kg cases (conditional, allocation-level)."
+  ],
+  "compatible_categories_from_comparison_side": [
+   "C (only if the decisive run classifies wet mass as the binding constraint; the comparison shows it is not specific to ALT-B relative to ALT-A)",
+   "D (missing items CD-01, CD-02, CD-03, CD-06)"
+  ],
+  "not_supported_from_comparison_side": [
+   "A",
+   "B (no feasible region exists in any record)"
+  ],
+  "decisive_missing_items": [
+   "CD-01",
+   "CD-02",
+   "CD-03",
+   "CD-06"
+  ],
+  "sec23_item_I_text_proposal": "Among the investigated alternatives none is better supported by repository evidence than hall_icp_neutralizer; it is the only option without both a thermionic emitter in the O-bearing plume and a continuous Xe consumable. Its open weaknesses (neutralizer capacity, RF power per ampere, maturity) are missing evidence, not demonstrated infeasibility. No absolute comparison is possible while the Hall credible set is empty."
+ },
+ "sources": [
+  {
+   "path": "CLAUDE.md",
+   "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3"
+  },
+  {
+   "path": "config/requirements/rfp_constraints_v1.json",
+   "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7"
+  },
+  {
+   "path": "docs/HISTORY.md",
+   "sha256": "0c015142055c20143bfd5db3276ea86e4161bd2da6500e9b98ec5c776db3abfd"
+  },
+  {
+   "path": "docs/architecture/freeze_candidate/ARCHITECTURE_FREEZE_CANDIDATE.md",
+   "sha256": "e372b78e117e871d31fff76081975260bdbbae645f70e6d4096010433ab8d4d2"
+  },
+  {
+   "path": "docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.json",
+   "sha256": "db4792bf65e041895e26206e122e54e944a742dc0aba467d7b0241706584bd57"
+  },
+  {
+   "path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+   "sha256": "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72"
+  },
+  {
+   "path": "docs/architecture_comparison/cathode_integration/cathode_integration_derived_v1.json",
+   "sha256": "a0c8c247d2f87654568da3c01fece2ad562c1ca8e2ba78140813394aed81c125"
+  },
+  {
+   "path": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+   "sha256": "2c82b3277067b22c85eabd25539b18101f429e6d34ee698d2f5d6e183aa44527"
+  },
+  {
+   "path": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json",
+   "sha256": "3ee12e66f94204955f61cbb78d7c5036044cc59a9bc50f675704592bfbfabfcd"
+  },
+  {
+   "path": "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json",
+   "sha256": "3381c88b81670c37836c04e1ee8dea78898718fa9219df12140f2dbe24f612bb"
+  },
+  {
+   "path": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json",
+   "sha256": "ba739be2fdf431ac33900207cd8365d265456ad7b9d7e6a71e0875524c662359"
+  },
+  {
+   "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+   "sha256": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6"
+  },
+  {
+   "path": "docs/architecture_comparison/power_boundary_a9_v2/BUS_POWER_BOUNDARY_A9_V2.md",
+   "sha256": "78ed6f131af0f0213bc79d94fdf91f61dfb5b203e5bfe9d69c4a6471e2a62f96"
+  },
+  {
+   "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+   "sha256": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+  },
+  {
+   "path": "docs/architecture_comparison/veto_layer/VETO_LAYER.md",
+   "sha256": "64e3600614a9172c6e024d353605232e9c8228d35a5c2bfb7f3a2b75a6b2567c"
+  },
+  {
+   "path": "docs/audits/a9_24_cathode_path_audit_v1.md",
+   "sha256": "6b556bd787b093b53e9566bb76a73ffc5a6703f6794273d0ca512c89a9aa85ed"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v2/MASS_POWER_A9_V2.md",
+   "sha256": "6032ca8c15798460e6a67913c14a0413e12e3f4698730152a33f79d4230bba4e"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+   "sha256": "96764681d13d05f2f566ec04417049c65f1116955ba91870a7d3a713c0d5098a"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v5/MASS_POWER_A9_V5.md",
+   "sha256": "50b4867e7e60e132db01e2213a2d3a87ab1ffdd5ca2f0fcf60a8ec3ae57e875e"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+   "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+   "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+   "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+   "sha256": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+   "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f"
+  },
+  {
+   "path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+   "sha256": "ef2c6800a8cbb1bad70197bc83e53b9e0ae089206b5832503212383424e88b7b"
+  },
+  {
+   "path": "docs/evidence/ecr_source/ecr_evidence_matrix.json",
+   "sha256": "4a65dbeec34f16f048fa515ced3bb959c02a981113e25da89e8bb844337fec88"
+  },
+  {
+   "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+   "sha256": "e63865c55f79af6c809a9dc0b1d915927e5c58e7422f1072fa32ed6a1844cd95"
+  },
+  {
+   "path": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md",
+   "sha256": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15"
+  },
+  {
+   "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+   "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083"
+  },
+  {
+   "path": "docs/milestones/bundle1/BUNDLE1_v5.md",
+   "sha256": "9741d0687fb6ce0e37abd196b553be7e0674d300af366ba97a0d031ccae0c100"
+  },
+  {
+   "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+   "sha256": "c126be5eef7b9ec6340776ed035eeaa0ced1c4dd2ec585383f3d3a5977d174a0"
+  },
+  {
+   "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+   "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v2.json",
+   "sha256": "cea8211649beafe0f0e6a7fd32c0e74d543f06765105442215cca00456168704"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification_report_v1.json",
+   "sha256": "7a355efd6e3ccd926f04afec5487f1cc42f5bedeffa4bcab63bdeb16a96bbb7e"
+  },
+  {
+   "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+   "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
+  },
+  {
+   "path": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
+   "sha256": "0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c"
+  }
+ ],
+ "sha256_basis": "sha256 of each cited file at the base commit; docs/HISTORY.md and CLAUDE.md are mutable and pinned here at that commit"
+}

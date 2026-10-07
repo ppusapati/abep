@@ -4872,6 +4872,95 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   parallel and sets the primary objective: the hall_icp_neutralizer architecture proof (decisive 196-state run, RFP
   constraint matrix, controlled comparison, one of conclusions A-D).
 
+## 2026-10-06 — RF/ICP v2 preregistration lane: NP-ICP-NEUTRALIZER prereg v2 and NP-THERMAL-CATHODELESS prereg v2 (A9.31 secs. 7-10; docs only)
+
+- **NP-ICP-NEUTRALIZER v2** (`7a26d39`, lock `a180ceef…`, prereg_v2.json `3f0df5b8…`, PREREG_v2.md `2a4ff426…`). v1, its
+  addenda and both verification reports are unchanged. Every v1 item not replaced or retired is inherited verbatim.
+  - PF-01: γ is per collision (AIR-WALL-02/03), so the atom sink is γ ¼ n v̄ A. γ comes per (species, material) from the
+    {0, 1} vertex set unless sourced.
+  - PF-02: background inflow carries τ_j (Chiggiato Q = C Δp; detailed balance). Flight hyperthermal ambient needs a
+    registered exposure model.
+  - GAP-01..03: energy classes X / N / A with registered destination vertex sets (RAD, WALL per material, OUT; end split
+    ∝ A_j τ_j or the UP/DOWN pair). There is no point split. Atom formation uses the registered D0 (D0(N2) still to
+    register, otherwise the partition is INCOMPLETE_EVIDENCE).
+  - GAP-04: λ_i,s = 1/Σ n_k σ_s,k, with members H-MS / H-LO / H-HI; all three equal v1 for one ion species.
+  - GAP-05: CC-03 is scaled by the largest current component.
+  - INT-16/17/18 are adopted as approved. The sec. 10 rulings are applied: HC-05 only inside a VALIDATED_BENCH cell,
+    with a measured value superseding the model; ω_ce/ν_m and r_ce/R reported with no threshold; CA-ICP-v1 as a screen
+    where an unbounded omission blocks; a frozen CAL/VAL partition; ASSUMED_GEOMETRIC_TUBE; measured p_ICP determining
+    for validation.
+- **IF-ICP-BUS-v2**: load-plane values only, mapped onto `bus_power_boundary_a9_v2` slots. `P_icp_bus_W` (mixed planes,
+  SC-WP-05 finding), η_bias and `Q_icp_bias_supply_loss_W` are retired, because the bias-supply loss is the ledger's
+  P_loss. There is no flight cathode key, and 1.5 kW stays in assessment.
+- **CPL-HALL-ON-v1**: the Hall-ON coupling contract, preregistered with execution gated on an admitted Hall member.
+  CFG-FLIGHT-HALL-ON stays NOT_EVALUATED. HI-04..06 (exit neutrals and their transfer, beam/CEX ions, plume potential)
+  have no producer. Per-surface supply attribution of the jointly powered circuit energy is not identifiable, so it goes
+  into coupling keys, never into ICP keys.
+- **NP-THERMAL-CATHODELESS v2** (`37939f5`, lock `727689fe…`, prereg_v2.json `6828f3e2…`, PREREG_v2.md `b94b95fa…`)
+  consumes IF-ICP-THERMAL-v2 byte for byte (key-table sha256 `33e495ad…`). Destinations:
+  - RF-source losses → B_PPU_RF RF_SOURCE;
+  - line / match / actuator → N_MATCH or RF_CHAIN;
+  - collector deposition → N_COLLECTOR;
+  - upstream outflow → RX-H1-FACE, a registered partition over existing H-1 / mount / housing nodes and EXPORT, with no
+    new node;
+  - downstream outflow, extraction and bias export → EXPORT.
+
+  The IK-07 remainder is retired in favour of exact identities and CONS-I3. Every other v1 criterion is inherited.
+- **Open:** OQ-NPICP-05 (Xe / Ar sources); VER-19..25; D0(N2) registration; v2 consumer paths in
+  `abep_subsystems::power` (additive). No code, Python or frozen data was changed.
+
+## 2026-10-06 — SC-WP-11 assessment: crate abep-assess, two contracts ADMITTED, RFP constraint matrix ACCEPTED (no Python, config or frozen data changed)
+
+- **Contracts**, each committed alone before any comparison: design gates `0dfe17e2…` (design_gates.py plus the parts
+  other lanes left for SC-WP-11: bus_boundary_a9_v2.rfp_power_gate, design_synthesis.bus_power gate_verdict,
+  upstream_a9_13.statewise_envelope, p1_reducer.icp45a_margin; DIV-01 = A9.31 sec. 10 HC-05 rule), RVM rules + GNG-ICP-01
+  `f67e2fc8…`. Acceptance prereg ACCEPT-NI-ABEP-ASSESS-RFP-MATRIX-V1 `ed5bf752…` (A9.31 sec. 17 matrix, HC-05 evaluator).
+- **Rust:** new crate `crates/abep-assess` (gates, power_gate, statewise, pareto, propellant, rvm, icp_gate,
+  owner_state, neutralization, matrix). Thresholds come only from config through abep-config. It reuses the admitted
+  abep-mission statewise quantifier (called, not moved: its admitted contract places it in abep-mission), abep-gaspath
+  vocabulary, abep-config architecture, abep-subsystems power / mass and abep-icp. Crate-graph test: no physics crate
+  depends on abep-assess.
+- **Scored once: both PARITY_PASS / ADMITTED.** 5199 and 2813 vectors, 0 failures, 0 ulp. All 60 committed RVM cells
+  and the committed GNG-ICP-01 status (NOT_EVALUATED) replay exactly. CI replay `tests/captured_replay.rs`.
+- **Acceptance: ACCEPTED** (AC-01..AC-10; execution 1 aborted on a full shared disk before any report). Matrix on
+  today's admitted raw results: 7 of 8 requirements NOT_EVALUATED; wet mass DOES_NOT_CLOSE at the governed 2 / 5 /
+  10 kg Xe cases (40.35 / 43.35 / 48.35 kg planning values, evidence INCOMPLETE_EVIDENCE); P_bus official ledger
+  PARTIAL_BOUNDARY (24 TBD terms, lower bound 0 W, no start-up ledgers); HC-05 and GNG-ICP-01 NOT_EVALUATED.
+- **Not ported:** gate_snapshot (wraps the F8 snapshot, SC-WP-10), the RVM document builder and the RFP registration
+  builder (PYTHON_REFERENCE). hard_gates / arch_constraints / closure_checks are class H.
+- **Results:** `cargo test --workspace --locked` 427 passed, 0 failed, 2 ignored (registered PT-01 / PT-02). fmt and
+  clippy are clean. `ci_checks` 12/12. The full pytest run stopped at ~78 % when the shared disk filled during
+  concurrent full runs (disk rule of 2026-10-06). The affected files (layer separation, RVM, ICP gate, gate thresholds,
+  dependency rule, bid guard, repo integrity, Rust CI) pass: 303 passed.
+- **Ledger request** (in each report; the ledger was not edited): partial admissions of design_gates, bus boundary v2
+  (rfp_power_gate), design_synthesis (gate_verdict), upstream_a9_13 (statewise_envelope), P1 bench (icp45a_margin) and
+  RVM (rules, GNG-ICP-01); NI-ABEP-ASSESS-RFP-MATRIX ACCEPTED.
+
+## 2026-10-07 — A9.31 sec. 19 architecture comparison v1 (analysis record; no model, config, frozen data or decision changed)
+
+- **Record:** `docs/architecture/architecture_proof/architecture_comparison_v1.json` (authoritative, sha256 `52cea11a…`)
+  and `architecture_comparison_v1.md` (`89e62d7e…`). Status ANALYSIS_RECORD_NOT_A_DECISION. Base `442730f`.
+- **Scope:** seven alternatives × eleven criteria = 77 rows. The alternatives are A (Hall + Xe-fed LaB6 hollow cathode),
+  B (selected `hall_icp_neutralizer`), C (electrodeless-only / magnetic nozzle), D1 / D2 (upstream RF / ECR pre-ionizer + Hall
+  + cathode), D3 (gridded ion) and D4 (RF||Hall v2 / A8, no inputs on this line). Each row carries the basis type, evidence
+  status and class, sources pinned by sha256 (39 files), and a scoped qualitative ranking. No row is verdict-bearing.
+- **Common basis:** the frozen RFP envelope (engineering_constraints_v1, manifest `3a85581e…`) and the 196 frozen design states.
+  Only B has been evaluated on the 196 states and on `bus_power_boundary_a9_v2`; the boundary-parity table records where each
+  other alternative sits. No cross-boundary numeric comparison is made.
+- **Withdrawn results:** no withdrawn absolute 0-D result is used. Three mechanism-level notes ("probably robust") are cited,
+  labelled MECHANISM_LEVEL_PROBABLY_ROBUST. They cover grids (CEX / perveance), magnetic nozzles (energy per particle) and
+  RF pre-ionizers; the pre-ionizer note is recorded as not confirmed by the later break-even overlays, which straddle.
+- **Findings (input to the A9.31 sec. 20 integrator, not the conclusion):**
+  - No alternative has an admitted thrust, P_bus or closed mass. No investigated alternative is better supported than B on
+    any criterion with determining evidence.
+  - B is favoured on architecture / mechanism grounds: no Xe consumable in air mode, no thermionic emitter in the O-bearing
+    plume, no continuous Xe feed branch, and (conditionally) Xe mass.
+  - A is favoured on evidence maturity: neutralization, control, and neutralizer electrical power per ampere (Xe analogs).
+  - A is retired by owner decision (A9.19 / A9.20), not by a physics veto. C and D3 are excluded at mechanism level only.
+    D1 / D2 are historical and not eliminated.
+  - Gaps that block a determination are listed as CD-01..CD-14; the decisive ones are CD-01, CD-02, CD-03 and CD-06.
+- Generated by a lane scratchpad script (not committed); the JSON is the record.
+
 ## 2026-10-06 — SC-WP-09 mission: state propagation ADMITTED; NP-MISSION-INTEGRATION v1 preregistered, implemented and VERIFIED (no Python, config or frozen data changed)
 
 - **Contract first** (`1a8101e`, sha256 `89db4ba5…`): PARITY-C-ABEP_SIM_MISSION_ENV_PY-PROPAGATION-V1 covers SOLAR_CONST,
