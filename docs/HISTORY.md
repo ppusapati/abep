@@ -5249,3 +5249,47 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   4. The absolute scale of F43.overshoot does not fit a heavy-tailed quantity.
 
   Options are in the note; the decision lies with the coordinator.
+
+## 2026-10-07 — Plenum / feed v8: unstable stratum scored on class and eigenvalues only, Rust typed status UNSTABLE_EQUILIBRIUM; scored once: PARITY_FAIL (one lightly damped stable vector)
+
+- **Decision (coordinator, final):** a run that starts at an unstable equilibrium stays there in exact arithmetic,
+  and its growth is seeded only by rounding and truncation noise. The unstable stratum's time-domain outputs are
+  therefore ill-posed as parity observables. No further step-control fix, and no later version for the unstable
+  stratum. **v7 REGISTERED_NEVER_SCORED, superseded** (status line in `refinement_v7_nonvacuity_note.md`; v7 contract
+  and record unedited). New record `div_p_ref_01_addendum_a1_tightened_runs.json` (DIV-P-REF-01-A1): on
+  R45-PROD-U-061 the Python T1 / T2 runs also miss the growth.
+- **Rust (`b5018a9`, additive):** `StabilityReport` / `stability_class_events` / `stability_class_orbit`,
+  `TransientStatus::UnstableEquilibrium`, and `Assessed<T>`, whose `trusted()` refuses an unstable loop
+  (NOT_EVALUATED; the record sits only under `ill_posed_result` with the label ILL_POSED_UNSTABLE_EQUILIBRIUM). Also
+  the `*_assessed` entries and the parity CLI `plenum.stability_spectrum`. The integrator and the v6 guard are
+  unchanged. Parity CLI stdout is byte-identical before / after on compressor v2 (2368), filter v1 / v2 (1732 / 1732)
+  and plenum v1 / v2 (3815 / 3781), and on the 2752 v7 refinement vectors and their class requests. Consumer audit: no
+  crate outside abep-gaspath calls the transient (guard test). `cargo test --workspace --locked`: 564 passed, 0
+  failed, 2 registered platform tests.
+- **Contract v8** (`parity_prereg_v8.json`, `05192a43…`, `8943d26`; seeds scoring 731905373, development 731905473,
+  refinement 731905573; harness `56c2e08`):
+  - U stratum: the class plus the leading eigenvalues at every UNSAT equilibrium are scored. The bound is
+    (E_py + E_rust) ρ + |x*_rust − x*_py| from 34 / 68-digit Newton roots of the exact characteristic polynomial; the
+    Jacobian blocks fall under the steady class.
+  - Every U time-domain output is reported with its spreads.
+  - ST-P-01 / DIV-P-04 check the typed status.
+  - S stratum as v7, with the v7 S envelopes reused (`e4774be4…`). The F43.overshoot S comparison scale (PROD 0.0538,
+    REF 0.0688) was stated in advance.
+  - The excused xO sample rule is confirmed and disclosed as coming from development runs.
+- **Frozen record** (`transient_envelope_v8.json`, `29430be1…`, `7262ad2`): 704 U refinement vectors, 8614 UNSAT
+  equilibria, 0 class disagreements, 0 NOT_CONVERGENT. E^λ is 7.5e-16 to 1.8e-15 ρ. NON_VACUITY passes 36 / 36 (30
+  reused S rows; the eigen rows are bounded by ≤ 4.5e-15 against scales of 2.1e-3 to 2.4e-2).
+- **Scored once** (`parity_report_v8.json`, `330bbdd`): **PARITY_FAIL / NOT_ADMITTED**, 17 failures among 270 563
+  scored leaves.
+  - What passes: class 77 / 77; eigen leaves of 373 equilibria with 0 failures (largest used fraction 4.8e-3);
+    ST-P-01 77 / 77; every non-transient entry; conservation, integrity, determinism and proximity.
+  - All 17 failures are in **P43-PROD-S-010**, a stable but lightly damped loop (max Re λ −0.0011 ± 2.02i, decay
+    time 900 s against a 60 s window). The two implementations' converged answers agree (≤ 2.4e-8 r0). The nominal
+    errors of both exceed their v7 grid maxima, mostly Python's (e.g. valve travel 0.059 against E_py 0.030). The
+    v7 S grid hardly samples this tail: no P43 PROD S refinement vector is as weakly damped.
+  - This is neither a Rust defect nor an ill-posed observable. Note: `scoring_v8_failure_note.md` (probe
+    `scripts/rust_migration/plenum_v8_failure_probe.py`). Options are for the coordinator; nothing is registered.
+- **Ledger requests** (in the report): plenum / reservoir / upstream rows stay PYTHON_REFERENCE (PARITY_FAILED). The
+  Python transient output is not trustworthy on unstable loops at any tolerance (DIV-P-REF-01 + A1). The admitted
+  compressor v2 and filter v1 / v2 reports record abep-gaspath sources changed in `361a197`, `b4de97d` and `b5018a9`,
+  with outputs byte-identical.

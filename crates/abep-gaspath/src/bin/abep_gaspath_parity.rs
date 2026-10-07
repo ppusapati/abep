@@ -1003,6 +1003,47 @@ fn dispatch(env: &Env, entry: &str, a: &Value) -> PyResult<Value> {
             }
         }
         "plenum.stability_class" => stability_class(ctx, mats, a)?,
+        "plenum.stability_spectrum" => stability_spectrum(ctx, mats, a)?,
+        "plenum.transient_run_assessed" | "plenum.transient_case_assessed" => {
+            let fc = filter_case(&a["filter"])?;
+            let p = plant(ctx, &a["plant"])?;
+            let pl = plenum(&a["plenum"])?;
+            let c = controller(&a["controller"])?;
+            let design = intake_state(&a["intake"])?;
+            let r0 = f(a, "r0")?;
+            let rtol = a.get("rtol").and_then(as_f64).unwrap_or(pf::RTOL);
+            let method = ostr(a, "method");
+            let window = a.get("window_s").and_then(as_f64).unwrap_or(tr::WINDOW_S);
+            if entry == "plenum.transient_run_assessed" {
+                tr::transient_run_assessed(&fc, &p, &pl, c, mats, &design, r0, window, rtol, method.as_deref())?
+                    .to_value_with(|r| r.to_value(true))
+            } else {
+                let oc: Option<Vec<String>> = a.get("orbit_check").and_then(|x| x.get("reasons")).map(strs);
+                tr::transient_case_assessed(
+                    &fc,
+                    &p,
+                    &pl,
+                    c,
+                    mats,
+                    &design,
+                    r0,
+                    oc.as_deref(),
+                    window,
+                    rtol,
+                    method.as_deref(),
+                )?
+                .to_value_with(Value::clone)
+            }
+        }
+        "plenum.orbit_sim_assessed" => {
+            let fc = filter_case(&a["filter"])?;
+            let p = plant(ctx, &a["plant"])?;
+            let pl = plenum(&a["plenum"])?;
+            let c = controller(&a["controller"])?;
+            let (design, state) = (intake_state(&a["design"])?, intake_state(&a["state"])?);
+            tr::orbit_simulated_assessed(&fc, &p, &pl, c, mats, &design, &state, f(a, "r0")?, f(a, "amplitude")?)?
+                .to_value_with(Value::clone)
+        }
         "plenum.strict_blockers" => pf::strict_blockers(),
         "plenum.pareto_ids" => {
             let objs = strs(&a["objectives"]);
@@ -1240,64 +1281,52 @@ fn compressor_constants() -> Value {
 }
 
 /// Contract v7 input-only stability class of a transient vector (P42 / P43 args: intake, window_s; P45 args: design,
-/// state, amplitude), composed from library calls. P42 / P43: the equilibrium of every event of the fixed sequence.
-/// P45: the orbit event's quasi-static equilibria at density 1 + amplitude sin(2 pi k / 24), k = 0..23 (the reference
-/// orbit_quasi_static default phase grid). Class "U" when an UNSAT equilibrium has an eigenvalue with Re lambda > 0,
-/// "R" when the vector is refused (dead-head at the design setpoint, ValueError; P45 also NO_STEADY_START), else "S".
-#[allow(clippy::neg_cmp_op_on_partial_ord)] // `!(u > 1)`: the library's NaN semantics (NO_STEADY_START)
-fn stability_class(ctx: Ctx, mats: &MaterialsView, a: &Value) -> PyResult<Value> {
+/// state, amplitude): the library's `stability_class_events` / `stability_class_orbit`. P42 / P43: the equilibrium of
+/// every event of the fixed sequence. P45: the orbit event's quasi-static equilibria at density 1 + amplitude
+/// sin(2 pi k / 24), k = 0..23. Class "U" when an UNSAT equilibrium has an eigenvalue with Re lambda > 0, "R" when the
+/// vector is refused (dead-head at the design setpoint, ValueError; P45 also NO_STEADY_START), else "S".
+fn stability_report(ctx: Ctx, mats: &MaterialsView, a: &Value) -> PyResult<tr::StabilityReport> {
     let fc = filter_case(&a["filter"])?;
     let p = plant(ctx, &a["plant"])?;
     let pl = plenum(&a["plenum"])?;
     let c = controller(&a["controller"])?;
     let r0 = f(a, "r0")?;
-    let orbit = a.get("state").is_some();
-    let design = intake_state(if orbit { &a["design"] } else { &a["intake"] })?;
-    let refused = || Ok(Obj::new().s("class", "R").set("events", Value::Array(vec![])).build());
-    let run = match tr::TransientRun::new(&fc, &p, &pl, c, mats, &design, r0, pf::RTOL, None) {
-        Ok(r) => r,
-        Err(e) if e.class == PyClass::ValueError => return refused(),
-        Err(e) => return Err(e),
-    };
-    let mut eqs: Vec<(&'static str, Vec<(f64, f64)>)> = vec![];
-    if orbit {
-        let state = intake_state(&a["state"])?;
-        let amp = f(a, "amplitude")?;
-        let start = run.steady_start(&state, r0, 1.0)?;
-        if start.filter(|(_, u)| !(*u > 1.0)).is_none() {
-            return refused();
-        }
-        let t_orb = pf::orbital_period_s(state.alt_km)?;
-        let ev = tr::Event {
-            name: format!("O_{}", state.state),
-            kind: "orbit".into(),
-            duration_s: t_orb,
-            setpoint_pa: r0,
-            feed_factor: 1.0,
-            intake: state.clone(),
-            orbit_amplitude: amp,
-            orbit_period_s: t_orb,
-            density: 1.0,
-        };
-        for k in 0..24 {
-            let d = 1.0 + amp * (2.0 * std::f64::consts::PI * k as f64 / 24.0).sin();
-            eqs.push(run.event_equilibrium(&ev, d)?);
-        }
+    if a.get("state").is_some() {
+        let (design, state) = (intake_state(&a["design"])?, intake_state(&a["state"])?);
+        tr::stability_class_orbit(&fc, &p, &pl, c, mats, &design, &state, r0, f(a, "amplitude")?)
     } else {
         let window = a.get("window_s").and_then(as_f64).unwrap_or(tr::WINDOW_S);
-        for ev in tr::event_sequence(&design, r0, window) {
-            eqs.push(run.event_equilibrium(&ev, ev.density)?);
-        }
+        tr::stability_class_events(&fc, &p, &pl, c, mats, &intake_state(&a["intake"])?, r0, window)
     }
-    let unstable = eqs.iter().any(|(k, l)| *k == "UNSAT" && l.iter().any(|z| z.0 > 0.0));
-    let events: Vec<Value> = eqs
+}
+
+/// The v7 record of the class: {"class", "events": [{"eq", "re_max"}]}.
+fn stability_class(ctx: Ctx, mats: &MaterialsView, a: &Value) -> PyResult<Value> {
+    let rep = stability_report(ctx, mats, a)?;
+    let events: Vec<Value> = rep
+        .equilibria
         .iter()
-        .map(|(k, l)| {
-            let re = l.iter().map(|z| z.0).fold(None, |m: Option<f64>, x| Some(m.map_or(x, |m| m.max(x))));
-            Obj::new().s("eq", k).set("re_max", re.map_or(Value::Null, fnum)).build()
+        .map(|e| Obj::new().s("eq", e.kind.as_str()).set("re_max", e.re_max().map_or(Value::Null, fnum)).build())
+        .collect();
+    Ok(Obj::new().s("class", rep.class.as_str()).set("events", Value::Array(events)).build())
+}
+
+/// Contract v8: the class with every equilibrium's spectrum (re, im) and dynamic 5 x 5 Jacobian block (row major),
+/// the inputs of the leading-eigenvalue comparison and of its high-precision convergence check.
+fn stability_spectrum(ctx: Ctx, mats: &MaterialsView, a: &Value) -> PyResult<Value> {
+    let rep = stability_report(ctx, mats, a)?;
+    let eqs: Vec<Value> = rep
+        .equilibria
+        .iter()
+        .map(|e| {
+            let lam: Vec<Value> = e.eigenvalues.iter().map(|z| Value::Array(vec![fnum(z.0), fnum(z.1)])).collect();
+            let jac = e.jacobian.map_or(Value::Null, |j| {
+                Value::Array(j.iter().map(|row| Value::Array(row.iter().map(|x| fnum(*x)).collect())).collect())
+            });
+            Obj::new().s("eq", e.kind.as_str()).set("eigenvalues", Value::Array(lam)).set("jacobian", jac).build()
         })
         .collect();
-    Ok(Obj::new().s("class", if unstable { "U" } else { "S" }).set("events", Value::Array(events)).build())
+    Ok(Obj::new().s("class", rep.class.as_str()).set("equilibria", Value::Array(eqs)).build())
 }
 
 /// orbit_simulated with an explicit rtol (contract v3 refinement grid, tightened runs): the library body with

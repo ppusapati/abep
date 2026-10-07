@@ -1,0 +1,52 @@
+{
+ "schema": "abep_parity_divergence_record_v1",
+ "id": "DIV-P-REF-01-A1",
+ "addendum_to": {
+  "id": "DIV-P-REF-01",
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/div_p_ref_01_lsoda_unstable_loops.json",
+  "sha256": "746dc448b2d4db4c5aa1c5995ca0c0e0a97a736de9cb4b7030c4100e92cf3c71",
+  "rule": "the original record is not edited; this addendum extends its scope"
+ },
+ "title": "On unstable closed loops the Python reference's tightened transient runs (T1 rtol 1e-8, T2 rtol 1e-10) can also miss the growing mode",
+ "date": "2026-10-07",
+ "component": "C-ABEP_SIM_DESIGN_PLENUM_FEED_PY (abep_sim/design/plenum_feed.py TransientRun.run / transient_case / orbit_simulated)",
+ "kind": "REFERENCE_DEFECT (found by the parity procedure; the reference is read-only and is never edited, RM-R11)",
+ "reference": {
+  "file": "abep_sim/design/plenum_feed.py",
+  "python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+  "integrator": "scipy.integrate.solve_ivp LSODA, ATOL_SCALED 1e-11; orbit_simulated at the default rtol of TransientRun set by the harness to 1e-8 (T1) / 1e-10 (T2) (registered override mechanics, no file changed)"
+ },
+ "found_by": {
+  "contract": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v7.json (sha256 4f07529b88393291c737576a12d5dc3a2a401d919958fb5fd1c6ce8007e16083)",
+  "record": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/transient_envelope_v7.json (sha256 e4774be4927aebe91c4cf1692405f3c463e1d4de21fc62f406fe075d69c9855f, commit 60df0d4): PROD P45 F45.P_dev E_rust^U 86.4 attained at R45-PROD-U-061 against its Python T2 value",
+  "analysis": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/refinement_v7_nonvacuity_note.md (finding 2)",
+  "seed": "refinement_master_seed 731905563 (refinement vectors only; no scoring vector)",
+  "reproduce": "python3 scripts/rust_migration/plenum_v7_nonvacuity_probe.py R45-PROD-U-061"
+ },
+ "evidence": {
+  "R45-PROD-U-061": {
+   "stability_class": "U: max Re lambda over the 24 quasi-static orbit phases 0.272 (phase 0: 3.6e-2; 13 of 24 phases with Re lambda > 0), both implementations",
+   "orbit_sim_P_dev_max_frac": {
+    "python_nominal_rtol_1e-5": "9.4e-6 (185 RHS evaluations)",
+    "python_T1_rtol_1e-8": "8.2e-5 (51 472 evaluations)",
+    "python_T2_rtol_1e-10": "7.564200341025895e-05 (39 697 evaluations; frozen v7 record)",
+    "rust_nominal": "0.024454516158719963 (frozen v7 record)",
+    "rust_T1": "0.01791929329161479 (frozen v7 record)",
+    "rust_T2": "0.02165196141654735 (frozen v7 record; Rust runs 11-16 M evaluations)"
+   },
+   "reading": "the Python reference holds the setpoint at every tolerance level (P_dev below 1e-4) while the Rust integrator, whose growing-mode guard prevents an accepted step from damping a growing mode, shows the excursion at every level (P_dev 0.018 .. 0.024); tightening the Python tolerance by five orders of magnitude does not resolve the mode, so the tightened Python answer is not a converged answer on this loop"
+  },
+  "R45-PROD-U-045 (related, seeding-sensitive)": "max Re lambda 1.1e-2 at 9 of 24 phases, phase 0 stable: Python N 0.048, T1 1.0e-4, T2 7.6e-6; Rust N / T1 / T2 7.6e-6: whether the excursion appears depends on how the growing phases are seeded"
+ },
+ "mechanism": "as DIV-P-REF-01: a growing mode started below the tolerance scale is not seen by the error control, which integrates the unstable loop as a held setpoint and returns ok; the T1 / T2 runs inherit the effect. A loop that starts at an unstable equilibrium stays there in exact arithmetic, and its growth is seeded only by rounding and truncation noise, so no tolerance level makes the time-domain answer well posed (coordinator decision 2026-10-07, contract v8)",
+ "consequence": [
+  "DIV-P-REF-01 extends from the nominal run to the tightened runs: on closed loops that are unstable at an equilibrium of their event sequence (or at a quasi-static orbit phase), no Python transient output (P42 transient_run, P43 transient_case, P45 orbit_simulated, at any registered rtol) is a trustworthy comparison target",
+  "contract v8 therefore scores the unstable stratum only on well-posed quantities (the input-only stability class and the leading eigenvalues) and reports its time-domain outputs labelled ILL_POSED_UNSTABLE_EQUILIBRIUM; the Rust transient carries the typed status UNSTABLE_EQUILIBRIUM (DIV-P-04)",
+  "the reference itself is not changed; no Python result, golden or fixture is rewritten"
+ ],
+ "ledger_update_requested": {
+  "row": "C-ABEP_SIM_DESIGN_PLENUM_FEED_PY",
+  "item": "PYTHON_REFERENCE transient output (TransientRun.run, transient_case, orbit_simulated) is not trustworthy on unstable closed loops at any tolerance level (DIV-P-REF-01 with addendum A1); production use of those Python results on such loops is not admissible evidence",
+  "owner": "ledger lane (A1); this record does not edit docs/rust_migration/migration_state_v1.json"
+ }
+}
