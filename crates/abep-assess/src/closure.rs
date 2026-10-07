@@ -1082,7 +1082,15 @@ fn sec23(
             ]),
         );
     }
-    let first_codes: Vec<Value> = out.blockers.iter().take(3).map(|(c, _)| s(c.clone())).collect();
+    let rank = |c: &str| match category(c) {
+        "FUNDAMENTAL_ARCHITECTURE_LIMIT" => 0,
+        "MODEL_DOMAIN_LIMIT" => 1,
+        "DESIGN_VARIABLE_LIMIT" => 2,
+        _ => 3,
+    };
+    let mut ordered: Vec<&(String, usize)> = out.blockers.iter().collect();
+    ordered.sort_by(|a, b| (rank(&a.0), std::cmp::Reverse(a.1), &a.0).cmp(&(rank(&b.0), std::cmp::Reverse(b.1), &b.0)));
+    let first_codes: Vec<Value> = ordered.iter().map(|(c, _)| s(c.clone())).collect();
     dict(vec![
         (
             "A_feasible_region_a",
@@ -1110,7 +1118,13 @@ fn sec23(
         ),
         ("F_constraints_closing_a", s("see binding_constraint (n_required_closes per constraint)")),
         ("G_evidence_limited", Value::List(out.blockers.iter().map(|(c, _)| s(c.clone())).collect())),
-        ("H_dominant_blockers", Value::List(first_codes)),
+        (
+            "H_dominant_blockers",
+            dict(vec![
+                ("order", s("A9.31 sec. 21 category (FUNDAMENTAL, MODEL_DOMAIN, DESIGN_VARIABLE, MISSING_EVIDENCE), then blocked cells")),
+                ("codes", Value::List(first_codes)),
+            ]),
+        ),
         ("J_engineering_statement", s("not stated here: the coordinator states the A9.31 sec. 20 / 23 J conclusion")),
     ])
 }
