@@ -4999,3 +4999,16 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   - OQ-MI-03: confirm pointing_factors not ported.
   - OQ-MI-04: a v2 altitude coupling.
   - OQ-MI-05: NON_FIRING loads.
+
+## 2026-10-07 — A9.32 owner decision recorded: Hall thrust critical path, parametric feasibility envelope
+
+- **What:** owner directive recorded verbatim as `docs/decisions/OD_2026_10_07_A9_32_HALL_THRUST_CRITICAL_PATH_PARAMETRIC_ENVELOPE.md` (sha256 `69e9a00d77a7c51717a1d9cf6738c238090b23812195c8b37bfab560f33a0e6f`), with companion `docs/decisions/OD_2026_10_07_A9_32_hall_thrust_critical_path_parametric_envelope.json`.
+- **Directive:** no new broad architecture work; complete mission, F7/F8, RF/ICP + thermal v2 and plenum/feed v6. In parallel,
+  preregister and run a HallThruster.jl parametric feasibility envelope for the selected H1 geometry using only sourced / registered
+  transport assumptions, labelled PARAMETRIC / NOT_VALIDATED, and feed it into the decisive 196-state closure run. The result reports
+  (a) physics-feasible and (b) evidence-qualified / admitted states separately.
+  - Non-closing under the favorable but defensible envelope → Hall+RF PHYSICALLY_NON_CLOSING.
+  - A feasible region with an empty credible set → SELECT_WITH_EVIDENCE_CONDITIONS.
+  - Archival, golden and clean-install work do not gate the conclusion.
+- **Unchanged:** the credible Hall transport set stays EMPTY; HallMap admission is unchanged; the HallThruster.jl pin (rule 7) is unchanged.
+- **Environment note:** this session's network policy denies the Julia download hosts, so score-bearing Hall runs wait on that.
