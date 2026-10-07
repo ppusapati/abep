@@ -23,3 +23,7 @@ sha2.workspace = true
 [[bin]]
 name = "abep-design-uq"
 path = "src/bin/abep_design_uq.rs"
+
+[dev-dependencies]
+# CI replay of the gzip-captured numpy stream samples (the crate the workspace uses for the frozen .csv.gz data).
+flate2.workspace = true
