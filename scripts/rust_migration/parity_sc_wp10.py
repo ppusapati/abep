@@ -618,8 +618,42 @@ def py_study(inp, spec: dict, fractions: list):
     return allctx, pars, f8, surv, {"t_f7_cpu_s": t_f7, "t_f8_cpu_s": t_f8}
 
 
+MIN_FREE_BYTES = 8 * 1024 ** 3  # the full-grid study writes ~0.65 GB of context bins; the volume is shared
+
+# Scoring-seed executions that aborted before any comparison (no result computed or seen); appended to the
+# campaign_history of both reports. The harness also appends every new abort to SCRATCH/aborts_score.jsonl.
+ABORTED_SCORING_EXECUTIONS = [{
+    "execution": "scoring (aborted before any comparison)",
+    "utc": "2026-10-06T18:44Z .. 2026-10-06T20:26Z", "rust_commit": "0311af2",
+    "what_happened": "the Rust study computed all 100 F7 contexts, but three context-bin writes (ctx_028 and ctx_029 "
+                     "at 18:53Z, ctx_078 at 19:24Z) left zero-byte files on the shared scratch volume (transient "
+                     "out-of-space / I/O failure); the CLI's write check then returned a RAISED HarnessError "
+                     "outcome (its message was not captured). The harness did not check the study outcome, ran "
+                     "the Python study, and stopped with FileNotFoundError on contexts.json at the first line of "
+                     "compare_contexts, before any comparison",
+    "results_seen": "none (no comparison computed; no report written; the randomized vectors were never generated)",
+    "fix": "harness only, no random draw consumed: the study directory is cleared before each run, a free-space "
+           "floor is checked before the study, and the study outcome is checked (a CLI HarnessError aborts before "
+           "the Python study and is logged here; a contract-class RAISED is scored as a failure). The Rust "
+           "source is unchanged (same commit)"}]
+
+
+def logged_aborts() -> list:
+    p = SCRATCH / "aborts_score.jsonl"
+    if not p.exists():
+        return []
+    return [json.loads(ln) for ln in p.read_text().splitlines() if ln.strip()]
+
+
 def rust_study(spec: dict, out: Path) -> dict:
+    import shutil
+    if out.exists():
+        shutil.rmtree(out)
     out.mkdir(parents=True, exist_ok=True)
+    free = shutil.disk_usage(out).free
+    if free < MIN_FREE_BYTES:
+        raise SystemExit(f"REFUSED_ENVIRONMENT: {free / 1024 ** 3:.1f} GiB free at {out} (< "
+                         f"{MIN_FREE_BYTES / 1024 ** 3:.0f} GiB); nothing executed")
     p = out / "spec.json"
     p.write_text(json.dumps(spec), encoding="utf-8")
     t0 = time.perf_counter()
@@ -747,12 +781,31 @@ def run(mode: str):
     fractions = [float(u) for u in rng8(99).random(6)]
     out = SCRATCH / f"study_{tag}"
     t_r = rust_study(dict(spec, sensitivity_fractions=fractions), out)
+    if t_r.get("outcome") != "RETURNED" and t_r.get("class") == "HarnessError":
+        # the CLI's own file I/O / argument handling failed (not a contract class): abort before the Python study
+        # and before any comparison, and log the abort for campaign_history
+        rec = {"execution": f"{tag} (aborted before any comparison)", "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+               "rust_commit": git("rev-parse", "HEAD"), "rust_study_outcome": t_r, "results_seen": "none"}
+        if not dev:
+            SCRATCH.mkdir(parents=True, exist_ok=True)
+            with open(SCRATCH / "aborts_score.jsonl", "a") as fh:
+                fh.write(json.dumps(rec, default=str) + "\n")
+        raise SystemExit(f"ABORTED_ENVIRONMENT (no comparison): {t_r}")
     allctx, pars, f8, surv_py, t_py = py_study(inp, spec, fractions)
     picks = f8["pick_indices"]
-    results["study_contexts"] = compare_contexts(allctx, out)
-    results["study_pareto"] = compare_pareto(pars, out)
-    s8, rs8 = compare_f8(f8, out)
-    results["study_f8"] = s8
+    if t_r.get("outcome") == "RETURNED":
+        results["study_contexts"] = compare_contexts(allctx, out)
+        results["study_pareto"] = compare_pareto(pars, out)
+        s8, rs8 = compare_f8(f8, out)
+        results["study_f8"] = s8
+    else:
+        # a contract-class error where Python returned: a failure of the study golden vector (mapping rule)
+        msg = f"Rust study RAISED {t_r.get('class')}: {t_r.get('message')} where Python returned"
+        for k in ("study_contexts", "study_pareto", "study_f8"):
+            results[k] = {"float_leaves": 0, "bit_identical": 0, "exact_leaves": 0, "max_ulp": None, "max_abs_diff": None,
+                          "failures": 1, "first_failures": [msg]}
+        rs8 = {"gates_before": None, "gates_after": True, "robust_pareto": [],
+               "carried_robust_set": {"representative": "NOT_COMPUTED"}}
     # ---------------------------------------------------------------- vectors
     v7 = f7_vectors(inp, rng7)
     v8 = f8_vectors(inp, rng8, surv_py)
@@ -864,6 +917,9 @@ def md_of(rep: dict) -> str:
     L += ["", "## Performance (reported, never a criterion)", ""]
     for k, v in rep["performance"].items():
         L.append(f"* {k}: {v}")
+    L += ["", "## Campaign history", ""]
+    for h in rep["campaign_history"]:
+        L.append("* " + "; ".join(f"{k}: {v}" for k, v in h.items()))
     L += ["", "## Ledger update requested", ""] + [f"* {x}" for x in rep["ledger_update_requested"]]
     L += ["", "Parity is not physics validation, not a gate PASS and not a change of any frozen dataset.", ""]
     return "\n".join(L)
@@ -877,7 +933,8 @@ def write_reports(report, c7, c8, inp, out, f8, rs8, pars):
     inv8_ok = (inv["INV-F8-01 gates unchanged"]["python"] and inv["INV-F8-01 gates unchanged"]["rust"]
                and inv["INV-F8-04 no representative"]["python"] and inv["INV-F8-04 no representative"]["rust"]
                and inv["INV-F8-02 robust set reported"]["python_n_members"] == inv["INV-F8-02 robust set reported"]["rust_n_members"])
-    hist = {"execution": "scoring", "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "host": platform.node()}
+    hist = {"execution": "scoring", "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "host": platform.node(),
+            "rust_commit": prov["rust_commit"], "verdict_basis": "this execution"}
     for c, cdir, keys, prefix, inv_ok, seed in ((c7, C7, F7_KEYS, "f7:", inv7_ok, SEEDS["f7"]["score"]),
                                                 (c8, C8, F8_KEYS, "f8:", inv8_ok, SEEDS["f8"]["score"])):
         verdict, nf = verdict_of(results, keys, prefix, inv_ok)
@@ -925,7 +982,8 @@ def write_reports(report, c7, c8, inp, out, f8, rs8, pars):
                                "python_f7_cpu_s": report["python_study"]["t_f7_cpu_s"],
                                "python_f8_cpu_s": report["python_study"]["t_f8_cpu_s"]},
                "reference_outputs": manifest,
-               "campaign_history": [hist], "ledger_update_requested": led}
+               "campaign_history": ABORTED_SCORING_EXECUTIONS + logged_aborts() + [hist],
+               "ledger_update_requested": led}
         (cdir / "parity_report_v1.json").write_text(json.dumps(rep, indent=1, default=str) + "\n")
         (cdir / "parity_report_v1.md").write_text(md_of(rep))
         print(c["id"], verdict, nf)
