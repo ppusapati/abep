@@ -5,6 +5,7 @@
 
 pub mod verify;
 pub mod vs_net;
+pub mod vs_net_v2;
 
 use abep_provenance::git::Git;
 use abep_provenance::workspace_repo_root;
@@ -106,6 +107,7 @@ impl Cb {
                 coil_resistance_relations: BTreeMap::new(),
                 interfaces: Interfaces::default(),
                 partitions: BTreeMap::new(),
+                model_version: None,
             },
             evidence_class: SYN.into(),
         }

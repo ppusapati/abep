@@ -298,3 +298,76 @@ pub fn accounts_from_thermal(out: &ThermalOutput, icp_slot_planes: &[(Slot, Plan
     });
     accounts
 }
+
+// ------------------------------------------------------------------------------------- CONS-L1 v2 ICP account
+
+/// NP-THERMAL-CATHODELESS prereg v2 CONS-L1: the v2 ICP account takes slots icp_rf_source, icp_matching_network and
+/// icp_collector_bias at their load planes; the ledger's P_loss of those slots is the supply loss outside the account.
+pub const ICP_V2_PLANES: [(Slot, Plane); 3] =
+    [(Slot::IcpRfSource, Plane::Load), (Slot::IcpMatchingNetwork, Plane::Load), (Slot::IcpCollectorBias, Plane::Load)];
+/// Deposited: the node deposits of TK-03..TK-08, TK-10 and TK-12 (TK-12 signed).
+pub const ICP_V2_DEPOSITED_KEYS: [&str; 8] = [
+    "Q_icp_line_W",
+    "Q_icp_match_W",
+    "P_icp_matching_DC_W",
+    "Q_icp_coil_ohmic_W",
+    "Q_icp_plasma_wall_W",
+    "Q_icp_radiation_W",
+    "Q_icp_outflow_upstream_W",
+    "Q_icp_bias_collector_W",
+];
+/// Exported: TK-09, TK-11, TK-13 and the EXPORT shares of TK-08 / TK-10.
+pub const ICP_V2_EXPORTED_KEYS: [&str; 5] = [
+    "Q_icp_extraction_W",
+    "Q_icp_outflow_downstream_W",
+    "Q_icp_bias_export_W",
+    "Q_icp_radiation_W.EXPORT",
+    "Q_icp_outflow_upstream_W.EXPORT",
+];
+
+/// The downstream accounts of a steady model 2.0.0 NP-THERMAL output: as `accounts_from_thermal`, with the ICP
+/// account replaced by the CONS-L1 v2 account (ICP_V2_PLANES; booked = the B_PPU_RF RF_SOURCE + RF_CHAIN sub-accounts;
+/// no remainder key). A model 1.0.0 output carries no v2 account: its ICP account is MODEL_ERROR here.
+pub fn accounts_from_thermal_v2(out: &ThermalOutput) -> Vec<Account> {
+    let mut accounts = accounts_from_thermal(out, &ICP_V2_PLANES);
+    let src = |what: &str| format!("NP-THERMAL-CATHODELESS {} case {}: {what}", out.model_version, out.case_id);
+    let Some(icp) = accounts.iter_mut().find(|a| a.account_id == "ICP") else { return accounts };
+    if out.model_version != crate::thermal::vocab::MODEL_VERSION_V2 {
+        icp.status = EvalStatus::ModelError;
+        icp.source = src("CONS-L1 v2 needs a model 2.0.0 output (IF-ICP-THERMAL-v2)");
+        return accounts;
+    }
+    let res = match (&out.results, out.run_status) {
+        (Some(r), RunStatus::Converged) if r.t_node_k.is_some() => r,
+        _ => return accounts,
+    };
+    let derived = res.interface_derived.as_ref().and_then(|d| d.icp_v2.as_ref());
+    let Some(d) = derived else {
+        icp.status = EvalStatus::NotEvaluated;
+        icp.source = src("no IF-ICP-THERMAL-v2 bookkeeping in the output");
+        return accounts;
+    };
+    let deposited = fsum(
+        res.q_source_node_w
+            .values()
+            .flat_map(|m| m.iter().filter(|(k, _)| ICP_V2_DEPOSITED_KEYS.contains(&k.as_str())))
+            .map(|(_, v)| *v),
+    )
+    .unwrap_or(f64::NAN);
+    let first = |v: Option<&Vec<f64>>| v.and_then(|x| x.first().copied()).unwrap_or(0.0);
+    let exported = fsum(ICP_V2_EXPORTED_KEYS.iter().map(|k| first(res.p_exported_w.get(*k)))).unwrap_or(f64::NAN);
+    let booked = fsum(d.b_ppu_rf_sub_account_w.values().map(|v| first(Some(v)))).unwrap_or(f64::NAN);
+    *icp = Account {
+        account_id: "ICP".into(),
+        slots: ICP_V2_PLANES.to_vec(),
+        deposited_w: deposited,
+        exported_w: exported,
+        booked_w: booked,
+        status: EvalStatus::Evaluated,
+        source: src(&format!(
+            "scenario member {}: Q_source_node_W (TK-03..TK-08, TK-10, TK-12) + P_exported_W (TK-09, TK-11, TK-13, EXPORT shares) + B_PPU_RF RF_SOURCE / RF_CHAIN",
+            d.scenario_member_id
+        )),
+    };
+    accounts
+}

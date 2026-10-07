@@ -202,3 +202,125 @@ impl GovernedContext {
         self
     }
 }
+
+// ------------------------------------------------------------------------------------------------ model 2.0.0
+
+pub const PREREG_V2_DIR: &str = "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS";
+/// sha256 of prereg_lock_v2.json (the anchor of model 2.0.0; it pins prereg_v2.json and PREREG_v2.md).
+pub const PREREG_LOCK_V2_SHA256: &str = "727689fee6bd003295c53abfbc4185c93fab80620329c75062a956dbbb9742de";
+/// sha256 of prereg_lock_v1.json (named by the v2 lock as its predecessor).
+pub const PREREG_LOCK_V1_SHA256: &str = "3421e28c959dc5ac7de600acd8e94d83b1ded605bcc6095a81fccd4905470fc7";
+/// The producer anchor: NP-ICP-NEUTRALIZER prereg_lock_v2.json.
+pub const PRODUCER_LOCK_PATH: &str = "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_lock_v2.json";
+pub const PRODUCER_LOCK_SHA256: &str = "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287";
+/// Canonical sha256 of the matched IF-ICP-THERMAL-v2 key table (equal on both sides).
+pub const KEY_TABLE_V2_SHA256: &str = "33e495adadbe94a5113c5f6b9040156ec8309295cca15b812714038beaa51161";
+
+/// The model 2.0.0 context: the v1 governed context (unchanged, every v1 pin verified) plus the v2 lock, its predecessor,
+/// the producer anchor and the matched key table, each sha256-verified. A v1 run never reads any of this.
+#[derive(Debug, Clone)]
+pub struct GovernedContextV2 {
+    v1: GovernedContext,
+    prereg_v2_sha256: String,
+    prereg_v2_md_sha256: String,
+    hashes_v2: BTreeMap<String, String>,
+}
+
+/// Canonical sha256 of a key table: sorted-key compact JSON (serde_json maps are ordered).
+pub fn canonical_sha256(v: &Value) -> String {
+    sha256_hex(serde_json::to_string(v).expect("serializable").as_bytes())
+}
+
+impl GovernedContextV2 {
+    pub fn load(repo_root: &Path) -> AbepResult<Self> {
+        let v1 = GovernedContext::load(repo_root)?;
+        let mut hashes_v2 = BTreeMap::new();
+        let lock_rel = format!("{PREREG_V2_DIR}/prereg_lock_v2.json");
+        let lock: Value = parse_json(&lock_rel, &read_verified(&repo_root.join(&lock_rel), PREREG_LOCK_V2_SHA256)?)?;
+        hashes_v2.insert(lock_rel.clone(), PREREG_LOCK_V2_SHA256.to_string());
+        let pin =
+            |p: &str| lock.pointer(p).and_then(Value::as_str).map(String::from).ok_or_else(|| schema_err(&lock_rel, p));
+        let (pj, pm) = (pin("/files/prereg_v2.json")?, pin("/files/PREREG_v2.md")?);
+        if pin("/model_version")? != vocab::MODEL_VERSION_V2 {
+            return Err(schema_err(&lock_rel, "model_version is not 2.0.0"));
+        }
+        if pin("/predecessor_lock/sha256")? != PREREG_LOCK_V1_SHA256 {
+            return Err(schema_err(&lock_rel, "the v2 lock does not name the v1 lock as its predecessor"));
+        }
+        let v1_lock = format!("{PREREG_V2_DIR}/prereg_lock_v1.json");
+        read_verified(&repo_root.join(&v1_lock), PREREG_LOCK_V1_SHA256)?;
+        hashes_v2.insert(v1_lock, PREREG_LOCK_V1_SHA256.into());
+        if pin("/producer_anchor/path")? != PRODUCER_LOCK_PATH
+            || pin("/producer_anchor/sha256")? != PRODUCER_LOCK_SHA256
+        {
+            return Err(schema_err(&lock_rel, "producer anchor differs from NP-ICP-NEUTRALIZER prereg_lock_v2.json"));
+        }
+        if pin("/matched_key_table_sha256")? != KEY_TABLE_V2_SHA256 {
+            return Err(schema_err(&lock_rel, "matched_key_table_sha256 differs"));
+        }
+        // The producer anchor and the producer's key table.
+        let producer_lock: Value =
+            parse_json(PRODUCER_LOCK_PATH, &read_verified(&repo_root.join(PRODUCER_LOCK_PATH), PRODUCER_LOCK_SHA256)?)?;
+        hashes_v2.insert(PRODUCER_LOCK_PATH.into(), PRODUCER_LOCK_SHA256.into());
+        let producer_prereg_rel = "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v2.json";
+        let producer_pin = producer_lock
+            .pointer("/files/prereg_v2.json")
+            .and_then(Value::as_str)
+            .ok_or_else(|| schema_err(PRODUCER_LOCK_PATH, "files.prereg_v2.json"))?;
+        let producer: Value =
+            parse_json(producer_prereg_rel, &read_verified(&repo_root.join(producer_prereg_rel), producer_pin)?)?;
+        hashes_v2.insert(producer_prereg_rel.into(), producer_pin.into());
+        // This model's prereg v2 and its key table.
+        let prereg_rel = format!("{PREREG_V2_DIR}/prereg_v2.json");
+        let prereg: Value = parse_json(&prereg_rel, &read_verified(&repo_root.join(&prereg_rel), &pj)?)?;
+        hashes_v2.insert(prereg_rel.clone(), pj.clone());
+        let md_rel = format!("{PREREG_V2_DIR}/PREREG_v2.md");
+        read_verified(&repo_root.join(&md_rel), &pm)?;
+        hashes_v2.insert(md_rel, pm.clone());
+        let ours = prereg
+            .pointer("/matched_interface/keys")
+            .ok_or_else(|| schema_err(&prereg_rel, "matched_interface.keys"))?;
+        let theirs = producer
+            .pointer("/system_coupling_interfaces/IF-ICP-THERMAL-v2/keys")
+            .ok_or_else(|| schema_err(producer_prereg_rel, "IF-ICP-THERMAL-v2 keys"))?;
+        for (who, t) in [(&prereg_rel, ours), (&producer_prereg_rel.to_string(), theirs)] {
+            let h = canonical_sha256(t);
+            if h != KEY_TABLE_V2_SHA256 {
+                return Err(schema_err(who, format!("key table sha256 {h} != {KEY_TABLE_V2_SHA256}")));
+            }
+        }
+        // Every vocabulary row names the same id and key as the locked table, in the same order.
+        let rows = ours.as_array().ok_or_else(|| schema_err(&prereg_rel, "keys is not an array"))?;
+        let table: Vec<(String, String)> = rows
+            .iter()
+            .map(|r| {
+                (
+                    r.get("id").and_then(Value::as_str).unwrap_or_default().to_string(),
+                    r.get("key").and_then(Value::as_str).unwrap_or_default().to_string(),
+                )
+            })
+            .collect();
+        let vocab_rows: Vec<(String, String)> =
+            vocab::ICP_V2_KEYS.iter().map(|k| (k.id.to_string(), k.key.to_string())).collect();
+        if table != vocab_rows {
+            return Err(schema_err(&prereg_rel, "the consumer vocabulary differs from the locked key table"));
+        }
+        Ok(GovernedContextV2 { v1, prereg_v2_sha256: pj, prereg_v2_md_sha256: pm, hashes_v2 })
+    }
+
+    pub fn v1(&self) -> &GovernedContext {
+        &self.v1
+    }
+    pub fn prereg_v2_sha256(&self) -> &str {
+        &self.prereg_v2_sha256
+    }
+    pub fn prereg_v2_md_sha256(&self) -> &str {
+        &self.prereg_v2_md_sha256
+    }
+    /// The v1 governed hashes plus the v2 locks, preregistrations and the producer anchor.
+    pub fn hashes(&self) -> BTreeMap<String, String> {
+        let mut h = self.v1.hashes().clone();
+        h.extend(self.hashes_v2.clone());
+        h
+    }
+}
