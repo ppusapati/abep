@@ -1,0 +1,278 @@
+{
+ "schema": "abep_new_physics_prereg_v1",
+ "id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "prereg_version": 1,
+ "title": "HallThruster.jl parametric feasibility envelope of the H-1 Hall accelerator and the decisive 196-state two-layer closure classification (A9.32)",
+ "status": "PREREGISTERED_NOT_RUN",
+ "status_label": "PARAMETRIC / NOT_VALIDATED",
+ "date": "2026-10-07",
+ "lane": "lane-hall-parametric-envelope",
+ "base": "8a53b13 (origin/integration/simulation-complete)",
+ "registered_before": "any HallThruster.jl run on any H-1 case. No Hall result for H-1 exists anywhere in the repository; the container that wrote this cannot install Julia (julialang-s3.julialang.org / pkg.julialang.org 403). The only Hall results ever seen by the project are the P5-Xe identification and P5-N2 v1 campaign records (P5 geometry), which are not H-1 results.",
+ "governing_records": {
+  "A9.32_json": {"path": "docs/decisions/OD_2026_10_07_A9_32_hall_thrust_critical_path_parametric_envelope.json", "sha256": "b3deaf25c9db25ed7fe349d28b8c4b7585d434c9e90f952d9757ee725473ddde"},
+  "A9.32_verbatim": {"path": "docs/decisions/OD_2026_10_07_A9_32_HALL_THRUST_CRITICAL_PATH_PARAMETRIC_ENVELOPE.md", "sha256": "69e9a00d77a7c51717a1d9cf6738c238090b23812195c8b37bfab560f33a0e6f"},
+  "A9.31_verbatim_secs_15_23": {"path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md", "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc"},
+  "input_audit": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/input_audit_v1.json", "sha256": "d84d59ca3cd0fd3dd61939c7392214ff63c20e4fe204ddcba0f6b8b7583e64b0"},
+  "CLAUDE.md": {"path": "CLAUDE.md", "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3"}
+ },
+ "what_this_is": [
+  "the preregistered case grid, assumptions, run-status rule, output schema and decision rules of the A9.32 parametric Hall envelope for H-1",
+  "the preregistered two-layer reporting and A9.32 classification rule of the decisive 196-state closure run, including its NOT_DETERMINABLE branch"
+ ],
+ "what_this_is_not": [
+  "not a validation and not an admission: the credible Hall transport set stays EMPTY; HallMap admission, the admitted-member loader and the hall_ensemble admission logic are unchanged",
+  "not a design Hall map: no envelope record is a Hall map, enters HallMap, or enters layer (b)",
+  "not an H-1 design selection: geometry points are FEMM analysis points, B(z) shapes are surrogates",
+  "not a change to the P5-N2 v1 outcome (INCONCLUSIVE, permanent) or to any pin, frozen dataset or admitted record",
+  "not new transport: no parameter is tuned, retuned or interpolated; no super-Bohm set is used"
+ ],
+ "hard_rules": [
+  "HR-01 credible set EMPTY is unchanged; layer (a) results never enter layer (b); every layer (a) field carries PARAMETRIC / NOT_VALIDATED",
+  "HR-02 transport only from registered records (transport_ensemble_v0.json screening_candidates, all a = 1/16 <= 1/16); no super-Bohm, no retuning to any target",
+  "HR-03 no invented geometry, B(z), operating point or rate data: every axis value below cites its source; the B(z) gap is declared (sec. bz_family)",
+  "HR-04 Xe uses the pinned HallThruster.jl built-in Xe; the only Hall air chemistry is abep-n2n-0.11 (runs beyond its domain are OUT_OF_DOMAIN, never feasible); no Hall O / O2 chemistry exists and atomic O is never replaced by N2: N2 runs are labelled N2_PROXY",
+  "HR-05 run statuses follow the registered P5 rule structure; only converged, sustained, chemistry-trustworthy runs count toward feasibility",
+  "HR-06 HallThruster.jl pin unchanged (v0.23.1, bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5, Julia 1.11.7); every run records commit, Julia version, thread / BLAS environment and case hash",
+  "HR-07 PHYSICALLY_NON_CLOSING only from non-closure demonstrated by evaluated physics under the favorable envelope; never from missing evidence or planning allocations; otherwise NOT_DETERMINABLE with the blocking list"
+ ],
+ "pinned_inputs": {
+  "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+  "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+  "hallthruster_bridge/ensemble/transport_ensemble_v0.json": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
+  "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv": "65216f4d713be929b9c59f101711301d933df7b2ae1ed3478b36aa3772926625",
+  "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_3p0kW.csv": "1f1cb42cdc9a2b40b527e8e0a8daf5d4559c460ba8e4342e4f488e4ce283efe2",
+  "hallthruster_bridge/PINNED.toml": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280",
+  "hallthruster_bridge/Manifest.toml": "a98c1a6e9cdf491ef602ef7cd1d08371b2bbe3da4e1df74e45a1c9d84f6c5634",
+  "hallthruster_bridge/Project.toml": "6abb74e3e4fd8078904b0035391ba63fa20d27a358f39b085708bb6a8ae6f617",
+  "hallthruster_bridge/bridge_lib.jl": "cf26aab8607b640ebb78be9715f2c7c5d957f145ac17f52c1b23db2e980e21ab",
+  "hallthruster_bridge/propellants/n2_n.toml": "4f10db747cfb11cfefb8080a9cad52e502c2ab11f0e485ac644a532b929607de",
+  "hallthruster_bridge/propellants/rate_validity.toml": "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a",
+  "hallthruster_bridge/hall_map_schema_v1.json": "f371b43bced1020d55e2b28303c877220f41395767cdf6ebab6019475e9bdde9",
+  "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json": "0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c",
+  "hallthruster_bridge/prereg/p5_n2_run_status_rule_v1.json": "e72eb4c65417ebda87fbb1f2df75b3d97156f4a4a25207a336197872d88151e0",
+  "hallthruster_bridge/prereg/p5_n2_run_status_rule_v1_addendum1_extinction.json": "56e767747b92e1fad8c0820c564700e0052a5496e63192f4c38f9539ce3c04bf",
+  "config/constraints/engineering_constraints_v1.json": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+  "config/assessment/gate_thresholds_v1.json": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+  "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
+ },
+ "pinned_inputs_note": "the per-propellant rate tables referenced by n2_n.toml are re-hashed by bridge_lib.jl's own guards at run time; the case file and driver produced after this lock are hash-pinned in the launch manifest (sec. execution_provenance)",
+ "families": [
+  {
+   "id": "XE",
+   "supply_mode": "XE_CONTINGENCY",
+   "gas": "Xe",
+   "chemistry": "builtin-Xe (HallThruster.jl v0.23.1 built-in tables; bridge run_case allowed_charges [1])",
+   "chemistry_domain_check": "none available: the built-in Xe tables have no project validity manifest; every Xe record carries the limitation XE_CHEMISTRY_NO_VALIDITY_MANIFEST and chemistry never makes an Xe run OUT_OF_DOMAIN (same observation as hall_transport_v2_prereg_DRAFT chemistry.xenon)",
+   "classification_role": "XE_CONTINGENCY layer (a) Hall input",
+   "mdot_label": "XE_FLOW_FROM_H1_ATM_RANGE: no H-1 Xe flow is registered (xe_accounting_a9_v3 XV2-17 / XV2-18 TBD); the Xe axis reuses the registered H-1 mass-flow values"
+  },
+  {
+   "id": "N2_PROXY",
+   "supply_mode": "AIR_PRIMARY (diagnostic only)",
+   "gas": "N2",
+   "propellant_config": "propellants/n2_n.toml",
+   "rate_dir": "propellants",
+   "chemistry": "abep-n2n-0.11 nominal (COMPLETE_FOR_P5_N2_VALIDATION; domain T_e 2-30 eV, mean energy 3-45 eV)",
+   "chemistry_domain_check": "bridge_lib.jl chemistry_validity: f_out <= 1e-12 for every reaction over every saved frame and cell, and no unresolved table (p5_n2_run_status_rule_v1 chemistry_trust_rule, never relaxed)",
+   "classification_role": "NONE. N2_PROXY: pure N2 at the delivered mass flow. The delivered air has atomic O at 5.0-86.0 % of the inflow over the required states (input audit AUD-CHEM) and there is no Hall O / O2 chemistry. N2 is not a bound in either direction (O is lighter, which lowers thrust per power at equal efficiency, and has a lower ionization energy and no molecular losses, which raises ionization efficiency). N2_PROXY results are reported in their own diagnostic block and never enter the AIR_PRIMARY layer (a) feasibility, the PHYSICALLY_NON_CLOSING branch or the SELECT_WITH_EVIDENCE_CONDITIONS branch.",
+   "air_layer_a": "AIR_PRIMARY layer (a) Hall quantities are NOT_EVALUATED with reason AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED (an honest AIR Hall envelope is not possible with the registered chemistry)"
+  }
+ ],
+ "case_grid": {
+  "order": "families x geometry x bz_shape x B_peak x V_d x mdot x transport, nested in that order, each axis in the order listed; case index i is 0-based in file order",
+  "geometry": {
+   "rule": "the FEMM-authorised analysis points of the H-1 freeze candidate (A9.14 F5-OQ-01, ANALYSIS_POINTS_NOT_SELECTION) with their nominal_assumptions probe rows; r_in = (d_mean - h)/2, r_out = (d_mean + h)/2, L from the probe; mm -> m by 1e-3",
+   "label": "ANALYSIS_POINT_NOT_DESIGN_SELECTION",
+   "source": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json /x_hall_design_space/probe_evaluations and /femm_analysis_points/points",
+   "points": [
+    {"id": "G-AMINDHMAX-LH8603", "probe": "A_min_dh_max L/h 8.603", "pointer": "/x_hall_design_space/probe_evaluations/4", "h_mm": 7.758, "d_mean_mm": 69.82, "L_mm": 66.74},
+    {"id": "G-AMINDHMAX-LH12", "probe": "A_min_dh_max L/h 12.0", "pointer": "/x_hall_design_space/probe_evaluations/6", "h_mm": 7.758, "d_mean_mm": 69.82, "L_mm": 93.1},
+    {"id": "G-AMAXDHMIN-LH8603", "probe": "A_max_dh_min L/h 8.603", "pointer": "/x_hall_design_space/probe_evaluations/8", "h_mm": 17.21, "d_mean_mm": 65.38, "L_mm": 148.1},
+    {"id": "G-AMAXDHMIN-LH12", "probe": "A_max_dh_min L/h 12.0", "pointer": "/x_hall_design_space/probe_evaluations/10", "h_mm": 17.21, "d_mean_mm": 65.38, "L_mm": 206.5},
+    {"id": "G-AMAXDHMAX-LH8603", "probe": "A_max_dh_max L/h 8.603", "pointer": "/x_hall_design_space/probe_evaluations/12", "h_mm": 11.18, "d_mean_mm": 100.6, "L_mm": 96.18},
+    {"id": "G-AMAXDHMAX-LH12", "probe": "A_max_dh_max L/h 12.0", "pointer": "/x_hall_design_space/probe_evaluations/14", "h_mm": 11.18, "d_mean_mm": 100.6, "L_mm": 134.2},
+    {"id": "G-RP1", "probe": "RP-1 anchor (not a selection)", "pointer": "/x_hall_design_space/probe_evaluations/16", "h_mm": 12.0, "d_mean_mm": 70.0, "L_mm": 103.2}
+   ],
+   "excluded": "A_min_dh_min L/h 8.603 and 12.0: not authorised analysis points (outside the window under worst-case assumptions)"
+  },
+  "bz_shape": [
+   {"id": "BZ-P5B16", "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv", "source": "Peterson, Gallimore & Haas, AIAA 2001-3890, Fig. 11 (digitized; REFERENCE_FOR_P5_ONLY)"},
+   {"id": "BZ-P5B30", "file": "bfield/p5_vacuum_Br_centerline_3p0kW.csv", "source": "Peterson, Gallimore & Haas, AIAA 2001-3890, Fig. 12 (digitized; REFERENCE_FOR_P5_ONLY)"}
+  ],
+  "B_peak_G": [
+   {"id": "BP-LO", "value": 69.93, "source": "H1F-BZ-03 lower end (h1_freeze_candidate_v1.json /parameters/36/value/0)"},
+   {"id": "BP-HI", "value": 268.6, "source": "H1F-BZ-03 upper end (h1_freeze_candidate_v1.json /parameters/36/value/1)"}
+  ],
+  "V_d_V": [
+   {"id": "VD-180", "value": 180.0, "source": "H2-1 V_d band lower end (h2_1_hall_chamber_magnet_v1.json /channel/V_d_band_V/0)"},
+   {"id": "VD-265", "value": 265.0, "source": "midpoint of the H2-1 V_d band (grid resolution only; not an operating point)"},
+   {"id": "VD-350", "value": 350.0, "source": "H2-1 V_d band upper end (/channel/V_d_band_V/1); H1F-AN-10 350 V rating"}
+  ],
+  "mdot_kg_s": [
+   {"id": "MF-LO", "value": 3.77e-07, "source": "H2-1 flows_kgps design_case_min (/channel/flows_kgps/design_case_min)"},
+   {"id": "MF-MID", "value": 1.287e-06, "source": "H2-1 flows_kgps design_case_max (/channel/flows_kgps/design_case_max); H1F-CH-12 nominal sizing ~1.3 mg/s"},
+   {"id": "MF-HI", "value": 3.2e-06, "source": "H2-1 flows_kgps delivered_max_A5 (/channel/flows_kgps/delivered_max_A5); H1F-CH-12 range upper end"}
+  ],
+  "transport": {
+   "source": "hallthruster_bridge/ensemble/transport_ensemble_v0.json /screening_candidates (file order)",
+   "ids": ["sgb-screen-01", "sgb-screen-02", "sgb-screen-03", "sgb-screen-04", "sgb-screen-05", "sgb-screen-06", "sgb-screen-07", "sgb-screen-08", "sgb-screen-09"]
+  },
+  "n_cases": {"per_family": 2268, "total": 4536, "formula": "2 families x 7 geometry x 2 shapes x 2 B_peak x 3 V_d x 3 mdot x 9 transport"},
+  "key_format": "<family>|<geometry id>|<bz id>|<B_peak id>|<V_d id>|<mdot id>|<transport id>",
+  "case_hash": "case_sha256 = sha256 of the case object without the case_sha256 field, serialized as compact JSON with keys sorted (serde_json number formatting); verified by the Rust ingestion against the frozen case file"
+ },
+ "bz_family": {
+  "kind": "SOURCED_SURROGATE",
+  "label": "SOURCED_SURROGATE_P5_SHAPE_NOT_H1_BZ",
+  "gap_declared": "H-1 B(z) is NOT registered (H1F-BZ-01 TBD_AFTER_EVIDENCE: no FEMM of MC-1, no measured H-1 map). The family below is built only from the two sourced P5 shapes. It is never an H-1 design value (bz_reference rule; HW-H1-03) and never a transport optimum.",
+  "registration_rule": "rigid, never stretched (bridge_lib.jl measured_bfield): B_profile.align = \"exit\", B_profile.z_ref_in_file_mm = the file z of the first maximum of B (BZ-P5B16 28.23 mm, BZ-P5B30 30.40 mm), so the shape peak sits at the H-1 exit plane z = L (the H1F-BZ-02 peak position 'at or just downstream of z = L'); B_profile.scale_to = \"max\" with B_ref_T = B_peak_G x 1e-4. Upstream of the first file point and downstream of the last, HallThruster.jl holds B constant (no tail is invented by the bridge).",
+  "what_stays_p5": "the gradient, the width of the high-field region and the anode-to-peak ratio (0.201 for BZ-P5B16, 0.257 for BZ-P5B30) are P5 properties, not H-1 properties",
+  "classification_effect": "ASYMMETRIC (existence versus universality). A Hall closure found under the surrogate is a demonstrated existence of a closing model configuration whose field is a sourced, realised (P5) shape scaled into the H-1 FEMM target band: it is eligible for SELECT_WITH_EVIDENCE_CONDITIONS with the explicit evidence condition EC-BZ (H-1 B(z) from FEMM / measurement realises a field of this class). A Hall non-closure under the surrogate does NOT show that no H-1 field closes, because the surrogate family is not shown to be favorable (bounding) for H-1: it is recorded as HALL_NON_CLOSING_UNDER_SURROGATE_BZ and is NOT eligible for PHYSICALLY_NON_CLOSING (the classification is then NOT_DETERMINABLE with blocker H1_BZ_NOT_REGISTERED). A future envelope version with an H-1-registered B(z) family (kind H1_REGISTERED) makes Hall non-closure eligible."
+ },
+ "numerical_settings": {
+  "label": "NUMERICAL_ADEQUACY_NOT_VERIFIED_FOR_H1 (hall_transport_v2_prereg_DRAFT RG-04 open)",
+  "basis": "the only registered settings are the P5-N2 campaign settings (cases/p5_n2.json: 200 cells over 0.1 m, dt 5e-9 s, 2e-3 s, averaging from 1e-3 s); they are carried to H-1 by the rules below (same cell size, same base timestep, same number of domain transit times)",
+  "domain_m": "L_m + (z_last_mm - z_peak_mm) x 1e-3 of the B shape (the domain ends at the last sourced B datum after registration): BZ-P5B16 L + 0.06603 m, BZ-P5B30 L + 0.06622 m",
+  "cells": "ceil(domain_m / 5e-4) (EvenGrid; P5-N2 cell size 0.5 mm)",
+  "dt_s": 5e-09,
+  "duration_s": "2e-3 x max(1, domain_m / 0.1)",
+  "average_start_s": "duration_s / 2",
+  "mode": "vacuum (no facility ingestion; flight)",
+  "wall_and_ions": "bridge defaults as in P5-N2 v1: WallSheath(BNSiO2, 1.0), ion_wall_losses = false, HallThruster.jl defaults otherwise",
+  "thruster_name": "H-1-PARAMETRIC",
+  "compact": true
+ },
+ "favorable_but_defensible": {
+  "definition": "The favorable-but-defensible (FBD) Hall envelope of a family is the set of HallThruster.jl outcomes over the preregistered grid, every axis of which is a registered H-1 value or range (geometry analysis points, V_d band, delivered-flow values, B_peak band) or a registered / sourced assumption (transport: the nine screening candidates within a <= 1/16; B(z): the two sourced P5 shapes registered peak-at-exit), evaluated favorably: (1) existence over the grid: a constraint closes in the envelope if ANY grid point closes it (maximum over geometry, B shape, B_peak, V_d, flow and transport candidate); (2) the thrust observable is the HallThruster.jl time-averaged thrust_N with no plume-divergence loss added beyond what the pinned solver computes; (3) bus power uses P_d (PPU efficiency 1, an upper bound) plus the non-Hall lower bound P_nonHall,LB; (4) only registered evidence: no super-Bohm set, no anom_scale below or above the candidates' values, no retuning, no interpolation between grid points, no extrapolation beyond the grid.",
+  "defensible_means": "every input is registered or sourced (cited above); nothing is chosen after seeing a result",
+  "favorable_means_for_non_closure": "a non-closure claim additionally requires that every axis family is H-1-registered or demonstrably bounding. In v1 the B(z) family is SOURCED_SURROGATE and the AIR chemistry is N2_PROXY: neither can carry a Hall-driven non-closure (bz_family.classification_effect; families N2_PROXY classification_role).",
+  "not_favorable_by_construction": "the transport set is the registered screening set, not a bound on all transport (a < 1/16 sets are not registered); within this preregistration the registered set is the defensible transport space, which is why transport existence over the nine candidates is taken"
+ },
+ "run_status_rule": {
+  "basis": "structure of hallthruster_bridge/prereg/p5_n2_run_status_rule_v1.json (+ addendum 1) without measured targets: FAIL_VALIDATION does not exist here (no target); extinction is read from the bridge 'sustained' flag of hall_map_schema_v1 (conventions.sustained_min_Id_fraction = 0.01), the registered HallMap performance-trust convention, because the P5 O1 rule needs a measured I_d target",
+  "statuses": {
+   "NUMERICAL_FAILURE": "record absent, retcode != \"success\", converged != true, finite != true, or any of thrust_N, discharge_current_A, discharge_power_W absent or not finite",
+   "OUT_OF_DOMAIN": "N2_PROXY only: chemistry_unresolved_rate_files non-empty, or any chemistry_per_reaction extrapolated_fraction null or > 1e-12 (f_out rule, never relaxed); evaluated independently of sustainment. XE: never from chemistry (no validity manifest)",
+   "NOT_SUSTAINED": "sustained != true (bridge flag)",
+   "PASS": "none of the above: converged, finite, sustained and chemistry-trustworthy"
+  },
+  "precedence": ["NUMERICAL_FAILURE", "OUT_OF_DOMAIN", "NOT_SUSTAINED", "PASS"],
+  "counts_toward_feasibility": "PASS only",
+  "counts_as_evaluated_physics": "PASS and NOT_SUSTAINED (a numerically valid, in-domain run); OUT_OF_DOMAIN and NUMERICAL_FAILURE are unknowns",
+  "record_rejection": "a record whose case_sha256, hallthruster_commit, prereg_lock_sha256 or cases_file_sha256 differs from the frozen values, a duplicate key, an unexpected key or a missing expected key makes the whole envelope ingestion MODEL_ERROR (no partial envelope)"
+ },
+ "envelope_output_schema": {
+  "raw_record": "one JSON object per case (JSONL, gzip at freeze), written by the driver; raw observables only, no status, no threshold, no verdict",
+  "fields": {
+   "key": "case key", "family": "XE | N2_PROXY", "case_sha256": "copied from the case", "cases_file_sha256": "sha256 of the frozen case file",
+   "prereg_lock_sha256": "sha256 of prereg_lock_v1.json", "driver_sha256": "sha256 of the driver", "hallthruster_commit": "Manifest repo-rev (check_pin)",
+   "hallthruster_version": "pkgversion", "julia_version": "VERSION", "threads_blas": "JULIA_NUM_THREADS, OPENBLAS_NUM_THREADS, MKL_NUM_THREADS, OMP_NUM_THREADS (null if unset)",
+   "host": "gethostname()", "utc_start": "ISO 8601", "wall_s": "run wall time",
+   "retcode": "bridge run_case", "converged": "bool", "finite": "all I_d samples, thrust and mean I_d finite", "sustained": "bridge flag",
+   "thrust_N": "time-averaged thrust", "discharge_current_A": "time-averaged I_d", "discharge_power_W": "I_d x V_d", "ion_current_A": "time-averaged",
+   "anode_eff": "", "mass_eff": "", "current_eff": "", "voltage_eff": "", "divergence_eff": "", "Te_max_eV": "", "ne_max_m3": "",
+   "Id_rms_rel": "", "Id_pp_rel": "", "Id_f_dominant_Hz": "", "Id_min_A": "", "Id_max_A": "", "B_max_T": "", "B_peak_minus_exit_m": "",
+   "chemistry_unresolved_rate_files": "N2_PROXY", "chemistry_per_reaction": "N2_PROXY: file, limit, extrapolated_fraction, max active energy", "chemistry_trustworthy": "bridge flag (diagnostic)",
+   "error": "solver error text if any"
+  },
+  "frozen_raw": "<name>_raw.jsonl.gz + <name>_raw_manifest.json {prereg_lock_sha256, cases_file_sha256, driver_sha256, n_records, raw_sha256, shard sidecars}; the Rust ingestion reads only a frozen, sha-pinned raw file",
+  "labels": "every ingested quantity carries layer = PARAMETRIC / NOT_VALIDATED, the family label and the bz_family label; Xe records also carry XE_CHEMISTRY_NO_VALIDITY_MANIFEST and XE_FLOW_FROM_H1_ATM_RANGE; every record carries TRANSPORT_EXTRAPOLATED and NUMERICAL_ADEQUACY_NOT_VERIFIED_FOR_H1"
+ },
+ "hall_specific_closure": {
+  "scope": "per family; state-independent (vacuum runs, no ingestion; the state dependence enters only through the non-Hall inputs)",
+  "point_tests": {
+   "P_bus_fav": "discharge_power_W + P_nonHall,LB",
+   "T12": "PASS and thrust_N >= HC-01 (engineering_constraints_v1 thrust_sustained_min_mN x 1e-3) and P_bus_fav < HC-03 (p_bus_max_W)",
+   "T25": "PASS and thrust_N >= HC-02 (thrust_capability_mN x 1e-3) and P_bus_fav < HC-03",
+   "XE_FUNC": "PASS and thrust_N > 0 and P_bus_fav < HC-03 (bounded functional Xe capability: a sustained, in-domain discharge with positive thrust inside the bus limit; the >= 12 mN basis is the atmospheric-propellant requirement, HC-01)"
+  },
+  "constraint_status": {
+   "CLOSES_IN_ENVELOPE": "at least one grid point passes the point test",
+   "NON_CLOSING_IN_ENVELOPE": "no grid point passes AND every grid point of the family is evaluated physics (PASS or NOT_SUSTAINED)",
+   "NOT_DETERMINABLE_IN_ENVELOPE": "no grid point passes and at least one grid point is OUT_OF_DOMAIN or NUMERICAL_FAILURE (blockers: their counts)",
+   "NOT_EVALUATED": "no envelope ingested (HALL_ENVELOPE_NOT_RUN) or the family carries no classification role (AIR: AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED)"
+  },
+  "hardware_consistency": "a hardware configuration is (geometry, bz_shape); B_peak, V_d and mdot are operating variables (coil current, discharge voltage, flow). AIR_PRIMARY needs T12 and T25 under one hardware configuration (any transport candidate); the architecture needs one hardware configuration that closes every required mode",
+  "margins": "for each test: the maximum of (thrust_N - threshold) over PASS points with P_bus_fav < HC-03 and the minimum P_bus_fav over PASS points with thrust_N >= threshold, each with its key; raw quantities with labels, never a verdict",
+  "robustness": "per hardware configuration: the transport candidates under which some point closes; ROBUST_UNDER_TRANSPORT_SET iff all nine close (A9.31 sec. 23 C); N2_PROXY uses one chemistry configuration (nominal), so no chemistry robustness is claimed"
+ },
+ "non_hall_inputs": {
+  "rule": "registered in advance: a sourced favorable bound OR an explicit open condition. An open condition can never make a state PHYSICALLY_NON_CLOSING; it blocks feasibility (NOT_DETERMINABLE) until evaluated",
+  "items": [
+   {"id": "NH-FLOW", "quantity": "delivered flow (atmospheric; Xe feed) >= the closing point's mdot", "today": "OPEN: NO_FROZEN_DESIGN_POINT (no delivered-flow record, F7 / F8)", "favorable_bound_for_non_closure": "none needed: the Hall grid already spans the registered H-1 flow range 0.377-3.2 mg/s; flow can never demonstrate non-closure in v1"},
+   {"id": "NH-ICP", "quantity": "I_e,cap >= I_d of the closing point (Q3)", "today": "OPEN: NP_ICP_NOT_ADMITTED (ledger RUST_IMPL); raw I_d of closing points reported", "favorable_bound_for_non_closure": "none sourced (no upper bound on I_e,cap): ICP can never demonstrate non-closure in v1"},
+   {"id": "NH-PBUS", "quantity": "complete-ledger P_bus < HC-03 at the closing point", "today": "OPEN: BUS_LEDGER_NOT_COMPLETE (official flight ledger bus_power_boundary_a9_v2, PARTIAL_BOUNDARY, 24 TBD terms)", "favorable_bound": "P_nonHall,LB = sum of the lower_bound_W of every official flight ledger item except HALL_DISCHARGE (TBD -> 0), read by the admitted abep-subsystems ledger at evaluation time (0 W today); used inside the Hall point tests", "evaluated_when": "ledger status COMPLETE: P_d + sum of the non-Hall p_bus_w < HC-03 is evaluated (CLOSES / NON_CLOSING); P_nonHall,LB >= HC-03 is an eligible evaluated non-closure"},
+   {"id": "NH-TD", "quantity": "T - D_total >= 0 (HC-08), AIR_PRIMARY", "today": "OPEN: HOST_SPACECRAFT_DRAG_ICD_ABSENT (intake-face drag is PARAMETRIC_SENSITIVITY_ONLY without a design point)", "favorable_bound_for_non_closure": "D >= 0 (physical non-negativity): adds nothing beyond the Hall thrust tests"},
+   {"id": "NH-MASS", "quantity": "complete wet mass < HC-04", "today": "OPEN: MASS_INCOMPLETE_EVIDENCE (no CBE / measured mass; Xe load not frozen). The planning-value DOES_NOT_CLOSE (dry known 38.349 kg; wet 40.35 / 43.35 / 48.35 kg at the 2 / 5 / 10 kg Xe planning cases) is reported as information and is NOT eligible for PHYSICALLY_NON_CLOSING (planning allocations alone, HR-07)", "favorable_bound_for_non_closure": "none (no evaluated mass)"},
+   {"id": "NH-THERMAL", "quantity": "thermal closure", "today": "OPEN: THERMAL_LOADS_NOT_EVALUATED (NP-THERMAL-CATHODELESS NE-01 / NE-02)"},
+   {"id": "NH-LIFE", "quantity": "erosion / AO / life", "today": "OPEN: LIFE_NOT_EVALUATED (wall_life_trustworthy needs ion_wall_losses = true; not set in this envelope)"}
+  ]
+ },
+ "state_evaluation": {
+  "states": "the frozen 196-state design set (atmosphere_msis21_orbit_v1_design_states_v2) through the admitted mission hook abep_mission::integration::today::run_admitted (environment EVALUATED per state); required = the set's required flag",
+  "required_modes": ["AIR_PRIMARY", "XE_CONTINGENCY"],
+  "required_constraints": {
+   "AIR_PRIMARY": ["HALL_T12_AT_PBUS", "HALL_T25_CAPABILITY", "NH-FLOW", "NH-ICP", "NH-PBUS", "NH-TD", "NH-MASS", "NH-THERMAL", "NH-LIFE"],
+   "XE_CONTINGENCY": ["HALL_XE_FUNCTIONAL_AT_PBUS", "NH-FLOW", "NH-ICP", "NH-PBUS", "NH-MASS", "NH-THERMAL", "NH-LIFE"]
+  },
+  "state_status_a": {
+   "PHYSICS_FEASIBLE": "every required constraint closes (Hall: CLOSES_IN_ENVELOPE, eligible) at one hardware configuration",
+   "PHYSICS_NON_CLOSING": "some required constraint is non-closing by evaluated physics AND eligible (Hall: H1_REGISTERED B(z) family and not N2_PROXY; non-Hall: evaluated, not planning)",
+   "NOT_DETERMINABLE": "otherwise; blockers = the sorted reason codes of every required constraint that is neither eligible-closing nor eligible-non-closing"
+  },
+  "non_hall_at_closing_points": "when a non-Hall input becomes evaluable it is evaluated at each Hall closing point of the state, and the state is PHYSICS_FEASIBLE only if one hardware configuration closes every required constraint; in v1 every non-Hall input is OPEN, so this case does not arise"
+ },
+ "two_layer_reporting": {
+  "layer_a": "physics-feasible (PARAMETRIC / NOT_VALIDATED): the FBD envelope plus the non-Hall rules above; every field labelled",
+  "layer_b": "evidence-qualified / admitted: only admitted components (abep_hall HallGate: credible set; abep_mission run hook; abep_assess RFP constraint matrix; official power ledger; mass record). A state is EVIDENCE_QUALIFIED_FEASIBLE only if every required RFP row reads COMPLIES with determining evidence; with the credible set EMPTY every Hall quantity is NOT_EVALUATED",
+  "separation": "no layer (a) value, status or count is copied into layer (b) and vice versa; the record carries separate counts n_states_physics_feasible_a and n_states_evidence_qualified_b",
+  "a9_31_sec_23": "reported per layer where legitimate: feasible state count, robust count, worst state, min/max of thrust, P_bus, I_d, mdot (Hall envelope, layer a), and the statuses of drag, T - D, I_e,cap margin and wet mass (open today)"
+ },
+ "classification_rule": {
+  "vocabulary": ["PHYSICALLY_NON_CLOSING", "SELECT_WITH_EVIDENCE_CONDITIONS", "NOT_DETERMINABLE"],
+  "a9_32_rules": {
+   "rule_1": "if even the favorable but defensible Hall envelope cannot close the RFP constraints -> PHYSICALLY_NON_CLOSING (Hall + RF physically non-closing)",
+   "rule_2": "if a feasible region exists but the credible Hall set remains empty -> SELECT_WITH_EVIDENCE_CONDITIONS (physically feasible but not yet experimentally proven)"
+  },
+  "procedure": [
+   "C0: credible set non-empty -> NOT_DETERMINABLE [CREDIBLE_SET_NON_EMPTY_NEW_PREREGISTRATION_REQUIRED] (rule 2's premise is an empty set; layer (b) then governs under its own rules)",
+   "C1: no frozen envelope ingested -> NOT_DETERMINABLE [HALL_ENVELOPE_NOT_RUN] plus every open blocker",
+   "C2: some required state of some required mode is PHYSICS_NON_CLOSING (eligible, evaluated) -> PHYSICALLY_NON_CLOSING (the RFP constraints are statewise over all required states, so one eligible non-closing required state means the RFP constraints cannot close)",
+   "C3: every required state of every required mode is PHYSICS_FEASIBLE, under one hardware configuration, and the credible set is EMPTY -> SELECT_WITH_EVIDENCE_CONDITIONS, with the evidence conditions EC-TRANSPORT (an admitted Hall member), EC-BZ (H-1 B(z) of the surrogate class, when bz_family = SOURCED_SURROGATE), EC-DIV (plume divergence not added), EC-NUM (numerical adequacy for H-1), EC-GEOM (analysis point, not a selection) and every non-Hall evidence item used",
+   "C4: otherwise NOT_DETERMINABLE with the blocking list (union of state blockers over required modes, sorted, with state counts)"
+  ],
+  "per_mode": "the record also reports the C2 / C3 / C4 outcome per mode (informative; the architecture classification is the procedure above over both required modes)",
+  "binding_constraint": "per mode, per constraint: the number of required states CLOSES / NON_CLOSING / OPEN; the Hall-specific closure (HALL_* constraints) is reported separately from the non-Hall closure (NH-*) so the binding constraint is visible; first blocker in the order of required_constraints",
+  "a9_31_sec_21_category": {
+   "FUNDAMENTAL_ARCHITECTURE_LIMIT": "an eligible evaluated non-closure",
+   "DESIGN_VARIABLE_LIMIT": "HALL_NON_CLOSING_UNDER_SURROGATE_BZ",
+   "MODEL_DOMAIN_LIMIT": "AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED; Hall NOT_DETERMINABLE_IN_ENVELOPE driven by OUT_OF_DOMAIN runs",
+   "MISSING_EVIDENCE": "every other open condition (HALL_ENVELOPE_NOT_RUN, NO_FROZEN_DESIGN_POINT, NP_ICP_NOT_ADMITTED, BUS_LEDGER_NOT_COMPLETE, HOST_SPACECRAFT_DRAG_ICD_ABSENT, MASS_INCOMPLETE_EVIDENCE, THERMAL_LOADS_NOT_EVALUATED, LIFE_NOT_EVALUATED; Hall NOT_DETERMINABLE_IN_ENVELOPE driven by NUMERICAL_FAILURE runs)"
+  },
+  "today_expected": "no envelope exists: classification NOT_DETERMINABLE with HALL_ENVELOPE_NOT_RUN first; every Hall field of layer (a) NOT_EVALUATED (HALL_ENVELOPE_NOT_RUN); layer (b) Hall NOT_EVALUATED (credible set EMPTY); AIR layer (a) stays NOT_EVALUATED (AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED) even after the envelope runs, so the architecture classification stays NOT_DETERMINABLE until a Hall O / O2 chemistry or an owner-registered alternative exists"
+ },
+ "seeds": "none: HallThruster.jl runs are deterministic for a fixed input, pin and thread count; no random input is used. Determinism is protected by JULIA_NUM_THREADS = OPENBLAS_NUM_THREADS = MKL_NUM_THREADS = OMP_NUM_THREADS = 1 in the workflow and the local script (recorded per run)",
+ "execution_provenance": {
+  "per_record": ["hallthruster_commit", "hallthruster_version", "julia_version", "threads_blas", "host", "driver_sha256", "cases_file_sha256", "case_sha256", "prereg_lock_sha256", "utc_start", "wall_s"],
+  "per_shard": "a provenance JSON next to the shard output: the JuliaRunSidecar nine fields (julia_version, hallthruster_commit, threads_blas, host, argv, input_sha256, output_sha256, rust_commit, contract_id) plus runner OS",
+  "launch_manifest": "launch_manifest_v1.json: driver path and sha256, case file path and sha256, prereg lock sha256, n_cases, n_shards, the exact command per shard; generated by the Rust case generator after this lock",
+  "freeze": "the shard outputs are concatenated in key order, gzipped and hashed into <name>_raw_manifest.json before any ingestion (sha-pinned); the Rust harness never reads an unfrozen file",
+  "pin_check": "the driver calls check_pin() (bridge_lib.jl) and refuses any other HallThruster.jl commit / version; it also refuses a case file or prereg lock whose sha256 differs from the launch manifest"
+ },
+ "runtime_estimate": {
+  "basis": "one observed P5-N2 throughput datum: 36 records in about 5 min on 4 parallel shards (HISTORY 2026-09-26 facility attempt 1), i.e. ~30-60 s per N2 run at 200 cells x 0.4 M base steps; cost assumed proportional to cells x duration",
+  "h1_scaling": "domain 0.133-0.273 m -> cells 266-546 and duration 2.66-5.45 ms: 1.8-7.4x the P5-N2 cost (mean ~3.7x)",
+  "per_run": "N2_PROXY ~2 min mean (up to ~4-7 min); XE expected cheaper (one neutral, one ion species); both are estimates, not measurements",
+  "total": "~4536 runs, of order 100-150 CPU-hours; with 64 single-thread shards about 2-3 h wall per shard"
+ },
+ "open_owner_questions": [
+  {"id": "OQ-HPE-01", "question": "Accept the asymmetric surrogate-B(z) rule (bz_family.classification_effect): Hall closure under the P5-shape surrogate is eligible for SELECT_WITH_EVIDENCE_CONDITIONS with EC-BZ; Hall non-closure under it is not eligible for PHYSICALLY_NON_CLOSING? (A symmetric rule would need a new preregistration version.)"},
+  {"id": "OQ-HPE-02", "question": "AIR_PRIMARY: with no Hall O / O2 chemistry the AIR layer (a) stays NOT_EVALUATED and the A9.32 architecture classification cannot leave NOT_DETERMINABLE. Authorize a Hall O / O2 chemistry contract (A9.30 limits O / O2 to the ICP), or register another AIR treatment?"},
+  {"id": "OQ-HPE-03", "question": "H-1 Xe operating flow: confirm the reuse of the H-1 mass-flow values (XE_FLOW_FROM_H1_ATM_RANGE) or register an Xe flow (XV2-17 / XV2-18)."},
+  {"id": "OQ-HPE-04", "question": "Non-Hall favorable bounds: register sourced bounds (per-state delivered flow, I_e,cap, CBE mass, host drag) when they exist; until then they are open conditions."},
+  {"id": "OQ-HPE-05", "question": "Execution: run the workflow_dispatch workflow (GitHub-hosted runners, ~100-150 CPU-h) or another environment with the pinned Julia stack?"},
+  {"id": "OQ-HPE-06", "question": "Numerical settings: accept the scaled P5-N2 rule for v1 (labelled NUMERICAL_ADEQUACY_NOT_VERIFIED_FOR_H1) or require a grid-adequacy check (RG-04) first?"}
+ ],
+ "change_control": "any change to an axis, rule, threshold source, family role or classification step after the lock is a new, dated preregistration version or addendum, registered before the runs it governs; results seen under v1 cannot justify a v1 change"
+}
