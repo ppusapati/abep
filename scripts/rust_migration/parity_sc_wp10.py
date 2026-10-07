@@ -20,6 +20,7 @@ import json
 import math
 import os
 import platform
+import re
 import subprocess
 import sys
 import time
@@ -1008,20 +1009,49 @@ def numpy_stream_samples() -> dict:
 CD = ROOT / "docs/rust_migration/contracts/DIAG-B2-OF-01-INTERP-SENSITIVITY"
 
 
-def accept(chain_file: Path):
-    """The one scored execution of ACCEPT-DIAG-B2-OF-01-INTERP-SENSITIVITY-V1: the Rust acceptance tests, the Rust
-    records of every registered point, an independent Python classification from the frozen CSV grid (exact float
-    equality) and the survey comparison, and the F7 / F8 chain application of the full study."""
-    pre = CD / "acceptance_prereg_v1.json"
-    if (CD / "acceptance_report_v1.json").exists():
-        raise SystemExit("REFUSED: acceptance_report_v1.json exists (scored once)")
+TEST_LINE = re.compile(r"^test (.+?) \.\.\. (.+)$")
+PLATFORM_IGNORED = ("REGISTERED_PLATFORM_TEST:PT-01", "REGISTERED_PLATFORM_TEST:PT-02")
+
+
+def accept(chain_file: Path, version: int = 1):
+    """The one scored execution of ACCEPT-DIAG-B2-OF-01-INTERP-SENSITIVITY-V<version>: the Rust acceptance tests, the
+    Rust records of every registered point, an independent Python classification from the frozen CSV grid (exact float
+    equality) and the survey comparison, and the F7 / F8 chain application of the full study.
+    v1 (scored, NOT_ACCEPTED, kept) ran tests/interp_sensitivity.rs and counted cargo's summary line as a test; v2
+    applies acceptance_prereg_v2's test_evidence_rule (workspace run, 'test <name> ... <status>' lines only, the
+    registered test of each case exactly once and ok)."""
+    pre = CD / f"acceptance_prereg_v{version}.json"
+    out_json, out_md = CD / f"acceptance_report_v{version}.json", CD / f"acceptance_report_v{version}.md"
+    if out_json.exists():
+        raise SystemExit(f"REFUSED: {out_json.name} exists (scored once)")
     reg = json.loads(pre.read_text())
     env = dict(os.environ, PATH=f"/root/.cargo/bin:{os.environ.get('PATH', '')}", CARGO_INCREMENTAL="0",
                CARGO_PROFILE_DEV_DEBUG="0")
-    t = subprocess.run(["cargo", "test", "--locked", "-p", "abep-uq", "--test", "interp_sensitivity", "--",
-                        "--test-threads=1"], cwd=ROOT, env=env, capture_output=True, text=True)
-    lines = [ln for ln in t.stdout.splitlines() if ln.startswith("test ")]
-    tests = {ln.split()[1]: ln.split()[-1] for ln in lines}
+    if version == 1:
+        cmd = ["cargo", "test", "--locked", "-p", "abep-uq", "--test", "interp_sensitivity", "--", "--test-threads=1"]
+        t = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True, text=True)
+        lines = [ln for ln in t.stdout.splitlines() if ln.startswith("test ")]
+        tests = {ln.split()[1]: ln.split()[-1] for ln in lines}
+        tests_ok = t.returncode == 0 and bool(tests) and all(v == "ok" for v in tests.values())
+        cargo_record = {"command": " ".join(cmd[:7]), "exit": t.returncode, "tests": tests}
+    else:
+        cmd = ["cargo", "test", "--workspace", "--locked"]
+        t = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True, text=True)
+        parsed = [m.groups() for m in map(TEST_LINE.match, t.stdout.splitlines()) if m]
+        ignored = [(n, st) for n, st in parsed if st.startswith("ignored")]
+        bad_ignored = [(n, st) for n, st in ignored if not any(x in st for x in PLATFORM_IGNORED)]
+        failed = [(n, st) for n, st in parsed if not st.startswith("ignored") and st != "ok"]
+        cases = {}
+        for case, ref in reg["v2_change"]["registered_tests"].items():
+            name = ref.split("::")[-1]
+            hits = [st for n, st in parsed if n == name]
+            cases[case] = {"test": ref, "occurrences": len(hits), "status": hits[0] if len(hits) == 1 else hits,
+                           "ok": hits == ["ok"]}
+        tests = {c: v["status"] for c, v in cases.items()}
+        tests_ok = t.returncode == 0 and not failed and not bad_ignored and all(v["ok"] for v in cases.values())
+        cargo_record = {"command": " ".join(cmd), "exit": t.returncode, "n_test_lines": len(parsed),
+                        "n_ok": sum(st == "ok" for _, st in parsed), "failed": failed, "ignored": ignored,
+                        "ignored_outside_registered_platform_class": bad_ignored, "registered_tests": cases}
     import pandas as pd
     df = pd.read_csv(ROOT / "abep_sim/data/intake_surface_v1.csv")
     axes = ["L_over_d", "phi", "alpha", "theta_deg"]
@@ -1083,14 +1113,13 @@ def accept(chain_file: Path):
     at08 = (chain["interpolant_used_by_chain"] is False and chain["n_non_conforming"] == 0
             and set(chain["face_geometry_counts"]) <= {"GRID_NODE", "NOT_ON_KNOWN_FACE"}
             and grid_classes in ([], ["ROUNDING_LEVEL"]))
-    ok = (t.returncode == 0 and bool(tests) and all(v == "ok" for v in tests.values()) and all(c["agree"] for c in checks)
-          and all(c["within_1e-12"] for c in survey_cmp) and at08 and at10)
-    rep = {"schema": "abep_new_diagnostic_acceptance_report_v1", "id": reg["id"],
+    ok = (tests_ok and all(c["agree"] for c in checks) and all(c["within_1e-12"] for c in survey_cmp) and at08
+          and at10)
+    rep = {"schema": f"abep_new_diagnostic_acceptance_report_v{version}", "id": reg["id"],
            "prereg": pre.relative_to(ROOT).as_posix(), "prereg_sha256": sha_file(pre),
            "registered_in": git("log", "--format=%H", "-1", "--", pre.relative_to(ROOT).as_posix()),
            "rust_commit": git("rev-parse", "HEAD"), "environment": environment(),
-           "cargo_test": {"command": "cargo test --locked -p abep-uq --test interp_sensitivity", "exit": t.returncode,
-                          "tests": tests},
+           "cargo_test": cargo_record,
            "registered_points": checks, "survey_maxima": survey_cmp,
            "at10_determinism_two_evaluations_identical": at10,
            "f7_f8_chain_application": dict(chain_summary, at08_prediction_holds=at08,
@@ -1102,11 +1131,20 @@ def accept(chain_file: Path):
                + ("ACCEPTED (software verification, not physics)" if ok else "NOT_ACCEPTED"),
                "abep-intake: additive public accessors IntakeSurface::{species_rows_at, containing_simplex_rows} "
                "(admitted interpolation unchanged; C-ABEP_SIM_INTAKE_TPMC_PY admission unaffected)"]}
-    (CD / "acceptance_report_v1.json").write_text(json.dumps(rep, indent=1, default=str) + "\n")
-    md = [f"# Acceptance report v1 - {reg['id']}", "", f"Verdict: **{rep['verdict']}**.", "",
+    if version > 1:
+        rep["supersedes"] = reg.get("supersedes")
+    out_json.write_text(json.dumps(rep, indent=1, default=str) + "\n")
+    when = "before any diagnostic code" if version == 1 else "alone, before this execution"
+    md = [f"# Acceptance report v{version} - {reg['id']}", "", f"Verdict: **{rep['verdict']}**.", "",
           f"* Preregistration `{rep['prereg']}` sha256 `{rep['prereg_sha256']}`, committed in `{rep['registered_in'][:12]}` "
-          "before any diagnostic code.", f"* Rust commit `{rep['rust_commit'][:12]}`.",
-          f"* cargo test: exit {t.returncode}; " + ", ".join(f"{k} {v}" for k, v in tests.items()), "",
+          f"{when}.", f"* Rust commit `{rep['rust_commit'][:12]}`.",
+          f"* {cargo_record['command']}: exit {t.returncode}; " + ", ".join(f"{k} {v}" for k, v in tests.items())]
+    if version > 1:
+        md += [f"* workspace test lines {cargo_record['n_test_lines']}, ok {cargo_record['n_ok']}, failed "
+               f"{len(cargo_record['failed'])}, ignored {[n for n, _ in cargo_record['ignored']]} (registered platform "
+               f"class only: {not cargo_record['ignored_outside_registered_platform_class']})",
+               f"* Supersedes `{rep['supersedes']['path']}`; its scored report stays committed ({rep['supersedes']['v1_verdict']})."]
+    md += ["",
           "## Registered points (Rust classification vs an independent Python classification from the frozen CSV)", "",
           "| case | table | point | Rust | Python | status | class | max spread |", "|---|---|---|---|---|---|---|---|"]
     for c in checks:
@@ -1120,13 +1158,13 @@ def accept(chain_file: Path):
     md += ["", "## F7 / F8 chain application (AT-08)", "", f"* {chain_summary}", f"* prediction holds: {at08}", "",
            "Software verification of a numerical diagnostic, not physics validation, not a change of the frozen "
            "surface and not a gate PASS.", ""]
-    (CD / "acceptance_report_v1.md").write_text("\n".join(md))
+    out_md.write_text("\n".join(md))
     print("ACCEPTANCE", rep["verdict"])
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 3 and sys.argv[1] == "accept":
-        accept(Path(sys.argv[2]))
+    if len(sys.argv) in (3, 4) and sys.argv[1] == "accept":
+        accept(Path(sys.argv[2]), int(sys.argv[3]) if len(sys.argv) == 4 else 1)
         raise SystemExit(0)
     if len(sys.argv) != 2 or sys.argv[1] not in ("dev", "score"):
         raise SystemExit(__doc__)
