@@ -5048,3 +5048,36 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   - a producer → consumer record adapter for orchestration;
   - RI-PART f_up and TK-06 split for real configurations;
   - CFG-FLIGHT-HALL-ON (CPL-HALL-ON).
+
+## 2026-10-07 — Hall-thrust critical path (A9.32): NP-HALL-PARAMETRIC-ENVELOPE v1 preregistered; case generation, workflow and 196-state closure harness (no run yet)
+
+- **Input audit** (`input_audit_v1.json`, `1559dbd`):
+  - **H-1 B(z) is NOT registered** (H1F-BZ-01 TBD: no FEMM of MC-1, no measured map). Only the H1F-BZ-02 shape target
+    and the H1F-BZ-03 peak band 69.93–268.6 G exist. The two P5 Peterson 2001 shapes are the only sourced numeric
+    profiles.
+  - No H-1 design point is selected; there are 7 FEMM-authorised analysis points.
+  - The credible set is EMPTY; only sgb-screen-01..09 are registered.
+  - There is no Hall O / O2 chemistry, while atomic O is 5–86 % of the inflow over the required states.
+  - No H-1 Xe flow is registered. Every non-Hall input is open.
+- **Preregistration** (`6358665`, committed alone):
+  - Hashes: `prereg_v1.json` `3275f857…`, `PREREG.md` `733509bd…`, lock `25ecfa88…`.
+  - Grid: 4536 vacuum cases. XE plus N2_PROXY × 7 geometry analysis points × 2 SOURCED_SURROGATE B shapes (P5,
+    peak-at-exit, band ends) × 3 V_d × 3 flows × 9 candidates. Numerics are scaled from P5-N2.
+  - Run-status rule: NUMERICAL_FAILURE > OUT_OF_DOMAIN > NOT_SUSTAINED > PASS.
+  - Favorable-but-defensible definition. The surrogate-B(z) rule is asymmetric: a closure can support
+    SELECT_WITH_EVIDENCE_CONDITIONS with EC-BZ; a non-closure is never PHYSICALLY_NON_CLOSING.
+  - AIR layer (a) is NOT_EVALUATED. N2_PROXY is diagnostic only.
+  - Classification procedure C0..C4 with the NOT_DETERMINABLE branch.
+- **Code** (`382c5c4`, `9364b25`, `ea69ae9`; additive):
+  - `abep-hall::envelope`: frozen case set, run status, sha-pinned ingestion.
+  - `abep-julia-bridge::envelope_cases` and `abep-h1-envelope-cases` (generate / check / run-shard / freeze). The case
+    file is `c4a73dbb…`; the dry run checks it against bridge_lib.jl `run_case`. The Julia driver is
+    `driver/h1_envelope_driver.jl`.
+  - `abep-assess::closure` and `abep-assess-closure`: the two-layer 196-state run.
+  - `.github/workflows/h1-parametric-envelope.yml`: workflow_dispatch only, 64 shards, freeze. Not triggered.
+  - `driver/run_local.sh`.
+- **Closure run today** (`closure_run_today_v1.json`): **NOT_DETERMINABLE** (C1).
+  - Blockers: HALL_ENVELOPE_NOT_RUN, AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED, and the open non-Hall inputs.
+  - 0 / 196 states are physics-feasible in layer (a); 0 are evidence-qualified in layer (b).
+- **Execution:** Julia is not installable here (403), so no Hall run was made. The estimate is about 100–150 CPU-h.
+- **Open owner questions:** OQ-HPE-01..06 (surrogate rule, Hall O / O2, Xe flow, non-Hall bounds, execution, numerics).
