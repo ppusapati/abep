@@ -37,6 +37,19 @@ pub enum PreparedH {
     /// One ion-neutral cross section shared by every ion species (multi-species H-LIEB with distinct sigma is refused
     /// before this point: the prereg defines one h per surface).
     Lieberman { sigma_i_m2: f64 },
+    /// model_version 2, member H-MS (GAP-04, EQ-05 v2 / EQ-22): h_j,s = h(lambda_i,s) per ion species, lambda_i,s =
+    /// 1 / (n_g sigma_s) (sigma per ion species, the IN-17 registration form); 0 for neutrals. The members H-LO and
+    /// H-HI are `Lieberman` with the largest / smallest sigma (common h at min / max lambda).
+    LiebermanPerSpecies { sigma_by_species_m2: Vec<f64> },
+}
+
+/// model_version 2 wall recombination of one atom species (PF-01, EQ-02 v2): sink gamma (1/4) n vbar A_j at every wall
+/// surface j, source of 1/2 molecule per atom lost. `gamma_area_m2` = sum_j gamma_a,m(j) A_j over the wall surfaces.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Recombination {
+    pub atom: usize,
+    pub molecule: usize,
+    pub gamma_area_m2: f64,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -95,6 +108,8 @@ pub struct PreparedCase {
     pub p_abs_w: f64,
     /// Per reaction: Some for a registered table (EQ-06 through abep-chem), None for a synthetic rate.
     pub direct: Vec<Option<DirectRate>>,
+    /// model_version 2 (PF-01): wall recombination in FLOW_BALANCE; empty in model_version 1.
+    pub recombination: Vec<Recombination>,
 }
 
 impl PreparedCase {
@@ -162,9 +177,35 @@ impl PreparedCase {
         g
     }
 
+    /// H-MS edge factors per surface and species (None for every common-h model).
+    fn h_species(&self, n_g_total: f64) -> Option<Vec<Vec<f64>>> {
+        let PreparedH::LiebermanPerSpecies { sigma_by_species_m2 } = &self.h else { return None };
+        Some(
+            self.surfaces
+                .iter()
+                .map(|sf| {
+                    sigma_by_species_m2
+                        .iter()
+                        .map(|&sig| {
+                            if sig == 0.0 {
+                                return 0.0;
+                            }
+                            let lam = physics::ion_mean_free_path(n_g_total, sig);
+                            match sf.orientation {
+                                Orientation::Radial => physics::h_radial_lieberman(self.radius_m, lam),
+                                Orientation::Axial => physics::h_axial_lieberman(self.length_m, lam),
+                            }
+                        })
+                        .collect()
+                })
+                .collect(),
+        )
+    }
+
     fn h_values(&self, n_g_total: f64) -> Vec<f64> {
         match &self.h {
             PreparedH::Explicit(h) => h.clone(),
+            PreparedH::LiebermanPerSpecies { .. } => vec![f64::NAN; self.surfaces.len()],
             PreparedH::Lieberman { sigma_i_m2 } => {
                 let lam = physics::ion_mean_free_path(n_g_total, *sigma_i_m2);
                 self.surfaces
@@ -226,6 +267,8 @@ pub struct Kinetics {
     /// Densities per species index.
     pub n: Vec<f64>,
     pub h: Vec<f64>,
+    /// H-MS (model_version 2): h_j,s per surface and species; None for every common-h model.
+    pub h_species: Option<Vec<Vec<f64>>>,
     pub u_b: Vec<f64>,
     /// Max |residual| / largest term over every balance row.
     pub balance_residual: f64,
@@ -274,8 +317,13 @@ fn balance_system(
     n_e: f64,
     k: &[f64],
     h: &[f64],
+    hs: Option<&[Vec<f64>]>,
     collecting: &[bool],
 ) -> (Vec<Vec<f64>>, Vec<f64>, Vec<usize>) {
+    let h_js = |j: usize, s: usize| match hs {
+        Some(m) => m[j][s],
+        None => h[j],
+    };
     let ns = c.n_species();
     let unknown: Vec<usize> = match &c.neutrals {
         PreparedNeutrals::Fixed(_) => (0..ns).filter(|&s| c.is_ion(s)).collect(),
@@ -322,9 +370,9 @@ fn balance_system(
         let mut h_wall = 0.0;
         for (j, sf) in c.surfaces.iter().enumerate() {
             if collecting[j] {
-                h_all += h[j] * sf.area_m2;
+                h_all += h_js(j, s) * sf.area_m2;
                 if !sf.kind.is_open() {
-                    h_wall += h[j] * sf.area_m2;
+                    h_wall += h_js(j, s) * sf.area_m2;
                 }
             }
         }
@@ -350,6 +398,14 @@ fn balance_system(
             a[row][row] -= 0.25 * vbar * open_a_tau;
             b[row] -= inflow_per_s[s];
         }
+        // EQ-02 v2 (PF-01): atom sink gamma (1/4) n vbar A_j at every wall, half a molecule per atom (nuclei-exact).
+        for rc in &c.recombination {
+            let vbar = physics::neutral_mean_speed(c.t_g_k, c.set.species[rc.atom].mass_kg);
+            let sink = 0.25 * vbar * rc.gamma_area_m2;
+            let (ra, rm) = (pos(rc.atom).expect("unknown"), pos(rc.molecule).expect("unknown"));
+            a[ra][ra] -= sink;
+            a[rm][ra] += 0.5 * sink;
+        }
     }
     (a, b, unknown)
 }
@@ -367,6 +423,21 @@ fn row_residual(a: &[Vec<f64>], b: &[f64], x: &[f64]) -> f64 {
         worst = worst.max(rel);
     }
     worst
+}
+
+/// Read-only access to the linear species-balance rows (A x = b over `unknown`) at (T_e, n_e) with rate coefficients
+/// `k`, common edge factors `h` and the collecting pattern; the solver builds its rows with the same function. Used by
+/// the model_version 2 verification (LC-13: PF-01 sink and molecule source in a closed vessel, where the full balance
+/// is singular because nothing fixes the inventory).
+pub fn balance_rows(
+    c: &PreparedCase,
+    t_e: f64,
+    n_e: f64,
+    k: &[f64],
+    h: &[f64],
+    collecting: &[bool],
+) -> (Vec<Vec<f64>>, Vec<f64>, Vec<usize>) {
+    balance_system(c, t_e, n_e, k, h, None, collecting)
 }
 
 /// Species densities at (T_e, n_e) in one regime. FLOW_BALANCE with H-LIEB iterates on the total neutral density.
@@ -390,12 +461,14 @@ pub fn kinetics(
         PreparedNeutrals::Flow { .. } => f64::NAN,
     };
     let mut n_g_guess = if n_g_fixed.is_nan() { 0.0 } else { n_g_fixed };
-    let iterate = matches!(c.h, PreparedH::Lieberman { .. }) && matches!(c.neutrals, PreparedNeutrals::Flow { .. });
+    let iterate = matches!(c.h, PreparedH::Lieberman { .. } | PreparedH::LiebermanPerSpecies { .. })
+        && matches!(c.neutrals, PreparedNeutrals::Flow { .. });
     let mut it = 0;
     loop {
         it += 1;
         let h = c.h_values(n_g_guess);
-        let (a, b, unknown) = balance_system(c, t_e, n_e, &k, &h, collecting);
+        let hs = c.h_species(n_g_guess);
+        let (a, b, unknown) = balance_system(c, t_e, n_e, &k, &h, hs.as_deref(), collecting);
         let Some(x) = solve_linear(a.clone(), b.clone()) else {
             return fail("SINGULAR_BALANCE", format!("species balance singular at T_e = {t_e} eV"));
         };
@@ -428,6 +501,7 @@ pub fn kinetics(
                 k,
                 n,
                 h,
+                h_species: hs,
                 u_b,
                 balance_residual: row_residual(&a, &b, &x),
                 fixed_point_iterations: it,
@@ -575,6 +649,9 @@ pub fn equilibrium_state(
     kin: Kinetics,
     bisection_iterations: usize,
 ) -> Result<Option<Equilibrium>, SolveFailure> {
+    if kin.h_species.is_some() {
+        return equilibrium_state_per_species(c, regime, kin, bisection_iterations);
+    }
     let t_e = kin.t_e;
     let n_e = kin.n_e;
     let ns = c.n_species();
@@ -678,6 +755,141 @@ pub fn equilibrium_state(
         kin,
         phi_p_v: phi_p,
         v_s_float_v: v_s,
+        surfaces,
+        p_reaction_w,
+        p_loss_w,
+        quasi_residual: quasi,
+        current_residual,
+        bisection_iterations,
+    }))
+}
+
+/// Volume power per reaction (EQ-16): V e n_e n_t k_r E_r, or the elastic recoil term.
+fn reaction_powers(c: &PreparedCase, kin: &Kinetics) -> Vec<f64> {
+    let t_g_ev = physics::kelvin_to_ev(c.t_g_k);
+    c.set
+        .reactions
+        .iter()
+        .enumerate()
+        .map(|(ri, r)| {
+            let t = c.set.species_index(&r.target).expect("checked");
+            let base = c.volume_m3 * E_CHARGE * kin.n_e * kin.n[t] * kin.k[ri];
+            if r.kind == ReactionKind::ElasticMomentumTransfer {
+                base * 3.0 * M_E / c.set.species[t].mass_kg * (kin.t_e - t_g_ev)
+            } else {
+                base * r.threshold_ev
+            }
+        })
+        .collect()
+}
+
+/// H-MS surface state (model_version 2, GAP-04): per-species edge factors h_j,s, electron edge density
+/// n_e,j = sum_s Z_s h_j,s n_i,s (EQ-22), a floating sheath per surface (EQ-08 v2) and phi_p in closed form over the
+/// biased surfaces. `v_s_float_v` is NaN here: the floating drop differs per surface and is each surface's `barrier_v`.
+fn equilibrium_state_per_species(
+    c: &PreparedCase,
+    regime: &Regime,
+    kin: Kinetics,
+    bisection_iterations: usize,
+) -> Result<Option<Equilibrium>, SolveFailure> {
+    let t_e = kin.t_e;
+    let ns = c.n_species();
+    let vbar_e = physics::electron_mean_speed(t_e);
+    let hs = kin.h_species.clone().expect("H-MS");
+    let z = |s: usize| f64::from(c.set.species[s].charge);
+    // Per surface: ion charge-flux density at the edge and the electron edge density.
+    let ion_flux: Vec<f64> = (0..c.surfaces.len())
+        .map(|j| (0..ns).filter(|&s| c.is_ion(s)).map(|s| z(s) * hs[j][s] * kin.n[s] * kin.u_b[s]).sum())
+        .collect();
+    let n_edge: Vec<f64> = (0..c.surfaces.len())
+        .map(|j| (0..ns).filter(|&s| c.is_ion(s)).map(|s| z(s) * hs[j][s] * kin.n[s]).sum())
+        .collect();
+    let mut v_s = Vec::with_capacity(c.surfaces.len());
+    for j in 0..c.surfaces.len() {
+        let arg = 0.25 * n_edge[j] * vbar_e / ion_flux[j];
+        if !(arg.is_finite() && arg > 1.0) {
+            return fail(
+                "FLOATING_SHEATH_UNDEFINED",
+                format!("surface {}: (1/4) n_e,j vbar_e / sum Z h n u_B = {arg} (must exceed 1)", c.surfaces[j].id),
+            );
+        }
+        v_s.push(t_e * arg.ln());
+    }
+    let phi_p = if regime.lower_v.is_none() && regime.upper_v.is_none() {
+        None
+    } else {
+        let mut s_val = 0.0;
+        let mut terms = Vec::new();
+        for (j, sf) in c.surfaces.iter().enumerate() {
+            let Some(vj) = sf.potential_v else { continue };
+            if regime.collecting[j] {
+                s_val += sf.area_m2 * ion_flux[j];
+                terms.push((0.25 * sf.area_m2 * n_edge[j] * vbar_e).ln() + vj / t_e);
+            } else {
+                s_val -= 0.25 * sf.area_m2 * n_edge[j] * vbar_e;
+            }
+        }
+        if terms.is_empty() || s_val <= 0.0 {
+            return Ok(None);
+        }
+        let mx = terms.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+        let ln_k = mx + terms.iter().map(|t| (t - mx).exp()).sum::<f64>().ln();
+        let phi = t_e * (ln_k - s_val.ln());
+        let inside = regime.lower_v.is_none_or(|l| phi > l) && regime.upper_v.is_none_or(|u| phi <= u);
+        if !inside {
+            return Ok(None);
+        }
+        Some(phi)
+    };
+    let eps = formation_by_species(&c.set);
+    let mut surfaces = Vec::with_capacity(c.surfaces.len());
+    for (j, sf) in c.surfaces.iter().enumerate() {
+        let (collecting, barrier, potential) = match (sf.potential_v, phi_p) {
+            (Some(vj), Some(phi)) => (vj < phi, (phi - vj).max(0.0), Some(vj)),
+            (Some(_), None) => unreachable!("biased surfaces imply a referenced phi_p"),
+            (None, phi) => (true, v_s[j], phi.map(|p| p - v_s[j])),
+        };
+        let gamma_i: Vec<f64> =
+            (0..ns).map(|s| if collecting && c.is_ion(s) { hs[j][s] * kin.n[s] * kin.u_b[s] } else { 0.0 }).collect();
+        let gamma_z: f64 = (0..ns).map(|s| z(s) * gamma_i[s]).sum();
+        let saturated = !collecting;
+        let gamma_e = 0.25 * n_edge[j] * vbar_e * if saturated { 1.0 } else { (-barrier / t_e).exp() };
+        let current_ion_a = E_CHARGE * sf.area_m2 * gamma_z;
+        let current_electron_a = E_CHARGE * sf.area_m2 * gamma_e;
+        let current_a = current_ion_a - current_electron_a;
+        let l_w = E_CHARGE * sf.area_m2 * (gamma_e * (2.0 * t_e + barrier) + gamma_z * 0.5 * t_e);
+        let c_w = match (sf.potential_v, phi_p) {
+            (Some(vj), Some(phi)) => current_a * (phi - vj),
+            _ => 0.0,
+        };
+        let formation_w = E_CHARGE * sf.area_m2 * (0..ns).map(|s| eps[s].unwrap_or(0.0) * gamma_i[s]).sum::<f64>();
+        surfaces.push(SurfaceState {
+            collecting_ions: collecting,
+            electron_saturated: saturated,
+            gamma_i,
+            gamma_z,
+            gamma_e,
+            barrier_v: barrier,
+            potential_v: potential,
+            current_a,
+            current_ion_a,
+            current_electron_a,
+            l_w,
+            c_w,
+            formation_w,
+        });
+    }
+    let p_reaction_w = reaction_powers(c, &kin);
+    let p_loss_w = p_reaction_w.iter().sum::<f64>() + surfaces.iter().map(|s| s.l_w).sum::<f64>();
+    let big = surfaces.iter().map(|s| s.current_ion_a.abs().max(s.current_electron_a.abs())).fold(0.0, f64::max);
+    let sum_i: f64 = surfaces.iter().map(|s| s.current_a).sum();
+    let current_residual = if big == 0.0 { sum_i.abs() } else { sum_i.abs() / big };
+    let quasi = quasi_residual(c, &kin);
+    Ok(Some(Equilibrium {
+        regime: regime.clone(),
+        kin,
+        phi_p_v: phi_p,
+        v_s_float_v: f64::NAN,
         surfaces,
         p_reaction_w,
         p_loss_w,
@@ -840,6 +1052,25 @@ pub fn solve(c: &PreparedCase, num: &NumericalSettings) -> Result<SolveOutcome, 
 pub fn trivial_neutrals(c: &PreparedCase) -> Vec<f64> {
     match &c.neutrals {
         PreparedNeutrals::Fixed(nf) => nf.clone(),
+        // model_version 2 with wall recombination: the n_e = 0 balance couples atoms and molecules (EQ-02 v2).
+        PreparedNeutrals::Flow { .. } if !c.recombination.is_empty() => {
+            let ns = c.n_species();
+            let (a, b, unknown) = balance_system(
+                c,
+                1.0,
+                0.0,
+                &vec![0.0; c.set.reactions.len()],
+                &vec![1.0; c.surfaces.len()],
+                None,
+                &vec![true; c.surfaces.len()],
+            );
+            let x = solve_linear(a, b).unwrap_or_else(|| vec![f64::NAN; unknown.len()]);
+            let mut n = vec![0.0; ns];
+            for (i, &s) in unknown.iter().enumerate() {
+                n[s] = if c.is_ion(s) { 0.0 } else { x[i] };
+            }
+            n
+        }
         PreparedNeutrals::Flow { inflow_per_s } => {
             let open_a_tau: f64 =
                 c.surfaces.iter().filter(|s| s.kind.is_open()).map(|s| s.area_m2 * s.tau.unwrap_or(f64::NAN)).sum();

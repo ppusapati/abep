@@ -1,0 +1,32 @@
+{
+  "id": "np_thermal_cathodeless_al10_v2_registration_v1",
+  "model_id": "NP-THERMAL-CATHODELESS",
+  "model_version": "2.0.0",
+  "prereg_lock_v2_sha256": "727689fee6bd003295c53abfbc4185c93fab80620329c75062a956dbbb9742de",
+  "prereg_v2_sha256": "6828f3e257e38a588c9513f2531658035fa904b6c51e3b28831681d871adfa78",
+  "registered": "2026-10-07",
+  "rule": "prereg v2 analytic_limiting_cases AL-10 (v2): 'The synthetic interface records are registered alone with their sha256 before the scored run' (the v1 VS-NET registration rule). Committed alone, before the scored verification run of model 2.0.0.",
+  "record_path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification/al10_v2_icp_record_v1.json",
+  "record_sha256": "3419b51859e00861410c8f49f19c1c4164a3c6f11b98ddb24e07c56a9cc8f300",
+  "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+  "schema": "IF-ICP-THERMAL-v2 record (abep-subsystems thermal::case::InterfaceRecordV2)",
+  "builder": "crates/abep-subsystems/tests/support/vs_net_v2.rs::build_record (the file is its byte-identical output; tests/thermal_v2.rs checks the bytes and this sha256)",
+  "network": {
+    "vs_net_path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification/vs_net_v1.json",
+    "vs_net_sha256": "64c4bf335354bd9ffc7e4de602156d3ca26b1b6ee614e30558ccc94c897ec9a9",
+    "unchanged": true
+  },
+  "content": {
+    "keys_W": "TK-R1 53.4, TK-R2 45, TK-R3 40, TK-R4 27, TK-R5 6.4; TK-01 5, TK-02 3, TK-03 0.5, TK-04 2.5, TK-05 2, TK-06 7, TK-07 15, TK-08 2, TK-09 4, TK-10 3, TK-11 3, TK-12 2.4, TK-13 4.0, TK-14 0, TK-15 0 (IFI2-03..IFI2-07 and CONS-I3 exact; slot loads equal the LS-01 ICP rows 45 / 2 / 6.4 W)",
+    "producer_partitions_W": "TK-07: N_VESSEL 8, N_COLLECTOR 4, N_ANTENNA 1.5, N_HOUSING 1.5; TK-12: N_COLLECTOR 2.4",
+    "configuration": "SYNTHETIC",
+    "scenario_member_id": "SYNTHETIC/P:AL-10-v2"
+  },
+  "transformations_used_by_verification": {
+    "model_2_case": "VS-NET with model_version 2.0.0, the IF-ICP-THERMAL-v1 record removed and this record as IF-ICP-THERMAL-v2 (case_id set per run); TK-06 split = the registered PART.ohmic, f_rad = PART.icp_rad (both unchanged); RX-H1-FACE f_up = PART.f_up {H1_POLE_IN 0.25, H1_POLE_OUT 0.25, H1_WALL_IN 0.125, H1_WALL_OUT 0.125, H1_ANODE 0.0625, N_MOUNT 0.0625, N_HOUSING 0.0625, EXPORT 0.0625}; node declarations add the v2 keys each node is a registered receiver of (N_COLLECTOR Q_icp_bias_collector_W; N_HOUSING, N_MOUNT, H1_POLE_IN, H1_POLE_OUT, H1_WALL_IN, H1_WALL_OUT, H1_ANODE Q_icp_outflow_upstream_W; N_MATCH P_icp_matching_DC_W)",
+    "consistent_sets": "match_colocated true and false; a signed TK-12 (-1.0 W, TK-13 7.4 W, N_COLLECTOR share -1.0 W: node total 3 W > 0)",
+    "refusal_sets": "single-key edits violating IFI2-02..IFI2-09; a missing key; a key INCOMPLETE_EVIDENCE; a key NOT_EVALUATED; an IF-ICP-THERMAL-v1 record; P_icp_bus_W; a Hall-powered key; TK-10 > 0 without f_up; no TK-06 split; configuration CFG-FLIGHT-HALL-ON; a negative N_COLLECTOR total (TK-12 -5.0 W, TK-13 11.4 W)",
+    "LC-18": "the IF-ICP-BUS-v2 consumer on a synthetic record with BK-01..BK-03 = 45 / 2 / 6.4 W and a synthetic bus_power_boundary_a9_v2 ledger with eta_slot 0.9 / 0.85 / 0.8 and eta_front_end 0.96",
+    "where": "crates/abep-subsystems/tests/support/vs_net_v2.rs and tests/thermal_v2.rs"
+  }
+}

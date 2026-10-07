@@ -1,0 +1,251 @@
+{
+  "interface_id": "IF-ICP-THERMAL-v2",
+  "producer_id": "NP-ICP-NEUTRALIZER",
+  "producer_version": "2",
+  "producer_lock_sha256": "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287",
+  "key_table_sha256": "33e495adadbe94a5113c5f6b9040156ec8309295cca15b812714038beaa51161",
+  "case_id": "VS-NET-v1",
+  "case_class": "SYNTHETIC_VERIFICATION",
+  "supply_mode": "AIR_PRIMARY",
+  "design_state_id": null,
+  "operating_point_id": "VS-NET-OP-1",
+  "configuration": "SYNTHETIC",
+  "scenario_member_id": "SYNTHETIC/P:AL-10-v2",
+  "time_basis": {
+    "kind": "STEADY",
+    "breakpoints_s": null
+  },
+  "keys": {
+    "P_icp_abs_W": {
+      "value": 27.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "P_icp_assist_magnet_W": {
+      "value": 0.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "P_icp_collector_bias_W": {
+      "value": 6.4,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "P_icp_flow_control_W": {
+      "value": 0.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "P_icp_matching_DC_W": {
+      "value": 2.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "P_icp_rf_forward_W": {
+      "value": 40.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "P_icp_rf_reflected_W": {
+      "value": 3.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "P_icp_rf_source_DC_W": {
+      "value": 45.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "P_icp_slot_load_sum_W": {
+      "value": 53.4,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "Q_icp_bias_collector_W": {
+      "value": 2.4,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "Q_icp_bias_export_W": {
+      "value": 4.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "Q_icp_coil_ohmic_W": {
+      "value": 7.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "Q_icp_extraction_W": {
+      "value": 4.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "Q_icp_line_W": {
+      "value": 0.5,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "Q_icp_match_W": {
+      "value": 2.5,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "Q_icp_outflow_downstream_W": {
+      "value": 3.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "Q_icp_outflow_upstream_W": {
+      "value": 3.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "Q_icp_plasma_wall_W": {
+      "value": 15.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "Q_icp_radiation_W": {
+      "value": 2.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    },
+    "Q_icp_rf_conversion_loss_W": {
+      "value": 5.0,
+      "units": "W",
+      "status": "EVALUATED",
+      "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+      "source": "synthetic verification vector (NP-THERMAL-CATHODELESS prereg analytic_limiting_cases / VS-NET); not evidence",
+      "uncertainty": "none: synthetic verification input",
+      "applicability_domain": "synthetic verification domain",
+      "validation_status": "NOT_APPLICABLE_SYNTHETIC",
+      "hall_map": null
+    }
+  },
+  "node_shares_w": {
+    "Q_icp_bias_collector_W": {
+      "N_COLLECTOR": 2.4
+    },
+    "Q_icp_plasma_wall_W": {
+      "N_ANTENNA": 1.5,
+      "N_COLLECTOR": 4.0,
+      "N_HOUSING": 1.5,
+      "N_VESSEL": 8.0
+    }
+  }
+}

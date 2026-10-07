@@ -5012,3 +5012,39 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   - Archival, golden and clean-install work do not gate the conclusion.
 - **Unchanged:** the credible Hall transport set stays EMPTY; HallMap admission is unchanged; the HallThruster.jl pin (rule 7) is unchanged.
 - **Environment note:** this session's network policy denies the Julia download hosts, so score-bearing Hall runs wait on that.
+
+## 2026-10-07 — RF/ICP + thermal v2 implementation lane: NP-ICP model_version 2, NP-THERMAL 2.0.0, IF-ICP-BUS-v2 consumer (additive)
+
+- **NP-ICP-NEUTRALIZER model_version 2** (`edbbfe1`, `crates/abep-icp/src/v2`) is added beside v1 and verifies lock
+  `a180ceef…` on load. It implements:
+  - EQ-02 v2 (PF-01 per-collision recombination, PF-02 background inflow through τ_j);
+  - the GAP-04 members H-MS / H-LO / H-HI;
+  - CC-03 v2;
+  - the ED-01..ED-09 disposition, with one IF-ICP-THERMAL-v2 record per ED-08 member;
+  - IF-ICP-BUS-v2;
+  - CPL-HALL-ON-v1 as a typed NOT_EVALUATED contract;
+  - VC-03/06/07/08 validation gating and the EQ-19 / EQ-20 diagnostics.
+
+  Tests: LC-12..LC-17, LC-19, LC-20, FC-14 and FC-16..FC-30. Every v1 result is byte-identical to base `1c9e87f`
+  (`tests/v1_byte_identity.rs`).
+- **NP-THERMAL-CATHODELESS 2.0.0** (`2f4b7fc`) adds `run_case_v2` and `GovernedContextV2`, which verifies lock
+  `727689fe…`, its v1 predecessor, the producer anchor and key table `33e495ad…` on both sides. The consumer implements
+  E-07 v2 deposition by key: B_PPU_RF RF_SOURCE / RF_CHAIN with no remainder, the RX-H1-FACE f_up, the registered TK-06
+  split, and the producer TK-07 / TK-12 node shares. It also implements IFI2-01..IFI2-11, CONS-I3 and FT-19..FT-23.
+  The AL-10 v2 synthetic record (sha256 `3419b518…`) was registered and committed alone before the scored run
+  (`a18ceb5`).
+- **Power lane:** `icp_upstream_loads_v2` reads IF-ICP-BUS-v2 load planes exactly (BUS2-01/04/07; `P_icp_bus_W` is
+  refused). `accounts_from_thermal_v2` provides the CONS-L1 v2 ICP account at the load planes, with the ledger P_loss
+  outside the account; LC-18 passes.
+- The v1 thermal, IF-ICP-BUS-v1 and CONS-L1 outputs and `vs_net_v1.json` are byte-identical.
+- **Results:** workspace 455 passed, 0 failed, 2 ignored (PT-01 / PT-02). test-register reports 0 violations. fmt and
+  clippy `-D warnings` are clean on the changed crates.
+- **Status:** both models are IMPLEMENTED_UNVERIFIED (open verify items) and NOT_VALIDATED. No preregistration conflict
+  was found, and no frozen record was edited. Reports: `verification_report_model_v2_v1.json` in both model
+  directories.
+- **Open:**
+  - D0(N2);
+  - VER-01/06/07/08/11/12/20..25;
+  - a producer → consumer record adapter for orchestration;
+  - RI-PART f_up and TK-06 split for real configurations;
+  - CFG-FLIGHT-HALL-ON (CPL-HALL-ON).

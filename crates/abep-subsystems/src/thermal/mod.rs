@@ -22,9 +22,9 @@ pub mod series;
 pub mod solver;
 pub mod vocab;
 
-use assemble::{assemble, Compiled, Mode};
+use assemble::{assemble, assemble_v2, Compiled, Mode};
 pub use case::ThermalCase;
-pub use governance::GovernedContext;
+pub use governance::{GovernedContext, GovernedContextV2};
 use network::{End, Factors, MemberKind, SourceKind};
 use output::*;
 use solver::{Fail, SteadyOut, TransientOut};
@@ -77,6 +77,8 @@ fn provenance(
         a9_status: A9_STATUS.into(),
         binding_statuses: binding,
         validation_status: NOT_VALIDATED.into(),
+        scenario_member_id: None,
+        producer_lock_sha256: None,
     }
 }
 
@@ -132,7 +134,32 @@ fn fail_reason(f: &Fail) -> Reason {
 /// Run one case. Status precedence: record / topology validation, evidence availability, solve, domain checks.
 pub fn run_case(case: &ThermalCase, gov: &GovernedContext, run: &RunContext) -> ThermalOutput {
     let asm = assemble(case, gov);
-    let mut prov = provenance(&case.case_class, &case.supply_mode, case.design_state_id.clone(), gov, run);
+    let prov = provenance(&case.case_class, &case.supply_mode, case.design_state_id.clone(), gov, run);
+    finish(case, asm, prov, run, MODEL_VERSION, OUTPUT_SCHEMA)
+}
+
+/// Model 2.0.0 (NP-THERMAL-CATHODELESS prereg v2): run one case that consumes IF-ICP-THERMAL-v2 (one producer
+/// scenario member). The v1 entry point `run_case` and its outputs are unchanged.
+pub fn run_case_v2(case: &ThermalCase, gov: &GovernedContextV2, run: &RunContext) -> ThermalOutput {
+    let asm = assemble_v2(case, gov);
+    let mut prov = provenance(&case.case_class, &case.supply_mode, case.design_state_id.clone(), gov.v1(), run);
+    prov.model_version = vocab::MODEL_VERSION_V2.into();
+    prov.prereg_sha256 = gov.prereg_v2_sha256().into();
+    prov.prereg_md_sha256 = gov.prereg_v2_md_sha256().into();
+    prov.governed_record_sha256 = gov.hashes();
+    prov.producer_lock_sha256 = Some(governance::PRODUCER_LOCK_SHA256.into());
+    prov.scenario_member_id = case.interfaces.icp_v2.as_ref().map(|r| r.scenario_member_id.clone());
+    finish(case, asm, prov, run, vocab::MODEL_VERSION_V2, OUTPUT_SCHEMA_V2)
+}
+
+fn finish(
+    case: &ThermalCase,
+    asm: assemble::Assembly,
+    mut prov: Provenance,
+    run: &RunContext,
+    model_version: &str,
+    schema: &str,
+) -> ThermalOutput {
     prov.input_set_sha256 = asm.input_set_sha256.clone();
     prov.interface_record_sha256 = asm.interface_hashes.clone();
     prov.ensemble_member_ids = asm.ensemble_member_ids.iter().cloned().collect();
@@ -171,9 +198,9 @@ pub fn run_case(case: &ThermalCase, gov: &GovernedContext, run: &RunContext) -> 
         }
     }
     ThermalOutput {
-        schema: OUTPUT_SCHEMA.into(),
+        schema: schema.into(),
         model_id: MODEL_ID.into(),
-        model_version: MODEL_VERSION.into(),
+        model_version: model_version.into(),
         case_id: case.case_id.clone(),
         case_class: case.case_class.clone(),
         solver_mode: case.solver.mode.clone(),
@@ -388,6 +415,10 @@ fn solve_and_report(c: &Compiled) -> (Option<Results>, DomainDiagnostics, Vec<Re
             bound: d.cons_i2_bound_w,
             met: d.cons_i2_residual_w <= d.cons_i2_bound_w,
         });
+        // Model 2.0.0 only (absent from every v1 run).
+        if let Some((r, b)) = d.icp_v2.as_ref().and_then(|v| v.cons_i3_residual_w.zip(v.cons_i3_bound_w)) {
+            checks.push(CheckOut { id: "CONS-I3".into(), observed: r, bound: b, met: r <= b });
+        }
     }
     for ch in &checks {
         if !ch.met {
