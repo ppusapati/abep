@@ -5,7 +5,7 @@ Implements the vector generators, reference calls, tolerance classes and decisio
 
 * docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_FILTER_STAGE_PY/parity_prereg_v{1,2}.json  (contract key 'filter')
 * docs/rust_migration/contracts/C-ABEP_SIM_COMPRESSOR_PY/parity_prereg_v{1,2}.json           (contract key 'compressor')
-* docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v{1..5}.json (contract key 'plenum')
+* docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v{1..6}.json (contract key 'plenum')
 
 The active version of each key is CONTRACT_VERSION; a superseded version keeps its report (immutable). Version 2 of
 the filter and compressor contracts repeats version 1 with fresh seeds (see their 'supersedes' records). Version 2 of
@@ -16,13 +16,15 @@ convergence-derived procedure (transient_convergence_procedure_v3): the refineme
 grid once and writes the frozen envelope record; the scoring mode reads it. Version 4 is version 3 with the transient
 RUST_DEFECT fix registered and fresh seeds (v3 was superseded before any scored run); the procedure is unchanged.
 Version 5 (v4 superseded before any scored run) scores the five rounding-dominated segment cascade diagnostics through
-their primitives (reported with conditioning) and registers a larger refinement grid.
+their primitives (reported with conditioning) and registers a larger refinement grid. Version 6 (v5 superseded before
+any scored run: its frozen refinement record exposed a Rust integrator that damped growing modes) registers the
+growing-mode guard of the Rust integrator and fresh seeds; the procedure is v5's.
 
 The Python reference is called read-only; the Rust side is the `abep-gaspath-parity` binary of crates/abep-gaspath.
 
     python3 scripts/rust_migration/es3_gaspath_parity.py dev   filter|compressor|plenum   # development seed; no verdict
     python3 scripts/rust_migration/es3_gaspath_parity.py score filter|compressor|plenum   # scoring seed, ONCE
-    python3 scripts/rust_migration/es3_gaspath_parity.py refine plenum                    # v5 envelope record, ONCE
+    python3 scripts/rust_migration/es3_gaspath_parity.py refine plenum                    # v6 envelope record, ONCE
     python3 scripts/rust_migration/es3_gaspath_parity.py refine-dev plenum OUT_JSON N     # development draft only
 
 A scoring run refuses to start when parity_report_v<n>.json exists, when a reference file differs from its registered
@@ -122,7 +124,7 @@ def sha_file(p: str) -> str:
         return hashlib.sha256(f.read()).hexdigest()
 
 
-CONTRACT_VERSION = {"filter": 2, "compressor": 2, "plenum": 5}
+CONTRACT_VERSION = {"filter": 2, "compressor": 2, "plenum": 6}
 
 
 def version_of(key: str, version=None) -> int:
@@ -3810,6 +3812,12 @@ LEDGER_V[("plenum", 5)][0]["scope"] = LEDGER_V[("plenum", 5)][0]["scope"].replac
     "; the segment cascade diagnostics K_min / K_over_K0_max / p_stage_max_Pa / P_el_max_W / T_comp_max_K of a "
     "transient segment are rounding-dominated outside the Gaede domain and carry no admitted value beyond their "
     "primitives (contract v5 rule_cascade)")
+LEDGER_V[("plenum", 6)] = copy.deepcopy(LEDGER_V[("plenum", 5)])
+LEDGER_V[("plenum", 6)][0]["scope"] = LEDGER_V[("plenum", 6)][0]["scope"].replace(
+    "transient_envelope_v5.json", "transient_envelope_v6.json").replace(
+    "Rust transient integrator with the switching-point fix a9dc2f5",
+    "Rust transient integrator with the switching-point fix a9dc2f5 and the growing-mode guard 361a197")
+assert "361a197" in LEDGER_V[("plenum", 6)][0]["scope"] and "transient_envelope_v6" in LEDGER_V[("plenum", 6)][0]["scope"]
 LEDGER_FAIL["plenum"] = [{"component": c, "requested_status": "PARITY_FAILED (stays PYTHON_REFERENCE; a code fix needs "
                           "a new contract version with a fresh seed)"}
                          for c in ("C-ABEP_SIM_DESIGN_PLENUM_FEED_PY", "C-ABEP_SIM_RESERVOIR_PY",
@@ -4151,6 +4159,21 @@ VERSION_NOTES = {
                     "exists. The harness generates the P42 / P43 vectors from their own streams and drops them before "
                     "any call; CONS-P-03 is evaluated on P45 only; PERF-P-02 (transient_case) is not measured"],
 }
+VERSION_NOTES[("plenum", 6)] = [
+    "v6 is contract v5 (registered f44dbfe; REGISTERED_NEVER_SCORED, superseded: Rust integrator accepts damped steps "
+    "on unstable modes) with the growing-mode guard 361a197 registered and fresh seeds. The frozen v5 refinement "
+    "record (3eeb574) showed Rust P45 envelopes of 0.782 (F45.mdot) and 0.0311 (F45.P_dev) from R45-192 / R45-331, "
+    "whose closed loops are unstable at the steady start: Radau IIA damped the mode at large steps and the "
+    "step-doubling estimate did not see it, so the nominal Rust run held the setpoint where both implementations "
+    "converge to a 3 % saturating limit cycle. v5 was not scored (near-vacuous P45 bounds, A9.29 sec. 14); its "
+    "record and the defect note rust_defect_v5_growing_mode_damping.md stay as evidence. v5 itself is v4 with the "
+    "cascade diagnostics scored through their primitives and a four-times larger grid; v4 is v3 with the switching-"
+    "point fix a9dc2f5",
+    "order of commits: contract v3, fix a9dc2f5, contract v4, contract v5, the harness / CLI refinement and scoring "
+    "code, the frozen v5 record (not scored), fix 361a197, the defect note, contract v6 (each contract alone), the "
+    "harness version bump, the frozen v6 envelope record (refinement run), the captured scoring run, the reports. "
+    "The parity CLI gained one request option (orbit_sim with an explicit rtol, composed from library calls; "
+    "COMP-P-01 in the record)"]
 VERSION_NOTES[("plenum", 5)] = [
     "v5 is contract v4 (registered 0aec5a1, superseded before any scored run) with the five segment cascade "
     "diagnostics scored through their primitives (reported with conditioning; rounding-dominated at and outside the "
@@ -4180,7 +4203,7 @@ VERSION_NOTES[("plenum", 3)] = [
     "committed code), then the frozen envelope record (refinement run), then the single scoring run and the "
     "reports. The parity CLI gained one request option (orbit_sim with an explicit rtol, composed from library "
     "calls; COMP-P-01 in the record); no abep-gaspath library source changed"]
-NOTES_V[("plenum", 5)] = NOTES_V[("plenum", 4)] = NOTES_V[("plenum", 3)] = [x for x in NOTES["plenum"]
+NOTES_V[("plenum", 6)] = NOTES_V[("plenum", 5)] = NOTES_V[("plenum", 4)] = NOTES_V[("plenum", 3)] = [x for x in NOTES["plenum"]
                                                   if not x.startswith("pre-scoring disclosure")] + [
     "harness instrumentation (v3): the tap of TransientRun._segment_record also keeps the run's states at the "
     "samples (for the primitive image of the cascade diagnostics and the per-segment proximity flags); the reference "
