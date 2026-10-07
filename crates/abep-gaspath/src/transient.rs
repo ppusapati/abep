@@ -1103,6 +1103,39 @@ impl<'a> TransientRun<'a> {
         Ok(Some(([p3[0] / self.r0, p3[1] / self.r0, p3[2] / self.r0, u_ss, i_int, 0.0, 0.0, 0.0], u_ss)))
     }
 
+    /// Contract v7 stability class, one equilibrium: the equilibrium of event `ev` at free-stream density `density`
+    /// (the event's own density for a constant event; one quasi-static phase for an orbit event) and the spectrum of
+    /// the dynamic 5 x 5 block of the Jacobian there. Kinds: "CLOSING" (no unsaturated equilibrium: area_for_pressure
+    /// is not ok, the setpoint is at or above the dead-head pressure and the valve closes), "SAT_OPEN" (the
+    /// equilibrium opening u = A_eq / (A_max feed_factor) exceeds 1), "UNSAT" (u <= 1; the eigenvalues are returned).
+    /// Fail closed: a non-converged eigenvalue iteration is an error, never a silent class.
+    pub fn event_equilibrium(&self, ev: &Event, density: f64) -> PyResult<(&'static str, Vec<(f64, f64)>)> {
+        let co = self.chain(&ev.intake).node_coefficients(density)?;
+        let sol = area_for_pressure(&co, ev.setpoint_pa, self.k_rec, &self.leak, &self.fc, true)?;
+        if !sol.ok {
+            return Ok(("CLOSING", vec![]));
+        }
+        let u = sol.a_eq / (self.a_max * ev.feed_factor);
+        if u > 1.0 {
+            return Ok(("SAT_OPEN", vec![]));
+        }
+        let (p3, _) = solve_pressures(&co, sol.a_eq, self.k_rec, &self.leak, &self.fc, true)?;
+        let i_int = (u / self.u_ff - 1.0) * self.ctrl.ti_s / self.ctrl.kp;
+        let y = [p3[0] / self.r0, p3[1] / self.r0, p3[2] / self.r0, u, i_int, 0.0, 0.0, 0.0];
+        let j = self.make(ev)?.jac(&y);
+        let mut b = [[0.0; NM]; NM];
+        for (bi, ji) in b.iter_mut().zip(j.iter()) {
+            bi.copy_from_slice(&ji[..NM]);
+        }
+        let lam = eig_real(&b).ok_or_else(|| {
+            crate::GasPathError::new(
+                crate::PyClass::RuntimeError,
+                "stability class: eigenvalue iteration did not converge",
+            )
+        })?;
+        Ok(("UNSAT", lam.to_vec()))
+    }
+
     fn mass(&self, y: &[f64; N]) -> f64 {
         let mut s = 0.0;
         for i in 0..3 {

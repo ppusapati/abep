@@ -5219,3 +5219,33 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
 - **Admitted reports (ledger note):** the guard 361a197 changed `crates/abep-gaspath/src/transient.rs`, recorded in
   the compressor v2 and filter v1 / v2 reports' provenance. Their outputs are byte-identical before and after
   (parity CLI replay of their captured scoring inputs: 2368 and 1732 requests).
+
+## 2026-10-07 — Plenum / feed v7 registered and refined; NON_VACUITY failed in the unstable stratum; scoring not run (STOP)
+
+- **Merge** of `origin/integration/simulation-complete` into the lane (`5f32aed`; only `Cargo.lock` and this file
+  overlapped), before v7.
+- **Rust class** (`b4de97d`): `TransientRun::event_equilibrium` + parity CLI `plenum.stability_class` (library addition;
+  parity CLI output byte-identical on the captured scoring inputs of compressor v2, filter v1 / v2 and plenum v1 / v2
+  and on the 2560 v5 refinement vectors). Python and Rust classes agree on all 2560 v6 refinement vectors.
+- **Contract v7** (`parity_prereg_v7.json`, `4f07529b…`, `bd11e5c`; harness `07ed905`). It registers:
+  - an input-only stability class: equilibrium of every event, or 24 quasi-static orbit phases for P45; U iff
+    Re λ > 0; a class disagreement is a scored failure;
+  - strata S / U / R with stratified held-out draws (S at the v6 sizes, U ≥ 4 per entry and level) and refinement
+    draws;
+  - the U stratum scored against the converged reference (DIV-P-REF-01), with NOT_CONVERGENT_REFERENCE (ρ ≥ 1/2)
+    leaves reported;
+  - closing-valve xO extrema reported, and P42 xO None-ness counted once per segment in the proximity limit;
+  - the non-vacuity check.
+- **Frozen record** (`transient_envelope_v7.json`, `e4774be4…`, `60df0d4`): 21 364 candidates classified (the
+  commit message says 25 364 in error), 0 class disagreements, COMP-P-01 true. **NON_VACUITY failed in 3 of 60 rows**,
+  all U PROD: F45.P_dev (relative) 98.8 ≥ 1, F45.mdot 1.05 ≥ 0.868, F43.overshoot 7.43 ≥ 1.98. Per the rule, no
+  scoring; no held-out vector was drawn or run. Findings (`refinement_v7_nonvacuity_note.md`, script
+  `scripts/rust_migration/plenum_v7_nonvacuity_probe.py`):
+  1. Rust nominal still holds the setpoint on a weakly unstable loop (R45-PROD-U-119, P_dev 1.2e-4 vs converged 0.229
+     in both implementations): the v6 guard prevents damping but does not resolve a sub-tolerance mode.
+  2. The Python reference's tightened runs also miss a growing mode (R45-PROD-U-061: Python T2 7.6e-5 vs Rust
+     0.018-0.024), so DIV-P-REF-01 extends beyond the nominal run.
+  3. A seeding-sensitive outcome (R45-PROD-U-045).
+  4. The absolute scale of F43.overshoot does not fit a heavy-tailed quantity.
+
+  Options are in the note; the decision lies with the coordinator.

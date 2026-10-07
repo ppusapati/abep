@@ -1,0 +1,1195 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_DESIGN_PLENUM_FEED_PY-V7",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "component": {
+  "inventory_id": "C-ABEP_SIM_DESIGN_PLENUM_FEED_PY",
+  "inventory_ids_coupled_group": [
+   "C-ABEP_SIM_DESIGN_PLENUM_FEED_PY",
+   "C-ABEP_SIM_RESERVOIR_PY",
+   "C-ABEP_SIM_DESIGN_UPSTREAM_A9_13_PY"
+  ],
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W2",
+  "scope": "coupled group (RM-R01): the F4 plenum / feed physics of abep_sim/design/plenum_feed.py (steady network, orifice bisection, vectorized sweep, transient PI-controlled plenum, orbit checks, control modes), abep_sim/reservoir.py (whole module) and the A9.13 setpoint / domain / flow-gap / robust-set rules of abep_sim/design/upstream_a9_13.py (RM-R17 subsets); v3 / v4 / v5 / v6 / v7 scope: the full v1 scope, including TransientRun.run (P42 transient_run), transient_case (P43) and orbit_simulated (P45), with the transient observables re-specified under the A9.31 sec. 5 convergence-derived tolerance procedure (transient_convergence_procedure_v3)",
+  "functions_or_entry_points": [
+   "abep_sim/design/plenum_feed.py::(SPECIES, MODE_*, LABEL_PARAMETRIC, ST_*, R_* / REASONS / OOD_REASONS / MODEL_ERROR_REASONS / REASON_BITS, status_from_reasons, reasons_from_bits, P_DOMAIN_PA, KN_MIN, SIGMA_C_M2, K_TOL, SETTLE_BAND, RTOL, RTOL_REFERENCE, ATOL_SCALED, MASS_TOL, BISECT_ITERS, A_EQ_BRACKET_M2, BISECT_RTOL, RES_DEFAULTS, T_CHAIN_K, orbital_period_s, cbar, kT_over_m, IntakeState (q_fwd, e_f1, escape_probability, alt_km), f1_candidate_id, FilterCase (coefficients, reference_bound_only), filter_case_from_stage, filter_none, filter_parametric, filter_placeholder, filter_cases, element_filter_cases, CompressorPlant (from_design, stages, characteristic, leak_m3_s, shaft_hz, cascade), Plenum (validation, wall_area_m2, reservoir, k_rec_m3_s, leak_m3_s, feed_c), Chain (node_coefficients), solve_pressures, area_for_pressure, bisection_failed, lambda_upper_m, steady_operating_point, _operating_record, intake_side, cascade_arrays, steady_sweep, Controller, Event, TransientRun (__init__, steady_start, run, _segment_record), settling_time, segment_metrics, ripple_transfer, inlet_node_tau_per_m3, WINDOW_S, SETPOINT_STEP, FEED_PATH_STEP, SUPPLY_STEP, OBJECTIVES, REPORTED_NOT_OPTIMISED, TRANSIENT_FRAMEWORK, event_sequence, _domain_reasons, orbit_quasi_static, orbit_simulated, transient_case, strict_blockers, evaluate, dominates, pareto_ids, NAV_ALTITUDE_INPUT, intake_controller_state, scheduled_operation, compare_control_modes)",
+   "abep_sim/reservoir.py::(Reservoir: fields, _cbar, conductance, SS_MAX_ITER, SS_RTOL, steady_state; ORIFICE_BRACKET_M2, ORIFICE_BISECTION_STEPS, ORIFICE_P_RTOL, size_orifice_for_pressure (report form), startup_transient)",
+   "abep_sim/design/upstream_a9_13.py::(DECISIONS, STATE_SET_DECISIONS, RFP_CLAUSES, verify_decision_records, cite, vocabulary NOT_EVALUATED .. C_VIOLATED_SYNTHETIC, A913RuleError, combine_value_status, constraint_status, P_FREE_MOLECULAR_LIMIT_PA, DOMAIN_IN, TRANSITIONAL_MODEL, DD_*, DESIGN_DIRECTIONS, pressure_domain_status, classify_pressure_target, refuse_candidate_evidence, CONTROL_MODE_*, CONTROL_MODES, SCHEDULE_STATUS, INPUT_KINDS, ORACLE_KEYS, ScheduleInput, SetpointSchedule, FixedSetpoint, controller_view, F4_TRANSIENT_FRAMEWORK, H1Tolerance, h1_tolerance_tbd, governing_band, CHARACTERIZATION_COVERAGE_MGPS, FEED_STATE_FIELDS, characterization_coverage, refuse_fixed_mass_flow_gate, H1_MAP_VALIDATED, FLOW_GAP_AUTHORITY, GROUND_CHARACTERIZATION_ONLY_MGPS, FLOW_GAP_ORDER, DENSE_STATE_ONLY_ROLE, FULL_STATE_SET, STATE_SUBSET, FORBIDDEN_FEED_REQUIREMENT_BASES, PERFORMANCE_DERIVED_BASIS, flow_gap_record, flight_feed_requirement, refuse_feed_requirement_lowering, state_coverage, dense_state_only_operation, REGENERATION_TRIGGERS, RepresentativeSelectionRefused, RobustParetoSet (validation, representative, engineering_reference, pending_triggers, to_dict))"
+  ],
+  "out_of_scope": [
+   "plenum_feed.py parameter_registry, REFERENCES, QUASI_STEADY_NOTE: documentation records (carried by the committed F4 study record docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json); proposed FROZEN_AS_REFERENCE_EVIDENCE at module retirement (ledger decision, not taken here)",
+   "plenum_feed.py load_f1, f1_state_infeasibility, load_f1_records: readers of the committed F1 intake record (the intake response layer of lane B2 / C-ABEP_SIM_DESIGN_INTAKE_SYNTHESIS_PY); abep-gaspath takes the IntakeState values as explicit plain-data inputs (lane brief: 'where the Python takes intake outputs as inputs, take them as explicit inputs'); the harness builds them with these Python readers",
+   "upstream_a9_13.py statewise_envelope / _quantify (SC-WP-04 statewise quantifier), reference_drag_fn and _rec_value (SC-WP-04 spacecraft reference drag), require_all_admitted_scenarios / robust_over_scenarios (SC-WP-09 robust / UQ), verify_state_set_decision_records, PROPELLANT_POLICY / AIR_PATH / XE_PATH (a9_19 architecture constants, SC-WP-12), PARETO_OBJECTIVES_S6_17 / HARD_CONSTRAINTS_FIRST / _dominates (assessment-layer comparison, A9.22 moves), MOVED_TO_ASSESSMENT: they stay PYTHON_REFERENCE for their own work packages",
+   "the feed-state closure (pivot W1): GROUND_TEST_PROGRAMME_ONLY / NOT_FLIGHT_RUNTIME, RM-OQ-10 (A9.29 sec. 2); not part of this flight-runtime contract",
+   "docs/design_synthesis/f4_plenum/build_f4_plenum.py (study builder; RM-R41)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "the feed-state closure builder (GROUND_TEST_PROGRAMME_ONLY, RM-OQ-10)",
+   "abep_sim/compressor_transitional.py (CANDIDATE_NOT_ADMITTED; never consumed, A9.13 S6.8)",
+   "abep_sim/system.py gas path (K-GASPATH NOT_EXTRACTED_NO_ACTIVE_CONSUMER)"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-02 (elements 'plenum' and 'feed dynamics (transients, control, ripple, orbit operation, A9.13 setpoint rules)')",
+  "owner_disposition_a9_29": "RM-OQ-10 (A9.29 sec. 2): the feed-state closure is not ported here"
+ },
+ "date": "2026-10-07",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this version, before its refinement-grid run and before any held-out vector of any version 3 / 4 / 5 / 6 / 7 was drawn or run (plenum / feed v3 lane, SC-WP-02). The registration commit is recorded in the envelope record and in the report, not here.",
+ "supersedes": {
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v6.json",
+  "sha256": "60f8bc2482e967b888f1b1421f8b7b7c907a92fed4b0a88f5d3e65ad30deab5a",
+  "registered_in": "aca62b3",
+  "status_of_superseded": "REGISTERED_NEVER_SCORED, superseded: P45 envelope dominated by an unstable-start stratum and a silent reference defect (no held-out vector drawn or run, no report)",
+  "evidence_kept": {
+   "envelope_record": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/transient_envelope_v6.json",
+   "envelope_record_sha256": "439ae2dd1f5f935db7ad1e3538c538c0cad7a11af333752e4c9fedbbeaa7002c",
+   "envelope_record_commit": "eec930a",
+   "analyses": [
+    "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/refinement_v6_p45_note.md",
+    "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/refinement_v6_p4243_note.md"
+   ],
+   "divergence_record": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/div_p_ref_01_lsoda_unstable_loops.json",
+   "rule": "kept unedited as evidence; not used by v7 (v7 draws and runs its own refinement grid)"
+  },
+  "also_supersedes": [
+   {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v5.json",
+    "sha256": "1b382387491bef6c4a1669b27170dac42ae5a416fc43527f1c840e9d8aa2f092",
+    "status": "REGISTERED_NEVER_SCORED (RUST_DEFECT growing-mode damping, see v6)"
+   },
+   {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v4.json",
+    "sha256": "732eb2199b000a592d102e5946424d55db5b242d35c5947eb8fd1875057e06b9",
+    "status": "REGISTERED_NEVER_SCORED (CONTRACT_DEFECT, see v5)"
+   },
+   {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v3.json",
+    "sha256": "e1631d0bbe8e0c5be4f6931977ffed3574e544b5663b7ed2890b7eee476ad0d6",
+    "status": "REGISTERED_NEVER_SCORED (RUST_DEFECT, see v4)"
+   },
+   {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v2.json",
+    "sha256": "8ee5a18c5ea0a6672da32e20c07c583a514cf9c8bcd543778d9332e229ead0a5",
+    "verdict": "PARITY_FAIL"
+   },
+   {
+    "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v1.json",
+    "sha256": "ab93bbde3f2f3e98e61c511f03633fdf3fcd4611e282c2152aec74e3bcbebff3",
+    "verdict": "PARITY_FAIL"
+   }
+  ],
+  "reason": "the frozen v6 refinement record and its per-vector analyses (coordinator decisions 2026-10-07): every P45 envelope and every grown P42 / P43 envelope is set by vectors whose closed loop is unstable at an equilibrium of their event sequence; the Python reference's nominal LSODA run itself misses the growing mode on such vectors (DIV-P-REF-01: R45-187 P_dev 7.5e-5 vs converged 0.181); scored as one stratum the P45 bounds would be near-vacuous for the stable vectors. A second cause: the xO extrema of segments in which the valve closes depend on the sign of a rounding-level valve opening (P43 F43.xO up to 1.2e-3, converged implementations disagree, R43-REF-809 segment 6 0.51716 vs 0.51607). v7 registers the coordinator-approved treatment (transient_convergence_procedure_v7); v6 is not rewritten; no scored case was removed or weakened (A9.31 sec. 1)"
+ },
+ "v7_changes_from_v6": [
+  "transient_convergence_procedure_v7 (new): input-only stability class computed by both implementations (a disagreement is a scored failure), strata S / U / R, registered stratified held-out and refinement draws, stable-stratum envelopes, unstable stratum scored against the converged Python reference (DIV-P-REF-01) with NOT_CONVERGENT_REFERENCE leaves reported, closing-valve xO extrema reported, non-vacuity check of every scored family and stratum before the scoring run",
+  "rust_implementation.v7_stability_class (the Rust side of the class: commit b4de97d, library addition only)",
+  "observables: the stability class row and the reported categories; inputs.randomized_domain.v7_draws",
+  "transient_convergence_procedure_v3: version_note, step_1 / step_4 replaced for v7 by the v7 section",
+  "fresh scoring / development / refinement seeds; version-bound paths (transient_envelope_v7.json, reference_outputs_v7/, parity_report_v7.json); id, date, registration_statement, supersedes, inputs.harness, outputs, decision_rules (scoring_once, verdict), tolerance_basis.pre_registration_disclosure (appended)",
+  "nothing else: levels, families, family scales (except the registered relative scale of F45.P_dev in the U stratum), estimator, proximity rules, integrity checks, the v5 cascade treatment, the registered Rust integrator (v4 switching-point fix, v6 growing-mode guard) and every non-transient rule are v6's"
+ ],
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "lane": {
+  "id": "plenum-v3",
+  "execution_step": "ES-3 follow-up",
+  "work_package": "SC-WP-02",
+  "branch": "lane-plenum-v3",
+  "base_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+  "authority": "A9.31 sec. 5 (docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md, Message 1 sec. 5 (text sha256 ab7705efeb0835b9443cebd86018cd5c29bdbc3f29d6f618c147dab1e7dec75a)); A9.29 secs. 13-15; simulation_completion_programme_v1_1.json SC-WP-02; method rule 5 (Rust bug: fix and preregister a new version)",
+  "rust_defect_fix_commit": "a9dc2f52c4afe61be53d4b76c6b7361d00dcc15a"
+ },
+ "reference_implementation": {
+  "python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+  "python_commit_note": "the integration/simulation-complete head at v3 lane start; every reference file and pinned input has the same sha256 as registered in v1 (captured at e3b7e6712d106b36dedec1115d9570e2be28f458) and v2; the bid record 5eee4b8 / 2de86ab is never a reference commit for new work",
+  "files": [
+   {
+    "path": "abep_sim/design/plenum_feed.py",
+    "sha256_at_registration": "dbc28212e4c3d79a60c0cae7f875c62291ea3e90dbdc491b2bcfaa5f967d616b"
+   },
+   {
+    "path": "abep_sim/reservoir.py",
+    "sha256_at_registration": "9a7894a47169f1d77e8c66a196002c5456e955b9eb72d81bb9e1440c90ae29af"
+   },
+   {
+    "path": "abep_sim/design/upstream_a9_13.py",
+    "sha256_at_registration": "384b24086c1cc779707d7cb958b9ccd8cb58edf337d629727d923ab659a30af5"
+   },
+   {
+    "path": "abep_sim/design/filter_stage.py",
+    "sha256_at_registration": "69991f070ac5c0c8ea4b053359e116b34ff74cdc8349c87d61b24e42d8ba82b7"
+   },
+   {
+    "path": "abep_sim/compressor.py",
+    "sha256_at_registration": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75"
+   },
+   {
+    "path": "abep_sim/design/compressor_synthesis.py",
+    "sha256_at_registration": "b7b9ffd9f62e0343c7d4a7297c5106a5dcb70d7d9cbaef3ce96a4ce8f7894b7e"
+   },
+   {
+    "path": "abep_sim/rotor_strength.py",
+    "sha256_at_registration": "59f7ba95bf5d4268b184304defddb36bbfca219c79a0cc8fde91e5031bc61d9b"
+   },
+   {
+    "path": "abep_sim/materials.py",
+    "sha256_at_registration": "08e2ddddfc9380780e71bc15957fa82a9e879fc36046c266c669b037c2194feb"
+   },
+   {
+    "path": "abep_sim/constants.py",
+    "sha256_at_registration": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+   },
+   {
+    "path": "abep_sim/design/intake_synthesis.py",
+    "sha256_at_registration": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191"
+   },
+   {
+    "path": "abep_sim/design/a9_19_architecture.py",
+    "sha256_at_registration": "8a4ccfb00fc2bb5a9f00b8a405e9c816e2d025d6d91c8bbef25f50300d4d226b"
+   },
+   {
+    "path": "abep_sim/intake_tpmc.py",
+    "sha256_at_registration": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"
+   }
+  ],
+  "files_note": "filter_stage / compressor / compressor_synthesis / rotor_strength / materials / constants: called by plenum_feed (their own physics is scored under the filter and compressor contracts); intake_synthesis: the harness's F1 readers, state_alt_km and required_states (inputs only); a9_19_architecture: imported by upstream_a9_13; intake_tpmc: the F2 placeholder defaults",
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "scipy-openblas bundled with numpy (DYNAMIC_ARCH, USE64BITINT)",
+   "numpy_simd": "baseline X86_V2; AVX512 dispatch enabled on the registration host (Intel Xeon @ 2.10GHz): numpy float64 exp / log / sin / power on arrays may run SIMD loops, not glibc libm (ulp-level differences from the Rust libm calls are possible on the numpy paths only)",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1 (set by the harness for every reference run)",
+    "OPENBLAS_NUM_THREADS": "1 (set by the harness for every reference run)"
+   },
+   "recorded_again_at_scoring": "python / numpy / scipy / pandas versions, numpy SIMD dispatch, CPU model and thread env are re-read and written into the report; a version change is INPUT_MISMATCH (not a verdict)"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-gaspath (flight-runtime physics crate; depends on abep-types and abep-provenance only)",
+  "functions_or_entry_points": [
+   "abep_gaspath::plenum_feed::{IntakeState, FilterCase, CompressorPlant, Plenum, Chain, solve_pressures, area_for_pressure, bisection_failed, lambda_upper_m, steady_operating_point, intake_side, steady_sweep, ripple_transfer, inlet_node_tau_per_m3, evaluate, strict_blockers, pareto_ids, scheduled_operation, compare_control_modes, intake_controller_state}",
+   "abep_gaspath::transient::{Controller, Event, TransientRun, settling_time, segment_metrics, event_sequence, orbit_quasi_static, orbit_simulated, transient_case, Radau5 integrator}",
+   "abep_gaspath::reservoir::{Reservoir, size_orifice_for_pressure, startup_transient}",
+   "abep_gaspath::upstream::{pressure_domain_status, classify_pressure_target, ScheduleInput, SetpointSchedule, FixedSetpoint, controller_view, governing_band, flight_feed_requirement, flow_gap_record, refuse_feed_requirement_lowering, state_coverage, dense_state_only_operation, RobustParetoSet, verify_decision_records, cite, ...}",
+   "CLI: abep-gaspath-parity entries plenum.*, reservoir.*, upstream.*"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml channel 1.94.1)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/**",
+   "crates/abep-provenance/src/**",
+   "crates/abep-gaspath/Cargo.toml",
+   "crates/abep-gaspath/src/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it (A9.14 S10.4 RUSTCI-1, generalised)",
+  "v4_rust_defect_fix": {
+   "commit": "a9dc2f52c4afe61be53d4b76c6b7361d00dcc15a",
+   "statement": "abep_gaspath::transient::Integrator: a step whose end changes the saturation state of the valve command (Rhs::sat_state: u_cmd > 1, u_cmd < 0, inside; the tests of the clip) is bisected to the shortest step whose end has left the start state, so no accepted step integrates across the switch; a switch within rounding of the step start is accepted. Step body, error norm, rtol / atol, output grid and records unchanged",
+   "verification": "unit test radau_resolves_the_valve_command_saturation_switch (analytic first-order valve lag behind a command crossing 1; |u - exact| <= rtol at rtol 1e-6 and 1e-10, before the fix 3.4e-6 and 6.4e-10)"
+  },
+  "v6_rust_defect_fix": {
+   "commit": "361a1970c0b629cced8a000054615a489e3a46ca",
+   "transient_rs_sha256": "a779fee5fe3d4cd45102fffd2f07deeda7f9800198ed08effba647d3dc577a1a",
+   "statement": "abep_gaspath::transient::Integrator::integrate: before every trial step the eigenvalues of the dynamic 5 x 5 block of the Jacobian at the step start are computed (scaled pressures, valve opening, integral; the three cumulative-integral states have zero Jacobian columns) by a hand-written balanc / elmhes / Francis double-shift hqr routine; while any eigenvalue with Re lambda > 0 has |R_acc(h lambda)| < 1 the step is halved, R_acc(z) = (32 R(z/2)^2 - R(z)) / 31 the linear amplification of the accepted step-doubling update and R the Radau IIA (order 5) stability function. No tunable constant: no accepted step damps a mode the linearised flow grows. A non-finite Jacobian entry or a QR iteration that does not converge in 30 iterations per eigenvalue fails closed (R_INTEGRATOR, MODEL_ERROR). Step body, error norm, rtol / atol, output grid and records unchanged; the v4 switching-point fix is kept",
+   "verification": "unit tests growing_mode_guard_resolves_an_unstable_oscillator (lambda = 0.05 +/- 2.4i on the R45-192 orbit output grid; fails before the fix), growing_mode_guard_leaves_a_stable_oscillator_unchanged (bit-identical to before), radau_stability_function_matches_the_coefficients, eig_real_reproduces_known_spectra, eig_real_fails_closed_on_non_finite_entries; integration test transient_growing_mode_regression (R45-192 / R45-331 of the v5 refinement grid through the parity CLI against their converged Rust T1 records within the frozen v5 Python P45 envelope E_py; fails before the fix)",
+   "blast_radius": "parity CLI stdout byte-identical before / after on the captured scoring inputs of compressor v2 (2368), filter stage v1 / v2 (1732) and plenum / feed v1 / v2 (3815); on the v5 refinement grid at nominal rtol 2557 of 2560 byte-identical (changed: R45-192, R45-331, R45-021); see the defect note",
+   "defect_note": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/rust_defect_v5_growing_mode_damping.md"
+  },
+  "v7_stability_class": {
+   "commit": "b4de97d5325967223030477f35957292d2829aea",
+   "transient_rs_sha256": "fc43e9ff97840ce2945fa6f619f7437d20de212a01142c5e93afd3a1a33ec592",
+   "parity_cli_sha256": "b3ede944b2e85c3902826e19ed0b88f315f20e4e4e139ea909a3630f78a0715e",
+   "statement": "abep_gaspath::transient::TransientRun::event_equilibrium (library addition) and the parity CLI entry plenum.stability_class (composed from library calls): the Rust side of transient_convergence_procedure_v7.stability_class. The integrator and every existing record are unchanged (parity CLI stdout byte-identical on the captured scoring inputs of compressor v2, filter v1 / v2, plenum v1 / v2 and on the 2560 v5 refinement vectors)",
+   "verification": "on the 2560 vectors of the v6 refinement grid the Rust class equals the Python class for every vector and every equilibrium kind (0 disagreements, max |Re lambda_max difference| 5.6e-12, smallest |Re lambda_max| 7.0e-7); test stability_class_of_the_regression_vectors"
+  }
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE: architecture-independent gas-path physics of the selected hall_icp_neutralizer AIR_PRIMARY upstream chain (no architecture record is read)",
+  "model_set_hash": "NOT_APPLICABLE: no model-set entry is read by the scored functions",
+  "design_state_set_hash": {
+   "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+   "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+   "use": "required state ids for scheduled_operation state coverage and the F1 record state ids (inputs)"
+  },
+  "rule": "both implementations must report these exact values for every run; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/design/plenum_feed.py": "dbc28212e4c3d79a60c0cae7f875c62291ea3e90dbdc491b2bcfaa5f967d616b",
+  "abep_sim/reservoir.py": "9a7894a47169f1d77e8c66a196002c5456e955b9eb72d81bb9e1440c90ae29af",
+  "abep_sim/design/upstream_a9_13.py": "384b24086c1cc779707d7cb958b9ccd8cb58edf337d629727d923ab659a30af5",
+  "abep_sim/design/filter_stage.py": "69991f070ac5c0c8ea4b053359e116b34ff74cdc8349c87d61b24e42d8ba82b7",
+  "abep_sim/compressor.py": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75",
+  "abep_sim/design/compressor_synthesis.py": "b7b9ffd9f62e0343c7d4a7297c5106a5dcb70d7d9cbaef3ce96a4ce8f7894b7e",
+  "abep_sim/rotor_strength.py": "59f7ba95bf5d4268b184304defddb36bbfca219c79a0cc8fde91e5031bc61d9b",
+  "abep_sim/materials.py": "08e2ddddfc9380780e71bc15957fa82a9e879fc36046c266c669b037c2194feb",
+  "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+  "abep_sim/design/intake_synthesis.py": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191",
+  "abep_sim/design/a9_19_architecture.py": "8a4ccfb00fc2bb5a9f00b8a405e9c816e2d025d6d91c8bbef25f50300d4d226b",
+  "abep_sim/intake_tpmc.py": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433",
+  "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854",
+  "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json": "74a52aa749e1d071f76957e4f9ef4929c9d8ab302b183da3c5a5d9ba8d6d6923",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+  "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json": "b6010d9d2856ab21b15d49e477ade8246b9d6e90d4dfa1cc07c4468c10a1e47b",
+  "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+  "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+  "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+  "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad"
+ },
+ "frozen_data_read_only": [
+  "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json (F1 IF-A1 records, read by the Python harness only)",
+  "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json (F3 design grid, read by the Python harness only)",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json (required state ids, read by the Python harness only)",
+  "the five decision JSONs of upstream_a9_13.DECISIONS (hashed by verify_decision_records in both implementations)"
+ ],
+ "inputs": {
+  "harness": "scripts/rust_migration/es3_gaspath_parity.py (contract key 'plenum', CONTRACT_VERSION plenum 7): the refinement mode ('refine plenum', refinement_master_seed) writes the envelope record; the scoring mode ('score plenum') reads it. Harness changes are committed after this contract; the scoring run refuses with uncommitted harness or Rust sources (v1 rule)",
+  "transport": "one JSON request per vector {id, entry, args}; every request carries 'materials' (materials.DB values as in the compressor contract). An IntakeState is sent as its fields plus alt_km = intake_synthesis.state_alt_km(state); a compressor as its F3 design dict; a filter case as its FilterCase fields or as the factory call that builds it (both are compared); a plenum as its fields; a controller as (Kp, Ti_s, f_valve_hz, authority)",
+  "record_pool": "F1: pf.load_f1_records(pf.load_f1(ROOT), areas=[0.25, 0.5, 1.0], scenarios=['cll_a0.8', 'maxwell_a1', 'maxwell_a0.5', 'cll_a0.5'], states=None) in its native order; F3: the design_grid list of f3_compressor_designs_v1.json in file order; required states: [s.id for s in isy.required_states()]",
+  "golden_vectors": {
+   "source": "module constants and factories",
+   "count": "P32 4 + P46 1 + P50 1",
+   "list_or_generator": "P32: filter_none(), filter_parametric(0.9 / 0.7 / 0.5), filter_placeholder(), filter_cases(); P46: strict_blockers(); P50: every constant / vocabulary listed in functions_or_entry_points (EXACT_VALUE)"
+  },
+  "edge_cases": [
+   {
+    "id": "E-P-01",
+    "inputs": "Plenum with V 0 / -1 / NaN, gamma 1.5 / -0.1, leak -1, T 0, V True",
+    "note": "ValueError"
+   },
+   {
+    "id": "E-P-02",
+    "inputs": "area_for_pressure target 0 / -1 / NaN",
+    "note": "ValueError"
+   },
+   {
+    "id": "E-P-03",
+    "inputs": "steady_operating_point with target above P_DOMAIN_PA, at / above dead-head, with f1_status other than FEASIBLE_AT_STATE, and a CompressorPlant with N_turbo 0 and N_drag 0 (zero divisor in node_coefficients)",
+    "note": "NOT_EVALUATED_OUT_OF_DOMAIN / INFEASIBLE / ZeroDivisionError"
+   },
+   {
+    "id": "E-P-04",
+    "inputs": "bisection_failed at the bracket ends, with residual 2e-6 and NaN",
+    "note": "True (fail closed)"
+   },
+   {
+    "id": "E-P-05",
+    "inputs": "TransientRun / transient_case with the design setpoint above dead-head",
+    "note": "ValueError / R_DEADHEAD"
+   },
+   {
+    "id": "E-P-06",
+    "inputs": "filter_case_from_stage of an all-TBD stage without a case; with a capturing case",
+    "note": "FilterStageError"
+   },
+   {
+    "id": "E-P-07",
+    "inputs": "scheduled_operation with a control that is neither schedule nor fixed; controller_states missing a state",
+    "note": "ValueError"
+   },
+   {
+    "id": "E-P-08",
+    "inputs": "Reservoir steady_state with mdot_in missing N2",
+    "note": "KeyError"
+   },
+   {
+    "id": "E-P-09",
+    "inputs": "upstream: classify_pressure_target 0 / NaN; SetpointSchedule frozen status, label without PARAMETRIC_SENSITIVITY / SYNTHETIC, blank basis, no breakpoint, non-increasing / duplicate inputs, setpoint 0; FixedSetpoint 0 / blank basis; ScheduleInput unknown kind / oracle name / 'est:' with another kind / blank source; controller state with an oracle key; controller_view unmapped / oracle / missing key; H1Tolerance unknown quantity / unknown status / TBD with value / non-positive / blank source; governing_band band 0; refuse_fixed_mass_flow_gate(0.38); refuse_feed_requirement_lowering of every forbidden basis, of an unknown basis and of 0.38 mg/s; state_coverage with an empty required set; RobustParetoSet blank id, duplicate members, label with a selection word, representative(), engineering_reference of a non-member / blank purpose; refuse_candidate_evidence of a CANDIDATE_NOT_ADMITTED mapping and of an object with valid_design_evidence False",
+    "note": "A913RuleError / RepresentativeSelectionRefused"
+   }
+  ],
+  "randomized_domain": {
+   "count": "P30 300; P31 200; P32 10; P33 100; P34 100; P35 200; P36 400; P37 500 + 40; P38 12 sweeps (20 records x 8 targets); P39 100; P40 200; P41 20; P42 / P43 12 production + 4 reference-tolerance; P44 10; P45 4; P46 50; P47 20 + 6 + 3; P48 50; P49 100 + 300 + 100 + 60; upstream P10 60, P11 60, P12 40 schedules x 10 controller states, P13 30, P14 40, P15 33 + 15, P16 40, P17 40, P18 3, P19 4, P20 1, P21 20, P22 40, P23 30, P24 2, P25 4; plus the E-P edge vectors",
+   "draw": "one numpy Generator per entry, default_rng(SeedSequence([master, entry_index])), entry_index = the P-number. Chains: F1 record uniform over the record pool; F3 design uniform over the grid; filter case filter_none 0.3 / filter_parametric(tau in {0.9, 0.7, 0.5} or U(0.05, 1)) 0.5 / filter_placeholder 0.2; plenum V 10**U(-3.5, -1) m^3, gamma 0 (0.4) / materials.DB Ti6Al4V gamma_O(350 K) (0.3) / U(0, 0.1) (0.3), leak = RES_DEFAULTS leak (0.7) else U(0, 1e-6) m^2; targets 10**U(-3.5, -0.7) Pa; density_factor and feed_factor U(0.5, 1.5) w.p. 0.3 each. Transients (P42 / P43): design state h200_f150 records only, controller Kp U(0.5, 10), Ti U(0.1, 3) s, f_valve in {0.1, 1, 10} Hz, authority U(1.5, 4), V 10**U(-3.5, -1.5) m^3, r0 in {0.005, 0.01, 0.02, 0.05} Pa, window 60 s, orbit_check null or {reasons: random subset of the orbit reasons}; production set = module defaults (Python LSODA, rtol RTOL), reference-tolerance set = rtol RTOL_REFERENCE with Python method INTEGRATOR_REFERENCE (BDF). P44: 3-6 records of one candidate / scenario, amplitude U(0.05, 0.3), n_phase randint 8..32, a_max = authority x the design area. P45: amplitude U(0.05, 0.2), one state. P40: synthetic segments (t = the TransientRun sample grid of a random duration, p / mdot / u = damped oscillations with random amplitude, rate and phase around a final value, kinds hold / setpoint / feed_path / supply / orbit, NaN entries in xO w.p. 0.1). P49: Reservoir fields (V U(5e-4, 1e-2), wall area U(0.02, 0.3), wall / upstream material uniform over materials.DB, T U(250, 600), orifice 10**U(-7, -4), K U(0.2, 1), leak 10**U(-9, -6), upstream collisions randint 0..200), mdot_in per species 10**U(-8, -5.5), p_target 10**U(-3, 0), startup spinup U(0, 120) s, t_end U(50, 600) s, dt U(0.01, 0.2) s, p_ignite 10**U(-3, 0). Upstream entries: as the edge list, with random numbers in the stated domains (setpoint breakpoints: 1-6 sorted unique altitudes U(170, 240) km with setpoints 10**U(-3, -0.5) Pa; controller states inside / outside the range)",
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim; every synthetic label carries PARAMETRIC_SENSITIVITY or SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+   "v3_transient_note": "P42 / P43 held-out counts as v1 (12 production + 4 reference-tolerance each, plus E-P-05); P45 4. The draws are v1's verbatim. The refinement grid (transient_convergence_procedure_v3.step_1_refinement_grid) uses the same draw procedure with refinement_master_seed and larger counts",
+   "v7_draws": "P42 / P43 / P45: the transient_convergence_procedure_v7.stratified_draws of the v1 generators (the other entries' draws are v1's)"
+  },
+  "vector_totals": "as randomized_domain.count plus the golden and edge vectors (the full v1 set); the report lists the count per entry"
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 731905363,
+  "development_master_seed": 731905463,
+  "derivation": "numpy.random.default_rng(numpy.random.SeedSequence([master, entry_index])) for every master",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: no design / UQ sampling in the scored functions",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: no TPMC call (intake outputs enter as explicit plain-data inputs)",
+   "other_streams": "NOT_APPLICABLE: neither implementation draws random numbers; the harness draws the input vectors once (numpy default_rng) and passes identical float values (JSON shortest round-trip repr) to both implementations",
+   "migration_parity_dataset": "seeds, draw order and captured reference outputs stay exactly reproducible (immutable)",
+   "after_rust_authority": "not applicable (no RNG in the component)"
+  },
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; the refinement grid (refinement_master_seed) is the registered development run of transient_convergence_procedure_v3 step 1-3: it estimates each implementation's numerical envelope and is frozen in the envelope record, never scored; the single execution with scoring_master_seed is recorded in campaign_history and the report is committed whatever its verdict",
+  "refinement_master_seed": 731905563,
+  "seed_independence": "the three masters are distinct and distinct from v1 (731905303 / 731905393), v2 (731905313 / 731905413), v3 (731905323 / 731905423 / 731905523), v4 (731905333 / 731905433 / 731905533), v5 (731905343 / 731905443 / 731905543) and v6 (731905353 / 731905453 / 731905553); of v3 / v4 only the development seeds were used, of v5 / v6 only the refinement seeds (frozen records kept as evidence, and their vectors for the analyses); no scoring seed of v3-v6 was ever used; the v7 held-out vectors (scoring_master_seed, stratified draw) are never drawn or run before the envelope record is committed and its non-vacuity check passed"
+ },
+ "observables": {
+  "rule": "every entry compares the full JSON record of the Python result recursively (numpy arrays as lists, masked NaN as 'NaN'); every non-float leaf EXACT_VALUE; floats by the entry's class below; a refused call compares the exception class (EXACT_VALUE) and reports the message (not scored). Reported, not scored: conservation_residual_rel.* (rounding noise of each implementation; gated by CONS-P-02), the transient solver internals (nfev, internal step / segment decomposition, iteration counts; A9.31 sec. 5), mass_residual_rel of transients (gated by CONS-P-03 in each implementation and by the R_CONSERVATION reason), _ucmd_end (controller command at a segment end; used by the threshold-proximity rule), iterations of the reservoir fixed point",
+  "closed_form (P30-P36, P39, P41, P46-P48, upstream P10-P25, P50)": {
+   "list": [
+    {
+     "name": "every computed float",
+     "units": "SI",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "upstream / P30-P34 / P41 / P46-P48": {
+       "k_ulp": 4,
+       "r_rel": 1e-12
+      },
+      "P35 / P36 / P39 (cascade characteristic, node network, numpy paths)": {
+       "k_ulp": 4,
+       "r_rel": 1e-09
+      },
+      "absolute floor for kg/s and Pa m^3/s fields of P35-P36": "1e-12 x the vector's forward source term sum_s f_s"
+     },
+     "definition": "closed-form evaluations"
+    }
+   ]
+  },
+  "steady (P37 steady_operating_point / evaluate, P38 steady_sweep, P44 orbit_quasi_static)": {
+   "list": [
+    {
+     "name": "status / reasons / bits / offered None-ness / in_domain",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal, under the threshold-proximity rule below",
+     "definition": "F4 gates"
+    },
+    {
+     "name": "a_eq_m2, p_deadhead_Pa, flows, pressures, compositions, compressor P_el / mass / T / K_min / K_over_K0_max / p_stage_max, Kn, lambda",
+     "units": "SI",
+     "tolerance_class": "SOLVER_TOLERANCE (bisection) / ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-09,
+      "a_abs": "kg/s fields: 1e-12 x the vector's forward source mass flow sum_s f_s / (k T / m_s); bisection_residual_rel: 1e-9 absolute"
+     },
+     "definition": "the identical 90-step log bisection (same bracket, same midpoint rule) on the closed-form network: rounding-level agreement except the numpy SIMD exp / power of the reference (ulp-level), amplified at most ~1e6 by the cascade throughput cancellation (A_c p2 - p3) / B_c"
+    }
+   ]
+  },
+  "reservoir (P49)": {
+   "list": [
+    {
+     "name": "converged / solver_status / bracketed / reachable",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "G-04 / G-05"
+    },
+    {
+     "name": "steady_state, size_orifice_for_pressure floats",
+     "units": "SI",
+     "tolerance_class": "SOLVER_TOLERANCE",
+     "tolerance": {
+      "rel_tol": 1e-10,
+      "k_ulp": 4,
+      "abs_tol": "residual / balance_residual_rel / p_residual_rel: 1e-12"
+     },
+     "definition": "identical damped fixed point (200 iterations max, rtol 1e-6) and 60-step geometric bisection; Python floats only"
+    },
+    {
+     "name": "startup_transient floats and history",
+     "units": "SI",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-09,
+      "t_ignite_s": "both null, or |rust - py| <= 1.0001 dt (one explicit step: the threshold test p >= p_ignite on a rounding-level trajectory)"
+     },
+     "definition": "identical explicit Euler loop"
+    }
+   ]
+  },
+  "transient v3 (P42 transient_run, P43 transient_case, P45 orbit_simulated)": {
+   "rule": "transient_convergence_procedure_v3 (the A9.31 sec. 5 procedure); the v1 transient tolerance group is withdrawn for v3 (v1 / v2 keep it as history)",
+   "list": [
+    {
+     "name": "integrator-dependent physical observables (the families of transient_convergence_procedure_v3.step_3_envelope_estimator.families)",
+     "units": "SI (scored in the family's registered normalisation)",
+     "tolerance_class": "CONVERGENCE_ENVELOPE",
+     "tolerance": "|rust - py| <= (E_py + E_rust) x s_F + max(4 ulp(py), 1e-9 |py|), E from the frozen envelope record at the vector's tolerance level, s_F the family scale",
+     "definition": "samples at the registered physical sample times, segment metrics, extrema, final values, summary and objectives as listed per family"
+    },
+    {
+     "name": "segment cascade diagnostics K_min, K_over_K0_max, p_stage_max_Pa, P_el_max_W, T_comp_max_K (P42)",
+     "units": "SI",
+     "tolerance_class": "SOLVER_TOLERANCE",
+     "tolerance": "reported with the conditioning recorded, not scored as values; scored through their primitives (transient_convergence_procedure_v3.ill_conditioned_diagnostics.rule_cascade)",
+     "definition": "max / min over the segment samples of the forward Gaede cascade at the trajectory state; rounding-dominated at and outside the edge of the Gaede domain"
+    },
+    {
+     "name": "segment compressor-inlet pressure p_inlet_max_Pa (P42)",
+     "units": "Pa",
+     "tolerance_class": "CONVERGENCE_ENVELOPE (primitive image)",
+     "tolerance": "|rust - py| <= W + max(4 ulp(py), 1e-9 |py|) (ill_conditioned_diagnostics.rule_inlet)",
+     "definition": "max over the segment samples of sum_s (f_s d + beta_s p_s) / (e_s + alpha_s)"
+    },
+    {
+     "name": "closed-form transient leaves: t (sample grid), a_eq_design_m2, a_eq_max_m2, plenum_tau_s, shaft_hz, inventory_kg, ride_through_s, ripple_transfer_shaft, P_compressor_el_W",
+     "units": "SI",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "t": {
+       "k_ulp": 4,
+       "r_rel": 1e-12
+      },
+      "the steady-network leaves": {
+       "k_ulp": 4,
+       "r_rel": 1e-09
+      }
+     },
+     "definition": "not integrator outputs: the t_eval grid (closed form) and the steady network at the design point (v1 closed-form / steady classes); copied leaves (setpoint_Pa, duration_s, t_start_s, V_m3, T_comp_limit_K, shaft_hz, amplitude) EXACT_VALUE as in v1"
+    },
+    {
+     "name": "ok / status / reasons / saturated_end / event / kind / intake_state / state / reason, None-ness of xO samples, settling_time_s / flow_recovery_s / settling_max_s (a sample time: same index ULP {k_ulp 4, r_rel 1e-12}, a different index is a discrete difference), objectives None-ness",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal, under the v3 threshold-proximity rule (threshold_proximity_rule.v3_transient)",
+     "definition": "transient gates, event ordering and domain / status parity (A9.31 sec. 5)"
+    },
+    {
+     "name": "nfev, mass_residual_rel, _ucmd_end",
+     "units": "-",
+     "tolerance_class": "SOLVER_TOLERANCE",
+     "tolerance": "reported, not scored (A9.31 sec. 5: adaptive-solver internals are not physics; mass_residual_rel gated by CONS-P-03 and R_CONSERVATION; _ucmd_end feeds the proximity rule)",
+     "definition": "integrator statistics / instrumentation"
+    },
+    {
+     "name": "stability class of every transient vector ('<id>#class', plenum.stability_class)",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE (class, per-equilibrium kind); Re lambda_max reported",
+     "tolerance": "equal; a disagreement is a scored failure (transient_convergence_procedure_v7.stability_class.agreement)",
+     "definition": "transient_convergence_procedure_v7.stability_class"
+    },
+    {
+     "name": "reported, not scored (v7): NOT_CONVERGENT_REFERENCE leaves of the U stratum; closing-valve xO extrema (P43)",
+     "units": "-",
+     "tolerance_class": "REPORTED",
+     "tolerance": "none (transient_convergence_procedure_v7.unstable_stratum.not_convergent_reference, closing_valve_xO); not counted as a pass",
+     "definition": "values of both implementations in the report"
+    }
+   ]
+  }
+ },
+ "threshold_proximity_rule": {
+  "statement": "a discrete outcome (reason, status, boolean, settling sample index, None-ness) derived from a toleranced continuous quantity x by a threshold test x vs theta may differ between the implementations only where the Python value lies within x's registered tolerance of theta: |x_py - theta| <= tol(x_py) (combined with the threshold's own relative slack). Such a difference is recorded NOT_SCORED_AT_THRESHOLD with the quantity, theta and both values; any other difference fails. The dependent outcomes (status from reasons, objectives None-ness, the values that are masked or offered only on one side) of that vector are then not scored either and are listed",
+  "quantities": {
+   "R_CHARACTERISTIC": "K_min vs 1 - K_TOL; K_over_K0_max vs 1 + K_TOL",
+   "R_STAGE_DOMAIN": "p_stage_max vs P_DOMAIN_PA (1 + 1e-12); compressor inlet pressure vs P_DOMAIN_PA",
+   "R_KN_FEED": "Kn_upper vs KN_MIN",
+   "R_THERMAL": "T_comp vs materials.DB T_max_K",
+   "R_DEADHEAD": "target vs p_deadhead",
+   "R_BISECTION": "bisection_residual_rel vs BISECT_RTOL; a_eq vs the bracket ends (1 -/+ 1e-9)",
+   "R_TRAJ_DOMAIN": "max trajectory p vs P_DOMAIN_PA",
+   "R_SATURATED / saturated_end": "u_cmd at the segment end vs 1 + 1e-9 and -1e-9 (tolerance: the u tolerance); orbit_quasi_static u_max vs 1",
+   "R_NOT_SETTLED / settling index": "per sample |y - y_final| vs SETTLE_BAND |y_final| (tolerance: twice the trajectory tolerance of y, relative to |y_final|)",
+   "reservoir converged / bracketed": "not toleranced: EXACT_VALUE without exception (identical algorithm)"
+  },
+  "registered_before_comparison": true,
+  "v3_transient": {
+   "statement": "for P42 / P43 / P45 the v1 transient quantities are replaced as below; each differing discrete leaf must be attributed to a flagged governing quantity of the same segment (no vector-wide excuse); a difference without its flag fails",
+   "quantities": {
+    "saturated_end (segment k)": "|u_cmd,end,py - theta| <= (E_py + E_rust)[F42.ucmd_end] for theta in {1 + 1e-9, -1e-9}",
+    "settling_time_s / flow_recovery_s / settling_max_s / their None-ness (segment k)": "some sample j with | |y_j - y_f| - band |y_f| | <= tol(y_j) + tol(y_f), y = p (final = the setpoint, tol(y_f) = 0) or mdot (final = the last sample), tol = (E_py + E_rust)[F42.p] r0 or [F42.mdot] mdot_scale, band = SETTLE_BAND (P43 uses the P42 sample envelopes of the same level)",
+    "R_TRAJ_DOMAIN": "|max_j p_py - P_DOMAIN_PA| <= (E_py + E_rust)[F42.p] r0",
+    "R_CHARACTERISTIC / R_STAGE_DOMAIN / R_THERMAL": "the image interval (ill_conditioned_diagnostics, 8 corners) of the governing quantity (min K_min vs 1 - K_TOL, max K_over_K0_max vs 1 + K_TOL, max p_stage_max_Pa vs P_DOMAIN_PA (1 + 1e-12), max p_inlet_max_Pa vs P_DOMAIN_PA, T_comp_max_K vs T_comp_limit_K) contains or touches theta",
+    "xO None-ness (P42 sample j)": "|u_py,j| <= (E_py + E_rust)[F42.u] (xO is undefined exactly where the valve opening is not positive; the sign of u inside its envelope is unresolved)",
+    "P43": "transient_case does not return samples: its proximity tolerances use the P42 envelopes of the same level (same event sequence and integrators) on the instrumented Python samples",
+    "dependent outcomes": "R_SATURATED / R_NOT_SETTLED from the flagged leaves above, status from reasons, objectives.settling_max_s None-ness and value from the settling leaves",
+    "not toleranced (EXACT_VALUE without exception)": "ok, R_INTEGRATOR, R_CONSERVATION (both residuals are rounding-level against MASS_TOL 1e-6), R_DEADHEAD / NO_STEADY_START (closed-form steady network), event / kind / state ids"
+   },
+   "counting": "the proximity limit counts discrete leaves: NOT_SCORED_AT_THRESHOLD leaves (governing and dependent) over the EXACT_VALUE leaves compared in the entry (the v1 text 'scored discrete outcomes'; the v1 / v2 harness counted vectors, which made one coincidence among 17 vectors exceed 1 %)"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "not used",
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, reasons, ids, error classes, None / null, list lengths and orders, dict key SETS (Python dict insertion order carries no meaning in these records and is not compared), and floats that are copied (not computed): equal (floats by value, -0.0 == 0.0; non-finite floats are transported as the strings 'NaN', '+inf', '-inf' and compared as strings)",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp * ulp(py) OR |rust - py| <= r_rel * |py| OR |rust - py| <= a_abs, k_ulp / r_rel / a_abs fixed per observable group below (an absent clause is not applied); relative clause scaled by |py| (not max(1, |py|)): the observables span 1e-30 .. 1e9. ulp(py) = math.ulp(py)",
+  "SOLVER_TOLERANCE": "convergence / solver status EXACT_VALUE; solution |rust - py| <= abs_tol + rel_tol * |py| with abs_tol / rel_tol fixed per entry below and tied to the solver's own tolerance; iteration and function-evaluation counts reported, not scored",
+  "STATISTICAL": "not used (deterministic components)",
+  "EXACT_STREAM": "not used (no RNG in either implementation)",
+  "CONVERGENCE_ENVELOPE": "A9.31 sec. 5: |rust - py| <= (E_py + E_rust) x s + max(k_ulp ulp(py), r_rel |py|) with E_py / E_rust the frozen numerical-discretisation envelopes of the two implementations (envelope record, estimated on the independent refinement grid before the held-out vectors are run), s the registered family scale and (k_ulp 4, r_rel 1e-9) the existing floating residual allowance of the steady network class (v1 tolerance_basis.closed_form_and_steady). Non-finite values compare as strings (EXACT_VALUE)"
+ },
+ "tolerance_basis": {
+  "independence": "fixed before any comparison",
+  "registered": {
+   "closed_form_and_steady": "the Rust port repeats the reference operation order; scalar Python floats and glibc libm are reproduced exactly; the reference's numpy paths (area_for_pressure exp, steady_sweep, cascade_arrays, orbit sin) may differ by a few ulp (AVX512 SIMD loops); the cascade throughput Q = (A_c p2 - p3) / B_c can cancel and amplify that by up to ~1e6, so r_rel 1e-9 is the registered bound",
+   "reservoir": "Python floats only, identical algorithms: rounding-level",
+   "transient": "v3: no tolerance is chosen; the transient tolerances are the convergence-derived envelopes of transient_convergence_procedure_v3, frozen in the envelope record before the held-out vectors are run (A9.31 sec. 5). The v1 statement (100 x the integrator rtol) is withdrawn for v3"
+  },
+  "pre_registration_disclosure": "examined before this registration: the committed v1 / v2 reports and HISTORY entries; Python-only properties of the reference (no Rust involved) on exploration seeds 11111 / 22222 / 33333 / 44444 / 55555 / 66666 (not registered seeds): LSODA rtol 1e-5 vs 1e-8 vs 1e-10 and BDF 1e-8 vs 1e-10 vs 1e-12 converge monotonically (|T1 - T2| about 1e-3 x |N - T2| for production, about 1/40 for the reference-tolerance set), the converged LSODA / BDF solutions agree with an independent scipy Radau rtol-1e-11 solution to <= 1e-7 in every family (p / r0, u, mdot / mdot_scale); the segment cascade diagnostics are rounding-unstable outside and at the edge of the Gaede domain (relative N - T2 differences up to ~1e44 out of domain and 0.98 in one in-domain segment with K0 / K_min ~ 2e11); and one Rust-only feasibility run (no Python comparison) showing the Rust Radau integrates the exploration vectors at rtol 1e-5 .. 1e-12 without failure. No Python-vs-Rust comparison of any v3 vector was made. v4 addition: the v3 development draft of the refinement procedure (development seed 731905423: 22 vectors, Python and Rust at N / T1 / T2, never scored) and its investigation (supersedes.reason); after the fix the development vector agrees with the converged reference to <= 1.5e-11. No vector of the v4 seeds was drawn or run before this registration. v5 addition: the v4 development run (development seed 731905433: a draft refinement envelope from 9 + 3 vectors per entry and the development vectors of every entry, Python and Rust, never scored) and its analysis (supersedes.reason); then, on the same development seed, a 48 + 16 (P45 48) draft envelope and a development comparison of the P42 / P43 / P45 development vectors with the five cascade diagnostics unscored: no failure, largest used fraction of a bound 0.37. No vector of the v5 seeds was drawn or run before this registration. v6 addition: the frozen v5 refinement record (refinement seed 731905543) and, for the diagnosis, reruns of v5 refinement vectors (R45-192 / R45-331 / R45-054 / R45-198 / R45-021 / R45-007 in both implementations; the 512 P45 vectors in Rust at nominal and, where cheap, T1 rtol; all 2560 in Rust at nominal rtol before / after the fix for the blast radius); no development-seed comparison of v6 and no vector of the v6 seeds was drawn or run before this registration. v7 addition: the frozen v6 record (refinement seed 731905553) and its analyses (refinement_v6_p45_note.md, refinement_v6_p4243_note.md, DIV-P-REF-01); a design probe on the v6 refinement vectors (both implementations at N / T1 / T2; timings; the event-wise and 24-phase classes; the closing-valve xO validation; the rho distribution; a non-vacuity preview); the Python vs Rust class on the 2560 v6 refinement vectors; the v7 harness developed against a draft of this contract with exploration seeds 11111 / 22222 (not registered seeds). No vector of the v7 seeds was drawn or run before this registration"
+ },
+ "transient_convergence_procedure_v3": {
+  "authority": "A9.31 sec. 5, binding word for word (docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md, Message 1 sec. 5 (text sha256 ab7705efeb0835b9443cebd86018cd5c29bdbc3f29d6f618c147dab1e7dec75a)): 'Do NOT choose an arbitrary owner tolerance. Use a preregistered convergence-derived tolerance procedure' (steps 1-6 below map one to one onto the ruling's steps 1-6)",
+  "applies_to": [
+   "plenum.transient_run (P42, TransientRun.run on event_sequence)",
+   "plenum.transient_case (P43)",
+   "plenum.orbit_sim (P45, orbit_simulated)"
+  ],
+  "tolerance_levels": {
+   "PROD": {
+    "nominal_rtol": 1e-05,
+    "python_method": "LSODA (module default INTEGRATOR_METHOD)",
+    "rust_method": "Radau IIA order 5 (DIV-P-01; v4 switching-point fix, v6 growing-mode guard)",
+    "T1_rtol": 1e-08,
+    "T2_rtol": 1e-10,
+    "vectors": "P42 / P43 PROD vectors (module defaults) and every P45 vector"
+   },
+   "REF": {
+    "nominal_rtol": 1e-08,
+    "python_method": "BDF (module INTEGRATOR_REFERENCE)",
+    "rust_method": "Radau IIA order 5 (DIV-P-01; v4 switching-point fix, v6 growing-mode guard)",
+    "T1_rtol": 1e-10,
+    "T2_rtol": 1e-12,
+    "vectors": "P42 / P43 REF vectors (rtol RTOL_REFERENCE, method INTEGRATOR_REFERENCE)"
+   },
+   "rule": "a tightened run changes rtol only: same implementation and method, same atol (ATOL_SCALED 1e-11 on the scaled states), same t_eval sample grid, same event sequence and inputs",
+   "override_mechanics": {
+    "python": "P42 / P43: the rtol / method arguments of TransientRun / transient_case; P45: orbit_simulated has no rtol argument, so the harness sets the default rtol of TransientRun.__init__ in its own process for the tightened P45 runs only (no reference file is changed; the nominal P45 runs use the unmodified default)",
+    "rust": "P42 / P43: the request 'rtol'; P45: a request carrying 'rtol' is evaluated by the parity CLI as TransientRun::new(rtol) + steady_start + run + the orbit_simulated record (library calls only); check COMP-P-01: at the nominal rtol this composed path equals the library orbit_simulated byte for byte on every P45 refinement vector (recorded in the envelope record; a mismatch voids the record)"
+   }
+  },
+  "step_1_refinement_grid": {
+   "statement": "an independent development / refinement grid of transient cases, separate from the held-out scored vectors, frozen by this contract",
+   "seed": "refinement_master_seed 731905553, streams SeedSequence([731905553, entry_index]), entry_index 42 / 43 / 45",
+   "generator": "the held-out P42 / P43 / P45 draw procedure verbatim (inputs.randomized_domain.draw: transients, P45) with larger counts; no edge vectors",
+   "counts": {
+    "P42": {
+     "PROD": 768,
+     "REF": 256
+    },
+    "P43": {
+     "PROD": 768,
+     "REF": 256
+    },
+    "P45": {
+     "PROD": 512
+    }
+   },
+   "ids": "R42-PROD-000.., R42-REF-768.., R43-PROD-000.., R43-REF-768.., R45-000..",
+   "frozen_as": "the envelope record stores the sha256 of the canonical JSON of the grid inputs",
+   "v7": "replaced by transient_convergence_procedure_v7.stratified_draws.refinement"
+  },
+  "step_2_runs": "every refinement vector is run by both implementations at its level's nominal, T1 and T2 rtol (six runs per vector). Python is the read-only reference module at python_commit; Rust is the abep-gaspath-parity CLI at the recorded commit",
+  "step_3_envelope_estimator": {
+   "per_leaf": "e = (|x_N - x_T2| + |x_T1 - x_T2|) / s_F, all three values from the same implementation. |x_N - x_T2| estimates the nominal discretisation error; |x_T1 - x_T2| bounds the residual error of T2 (convergence with decreasing rtol, verified by the Python-only disclosure above), so e bounds |x_N - x_exact| / s_F",
+   "envelope": "E[impl, level, entry, family] = the maximum of e over every pairable leaf of the family over every refinement vector of that entry and level. No multiplier or coverage factor is applied (one would be a chosen tolerance). Exchangeability note (recorded, not a rule): with n refinement and m held-out vectors of one entry and level drawn from the same distribution, the chance that the held-out maximum of one implementation's error exceeds the grid maximum is m / (n + m) (1.5 % for P42 / P43 PROD (12 / 780) and REF (4 / 260), 0.8 % for P45 (4 / 516)); the decision adds the other implementation's envelope and the floating allowance",
+   "pairable": "a leaf is pairable when it is a finite float in all three runs of the implementation (xO: finite, i.e. defined, in all three); a run that is refused, fails (ok false, MODEL_ERROR) or differs in structure from its T2 run (segment / metric count, None-ness) contributes no leaf of that vector and is listed in the record (with the discrete N-vs-T2 differences); if a family has no pairable leaf its envelope is NOT_EVALUATED and every held-out leaf of it fails",
+   "scales": {
+    "r0": "the vector's design setpoint r0 [Pa] (an input)",
+    "mdot_scale": "TransientRun(filter, plant, plenum, controller, design intake, r0).mdot_scale of the reference: sum_s c_s a_ss p_s m_s / (k T) at the design steady state [kg/s], a closed-form property of the vector computed once by the harness and used for both implementations (a relative scale, not an absolute floor)",
+    "1": "dimensionless (valve opening, mole fraction, setpoint-relative fractions)",
+    "relative": "|x_T2| of the same implementation on the grid; |py| at scoring"
+   },
+   "families": {
+    "P42": {
+     "F42.p": {
+      "leaves": "segments[*].p[*] (total plenum pressure at every registered sample time)",
+      "scale": "r0"
+     },
+     "F42.u": {
+      "leaves": "segments[*].u[*] (valve opening)",
+      "scale": "1"
+     },
+     "F42.mdot": {
+      "leaves": "segments[*].mdot[*] (delivered mass flow)",
+      "scale": "mdot_scale"
+     },
+     "F42.xO": {
+      "leaves": "segments[*].xO[*] where finite in every run compared",
+      "scale": "1"
+     },
+     "F42.ucmd_end": {
+      "leaves": "segments[*]._ucmd_end (reported, not scored; proximity tolerance of saturated_end)",
+      "scale": "1"
+     },
+     "F42.throughput": {
+      "leaves": "throughput_kg",
+      "scale": "relative"
+     }
+    },
+    "P43": {
+     "F43.p": {
+      "leaves": "metrics[*].P_final_Pa, P_min_Pa, P_max_Pa; summary.P_min_Pa, P_max_Pa",
+      "scale": "r0"
+     },
+     "F43.setpoint_frac": {
+      "leaves": "metrics[*].final_setpoint_error_frac, peak_deviation_frac; objectives.peak_deviation_max",
+      "scale": "1"
+     },
+     "F43.overshoot": {
+      "leaves": "metrics[*].overshoot_frac; summary.overshoot_max",
+      "scale": "1"
+     },
+     "F43.mdot": {
+      "leaves": "metrics[*].mdot_final_kgps, mdot_min_kgps, mdot_max_kgps; summary.mdot_min_kgps, mdot_max_kgps",
+      "scale": "mdot_scale"
+     },
+     "F43.xO": {
+      "leaves": "metrics[*].xO_min, xO_max; summary.xO_flow_min, xO_flow_max",
+      "scale": "1"
+     },
+     "F43.u": {
+      "leaves": "metrics[*].u_min, u_max",
+      "scale": "1"
+     },
+     "F43.valve_travel": {
+      "leaves": "metrics[*].valve_travel",
+      "scale": "1"
+     },
+     "F43.valve_travel_total": {
+      "leaves": "objectives.valve_travel",
+      "scale": "1"
+     }
+    },
+    "P45": {
+     "F45.P_dev": {
+      "leaves": "P_dev_max_frac",
+      "scale": "1"
+     },
+     "F45.mdot": {
+      "leaves": "mdot_min_kgps, mdot_max_kgps",
+      "scale": "mdot_scale"
+     }
+    }
+   },
+   "levels": "every family is estimated separately for PROD and REF (P45: PROD only) and for each implementation",
+   "also_recorded_not_used": [
+    "T2-vs-T2 cross-implementation difference per family (model-equivalence diagnostic, not a verdict)",
+    "max |T1 - T2| / max |N - T2| per family (convergence ratio)",
+    "N - T2 relative differences of the six segment cascade diagnostics (their ill-conditioning)",
+    "CONS-P-03 mass residuals of every run",
+    "COMP-P-01 (P45 composed path equals the library orbit_simulated at nominal rtol)"
+   ]
+  },
+  "step_4_freeze": {
+   "record": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/transient_envelope_v7.json",
+   "content": "contract id and sha256, refinement inputs sha256, python_commit and environment, rust commit and build provenance, harness sha256, the envelopes E[impl, level, entry, family] with the vector and leaf attaining each maximum, counts, failures and the also_recorded items",
+   "rule": "committed in its own commit before any held-out (scoring_master_seed) vector is generated or run; the scoring run refuses unless the record exists, is tracked and unchanged since its commit, names this contract's sha256 and has no NOT_EVALUATED envelope it needs; the report records its sha256 and commit. The record is never edited after the scoring run"
+  },
+  "step_5_score": "the held-out P42 / P43 / P45 vectors are scored on the common physical observables at the registered physical sample times: the module t_eval grid of every event (0 plus 150 geometric points from 1e-6 max(T, 1) to T, deduplicated, last = T; identical in both implementations and ULP-checked), and the segment metrics, extrema, final values, summary and objectives defined on those samples",
+  "step_6_decision": "for every family leaf: |rust - py| <= (E_py + E_rust) x s_F + max(4 ulp(py), 1e-9 |py|) at the vector's level (CONVERGENCE_ENVELOPE); the floating term is the existing STEADY floating residual allowance",
+  "not_scored": "nfev, internal step / segment decomposition, iteration counts (A9.31 sec. 5); mass_residual_rel (gated per implementation, CONS-P-03); _ucmd_end (proximity input)",
+  "ill_conditioned_diagnostics": {
+   "quantities": "P42 segments[*]: K_min, K_over_K0_max, p_stage_max_Pa, P_el_max_W, T_comp_max_K (the forward Gaede cascade along the trajectory: K = K0 - (K0 - 1) Q / (S p), Q = (A_c p2 - p3) / B_c) and p_inlet_max_Pa (p2 = (f d + beta p3) / (e + alpha), linear in the states)",
+   "rule_cascade": "K_min, K_over_K0_max, p_stage_max_Pa, P_el_max_W, T_comp_max_K: scored through their well-conditioned primitives and reported with the conditioning recorded, not scored as cross-implementation values: (a) the per-species plenum states that determine them are the scored samples of F42.p (total) and F42.xO (composition) at the registered sample times; (b) the map is scored on identical inputs by P35 (CompressorPlant.cascade) and P40 (segment_metrics / _domain_reasons) of this contract, and IMG-CHECK confirms the instrumented reference map reproduces the reported values bit for bit; (c) the domain decisions they feed (R_CHARACTERISTIC, R_STAGE_DOMAIN, R_THERMAL in transient_case) are EXACT_VALUE under the image proximity rule (threshold_proximity_rule.v3_transient)",
+   "rule_inlet": "p_inlet_max_Pa: allowed |rust - py| = W + max(4 ulp(py), 1e-9 |py|), W = max over the 8 corners sigma in {-1, +1}^3 of |f(y + sigma delta) - f(y)|, y the Python nominal scaled plenum states at the registered sample times, delta = E_py + E_rust of F42.p at the vector's level, f the reference TransientRun._segment_record on the perturbed states",
+   "conditioning_recorded": "per segment and quantity: f(y), W (the envelope image, delta box), W_round (the image of the 4-ulp box y_s (1 +/- 4 eps)) and kappa = W / (delta |f|), kappa_round = W_round / (4 eps |f|): kappa_round >> 1 marks a value whose computed digits are rounding noise",
+   "image_also_used_by": "the threshold-proximity rule of the cascade domain reasons (image interval of the delta box, 8 corners), unchanged from v3 / v4",
+   "check": "IMG-CHECK: f(y) equals the Python reported value bit for bit (the instrumentation reproduces the reference)",
+   "evidence": "supersedes.reason (1); development seed only"
+  },
+  "no_tighter_rust_integration": "the Rust integrator is the v1 Radau IIA (DIV-P-01) with the registered switching-point fix (rust_implementation.v4_rust_defect_fix) and the growing-mode guard (rust_implementation.v6_rust_defect_fix); its error norm, rtol / atol and output grid are unchanged; no tighter internal integration is registered",
+  "version_note": "the procedure registered in contract v3, carried into v4-v7 (section name kept); v5 changed ill_conditioned_diagnostics and the grid counts; v6 the registered Rust integrator; v7 replaces step_1 (draws) and step_4.record by transient_convergence_procedure_v7 and applies steps 3, 5 and 6 per stratum"
+ },
+ "transient_convergence_procedure_v7": {
+  "authority": "A9.31 sec. 1 (supersession before any scored run) and sec. 5 (convergence-derived envelopes); coordinator decisions 2026-10-07 (v6 superseded unscored; v7 design approved with additions)",
+  "applies_to": "P42 transient_run, P43 transient_case, P45 orbit_simulated (every other entry: the v1 / v3 rules)",
+  "levels_from": "transient_convergence_procedure_v3",
+  "replaces_in_v3_section": "step_1_refinement_grid (draws) and step_4_freeze.record (path); steps 2, 3, 5, 6, tolerance levels, families and scales are used per stratum as below",
+  "stability_class": {
+   "input_property": "computed from the vector's inputs only (no transient run)",
+   "equilibria": {
+    "P42 / P43": "one per event of the fixed sequence event_sequence(design, r0, window_s) (E0 hold, E1 / E2 setpoint x1.1 and back, E3 / E4 feed path x0.8 and back, E5 / E6 / E7 supply x0.9, x1.1, back): the equilibrium of the event's intake, setpoint, density and feed factor",
+    "P45": "the orbit event's quasi-static equilibria at density 1 + amplitude sin(2 pi k / 24), k = 0..23 (the reference orbit_quasi_static default phase grid n_phase = 24); k = 0 is the steady start"
+   },
+   "equilibrium": "co = Chain(event intake, filter, plant, plenum).node_coefficients(density); (A, ok) = area_for_pressure(co, setpoint, k_rec, leak, feed); CLOSING if not ok (the setpoint is at or above the dead-head pressure: the valve closes); u = A / (A_max feed_factor); SAT_OPEN if u > 1; else UNSAT with y = (p_s / r0 from solve_pressures(co, A, ...), u, I = (u / u_ff - 1) Ti / Kp, 0, 0, 0) and the eigenvalues of the dynamic 5 x 5 block (scaled pressures, valve opening, integral) of the reference Jacobian TransientRun._make(event) at y (the three cumulative-integral states have zero Jacobian columns)",
+   "class": "U if some UNSAT equilibrium has an eigenvalue with Re lambda > 0 (no other threshold); R if the vector is refused (TransientRun at the design setpoint raises ValueError: dead-head; P45 also no steady start: y0 None or u_ss > 1); S otherwise",
+   "implementations": "Python: the harness on the reference module's own functions (TransientRun, Chain.node_coefficients, area_for_pressure, solve_pressures, TransientRun._make Jacobian) with numpy.linalg.eigvals; Rust: parity CLI plenum.stability_class (TransientRun::event_equilibrium, eig_real; rust_implementation.v7_stability_class)",
+   "agreement": "every held-out transient vector (incl. R) has a scored class vector '<id>#class': class and per-equilibrium kind EXACT_VALUE; a disagreement is a scored FAILURE, never an exclusion; Re lambda_max is reported, not scored. The stratum of a held-out vector is the Python class (the class used by the draw)",
+   "unclean_vectors_rule": "the class is defined by the equilibria only. A vector whose equilibria are all stable but whose trajectory passes linearly unstable states between equilibria is S (scored under the S envelopes, which are estimated over S vectors including such cases). For P45 the 24 quasi-static phases cover the orbit: v5 R45-021 (stable at the steady start, -7.3e-4 +/- 0.225i, unstable along its orbit) is U (9 of 24 phases with Re lambda > 0, max 1.9e-3); v6 R45-393 is U (max 4.9e-4). P42 / P43: v6 R43-PROD-033 (stable at E0, unstable at E1 / E5) is U"
+  },
+  "strata": {
+   "S": "stable: Rust N vs Python N, bound (E_py^S + E_rust^S) x s_F + max(4 ulp(py), 1e-9 |py|), the v3 rules (step_5 / step_6, proximity) with the S envelopes",
+   "U": "unstable: Rust N vs the converged Python reference T2 (DIV-P-REF-01: the Python nominal transient is not trustworthy on unstable loops), unstable_stratum below",
+   "R": "refused: domain / error parity (the v1 rules); no envelope"
+  },
+  "unstable_stratum": {
+   "reference": "Python T2 run (rtol T2 of the vector's level; P45 by the registered default-rtol override); the Python N and T1 runs are evaluated before it and recorded (the instrumentation keeps the T2 run)",
+   "float_leaf_bound": "|x_rust,N - x_py,T2| <= (E_rust^U + D_py^U) x s_F + max(4 ulp(x_py,T2), 1e-9 |x_py,T2|); E_rust^U = max over the U refinement leaves of (|y_N - y_T2| + |y_T1 - y_T2|) / s_F (Rust runs), D_py^U = max over the same leaves of |x_T1 - x_T2| / s_F (the converged reference's own change), both over leaves whose reference is convergent",
+   "scale": "the registered family scales, except F45.P_dev in U: relative, s = |x_py,T2| (the outcome: a held answer, P_dev about 0, cannot pass because the bound is checked < 1)",
+   "not_convergent_reference": "a float leaf of the Python reference is NOT_CONVERGENT_REFERENCE when rho = |x_T1 - x_T2| / |x_N - x_T1| >= 1/2 (with f = max(4 ulp(x_T2), 1e-9 |x_T2|): |x_N - x_T1| <= f and |x_T1 - x_T2| <= f is convergent; |x_N - x_T1| <= f < |x_T1 - x_T2| is not), or when it is missing / of another type in N or T1; a discrete leaf when T1 != T2. Such leaves are reported (with the Python and Rust values), neither scored nor counted as a pass, and excluded from E_rust^U / D_py^U. rho_limit 1/2: a convergent tolerance sequence contracts by orders of magnitude (median rho of the v6 unstable leaves 4.5e-3); 1/2 marks a second tightening that changes the value at least half as much as the first (v6 R45-034 rho 0.99; the rest of its P45 class <= 0.35)",
+   "discrete_leaves": "EXACT_VALUE against the Python T2 output under the v3 proximity rule with the U bounds and the T2 samples",
+   "sampled_extrema": "extrema sampled from a limit cycle (P_dev_max_frac, mdot_min / mdot_max, xO / u / p extrema, valve travel) are phase-sensitive where the reference is not convergent; they are then NOT_CONVERGENT_REFERENCE leaves, labelled so in the report",
+   "outcome": "scored through every U family (the instability, i.e. the excursion, is what the converged reference shows); the non-vacuity check guarantees that a held answer fails"
+  },
+  "closing_valve_xO": {
+   "segments": "segment k of a P43 vector is a closing-valve segment when event k or event k - 1 is CLOSING (stability_class.equilibrium; input property; the valve starts event k + 1 shut)",
+   "reported_not_scored": "metrics[k].xO_min / xO_max of closing-valve segments and summary.xO_flow_min / xO_flow_max of a vector with any closing-valve segment, in every stratum: reported with their sign / rounding sensitivity (xO is NaN where u <= 0 and the valve opening is at rounding level, so the sign of rounding noise decides which samples enter the extremum), the v5 cascade-diagnostics precedent",
+   "xO_still_scored": "xO samples of P42 (F42.xO) and every other xO extremum stay scored; the None-ness of P42 xO samples stays under the v3 proximity rule (|u_py,j| <= bound of F42.u)",
+   "proximity_counting": "P42 xO None-ness differences that the v3 proximity rule excuses (|u_py,j| <= bound of F42.u) count as ONE NOT_SCORED_AT_THRESHOLD leaf per (vector, segment) in decision_rules.proximity_limit; every excused sample is reported. Reason: while the valve is shut (a closing-valve segment, or a transient closure in which the opening decays to rounding level) the governing quantity is a single one, the sign of the segment's rounding-level valve opening, and the None-ness of all its samples follows it; counting each sample would turn one threshold coincidence into many and make the limit (meant for isolated coincidences, not systematic drift) fail on one shut valve. Every such sample still has to pass the per-sample proximity test; an unexcused difference fails. Found with the draft harness on exploration seeds: one P42 REF vector with a transient closure gave 27 excused samples in one segment (0.98-1.09 % of the entry's discrete leaves)",
+   "known_property": "the converged cross-implementation disagreement of these extrema is recorded in the envelope record as a known property of an ill-posed observable (v6 grid: R43-REF-809 segment 6 xO_min Rust 0.51716, Python 0.51607); it is not resolved by choosing one value",
+   "validation_v6": "v6 grid: F43.xO estimator max over closing-valve segments PROD 3.2e-4 / REF 1.2e-3, over all other segments 1.6e-6 / 1.2e-8 (refinement_v6_p4243_note.md)"
+  },
+  "stratified_draws": {
+   "procedure": "per entry and level a candidate stream numpy.random.default_rng(SeedSequence([master, entry_index, level_index])) (entry_index 42 / 43 / 45, level_index 0 PROD / 1 REF) of the v1 generator (P42 / P43: gen_transient_args with the level's REF flag; P45: gen_orbit_sim_args); each candidate is classified by the Python side of stability_class and accepted while its stratum is not full, in draw order, until every stratum of the level is full; ids <P|R><entry_index>-<level>-<S|U|R>-<nnn>; P42 / P43 also keep the fixed v1 dead-head vector <P42|P43>-E-deadhead in the held-out set",
+   "max_candidates_per_level": 400000,
+   "held_out": {
+    "P42": {
+     "PROD": {
+      "S": 12,
+      "U": 8,
+      "R": 2
+     },
+     "REF": {
+      "S": 4,
+      "U": 4,
+      "R": 1
+     }
+    },
+    "P43": {
+     "PROD": {
+      "S": 12,
+      "U": 8,
+      "R": 2
+     },
+     "REF": {
+      "S": 4,
+      "U": 4,
+      "R": 1
+     }
+    },
+    "P45": {
+     "PROD": {
+      "S": 4,
+      "U": 8,
+      "R": 1
+     }
+    }
+   },
+   "refinement": {
+    "P42": {
+     "PROD": {
+      "S": 640,
+      "U": 192
+     },
+     "REF": {
+      "S": 192,
+      "U": 64
+     }
+    },
+    "P43": {
+     "PROD": {
+      "S": 640,
+      "U": 192
+     },
+     "REF": {
+      "S": 192,
+      "U": 64
+     }
+    },
+    "P45": {
+     "PROD": {
+      "S": 384,
+      "U": 192
+     }
+    }
+   },
+   "rationale": "held-out S at the v6 numbers (P42 / P43 12 PROD + 4 REF, P45 4); held-out U >= 4 per entry and level so every family of the U stratum (P42 6, P43 8, P45 2) has held-out leaves even with NOT_CONVERGENT_REFERENCE leaves; R keeps the domain / error parity coverage of the v1 draws (about 10 % refusals). Refinement: the exceedance probability m / (n + m) of the grid maximum is S 1.8 % (P42 / P43 PROD), 2.0 % (REF), 1.0 % (P45); U 4.0 % (PROD, P45), 5.9 % (REF). Expected candidates from the v6 class shares (U 3.7 % P42, 2.5 % P43, 2.3 % P45): about 5 200 / 7 700 / 8 300 per PROD level (classification 0.03 s each); runtime of the refinement runs about 2 h of single-core Python reference time, run in a 4-process pool",
+   "class_shares_recorded": "the record and the report give the class counts of every candidate stream"
+  },
+  "non_vacuity": {
+   "rule": "before the scoring run, for every scored family, stratum (S, U) and level of the needed envelopes, the frozen bound (family units) must be smaller than the comparison scale of the quantity it discriminates, computed from the converged Python reference values (T2) of the stratum's refinement vectors (U: convergent leaves only; closing-valve xO extrema excluded)",
+   "comparison_scales": {
+    "range_families": {
+     "families": [
+      "F42.p",
+      "F42.mdot",
+      "F42.u",
+      "F42.xO",
+      "F42.ucmd_end",
+      "F43.p",
+      "F43.mdot",
+      "F43.u",
+      "F43.xO",
+      "F43.setpoint_frac",
+      "F43.valve_travel",
+      "F45.mdot"
+     ],
+     "scale": "median over the stratum's refinement vectors with >= 2 leaves of the family of (max - min) of the converged leaf values (the transient response the family must resolve)"
+    },
+    "magnitude_families": {
+     "families": [
+      "F42.throughput",
+      "F43.overshoot",
+      "F43.valve_travel_total",
+      "F45.P_dev"
+     ],
+     "scale": "median of |converged value| over the stratum's refinement leaves (F42.throughput is relative: scale 1)"
+    },
+    "U F45.P_dev": "relative scale: the check is bound < 1, i.e. bound x P_dev,T2 < P_dev,T2 for every U refinement vector (the coordinator's scale: the converged P_dev of every unstable refinement vector)"
+   },
+   "outcome": "written into the frozen record (checks.NON_VACUITY); a missing envelope fails the check; the scoring run refuses unless the check passed; a failure is reported and nothing is scored",
+   "preview_v6_data": "on the v6 grid every family and stratum passes (tightest: U F43.overshoot PROD 0.263 < 0.344, S F43.overshoot PROD 0.0029 < 0.0116, S F45.P_dev 4.7e-6 < 4.4e-5, U F45.P_dev 0.245 < 1); not a substitute for the check on the v7 record"
+  },
+  "needed_envelopes": {
+   "S": {
+    "PROD": [
+     "P42",
+     "P43",
+     "P45"
+    ],
+    "REF": [
+     "P42",
+     "P43"
+    ]
+   },
+   "U": {
+    "PROD": [
+     "P42",
+     "P43",
+     "P45"
+    ],
+    "REF": [
+     "P42",
+     "P43"
+    ]
+   }
+  },
+  "record": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/transient_envelope_v7.json",
+  "freeze": "the v3 step_4 rule with this record: committed alone before any held-out (scoring_master_seed) vector is drawn or run; the scoring run refuses unless it exists, is tracked, unchanged, names this contract's sha256, has no missing envelope, COMP-P-01 and NON_VACUITY passed",
+  "reuse_of_v6_runs": "none: the v7 refinement grid is drawn and run fresh (refinement_master_seed)",
+  "class_disagreement_in_refinement": "recorded in the record (refinement vectors are classified by the Python side for the draw); not a scored check"
+ },
+ "transient_integrity_checks_v3": {
+  "authority": "A9.31 sec. 5 'Still require: mass conservation; pressure / mass non-negativity; valve saturation semantics; event ordering; final state; transient extrema; domain/status parity'",
+  "checks": [
+   {
+    "id": "NN-P-01",
+    "statement": "pressure non-negativity: every P42 p sample and every P43 P_min_Pa >= 0",
+    "evaluated_on": "Rust (required); Python recorded",
+    "tolerance": "exact (>= 0)"
+   },
+   {
+    "id": "NN-P-02",
+    "statement": "mass-flow / mass non-negativity: every P42 mdot sample and every P43 / P45 mdot_min_kgps >= -E_own[mdot] mdot_scale; throughput_kg >= 0; inventory_kg > 0",
+    "evaluated_on": "Rust (required, own envelope); Python recorded (own envelope)",
+    "tolerance": "the implementation's own frozen envelope of the family at the vector's level (mdot is linear in the valve opening, whose exact solution is >= 0)"
+   },
+   {
+    "id": "VS-P-01",
+    "statement": "valve saturation semantics: every P42 u sample and every P43 u_min / u_max in [-E_own[u], 1 + E_own[u]] (the exact valve opening is a first-order lag of clip(u_cmd, 0, 1) and stays in [0, 1]); saturated_end, R_SATURATED and NO_STEADY_START compared as in v3_transient",
+    "evaluated_on": "Rust (required); Python recorded",
+    "tolerance": "own envelope (F42.u / F43.u)"
+   },
+   {
+    "id": "EV-P-01",
+    "statement": "event ordering: P42 segments / P43 metrics follow event_sequence (names and kinds in order), t_start_s equals the cumulative durations, every segment's sample times increase strictly from 0 to duration_s",
+    "evaluated_on": "Rust (required) and EXACT_VALUE leaves against Python",
+    "tolerance": "exact"
+   },
+   {
+    "id": "FS-P-01",
+    "statement": "final state and transient extrema are scored leaves: segment last samples (F42), P_final / mdot_final / final_setpoint_error_frac, P / mdot / u / xO extrema, peak deviation, overshoot, P_dev_max_frac (F43 / F45)",
+    "evaluated_on": "per-test",
+    "tolerance": "CONVERGENCE_ENVELOPE"
+   }
+  ]
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-P-01",
+   "statement": "determinism: two Rust CLI runs over the full vector set give byte-identical stdout; the Python reference evaluated twice gives equal records (transients: deterministic LSODA / BDF)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-P-02",
+   "statement": "steady_sweep is the vectorized twin of steady_operating_point: for every P38 point the Rust sweep and the Rust scalar path give the same bits and values (ULP_BOUNDED STEADY)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-P-03",
+   "statement": "Rust status -> EvalStatus mapping (Rust unit tests; the reference has no EvalStatus): FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS and INFEASIBLE -> EVALUATED (infeasibility is a computed result with reasons); NOT_EVALUATED_OUT_OF_DOMAIN -> OUT_OF_DOMAIN (the SC-WP-02 gate 'feed state outside the registered pressure domain', upstream_a9_13.pressure_domain_status); MODEL_ERROR (R_INTEGRATOR, R_CONSERVATION, R_BISECTION: bisection failure is reported, never half-converged) -> MODEL_ERROR; NOT_EVALUATED -> NOT_EVALUATED; RepresentativeSelectionRefused -> NOT_EVALUATED (the robust upstream set stays visible, never filled by a representative point); flight_feed_requirement PENDING_EVIDENCE -> NOT_EVALUATED; reservoir MODEL_NOT_CONVERGED -> MODEL_ERROR",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-P-04",
+   "statement": "no offered feed state above 0.1 Pa: every Rust record with a target or a touched pressure above P_DOMAIN_PA has offered = null",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-P-05",
+   "statement": "no requirement threshold in the raw gas-path physics: the Rust plenum / feed functions take no RFP value; the only fixed mass-flow numbers (0.38 / 0.38-3.2 mg/s) appear in the refusal guard and the coverage record of upstream (never a gate); R_FLOW belongs to the parametric requirement sweep only",
+   "required_in_both": false
+  }
+ ],
+ "conservation_checks": {
+  "applicable": true,
+  "checks": [
+   {
+    "id": "CONS-P-01",
+    "statement": "source mass balance intake -> compressor -> plenum closes (CLAUDE.md rule 4): for every steady operating point with a computed record, sum_s mdot_intake_net,s = sum_s (mdot_H1,s + mdot_plenum_leak,s) (O -> O2 wall recombination is mass-conserving)",
+    "evaluated_on": "Rust outputs of every P37 vector with a computed record (Python recorded); also a Rust unit test over the P37-type chains",
+    "tolerance": "|residual| <= 1e-12 x sum_s f_s m_s / (k T) (the forward source mass flow at the compressor-inlet node)"
+   },
+   {
+    "id": "CONS-P-02",
+    "statement": "node-wise balances of the reference record (inlet node: intake net = compressor gross - back-leak; plenum: gross - back-leak = H-1 + leak -/+ recombination)",
+    "evaluated_on": "Rust conservation_residual_rel.inlet_node / .plenum of every P37 record",
+    "tolerance": "<= MASS_TOL 1e-6 (the F4 gate; the compressor gross / back-leak split carries the cascade cancellation)"
+   },
+   {
+    "id": "CONS-P-03",
+    "statement": "transient mass conservation: |m(t) - m(0) - (integrated in - out)| / integrated throughput",
+    "evaluated_on": "Rust P42 / P43 / P45 runs (required); Python recorded; also every refinement run at every level (recorded in the envelope record)",
+    "tolerance": "<= MASS_TOL 1e-6"
+   },
+   {
+    "id": "CONS-P-04",
+    "statement": "reservoir steady-state balance at the returned state",
+    "evaluated_on": "Rust P49 steady_state results with converged = true",
+    "tolerance": "balance_residual_rel <= 1e-12"
+   }
+  ]
+ },
+ "domain_and_error_parity": {
+  "cases": [
+   {
+    "id": "DE-P-01",
+    "inputs": "E-P-01, E-P-02, E-P-05, E-P-07",
+    "expected_python": "ValueError",
+    "expected_rust": "class ValueError",
+    "message_key": "reported, not scored"
+   },
+   {
+    "id": "DE-P-02",
+    "inputs": "E-P-03 zero-stage plant",
+    "expected_python": "ZeroDivisionError",
+    "expected_rust": "class ZeroDivisionError",
+    "message_key": "float division by zero"
+   },
+   {
+    "id": "DE-P-03",
+    "inputs": "E-P-06",
+    "expected_python": "FilterStageError",
+    "expected_rust": "class FilterStageError",
+    "message_key": "reported, not scored"
+   },
+   {
+    "id": "DE-P-04",
+    "inputs": "E-P-08",
+    "expected_python": "KeyError",
+    "expected_rust": "class KeyError",
+    "message_key": "'N2'"
+   },
+   {
+    "id": "DE-P-05",
+    "inputs": "E-P-09",
+    "expected_python": "A913RuleError / RepresentativeSelectionRefused",
+    "expected_rust": "class A913RuleError / RepresentativeSelectionRefused",
+    "message_key": "reported, not scored"
+   },
+   {
+    "id": "DE-P-06",
+    "inputs": "E-P-03 OOD / dead-head / F1 infeasible; transient integrator failure",
+    "expected_python": "status NOT_EVALUATED_OUT_OF_DOMAIN / INFEASIBLE / MODEL_ERROR with reasons",
+    "expected_rust": "the identical status and reasons",
+    "message_key": "reasons"
+   }
+  ],
+  "mapping": {
+   "ValueError": "OUT_OF_DOMAIN",
+   "KeyError": "OUT_OF_DOMAIN",
+   "FilterStageError": "OUT_OF_DOMAIN",
+   "SynthesisInputError": "OUT_OF_DOMAIN",
+   "ZeroDivisionError": "MODEL_ERROR",
+   "OverflowError": "MODEL_ERROR",
+   "A913RuleError": "NOT_EVALUATED (an owner rule refuses the request; nothing is evaluated)",
+   "RepresentativeSelectionRefused": "NOT_EVALUATED"
+  },
+  "mapping_rule": "every Python exception class maps to exactly one Rust error class (GasPathError.class carries the Python class name) and one EvalStatus; no Rust path may return a value where Python fails, or fail where Python returns (CLAUDE.md rule 3)",
+  "documented_divergence": [
+   {
+    "id": "DIV-P-01",
+    "statement": "transient integrator: the reference calls scipy solve_ivp (LSODA, or BDF for the convergence reference) with dense output at t_eval; Rust integrates with a Radau IIA order-5 method (simplified Newton on the analytic Jacobian, step-doubling error estimate with local extrapolation, error norm RMS(err / (ATOL_SCALED + rtol max(|y|, |y_new|))), steps clamped to the t_eval points, restarted at every event, failure -> R_INTEGRATOR). The 'method' argument is accepted for API parity and recorded; it does not select a Rust algorithm; v4: steps are bisected so that none integrates across a switch of the valve-command saturation state (rust_implementation.v4_rust_defect_fix); v6: no accepted step damps a growing mode of the Jacobian (the step is halved while any eigenvalue with Re lambda > 0 has |R_acc(h lambda)| < 1; rust_implementation.v6_rust_defect_fix)",
+    "disposition": "CONVERGENCE_ENVELOPE (transient_convergence_procedure_v3): the integrators differ, so the comparison bound is the sum of the two implementations' frozen convergence-derived envelopes plus the floating allowance"
+   },
+   {
+    "id": "DIV-P-02",
+    "statement": "IntakeState carries alt_km as an explicit field (the reference derives it from intake_synthesis.state_alt_km); scheduled_operation takes the required state ids explicitly (the reference reads them from the frozen design-state set)",
+    "disposition": "API shape only; the harness passes the reference values"
+   },
+   {
+    "id": "DIV-P-03",
+    "statement": "materials.DB values (gamma_O parameters, T_max_K, density) enter as explicit MaterialsView data until C-ABEP_SIM_MATERIALS_PY is admitted (SC-WP-12); Material.gamma_O(T) is evaluated in abep-gaspath with the reference expression",
+    "disposition": "API shape only"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE: the records have no JSON schema file; the Python dict layout is the schema"
+  ],
+  "rules": [
+   "field names identical, dict key sets identical, list order identical (numpy arrays as lists in row-major order)",
+   "labels (PARAMETRIC_SENSITIVITY, NOT_EVALUATED_OUT_OF_DOMAIN, SENSITIVITY_ONLY_NOT_BASELINE, PENDING_EVIDENCE, ORBIT_STATE_SCHEDULED_SETPOINT, FIXED_SETPOINT) identical"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "the reference modules at python_commit; the committed F1 core view and F3 design grid as input pools (read, never regenerated)"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11); a disagreement is investigated and classified (RUST_DEFECT | PYTHON_REFERENCE_DEFECT (own governance, new contract version) | CONTRACT_DEFECT (new contract version))",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/reference_outputs_v7/",
+   "captured_at_python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+   "sha256_manifest": "reference_outputs_v7/MANIFEST.json, written by the scoring run",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution; the frozen envelope record travels with it (the transient tolerances are not re-derivable without Python)"
+  },
+  "historical_golden_rule": "RM-R28: the golden_v2 gas_path case (Reservoir through the class-H closure) is historical and not used"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "reason": "no HallThruster.jl path (the H-1 inlet is the interface boundary, HALL_INLET_Z0)",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (recorded; not used)"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-P-01",
+    "description": "the 12 P38 steady sweeps (the F7 / F8 study path)"
+   },
+   {
+    "id": "PERF-P-02",
+    "description": "the 12 production transient_case vectors"
+   },
+   {
+    "id": "PERF-P-03",
+    "description": "the 300 P49 Reservoir.steady_state vectors"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation of 3 repeats in one session on one machine; speed-up = median_python / median_rust; the Rust figure is one CLI process including JSON parsing",
+  "machine_manifest": "recorded in the report (CPU, OS, toolchains, thread env)"
+ },
+ "decision_rules": {
+  "aggregate": "NOT_APPLICABLE (no STATISTICAL entry point)",
+  "exact_invariants_required": true,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "parity_vocabulary": [
+   "PARITY_PASS",
+   "PARITY_FAIL"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for the registered functions (within the registered domain); new production results for them come from Rust and carry implementation = rust, rust_commit and this contract id; the Python functions may then be retired from active execution. It is NOT physics validation.",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded; the frozen envelope record is never regenerated, extended or edited after the held-out vectors are run",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to retained selected-architecture physics; an observable that depends on an excluded legacy path is not registered (RM-R20)",
+  "scoring_once": "the scoring comparison runs once (scoring_master_seed); the harness refuses a second scoring run when parity_report_v7.json exists; development and refinement runs never write a report into the contract directory (the refinement run writes only the envelope record, once)",
+  "per_test": "every scored leaf of every vector meets its tolerance class (threshold-proximity differences recorded as NOT_SCORED_AT_THRESHOLD); every refusal has the same exception class in both implementations",
+  "conservation_required": true,
+  "verdict": "ADMITTED iff every per-test (v1 classes for the non-transient entries; CONVERGENCE_ENVELOPE / ULP / EXACT for P42 / P43 / P45), invariant (INV-P-01, -02, -04 compared; INV-P-03 and -05 by Rust tests), conservation (CONS-P-01..04), transient integrity (NN-P-01, NN-P-02, VS-P-01, EV-P-01), domain/error and schema check passes, the proximity limit holds, every reference file matches sha256_at_registration and the frozen envelope record passes step_4_freeze (incl. COMP-P-01); PARITY_PASS <=> ADMITTED, PARITY_FAIL <=> NOT_ADMITTED; v7: the stability class of every transient vector agrees (scored), every S and U leaf meets its stratum bound, the frozen record passed NON_VACUITY; NOT_CONVERGENT_REFERENCE and closing-valve xO leaves are reported and do not count as a pass",
+  "proximity_limit": "if more than 1 % of the compared discrete (EXACT_VALUE) leaves of an entry are NOT_SCORED_AT_THRESHOLD the entry fails (the rule is for isolated threshold coincidences, not for systematic drift); threshold_proximity_rule.v3_transient.counting"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): every PARAMETRIC_SENSITIVITY / PLACEHOLDER / TBD label of the reference is reproduced, never upgraded",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)",
+  "not a feed requirement: the H-1 required inlet state is TBD (F5 IFD-F4-01..05); R_FLOW belongs to a parametric requirement sweep only, and the flight feed requirement stays PENDING_EVIDENCE (A9.13 S6.13 / S6.21)",
+  "not an owner-chosen transient tolerance: every transient bound is the frozen convergence-derived envelope of the two implementations plus the existing floating allowance (A9.31 sec. 5)",
+  "not a scoring of adaptive-solver internals (nfev, step decomposition, iteration counts)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_report_v7.json (+ .md); the envelope record docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/transient_envelope_v7.json (+ .md) precedes it",
+  "runner": "scripts/rust_migration/es3_gaspath_parity.py refine plenum (envelope record, once), then score plenum (CONTRACT_VERSION 7)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "aggregates",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "threshold-proximity record",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested",
+   "envelope_record (path, sha256, commit)",
+   "transient_v3 (per-family margins, diagnostic conditioning)"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS for every inventory id of the group (inventory v3.1 rows, classification_confidence_v3_1 PLAN_APPROVED_A9_29)",
+   "no observable, input or code path of the contract belongs to the excluded legacy vocabulary (LaB6Cathode, lab6_xe, Xe hollow-cathode heater / keeper, C1 flight fallback, hollow-cathode Hall cards, multi-family selection); the components have no not_ported_parts in the inventory",
+   "the Python harness traverses no legacy path to reach the scored functions (no abep_sim.system / archengine / Config card import)",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract: abep-gaspath is a flight-runtime crate and does not depend on abep-groundtest (cargo metadata check of abep-ci)",
+   "the feed-state closure (GROUND_TEST_PROGRAMME_ONLY) is not part of the contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {
+    "id": "F4-P-05 / F4-P-06 / F4-P-08 / F4-P-09 / F4-P-11 / F4-P-18",
+    "value": "TBD (parametric case values only)",
+    "value_status": "TBD",
+    "open_action": "plenum_feed.strict_blockers()",
+    "committed_labels": [
+     "PARAMETRIC_SENSITIVITY",
+     "MODE_STRICT -> NOT_EVALUATED"
+    ]
+   },
+   {
+    "id": "GROUND-CHARACTERIZATION-0.38",
+    "value": 0.38,
+    "value_status": "GROUND_CHARACTERIZATION_ONLY_NEVER_A_FLIGHT_REQUIREMENT",
+    "open_action": "validated H-1 map (A9.13 S6.21)",
+    "committed_labels": [
+     "CHARACTERIZATION_COVERAGE_NOT_A_REQUIREMENT"
+    ]
+   }
+  ],
+  "check": "VS-P-01: every Rust record carries the labels above exactly (EXACT_VALUE); MODE_STRICT always refuses; flight_feed_requirement stays PENDING_EVIDENCE for every map status other than VALIDATED"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS (otherwise NOT_APPLICABLE)",
+  "status": "NOT_APPLICABLE",
+  "reason": "EXISTING_PHYSICS_PARITY contract"
+ }
+}
