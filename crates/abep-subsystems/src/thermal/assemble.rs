@@ -17,6 +17,9 @@ use std::collections::{BTreeMap, BTreeSet};
 pub const VF_SUM_TOL: f64 = 1e-9;
 pub const VF_RECIPROCITY_REL_TOL: f64 = 1e-9;
 /// E-07 weight-sum tolerance (consistent with CONS-I2: 1e-12 relative).
+#[path = "assemble_icp_v2.rs"]
+mod icp_v2;
+
 pub const WEIGHT_SUM_TOL: f64 = 1e-12;
 /// CONS-I2.
 pub const CONS_I2_REL: f64 = 1e-12;
@@ -167,6 +170,8 @@ struct Asm<'a> {
     gov: &'a GovernedContext,
     synthetic: bool,
     np_scope: bool,
+    /// Model 2.0.0 (IF-ICP-THERMAL-v2 consumer); false on every v1 run.
+    v2: bool,
     records: BTreeMap<String, &'a InputRecord>,
     reasons: Vec<Reason>,
     labels: BTreeSet<String>,
@@ -472,6 +477,22 @@ impl<'a> Asm<'a> {
         let g = self.gov;
         if c.schema != CASE_SCHEMA {
             self.me("CASE_SCHEMA", "schema", format!("{:?}, expected {CASE_SCHEMA:?}", c.schema));
+        }
+        match (self.v2, c.model_version.as_deref()) {
+            (false, None | Some(super::MODEL_VERSION)) | (true, Some(vocab::MODEL_VERSION_V2)) => {}
+            (false, Some(v)) => self.me(
+                "MODEL_VERSION_MISMATCH",
+                "model_version",
+                format!(
+                    "{v:?}: this run is model {}; a 2.0.0 case runs only through run_case_v2",
+                    super::MODEL_VERSION
+                ),
+            ),
+            (true, v) => self.me(
+                "MODEL_VERSION_MISMATCH",
+                "model_version",
+                format!("{v:?}: run_case_v2 needs a case declaring {:?}", vocab::MODEL_VERSION_V2),
+            ),
         }
         if !vocab::CASE_CLASSES.contains(&c.case_class.as_str()) {
             self.me("CASE_CLASS_UNKNOWN", "case_class", c.case_class.clone());
@@ -783,7 +804,8 @@ impl<'a> Asm<'a> {
                 }
                 for k in &n.receives_interface_keys {
                     let hk08 = k == "Q_hall_return_to_icp_W" && b.group == "ICP_NEUTRALIZER" && collector_absent;
-                    if !b.receives.contains(&k.as_str()) && !hk08 {
+                    let v2_key = self.v2 && vocab::icp_v2_receives(b.id, k);
+                    if !b.receives.contains(&k.as_str()) && !hk08 && !v2_key {
                         self.me("NODE_RECEIVES_NOT_REGISTERED", &n.id, format!("{k} is not registered for {}", b.id));
                     }
                 }
@@ -1610,10 +1632,10 @@ impl<'a> Asm<'a> {
         let mut exported = BTreeMap::new();
         let mut booked = BTreeMap::new();
         let mut breakpoints = Vec::new();
-        for (name, rec) in
-            [(vocab::HALL_INTERFACE_ID, &c.interfaces.hall), (vocab::ICP_INTERFACE_ID, &c.interfaces.icp)]
-        {
-            if rec.is_none() && self.np_scope {
+        let icp_name = if self.v2 { vocab::ICP_V2_INTERFACE_ID } else { vocab::ICP_INTERFACE_ID };
+        let icp_present = if self.v2 { c.interfaces.icp_v2.is_some() } else { c.interfaces.icp.is_some() };
+        for (name, present) in [(vocab::HALL_INTERFACE_ID, c.interfaces.hall.is_some()), (icp_name, icp_present)] {
+            if !present && self.np_scope {
                 self.me(
                     "INTERFACE_RECORD_MISSING",
                     name,
@@ -1621,8 +1643,22 @@ impl<'a> Asm<'a> {
                 );
             }
         }
+        if !self.v2 && c.interfaces.icp_v2.is_some() {
+            self.me(
+                "INTERFACE_VERSION",
+                vocab::ICP_V2_INTERFACE_ID,
+                "IF-ICP-THERMAL-v2 is consumed by model 2.0.0 only (run_case_v2)",
+            );
+        }
+        if self.v2 && c.interfaces.icp.is_some() {
+            self.me(
+                "INTERFACE_VERSION_MISMATCH",
+                vocab::ICP_INTERFACE_ID,
+                "IFI2-10: model 2.0.0 refuses an IF-ICP-THERMAL-v1 record (v1 is immutable history)",
+            );
+        }
         let hall = c.interfaces.hall.as_ref().and_then(|r| self.interface(r, true));
-        let icp = c.interfaces.icp.as_ref().and_then(|r| self.interface(r, false));
+        let icp = if self.v2 { None } else { c.interfaces.icp.as_ref().and_then(|r| self.interface(r, false)) };
         let flight = c.case_class == "FLIGHT_CONDITIONAL";
         let bench = c.case_class == "BENCH_REPLICA";
         let non_firing = c.supply_mode == "NON_FIRING";
@@ -1776,7 +1812,8 @@ impl<'a> Asm<'a> {
             }
         }
         for k in c.partitions.keys() {
-            if !heat.iter().any(|(h, ..)| h == k) {
+            let v2_key = self.v2 && vocab::icp_v2_key(k).is_some();
+            if !heat.iter().any(|(h, ..)| h == k) && !v2_key {
                 self.me("PARTITION_KEY_NOT_REGISTERED", k, "registered partition for a key that is not deposited");
             }
         }
@@ -1839,6 +1876,11 @@ impl<'a> Asm<'a> {
         if i2_fail {
             self.me("CONS_I2_NOT_MET", "interfaces", format!("deposition bookkeeping residual {i2_resid:e} W"));
         }
+        // Model 2.0.0: IF-ICP-THERMAL-v2 (matched_interface; E-07 v2; IFI2-01..IFI2-11; CONS-I3).
+        let icp_v2 = match (self.v2, &c.interfaces.icp_v2) {
+            (true, Some(rec)) => self.icp_v2(rec, sources, &mut exported, &mut booked, &mut breakpoints),
+            _ => None,
+        };
 
         // Coils in CONSTANT_CURRENT_R_OF_T (E-09).
         if let (Some(h), Some("CONSTANT_CURRENT_R_OF_T")) = (&hall, mode.as_deref()) {
@@ -1879,10 +1921,12 @@ impl<'a> Asm<'a> {
         }
 
         // E-13 and the identities (CONS-I1).
+        let icp_v2_present = icp_v2.is_some();
         let mut derived = InterfaceDerived {
             deposition: dep_report,
             cons_i2_residual_w: i2_resid,
             cons_i2_bound_w: i2_bound,
+            icp_v2,
             ..Default::default()
         };
         if let Some(h) = &hall {
@@ -1990,7 +2034,7 @@ impl<'a> Asm<'a> {
                 derived.sigma_i_w = Some(sig);
             }
         }
-        let any = hall.is_some() || icp.is_some();
+        let any = hall.is_some() || icp.is_some() || icp_v2_present;
         (any.then_some(derived), exported, booked, breakpoints)
     }
 
@@ -2382,12 +2426,27 @@ impl<'a> Asm<'a> {
 
 /// Assemble a case: every reason found, and the compiled network when no reason blocks the solve.
 pub fn assemble(case: &ThermalCase, gov: &GovernedContext) -> Assembly {
+    assemble_inner(case, gov, false)
+}
+
+/// Model 2.0.0: assemble a case that consumes IF-ICP-THERMAL-v2 (prereg v2). The v1 path is not touched.
+pub fn assemble_v2(case: &ThermalCase, gov: &super::governance::GovernedContextV2) -> Assembly {
+    let mut a = assemble_inner(case, gov.v1(), true);
+    if let Some(r) = &case.interfaces.icp_v2 {
+        a.interface_hashes
+            .insert(vocab::ICP_V2_INTERFACE_ID.to_string(), sha256_hex(&serde_json::to_vec(r).expect("serializable")));
+    }
+    a
+}
+
+fn assemble_inner(case: &ThermalCase, gov: &GovernedContext, v2: bool) -> Assembly {
     let synthetic = case.case_class == "SYNTHETIC_VERIFICATION";
     let mut a = Asm {
         case,
         gov,
         synthetic,
         np_scope: case.topology_scope == "NP_THERMAL_NETWORK",
+        v2,
         records: BTreeMap::new(),
         reasons: Vec::new(),
         labels: BTreeSet::new(),

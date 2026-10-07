@@ -38,6 +38,11 @@ pub struct ThermalCase {
     pub interfaces: Interfaces,
     /// Registered partitions (RI-PART): interface key -> partition record id.
     pub partitions: BTreeMap<String, String>,
+    /// Model version the case is written for: absent (or "1.0.0") for the admitted v1 model; "2.0.0" selects the
+    /// IF-ICP-THERMAL-v2 consumer (prereg v2) and is run only by `run_case_v2`. Never serialized when absent, so every
+    /// v1 case document and its sha256 are unchanged.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub model_version: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -248,6 +253,37 @@ pub struct Interfaces {
     pub hall: Option<InterfaceRecord>,
     #[serde(rename = "IF-ICP-THERMAL-v1")]
     pub icp: Option<InterfaceRecord>,
+    /// Model 2.0.0 only (absent from every v1 document).
+    #[serde(rename = "IF-ICP-THERMAL-v2", default, skip_serializing_if = "Option::is_none")]
+    pub icp_v2: Option<InterfaceRecordV2>,
+}
+
+/// IF-ICP-THERMAL-v2 record of one producer scenario member (NP-ICP-NEUTRALIZER prereg v2; NP-THERMAL prereg v2
+/// `matched_interface`). Every key is a full value record (no zero-fill); the producer's per-node partitions of TK-07
+/// and TK-12 are carried in W per node (signed for TK-12).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct InterfaceRecordV2 {
+    pub interface_id: String,
+    pub producer_id: String,
+    pub producer_version: String,
+    /// sha256 of the producer's prereg lock (the anchor named by the consumer lock).
+    pub producer_lock_sha256: String,
+    /// Canonical sha256 of the key table the record was written against.
+    pub key_table_sha256: String,
+    pub case_id: String,
+    pub case_class: String,
+    pub supply_mode: String,
+    pub design_state_id: Option<String>,
+    pub operating_point_id: String,
+    /// CFG-CAP-OFF | SYNTHETIC | PARAMETRIC | CFG-FLIGHT-HALL-ON (IFI2-11).
+    pub configuration: String,
+    /// ED-08 scenario member of the producer (FT-23).
+    pub scenario_member_id: String,
+    pub time_basis: TimeBasis,
+    pub keys: BTreeMap<String, ValueRecord>,
+    /// key (Q_icp_plasma_wall_W, Q_icp_bias_collector_W) -> node -> W (a number, or one per breakpoint).
+    pub node_shares_w: BTreeMap<String, BTreeMap<String, Value>>,
 }
 
 /// prereg `heat_sources.interface_record_format`.

@@ -400,3 +400,141 @@ pub const LINK_TYPES: [&str; 3] = ["CONDUCTION", "CONTACT", "LUMPED_G"];
 pub const SHAPE_KINDS: [&str; 3] = ["SLAB", "CYLINDRICAL_SHELL", "SHAPE_FACTOR"];
 pub const NODE_ROLES: [&str; 4] = ["REGISTERED", "SUBDIVISION", "MASSLESS_SERIES_JUNCTION", "ANALYTIC"];
 pub const THERMAL_MASS_KINDS: [&str; 2] = ["LUMPED_C_OF_T", "MASSLESS_SERIES"];
+
+// ------------------------------------------------------------------------------------------------ model 2.0.0
+
+/// NP-THERMAL-CATHODELESS prereg v2 (model 2.0.0): the matched IF-ICP-THERMAL-v2 consumer. The rows below repeat the
+/// producer's key table; `GovernedContextV2::load` reads the table from both locked preregistrations, checks its
+/// canonical sha256 and that every row here names the same id and key (no row is invented here).
+pub const ICP_V2_INTERFACE_ID: &str = "IF-ICP-THERMAL-v2";
+pub const MODEL_VERSION_V2: &str = "2.0.0";
+
+/// Consumer deposition rule of one IF-ICP-THERMAL-v2 key (matched_interface.consumer_deposition).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DepositionV2 {
+    /// TK-R1..TK-R5: closure references, never deposited.
+    Reference,
+    /// Booked at B_PPU_RF, sub-account RF_SOURCE (TK-01, TK-02).
+    BookedRfSource,
+    /// B_PPU_RF RF_CHAIN, or N_MATCH for a registered co-located segment (TK-03).
+    LineRule,
+    /// N_MATCH iff match_colocated, else B_PPU_RF RF_CHAIN (TK-04, TK-05).
+    MatchRule,
+    /// Registered RI-PART split over the listed receivers, required (TK-06).
+    RegisteredSplit(&'static [&'static str]),
+    /// Producer per-node partition [W] over the v2 receivers of the key (TK-07; TK-12 signed).
+    ProducerShares,
+    /// Registered partition over the listed receivers with an EXPORT share (TK-08 f_rad).
+    RegisteredWithExport(&'static [&'static str]),
+    /// RX-H1-FACE: registered f_up with an EXPORT share; not needed when the key is exactly 0 (TK-10).
+    RxH1Face(&'static [&'static str]),
+    /// EXPORT, deposited on no node (TK-09, TK-11, TK-13).
+    Export,
+    /// A variant slot: exactly 0 when NOT_INSTALLED; installed -> INCOMPLETE_EVIDENCE (TK-14) or OUT_OF_DOMAIN (TK-15).
+    Variant { out_of_domain: bool },
+}
+
+pub struct IcpKeyV2 {
+    pub id: &'static str,
+    pub key: &'static str,
+    /// TK-12 / TK-13 only (IFI2-02).
+    pub signed: bool,
+    pub deposition: DepositionV2,
+}
+
+pub const ICP_V2_COIL_SPLIT: [&str; 4] = ["N_ANTENNA", "N_COLLECTOR", "N_HOUSING", "N_MOUNT"];
+pub const ICP_V2_F_RAD: [&str; 6] = ["N_VESSEL", "N_ANTENNA", "N_COLLECTOR", "N_HOUSING", "H1_POLE_IN", "H1_POLE_OUT"];
+/// RX-H1-FACE receivers (rx_h1_face.receivers; its EXPORT share is the partition's export weight).
+pub const ICP_V2_RX_H1_FACE: [&str; 7] =
+    ["H1_POLE_IN", "H1_POLE_OUT", "H1_WALL_IN", "H1_WALL_OUT", "H1_ANODE", "N_MOUNT", "N_HOUSING"];
+
+pub const ICP_V2_KEYS: [IcpKeyV2; 20] = [
+    IcpKeyV2 { id: "TK-R1", key: "P_icp_slot_load_sum_W", signed: false, deposition: DepositionV2::Reference },
+    IcpKeyV2 { id: "TK-R2", key: "P_icp_rf_source_DC_W", signed: false, deposition: DepositionV2::Reference },
+    IcpKeyV2 { id: "TK-R3", key: "P_icp_rf_forward_W", signed: false, deposition: DepositionV2::Reference },
+    IcpKeyV2 { id: "TK-R4", key: "P_icp_abs_W", signed: false, deposition: DepositionV2::Reference },
+    IcpKeyV2 { id: "TK-R5", key: "P_icp_collector_bias_W", signed: false, deposition: DepositionV2::Reference },
+    IcpKeyV2 {
+        id: "TK-01",
+        key: "Q_icp_rf_conversion_loss_W",
+        signed: false,
+        deposition: DepositionV2::BookedRfSource,
+    },
+    IcpKeyV2 { id: "TK-02", key: "P_icp_rf_reflected_W", signed: false, deposition: DepositionV2::BookedRfSource },
+    IcpKeyV2 { id: "TK-03", key: "Q_icp_line_W", signed: false, deposition: DepositionV2::LineRule },
+    IcpKeyV2 { id: "TK-04", key: "Q_icp_match_W", signed: false, deposition: DepositionV2::MatchRule },
+    IcpKeyV2 { id: "TK-05", key: "P_icp_matching_DC_W", signed: false, deposition: DepositionV2::MatchRule },
+    IcpKeyV2 {
+        id: "TK-06",
+        key: "Q_icp_coil_ohmic_W",
+        signed: false,
+        deposition: DepositionV2::RegisteredSplit(&ICP_V2_COIL_SPLIT),
+    },
+    IcpKeyV2 { id: "TK-07", key: "Q_icp_plasma_wall_W", signed: false, deposition: DepositionV2::ProducerShares },
+    IcpKeyV2 {
+        id: "TK-08",
+        key: "Q_icp_radiation_W",
+        signed: false,
+        deposition: DepositionV2::RegisteredWithExport(&ICP_V2_F_RAD),
+    },
+    IcpKeyV2 { id: "TK-09", key: "Q_icp_extraction_W", signed: false, deposition: DepositionV2::Export },
+    IcpKeyV2 {
+        id: "TK-10",
+        key: "Q_icp_outflow_upstream_W",
+        signed: false,
+        deposition: DepositionV2::RxH1Face(&ICP_V2_RX_H1_FACE),
+    },
+    IcpKeyV2 { id: "TK-11", key: "Q_icp_outflow_downstream_W", signed: false, deposition: DepositionV2::Export },
+    IcpKeyV2 { id: "TK-12", key: "Q_icp_bias_collector_W", signed: true, deposition: DepositionV2::ProducerShares },
+    IcpKeyV2 { id: "TK-13", key: "Q_icp_bias_export_W", signed: true, deposition: DepositionV2::Export },
+    IcpKeyV2 {
+        id: "TK-14",
+        key: "P_icp_flow_control_W",
+        signed: false,
+        deposition: DepositionV2::Variant { out_of_domain: false },
+    },
+    IcpKeyV2 {
+        id: "TK-15",
+        key: "P_icp_assist_magnet_W",
+        signed: false,
+        deposition: DepositionV2::Variant { out_of_domain: true },
+    },
+];
+
+pub fn icp_v2_key(key: &str) -> Option<&'static IcpKeyV2> {
+    ICP_V2_KEYS.iter().find(|k| k.key == key)
+}
+
+/// Retired keys (IFI2-10 RETIRED_KEY).
+pub const ICP_V2_RETIRED_KEYS: [&str; 4] =
+    ["P_icp_bus_W", "Q_icp_boundary_W", "Q_icp_rf_generator_loss_W", "Q_icp_bias_supply_loss_W"];
+
+/// A Hall-discharge-powered key or a CPL-HALL-ON circuit key, refused inside the ICP record (IFI2-10
+/// ENERGY_SOURCE_RULE).
+pub fn icp_v2_energy_source_violation(key: &str) -> bool {
+    key.starts_with("Q_hall_") || key.starts_with("P_hall_") || key.contains("_cpl_") || key.contains("hallon")
+}
+
+/// prereg v2 `replaced_items.nodes_receives_interface_keys`: the IF-ICP-THERMAL-v2 keys each node may receive (Hall
+/// keys stay as v1).
+pub const ICP_V2_RECEIVES: [(&str, &[&str]); 11] = [
+    ("N_VESSEL", &["Q_icp_plasma_wall_W", "Q_icp_radiation_W"]),
+    ("N_ANTENNA", &["Q_icp_coil_ohmic_W", "Q_icp_plasma_wall_W", "Q_icp_radiation_W"]),
+    ("N_COLLECTOR", &["Q_icp_plasma_wall_W", "Q_icp_bias_collector_W", "Q_icp_coil_ohmic_W", "Q_icp_radiation_W"]),
+    ("N_HOUSING", &["Q_icp_coil_ohmic_W", "Q_icp_plasma_wall_W", "Q_icp_radiation_W", "Q_icp_outflow_upstream_W"]),
+    ("N_MATCH", &["Q_icp_match_W", "P_icp_matching_DC_W", "Q_icp_line_W"]),
+    ("N_MOUNT", &["Q_icp_coil_ohmic_W", "Q_icp_plasma_wall_W", "Q_icp_outflow_upstream_W"]),
+    ("H1_POLE_IN", &["Q_icp_radiation_W", "Q_icp_outflow_upstream_W"]),
+    ("H1_POLE_OUT", &["Q_icp_radiation_W", "Q_icp_outflow_upstream_W"]),
+    ("H1_WALL_IN", &["Q_icp_outflow_upstream_W"]),
+    ("H1_WALL_OUT", &["Q_icp_outflow_upstream_W"]),
+    ("H1_ANODE", &["Q_icp_outflow_upstream_W"]),
+];
+
+/// Whether `node` may receive the IF-ICP-THERMAL-v2 key `key` in model 2.0.0.
+pub fn icp_v2_receives(node: &str, key: &str) -> bool {
+    ICP_V2_RECEIVES.iter().any(|(n, ks)| *n == node && ks.contains(&key))
+}
+
+/// IFI2-11: configurations a 2.0.0 run consumes (CFG-FLIGHT-HALL-ON is NOT_EVALUATED).
+pub const ICP_V2_CONFIGURATIONS: [&str; 3] = ["CFG-CAP-OFF", "SYNTHETIC", "PARAMETRIC"];
