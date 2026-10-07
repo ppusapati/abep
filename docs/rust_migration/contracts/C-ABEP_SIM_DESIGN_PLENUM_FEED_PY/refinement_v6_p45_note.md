@@ -1,5 +1,10 @@
 # Plenum / feed v6: what drives the frozen P45 envelopes (scoring held for a decision)
 
+**Status (coordinator decision 2026-10-07): contract v6 REGISTERED_NEVER_SCORED, superseded: P45 envelope dominated
+by an unstable-start stratum and a silent reference defect.** Not scored; the record below stays unedited as evidence.
+Reference defect: `div_p_ref_01_lsoda_unstable_loops.json` (DIV-P-REF-01). P42 / P43 analysis and why the successor v7
+is not yet registered: `refinement_v6_p4243_note.md`.
+
 Contract v6 (`parity_prereg_v6.json`, sha256 `60f8bc2482e967b888f1b1421f8b7b7c907a92fed4b0a88f5d3e65ad30deab5a`,
 registered in `aca62b3`); frozen record `transient_envelope_v6.json` (sha256
 `439ae2dd1f5f935db7ad1e3538c538c0cad7a11af333752e4c9fedbbeaa7002c`, committed in `eec930a`, never edited). The

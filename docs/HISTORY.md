@@ -5198,3 +5198,24 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   - F7 and F8 partial admissions, plus the partial admissions of `context_pareto` (design part), the
     `rank_full_system` refusal stages and `require_all_admitted_scenarios` / `robust_over_scenarios`.
   - The abep-rng stream as infrastructure, and the new item DIAG-B2-OF-01 ACCEPTED.
+
+## 2026-10-07 — Plenum / feed v6 superseded unscored; reference defect DIV-P-REF-01; v7 not registered (second cause in P43 xO)
+
+- **v6 REGISTERED_NEVER_SCORED, superseded** (coordinator decision): P45 envelope dominated by an unstable-start
+  stratum and a silent reference defect. `transient_envelope_v6.json` (`439ae2dd…`, `eec930a`) is kept unedited.
+- **DIV-P-REF-01** (`contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/div_p_ref_01_lsoda_unstable_loops.json`): the Python
+  reference's nominal LSODA transient can miss a growing mode. R45-187 (0.00243 ± 2.83i): P_dev 7.5e-5 (`ok`, 4685
+  evaluations) against 0.174 (T1) and 0.181 (T2); Rust nominal 0.159, T2 0.183. The reference stays read-only. A ledger
+  item is requested (not edited here): the reference's transient output is not trustworthy on unstable loops.
+- **P42 / P43 per-vector analysis before v7** (`refinement_v6_p4243_note.md`; script
+  `scripts/rust_migration/plenum_v6_p4243_refinement_analysis.py`). With an event-wise class (reference Jacobian at
+  every event equilibrium; the design point alone misses R43-PROD-033) all grown P42 envelopes and the grown P43 PROD
+  envelopes are explained by unstable loops (51 PROD / 13 REF vectors). **A second, different cause:** xO_min / xO_max
+  of segments in which the valve closes. There u is at rounding level, and whether a sample's xO is defined
+  (u > 0) is the sign of rounding noise. F43.xO S-closed: PROD 3.2e-4 / 1.6e-4, REF 6.8e-4 / 1.2e-3 (Python / Rust),
+  against 1e-6 to 1e-10 elsewhere; the loop is stable throughout. Per the decision rule (a different cause → stop and
+  report), **v7 is not registered**; nothing was scored. Also open for v7: the held-out sets (P42 16, P43 16, P45 4)
+  would almost surely contain no unstable vector, so an unstable stratum needs a registered class-stratified draw.
+- **Admitted reports (ledger note):** the guard 361a197 changed `crates/abep-gaspath/src/transient.rs`, recorded in
+  the compressor v2 and filter v1 / v2 reports' provenance. Their outputs are byte-identical before and after
+  (parity CLI replay of their captured scoring inputs: 2368 and 1732 requests).
