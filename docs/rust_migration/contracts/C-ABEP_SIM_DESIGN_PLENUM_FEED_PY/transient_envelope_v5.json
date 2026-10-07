@@ -1,0 +1,8268 @@
+{
+ "schema": "abep_plenum_transient_envelope_v3",
+ "mode": "REFINEMENT_FROZEN",
+ "contract": {
+  "id": "PARITY-C-ABEP_SIM_DESIGN_PLENUM_FEED_PY-V5",
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v5.json",
+  "sha256": "1b382387491bef6c4a1669b27170dac42ae5a416fc43527f1c840e9d8aa2f092",
+  "registration_commit": "f44dbfe5ef6503c0d26b5f9461975bc5543e2fc1"
+ },
+ "procedure": "transient_convergence_procedure_v3 steps 1-4 (A9.31 sec. 5); estimator e = (|x_N - x_T2| + |x_T1 - x_T2|) / s_F, E = max over the grid, no multiplier",
+ "date_utc": "2026-10-06T19:43:09Z",
+ "master_seed": 731905543,
+ "counts": {
+  "P42": {
+   "PROD": 768,
+   "REF": 256
+  },
+  "P43": {
+   "PROD": 768,
+   "REF": 256
+  },
+  "P45": {
+   "PROD": 512
+  }
+ },
+ "n_vectors": 2560,
+ "inputs_sha256": "4d4c6110e918f982390fc116b6530ab3fe32efc3cfb63e80370b58dc2ea666c0",
+ "python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+ "reference_sha256_at_run": {
+  "abep_sim/design/plenum_feed.py": "dbc28212e4c3d79a60c0cae7f875c62291ea3e90dbdc491b2bcfaa5f967d616b",
+  "abep_sim/reservoir.py": "9a7894a47169f1d77e8c66a196002c5456e955b9eb72d81bb9e1440c90ae29af",
+  "abep_sim/design/upstream_a9_13.py": "384b24086c1cc779707d7cb958b9ccd8cb58edf337d629727d923ab659a30af5",
+  "abep_sim/design/filter_stage.py": "69991f070ac5c0c8ea4b053359e116b34ff74cdc8349c87d61b24e42d8ba82b7",
+  "abep_sim/compressor.py": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75",
+  "abep_sim/design/compressor_synthesis.py": "b7b9ffd9f62e0343c7d4a7297c5106a5dcb70d7d9cbaef3ce96a4ce8f7894b7e",
+  "abep_sim/rotor_strength.py": "59f7ba95bf5d4268b184304defddb36bbfca219c79a0cc8fde91e5031bc61d9b",
+  "abep_sim/materials.py": "08e2ddddfc9380780e71bc15957fa82a9e879fc36046c266c669b037c2194feb",
+  "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+  "abep_sim/design/intake_synthesis.py": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191",
+  "abep_sim/design/a9_19_architecture.py": "8a4ccfb00fc2bb5a9f00b8a405e9c816e2d025d6d91c8bbef25f50300d4d226b",
+  "abep_sim/intake_tpmc.py": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"
+ },
+ "head_commit": "faa4c1d28176ba8a1d4eb1cb5412af15b74d9362",
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "cargo_lock_sha256": "182bfc53fa2993c1ceee9f643069b11a930d9c24588156ae4c6ab56a78e784e3",
+  "source_sha256": {
+   "Cargo.lock": "182bfc53fa2993c1ceee9f643069b11a930d9c24588156ae4c6ab56a78e784e3",
+   "Cargo.toml": "ff8f4353a3e4313736de58204af2b36b147b75c826f19539551c997a93646fd0",
+   "crates/abep-gaspath/Cargo.toml": "7472978f5593b47c75e1b6921ad65e0d7e75835216db71ff08517578047a9fb5",
+   "crates/abep-gaspath/src/bin/abep_gaspath_parity.rs": "000d8c5a90ad65099a2e567b2a027266f69ad7a42f6df42fe08a4e2089446e07",
+   "crates/abep-gaspath/src/compressor.rs": "be1004378d16b3ef530a00a04384c1b14062a0e57a020c43c6621bfd70cbc734",
+   "crates/abep-gaspath/src/compressor_synthesis.rs": "02c4f923e55d75ce39456d1a3119fbfebf125d9c6e935624e30c67457819dc10",
+   "crates/abep-gaspath/src/error.rs": "d1f1afb4e024b97b89065100131420d6253360c2156e959c2753c7a1728b18eb",
+   "crates/abep-gaspath/src/filter.rs": "71beb5a77288a58716c22344105e8dbffa18d15b7df00324c18e885e46dcc338",
+   "crates/abep-gaspath/src/lib.rs": "07d6e477a9a9759692d3d9a0ea0bf24ef9be40fdb7924d3bdaab2e0004f32bef",
+   "crates/abep-gaspath/src/materials.rs": "2a4915a125d7d3fbebffc415da20114578675c9d98f34769456987309ec98377",
+   "crates/abep-gaspath/src/plenum_feed.rs": "6a17860c9e504fde292ac4975e10feae9f4a94625a745ab377b6e3b86251d2da",
+   "crates/abep-gaspath/src/pyops.rs": "9e350457a5ddd6ccd7089e3077a102795a7bbaff28c34933cd7e8f7d2844db38",
+   "crates/abep-gaspath/src/rec.rs": "80ec46981e10d3d1c7cd876d79e03c4fe5adf59c5d9ad1d93dfcf0278e467f29",
+   "crates/abep-gaspath/src/reservoir.rs": "4ef9cc5d40f631c6f8d69e2185d000d0cf2bcc4f574b39f5456c9b672e57f2f5",
+   "crates/abep-gaspath/src/rotor_strength.rs": "a6b6b1bf9f47721b992a99a05b7cc36b652ae36db1c9fb87bb53742bc3da196a",
+   "crates/abep-gaspath/src/transient.rs": "2bfe28e62feb09bbe892ce04f4e641b082127b47a1e2c1fbdf4361e1d637fabc",
+   "crates/abep-gaspath/src/upstream.rs": "d91db34beaa06a536cf876ef219a00d56921574e1162df4d08e174f143a410b3",
+   "crates/abep-provenance/src/bid_guard.rs": "6f13a31a479deea38caafd78491be295c12f40a41dc39139a4af4e86a3553c7d",
+   "crates/abep-provenance/src/bid_guard/acceptance.rs": "187739f27b297b6183928a3f951dc68127708072cb915173539b4582118a6693",
+   "crates/abep-provenance/src/bin/abep-provenance-verify.rs": "99350805d9b01876b29b3e8cdcefe3c9f893c5bc0fd16d8f43b6327549d4cfbe",
+   "crates/abep-provenance/src/git.rs": "68fdacdf9514432ec890fcb153c6ba5d02fbb2e44e6accb0ff5e3d2b918ef69e",
+   "crates/abep-provenance/src/lib.rs": "0beec4429b0d6cc891389d6bc83584b693c7f1698700b03ffac4defe43919761",
+   "crates/abep-provenance/src/run_record.rs": "c36e400a38d411c6fdfad5cf26e962c4dbb074631b4d6e81d1688b3fec9a6a53",
+   "crates/abep-provenance/src/verifier/checks.rs": "8462b1704b9ca0091ade566217db5c77b34c3f074721e0d95c8b9b4e6ccfac1d",
+   "crates/abep-provenance/src/verifier/live_sources.rs": "bab4b17e1900dede61c23ce8bc0407ed021b2ab79458af2c3b6dd0747083d1b1",
+   "crates/abep-provenance/src/verifier/load.rs": "0b9ba7424fc2fe586218fffb66d3073a4ad26717e133364409fee2fcd10edab8",
+   "crates/abep-provenance/src/verifier/mod.rs": "7b7328197f8608d921aead7a0960611553a8b73e3d03bade01012c5cffdf0e25",
+   "crates/abep-provenance/src/verifier/pyliteral.rs": "6a5d3582cdbb41d96fea1cf0d87d8a8f6b1f45250a55892b784bc5c5a31a4537",
+   "crates/abep-provenance/src/verifier/pyvalue.rs": "acbd670dff4e9ea3b6cd5f893c9d001adc14d2883acfba7a66509fef878fc337",
+   "crates/abep-provenance/src/verifier/sha_map.rs": "d0589e3cc5269297407dc4f2f37930b362abe21a75481fb3430be9cc35812191",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "0a067299e38d3dac702c3eb23ee3e34a55f844b389ec54b7463962c65d6a4b0e",
+   "crates/abep-types/src/pyjson.rs": "5ce15fdb06043a01ce8bd441a8e8f1906e74a0c4dd9fea2b9e4505f182a8d88e",
+   "crates/abep-types/src/pyjson_unicode.rs": "c6f59e0936c35051ef1f7d45a6611d3a7269a8d972c900805463f5f0bf6b2a75",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499"
+  },
+  "harness": {
+   "path": "scripts/rust_migration/es3_gaspath_parity.py",
+   "sha256": "d6479e8739e0f08bfec9f3864eb3cb287c71fcfc86fe17ad0a46e09d8dfd3bdf"
+  },
+  "binary": "target/release/abep-gaspath-parity (cargo build --release --locked)"
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "pandas": "3.0.2",
+  "numpy_simd_baseline": [
+   "X86_V2"
+  ],
+  "numpy_simd_dispatch": [
+   "X86_V3",
+   "X86_V4",
+   "AVX512_ICL",
+   "AVX512_SPR"
+  ],
+  "numpy_simd_avx512f_enabled": true,
+  "blas": "scipy-openblas 0.3.31.188.0",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+  "thread_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1"
+  },
+  "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312"
+ },
+ "tolerance_levels": {
+  "PROD": {
+   "nominal_rtol": 1e-05,
+   "python_method": "LSODA (module default INTEGRATOR_METHOD)",
+   "rust_method": "Radau IIA order 5 (DIV-P-01)",
+   "T1_rtol": 1e-08,
+   "T2_rtol": 1e-10,
+   "vectors": "P42 / P43 PROD vectors (module defaults) and every P45 vector"
+  },
+  "REF": {
+   "nominal_rtol": 1e-08,
+   "python_method": "BDF (module INTEGRATOR_REFERENCE)",
+   "rust_method": "Radau IIA order 5 (DIV-P-01)",
+   "T1_rtol": 1e-10,
+   "T2_rtol": 1e-12,
+   "vectors": "P42 / P43 REF vectors (rtol RTOL_REFERENCE, method INTEGRATOR_REFERENCE)"
+  },
+  "rule": "a tightened run changes rtol only: same implementation and method, same atol (ATOL_SCALED 1e-11 on the scaled states), same t_eval sample grid, same event sequence and inputs",
+  "override_mechanics": {
+   "python": "P42 / P43: the rtol / method arguments of TransientRun / transient_case; P45: orbit_simulated has no rtol argument, so the harness sets the default rtol of TransientRun.__init__ in its own process for the tightened P45 runs only (no reference file is changed; the nominal P45 runs use the unmodified default)",
+   "rust": "P42 / P43: the request 'rtol'; P45: a request carrying 'rtol' is evaluated by the parity CLI as TransientRun::new(rtol) + steady_start + run + the orbit_simulated record (library calls only); check COMP-P-01: at the nominal rtol this composed path equals the library orbit_simulated byte for byte on every P45 refinement vector (recorded in the envelope record; a mismatch voids the record)"
+  }
+ },
+ "envelopes": {
+  "python": {
+   "PROD": {
+    "P42": {
+     "F42.mdot": {
+      "E": 0.002885637443155305,
+      "status": "EVALUATED",
+      "n_leaves": 809360,
+      "n_vectors": 670,
+      "argmax": {
+       "vector": "R42-PROD-078",
+       "path": "segments/7/mdot/148",
+       "N": 8.995997215061731e-11,
+       "T1": 8.975064290721457e-11,
+       "T2": 8.974970710903227e-11,
+       "scale": 7.319035877785242e-11
+      },
+      "scale": "mdot_scale"
+     },
+     "F42.p": {
+      "E": 0.0008296173599518092,
+      "status": "EVALUATED",
+      "n_leaves": 809360,
+      "n_vectors": 670,
+      "argmax": {
+       "vector": "R42-PROD-411",
+       "path": "segments/7/p/144",
+       "N": 0.0049313026808272065,
+       "T1": 0.004935387985167993,
+       "T2": 0.004935419376397479,
+       "scale": 0.005
+      },
+      "scale": "r0"
+     },
+     "F42.throughput": {
+      "E": 1.610007858999007e-08,
+      "status": "EVALUATED",
+      "n_leaves": 670,
+      "n_vectors": 670,
+      "argmax": {
+       "vector": "R42-PROD-555",
+       "path": "throughput_kg",
+       "N": 1.95114302267533e-05,
+       "T1": 1.9511429912832263e-05,
+       "T2": 1.9511429912725004e-05,
+       "scale": 1.9511429912725004e-05
+      },
+      "scale": "relative"
+     },
+     "F42.u": {
+      "E": 0.0008178467609653017,
+      "status": "EVALUATED",
+      "n_leaves": 809360,
+      "n_vectors": 670,
+      "argmax": {
+       "vector": "R42-PROD-078",
+       "path": "segments/7/u/139",
+       "N": 0.5019977350609902,
+       "T1": 0.5028082392967113,
+       "T2": 0.5028119105593334,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F42.ucmd_end": {
+      "E": 0.00208592108181771,
+      "status": "EVALUATED",
+      "n_leaves": 5360,
+      "n_vectors": 670,
+      "argmax": {
+       "vector": "R42-PROD-411",
+       "path": "segments/5/_ucmd_end",
+       "N": 0.483525859831684,
+       "T1": 0.48146634791200055,
+       "T2": 0.4814531433309334,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F42.xO": {
+      "E": 4.252313017849563e-05,
+      "status": "EVALUATED",
+      "n_leaves": 809360,
+      "n_vectors": 670,
+      "argmax": {
+       "vector": "R42-PROD-486",
+       "path": "segments/7/xO/131",
+       "N": 0.42952392109041104,
+       "T1": 0.42956610746641444,
+       "T2": 0.429566275843502,
+       "scale": 1.0
+      },
+      "scale": "1"
+     }
+    },
+    "P43": {
+     "F43.mdot": {
+      "E": 0.0057683218612560325,
+      "status": "EVALUATED",
+      "n_leaves": 18278,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-213",
+       "path": "metrics/7/mdot_final_kgps",
+       "N": 4.1587483004160805e-10,
+       "T1": 4.14296656816275e-10,
+       "T2": 4.1428967438154055e-10,
+       "scale": 2.7601408747591454e-10
+      },
+      "scale": "mdot_scale"
+     },
+     "F43.overshoot": {
+      "E": 0.7894754370239241,
+      "status": "EVALUATED",
+      "n_leaves": 2109,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-719",
+       "path": "metrics/1/overshoot_frac",
+       "N": 74.32399576462103,
+       "T1": 75.10060034236352,
+       "T2": 75.10703577200424,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.p": {
+      "E": 0.0007587103154873404,
+      "status": "EVALUATED",
+      "n_leaves": 18278,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-194",
+       "path": "metrics/3/P_max_Pa",
+       "N": 0.011266257443885631,
+       "T1": 0.011273844547040505,
+       "T2": 0.011273840016345654,
+       "scale": 0.01
+      },
+      "scale": "r0"
+     },
+     "F43.setpoint_frac": {
+      "E": 0.0007587103154873542,
+      "status": "EVALUATED",
+      "n_leaves": 10545,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-194",
+       "path": "metrics/3/peak_deviation_frac",
+       "N": 0.1266257443885631,
+       "T1": 0.12738445470405046,
+       "T2": 0.1273840016345654,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.u": {
+      "E": 0.0006886981414455651,
+      "status": "EVALUATED",
+      "n_leaves": 11248,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-194",
+       "path": "metrics/3/u_min",
+       "N": 0.6358494283623881,
+       "T1": 0.6351607302209425,
+       "T2": 0.6351611400441853,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.valve_travel": {
+      "E": 0.00631761367391892,
+      "status": "EVALUATED",
+      "n_leaves": 5624,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-345",
+       "path": "metrics/6/valve_travel",
+       "N": 5.746852605578531,
+       "T1": 5.740534991904612,
+       "T2": 5.740546685637024,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.valve_travel_total": {
+      "E": 0.007355017589361523,
+      "status": "EVALUATED",
+      "n_leaves": 703,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-194",
+       "path": "objectives/valve_travel",
+       "N": 17.9197202913398,
+       "T1": 17.92707530892916,
+       "T2": 17.927065453570577,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.xO": {
+      "E": 0.00022591570789443072,
+      "status": "EVALUATED",
+      "n_leaves": 12654,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-451",
+       "path": "metrics/6/xO_min",
+       "N": 0.5066589329541874,
+       "T1": 0.5068848486620818,
+       "T2": 0.5066589329541874,
+       "scale": 1.0
+      },
+      "scale": "1"
+     }
+    },
+    "P45": {
+     "F45.P_dev": {
+      "E": 0.0062226130149540815,
+      "status": "EVALUATED",
+      "n_leaves": 366,
+      "n_vectors": 366,
+      "argmax": {
+       "vector": "R45-054",
+       "path": "P_dev_max_frac",
+       "N": 0.13915581286670742,
+       "T1": 0.14536076654145336,
+       "T2": 0.14536959621155743,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F45.mdot": {
+      "E": 0.04646687583651433,
+      "status": "EVALUATED",
+      "n_leaves": 732,
+      "n_vectors": 366,
+      "argmax": {
+       "vector": "R45-198",
+       "path": "mdot_max_kgps",
+       "N": 2.123195387322166e-10,
+       "T1": 2.156843940607883e-10,
+       "T2": 2.1568134432196984e-10,
+       "scale": 7.241406416928817e-11
+      },
+      "scale": "mdot_scale"
+     }
+    }
+   },
+   "REF": {
+    "P42": {
+     "F42.mdot": {
+      "E": 4.544160161550195e-05,
+      "status": "EVALUATED",
+      "n_leaves": 266968,
+      "n_vectors": 221,
+      "argmax": {
+       "vector": "R42-REF-893",
+       "path": "segments/6/mdot/150",
+       "N": 8.616234248779388e-09,
+       "T1": 8.61592757503566e-09,
+       "T2": 8.615904158683535e-09,
+       "scale": 7.779357139963743e-09
+      },
+      "scale": "mdot_scale"
+     },
+     "F42.p": {
+      "E": 2.1144543935897042e-05,
+      "status": "EVALUATED",
+      "n_leaves": 266968,
+      "n_vectors": 221,
+      "argmax": {
+       "vector": "R42-REF-893",
+       "path": "segments/6/p/133",
+       "N": 0.010007436290088748,
+       "T1": 0.01000725276593323,
+       "T2": 0.01000723880529131,
+       "scale": 0.01
+      },
+      "scale": "r0"
+     },
+     "F42.throughput": {
+      "E": 1.9612175765667118e-12,
+      "status": "EVALUATED",
+      "n_leaves": 221,
+      "n_vectors": 221,
+      "argmax": {
+       "vector": "R42-REF-832",
+       "path": "throughput_kg",
+       "N": 5.819131571379691e-05,
+       "T1": 5.819131571368278e-05,
+       "T2": 5.819131571370218e-05,
+       "scale": 5.819131571370218e-05
+      },
+      "scale": "relative"
+     },
+     "F42.u": {
+      "E": 1.8415729539145165e-05,
+      "status": "EVALUATED",
+      "n_leaves": 266968,
+      "n_vectors": 221,
+      "argmax": {
+       "vector": "R42-REF-893",
+       "path": "segments/6/u/150",
+       "N": 0.4364297571285274,
+       "T1": 0.43641378097385947,
+       "T2": 0.43641256118642385,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F42.ucmd_end": {
+      "E": 0.0001224284361014405,
+      "status": "EVALUATED",
+      "n_leaves": 1768,
+      "n_vectors": 221,
+      "argmax": {
+       "vector": "R42-REF-893",
+       "path": "segments/6/_ucmd_end",
+       "N": 1.0016937402457435,
+       "T1": 1.0015875357107709,
+       "T2": 1.0015794237602065,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F42.xO": {
+      "E": 1.031617665708806e-06,
+      "status": "EVALUATED",
+      "n_leaves": 266968,
+      "n_vectors": 221,
+      "argmax": {
+       "vector": "R42-REF-893",
+       "path": "segments/7/xO/86",
+       "N": 0.2321990639257664,
+       "T1": 0.2321999588664094,
+       "T2": 0.23220002720492075,
+       "scale": 1.0
+      },
+      "scale": "1"
+     }
+    },
+    "P43": {
+     "F43.mdot": {
+      "E": 3.6944560243208586e-05,
+      "status": "EVALUATED",
+      "n_leaves": 6032,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-906",
+       "path": "metrics/6/mdot_final_kgps",
+       "N": 1.1573708862382364e-10,
+       "T1": 1.1573250505272177e-10,
+       "T2": 1.1573234271244737e-10,
+       "scale": 1.3285451547818248e-10
+      },
+      "scale": "mdot_scale"
+     },
+     "F43.overshoot": {
+      "E": 0.005278238909845356,
+      "status": "EVALUATED",
+      "n_leaves": 696,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-980",
+       "path": "metrics/1/overshoot_frac",
+       "N": 26.886724960520876,
+       "T1": 26.88196490400851,
+       "T2": 26.88170581280977,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.p": {
+      "E": 1.2160074331843407e-05,
+      "status": "EVALUATED",
+      "n_leaves": 6032,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-980",
+       "path": "metrics/7/P_final_Pa",
+       "N": 0.009676404467861992,
+       "T1": 0.009676515051581413,
+       "T2": 0.009676520560093362,
+       "scale": 0.01
+      },
+      "scale": "r0"
+     },
+     "F43.setpoint_frac": {
+      "E": 1.2160074331843407e-05,
+      "status": "EVALUATED",
+      "n_leaves": 3480,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-980",
+       "path": "metrics/7/final_setpoint_error_frac",
+       "N": 0.032359553213800844,
+       "T1": 0.032348494841858734,
+       "T2": 0.03234794399066387,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.u": {
+      "E": 3.432040727391339e-06,
+      "status": "EVALUATED",
+      "n_leaves": 3712,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-906",
+       "path": "metrics/6/u_max",
+       "N": 0.670069252831392,
+       "T1": 0.6700724578582836,
+       "T2": 0.6700725713652015,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.valve_travel": {
+      "E": 8.134268037540693e-05,
+      "status": "EVALUATED",
+      "n_leaves": 1856,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-906",
+       "path": "metrics/7/valve_travel",
+       "N": 5.327528010302973,
+       "T1": 5.3276039439390885,
+       "T2": 5.327606648461218,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.valve_travel_total": {
+      "E": 5.9934912684411756e-05,
+      "status": "EVALUATED",
+      "n_leaves": 232,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-928",
+       "path": "objectives/valve_travel",
+       "N": 47.162732151243524,
+       "T1": 47.16278892706858,
+       "T2": 47.162790506612396,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.xO": {
+      "E": 0.0002711376498364393,
+      "status": "EVALUATED",
+      "n_leaves": 4176,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-952",
+       "path": "metrics/6/xO_min",
+       "N": 0.24624934565852058,
+       "T1": 0.24652048330834958,
+       "T2": 0.24624934565851686,
+       "scale": 1.0
+      },
+      "scale": "1"
+     }
+    }
+   }
+  },
+  "rust": {
+   "PROD": {
+    "P42": {
+     "F42.mdot": {
+      "E": 0.0012502150433339229,
+      "status": "EVALUATED",
+      "n_leaves": 825064,
+      "n_vectors": 683,
+      "argmax": {
+       "vector": "R42-PROD-198",
+       "path": "segments/7/mdot/143",
+       "N": 1.7094724809669828e-09,
+       "T1": 1.7079914118162563e-09,
+       "T2": 1.7079912949303482e-09,
+       "scale": 1.184838504736399e-09
+      },
+      "scale": "mdot_scale"
+     },
+     "F42.p": {
+      "E": 0.000312178726315053,
+      "status": "EVALUATED",
+      "n_leaves": 825064,
+      "n_vectors": 683,
+      "argmax": {
+       "vector": "R42-PROD-198",
+       "path": "segments/7/p/147",
+       "N": 0.02051947926132806,
+       "T1": 0.020525721728859858,
+       "T2": 0.02052572228235711,
+       "scale": 0.02
+      },
+      "scale": "r0"
+     },
+     "F42.throughput": {
+      "E": 1.44187290965094e-11,
+      "status": "EVALUATED",
+      "n_leaves": 683,
+      "n_vectors": 683,
+      "argmax": {
+       "vector": "R42-PROD-734",
+       "path": "throughput_kg",
+       "N": 5.936077549895249e-08,
+       "T1": 5.936077549809658e-08,
+       "T2": 5.936077549809671e-08,
+       "scale": 5.936077549809671e-08
+      },
+      "scale": "relative"
+     },
+     "F42.u": {
+      "E": 0.0005435678692654045,
+      "status": "EVALUATED",
+      "n_leaves": 825064,
+      "n_vectors": 683,
+      "argmax": {
+       "vector": "R42-PROD-198",
+       "path": "segments/7/u/143",
+       "N": 0.49717892917748907,
+       "T1": 0.4966354462080083,
+       "T2": 0.496635403758116,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F42.ucmd_end": {
+      "E": 0.0012063749912903377,
+      "status": "EVALUATED",
+      "n_leaves": 5464,
+      "n_vectors": 683,
+      "argmax": {
+       "vector": "R42-PROD-198",
+       "path": "segments/7/_ucmd_end",
+       "N": 0.17300570189852646,
+       "T1": 0.17421178224829934,
+       "T2": 0.17421192956905807,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F42.xO": {
+      "E": 2.1361386954299455e-05,
+      "status": "EVALUATED",
+      "n_leaves": 824811,
+      "n_vectors": 683,
+      "argmax": {
+       "vector": "R42-PROD-198",
+       "path": "segments/7/xO/147",
+       "N": 0.3440876582997534,
+       "T1": 0.3441090158851775,
+       "T2": 0.3441090177859426,
+       "scale": 1.0
+      },
+      "scale": "1"
+     }
+    },
+    "P43": {
+     "F43.mdot": {
+      "E": 0.0005441787642642977,
+      "status": "EVALUATED",
+      "n_leaves": 18278,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-719",
+       "path": "metrics/6/mdot_final_kgps",
+       "N": 2.3644680150418944e-10,
+       "T1": 2.3635642127508307e-10,
+       "T2": 2.363563218201992e-10,
+       "scale": 1.6645107237246193e-10
+      },
+      "scale": "mdot_scale"
+     },
+     "F43.overshoot": {
+      "E": 0.23509363322189358,
+      "status": "EVALUATED",
+      "n_leaves": 2109,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-111",
+       "path": "metrics/2/overshoot_frac",
+       "N": 43.27735080653073,
+       "T1": 43.04259258371882,
+       "T2": 43.04242487851383,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.p": {
+      "E": 0.00014159312563318677,
+      "status": "EVALUATED",
+      "n_leaves": 18278,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-194",
+       "path": "metrics/3/P_max_Pa",
+       "N": 0.011272424154016655,
+       "T1": 0.011273840085272987,
+       "T2": 0.011273839785572287,
+       "scale": 0.01
+      },
+      "scale": "r0"
+     },
+     "F43.setpoint_frac": {
+      "E": 0.0001415931256331937,
+      "status": "EVALUATED",
+      "n_leaves": 10545,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-194",
+       "path": "metrics/3/peak_deviation_frac",
+       "N": 0.12724241540166548,
+       "T1": 0.12738400852729867,
+       "T2": 0.12738397855722866,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.u": {
+      "E": 0.0001677296399845707,
+      "status": "EVALUATED",
+      "n_leaves": 11248,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-194",
+       "path": "metrics/2/u_min",
+       "N": 0.5016259744608987,
+       "T1": 0.5017937041008833,
+       "T2": 0.5017936946547942,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.valve_travel": {
+      "E": 0.0010005822287313393,
+      "status": "EVALUATED",
+      "n_leaves": 5624,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-111",
+       "path": "metrics/6/valve_travel",
+       "N": 5.020409880049828,
+       "T1": 5.021408747191658,
+       "T2": 5.0214096047351084,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.valve_travel_total": {
+      "E": 0.001662872620030953,
+      "status": "EVALUATED",
+      "n_leaves": 703,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-111",
+       "path": "objectives/valve_travel",
+       "N": 35.10683546525456,
+       "T1": 35.10849650374389,
+       "T2": 35.10849742080924,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.xO": {
+      "E": 2.5944529250532256e-06,
+      "status": "EVALUATED",
+      "n_leaves": 12654,
+      "n_vectors": 703,
+      "argmax": {
+       "vector": "R43-PROD-254",
+       "path": "metrics/5/xO_max",
+       "N": 0.5426826004095459,
+       "T1": 0.5426826004095455,
+       "T2": 0.5426813031830832,
+       "scale": 1.0
+      },
+      "scale": "1"
+     }
+    },
+    "P45": {
+     "F45.P_dev": {
+      "E": 0.03112483724790638,
+      "status": "EVALUATED",
+      "n_leaves": 366,
+      "n_vectors": 366,
+      "argmax": {
+       "vector": "R45-192",
+       "path": "P_dev_max_frac",
+       "N": 1.2464074939488867e-05,
+       "T1": 0.031130895855221552,
+       "T2": 0.03113409858903371,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F45.mdot": {
+      "E": 0.782401523572551,
+      "status": "EVALUATED",
+      "n_leaves": 732,
+      "n_vectors": 366,
+      "argmax": {
+       "vector": "R45-192",
+       "path": "mdot_max_kgps",
+       "N": 1.7674736059057365e-10,
+       "T1": 3.3217660461321346e-10,
+       "T2": 3.321695114259292e-10,
+       "scale": 1.9865662238607217e-10
+      },
+      "scale": "mdot_scale"
+     }
+    }
+   },
+   "REF": {
+    "P42": {
+     "F42.mdot": {
+      "E": 4.376123675669912e-07,
+      "status": "EVALUATED",
+      "n_leaves": 270592,
+      "n_vectors": 224,
+      "argmax": {
+       "vector": "R42-REF-893",
+       "path": "segments/6/mdot/150",
+       "N": 8.615886474683822e-09,
+       "T1": 8.61588321016434e-09,
+       "T2": 8.615883140252634e-09,
+       "scale": 7.779357139963743e-09
+      },
+      "scale": "mdot_scale"
+     },
+     "F42.p": {
+      "E": 1.9973256364796965e-07,
+      "status": "EVALUATED",
+      "n_leaves": 270592,
+      "n_vectors": 224,
+      "argmax": {
+       "vector": "R42-REF-893",
+       "path": "segments/6/p/133",
+       "N": 0.01000722819662075,
+       "T1": 0.010007226279996576,
+       "T2": 0.010007226239645844,
+       "scale": 0.01
+      },
+      "scale": "r0"
+     },
+     "F42.throughput": {
+      "E": 4.146387974602681e-15,
+      "status": "EVALUATED",
+      "n_leaves": 224,
+      "n_vectors": 224,
+      "argmax": {
+       "vector": "R42-REF-911",
+       "path": "throughput_kg",
+       "N": 2.8088792211641997e-07,
+       "T1": 2.8088792211642113e-07,
+       "T2": 2.8088792211642113e-07,
+       "scale": 2.8088792211642113e-07
+      },
+      "scale": "relative"
+     },
+     "F42.u": {
+      "E": 1.7727019357982599e-07,
+      "status": "EVALUATED",
+      "n_leaves": 270592,
+      "n_vectors": 224,
+      "argmax": {
+       "vector": "R42-REF-893",
+       "path": "segments/6/u/150",
+       "N": 0.436411639847618,
+       "T1": 0.43641146985672447,
+       "T2": 0.43641146621707444,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F42.ucmd_end": {
+      "E": 1.1801356487595172e-06,
+      "status": "EVALUATED",
+      "n_leaves": 1792,
+      "n_vectors": 224,
+      "argmax": {
+       "vector": "R42-REF-893",
+       "path": "segments/6/_ucmd_end",
+       "N": 1.0015732993561088,
+       "T1": 1.0015721677092904,
+       "T2": 1.0015721434648752,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F42.xO": {
+      "E": 9.930861077922515e-09,
+      "status": "EVALUATED",
+      "n_leaves": 270535,
+      "n_vectors": 224,
+      "argmax": {
+       "vector": "R42-REF-893",
+       "path": "segments/7/xO/86",
+       "N": 0.23220007881846538,
+       "T1": 0.23220008834157319,
+       "T2": 0.23220008854544982,
+       "scale": 1.0
+      },
+      "scale": "1"
+     }
+    },
+    "P43": {
+     "F43.mdot": {
+      "E": 2.3532069238880029e-07,
+      "status": "EVALUATED",
+      "n_leaves": 6032,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-906",
+       "path": "metrics/6/mdot_final_kgps",
+       "N": 1.1573229601826193e-10,
+       "T1": 1.1573226559787005e-10,
+       "T2": 1.157322651763577e-10,
+       "scale": 1.3285451547818248e-10
+      },
+      "scale": "mdot_scale"
+     },
+     "F43.overshoot": {
+      "E": 1.1790629535823882e-05,
+      "status": "EVALUATED",
+      "n_leaves": 696,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-980",
+       "path": "metrics/1/overshoot_frac",
+       "N": 26.881511026862963,
+       "T1": 26.881499299821233,
+       "T2": 26.88149926802733,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.p": {
+      "E": 4.484719054453912e-08,
+      "status": "EVALUATED",
+      "n_leaves": 6032,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-988",
+       "path": "metrics/7/P_final_Pa",
+       "N": 0.04730246269595215,
+       "T1": 0.047302460487388544,
+       "T2": 0.04730246047049058,
+       "scale": 0.05
+      },
+      "scale": "r0"
+     },
+     "F43.setpoint_frac": {
+      "E": 4.484719054453912e-08,
+      "status": "EVALUATED",
+      "n_leaves": 3480,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-988",
+       "path": "metrics/7/final_setpoint_error_frac",
+       "N": 0.053950746080957124,
+       "T1": 0.05395079025222918,
+       "T2": 0.053950790590188424,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.u": {
+      "E": 2.081799654884975e-08,
+      "status": "EVALUATED",
+      "n_leaves": 3712,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-906",
+       "path": "metrics/6/u_max",
+       "N": 0.6700726039812349,
+       "T1": 0.6700726242437025,
+       "T2": 0.670072624521467,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.valve_travel": {
+      "E": 5.089759991250276e-07,
+      "status": "EVALUATED",
+      "n_leaves": 1856,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-906",
+       "path": "metrics/7/valve_travel",
+       "N": 5.3276074113398,
+       "T1": 5.327607906604538,
+       "T2": 5.327607913460168,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.valve_travel_total": {
+      "E": 3.032731612506723e-07,
+      "status": "EVALUATED",
+      "n_leaves": 232,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-982",
+       "path": "objectives/valve_travel",
+       "N": 31.1150960364346,
+       "T1": 31.115096339707762,
+       "T2": 31.115096339631187,
+       "scale": 1.0
+      },
+      "scale": "1"
+     },
+     "F43.xO": {
+      "E": 5.225369861641915e-06,
+      "status": "EVALUATED",
+      "n_leaves": 4176,
+      "n_vectors": 232,
+      "argmax": {
+       "vector": "R43-REF-956",
+       "path": "metrics/1/xO_min",
+       "N": 0.00014875460187196713,
+       "T1": 0.00014352923201032527,
+       "T2": 0.00014875460187196716,
+       "scale": 1.0
+      },
+      "scale": "1"
+     }
+    }
+   }
+  }
+ },
+ "combined_E_py_plus_E_rust": {
+  "PROD": {
+   "P42": {
+    "F42.mdot": 0.004135852486489228,
+    "F42.p": 0.0011417960862668622,
+    "F42.throughput": 1.611449731908658e-08,
+    "F42.u": 0.0013614146302307062,
+    "F42.ucmd_end": 0.0032922960731080475,
+    "F42.xO": 6.388451713279508e-05
+   },
+   "P43": {
+    "F43.mdot": 0.00631250062552033,
+    "F43.overshoot": 1.0245690702458177,
+    "F43.p": 0.0009003034411205271,
+    "F43.setpoint_frac": 0.0009003034411205479,
+    "F43.u": 0.0008564277814301358,
+    "F43.valve_travel": 0.00731819590265026,
+    "F43.valve_travel_total": 0.009017890209392476,
+    "F43.xO": 0.00022851016081948394
+   },
+   "P45": {
+    "F45.P_dev": 0.03734745026286046,
+    "F45.mdot": 0.8288683994090653
+   }
+  },
+  "REF": {
+   "P42": {
+    "F42.mdot": 4.587921398306894e-05,
+    "F42.p": 2.1344276499545012e-05,
+    "F42.throughput": 1.9653639645413144e-12,
+    "F42.u": 1.859299973272499e-05,
+    "F42.ucmd_end": 0.00012360857175020001,
+    "F42.xO": 1.0415485267867286e-06
+   },
+   "P43": {
+    "F43.mdot": 3.717988093559739e-05,
+    "F43.overshoot": 0.00529002953938118,
+    "F43.p": 1.2204921522387946e-05,
+    "F43.setpoint_frac": 1.2204921522387946e-05,
+    "F43.u": 3.4528587239401887e-06,
+    "F43.valve_travel": 8.185165637453196e-05,
+    "F43.valve_travel_total": 6.023818584566243e-05,
+    "F43.xO": 0.00027636301969808123
+   }
+  }
+ },
+ "missing_envelopes": [],
+ "excluded_vectors": {
+  "python": {
+   "n": 368,
+   "list": [
+    {
+     "vector": "R42-PROD-004",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-017",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-018",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-028",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-029",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-039",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-042",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-046",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-050",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-056",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-057",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-071",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-086",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-094",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-112",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-116",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-130",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-138",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-150",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-172",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-173",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-176",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-178",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-181",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-187",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-197",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-205",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-218",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-232",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-234",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-237",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-238",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-239",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-246",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-252",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-278",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-283",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-300",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-306",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-312",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-335",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-369",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-371",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-379",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-390",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-395",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-398",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-429",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-432",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-434",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-450",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-455",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-469",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-474",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-478",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-482",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-488",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-494",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-502",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-512",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-513",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-514",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-521",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-530",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-531",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-544",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-562",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-567",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-569",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-582",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-586",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-592",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-594",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-595",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-604",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-609",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-611",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-614",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-620",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-623",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-626",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-628",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-629",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-633",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-639",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-648",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-660",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-677",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-683",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-688",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-699",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-712",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-716",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-725",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-727",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-739",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-754",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-764",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-770",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-778",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-787",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-803",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-804",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-815",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-818",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-824",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-830",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-838",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-855",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-856",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-863",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-866",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-873",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-877",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-880",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-883",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-901",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-917",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-923",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-955",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-961",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-971",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-973",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-982",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-990",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-996",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1000",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1001",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1005",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1009",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1011",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1022",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1023",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R43-PROD-009",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-025",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-031",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-035",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-066",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-067",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-096",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-123",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-126",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-128",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-147",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-154",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-160",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-161",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-173",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-176",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-183",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-191",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-193",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-197",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-202",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-208",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-232",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-235",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-241",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-272",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-281",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-297",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-304",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-328",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-334",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-375",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-376",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-379",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-394",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-401",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-425",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-426",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-460",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-477",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-493",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-513",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-515",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-520",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-539",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-540",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-553",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-582",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-584",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-590",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-597",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-609",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-616",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-622",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-645",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-649",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-653",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-658",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-680",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-682",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-685",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-704",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-714",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-745",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-759",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-790",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-796",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-807",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-810",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-819",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-831",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-839",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-856",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-860",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-867",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-882",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-887",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-904",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-910",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-918",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-933",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-944",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-963",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-964",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-987",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-993",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-999",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-1004",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-1012",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-000",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-002",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-005",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-013",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-016",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-017",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-028",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-033",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-037",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-041",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-049",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-050",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-056",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-066",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-067",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-068",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-069",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-076",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-081",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-082",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-095",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-100",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-102",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-103",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-105",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-113",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-114",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-116",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-125",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-129",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-145",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-149",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-151",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-152",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-157",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-158",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-161",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-162",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-164",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-165",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-167",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-170",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-173",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-174",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-175",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-180",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-184",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-186",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-187",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-191",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-194",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-196",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-205",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-207",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-208",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-225",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-226",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-238",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-239",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-244",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-245",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-247",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-255",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-256",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-259",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-267",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-278",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-279",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-280",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-284",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-288",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-289",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-290",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-297",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-299",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-303",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-306",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-313",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-319",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-322",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-326",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-327",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-330",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-332",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-333",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-334",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-335",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-336",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-337",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-339",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-342",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-345",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-351",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-355",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-357",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-361",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-363",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-364",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-370",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-373",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-374",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-376",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-381",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-383",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-384",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-390",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-394",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-397",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-399",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-401",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-404",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-406",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-409",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-412",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-413",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-416",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-417",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-419",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-420",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-426",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-427",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-430",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-434",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-442",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-445",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-449",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-453",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-460",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-461",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-463",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-466",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-467",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-472",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-476",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-482",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-484",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-486",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-489",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-492",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-494",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-498",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-500",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-503",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-506",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-510",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-511",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    }
+   ]
+  },
+  "rust": {
+   "n": 352,
+   "list": [
+    {
+     "vector": "R42-PROD-004",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-017",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-018",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-028",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-029",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-039",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-042",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-046",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-050",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-057",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-071",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-086",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-094",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-112",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-116",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-130",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-138",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-150",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-176",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-178",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-181",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-187",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-197",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-218",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-232",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-234",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-237",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-238",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-239",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-246",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-252",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-278",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-283",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-300",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-306",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-335",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-369",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-371",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-379",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-390",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-395",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-398",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-429",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-432",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-434",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-469",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-474",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-478",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-482",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-488",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-494",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-502",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-512",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-514",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-530",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-531",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-544",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-562",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-569",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-582",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-586",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-592",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-594",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-595",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-604",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-609",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-611",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-614",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-620",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-623",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-626",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-628",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-633",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-639",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-648",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-677",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-683",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-699",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-712",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-716",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-725",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-727",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-739",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-PROD-754",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-PROD-764",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-770",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-787",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-803",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-804",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-815",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-818",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-830",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-838",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-855",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-856",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-863",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-866",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-873",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-877",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-880",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-883",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-901",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-917",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-955",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-961",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-971",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-973",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-982",
+     "runs": "structure (family leaf set) differs from T2"
+    },
+    {
+     "vector": "R42-REF-990",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-996",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1000",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1001",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1005",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1009",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1011",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1022",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R42-REF-1023",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R43-PROD-009",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-025",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-031",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-035",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-066",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-067",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-096",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-123",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-126",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-128",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-147",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-154",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-160",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-161",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-173",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-176",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-183",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-191",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-193",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-197",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-202",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-208",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-232",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-235",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-241",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-272",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-281",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-297",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-304",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-328",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-334",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-375",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-376",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-379",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-394",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-401",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-425",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-426",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-460",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-477",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-493",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-513",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-515",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-520",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-539",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-540",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-553",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-582",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-584",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-590",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-597",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-609",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-616",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-622",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-645",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-649",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-653",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-658",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-680",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-682",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-685",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-704",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-714",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-745",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-PROD-759",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-790",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-796",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-807",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-810",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-819",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-831",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-839",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-856",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-860",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-867",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-882",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-887",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-904",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-910",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-918",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-933",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-944",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-963",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-964",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-987",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-993",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-999",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-1004",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R43-REF-1012",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-000",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-002",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-005",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-013",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-016",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-017",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-028",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-033",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-037",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-041",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-049",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-050",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-056",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-066",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-067",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-068",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-069",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-076",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-081",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-082",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-095",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-100",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-102",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-103",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-105",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-113",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-114",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-116",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-125",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-129",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-145",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-149",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-151",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-152",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-157",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-158",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-161",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-162",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-164",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-165",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-167",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-170",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-173",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-174",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-175",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-180",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-184",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-186",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-187",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-191",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-194",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-196",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-205",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-207",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-208",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-225",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-226",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-238",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-239",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-244",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-245",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-247",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-255",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-256",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-259",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-267",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-278",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-279",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-280",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-284",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-288",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-289",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-290",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-297",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-299",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-303",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-306",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-313",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-319",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-322",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-326",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-327",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-330",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-332",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-333",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-334",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-335",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-336",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-337",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-339",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-342",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-345",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-351",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-355",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-357",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-361",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-363",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-364",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-370",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-373",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-374",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-376",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-381",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-383",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-384",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-390",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-394",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-397",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-399",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-401",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-404",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-406",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-409",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-412",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-413",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-416",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-417",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-419",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-420",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-426",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-427",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-430",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-434",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-442",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-445",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-449",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-453",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-460",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-461",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-463",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-466",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-467",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-472",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-476",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-482",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-484",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-486",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-489",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-492",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-494",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-498",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-500",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-503",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-506",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    },
+    {
+     "vector": "R45-510",
+     "runs": {
+      "N": "ValueError",
+      "T1": "ValueError",
+      "T2": "ValueError"
+     }
+    },
+    {
+     "vector": "R45-511",
+     "runs": {
+      "N": "NOT_OK",
+      "T1": "NOT_OK",
+      "T2": "NOT_OK"
+     }
+    }
+   ]
+  }
+ },
+ "skipped_leaves_zero_scale": {
+  "python": 0,
+  "rust": 0
+ },
+ "discrete_N_vs_T2_differences": {
+  "python": {
+   "n": 863,
+   "first_50": [
+    {
+     "vector": "R42-PROD-056",
+     "path": "segments/1/xO/104",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-056",
+     "path": "segments/1/xO/105",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-056",
+     "path": "segments/1/xO/106",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-056",
+     "path": "segments/1/xO/107",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-056",
+     "path": "segments/1/xO/108",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-056",
+     "path": "segments/1/xO/109",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/138",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/139",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/140",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/141",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/142",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/143",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/144",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/145",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/146",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/147",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/122",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/125",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/126",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/129",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/132",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/133",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/135",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/136",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/138",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/139",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/142",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/144",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/145",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/146",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/149",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/117",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/118",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/119",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/123",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/128",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/129",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/130",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/133",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/134",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/135",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/136",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/137",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/138",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/139",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/144",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/145",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/148",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/1/xO/150",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-150",
+     "path": "segments/2/xO/0",
+     "N": null,
+     "T2": "NaN"
+    }
+   ]
+  },
+  "rust": {
+   "n": 695,
+   "first_50": [
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/141",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/142",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/143",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/144",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/145",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/146",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/147",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/148",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/149",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/1/xO/150",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/2/xO/0",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/132",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/134",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/136",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/137",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/138",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/139",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/140",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/141",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/142",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/143",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/144",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/145",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/146",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/147",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/148",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/149",
+     "N": null,
+     "T2": "NaN"
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/5/xO/150",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/0",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/1",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/10",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/11",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/12",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/13",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/14",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/15",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/16",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/17",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/18",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/19",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/2",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/20",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/21",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/22",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/23",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/3",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/4",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/5",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/6",
+     "N": "NaN",
+     "T2": null
+    },
+    {
+     "vector": "R42-PROD-086",
+     "path": "segments/6/xO/7",
+     "N": "NaN",
+     "T2": null
+    }
+   ]
+  }
+ },
+ "also_recorded_not_used": {
+  "cross_implementation_T2_vs_T2 (model-equivalence diagnostic, not a verdict)": {
+   "PROD/P42/F42.p": {
+    "n": 841976,
+    "max": 9.303901538082471e-08,
+    "argmax": {
+     "vector": "R42-PROD-519",
+     "path": "segments/6/p/105",
+     "python": 0.005109067006169042,
+     "rust": 0.005109066540973965
+    }
+   },
+   "PROD/P42/F42.mdot": {
+    "n": 841976,
+    "max": 5.993620065283855e-07,
+    "argmax": {
+     "vector": "R42-PROD-055",
+     "path": "segments/7/mdot/149",
+     "python": 1.2710673354508247e-11,
+     "rust": 1.271067986166235e-11
+    }
+   },
+   "PROD/P42/F42.u": {
+    "n": 841976,
+    "max": 2.1915609699219019e-07,
+    "argmax": {
+     "vector": "R42-PROD-055",
+     "path": "segments/7/u/149",
+     "python": 0.428361771006042,
+     "rust": 0.428361990162139
+    }
+   },
+   "PROD/P42/F42.xO": {
+    "n": 840804,
+    "max": 2.5035813422391584e-09,
+    "argmax": {
+     "vector": "R42-PROD-198",
+     "path": "segments/7/xO/149",
+     "python": 0.34273613508489015,
+     "rust": 0.3427361375884715
+    }
+   },
+   "PROD/P42/F42.ucmd_end": {
+    "n": 5576,
+    "max": 4.3798629179025994e-07,
+    "argmax": {
+     "vector": "R42-PROD-135",
+     "path": "segments/7/_ucmd_end",
+     "python": 0.4148553517582699,
+     "rust": 0.41485578974456166
+    }
+   },
+   "PROD/P42/F42.throughput": {
+    "n": 697,
+    "max": 4.657153375591913e-11,
+    "argmax": {
+     "vector": "R42-PROD-633",
+     "path": "throughput_kg",
+     "python": 1.562962580222304e-06,
+     "rust": 1.5629625802950935e-06
+    }
+   },
+   "REF/P42/F42.p": {
+    "n": 276632,
+    "max": 1.2565645465117958e-06,
+    "argmax": {
+     "vector": "R42-REF-893",
+     "path": "segments/6/p/133",
+     "python": 0.01000723880529131,
+     "rust": 0.010007226239645844
+    }
+   },
+   "REF/P42/F42.mdot": {
+    "n": 276632,
+    "max": 2.7018210531845987e-06,
+    "argmax": {
+     "vector": "R42-REF-893",
+     "path": "segments/6/mdot/150",
+     "python": 8.615904158683535e-09,
+     "rust": 8.615883140252634e-09
+    }
+   },
+   "REF/P42/F42.u": {
+    "n": 276632,
+    "max": 1.0949693494133328e-06,
+    "argmax": {
+     "vector": "R42-REF-893",
+     "path": "segments/6/u/150",
+     "python": 0.43641256118642385,
+     "rust": 0.43641146621707444
+    }
+   },
+   "REF/P42/F42.xO": {
+    "n": 276155,
+    "max": 6.13405290728064e-08,
+    "argmax": {
+     "vector": "R42-REF-893",
+     "path": "segments/7/xO/86",
+     "python": 0.23220002720492075,
+     "rust": 0.23220008854544982
+    }
+   },
+   "REF/P42/F42.ucmd_end": {
+    "n": 1832,
+    "max": 7.280295331257847e-06,
+    "argmax": {
+     "vector": "R42-REF-893",
+     "path": "segments/6/_ucmd_end",
+     "python": 1.0015794237602065,
+     "rust": 1.0015721434648752
+    }
+   },
+   "REF/P42/F42.throughput": {
+    "n": 229,
+    "max": 8.425629919346132e-12,
+    "argmax": {
+     "vector": "R42-REF-830",
+     "path": "throughput_kg",
+     "python": 1.7974542608781197e-07,
+     "rust": 1.7974542608932644e-07
+    }
+   },
+   "PROD/P43/F43.p": {
+    "n": 18278,
+    "max": 1.418251639392909e-07,
+    "argmax": {
+     "vector": "R43-PROD-482",
+     "path": "metrics/7/P_final_Pa",
+     "python": 0.018657305767075413,
+     "rust": 0.018657302930572134
+    }
+   },
+   "PROD/P43/F43.mdot": {
+    "n": 18278,
+    "max": 1.3604885414637687e-06,
+    "argmax": {
+     "vector": "R43-PROD-719",
+     "path": "metrics/6/mdot_final_kgps",
+     "python": 2.3635654827497587e-10,
+     "rust": 2.363563218201992e-10
+    }
+   },
+   "PROD/P43/F43.xO": {
+    "n": 12654,
+    "max": 0.0002259156891963876,
+    "argmax": {
+     "vector": "R43-PROD-451",
+     "path": "metrics/6/xO_min",
+     "python": 0.5066589329541874,
+     "rust": 0.5068848486433838
+    }
+   },
+   "PROD/P43/F43.valve_travel": {
+    "n": 5624,
+    "max": 1.4047260039617981e-06,
+    "argmax": {
+     "vector": "R43-PROD-719",
+     "path": "metrics/6/valve_travel",
+     "python": 5.027386973510432,
+     "rust": 5.027385568784428
+    }
+   },
+   "PROD/P43/F43.u": {
+    "n": 11248,
+    "max": 1.406818653792996e-07,
+    "argmax": {
+     "vector": "R43-PROD-018",
+     "path": "metrics/3/u_min",
+     "python": 0.6274776183446438,
+     "rust": 0.6274777590265092
+    }
+   },
+   "PROD/P43/F43.setpoint_frac": {
+    "n": 10545,
+    "max": 1.41825163932352e-07,
+    "argmax": {
+     "vector": "R43-PROD-482",
+     "path": "metrics/7/final_setpoint_error_frac",
+     "python": 0.06713471164622939,
+     "rust": 0.06713485347139332
+    }
+   },
+   "PROD/P43/F43.overshoot": {
+    "n": 2109,
+    "max": 0.00037363807680890204,
+    "argmax": {
+     "vector": "R43-PROD-719",
+     "path": "metrics/1/overshoot_frac",
+     "python": 75.10703577200424,
+     "rust": 75.10740941008105
+    }
+   },
+   "PROD/P43/F43.valve_travel_total": {
+    "n": 703,
+    "max": 3.061316673935721e-06,
+    "argmax": {
+     "vector": "R43-PROD-402",
+     "path": "objectives/valve_travel",
+     "python": 8.306642873795669,
+     "rust": 8.306645935112343
+    }
+   },
+   "REF/P43/F43.p": {
+    "n": 6032,
+    "max": 4.393505573241363e-07,
+    "argmax": {
+     "vector": "R43-REF-980",
+     "path": "metrics/7/P_final_Pa",
+     "python": 0.009676520560093362,
+     "rust": 0.009676524953598935
+    }
+   },
+   "REF/P43/F43.mdot": {
+    "n": 6032,
+    "max": 5.836165175688691e-07,
+    "argmax": {
+     "vector": "R43-REF-906",
+     "path": "metrics/6/mdot_final_kgps",
+     "python": 1.1573234271244737e-10,
+     "rust": 1.157322651763577e-10
+    }
+   },
+   "REF/P43/F43.xO": {
+    "n": 4176,
+    "max": 7.16352454580016e-05,
+    "argmax": {
+     "vector": "R43-REF-976",
+     "path": "metrics/6/xO_min",
+     "python": 0.4668963270885199,
+     "rust": 0.4668246918430619
+    }
+   },
+   "REF/P43/F43.valve_travel": {
+    "n": 1856,
+    "max": 2.8139943317739835e-06,
+    "argmax": {
+     "vector": "R43-REF-861",
+     "path": "metrics/4/valve_travel",
+     "python": 4.6134654510581266,
+     "rust": 4.613462637063795
+    }
+   },
+   "REF/P43/F43.u": {
+    "n": 3712,
+    "max": 1.7353470854741815e-07,
+    "argmax": {
+     "vector": "R43-REF-861",
+     "path": "metrics/6/u_min",
+     "python": 0.41968101396502255,
+     "rust": 0.4196811874997311
+    }
+   },
+   "REF/P43/F43.setpoint_frac": {
+    "n": 3480,
+    "max": 4.393505573241363e-07,
+    "argmax": {
+     "vector": "R43-REF-980",
+     "path": "metrics/7/final_setpoint_error_frac",
+     "python": 0.03234794399066387,
+     "rust": 0.03234750464010654
+    }
+   },
+   "REF/P43/F43.overshoot": {
+    "n": 696,
+    "max": 0.00020654478243997687,
+    "argmax": {
+     "vector": "R43-REF-980",
+     "path": "metrics/1/overshoot_frac",
+     "python": 26.88170581280977,
+     "rust": 26.88149926802733
+    }
+   },
+   "REF/P43/F43.valve_travel_total": {
+    "n": 232,
+    "max": 2.199748671216639e-06,
+    "argmax": {
+     "vector": "R43-REF-980",
+     "path": "objectives/valve_travel",
+     "python": 32.393873464317615,
+     "rust": 32.393875664066286
+    }
+   },
+   "PROD/P45/F45.P_dev": {
+    "n": 366,
+    "max": 3.5041457484563665e-06,
+    "argmax": {
+     "vector": "R45-046",
+     "path": "P_dev_max_frac",
+     "python": 0.09185477267872522,
+     "rust": 0.09185827682447367
+    }
+   },
+   "PROD/P45/F45.mdot": {
+    "n": 732,
+    "max": 2.8315425598723567e-05,
+    "argmax": {
+     "vector": "R45-331",
+     "path": "mdot_max_kgps",
+     "python": 5.230183842040111e-11,
+     "rust": 5.2295673187484977e-11
+    }
+   }
+  },
+  "convergence_ratio max|T1-T2| / max|N-T2|": {
+   "python": {
+    "PROD/P42/F42.mdot": {
+     "max_N_T2": 0.0028728516309537194,
+     "max_T1_T2": 1.4121307815535304e-05,
+     "ratio": 0.004915432340251892
+    },
+    "PROD/P42/F42.p": {
+     "max_N_T2": 0.0008233391140545152,
+     "max_T1_T2": 6.2782458972940325e-06,
+     "ratio": 0.00762534633679305
+    },
+    "PROD/P42/F42.throughput": {
+     "max_N_T2": 1.6094581397394515e-08,
+     "max_T1_T2": 5.09393823427378e-11,
+     "ratio": 0.003165002001915015
+    },
+    "PROD/P42/F42.u": {
+     "max_N_T2": 0.0008141754983431726,
+     "max_T1_T2": 5.285250095521388e-06,
+     "ratio": 0.006491536660433461
+    },
+    "PROD/P42/F42.ucmd_end": {
+     "max_N_T2": 0.002072716500750582,
+     "max_T1_T2": 1.5214503858995698e-05,
+     "ratio": 0.007340368957108292
+    },
+    "PROD/P42/F42.xO": {
+     "max_N_T2": 4.235475309094516e-05,
+     "max_T1_T2": 1.707164706821196e-07,
+     "ratio": 0.004030633121991126
+    },
+    "PROD/P43/F43.mdot": {
+     "max_N_T2": 0.005743024475900443,
+     "max_T1_T2": 2.5297385355589088e-05,
+     "ratio": 0.004404889002605676
+    },
+    "PROD/P43/F43.overshoot": {
+     "max_N_T2": 0.7830400073832067,
+     "max_T1_T2": 0.006435429640717416,
+     "ratio": 0.008218519590363694
+    },
+    "PROD/P43/F43.p": {
+     "max_N_T2": 0.0007582572460022863,
+     "max_T1_T2": 3.5643516256567143e-06,
+     "ratio": 0.004700715547986952
+    },
+    "PROD/P43/F43.setpoint_frac": {
+     "max_N_T2": 0.0007582572460022863,
+     "max_T1_T2": 3.5643516256567143e-06,
+     "ratio": 0.004700715547986952
+    },
+    "PROD/P43/F43.u": {
+     "max_N_T2": 0.0006882883182027788,
+     "max_T1_T2": 3.2948060428861226e-06,
+     "ratio": 0.004786956215513495
+    },
+    "PROD/P43/F43.valve_travel": {
+     "max_N_T2": 0.006305919941507199,
+     "max_T1_T2": 2.4003608963596434e-05,
+     "ratio": 0.003806519776059709
+    },
+    "PROD/P43/F43.valve_travel_total": {
+     "max_N_T2": 0.007345162230777191,
+     "max_T1_T2": 4.413340761288964e-05,
+     "ratio": 0.00600850004755033
+    },
+    "PROD/P43/F43.xO": {
+     "max_N_T2": 1.0632034936564061e-05,
+     "max_T1_T2": 0.00022591570789443072,
+     "ratio": 21.248585923800544
+    },
+    "PROD/P45/F45.P_dev": {
+     "max_N_T2": 0.00621378334485001,
+     "max_T1_T2": 6.167798736844698e-05,
+     "ratio": 0.009925995797643276
+    },
+    "PROD/P45/F45.mdot": {
+     "max_N_T2": 0.046424760553337684,
+     "max_T1_T2": 0.0006498555615558078,
+     "ratio": 0.01399803798253703
+    },
+    "REF/P42/F42.mdot": {
+     "max_N_T2": 4.243153899664482e-05,
+     "max_T1_T2": 3.0100626188571253e-06,
+     "ratio": 0.07093927512492863
+    },
+    "REF/P42/F42.p": {
+     "max_N_T2": 1.9748479743869618e-05,
+     "max_T1_T2": 1.3960641920274242e-06,
+     "ratio": 0.07069223606747728
+    },
+    "REF/P42/F42.throughput": {
+     "max_N_T2": 1.627826891273368e-12,
+     "max_T1_T2": 3.333906852933438e-13,
+     "ratio": 0.20480721081622433
+    },
+    "REF/P42/F42.u": {
+     "max_N_T2": 1.7195942103531703e-05,
+     "max_T1_T2": 1.219787435613462e-06,
+     "ratio": 0.07093460935547939
+    },
+    "REF/P42/F42.ucmd_end": {
+     "max_N_T2": 0.0001143164855370582,
+     "max_T1_T2": 8.111950564382298e-06,
+     "ratio": 0.07096046144414254
+    },
+    "REF/P42/F42.xO": {
+     "max_N_T2": 9.632791543590091e-07,
+     "max_T1_T2": 6.833851134979696e-08,
+     "ratio": 0.07094362110978221
+    },
+    "REF/P43/F43.mdot": {
+     "max_N_T2": 3.5722620034310246e-05,
+     "max_T1_T2": 1.2219402088983389e-06,
+     "ratio": 0.03420634342399048
+    },
+    "REF/P43/F43.overshoot": {
+     "max_N_T2": 0.005019147711106342,
+     "max_T1_T2": 0.0002590911987390143,
+     "ratio": 0.05162055664663918
+    },
+    "REF/P43/F43.p": {
+     "max_N_T2": 1.1609223136976876e-05,
+     "max_T1_T2": 5.508511948665307e-07,
+     "ratio": 0.047449445011699225
+    },
+    "REF/P43/F43.setpoint_frac": {
+     "max_N_T2": 1.1609223136976876e-05,
+     "max_T1_T2": 5.508511948665307e-07,
+     "ratio": 0.047449445011699225
+    },
+    "REF/P43/F43.u": {
+     "max_N_T2": 3.3185338095265138e-06,
+     "max_T1_T2": 2.7143157871334367e-07,
+     "ratio": 0.0817926211672592
+    },
+    "REF/P43/F43.valve_travel": {
+     "max_N_T2": 7.863815824560305e-05,
+     "max_T1_T2": 4.610316657327473e-06,
+     "ratio": 0.058626966350464514
+    },
+    "REF/P43/F43.valve_travel_total": {
+     "max_N_T2": 5.83553688713323e-05,
+     "max_T1_T2": 2.791979447636095e-06,
+     "ratio": 0.047844431483110454
+    },
+    "REF/P43/F43.xO": {
+     "max_N_T2": 7.787765369102499e-06,
+     "max_T1_T2": 0.00027113764983272004,
+     "ratio": 34.81584729150197
+    }
+   },
+   "rust": {
+    "PROD/P42/F42.mdot": {
+     "max_N_T2": 0.0012501163919922996,
+     "max_T1_T2": 2.880986672806405e-07,
+     "ratio": 0.00023045747510077856
+    },
+    "PROD/P42/F42.p": {
+     "max_N_T2": 0.0003121510514524778,
+     "max_T1_T2": 1.2503373978539623e-07,
+     "ratio": 0.0004005552414563354
+    },
+    "PROD/P42/F42.throughput": {
+     "max_N_T2": 1.4416611006709308e-11,
+     "max_T1_T2": 1.1789604092043959e-13,
+     "ratio": 0.008177791636714917
+    },
+    "PROD/P42/F42.u": {
+     "max_N_T2": 0.000543525419373081,
+     "max_T1_T2": 8.104691295862665e-08,
+     "ratio": 0.00014911338103029047
+    },
+    "PROD/P42/F42.ucmd_end": {
+     "max_N_T2": 0.0012062276705316066,
+     "max_T1_T2": 2.1816970147137127e-07,
+     "ratio": 0.00018086942191868297
+    },
+    "PROD/P42/F42.xO": {
+     "max_N_T2": 2.1359486189198584e-05,
+     "max_T1_T2": 4.433283518068265e-09,
+     "ratio": 0.00020755571921529463
+    },
+    "PROD/P43/F43.mdot": {
+     "max_N_T2": 0.0005435812620526582,
+     "max_T1_T2": 5.975022116394348e-07,
+     "ratio": 0.0010991957474456747
+    },
+    "PROD/P43/F43.overshoot": {
+     "max_N_T2": 0.23492592801689938,
+     "max_T1_T2": 0.00016770520499420627,
+     "ratio": 0.000713864180126352
+    },
+    "PROD/P43/F43.p": {
+     "max_N_T2": 0.00014156315556318466,
+     "max_T1_T2": 7.092295542521221e-08,
+     "ratio": 0.000500998689546425
+    },
+    "PROD/P43/F43.setpoint_frac": {
+     "max_N_T2": 0.00014156315556318466,
+     "max_T1_T2": 7.092295542521221e-08,
+     "ratio": 0.000500998689546425
+    },
+    "PROD/P43/F43.u": {
+     "max_N_T2": 0.00016772019389543757,
+     "max_T1_T2": 5.077520620622167e-08,
+     "ratio": 0.00030273758351291103
+    },
+    "PROD/P43/F43.valve_travel": {
+     "max_N_T2": 0.0009997246852808672,
+     "max_T1_T2": 8.575434504720647e-07,
+     "ratio": 0.0008577796098244213
+    },
+    "PROD/P43/F43.valve_travel_total": {
+     "max_N_T2": 0.0016619555546810716,
+     "max_T1_T2": 9.170653498813408e-07,
+     "ratio": 0.0005517989619507756
+    },
+    "PROD/P43/F43.xO": {
+     "max_N_T2": 1.895211524993723e-06,
+     "max_T1_T2": 1.2972264623600793e-06,
+     "ratio": 0.684475819850439
+    },
+    "PROD/P45/F45.P_dev": {
+     "max_N_T2": 0.03112163451409422,
+     "max_T1_T2": 3.3850276902613885e-06,
+     "ratio": 0.00010876767056461616
+    },
+    "PROD/P45/F45.mdot": {
+     "max_N_T2": 0.7823658178044821,
+     "max_T1_T2": 4.004444128950654e-05,
+     "ratio": 5.1183781778556545e-05
+    },
+    "REF/P42/F42.mdot": {
+     "max_N_T2": 4.2862554436268154e-07,
+     "max_T1_T2": 8.986823204309692e-09,
+     "ratio": 0.020966606686197615
+    },
+    "REF/P42/F42.p": {
+     "max_N_T2": 1.9569749050429852e-07,
+     "max_T1_T2": 4.085397124764523e-09,
+     "ratio": 0.020876083358231854
+    },
+    "REF/P42/F42.throughput": {
+     "max_N_T2": 4.146387974602681e-15,
+     "max_T1_T2": 1.1383861352612347e-15,
+     "ratio": 0.27454887054323907
+    },
+    "REF/P42/F42.u": {
+     "max_N_T2": 1.736305435540153e-07,
+     "max_T1_T2": 3.639650025810681e-09,
+     "ratio": 0.020962037849512408
+    },
+    "REF/P42/F42.ucmd_end": {
+     "max_N_T2": 1.1558912336173677e-06,
+     "max_T1_T2": 2.4244415142149478e-08,
+     "ratio": 0.020974650933441596
+    },
+    "REF/P42/F42.xO": {
+     "max_N_T2": 9.726984440128206e-09,
+     "max_T1_T2": 2.038766377943091e-10,
+     "ratio": 0.020959901709436877
+    },
+    "REF/P43/F43.mdot": {
+     "max_N_T2": 2.3214795608598996e-07,
+     "max_T1_T2": 3.1727363028103184e-09,
+     "ratio": 0.013666871577517161
+    },
+    "REF/P43/F43.overshoot": {
+     "max_N_T2": 1.1758835633202125e-05,
+     "max_T1_T2": 3.17939026217573e-08,
+     "ratio": 0.0027038308565164705
+    },
+    "REF/P43/F43.p": {
+     "max_N_T2": 4.450923130061568e-08,
+     "max_T1_T2": 4.74639216818673e-10,
+     "ratio": 0.010663837656798793
+    },
+    "REF/P43/F43.setpoint_frac": {
+     "max_N_T2": 4.450923130061568e-08,
+     "max_T1_T2": 4.74639216818673e-10,
+     "ratio": 0.010663837656798793
+    },
+    "REF/P43/F43.u": {
+     "max_N_T2": 2.054023207076483e-08,
+     "max_T1_T2": 4.068347880803458e-10,
+     "ratio": 0.01980672792199845
+    },
+    "REF/P43/F43.valve_travel": {
+     "max_N_T2": 5.021203683952535e-07,
+     "max_T1_T2": 6.8556307297740204e-09,
+     "ratio": 0.013653361148611046
+    },
+    "REF/P43/F43.valve_travel_total": {
+     "max_N_T2": 3.031965860600394e-07,
+     "max_T1_T2": 6.773960059547335e-09,
+     "ratio": 0.022341808486609892
+    },
+    "REF/P43/F43.xO": {
+     "max_N_T2": 5.406990371712925e-09,
+     "max_T1_T2": 5.225369861641888e-06,
+     "ratio": 966.4100548391582
+    }
+   }
+  },
+  "segment_cascade_diagnostics_N_vs_T2_relative": {
+   "python": {
+    "PROD/K_min/out_of_domain": {
+     "n": 4545,
+     "max_rel_N_T2": "+inf"
+    },
+    "PROD/K_over_K0_max/out_of_domain": {
+     "n": 4545,
+     "max_rel_N_T2": 0.00016613006797783214
+    },
+    "PROD/p_stage_max_Pa/out_of_domain": {
+     "n": 4545,
+     "max_rel_N_T2": 1.4305045827809522e+34
+    },
+    "PROD/p_inlet_max_Pa/out_of_domain": {
+     "n": 4545,
+     "max_rel_N_T2": 1.1754035477490347e-06
+    },
+    "PROD/P_el_max_W/out_of_domain": {
+     "n": 4545,
+     "max_rel_N_T2": 2.0230262390414041e+34
+    },
+    "PROD/T_comp_max_K/out_of_domain": {
+     "n": 4545,
+     "max_rel_N_T2": 2.022974764185094e+34
+    },
+    "PROD/K_min/in_domain": {
+     "n": 815,
+     "max_rel_N_T2": 1.4007823608413088e+42
+    },
+    "PROD/K_over_K0_max/in_domain": {
+     "n": 815,
+     "max_rel_N_T2": 4.197874705175417e-05
+    },
+    "PROD/p_stage_max_Pa/in_domain": {
+     "n": 815,
+     "max_rel_N_T2": 1.018386072058046e+35
+    },
+    "PROD/p_inlet_max_Pa/in_domain": {
+     "n": 815,
+     "max_rel_N_T2": 5.561976989900056e-06
+    },
+    "PROD/P_el_max_W/in_domain": {
+     "n": 815,
+     "max_rel_N_T2": 1.418257079020115e+35
+    },
+    "PROD/T_comp_max_K/in_domain": {
+     "n": 815,
+     "max_rel_N_T2": 1.4143997555198407e+35
+    },
+    "REF/K_min/out_of_domain": {
+     "n": 1516,
+     "max_rel_N_T2": 2.2910552586504788e+23
+    },
+    "REF/K_over_K0_max/out_of_domain": {
+     "n": 1516,
+     "max_rel_N_T2": 4.68874402988537e-05
+    },
+    "REF/p_stage_max_Pa/out_of_domain": {
+     "n": 1516,
+     "max_rel_N_T2": 5.432517122957739e+21
+    },
+    "REF/p_inlet_max_Pa/out_of_domain": {
+     "n": 1516,
+     "max_rel_N_T2": 8.590153798305428e-09
+    },
+    "REF/P_el_max_W/out_of_domain": {
+     "n": 1516,
+     "max_rel_N_T2": 5.335227210414698e+21
+    },
+    "REF/T_comp_max_K/out_of_domain": {
+     "n": 1516,
+     "max_rel_N_T2": 4.306276597264446e+21
+    },
+    "REF/K_min/in_domain": {
+     "n": 252,
+     "max_rel_N_T2": 6.4026225141818085e-06
+    },
+    "REF/K_over_K0_max/in_domain": {
+     "n": 252,
+     "max_rel_N_T2": 2.3264115541366576e-08
+    },
+    "REF/p_stage_max_Pa/in_domain": {
+     "n": 252,
+     "max_rel_N_T2": 0.02332296833346092
+    },
+    "REF/p_inlet_max_Pa/in_domain": {
+     "n": 252,
+     "max_rel_N_T2": 1.0295598689326388e-08
+    },
+    "REF/P_el_max_W/in_domain": {
+     "n": 252,
+     "max_rel_N_T2": 2.0183520245211036e-06
+    },
+    "REF/T_comp_max_K/in_domain": {
+     "n": 252,
+     "max_rel_N_T2": 1.7719381861168214e-07
+    }
+   },
+   "rust": {
+    "PROD/K_min/out_of_domain": {
+     "n": 4628,
+     "max_rel_N_T2": 1490.2284156290675
+    },
+    "PROD/K_over_K0_max/out_of_domain": {
+     "n": 4628,
+     "max_rel_N_T2": 0.00015080034287723705
+    },
+    "PROD/p_stage_max_Pa/out_of_domain": {
+     "n": 4628,
+     "max_rel_N_T2": 56161385014207.18
+    },
+    "PROD/p_inlet_max_Pa/out_of_domain": {
+     "n": 4628,
+     "max_rel_N_T2": 1.9465746995993564e-09
+    },
+    "PROD/P_el_max_W/out_of_domain": {
+     "n": 4628,
+     "max_rel_N_T2": 79424192326237.3
+    },
+    "PROD/T_comp_max_K/out_of_domain": {
+     "n": 4628,
+     "max_rel_N_T2": 79424192326237.3
+    },
+    "PROD/K_min/in_domain": {
+     "n": 836,
+     "max_rel_N_T2": 2.776033110368739e-09
+    },
+    "PROD/K_over_K0_max/in_domain": {
+     "n": 836,
+     "max_rel_N_T2": 7.815691676115136e-09
+    },
+    "PROD/p_stage_max_Pa/in_domain": {
+     "n": 836,
+     "max_rel_N_T2": 0.004717499976248209
+    },
+    "PROD/p_inlet_max_Pa/in_domain": {
+     "n": 836,
+     "max_rel_N_T2": 3.3000398546792844e-10
+    },
+    "PROD/P_el_max_W/in_domain": {
+     "n": 836,
+     "max_rel_N_T2": 0.00441431127056421
+    },
+    "PROD/T_comp_max_K/in_domain": {
+     "n": 836,
+     "max_rel_N_T2": 0.004414311270564234
+    },
+    "REF/K_min/out_of_domain": {
+     "n": 1532,
+     "max_rel_N_T2": 1283.6638978199446
+    },
+    "REF/K_over_K0_max/out_of_domain": {
+     "n": 1532,
+     "max_rel_N_T2": 4.688744029596687e-05
+    },
+    "REF/p_stage_max_Pa/out_of_domain": {
+     "n": 1532,
+     "max_rel_N_T2": 176212493090385.56
+    },
+    "REF/p_inlet_max_Pa/out_of_domain": {
+     "n": 1532,
+     "max_rel_N_T2": 1.215969712835729e-12
+    },
+    "REF/P_el_max_W/out_of_domain": {
+     "n": 1532,
+     "max_rel_N_T2": 249202097525966.12
+    },
+    "REF/T_comp_max_K/out_of_domain": {
+     "n": 1532,
+     "max_rel_N_T2": 249202097525966.16
+    },
+    "REF/K_min/in_domain": {
+     "n": 260,
+     "max_rel_N_T2": 5.868510161325344e-06
+    },
+    "REF/K_over_K0_max/in_domain": {
+     "n": 260,
+     "max_rel_N_T2": 6.827042194701448e-10
+    },
+    "REF/p_stage_max_Pa/in_domain": {
+     "n": 260,
+     "max_rel_N_T2": 0.05606805260756104
+    },
+    "REF/p_inlet_max_Pa/in_domain": {
+     "n": 260,
+     "max_rel_N_T2": 2.4513383802273513e-10
+    },
+    "REF/P_el_max_W/in_domain": {
+     "n": 260,
+     "max_rel_N_T2": 4.776149179301129e-06
+    },
+    "REF/T_comp_max_K/in_domain": {
+     "n": 260,
+     "max_rel_N_T2": 3.1717324477229874e-07
+    }
+   }
+  },
+  "CONS-P-03 mass_residual_rel per run": {
+   "python": {
+    "PROD/P42/N": {
+     "n": 697,
+     "max_mass_residual_rel": 1.677837786787739e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P42/T1": {
+     "n": 697,
+     "max_mass_residual_rel": 1.660579700567185e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P42/T2": {
+     "n": 697,
+     "max_mass_residual_rel": 1.6643571401078748e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "REF/P42/N": {
+     "n": 229,
+     "max_mass_residual_rel": 2.299632132419619e-13,
+     "n_above_MASS_TOL": 0
+    },
+    "REF/P42/T1": {
+     "n": 229,
+     "max_mass_residual_rel": 2.358916827395403e-13,
+     "n_above_MASS_TOL": 0
+    },
+    "REF/P42/T2": {
+     "n": 229,
+     "max_mass_residual_rel": 2.3293262474745687e-13,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P43/N": {
+     "n": 703,
+     "max_mass_residual_rel": 1.013360847786421e-13,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P43/T1": {
+     "n": 703,
+     "max_mass_residual_rel": 6.065935868150725e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P43/T2": {
+     "n": 703,
+     "max_mass_residual_rel": 1.8553813487927918e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "REF/P43/N": {
+     "n": 232,
+     "max_mass_residual_rel": 3.883817211953729e-15,
+     "n_above_MASS_TOL": 0
+    },
+    "REF/P43/T1": {
+     "n": 232,
+     "max_mass_residual_rel": 4.1726841704318665e-15,
+     "n_above_MASS_TOL": 0
+    },
+    "REF/P43/T2": {
+     "n": 232,
+     "max_mass_residual_rel": 3.856528664222625e-15,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P45/N": {
+     "n": 366,
+     "max_mass_residual_rel": 3.412567765906968e-13,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P45/T1": {
+     "n": 366,
+     "max_mass_residual_rel": 1.9675304461882476e-12,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P45/T2": {
+     "n": 366,
+     "max_mass_residual_rel": 6.254218484697886e-13,
+     "n_above_MASS_TOL": 0
+    }
+   },
+   "rust": {
+    "PROD/P42/N": {
+     "n": 697,
+     "max_mass_residual_rel": 1.6957906235420356e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P42/T1": {
+     "n": 697,
+     "max_mass_residual_rel": 1.681874947955319e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P42/T2": {
+     "n": 697,
+     "max_mass_residual_rel": 1.7089686724102533e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "REF/P42/N": {
+     "n": 229,
+     "max_mass_residual_rel": 2.310860897431411e-13,
+     "n_above_MASS_TOL": 0
+    },
+    "REF/P42/T1": {
+     "n": 229,
+     "max_mass_residual_rel": 2.362402809023575e-13,
+     "n_above_MASS_TOL": 0
+    },
+    "REF/P42/T2": {
+     "n": 229,
+     "max_mass_residual_rel": 2.334422914159258e-13,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P43/N": {
+     "n": 703,
+     "max_mass_residual_rel": 1.0361967768168077e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P43/T1": {
+     "n": 703,
+     "max_mass_residual_rel": 1.051363623701807e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P43/T2": {
+     "n": 703,
+     "max_mass_residual_rel": 1.0361657773282271e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "REF/P43/N": {
+     "n": 232,
+     "max_mass_residual_rel": 4.061571775736443e-15,
+     "n_above_MASS_TOL": 0
+    },
+    "REF/P43/T1": {
+     "n": 232,
+     "max_mass_residual_rel": 4.191002871081334e-15,
+     "n_above_MASS_TOL": 0
+    },
+    "REF/P43/T2": {
+     "n": 232,
+     "max_mass_residual_rel": 4.320370798492895e-15,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P45/N": {
+     "n": 366,
+     "max_mass_residual_rel": 5.53986724817374e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P45/T1": {
+     "n": 366,
+     "max_mass_residual_rel": 7.631244393922825e-14,
+     "n_above_MASS_TOL": 0
+    },
+    "PROD/P45/T2": {
+     "n": 366,
+     "max_mass_residual_rel": 2.441045964779097e-13,
+     "n_above_MASS_TOL": 0
+    }
+   }
+  }
+ },
+ "checks": {
+  "COMP-P-01": {
+   "n": 512,
+   "ok": true,
+   "failures": []
+  },
+  "no_missing_envelope": true
+ },
+ "timing_s": {
+  "python": 1656.6905989739998,
+  "rust": 337.83636275699973
+ },
+ "statement": "frozen before any held-out (scoring_master_seed) vector is generated or run; never edited after the scoring run"
+}
