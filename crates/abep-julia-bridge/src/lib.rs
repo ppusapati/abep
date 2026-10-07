@@ -6,7 +6,11 @@
 //! specifications), the pre-launch pin check, the launch with a fixed argv / environment allow-list / pinned thread
 //! settings, record reading (structural gate) and the per-run provenance sidecar. Normal tests never spawn Julia; the
 //! real runs are registered platform tests (docs/rust_migration/test_register/platform_tests_v1.json).
+//!
+//! [`envelope_cases`] (NP-HALL-PARAMETRIC-ENVELOPE v1, A9.32) generates and dry-runs the H-1 parametric envelope case
+//! file, launches its shards through [`launch::launch`] and freezes their outputs.
 
+pub mod envelope_cases;
 pub mod jobs;
 pub mod launch;
 pub mod manifests;

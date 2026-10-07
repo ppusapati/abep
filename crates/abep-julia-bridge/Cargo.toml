@@ -14,3 +14,5 @@ abep-hall.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 toml.workspace = true
+# NP-HALL-PARAMETRIC-ENVELOPE: deterministic gzip of the frozen raw envelope (envelope_cases::freeze).
+flate2.workspace = true
