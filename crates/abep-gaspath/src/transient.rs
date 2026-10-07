@@ -16,6 +16,12 @@
 //! closed-loop instability started below the tolerance scale was integrated as a held setpoint). An integrator failure,
 //! including a non-converged eigenvalue iteration of that guard, is R_INTEGRATOR (MODEL_ERROR), never a half-converged
 //! trajectory (DIV-P-01).
+//!
+//! Contract v8: a loop that is unstable at an equilibrium of its event sequence has ill-posed time-domain outputs
+//! (the excursion is seeded only by rounding and truncation noise). The `*_assessed` entries carry the input-only
+//! stability class and a typed status (`TransientStatus::UnstableEquilibrium`); their records are reachable as a
+//! result only through `Assessed::trusted`, which refuses an unstable loop. The plain entries keep the reference
+//! record shape for parity and carry no status: production consumers use the assessed entries.
 
 use crate::error::{value_error, PyResult};
 use crate::materials::MaterialsView;
@@ -1110,14 +1116,22 @@ impl<'a> TransientRun<'a> {
     /// equilibrium opening u = A_eq / (A_max feed_factor) exceeds 1), "UNSAT" (u <= 1; the eigenvalues are returned).
     /// Fail closed: a non-converged eigenvalue iteration is an error, never a silent class.
     pub fn event_equilibrium(&self, ev: &Event, density: f64) -> PyResult<(&'static str, Vec<(f64, f64)>)> {
+        let eq = self.equilibrium(ev, density)?;
+        Ok((eq.kind.as_str(), eq.eigenvalues))
+    }
+
+    /// `event_equilibrium` with the dynamic 5 x 5 Jacobian block whose spectrum it reports (UNSAT only), as a typed
+    /// record (contract v8: the leading eigenvalues are scored, and the harness checks the eigenvalue computation
+    /// against a high-precision spectrum of this block).
+    pub fn equilibrium(&self, ev: &Event, density: f64) -> PyResult<Equilibrium> {
         let co = self.chain(&ev.intake).node_coefficients(density)?;
         let sol = area_for_pressure(&co, ev.setpoint_pa, self.k_rec, &self.leak, &self.fc, true)?;
         if !sol.ok {
-            return Ok(("CLOSING", vec![]));
+            return Ok(Equilibrium { kind: EquilibriumKind::Closing, eigenvalues: vec![], jacobian: None });
         }
         let u = sol.a_eq / (self.a_max * ev.feed_factor);
         if u > 1.0 {
-            return Ok(("SAT_OPEN", vec![]));
+            return Ok(Equilibrium { kind: EquilibriumKind::SatOpen, eigenvalues: vec![], jacobian: None });
         }
         let (p3, _) = solve_pressures(&co, sol.a_eq, self.k_rec, &self.leak, &self.fc, true)?;
         let i_int = (u / self.u_ff - 1.0) * self.ctrl.ti_s / self.ctrl.kp;
@@ -1133,7 +1147,7 @@ impl<'a> TransientRun<'a> {
                 "stability class: eigenvalue iteration did not converge",
             )
         })?;
-        Ok(("UNSAT", lam.to_vec()))
+        Ok(Equilibrium { kind: EquilibriumKind::Unsat, eigenvalues: lam.to_vec(), jacobian: Some(b) })
     }
 
     fn mass(&self, y: &[f64; N]) -> f64 {
@@ -1628,6 +1642,343 @@ pub fn transient_case(
     Ok((rec, Some(out)))
 }
 
+// --------------------------------------------------------- stability class and typed transient status (v7 / v8)
+/// Label of the time-domain outputs of a loop that is unstable at an equilibrium of its event sequence (contract v8).
+pub const ILL_POSED_UNSTABLE_EQUILIBRIUM: &str = "ILL_POSED_UNSTABLE_EQUILIBRIUM";
+/// Quasi-static phases of the orbit stability class (the reference orbit_quasi_static default phase grid).
+pub const STABILITY_ORBIT_PHASES: usize = 24;
+
+/// Kind of one event equilibrium of the stability class.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum EquilibriumKind {
+    /// No unsaturated equilibrium: the setpoint is at or above the dead-head pressure and the valve closes.
+    Closing,
+    /// The equilibrium opening exceeds full opening.
+    SatOpen,
+    /// An unsaturated equilibrium; its spectrum is computed.
+    Unsat,
+}
+
+impl EquilibriumKind {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            EquilibriumKind::Closing => "CLOSING",
+            EquilibriumKind::SatOpen => "SAT_OPEN",
+            EquilibriumKind::Unsat => "UNSAT",
+        }
+    }
+}
+
+/// One equilibrium: kind, eigenvalues (re, im) of the dynamic 5 x 5 Jacobian block and the block itself (UNSAT only).
+#[derive(Debug, Clone, PartialEq)]
+pub struct Equilibrium {
+    pub kind: EquilibriumKind,
+    pub eigenvalues: Vec<(f64, f64)>,
+    pub jacobian: Option<[[f64; NM]; NM]>,
+}
+
+impl Equilibrium {
+    /// Largest real part of the spectrum (UNSAT only).
+    pub fn re_max(&self) -> Option<f64> {
+        self.eigenvalues.iter().map(|z| z.0).fold(None, |m: Option<f64>, x| Some(m.map_or(x, |m| m.max(x))))
+    }
+}
+
+/// Input-only stability class of a transient request (contract v7 transient_convergence_procedure_v7.stability_class).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StabilityClass {
+    /// Every UNSAT equilibrium has all Re lambda <= 0.
+    Stable,
+    /// Some UNSAT equilibrium has an eigenvalue with Re lambda > 0.
+    Unstable,
+    /// Refused: dead-head at the design setpoint (ValueError); for an orbit also no steady start.
+    Refused,
+}
+
+impl StabilityClass {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            StabilityClass::Stable => "S",
+            StabilityClass::Unstable => "U",
+            StabilityClass::Refused => "R",
+        }
+    }
+}
+
+/// The class with the equilibria it was computed from (event order; orbit: phase order).
+#[derive(Debug, Clone, PartialEq)]
+pub struct StabilityReport {
+    pub class: StabilityClass,
+    pub equilibria: Vec<Equilibrium>,
+}
+
+impl StabilityReport {
+    fn refused() -> StabilityReport {
+        StabilityReport { class: StabilityClass::Refused, equilibria: vec![] }
+    }
+
+    fn from_equilibria(equilibria: Vec<Equilibrium>) -> StabilityReport {
+        let unstable =
+            equilibria.iter().any(|e| e.kind == EquilibriumKind::Unsat && e.eigenvalues.iter().any(|z| z.0 > 0.0));
+        StabilityReport { class: if unstable { StabilityClass::Unstable } else { StabilityClass::Stable }, equilibria }
+    }
+
+    /// Largest real part over every UNSAT equilibrium; None when there is none.
+    pub fn re_lambda_max(&self) -> Option<f64> {
+        self.equilibria
+            .iter()
+            .filter_map(Equilibrium::re_max)
+            .fold(None, |m: Option<f64>, x| Some(m.map_or(x, |m| m.max(x))))
+    }
+}
+
+fn orbit_event(state: &IntakeState, r0: f64, amplitude: f64, t_orb: f64) -> Event {
+    Event {
+        name: format!("O_{}", state.state),
+        kind: "orbit".into(),
+        duration_s: t_orb,
+        setpoint_pa: r0,
+        feed_factor: 1.0,
+        intake: state.clone(),
+        orbit_amplitude: amplitude,
+        orbit_period_s: t_orb,
+        density: 1.0,
+    }
+}
+
+/// Stability class of a P42 / P43 request: the equilibrium of every event of `event_sequence(design, r0, window_s)`.
+#[allow(clippy::too_many_arguments)]
+pub fn stability_class_events(
+    filt: &FilterCase,
+    plant: &CompressorPlant,
+    plenum: &Plenum,
+    ctrl: Controller,
+    mats: &MaterialsView,
+    design: &IntakeState,
+    r0: f64,
+    window_s: f64,
+) -> PyResult<StabilityReport> {
+    let run = match TransientRun::new(filt, plant, plenum, ctrl, mats, design, r0, RTOL, None) {
+        Ok(r) => r,
+        Err(e) if e.class == crate::PyClass::ValueError => return Ok(StabilityReport::refused()),
+        Err(e) => return Err(e),
+    };
+    let mut eqs = vec![];
+    for ev in event_sequence(design, r0, window_s) {
+        eqs.push(run.equilibrium(&ev, ev.density)?);
+    }
+    Ok(StabilityReport::from_equilibria(eqs))
+}
+
+/// Stability class of a P45 request: the orbit event's quasi-static equilibria at density 1 + amplitude
+/// sin(2 pi k / 24), k = 0..23; refused also without a steady start (the NaN semantics of `!(u > 1)` are
+/// orbit_simulated's).
+#[allow(clippy::too_many_arguments)]
+pub fn stability_class_orbit(
+    filt: &FilterCase,
+    plant: &CompressorPlant,
+    plenum: &Plenum,
+    ctrl: Controller,
+    mats: &MaterialsView,
+    design: &IntakeState,
+    state: &IntakeState,
+    r0: f64,
+    amplitude: f64,
+) -> PyResult<StabilityReport> {
+    let run = match TransientRun::new(filt, plant, plenum, ctrl, mats, design, r0, RTOL, None) {
+        Ok(r) => r,
+        Err(e) if e.class == crate::PyClass::ValueError => return Ok(StabilityReport::refused()),
+        Err(e) => return Err(e),
+    };
+    let start = run.steady_start(state, r0, 1.0)?;
+    if start.filter(|(_, u)| !(*u > 1.0)).is_none() {
+        return Ok(StabilityReport::refused());
+    }
+    let ev = orbit_event(state, r0, amplitude, pf::orbital_period_s(state.alt_km)?);
+    let mut eqs = vec![];
+    for k in 0..STABILITY_ORBIT_PHASES {
+        let d = 1.0 + amplitude * (2.0 * PI * k as f64 / STABILITY_ORBIT_PHASES as f64).sin();
+        eqs.push(run.equilibrium(&ev, d)?);
+    }
+    Ok(StabilityReport::from_equilibria(eqs))
+}
+
+/// Typed status of a transient result (contract v8). A loop that starts at an unstable equilibrium stays there in
+/// exact arithmetic; its excursion is seeded only by rounding and truncation noise, so its time-domain outputs
+/// (pressures, flows, extrema, overshoot, valve travel, settling, the reasons derived from them) are ill-posed: they
+/// are carried only under the label ILL_POSED_UNSTABLE_EQUILIBRIUM and never as a result.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TransientStatus {
+    /// Stable at every equilibrium of the event sequence: the time-domain result is the answer.
+    Evaluated,
+    /// Unstable at some equilibrium: the time-domain outputs are ill-posed (NOT_EVALUATED as an answer).
+    UnstableEquilibrium,
+    /// Refused request (dead-head design setpoint, no steady start): the result is the fail-closed refusal record.
+    Refused,
+}
+
+impl TransientStatus {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            TransientStatus::Evaluated => "EVALUATED",
+            TransientStatus::UnstableEquilibrium => "UNSTABLE_EQUILIBRIUM",
+            TransientStatus::Refused => "REFUSED",
+        }
+    }
+
+    fn of(class: StabilityClass) -> TransientStatus {
+        match class {
+            StabilityClass::Stable => TransientStatus::Evaluated,
+            StabilityClass::Unstable => TransientStatus::UnstableEquilibrium,
+            StabilityClass::Refused => TransientStatus::Refused,
+        }
+    }
+}
+
+/// Refusal to hand out the time-domain outputs of an unstable loop as a result.
+#[derive(Debug, Clone, PartialEq)]
+pub struct IllPosedTransient {
+    /// Largest Re lambda over the equilibria of the request (> 0).
+    pub re_lambda_max: f64,
+}
+
+impl IllPosedTransient {
+    /// NOT_EVALUATED: no time-domain answer exists to evaluate (the instability itself is the evaluated result).
+    pub fn status(&self) -> abep_types::EvalStatus {
+        abep_types::EvalStatus::NotEvaluated
+    }
+}
+
+impl std::fmt::Display for IllPosedTransient {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}: UNSTABLE_EQUILIBRIUM (max Re lambda {:e} > 0): time-domain outputs are {}",
+            self.status(),
+            self.re_lambda_max,
+            ILL_POSED_UNSTABLE_EQUILIBRIUM
+        )
+    }
+}
+
+impl std::error::Error for IllPosedTransient {}
+
+/// A transient result with its stability class and typed status. The value is reachable as a result only through
+/// `trusted`, which refuses an unstable loop; `ill_posed_unscored` is the explicitly named access for reporting.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Assessed<T> {
+    status: TransientStatus,
+    stability: StabilityReport,
+    value: T,
+}
+
+impl<T> Assessed<T> {
+    fn new(stability: StabilityReport, value: T) -> Assessed<T> {
+        Assessed { status: TransientStatus::of(stability.class), stability, value }
+    }
+
+    pub fn status(&self) -> TransientStatus {
+        self.status
+    }
+
+    pub fn stability(&self) -> &StabilityReport {
+        &self.stability
+    }
+
+    /// The result, unless the loop is unstable at an equilibrium (fail closed).
+    pub fn trusted(&self) -> Result<&T, IllPosedTransient> {
+        match self.status {
+            TransientStatus::UnstableEquilibrium => {
+                Err(IllPosedTransient { re_lambda_max: self.stability.re_lambda_max().unwrap_or(f64::NAN) })
+            }
+            TransientStatus::Evaluated | TransientStatus::Refused => Ok(&self.value),
+        }
+    }
+
+    /// The time-domain record whatever the status: for reports that label it (ILL_POSED_UNSTABLE_EQUILIBRIUM for an
+    /// unstable loop) and never use it as a result.
+    pub fn ill_posed_unscored(&self) -> &T {
+        &self.value
+    }
+
+    /// Record form: the status, the class and the record under "result" (EVALUATED / REFUSED) or under
+    /// "ill_posed_result" with the label (UNSTABLE_EQUILIBRIUM), so that no reader of "result" sees a held setpoint.
+    pub fn to_value_with(&self, rec: impl Fn(&T) -> Value) -> Value {
+        let o = Obj::new()
+            .s("transient_status", self.status.as_str())
+            .s("stability_class", self.stability.class.as_str())
+            .set("re_lambda_max", self.stability.re_lambda_max().map_or(Value::Null, fnum));
+        match self.status {
+            TransientStatus::UnstableEquilibrium => o
+                .s("time_domain_label", ILL_POSED_UNSTABLE_EQUILIBRIUM)
+                .set("ill_posed_result", rec(&self.value))
+                .build(),
+            TransientStatus::Evaluated | TransientStatus::Refused => {
+                o.set("time_domain_label", Value::Null).set("result", rec(&self.value)).build()
+            }
+        }
+    }
+}
+
+/// `TransientRun::run` on `event_sequence(design, r0, window_s)` with its stability class (contract v8).
+#[allow(clippy::too_many_arguments)]
+pub fn transient_run_assessed(
+    filt: &FilterCase,
+    plant: &CompressorPlant,
+    plenum: &Plenum,
+    ctrl: Controller,
+    mats: &MaterialsView,
+    design: &IntakeState,
+    r0: f64,
+    window_s: f64,
+    rtol: f64,
+    method: Option<&str>,
+) -> PyResult<Assessed<RunResult>> {
+    let stability = stability_class_events(filt, plant, plenum, ctrl, mats, design, r0, window_s)?;
+    let run = TransientRun::new(filt, plant, plenum, ctrl, mats, design, r0, rtol, method)?;
+    let out = run.run(&event_sequence(design, r0, window_s), 150, None)?;
+    Ok(Assessed::new(stability, out))
+}
+
+/// `transient_case` with its stability class (contract v8).
+#[allow(clippy::too_many_arguments)]
+pub fn transient_case_assessed(
+    filt: &FilterCase,
+    plant: &CompressorPlant,
+    plenum: &Plenum,
+    ctrl: Controller,
+    mats: &MaterialsView,
+    design: &IntakeState,
+    r0: f64,
+    orbit_check_reasons: Option<&[String]>,
+    window_s: f64,
+    rtol: f64,
+    method: Option<&str>,
+) -> PyResult<Assessed<Value>> {
+    let stability = stability_class_events(filt, plant, plenum, ctrl, mats, design, r0, window_s)?;
+    let (rec, _) =
+        transient_case(filt, plant, plenum, ctrl, mats, design, r0, orbit_check_reasons, window_s, rtol, method)?;
+    Ok(Assessed::new(stability, rec))
+}
+
+/// `orbit_simulated` with its stability class (contract v8).
+#[allow(clippy::too_many_arguments)]
+pub fn orbit_simulated_assessed(
+    filt: &FilterCase,
+    plant: &CompressorPlant,
+    plenum: &Plenum,
+    ctrl: Controller,
+    mats: &MaterialsView,
+    design: &IntakeState,
+    state: &IntakeState,
+    r0: f64,
+    amplitude: f64,
+) -> PyResult<Assessed<Value>> {
+    let stability = stability_class_orbit(filt, plant, plenum, ctrl, mats, design, state, r0, amplitude)?;
+    let rec = orbit_simulated(filt, plant, plenum, ctrl, mats, design, state, r0, amplitude)?;
+    Ok(Assessed::new(stability, rec))
+}
+
 pub fn transient_framework() -> Value {
     let mut fw = crate::upstream::f4_transient_framework();
     let m: &mut Map<String, Value> = fw.as_object_mut().expect("object");
@@ -1842,6 +2193,69 @@ mod tests {
         assert!(eig_real(&m).is_none());
         m[2][3] = f64::INFINITY;
         assert!(eig_real(&m).is_none());
+    }
+
+    fn report(class: StabilityClass, re: f64) -> StabilityReport {
+        StabilityReport {
+            class,
+            equilibria: vec![
+                Equilibrium { kind: EquilibriumKind::Closing, eigenvalues: vec![], jacobian: None },
+                Equilibrium {
+                    kind: EquilibriumKind::Unsat,
+                    eigenvalues: vec![(re, 2.4), (re, -2.4), (-3.0, 0.0)],
+                    jacobian: Some([[0.0; NM]; NM]),
+                },
+            ],
+        }
+    }
+
+    /// Contract v8 typed status: an unstable loop's record is refused as a result (NOT_EVALUATED) and carried only
+    /// under the ILL_POSED_UNSTABLE_EQUILIBRIUM label; a stable loop's record is the result, unchanged.
+    #[test]
+    fn unstable_equilibrium_result_is_refused_and_labelled() {
+        let rec = Obj::new().b("ok", true).f("P_dev_max_frac", 1.2e-4).build();
+        let u = Assessed::new(report(StabilityClass::Unstable, 8.2e-3), rec.clone());
+        assert_eq!(u.status(), TransientStatus::UnstableEquilibrium);
+        let err = u.trusted().expect_err("an unstable loop has no trusted time-domain result");
+        assert_eq!(err.re_lambda_max, 8.2e-3);
+        assert_eq!(err.status(), abep_types::EvalStatus::NotEvaluated);
+        assert!(err.to_string().contains("UNSTABLE_EQUILIBRIUM"));
+        assert_eq!(u.ill_posed_unscored(), &rec);
+        let v = u.to_value_with(Value::clone);
+        assert_eq!(v["transient_status"], "UNSTABLE_EQUILIBRIUM");
+        assert_eq!(v["stability_class"], "U");
+        assert_eq!(v["time_domain_label"], ILL_POSED_UNSTABLE_EQUILIBRIUM);
+        assert!(v.get("result").is_none(), "no 'result' key for an unstable loop: {v}");
+        assert_eq!(v["ill_posed_result"], rec);
+
+        let s = Assessed::new(report(StabilityClass::Stable, -0.05), rec.clone());
+        assert_eq!(s.status(), TransientStatus::Evaluated);
+        assert_eq!(s.trusted(), Ok(&rec));
+        let v = s.to_value_with(Value::clone);
+        assert_eq!(v["transient_status"], "EVALUATED");
+        assert_eq!(v["result"], rec);
+        assert!(v.get("ill_posed_result").is_none());
+        assert_eq!(v["re_lambda_max"], -0.05);
+
+        let r = Assessed::new(StabilityReport::refused(), rec.clone());
+        assert_eq!(r.status(), TransientStatus::Refused);
+        assert_eq!(r.trusted(), Ok(&rec));
+        assert_eq!(r.to_value_with(Value::clone)["re_lambda_max"], Value::Null);
+    }
+
+    #[test]
+    fn class_from_equilibria() {
+        let s = StabilityReport::from_equilibria(report(StabilityClass::Stable, -1e-6).equilibria);
+        assert_eq!(s.class, StabilityClass::Stable);
+        assert_eq!(s.re_lambda_max(), Some(-1e-6));
+        let u = StabilityReport::from_equilibria(report(StabilityClass::Stable, 7e-7).equilibria);
+        assert_eq!(u.class, StabilityClass::Unstable);
+        let none = StabilityReport::from_equilibria(vec![Equilibrium {
+            kind: EquilibriumKind::SatOpen,
+            eigenvalues: vec![],
+            jacobian: None,
+        }]);
+        assert_eq!((none.class, none.re_lambda_max()), (StabilityClass::Stable, None));
     }
 
     #[test]
