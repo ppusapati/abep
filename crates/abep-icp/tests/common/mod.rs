@@ -10,6 +10,12 @@ pub fn model() -> &'static IcpModel {
     M.get_or_init(|| IcpModel::load_workspace().expect("the frozen preregistration and its pinned data verify"))
 }
 
+/// The lock-verified model_version 2 context (it verifies the v1 pins and the v2 lock), loaded once per test binary.
+pub fn model_v2() -> &'static abep_icp::v2::IcpModelV2 {
+    static M: OnceLock<abep_icp::v2::IcpModelV2> = OnceLock::new();
+    M.get_or_init(|| abep_icp::v2::IcpModelV2::load_workspace().expect("the frozen v1 and v2 preregistrations verify"))
+}
+
 pub fn rel(a: f64, b: f64) -> f64 {
     if a == b {
         0.0
