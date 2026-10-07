@@ -1,5 +1,12 @@
 # Plenum / feed v7: NON_VACUITY failed on the frozen record; scoring not run (STOP)
 
+**Status (coordinator decision 2026-10-07): contract v7 REGISTERED_NEVER_SCORED, superseded: unstable-stratum
+time-domain observables ill-posed (noise-seeded growth).** A run that starts at an unstable equilibrium stays there
+in exact arithmetic, so the growth that findings 1-3 below show is seeded only by rounding and truncation noise. No
+further step-control fix and no later version for the unstable stratum. The successor (contract v8) scores the
+unstable stratum on its class and leading eigenvalues only and reports its time-domain outputs. The v7 contract and
+its record stay unedited. Finding 2 is recorded as `div_p_ref_01_addendum_a1_tightened_runs.json` (DIV-P-REF-01-A1).
+
 Contract v7 (`parity_prereg_v7.json`, sha256 `4f07529b88393291c737576a12d5dc3a2a401d919958fb5fd1c6ce8007e16083`,
 registered in `bd11e5c`; harness `07ed905`). Frozen record `transient_envelope_v7.json` (sha256
 `e4774be4927aebe91c4cf1692405f3c463e1d4de21fc62f406fe075d69c9855f`, committed in `60df0d4`, never edited).
