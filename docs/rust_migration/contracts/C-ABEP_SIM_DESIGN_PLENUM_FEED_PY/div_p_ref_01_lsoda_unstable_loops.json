@@ -1,0 +1,49 @@
+{
+ "schema": "abep_parity_divergence_record_v1",
+ "id": "DIV-P-REF-01",
+ "title": "Python reference transients are not trustworthy on closed loops that are unstable: the nominal LSODA run can miss the growing mode",
+ "date": "2026-10-07",
+ "component": "C-ABEP_SIM_DESIGN_PLENUM_FEED_PY (abep_sim/design/plenum_feed.py TransientRun.run / transient_case / orbit_simulated)",
+ "kind": "REFERENCE_DEFECT (found by the parity procedure; the reference is read-only and is never edited, RM-R11)",
+ "reference": {
+  "file": "abep_sim/design/plenum_feed.py",
+  "python_commit": "0d8922cfe39b",
+  "integrator": "scipy.integrate.solve_ivp LSODA, rtol RTOL = 1e-5 (module default), atol ATOL_SCALED = 1e-11, t_eval = 0 plus 150 geometric samples"
+ },
+ "found_by": {
+  "contract": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v6.json (sha256 60f8bc2482e967b888f1b1421f8b7b7c907a92fed4b0a88f5d3e65ad30deab5a)",
+  "record": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/transient_envelope_v6.json (sha256 439ae2dd1f5f935db7ad1e3538c538c0cad7a11af333752e4c9fedbbeaa7002c, commit eec930a): PROD P45 F45.P_dev E_py 0.188 attained at R45-187",
+  "seed": "refinement_master_seed 731905553 (refinement vectors only; no scoring vector)"
+ },
+ "evidence": {
+  "R45-187": {
+   "steady_start_eigenvalues_dynamic_block": "0.002434 +/- 2.83i, -4.384, -5.26, -163.7 (numpy, reference Jacobian at the steady start; orbital period 5319 s)",
+   "orbit_sim_P_dev_max_frac": {
+    "python_nominal_rtol_1e-5": "7.458e-5 (ok, 4685 RHS evaluations: the setpoint held)",
+    "python_T1_rtol_1e-8": "0.17411 (827 921 evaluations)",
+    "python_T2_rtol_1e-10": "0.18119 (1 151 310 evaluations)",
+    "rust_nominal_rtol_1e-5": "0.15906 (5 107 203 evaluations; growing-mode guard 361a197)",
+    "rust_T1": "0.19631",
+    "rust_T2": "0.18326"
+   },
+   "orbit_sim_mdot_min_kgps": "python N 3.699e-10, T1 3.337e-10, T2 3.342e-10; rust N 3.169e-10, T1 3.300e-10, T2 3.199e-10"
+  },
+  "R45-034 (weakly unstable, not converged even at T2)": {
+   "steady_start_eigenvalues_dynamic_block": "0.001905 +/- 0.592i, -0.4277, -1.069, -845.3",
+   "orbit_sim_P_dev_max_frac": "python N 0.1248, T1 0.1520, T2 0.1790; rust N 0.1327, T1 0.1604, T2 0.1572: sampled limit-cycle extrema are phase-sensitive (T1 vs T2 differ within each implementation)"
+  },
+  "P42 / P43 (event-wise unstable vectors)": "the Python nominal error is largest there: R42-PROD-018 (design-point 0.135 +/- 5.87i) F42.ucmd_end e_py 0.020 vs e_rust < 1e-3; R43-PROD-033 (events E1 / E5 unstable, +0.0115 / +0.013 +/- 4.65i) F43.valve_travel_total e_py 0.18 vs e_rust 0.0095",
+  "contrast": "on the 362 P45 vectors stable at the steady start the Python nominal error is <= 4.6e-6 in P_dev and <= 4.6e-5 mdot_scale in mdot",
+  "reproduce": "scripts/rust_migration/plenum_v6_p45_refinement_analysis.py and scripts/rust_migration/plenum_v6_p4243_refinement_analysis.py (refinement vectors only)"
+ },
+ "mechanism": "the same as the Rust RUST_DEFECT fixed in 361a197 (rust_defect_v5_growing_mode_damping.md): a growing mode started below the tolerance scale is not seen by the error control of the nominal run, which then integrates the unstable loop as a held setpoint and returns ok. LSODA's internal step-size and order selection is not instrumented here; the observable fact is the nominal answer against the converged runs of both implementations",
+ "consequence": [
+  "on closed loops with an eigenvalue Re lambda > 0 at the steady start or at an event equilibrium, the reference's nominal-tolerance transient output (P42 transient_run, P43 transient_case, P45 orbit_simulated) is not a trustworthy comparison target: parity on such vectors is scored against the converged (tightened) reference answer, citing this record",
+  "the reference itself is not changed; no Python result, golden or fixture is rewritten"
+ ],
+ "ledger_update_requested": {
+  "row": "C-ABEP_SIM_DESIGN_PLENUM_FEED_PY",
+  "item": "PYTHON_REFERENCE transient output (TransientRun.run, transient_case, orbit_simulated at the module default rtol) is not trustworthy on unstable closed loops (DIV-P-REF-01); production use of those Python results on such loops is not admissible evidence",
+  "owner": "ledger lane (A1); this record does not edit docs/rust_migration/migration_state_v1.json"
+ }
+}
