@@ -4871,3 +4871,33 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   v2 (PF-01/PF-02/GAP-01..05; INT-16/17/18 approved), OQ-NPICP and OQ-CHEM questions; authorizes SC-WP-09/10/11/14 in
   parallel and sets the primary objective: the hall_icp_neutralizer architecture proof (decisive 196-state run, RFP
   constraint matrix, controlled comparison, one of conclusions A-D).
+
+## 2026-10-07 — Plenum / feed transients (SC-WP-02): v5 superseded unscored (Rust integrator damped growing modes), growing-mode guard, contract v6 registered and refined; v6 scoring held for a decision
+
+- **v5** (`parity_prereg_v5.json`, `1b382387…`, `f44dbfe`): cascade diagnostics scored through their primitives, a
+  four-times larger refinement grid. Its frozen refinement record (`transient_envelope_v5.json`, `c02452eb…`, `3eeb574`)
+  showed Rust P45 envelopes of 0.782 (F45.mdot) and 0.0311 (F45.P_dev). Cause: on R45-192 / R45-331 the closed loop is
+  unstable at the steady start (0.0508 ± 2.423i, 0.0365 ± 2.259i). Radau IIA damps such a mode for long steps (the
+  accepted step-doubling update for h ≥ 2.63 s), and the step-doubling estimate compares two equally damped solutions.
+  The Rust nominal orbit_sim therefore returned `ok` with the setpoint held (P_dev ~1e-5), where both implementations
+  converge to a 3 % saturating limit cycle. **RUST_DEFECT; v5 REGISTERED_NEVER_SCORED, superseded** (A9.29 sec. 14:
+  near-vacuous P45 bounds). Note: `contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/rust_defect_v5_growing_mode_damping.md`.
+- **Fix `361a197`** (`abep_gaspath::transient`): before every trial step, the eigenvalues of the 5 × 5 dynamic block of
+  the Jacobian (hand-written balanc / elmhes / hqr) are checked. While any Re λ > 0 mode has |R_acc(hλ)| < 1 the step is
+  halved; no tunable constant. A non-converged eigenvalue iteration or a non-finite Jacobian → R_INTEGRATOR /
+  MODEL_ERROR. Tests: unstable oscillator λ = 0.05 ± 2.4i (fails before the fix), stable control bit-identical to before,
+  R(z) against the coefficients, eigenvalue routine, and the R45-192 / R45-331 regression through the parity CLI against
+  the converged T1 records within the frozen v5 E_py. Blast radius: parity CLI output byte-identical on the captured
+  scoring inputs of the admitted compressor v2 (2368) and filter v1 / v2 (1732), and of plenum v1 / v2 (3815). 2557 of the
+  2560 v5 refinement vectors are byte-identical (changed: R45-192, R45-331, and R45-021, whose orbit has Re λ > 0 on 41 %
+  of its length). `cargo test --workspace --locked`: 422 passed, 0 failed, 2 registered platform tests.
+- **v6** (`parity_prereg_v6.json`, `60f8bc24…`, `aca62b3`): v5 plus the guard, with fresh seeds (scoring 731905353,
+  refinement 731905553). Frozen record `transient_envelope_v6.json` (`439ae2dd…`, `eec930a`; COMP-P-01 512 / 512).
+- **Scoring held.** Per vector (`refinement_v6_p45_note.md`, script
+  `scripts/rust_migration/plenum_v6_p45_refinement_analysis.py`): all v6 P45 envelopes come from the 11 of 373 vectors
+  that are unstable at the steady start (stable vectors: E_py ≤ 4.6e-5, E_rust ≤ 3.2e-6). The Python reference itself
+  holds the setpoint at nominal tolerance on R45-187 (7.5e-5 vs a converged 0.181). On two weakly unstable vectors T1 and
+  T2 disagree in both implementations (sampled limit-cycle extrema are phase-sensitive). Combined P45 bounds: 0.225 in
+  P_dev and 0.725 × mdot_scale, so the P45 test would be near-vacuous for the ~97 % stable held-out vectors. Decision
+  (score v6 as registered, or a v7 with a per-vector stability class) is with the coordinator / owner. No Python, frozen
+  data or admitted output changed.
