@@ -1,0 +1,470 @@
+{
+ "schema": "abep_gaspath_growing_mode_regression_v1",
+ "what": "R45-192 / R45-331 of the frozen plenum / feed v5 refinement grid (refinement seed 731905543): the Rust nominal orbit_sim must reproduce the converged (T1) answer within the registered Python PROD P45 envelope E_py of the frozen v5 record (the reference's own nominal-tolerance error). Before the growing-mode guard the nominal run held the setpoint (P_dev 1.2e-5 / 8.9e-6).",
+ "contract_v5_sha256": "1b382387491bef6c4a1669b27170dac42ae5a416fc43527f1c840e9d8aa2f092",
+ "record_v5_sha256": "c02452ebf2d6790c3e8d7fc511703d8e47e281c84b207431882d5a6a5c5d6642",
+ "bound": {
+  "F45.P_dev": 0.0062226130149540815,
+  "F45.mdot": 0.04646687583651433,
+  "units": "F45.P_dev absolute (scale 1); F45.mdot in units of the vector's mdot_scale"
+ },
+ "materials": {
+  "Al6061": {
+   "density": 2700,
+   "yield_MPa": 276,
+   "T_max_K": 500,
+   "gamma_min": 0.02,
+   "gamma0": 0.3,
+   "gamma_Ea_eV": 0.1
+  },
+  "Al2O3_anodised": {
+   "density": 3950,
+   "yield_MPa": 0,
+   "T_max_K": 1200,
+   "gamma_min": 0.002,
+   "gamma0": 0.02,
+   "gamma_Ea_eV": 0.15
+  },
+  "Ti6Al4V": {
+   "density": 4430,
+   "yield_MPa": 880,
+   "T_max_K": 700,
+   "gamma_min": 0.01,
+   "gamma0": 0.1,
+   "gamma_Ea_eV": 0.08
+  },
+  "SS316": {
+   "density": 8000,
+   "yield_MPa": 290,
+   "T_max_K": 800,
+   "gamma_min": 0.03,
+   "gamma0": 0.35,
+   "gamma_Ea_eV": 0.09
+  },
+  "Cu_OFHC": {
+   "density": 8960,
+   "yield_MPa": 70,
+   "T_max_K": 600,
+   "gamma_min": 0.05,
+   "gamma0": 0.6,
+   "gamma_Ea_eV": 0.07
+  },
+  "Mo": {
+   "density": 10200,
+   "yield_MPa": 500,
+   "T_max_K": 1500,
+   "gamma_min": 0.02,
+   "gamma0": 0.2,
+   "gamma_Ea_eV": 0.1
+  },
+  "W": {
+   "density": 19300,
+   "yield_MPa": 750,
+   "T_max_K": 2000,
+   "gamma_min": 0.02,
+   "gamma0": 0.2,
+   "gamma_Ea_eV": 0.1
+  },
+  "Graphite": {
+   "density": 1800,
+   "yield_MPa": 30,
+   "T_max_K": 2500,
+   "gamma_min": 0.01,
+   "gamma0": 0.05,
+   "gamma_Ea_eV": 0.1
+  },
+  "BN": {
+   "density": 2100,
+   "yield_MPa": 0,
+   "T_max_K": 1200,
+   "gamma_min": 0.002,
+   "gamma0": 0.02,
+   "gamma_Ea_eV": 0.15
+  },
+  "BN_SiO2": {
+   "density": 2000,
+   "yield_MPa": 0,
+   "T_max_K": 1200,
+   "gamma_min": 0.002,
+   "gamma0": 0.02,
+   "gamma_Ea_eV": 0.15
+  },
+  "SiC": {
+   "density": 3200,
+   "yield_MPa": 0,
+   "T_max_K": 1600,
+   "gamma_min": 0.003,
+   "gamma0": 0.02,
+   "gamma_Ea_eV": 0.15
+  },
+  "Quartz": {
+   "density": 2200,
+   "yield_MPa": 0,
+   "T_max_K": 1300,
+   "gamma_min": 0.0005,
+   "gamma0": 0.005,
+   "gamma_Ea_eV": 0.2
+  },
+  "Kapton_HN": {
+   "density": 1420,
+   "yield_MPa": 70,
+   "T_max_K": 550,
+   "gamma_min": 0.01,
+   "gamma0": 0.05,
+   "gamma_Ea_eV": 0.1
+  },
+  "Kapton_SiOx": {
+   "density": 1450,
+   "yield_MPa": 70,
+   "T_max_K": 550,
+   "gamma_min": 0.001,
+   "gamma0": 0.01,
+   "gamma_Ea_eV": 0.2
+  },
+  "CFRP": {
+   "density": 1600,
+   "yield_MPa": 600,
+   "T_max_K": 450,
+   "gamma_min": 0.01,
+   "gamma0": 0.05,
+   "gamma_Ea_eV": 0.1
+  },
+  "SmCo_bare": {
+   "density": 8400,
+   "yield_MPa": 0,
+   "T_max_K": 620,
+   "gamma_min": 0.02,
+   "gamma0": 0.2,
+   "gamma_Ea_eV": 0.1
+  },
+  "LaB6": {
+   "density": 4720,
+   "yield_MPa": 0,
+   "T_max_K": 2000,
+   "gamma_min": 0.02,
+   "gamma0": 0.2,
+   "gamma_Ea_eV": 0.1
+  },
+  "Ag": {
+   "density": 10490,
+   "yield_MPa": 55,
+   "T_max_K": 500,
+   "gamma_min": 0.05,
+   "gamma0": 0.6,
+   "gamma_Ea_eV": 0.05
+  }
+ },
+ "cases": [
+  {
+   "id": "R45-192",
+   "request": {
+    "id": "R45-192",
+    "entry": "plenum.orbit_sim",
+    "args": {
+     "filter": {
+      "factory": "parametric",
+      "tau": 0.3537978794670821
+     },
+     "plant": {
+      "design": {
+       "id": "T2-A0-U4-D1-Ti6Al4V",
+       "N_turbo": 2,
+       "A_turbo_m2": 0.1128299365,
+       "R_turbo_m": 0.1895122272,
+       "u_tip_turbo_mps": 419.845674,
+       "rpm": 21155.52606,
+       "N_drag": 1,
+       "rotor_material": "Ti6Al4V",
+       "hub_ratio": 0.0,
+       "R_hub_m": 0.0,
+       "blade_span_m": 0.1895122272,
+       "hub_geometry_status": "ZERO_HUB_ANALYTICAL_BOUND_NOT_BUILDABLE"
+      }
+     },
+     "plenum": {
+      "volume_m3": 0.0050881146397043185,
+      "gamma_wall": 0.0,
+      "wall_case": "SYN-WALL (SYNTHETIC_PARITY_VECTOR_NOT_EVIDENCE)",
+      "leak_area_m2": 5e-08
+     },
+     "controller": {
+      "Kp": 7.9353763745644,
+      "Ti_s": 0.1200313221245631,
+      "f_valve_hz": 1.0,
+      "authority": 2.634896085072419
+     },
+     "design": {
+      "candidate": "A1_Ld3_phi0.9",
+      "area_m2": 1.0,
+      "state": "h200_f150",
+      "scenario": "cll_a0.5",
+      "T_K": 350.0,
+      "mdot_fwd_kgps": [
+       [
+        "O",
+        8.97565e-07
+       ],
+       [
+        "N2",
+        9.88525e-07
+       ],
+       [
+        "O2",
+        6.14575e-08
+       ]
+      ],
+      "p_passive_Pa": [
+       [
+        "O",
+        0.00223739
+       ],
+       [
+        "N2",
+        0.00189431
+       ],
+       [
+        "O2",
+        0.000110637
+       ]
+      ],
+      "K_back": [
+       [
+        "O",
+        0.4765
+       ],
+       [
+        "N2",
+        0.46855
+       ],
+       [
+        "O2",
+        0.46655
+       ]
+      ],
+      "f1_status": "FEASIBLE_AT_STATE",
+      "source": "SRC-F1 if_a1_interface.records_per_unit_area[unit_area_Ld3_phi0.9/h200_f150/cll_a0.5] x A = 1 m^2",
+      "alt_km": 200.0
+     },
+     "state": {
+      "candidate": "A1_Ld3_phi0.9",
+      "area_m2": 1.0,
+      "state": "ds2:ECSS_LT_MODERATE:alt215:lat-76.0000:lst12:lon60:doy1",
+      "scenario": "cll_a0.5",
+      "T_K": 350.0,
+      "mdot_fwd_kgps": [
+       [
+        "O",
+        2.1757e-07
+       ],
+       [
+        "N2",
+        1.06825e-06
+       ],
+       [
+        "O2",
+        6.51657e-08
+       ]
+      ],
+      "p_passive_Pa": [
+       [
+        "O",
+        0.000545033
+       ],
+       [
+        "N2",
+        0.00201568
+       ],
+       [
+        "O2",
+        0.000116106
+       ]
+      ],
+      "K_back": [
+       [
+        "O",
+        0.47415
+       ],
+       [
+        "N2",
+        0.47585
+       ],
+       [
+        "O2",
+        0.4714
+       ]
+      ],
+      "f1_status": "FEASIBLE_AT_STATE",
+      "source": "SRC-F1 if_a1_interface.records_per_unit_area[unit_area_Ld3_phi0.9/ds2:ECSS_LT_MODERATE:alt215:lat-76.0000:lst12:lon60:doy1/cll_a0.5] x A = 1 m^2",
+      "alt_km": 215.0
+     },
+     "r0": 0.05,
+     "amplitude": 0.15416785322910032
+    }
+   },
+   "converged_rust_T1": {
+    "ok": true,
+    "P_dev_max_frac": 0.031130895855221552,
+    "mdot_min_kgps": 4.195791580785035e-12,
+    "mdot_max_kgps": 3.3217660461321346e-10,
+    "nfev": 8149617
+   },
+   "T1_rtol": 1e-08,
+   "mdot_scale": 1.9865662238607217e-10
+  },
+  {
+   "id": "R45-331",
+   "request": {
+    "id": "R45-331",
+    "entry": "plenum.orbit_sim",
+    "args": {
+     "filter": {
+      "factory": "none"
+     },
+     "plant": {
+      "design": {
+       "id": "T2-A0-U3-D4-Ti6Al4V",
+       "N_turbo": 2,
+       "A_turbo_m2": 0.1128299365,
+       "R_turbo_m": 0.1895122272,
+       "u_tip_turbo_mps": 339.691348,
+       "rpm": 17116.64455,
+       "N_drag": 4,
+       "rotor_material": "Ti6Al4V",
+       "hub_ratio": 0.0,
+       "R_hub_m": 0.0,
+       "blade_span_m": 0.1895122272,
+       "hub_geometry_status": "ZERO_HUB_ANALYTICAL_BOUND_NOT_BUILDABLE"
+      }
+     },
+     "plenum": {
+      "volume_m3": 0.005259099435397259,
+      "gamma_wall": 0.0,
+      "wall_case": "SYN-WALL (SYNTHETIC_PARITY_VECTOR_NOT_EVIDENCE)",
+      "leak_area_m2": 5e-08
+     },
+     "controller": {
+      "Kp": 1.2184712732823324,
+      "Ti_s": 0.12279309846782212,
+      "f_valve_hz": 1.0,
+      "authority": 2.8747601860281673
+     },
+     "design": {
+      "candidate": "A0.5_Ld3_phi0.8",
+      "area_m2": 0.5,
+      "state": "h200_f150",
+      "scenario": "maxwell_a1",
+      "T_K": 350.0,
+      "mdot_fwd_kgps": [
+       [
+        "O",
+        3.14048e-07
+       ],
+       [
+        "N2",
+        3.70477e-07
+       ],
+       [
+        "O2",
+        2.330605e-08
+       ]
+      ],
+      "p_passive_Pa": [
+       [
+        "O",
+        0.00305533
+       ],
+       [
+        "N2",
+        0.00275166
+       ],
+       [
+        "O2",
+        0.000161981
+       ]
+      ],
+      "K_back": [
+       [
+        "O",
+        0.2747
+       ],
+       [
+        "N2",
+        0.272
+       ],
+       [
+        "O2",
+        0.2719
+       ]
+      ],
+      "f1_status": "FEASIBLE_AT_STATE",
+      "source": "SRC-F1 if_a1_interface.records_per_unit_area[unit_area_Ld3_phi0.8/h200_f150/maxwell_a1] x A = 0.5 m^2",
+      "alt_km": 200.0
+     },
+     "state": {
+      "candidate": "A0.5_Ld3_phi0.8",
+      "area_m2": 0.5,
+      "state": "ds2:ECSS_LT_LOW:alt230:lat-39.0000:lst3:lon120:doy320",
+      "scenario": "maxwell_a1",
+      "T_K": 350.0,
+      "mdot_fwd_kgps": [
+       [
+        "O",
+        5.45065e-08
+       ],
+       [
+        "N2",
+        5.9817e-08
+       ],
+       [
+        "O2",
+        4.338705e-09
+       ]
+      ],
+      "p_passive_Pa": [
+       [
+        "O",
+        0.000523523
+       ],
+       [
+        "N2",
+        0.00043832
+       ],
+       [
+        "O2",
+        2.98095e-05
+       ]
+      ],
+      "K_back": [
+       [
+        "O",
+        0.27825
+       ],
+       [
+        "N2",
+        0.2757
+       ],
+       [
+        "O2",
+        0.27505
+       ]
+      ],
+      "f1_status": "FEASIBLE_AT_STATE",
+      "source": "SRC-F1 if_a1_interface.records_per_unit_area[unit_area_Ld3_phi0.8/ds2:ECSS_LT_LOW:alt230:lat-39.0000:lst3:lon120:doy320/maxwell_a1] x A = 0.5 m^2",
+      "alt_km": 230.0
+     },
+     "r0": 0.01,
+     "amplitude": 0.16572842480749367
+    }
+   },
+   "converged_rust_T1": {
+    "ok": true,
+    "P_dev_max_frac": 0.030146115039048405,
+    "mdot_min_kgps": 6.694835752459324e-13,
+    "mdot_max_kgps": 5.230439222674806e-11,
+    "nfev": 7467762
+   },
+   "T1_rtol": 1e-08,
+   "mdot_scale": 2.1773407200384616e-10
+  }
+ ]
+}

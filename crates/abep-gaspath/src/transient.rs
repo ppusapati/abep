@@ -5,8 +5,17 @@
 //! through a sequence of events, the integrator restarted at each event. States (scaled): p_s / r0 (O, N2, O2), valve
 //! opening u, integral I, and three cumulative mass integrals for the conservation gate. The reference integrates with
 //! scipy LSODA (BDF for its convergence reference); this port uses a Radau IIA order-5 method (simplified Newton on
-//! the analytic Jacobian, step-doubling error estimate with local extrapolation, steps clamped to the output grid). An
-//! integrator failure is R_INTEGRATOR (MODEL_ERROR), never a half-converged trajectory (DIV-P-01).
+//! the analytic Jacobian, step-doubling error estimate with local extrapolation, steps clamped to the output grid). The
+//! valve command clip(u_cmd, 0, 1) makes the right-hand side only Lipschitz where u_cmd crosses 0 or 1: a step whose
+//! end changes that saturation state is shortened (bisection) to end just past the switch, so no step integrates
+//! across it (contract v4 RUST_DEFECT fix: without it the error control did not see the switch and the samples near
+//! it kept an rtol-independent error up to ~6e-7). No accepted step damps a growing mode: where the Jacobian of the
+//! dynamic block has an eigenvalue with Re lambda > 0, a step whose accepted update has linear amplification
+//! |R_acc(h lambda)| < 1 is halved until it does not (contract v6 RUST_DEFECT fix: Radau IIA is damping for large
+//! |h lambda| also in the right half-plane, the step-doubling estimate compares two equally damped solutions, and a
+//! closed-loop instability started below the tolerance scale was integrated as a held setpoint). An integrator failure,
+//! including a non-converged eigenvalue iteration of that guard, is R_INTEGRATOR (MODEL_ERROR), never a half-converged
+//! trajectory (DIV-P-01).
 
 use crate::error::{value_error, PyResult};
 use crate::materials::MaterialsView;
@@ -275,6 +284,18 @@ impl Rhs {
         (eps, ucmd, hi || lo, usat)
     }
 
+    /// Branch of the valve-command clip at y: +1 (u_cmd > 1), -1 (u_cmd < 0), 0 (inside); the same tests as `ctrl`.
+    fn sat_state(&self, y: &[f64; N]) -> i8 {
+        let (_, ucmd, _, _) = self.ctrl(y[0] * self.r0 + y[1] * self.r0 + y[2] * self.r0, y[4]);
+        if ucmd > 1.0 {
+            1
+        } else if ucmd < 0.0 {
+            -1
+        } else {
+            0
+        }
+    }
+
     fn f(&self, t: f64, y: &[f64; N]) -> [f64; N] {
         let d = self.dens(t);
         let p = [y[0] * self.r0, y[1] * self.r0, y[2] * self.r0];
@@ -333,6 +354,25 @@ impl Rhs {
     }
 }
 
+/// The system the integrator advances: right-hand side, analytic Jacobian and the valve-command saturation branch.
+trait OdeSystem {
+    fn f(&self, t: f64, y: &[f64; N]) -> [f64; N];
+    fn jac(&self, y: &[f64; N]) -> [[f64; N]; N];
+    fn sat_state(&self, y: &[f64; N]) -> i8;
+}
+
+impl OdeSystem for Rhs {
+    fn f(&self, t: f64, y: &[f64; N]) -> [f64; N] {
+        Rhs::f(self, t, y)
+    }
+    fn jac(&self, y: &[f64; N]) -> [[f64; N]; N] {
+        Rhs::jac(self, y)
+    }
+    fn sat_state(&self, y: &[f64; N]) -> i8 {
+        Rhs::sat_state(self, y)
+    }
+}
+
 // ------------------------------------------------------------------------------------------------ Radau IIA (5)
 const NS: usize = 3 * N;
 
@@ -345,6 +385,344 @@ fn radau_coeffs() -> ([f64; 3], [[f64; 3]; 3]) {
         [(16.0 - s6) / 36.0, (16.0 + s6) / 36.0, 1.0 / 9.0],
     ];
     (c, a)
+}
+
+// ------------------------------------------------------------------- growing-mode guard (contract v6 RUST_DEFECT fix)
+/// The dynamic block of the state: scaled pressures (3), valve opening, integral. States 5..7 are cumulative integrals
+/// whose Jacobian columns are zero, so the spectrum of the full Jacobian is that of this block plus three zeros.
+const NM: usize = 5;
+
+type Cx = (f64, f64);
+
+fn cx_mul(a: Cx, b: Cx) -> Cx {
+    (a.0 * b.0 - a.1 * b.1, a.0 * b.1 + a.1 * b.0)
+}
+
+fn cx_div(a: Cx, b: Cx) -> Cx {
+    // Smith's algorithm (no overflow for |b| near the f64 range)
+    if b.0.abs() >= b.1.abs() {
+        let r = b.1 / b.0;
+        let d = b.0 + b.1 * r;
+        ((a.0 + a.1 * r) / d, (a.1 - a.0 * r) / d)
+    } else {
+        let r = b.0 / b.1;
+        let d = b.0 * r + b.1;
+        ((a.0 * r + a.1) / d, (a.1 * r - a.0) / d)
+    }
+}
+
+/// Stability function of the 3-stage Radau IIA method (order 5): R(z) = (1 + 2z/5 + z^2/20) / (1 - 3z/5 + 3z^2/20 -
+/// z^3/60) (Hairer & Wanner, Solving ODEs II, sec. IV.5), i.e. 1 + z b^T (I - z A)^-1 1 for the coefficients of
+/// `radau_coeffs` (checked by a unit test).
+fn radau_r(z: Cx) -> Cx {
+    let z2 = cx_mul(z, z);
+    let z3 = cx_mul(z2, z);
+    let num = (1.0 + 0.4 * z.0 + z2.0 / 20.0, 0.4 * z.1 + z2.1 / 20.0);
+    let den = (1.0 - 0.6 * z.0 + 0.15 * z2.0 - z3.0 / 60.0, -0.6 * z.1 + 0.15 * z2.1 - z3.1 / 60.0);
+    cx_div(num, den)
+}
+
+/// Linear amplification of one accepted step (`Integrator::trial`: two half steps, one full step, local
+/// extrapolation (32 y2 - y1) / 31) on the mode y' = lambda y, z = h lambda: (32 R(z/2)^2 - R(z)) / 31.
+fn accepted_amplification(z: Cx) -> Cx {
+    let rh = radau_r((0.5 * z.0, 0.5 * z.1));
+    let rh2 = cx_mul(rh, rh);
+    let r = radau_r(z);
+    ((32.0 * rh2.0 - r.0) / 31.0, (32.0 * rh2.1 - r.1) / 31.0)
+}
+
+/// True when a step of size h damps the growing mode lambda (Re lambda > 0): |R_acc(h lambda)| < 1 while the exact
+/// flow grows by |exp(h lambda)| > 1.
+fn damps_growing_mode(h: f64, lam: Cx) -> bool {
+    let a = accepted_amplification((h * lam.0, h * lam.1));
+    a.0.hypot(a.1) < 1.0
+}
+
+/// Eigenvalues (re, im) of a real NM x NM matrix: balancing by exact powers of 2, reduction to upper Hessenberg form by
+/// stabilised elimination and the Francis double-shift QR iteration (the EISPACK balanc / elmhes / hqr algorithms as
+/// given in Numerical Recipes, 2nd ed., sec. 11.5-11.6). None when an entry is not finite or the QR iteration does not
+/// converge within 30 iterations for an eigenvalue (fail closed: the caller reports R_INTEGRATOR).
+#[allow(unused_assignments)] // the QR sweep carries its scalars between iterations (hqr)
+fn eig_real(m: &[[f64; NM]; NM]) -> Option<[Cx; NM]> {
+    const RADIX: f64 = 2.0;
+    let n = NM;
+    // 1-based working copy
+    let mut a = [[0.0f64; NM + 1]; NM + 1];
+    for i in 0..n {
+        for j in 0..n {
+            if !m[i][j].is_finite() {
+                return None;
+            }
+            a[i + 1][j + 1] = m[i][j];
+        }
+    }
+    // balanc (similarity by powers of the radix: exact in floating point)
+    let sqrdx = RADIX * RADIX;
+    let mut last = false;
+    let mut passes = 0;
+    while !last {
+        passes += 1;
+        if passes > 1000 {
+            return None;
+        }
+        last = true;
+        for i in 1..=n {
+            let (mut r, mut c) = (0.0f64, 0.0f64);
+            for j in 1..=n {
+                if j != i {
+                    c += a[j][i].abs();
+                    r += a[i][j].abs();
+                }
+            }
+            if c != 0.0 && r != 0.0 {
+                let mut g = r / RADIX;
+                let mut f = 1.0;
+                let s = c + r;
+                while c < g {
+                    f *= RADIX;
+                    c *= sqrdx;
+                }
+                g = r * RADIX;
+                while c > g {
+                    f /= RADIX;
+                    c /= sqrdx;
+                }
+                if (c + r) / f < 0.95 * s {
+                    last = false;
+                    let g = 1.0 / f;
+                    for j in 1..=n {
+                        a[i][j] *= g;
+                    }
+                    for j in 1..=n {
+                        a[j][i] *= f;
+                    }
+                }
+            }
+        }
+    }
+    // elmhes
+    for mm in 2..n {
+        let mut x = 0.0f64;
+        let mut i = mm;
+        for j in mm..=n {
+            if a[j][mm - 1].abs() > x.abs() {
+                x = a[j][mm - 1];
+                i = j;
+            }
+        }
+        if i != mm {
+            for j in (mm - 1)..=n {
+                let t = a[i][j];
+                a[i][j] = a[mm][j];
+                a[mm][j] = t;
+            }
+            for row in a.iter_mut().skip(1) {
+                row.swap(i, mm);
+            }
+        }
+        if x != 0.0 {
+            for i in (mm + 1)..=n {
+                let mut y = a[i][mm - 1];
+                if y != 0.0 {
+                    y /= x;
+                    a[i][mm - 1] = y;
+                    for j in mm..=n {
+                        a[i][j] -= y * a[mm][j];
+                    }
+                    for j in 1..=n {
+                        a[j][mm] += y * a[j][i];
+                    }
+                }
+            }
+        }
+    }
+    for i in 1..=n {
+        for j in 1..=n {
+            if i > j + 1 {
+                a[i][j] = 0.0;
+            }
+        }
+    }
+    // hqr
+    let mut wr = [0.0f64; NM + 1];
+    let mut wi = [0.0f64; NM + 1];
+    let mut anorm = 0.0f64;
+    for i in 1..=n {
+        for j in i.max(2) - 1..=n {
+            anorm += a[i][j].abs();
+        }
+    }
+    let mut nn = n;
+    let mut t = 0.0f64;
+    let (mut p, mut q, mut r, mut s, mut w, mut x, mut y, mut z) = (0.0f64, 0.0f64, 0.0f64, 0.0f64, 0.0, 0.0, 0.0, 0.0);
+    while nn >= 1 {
+        let mut its = 0;
+        loop {
+            let mut l = nn;
+            while l >= 2 {
+                s = a[l - 1][l - 1].abs() + a[l][l].abs();
+                if s == 0.0 {
+                    s = anorm;
+                }
+                if a[l][l - 1].abs() + s == s {
+                    a[l][l - 1] = 0.0;
+                    break;
+                }
+                l -= 1;
+            }
+            x = a[nn][nn];
+            if l == nn {
+                wr[nn] = x + t;
+                wi[nn] = 0.0;
+                nn -= 1;
+            } else {
+                y = a[nn - 1][nn - 1];
+                w = a[nn][nn - 1] * a[nn - 1][nn];
+                if l == nn - 1 {
+                    p = 0.5 * (y - x);
+                    q = p * p + w;
+                    z = q.abs().sqrt();
+                    x += t;
+                    if q >= 0.0 {
+                        z = p + if p >= 0.0 { z.abs() } else { -z.abs() };
+                        wr[nn - 1] = x + z;
+                        wr[nn] = x + z;
+                        if z != 0.0 {
+                            wr[nn] = x - w / z;
+                        }
+                        wi[nn - 1] = 0.0;
+                        wi[nn] = 0.0;
+                    } else {
+                        wr[nn - 1] = x + p;
+                        wr[nn] = x + p;
+                        wi[nn - 1] = -z;
+                        wi[nn] = z;
+                    }
+                    nn -= 2;
+                } else {
+                    if its == 30 {
+                        return None;
+                    }
+                    if its == 10 || its == 20 {
+                        t += x;
+                        for i in 1..=nn {
+                            a[i][i] -= x;
+                        }
+                        s = a[nn][nn - 1].abs() + a[nn - 1][nn - 2].abs();
+                        x = 0.75 * s;
+                        y = x;
+                        w = -0.4375 * s * s;
+                    }
+                    its += 1;
+                    let mut mm = nn - 2;
+                    loop {
+                        z = a[mm][mm];
+                        r = x - z;
+                        s = y - z;
+                        p = (r * s - w) / a[mm + 1][mm] + a[mm][mm + 1];
+                        q = a[mm + 1][mm + 1] - z - r - s;
+                        r = a[mm + 2][mm + 1];
+                        s = p.abs() + q.abs() + r.abs();
+                        p /= s;
+                        q /= s;
+                        r /= s;
+                        if mm == l {
+                            break;
+                        }
+                        let u = a[mm][mm - 1].abs() * (q.abs() + r.abs());
+                        let v = p.abs() * (a[mm - 1][mm - 1].abs() + z.abs() + a[mm + 1][mm + 1].abs());
+                        if u + v == v {
+                            break;
+                        }
+                        mm -= 1;
+                    }
+                    for i in (mm + 2)..=nn {
+                        a[i][i - 2] = 0.0;
+                        if i != mm + 2 {
+                            a[i][i - 3] = 0.0;
+                        }
+                    }
+                    let mut k = mm;
+                    while k < nn {
+                        if k != mm {
+                            p = a[k][k - 1];
+                            q = a[k + 1][k - 1];
+                            r = 0.0;
+                            if k != nn - 1 {
+                                r = a[k + 2][k - 1];
+                            }
+                            x = p.abs() + q.abs() + r.abs();
+                            if x != 0.0 {
+                                p /= x;
+                                q /= x;
+                                r /= x;
+                            }
+                        }
+                        let sq = (p * p + q * q + r * r).sqrt();
+                        s = if p >= 0.0 { sq } else { -sq };
+                        if s != 0.0 {
+                            if k == mm {
+                                if l != mm {
+                                    a[k][k - 1] = -a[k][k - 1];
+                                }
+                            } else {
+                                a[k][k - 1] = -s * x;
+                            }
+                            p += s;
+                            x = p / s;
+                            y = q / s;
+                            z = r / s;
+                            q /= p;
+                            r /= p;
+                            for j in k..=nn {
+                                p = a[k][j] + q * a[k + 1][j];
+                                if k != nn - 1 {
+                                    p += r * a[k + 2][j];
+                                    a[k + 2][j] -= p * z;
+                                }
+                                a[k + 1][j] -= p * y;
+                                a[k][j] -= p * x;
+                            }
+                            let mmin = if nn < k + 3 { nn } else { k + 3 };
+                            for i in l..=mmin {
+                                p = x * a[i][k] + y * a[i][k + 1];
+                                if k != nn - 1 {
+                                    p += z * a[i][k + 2];
+                                    a[i][k + 2] -= p * r;
+                                }
+                                a[i][k + 1] -= p * q;
+                                a[i][k] -= p;
+                            }
+                        }
+                        k += 1;
+                    }
+                }
+            }
+            if nn < 2 || l + 1 >= nn {
+                break;
+            }
+        }
+    }
+    let mut out = [(0.0, 0.0); NM];
+    for i in 0..n {
+        if !(wr[i + 1].is_finite() && wi[i + 1].is_finite()) {
+            return None;
+        }
+        out[i] = (wr[i + 1], wi[i + 1]);
+    }
+    Some(out)
+}
+
+/// The growing modes (Re lambda > 0) of the dynamic block of the Jacobian at y; Err when the eigenvalue iteration fails.
+fn growing_modes<S: OdeSystem>(rhs: &S, y: &[f64; N], t: f64) -> Result<Vec<Cx>, String> {
+    let j = rhs.jac(y);
+    let mut b = [[0.0; NM]; NM];
+    for i in 0..NM {
+        b[i].copy_from_slice(&j[i][..NM]);
+    }
+    let ev =
+        eig_real(&b).ok_or_else(|| format!("growing-mode guard: eigenvalue iteration did not converge at t = {t}"))?;
+    Ok(ev.iter().copied().filter(|l| l.0 > 0.0).collect())
 }
 
 /// Dense LU with partial pivoting (in place); None when singular.
@@ -390,16 +768,18 @@ fn lu_solve(m: &[[f64; NS]; NS], piv: &[usize; NS], b: &mut [f64; NS]) {
     }
 }
 
-struct Integrator<'a> {
-    rhs: &'a Rhs,
+struct Integrator<'a, S: OdeSystem> {
+    rhs: &'a S,
     rtol: f64,
     atol: f64,
     nfev: usize,
     c: [f64; 3],
     a: [[f64; 3]; 3],
+    /// step halvings by the growing-mode guard (diagnostic; not part of any record)
+    n_guard: usize,
 }
 
-impl Integrator<'_> {
+impl<S: OdeSystem> Integrator<'_, S> {
     /// One Radau IIA step of size h from (t, y); None when the simplified Newton iteration fails.
     fn step(&mut self, t: f64, y: &[f64; N], h: f64) -> Option<[f64; N]> {
         let j = self.rhs.jac(y);
@@ -461,53 +841,94 @@ impl Integrator<'_> {
         None
     }
 
-    /// Integrate from t0 = 0 over the output grid `te` (te[0] = 0, increasing); None when the step size collapses.
+    /// One error-controlled trial of size hh from (t, y): the step-doubling solution with local extrapolation and its
+    /// scaled RMS error norm; None when a Newton iteration fails.
+    fn trial(&mut self, t: f64, y: &[f64; N], hh: f64) -> Option<([f64; N], f64)> {
+        let y1 = self.step(t, y, hh)?;
+        let ya = self.step(t, y, hh / 2.0)?;
+        let y2 = self.step(t + hh / 2.0, &ya, hh / 2.0)?;
+        let mut en = 0.0;
+        let mut out = y2;
+        for k in 0..N {
+            let err = (y2[k] - y1[k]) / 31.0;
+            let sc = self.atol + self.rtol * y[k].abs().max(y2[k].abs());
+            en += (err / sc).powi(2);
+            out[k] = y2[k] + err;
+        }
+        Some((out, (en / N as f64).sqrt()))
+    }
+
+    /// Integrate from t0 = 0 over the output grid `te` (te[0] = 0, increasing); Err when the step size collapses.
+    /// An accepted step never crosses a switch of the valve-command saturation state: the step is bisected to the
+    /// shortest one whose end has left the start state, which then ends within rounding of the switch.
     fn integrate(&mut self, y0: [f64; N], te: &[f64]) -> Result<Vec<[f64; N]>, String> {
         let mut out = vec![y0];
         let span = te[te.len() - 1];
+        let h_min = 1e-14 * span.max(1e-300);
         let mut t = 0.0;
         let mut y = y0;
         let mut h = if te.len() > 1 { te[1] } else { span };
         let mut steps = 0usize;
+        let mut modes = growing_modes(self.rhs, &y, t)?;
         for &t_out in &te[1..] {
+            let mut to_switch = false;
             while t < t_out {
                 steps += 1;
                 if steps > 2_000_000 {
                     return Err("step limit".into());
                 }
-                let hh = h.min(t_out - t);
-                if hh < 1e-14 * span.max(1e-300) {
+                let mut hh = h.min(t_out - t);
+                // growing-mode guard: no accepted step damps a mode the linearised flow grows
+                while hh >= h_min && modes.iter().any(|&l| damps_growing_mode(hh, l)) {
+                    hh *= 0.5;
+                    to_switch = false;
+                    self.n_guard += 1;
+                }
+                if hh < h_min {
                     return Err(format!("step size collapsed at t = {t}"));
                 }
-                let full = self.step(t, &y, hh);
-                let half = self.step(t, &y, hh / 2.0).and_then(|ya| self.step(t + hh / 2.0, &ya, hh / 2.0));
-                let (Some(y1), Some(y2)) = (full, half) else {
+                let Some((y_new, en)) = self.trial(t, &y, hh) else {
                     h = hh * 0.25;
+                    to_switch = false;
                     continue;
                 };
-                let mut en = 0.0;
-                let mut err = [0.0; N];
-                for k in 0..N {
-                    err[k] = (y2[k] - y1[k]) / 31.0;
-                    let sc = self.atol + self.rtol * y[k].abs().max(y2[k].abs());
-                    en += (err[k] / sc).powi(2);
-                }
-                en = (en / N as f64).sqrt();
                 if !en.is_finite() {
                     h = hh * 0.25;
+                    to_switch = false;
                     continue;
                 }
                 let fac = if en == 0.0 { 4.0 } else { (0.9 * en.powf(-1.0 / 6.0)).clamp(0.2, 4.0) };
-                if en <= 1.0 {
-                    t = if hh == t_out - t { t_out } else { t + hh };
-                    for k in 0..N {
-                        y[k] = y2[k] + err[k];
-                    }
-                    // keep the proposed step when the output point clamped it
-                    h = if hh < h { h.max(hh * fac) } else { hh * fac };
-                } else {
+                if !(en <= 1.0) {
                     h = hh * fac.min(0.9);
+                    to_switch = false;
+                    continue;
                 }
+                let s0 = self.rhs.sat_state(&y);
+                if !to_switch && self.rhs.sat_state(&y_new) != s0 {
+                    let (mut lo, mut hi) = (0.0, hh);
+                    loop {
+                        let mid = 0.5 * (lo + hi);
+                        if !(lo < mid && mid < hi) {
+                            break;
+                        }
+                        match self.trial(t, &y, mid) {
+                            Some((ym, _)) if self.rhs.sat_state(&ym) == s0 => lo = mid,
+                            _ => hi = mid,
+                        }
+                    }
+                    // a switch within rounding of the step start is already behind it: the step is accepted
+                    if hi < hh && hi >= h_min && t + hi > t {
+                        h = hi;
+                        to_switch = true;
+                        continue;
+                    }
+                }
+                to_switch = false;
+                t = if hh == t_out - t { t_out } else { t + hh };
+                y = y_new;
+                modes = growing_modes(self.rhs, &y, t)?;
+                // keep the proposed step when the output point clamped it
+                h = if hh < h { h.max(hh * fac) } else { hh * fac };
             }
             out.push(y);
         }
@@ -721,7 +1142,7 @@ impl<'a> TransientRun<'a> {
             let rhs = self.make(ev)?;
             let te = Self::t_eval(ev.duration_s, n_eval);
             let y0 = [y[0], y[1], y[2], y[3], y[4], 0.0, 0.0, 0.0];
-            let mut integ = Integrator { rhs: &rhs, rtol: self.rtol, atol: ATOL_SCALED, nfev: 0, c, a };
+            let mut integ = Integrator { rhs: &rhs, rtol: self.rtol, atol: ATOL_SCALED, nfev: 0, c, a, n_guard: 0 };
             let sol = integ.integrate(y0, &te);
             nfev += integ.nfev;
             let ys = match sol {
@@ -1186,12 +1607,257 @@ pub fn transient_framework() -> Value {
 mod tests {
     use super::*;
 
+    /// x' = a x - b y, y' = b x + a y in states 0 / 1 (eigenvalues a +/- i b, the closed-form flow a rotation scaled by
+    /// exp(a t)); state 2 is held at 1 (an O(1) state like the scaled pressures); the rest stay 0; no command switch.
+    struct LinOsc {
+        a: f64,
+        b: f64,
+    }
+
+    impl OdeSystem for LinOsc {
+        fn f(&self, _t: f64, y: &[f64; N]) -> [f64; N] {
+            let mut d = [0.0; N];
+            d[0] = self.a * y[0] - self.b * y[1];
+            d[1] = self.b * y[0] + self.a * y[1];
+            d
+        }
+        fn jac(&self, _y: &[f64; N]) -> [[f64; N]; N] {
+            let mut j = [[0.0; N]; N];
+            j[0][0] = self.a;
+            j[0][1] = -self.b;
+            j[1][0] = self.b;
+            j[1][1] = self.a;
+            j
+        }
+        fn sat_state(&self, _y: &[f64; N]) -> i8 {
+            0
+        }
+    }
+
+    /// The orbit output grid of R45-192 (orbital period 5319 s, 150 geometric samples) and the nominal tolerances.
+    fn osc_run(a: f64, x0: f64) -> (Vec<f64>, Vec<[f64; N]>, usize, usize) {
+        let (c, aa) = radau_coeffs();
+        let sys = LinOsc { a, b: 2.4 };
+        let te = TransientRun::t_eval(5319.0, 150);
+        let mut integ = Integrator { rhs: &sys, rtol: RTOL, atol: ATOL_SCALED, nfev: 0, c, a: aa, n_guard: 0 };
+        let ys = integ.integrate([x0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0], &te).expect("integrates");
+        (te, ys, integ.nfev, integ.n_guard)
+    }
+
+    /// The unstable closed loop of R45-192 in miniature: lambda = 0.05 +/- 2.4i, started below the absolute tolerance
+    /// (as a steady start excited only by the slow orbit forcing). Before the guard (commit 3eeb574) every sample after
+    /// the first few decays: the amplitude ends at 1.3e-137 (exact 3.2e102) in 1647 evaluations. With the guard no
+    /// accepted step damps the mode, so the sampled amplitude never decreases, and once the mode is above the tolerance
+    /// scale the error control reproduces its growth rate (measured 2.9e-5 relative). Below the tolerance scale the
+    /// amplitude carries no accuracy guarantee (absolute tolerance), so the onset is not compared to the exact flow.
+    #[test]
+    fn growing_mode_guard_resolves_an_unstable_oscillator() {
+        let (te, ys, _nfev, n_guard) = osc_run(0.05, 1e-13);
+        let r: Vec<f64> = ys.iter().map(|y| y[0].hypot(y[1])).collect();
+        for k in 1..r.len() {
+            assert!(
+                r[k] >= r[k - 1],
+                "growing mode damped between t = {} and {}: {:e} -> {:e}",
+                te[k - 1],
+                te[k],
+                r[k - 1],
+                r[k]
+            );
+        }
+        let n = te.len() - 1;
+        let k0 = te.iter().position(|&t| t >= 2.0 * te[n] / 3.0).expect("grid");
+        let rate = (r[n].ln() - r[k0].ln()) / (te[n] - te[k0]);
+        assert!((rate / 0.05 - 1.0).abs() <= 1e-3, "late growth rate {rate:e} vs 0.05");
+        assert!(r[n] > 1.0, "the instability must develop over the orbit: final amplitude {:e}", r[n]);
+        assert!(n_guard > 0, "the guard must act on a growing mode");
+    }
+
+    /// Stable control (lambda = -0.05 +/- 2.4i, same grid and tolerances): the guard never acts and the trajectory is
+    /// bit-identical to the integrator before the guard (FNV-1a of every sampled state and nfev recorded at 3eeb574).
+    #[test]
+    fn growing_mode_guard_leaves_a_stable_oscillator_unchanged() {
+        let (_te, ys, nfev, n_guard) = osc_run(-0.05, 1.0);
+        assert_eq!(n_guard, 0);
+        assert_eq!(nfev, 14433);
+        let mut h: u64 = 0xcbf2_9ce4_8422_2325;
+        for y in &ys {
+            for v in y {
+                for byte in v.to_bits().to_le_bytes() {
+                    h ^= byte as u64;
+                    h = h.wrapping_mul(0x0000_0100_0000_01b3);
+                }
+            }
+        }
+        assert_eq!(ys.len(), 151);
+        assert_eq!(format!("{h:016x}"), "64e8b0492b170e0c");
+    }
+
+    /// R(z) in closed form equals 1 + z b^T (I - z A)^-1 1 for the coefficients the integrator uses (b = last row of A,
+    /// stiffly accurate), on points of both half-planes.
+    #[test]
+    fn radau_stability_function_matches_the_coefficients() {
+        let (_c, a) = radau_coeffs();
+        for z in [(0.3, 0.2), (1.0, 2.4), (-3.0, 7.0), (5.0, -1.0), (60.0, 290.0), (-0.01, 0.0)] {
+            // (I - z A) x = 1 by complex Gaussian elimination (3 x 3, no pivoting needed for these z)
+            let mut m = [[(0.0, 0.0); 4]; 3];
+            for i in 0..3 {
+                for j in 0..3 {
+                    let za = (z.0 * a[i][j], z.1 * a[i][j]);
+                    m[i][j] = (if i == j { 1.0 } else { 0.0 } - za.0, -za.1);
+                }
+                m[i][3] = (1.0, 0.0);
+            }
+            for k in 0..3 {
+                for i in k + 1..3 {
+                    let f = cx_div(m[i][k], m[k][k]);
+                    for j in k..4 {
+                        let fm = cx_mul(f, m[k][j]);
+                        m[i][j] = (m[i][j].0 - fm.0, m[i][j].1 - fm.1);
+                    }
+                }
+            }
+            let mut x = [(0.0, 0.0); 3];
+            for i in (0..3).rev() {
+                let mut acc = m[i][3];
+                for j in i + 1..3 {
+                    let t = cx_mul(m[i][j], x[j]);
+                    acc = (acc.0 - t.0, acc.1 - t.1);
+                }
+                x[i] = cx_div(acc, m[i][i]);
+            }
+            let mut bx = (0.0, 0.0);
+            for j in 0..3 {
+                bx = (bx.0 + a[2][j] * x[j].0, bx.1 + a[2][j] * x[j].1);
+            }
+            let zbx = cx_mul(z, bx);
+            let want = (1.0 + zbx.0, zbx.1);
+            let got = radau_r(z);
+            let err = (got.0 - want.0).hypot(got.1 - want.1);
+            assert!(err <= 1e-13 * (1.0 + want.0.hypot(want.1)), "z = {z:?}: {got:?} vs {want:?}");
+        }
+        // the defect on the R45-192 growing mode: one Radau step damps it for h >= 1.26 s, the accepted step-doubling
+        // update (the map the integrator applies) for h >= 2.63 s; the nominal run reached 471 s steps
+        let lam = (0.0508, 2.423);
+        let r13 = radau_r((1.3 * lam.0, 1.3 * lam.1));
+        assert!(r13.0.hypot(r13.1) < 1.0);
+        for h in [3.0, 36.0, 471.0] {
+            assert!(damps_growing_mode(h, lam), "h = {h}");
+        }
+        for h in [0.01, 1.3, 2.0] {
+            assert!(!damps_growing_mode(h, lam), "h = {h}");
+        }
+    }
+
+    fn assert_spectrum(m: &[[f64; NM]; NM], want: &[Cx; NM]) {
+        let got = eig_real(m).expect("converges");
+        let mut used = [false; NM];
+        for w in want {
+            let (k, d) = got
+                .iter()
+                .enumerate()
+                .filter(|(k, _)| !used[*k])
+                .map(|(k, g)| (k, (g.0 - w.0).hypot(g.1 - w.1)))
+                .fold((NM, f64::INFINITY), |b, x| if x.1 < b.1 { x } else { b });
+            assert!(d <= 1e-9 * (1.0 + w.0.hypot(w.1)), "eigenvalue {w:?} not found in {got:?}");
+            used[k] = true;
+        }
+    }
+
+    #[test]
+    fn eig_real_reproduces_known_spectra() {
+        // companion matrix of prod (x - lambda_k), lambda = 0.0508 +/- 2.423i, -0.09575, -0.1159, -6.487 (the
+        // R45-192 steady-start spectrum of the reference Jacobian, numpy)
+        let want = [(0.0508, 2.423), (0.0508, -2.423), (-0.09575, 0.0), (-0.1159, 0.0), (-6.487, 0.0)];
+        let mut poly = vec![(1.0, 0.0)];
+        for l in want {
+            let mut next = vec![(0.0, 0.0); poly.len() + 1];
+            for (k, c) in poly.iter().enumerate() {
+                next[k] = (next[k].0 + c.0, next[k].1 + c.1);
+                let t = cx_mul(*c, l);
+                next[k + 1] = (next[k + 1].0 - t.0, next[k + 1].1 - t.1);
+            }
+            poly = next;
+        }
+        let mut m = [[0.0; NM]; NM];
+        for j in 0..NM {
+            m[0][j] = -poly[j + 1].0;
+        }
+        for i in 1..NM {
+            m[i][i - 1] = 1.0;
+        }
+        assert_spectrum(&m, &want);
+        // a badly scaled triangular-plus-rotation block (balancing exercised)
+        let mut t = [[0.0; NM]; NM];
+        t[0][0] = 0.05;
+        t[0][1] = -2.4e4;
+        t[1][0] = 2.4e-4;
+        t[1][1] = 0.05;
+        t[2][2] = -270.3;
+        t[3][3] = -1e-3;
+        t[4][4] = 7.0;
+        t[0][4] = 1e6;
+        t[2][3] = -3e-5;
+        assert_spectrum(&t, &[(0.05, 2.4), (0.05, -2.4), (-270.3, 0.0), (-1e-3, 0.0), (7.0, 0.0)]);
+        // the zero matrix (a fully saturated, frozen block)
+        assert_spectrum(&[[0.0; NM]; NM], &[(0.0, 0.0); NM]);
+    }
+
+    #[test]
+    fn eig_real_fails_closed_on_non_finite_entries() {
+        let mut m = [[0.0; NM]; NM];
+        m[2][3] = f64::NAN;
+        assert!(eig_real(&m).is_none());
+        m[2][3] = f64::INFINITY;
+        assert!(eig_real(&m).is_none());
+    }
+
     #[test]
     fn settling_definition() {
         let t = [0.0, 1.0, 2.0, 3.0];
         assert_eq!(settling_time(&t, &[1.0, 1.0, 1.0, 1.0], 1.0, 0.02), Some(0.0));
         assert_eq!(settling_time(&t, &[2.0, 1.5, 1.01, 1.0], 1.0, 0.02), Some(2.0));
         assert_eq!(settling_time(&t, &[1.0, 1.0, 1.0, 1.5], 1.0, 0.02), None);
+    }
+
+    /// A plenum frozen at eps = 0.1: the unsaturated valve command u_cmd = 0.6 + 0.1 t crosses 1 at t* = 4 s and
+    /// stays saturated (u_cmd' = 1.1 - u_cmd > 0 there); u is a first-order lag of clip(u_cmd, 0, 1), so
+    /// u(t) = a + b (t - tau) + (u0 - a + b tau) exp(-t / tau) before t* and 1 + (u(t*) - 1) exp(-(t - t*) / tau) after.
+    #[test]
+    fn radau_resolves_the_valve_command_saturation_switch() {
+        let (c, a) = radau_coeffs();
+        let rhs = Rhs {
+            v: 1.0,
+            r0: 1.0,
+            c: EventCoeffs { q0: [0.0; 3], k: [0.0; 3], q0g: [0.0; 3], dq: [0.0; 3], l0: [0.0; 3], dl: [0.0; 3] },
+            g: [0.0; 3],
+            cl: [0.0; 3],
+            km: [1.0; 3],
+            kr: 0.0,
+            mr: 1.0,
+            orbit: false,
+            w: 0.0,
+            amp: 0.0,
+            d0: 1.0,
+            rset: 1.0,
+            kp: 2.0,
+            ti: 1.0,
+            tau: 0.5,
+            uff: 0.5,
+            ms: 1.0,
+        };
+        let (ua, ub, tau, ts, u0) = (0.6, 0.1, 0.5, 4.0, 0.6);
+        let u_lin = |t: f64| ua + ub * (t - tau) + (u0 - ua + ub * tau) * (-t / tau).exp();
+        let exact = |t: f64| if t <= ts { u_lin(t) } else { 1.0 + (u_lin(ts) - 1.0) * (-(t - ts) / tau).exp() };
+        let te = [0.0, 0.7, 1.9, 3.3, 4.6, 6.1, 8.0, 10.0];
+        for rtol in [1e-6, 1e-10] {
+            let mut integ = Integrator { rhs: &rhs, rtol, atol: 1e-12, nfev: 0, c, a, n_guard: 0 };
+            let ys = integ.integrate([1.1, 0.0, 0.0, u0, 0.0, 0.0, 0.0, 0.0], &te).unwrap();
+            for (k, t) in te.iter().enumerate() {
+                let e = (ys[k][3] - exact(*t)).abs();
+                // before the fix: 3.4e-6 (rtol 1e-6) and 6.4e-10 (rtol 1e-10) at t = 4.6 s, after the switch
+                assert!(e <= rtol, "rtol {rtol:e}, t = {t}: |u - exact| = {e:e}");
+            }
+        }
     }
 
     #[test]
@@ -1225,7 +1891,7 @@ mod tests {
             uff: 1.0,
             ms: 1.0,
         };
-        let mut integ = Integrator { rhs: &rhs, rtol: 1e-8, atol: 1e-12, nfev: 0, c, a };
+        let mut integ = Integrator { rhs: &rhs, rtol: 1e-8, atol: 1e-12, nfev: 0, c, a, n_guard: 0 };
         let te = [0.0, 1e-3, 5e-3, 1.0];
         let ys = integ.integrate([0.0; N], &te).unwrap();
         for (k, t) in te.iter().enumerate() {

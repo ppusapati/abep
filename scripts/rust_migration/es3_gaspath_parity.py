@@ -5,17 +5,27 @@ Implements the vector generators, reference calls, tolerance classes and decisio
 
 * docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_FILTER_STAGE_PY/parity_prereg_v{1,2}.json  (contract key 'filter')
 * docs/rust_migration/contracts/C-ABEP_SIM_COMPRESSOR_PY/parity_prereg_v{1,2}.json           (contract key 'compressor')
-* docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v{1,2}.json  (contract key 'plenum')
+* docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v{1..6}.json (contract key 'plenum')
 
 The active version of each key is CONTRACT_VERSION; a superseded version keeps its report (immutable). Version 2 of
 the filter and compressor contracts repeats version 1 with fresh seeds (see their 'supersedes' records). Version 2 of
 the plenum contract is version 1 minus the entries listed in its scope_reduction_v2.excluded_harness_entries
 (plenum.transient_run P42, plenum.transient_case P43): their vectors are generated and dropped before any call.
+Version 3 of the plenum contract is the full v1 scope with the transients P42 / P43 / P45 under the A9.31 sec. 5
+convergence-derived procedure (transient_convergence_procedure_v3): the refinement mode runs the registered refinement
+grid once and writes the frozen envelope record; the scoring mode reads it. Version 4 is version 3 with the transient
+RUST_DEFECT fix registered and fresh seeds (v3 was superseded before any scored run); the procedure is unchanged.
+Version 5 (v4 superseded before any scored run) scores the five rounding-dominated segment cascade diagnostics through
+their primitives (reported with conditioning) and registers a larger refinement grid. Version 6 (v5 superseded before
+any scored run: its frozen refinement record exposed a Rust integrator that damped growing modes) registers the
+growing-mode guard of the Rust integrator and fresh seeds; the procedure is v5's.
 
 The Python reference is called read-only; the Rust side is the `abep-gaspath-parity` binary of crates/abep-gaspath.
 
     python3 scripts/rust_migration/es3_gaspath_parity.py dev   filter|compressor|plenum   # development seed; no verdict
     python3 scripts/rust_migration/es3_gaspath_parity.py score filter|compressor|plenum   # scoring seed, ONCE
+    python3 scripts/rust_migration/es3_gaspath_parity.py refine plenum                    # v6 envelope record, ONCE
+    python3 scripts/rust_migration/es3_gaspath_parity.py refine-dev plenum OUT_JSON N     # development draft only
 
 A scoring run refuses to start when parity_report_v<n>.json exists, when a reference file differs from its registered
 sha256 (REFUSED_REFERENCE_CHANGED) or when a Rust / harness source has uncommitted changes.
@@ -46,6 +56,11 @@ Harness-level definitions the contracts leave to the harness (fixed here, before
   refuse_fixed_mass_flow_gate; P19 flight_feed_requirement; P20 flow_gap_record; P21 refuse_feed_requirement_lowering;
   P22 state_coverage; P23 RobustParetoSet; P24 refuse_candidate_evidence; P25 verify_decision_records, cite,
   dense_state_only_operation.
+* Plenum contract v3 transient leaves (P42 / P43 / P45): the family map V3_FAMILY (registered families and scales of
+  transient_convergence_procedure_v3), p_inlet_max_Pa through the primitive image (diag_images; v5: the five cascade
+  diagnostics are reported with conditioning, scored through their primitives), the closed-form leaves (sample times, steady network) in the ULP classes; any other transient float leaf is a harness
+  error. Threshold proximity follows threshold_proximity_rule.v3_transient leaf by leaf (proximity_transient_v3) and
+  is counted per leaf.
 """
 from __future__ import annotations
 
@@ -67,6 +82,7 @@ import dataclasses  # noqa: E402
 import datetime  # noqa: E402
 import gzip  # noqa: E402
 import hashlib  # noqa: E402
+import itertools  # noqa: E402
 import json  # noqa: E402
 import math  # noqa: E402
 import platform  # noqa: E402
@@ -108,7 +124,7 @@ def sha_file(p: str) -> str:
         return hashlib.sha256(f.read()).hexdigest()
 
 
-CONTRACT_VERSION = {"filter": 2, "compressor": 2, "plenum": 2}
+CONTRACT_VERSION = {"filter": 2, "compressor": 2, "plenum": 6}
 
 
 def version_of(key: str, version=None) -> int:
@@ -291,8 +307,13 @@ class Tally:
             self.fail(vid, entry, name, rust, py, {"path": path})
         return same
 
+    def unfail(self, f):
+        """Withdraw a recorded failure (threshold proximity: NOT_SCORED_AT_THRESHOLD)."""
+        o = self.obs[f"{f['entry']}::{f['observable']}::{f.get('class') or 'EXACT_VALUE'}"]
+        o["n_fail"] -= 1
+
     def flt(self, entry, name, rust, py, spec, vid, path=""):
-        """spec: ('ULP', tol) | ('SOLVER', tol) | ('UNSCORED', None)."""
+        """spec: ('ULP', tol) | ('SOLVER', tol) | ('ENV', tol) | ('UNSCORED', None)."""
         kind, tol = spec
         if kind == "UNSCORED":
             u = self.unscored.setdefault(f"{entry}::{name}", {"entry": entry, "observable": name, "n": 0,
@@ -304,8 +325,10 @@ class Tally:
                 if py:
                     u["max_rel_diff"] = max(u["max_rel_diff"], d / abs(py))
             return True
-        cls = "ULP_BOUNDED" if kind == "ULP" else "SOLVER_TOLERANCE"
+        cls = {"ULP": "ULP_BOUNDED", "ENV": "CONVERGENCE_ENVELOPE"}.get(kind, "SOLVER_TOLERANCE")
         o = self._o(entry, name, cls)
+        if kind == "ENV":
+            o["family"] = tol.get("family")
         o["tolerance"] = tol
         o["n"] += 1
         ok = False
@@ -321,7 +344,15 @@ class Tally:
                 o["max_ulp"] = max(o["max_ulp"], d / u)
                 if p != 0.0:
                     o["max_rel_diff"] = max(o["max_rel_diff"], d / abs(p))
-                if kind == "ULP":
+                if kind == "ENV":
+                    # CONVERGENCE_ENVELOPE: (E_py + E_rust) s_F (or the primitive image W) + the STEADY floating
+                    # residual allowance max(4 ulp, 1e-9 |py|); a NOT_EVALUATED envelope fails
+                    a = tol.get("abs_env")
+                    allowed = (a + max(4 * u, 1e-9 * abs(p))) if a is not None else -1.0
+                    ok = d <= allowed
+                    if allowed > 0:
+                        o["max_used_frac"] = max(o.get("max_used_frac", 0.0), d / allowed)
+                elif kind == "ULP":
                     ok = ((d <= tol.get("k_ulp", 0) * u) or ("r_rel" in tol and d <= tol["r_rel"] * abs(p))
                           or ("a_abs" in tol and d <= tol["a_abs"]))
                 else:
@@ -1775,6 +1806,33 @@ def py_reservoir(d):
     return rmod.Reservoir(**d)
 
 
+def gen_transient_args(g, entry, ref):
+    """One P42 / P43 draw (v1 procedure; also the v3 refinement grid)."""
+    D = design_records()
+    rec = D[int(g.integers(len(D)))]
+    args = {"filter": gen_filter_spec(g), "plant": {"design": f3_grid()[int(g.integers(len(f3_grid())))]},
+            "plenum": gen_plenum_spec(g, -3.5, -1.5), "controller": gen_controller(g),
+            "intake": intake_spec(rec), "r0": pick(g, [0.005, 0.01, 0.02, 0.05]), "window_s": 60.0}
+    if ref:
+        args.update({"rtol": pf.RTOL_REFERENCE, "method": pf.INTEGRATOR_REFERENCE})
+    if entry == "plenum.transient_case":
+        args["orbit_check"] = None if P(g, 0.5) else {"reasons": [r for r in (
+            pf.R_SATURATED, pf.R_DEADHEAD, pf.R_STAGE_DOMAIN, pf.R_KN_FEED) if P(g, 0.3)]}
+    return args
+
+
+def gen_orbit_sim_args(g):
+    """One P45 draw (v1 procedure; also the v3 refinement grid)."""
+    D = design_records()
+    des = D[int(g.integers(len(D)))]
+    same = [r for r in pool() if r.candidate == des.candidate and r.scenario == des.scenario]
+    st = same[int(g.integers(len(same)))]
+    return {"filter": gen_filter_spec(g), "plant": {"design": f3_grid()[int(g.integers(len(f3_grid())))]},
+            "plenum": gen_plenum_spec(g, -3.5, -1.5), "controller": gen_controller(g),
+            "design": intake_spec(des), "state": intake_spec(st),
+            "r0": pick(g, [0.005, 0.01, 0.02, 0.05]), "amplitude": U(g, 0.05, 0.2)}
+
+
 def vectors_plenum(master: int) -> list:
     V = []
 
@@ -1951,16 +2009,7 @@ def vectors_plenum(master: int) -> list:
         g = rng(master, e_idx)
         for i in range(16):
             ref = i >= 12
-            rec = D[int(g.integers(len(D)))]
-            args = {"filter": gen_filter_spec(g), "plant": {"design": f3_grid()[int(g.integers(len(f3_grid())))]},
-                    "plenum": gen_plenum_spec(g, -3.5, -1.5), "controller": gen_controller(g),
-                    "intake": intake_spec(rec), "r0": pick(g, [0.005, 0.01, 0.02, 0.05]), "window_s": 60.0}
-            if ref:
-                args.update({"rtol": pf.RTOL_REFERENCE, "method": pf.INTEGRATOR_REFERENCE})
-            if entry == "plenum.transient_case":
-                args["orbit_check"] = None if P(g, 0.5) else {"reasons": [r for r in (
-                    pf.R_SATURATED, pf.R_DEADHEAD, pf.R_STAGE_DOMAIN, pf.R_KN_FEED) if P(g, 0.3)]}
-            add(f"P{e_idx}-{'REF' if ref else 'PROD'}-{i:02d}", entry, args)
+            add(f"P{e_idx}-{'REF' if ref else 'PROD'}-{i:02d}", entry, gen_transient_args(g, entry, ref))
         args = {"filter": {"factory": "none"}, "plant": {"design": f3_grid()[0]},
                 "plenum": {"volume_m3": 0.002, "gamma_wall": 0.0, "wall_case": "E", "leak_area_m2": 5e-8},
                 "controller": {"Kp": 2.0, "Ti_s": 1.0, "f_valve_hz": 1.0, "authority": 2.0},
@@ -1993,14 +2042,7 @@ def vectors_plenum(master: int) -> list:
     # P45
     g = rng(master, 45)
     for i in range(4):
-        des = D[int(g.integers(len(D)))]
-        same = [r for r in P_ if r.candidate == des.candidate and r.scenario == des.scenario]
-        st = same[int(g.integers(len(same)))]
-        add(f"P45-{i}", "plenum.orbit_sim", {"filter": gen_filter_spec(g),
-                                             "plant": {"design": f3_grid()[int(g.integers(len(f3_grid())))]},
-                                             "plenum": gen_plenum_spec(g, -3.5, -1.5), "controller": gen_controller(g),
-                                             "design": intake_spec(des), "state": intake_spec(st),
-                                             "r0": pick(g, [0.005, 0.01, 0.02, 0.05]), "amplitude": U(g, 0.05, 0.2)})
+        add(f"P45-{i}", "plenum.orbit_sim", gen_orbit_sim_args(g))
     # P46
     add("P46-G-strict_blockers", "plenum.strict_blockers", {})
     g = rng(master, 46)
@@ -2250,7 +2292,13 @@ def _tap_segment_record(self, ev, t0, sol):
     ucmd = self._u_cmd((rec["p"][-1] - ev.setpoint_Pa) / ev.setpoint_Pa, float(sol.y[4, -1]))
     TAP.setdefault(_CUR["vid"], []).append({"ucmd_end": float(ucmd), "kind": ev.kind, "setpoint": ev.setpoint_Pa,
                                             "p": [float(x) for x in rec["p"]], "mdot": [float(x) for x in rec["mdot"]],
-                                            "p_max": float(np.max(rec["p"]))})
+                                            "p_max": float(np.max(rec["p"])),
+                                            # contract v3 primitive image: the run's own states at the samples
+                                            "tr": self, "ev": ev, "t0": t0, "t": np.array(sol.t, copy=True),
+                                            "y": np.array(sol.y, copy=True),
+                                            "diag": {n: rec[n] for n in ("K_min", "K_over_K0_max", "p_stage_max_Pa",
+                                                                         "p_inlet_max_Pa", "P_el_max_W",
+                                                                         "T_comp_max_K")}})
     return rec
 
 
@@ -2594,6 +2642,8 @@ def rule_plenum(ctx, path, py):
             tol["a_abs"] = 1e-9
         return ("ULP", tol)
     if e in TRANSIENT_ENTRIES:
+        if v3_on():
+            return rule_transient_v3(ctx, path, py)
         return ("SOLVER", transient_tol(ctx, path))
     if e in ("reservoir.steady", "reservoir.size_orifice"):
         tol = {"rel": 1e-10, "k_ulp": 4, "abs": 0.0}
@@ -2617,6 +2667,8 @@ def skip_plenum(entry, path):
         return True
     if entry in TRANSIENT_ENTRIES and keys[-1] in ("nfev", "mass_residual_rel"):
         return True
+    if CONTRACT_VERSION["plenum"] >= 5 and entry == "plenum.transient_run" and keys[-1] in V5_CASCADE:
+        return True     # contract v5 ill_conditioned_diagnostics.rule_cascade: reported, scored through primitives
     if entry in ("reservoir.steady",) and keys[-1] == "iterations":
         return True
     return False
@@ -2699,6 +2751,8 @@ def transient_flags(v, py):
 def proximity_plenum(v, rust, py, sub):
     """Threshold-proximity rule (registered): a discrete difference is NOT_SCORED_AT_THRESHOLD only where the Python
     value of the governing quantity lies within its tolerance of the threshold; continuous leaves stay scored."""
+    if v3_on() and v["entry"] in TRANSIENT_ENTRIES:
+        return proximity_transient_v3(v, rust, py, sub)
     if not sub.failures or v["entry"] not in ("plenum.steady", "plenum.evaluate", "plenum.sweep", "plenum.orbit_qs",
                                               "plenum.transient_run", "plenum.transient_case", "plenum.orbit_sim"):
         return None
@@ -2744,6 +2798,7 @@ def proximity_plenum(v, rust, py, sub):
                 t2.flt(v["entry"], norm_path(path), r, p, spec, v["id"], "/".join(map(str, path)))
     walk(rust, py)
     return {"vector": v["id"], "entry": v["entry"], "status": "NOT_SCORED_AT_THRESHOLD", "flags": flags[:10],
+            "n_unscored_leaves": len(sub.failures),
             "unscored_discrete_differences": [{k: f[k] for k in ("observable", "path", "rust", "python") if k in f}
                                               for f in sub.failures][:10], "_tally": t2}
 
@@ -2824,12 +2879,811 @@ def checks_plenum(t, vectors, py_out, rres):
                       "failures": [c for c in L if not c["ok"]][:20], "ok": all(c["ok"] for c in L)}
     out = {"CONS-P-01": summ(cons1), "CONS-P-02": summ(cons2), "CONS-P-03": summ(cons3), "CONS-P-04": summ(cons4),
            "INV-P-02": summ(inv2), "INV-P-04": {"ok": inv4}}
+    if v3_on():
+        out["CONS-P-03"]["python_recorded"] = cons3_python(vectors, py_out)
+        out.update(checks_transient_v3(vectors, py_out, rres))
     out["CONS-P-01"]["max_residual_over_floor"] = max((c["residual_kgps"] / c["limit_kgps"] * 1e-12 for c in cons1
                                                        if c["limit_kgps"] > 0), default=0.0)
     out["CONS-P-02"]["max_residual_rel"] = max((c["residual_rel"] for c in cons2), default=0.0)
     out["CONS-P-03"]["max_mass_residual_rel"] = max((c["mass_residual_rel"] for c in cons3), default=0.0)
     out["CONS-P-04"]["max_balance_residual_rel"] = max((c["balance_residual_rel"] for c in cons4), default=0.0)
     return out
+
+
+def cons3_python(vectors, py_out):
+    """CONS-P-03 on the Python reference runs (recorded, not a Rust criterion)."""
+    rows = []
+    for v in vectors:
+        po = py_out[v["id"]]
+        if po[0] != "OK" or not isinstance(po[1], dict) or v["entry"] not in TRANSIENT_ENTRIES:
+            continue
+        val = po[1]
+        m = (val.get("summary") or {}).get("mass_residual_rel") if v["entry"] == "plenum.transient_case" else \
+            (val.get("mass_residual_rel") if val.get("ok") else None)
+        if m is not None:
+            rows.append({"vector": v["id"], "mass_residual_rel": unj(m), "ok": unj(m) <= pf.MASS_TOL})
+    return {"n": len(rows), "n_fail": sum(1 for r in rows if not r["ok"]),
+            "max_mass_residual_rel": max((r["mass_residual_rel"] for r in rows), default=0.0)}
+
+
+# ======================================================================================================================
+# Plenum contract v3: the A9.31 sec. 5 convergence-derived transient procedure (transient_convergence_procedure_v3)
+# ======================================================================================================================
+V3_DIAG = ("K_min", "K_over_K0_max", "p_stage_max_Pa", "p_inlet_max_Pa", "P_el_max_W", "T_comp_max_K")
+V5_CASCADE = ("K_min", "K_over_K0_max", "p_stage_max_Pa", "P_el_max_W", "T_comp_max_K")   # reported (v5)
+V3_FAMILY = {
+    "plenum.transient_run": {("segments", "p"): "F42.p", ("segments", "u"): "F42.u", ("segments", "mdot"): "F42.mdot",
+                             ("segments", "xO"): "F42.xO", ("segments", "_ucmd_end"): "F42.ucmd_end",
+                             ("throughput_kg",): "F42.throughput"},
+    "plenum.transient_case": {
+        **{("metrics", k): "F43.p" for k in ("P_final_Pa", "P_min_Pa", "P_max_Pa")},
+        **{("summary", k): "F43.p" for k in ("P_min_Pa", "P_max_Pa")},
+        **{("metrics", k): "F43.setpoint_frac" for k in ("final_setpoint_error_frac", "peak_deviation_frac")},
+        ("objectives", "peak_deviation_max"): "F43.setpoint_frac",
+        ("metrics", "overshoot_frac"): "F43.overshoot", ("summary", "overshoot_max"): "F43.overshoot",
+        **{("metrics", k): "F43.mdot" for k in ("mdot_final_kgps", "mdot_min_kgps", "mdot_max_kgps")},
+        **{("summary", k): "F43.mdot" for k in ("mdot_min_kgps", "mdot_max_kgps")},
+        **{("metrics", k): "F43.xO" for k in ("xO_min", "xO_max")},
+        **{("summary", k): "F43.xO" for k in ("xO_flow_min", "xO_flow_max")},
+        **{("metrics", k): "F43.u" for k in ("u_min", "u_max")},
+        ("metrics", "valve_travel"): "F43.valve_travel", ("objectives", "valve_travel"): "F43.valve_travel_total"},
+    "plenum.orbit_sim": {("P_dev_max_frac",): "F45.P_dev", ("mdot_min_kgps",): "F45.mdot",
+                         ("mdot_max_kgps",): "F45.mdot"}}
+V3_CODE = {"plenum.transient_run": "P42", "plenum.transient_case": "P43", "plenum.orbit_sim": "P45"}
+V3_SAMPLE_TIME = {("metrics", "settling_time_s"), ("metrics", "flow_recovery_s"), ("objectives", "settling_max_s"),
+                  ("segments", "t")}
+V3_STEADY = {("summary", k) for k in ("a_eq_design_m2", "a_eq_max_m2", "plenum_tau_s", "shaft_hz", "inventory_kg",
+                                      "ride_through_s")} | {("objectives", "ripple_transfer_shaft"),
+                                                            ("objectives", "P_compressor_el_W")}
+CF_T = {"k_ulp": 4, "r_rel": 1e-12}
+V3_SCALE: dict = {}     # family -> registered scale kind (filled from the contract)
+EPS = 2.0 ** -52
+ENV: dict = {}          # the frozen envelope record (scoring) or a development draft (dev only)
+IMG: dict = {}          # vector id -> per-segment primitive images of the cascade diagnostics
+MDS: dict = {}          # vector id -> mdot_scale (design steady delivered flow of the reference)
+
+
+def v3_on() -> bool:
+    return CONTRACT_VERSION["plenum"] >= 3
+
+
+def v3_families() -> dict:
+    """family -> scale kind, from the registered contract (one source of truth)."""
+    fams = load_contract("plenum")[0]["transient_convergence_procedure_v3"]["step_3_envelope_estimator"]["families"]
+    out = {f: d["scale"] for code in fams.values() for f, d in code.items()}
+    mapped = {f for m in V3_FAMILY.values() for f in m.values()}
+    if mapped != set(out):
+        raise RuntimeError(f"harness family map {sorted(mapped)} != contract families {sorted(out)}")
+    return out
+
+
+def level_of(v) -> str:
+    return "REF" if v["args"].get("rtol") == pf.RTOL_REFERENCE else "PROD"
+
+
+def keys_of(path) -> tuple:
+    return tuple(c for c in path if isinstance(c, str))
+
+
+def parse_path(s: str) -> tuple:
+    return tuple(int(c) if c.isdigit() else c for c in s.split("/")) if s else ()
+
+
+def get_path(tree, path):
+    for c in path:
+        if isinstance(tree, dict) and isinstance(c, str) and c in tree:
+            tree = tree[c]
+        elif isinstance(tree, list) and isinstance(c, int) and c < len(tree):
+            tree = tree[c]
+        else:
+            return None
+    return tree
+
+
+def mdot_scale_of(v):
+    """TransientRun(...).mdot_scale of the reference (registered family scale); None at / above dead-head."""
+    if v["id"] not in MDS:
+        a = v["args"]
+        try:
+            tr_ = pf.TransientRun(py_filter_case(a["filter"]), py_plant(a["plant"]), py_plenum_obj(a["plenum"]),
+                                  py_controller(a["controller"]),
+                                  py_intake_state(a["design"] if v["entry"] == "plenum.orbit_sim" else a["intake"]),
+                                  a["r0"])
+            MDS[v["id"]] = float(tr_.mdot_scale)
+        except ValueError:
+            MDS[v["id"]] = None
+    return MDS[v["id"]]
+
+
+def family_scale(kind, v, ref_value):
+    if kind == "r0":
+        return float(v["args"]["r0"])
+    if kind == "mdot_scale":
+        return mdot_scale_of(v)
+    if kind == "1":
+        return 1.0
+    if kind == "relative":
+        return abs(ref_value) if isinstance(ref_value, float) and math.isfinite(ref_value) else None
+    raise RuntimeError(kind)
+
+
+def env_of(impl, level, code, fam):
+    e = ENV["envelopes"][impl].get(level, {}).get(code, {}).get(fam)
+    return None if e is None else e["E"]
+
+
+def env_sum(level, code, fam):
+    a, b = env_of("python", level, code, fam), env_of("rust", level, code, fam)
+    return None if a is None or b is None else a + b
+
+
+# ------------------------------------------------------------------------------------------------ primitive image
+def diag_images(v) -> list:
+    """Per segment and cascade diagnostic: the reference value f(y), the image half-width W over the 8 corners of the
+    per-species box y_s +/- delta (delta = combined F42.p envelope at the vector's level), the image interval and
+    kappa = W / (delta |f|) (contract v3 ill_conditioned_diagnostics)."""
+    vid = v["id"]
+    if vid in IMG:
+        return IMG[vid]
+    delta = env_sum(level_of(v), "P42", "F42.p")
+    out = []
+    for tp in TAP.get(vid, []):
+        tr_, ev, t0, t, y = tp["tr"], tp["ev"], tp["t0"], tp["t"], tp["y"]
+        base = _ORIG_SEG(tr_, ev, t0, types.SimpleNamespace(t=t, y=y))
+        corners, rcorners = [], []
+        for sig in itertools.product((-1.0, 1.0), repeat=3):
+            yy = np.array(y, dtype=float, copy=True)
+            yr = np.array(y, dtype=float, copy=True)
+            for i in range(3):
+                yy[i] = yy[i] + sig[i] * delta
+                yr[i] = yr[i] * (1.0 + sig[i] * 4.0 * EPS)
+            corners.append(_ORIG_SEG(tr_, ev, t0, types.SimpleNamespace(t=t, y=yy)))
+            rcorners.append(_ORIG_SEG(tr_, ev, t0, types.SimpleNamespace(t=t, y=yr)))
+        rec = {"T_comp_limit_K": base["T_comp_limit_K"], "base_equals_reported": all(
+            struct.pack("<d", float(base[n])) == struct.pack("<d", float(tp["diag"][n])) for n in V3_DIAG)}
+        for n in V3_DIAG:
+            f0 = float(base[n])
+            vals = [float(c[n]) for c in corners]
+            if math.isfinite(f0) and all(math.isfinite(x) for x in vals):
+                W = max(abs(x - f0) for x in vals)
+                lo, hi = min(vals + [f0]), max(vals + [f0])
+            else:
+                W, lo, hi = math.inf, -math.inf, math.inf
+            kappa = W / (delta * abs(f0)) if f0 != 0.0 and math.isfinite(f0) and delta > 0 else math.inf
+            rv = [float(c[n]) for c in rcorners]
+            Wr = max(abs(x - f0) for x in rv) if math.isfinite(f0) and all(math.isfinite(x) for x in rv) else math.inf
+            kr = Wr / (4.0 * EPS * abs(f0)) if f0 != 0.0 and math.isfinite(f0) else math.inf
+            rec[n] = {"f": f0, "W": W, "lo": lo, "hi": hi, "kappa": kappa, "W_round": Wr, "kappa_round": kr}
+        out.append(rec)
+    IMG[vid] = out
+    return out
+
+
+# ------------------------------------------------------------------------------------------------ scoring rule
+def rule_transient_v3(ctx, path, py):
+    v, e = ctx["vector"], ctx["entry"]
+    keys = keys_of(path)
+    fam = V3_FAMILY[e].get(keys)
+    lvl = level_of(v)
+    if fam is not None:
+        E = env_sum(lvl, V3_CODE[e], fam)
+        s = family_scale(V3_SCALE[fam], v, py if isinstance(py, float) else None)
+        if E is None or s is None:
+            return ("ENV", {"abs_env": None, "family": fam, "level": lvl, "why": "envelope or scale NOT_EVALUATED"})
+        return ("ENV", {"abs_env": E * s, "family": fam, "level": lvl})
+    if e == "plenum.transient_run" and len(keys) == 2 and keys[0] == "segments" and keys[1] in V3_DIAG:
+        imgs = diag_images(v)
+        k = path[1]
+        W = imgs[k][keys[1]]["W"] if k < len(imgs) else None
+        return ("ENV", {"abs_env": W, "family": "image:" + keys[1], "level": lvl})
+    if keys in V3_SAMPLE_TIME or (keys and keys[-1] in TRANSIENT_COPIED):
+        return ("ULP", CF_T)
+    if keys in V3_STEADY:
+        return ("ULP", STEADY)
+    raise RuntimeError(f"contract v3: unregistered transient leaf {e} {path}")
+
+
+# ------------------------------------------------------------------------------------------------ proximity (v3)
+def proximity_transient_v3(v, rust, py, sub):
+    """threshold_proximity_rule.v3_transient: every differing discrete leaf must be attributed to a flagged governing
+    quantity of the same segment; excused leaves are NOT_SCORED_AT_THRESHOLD (counted per leaf), the rest fail."""
+    if not sub.failures or v["entry"] == "plenum.orbit_sim":
+        return None
+    e, vid, lvl = v["entry"], v["id"], level_of(v)
+    taps = TAP.get(vid, [])
+    r0, ms = float(v["args"]["r0"]), mdot_scale_of(v)
+    tol_p = env_sum(lvl, "P42", "F42.p") * r0
+    tol_md = env_sum(lvl, "P42", "F42.mdot") * ms
+    tol_u = env_sum(lvl, "P42", "F42.u")
+    tol_uc = env_sum(lvl, "P42", "F42.ucmd_end")
+    flags = []
+
+    def sat_flag(k):
+        if k >= len(taps):
+            return False
+        hit = [th for th in (1.0 + 1e-9, -1e-9) if abs(taps[k]["ucmd_end"] - th) <= tol_uc]
+        if hit:
+            flags.append({"quantity": "u_cmd end", "segment": k, "theta": hit[0], "python": taps[k]["ucmd_end"],
+                          "tol": tol_uc})
+        return bool(hit)
+
+    def settle_flag(k, which):
+        if k >= len(taps):
+            return False
+        if which == "p":
+            y, fin, tol = taps[k]["p"], taps[k]["setpoint"], tol_p
+        else:
+            y, fin, tol = taps[k]["mdot"], taps[k]["mdot"][-1], 2.0 * tol_md
+        band = pf.SETTLE_BAND * abs(fin)
+        hit = any(abs(abs(x - fin) - band) <= tol for x in y)
+        if hit:
+            flags.append({"quantity": f"settling band ({which})", "segment": k, "theta": band, "tol": tol})
+        return hit
+
+    def image_interval(name, agg):
+        imgs = diag_images(v)
+        if not imgs:
+            return None
+        lo = agg(r[name]["lo"] for r in imgs)
+        hi = agg(r[name]["hi"] for r in imgs)
+        return lo, hi
+
+    def straddles(iv, theta):
+        return iv is not None and iv[0] <= theta <= iv[1]
+
+    def reason_flag(reason):
+        n_seg = len(taps)
+        if reason == pf.R_NOT_SETTLED:
+            return any(settle_flag(k, "p") or settle_flag(k, "mdot") for k in range(1, n_seg))
+        if reason == pf.R_SATURATED:
+            return any(sat_flag(k) for k in range(1, n_seg))
+        if reason == pf.R_TRAJ_DOMAIN:
+            pm = max(tp["p_max"] for tp in taps) if taps else math.nan
+            hit = abs(pm - pf.P_DOMAIN_PA) <= tol_p
+            if hit:
+                flags.append({"quantity": "max trajectory p", "theta": pf.P_DOMAIN_PA, "python": pm, "tol": tol_p})
+            return hit
+        if reason == pf.R_CHARACTERISTIC:
+            hit = straddles(image_interval("K_min", min), 1.0 - pf.K_TOL) or \
+                straddles(image_interval("K_over_K0_max", max), 1.0 + pf.K_TOL)
+        elif reason == pf.R_STAGE_DOMAIN:
+            hit = straddles(image_interval("p_stage_max_Pa", max), pf.P_DOMAIN_PA * (1 + 1e-12)) or \
+                straddles(image_interval("p_inlet_max_Pa", max), pf.P_DOMAIN_PA)
+        elif reason == pf.R_THERMAL:
+            imgs = diag_images(v)
+            hit = bool(imgs) and straddles(image_interval("T_comp_max_K", max), imgs[0]["T_comp_limit_K"])
+        else:
+            return False
+        if hit:
+            flags.append({"quantity": f"image interval ({reason})"})
+        return hit
+
+    rs_r, rs_p = set(rust.get("reasons") or []), set(py.get("reasons") or [])
+    reasons_excused = bool(rs_r ^ rs_p) and all(reason_flag(r) for r in sorted(rs_r ^ rs_p))
+    excused, unexcused = [], []
+    for f in sub.failures:
+        path = parse_path(f.get("path", ""))
+        keys = keys_of(path)
+        ok = False
+        if e == "plenum.transient_run" and len(path) >= 3 and path[0] == "segments":
+            k = path[1]
+            if keys == ("segments", "saturated_end"):
+                ok = sat_flag(k)
+            elif keys == ("segments", "xO") and len(path) == 4:
+                pr, rr = get_path(py, path), get_path(rust, path)
+                if (pr == "NaN") != (rr == "NaN"):
+                    u = get_path(py, ("segments", k, "u", path[3]))
+                    ok = isinstance(u, float) and abs(u) <= tol_u
+                    if ok:
+                        flags.append({"quantity": "valve opening sign (xO None-ness)", "segment": k,
+                                      "sample": path[3], "python_u": u, "tol": tol_u})
+        elif e == "plenum.transient_case":
+            k = path[1] if len(path) > 1 and isinstance(path[1], int) else None
+            if keys == ("metrics", "saturated_end"):
+                ok = sat_flag(k)
+            elif keys == ("metrics", "settling_time_s"):
+                ok = settle_flag(k, "p")
+            elif keys == ("metrics", "flow_recovery_s"):
+                ok = settle_flag(k, "mdot")
+            elif keys == ("objectives", "settling_max_s"):
+                ok = any(settle_flag(j, "p") or settle_flag(j, "mdot") for j in range(1, len(taps)))
+            elif keys and keys[0] == "reasons":
+                ok = reasons_excused
+            elif keys == ("status",):
+                ok = reasons_excused
+        (excused if ok else unexcused).append(f)
+    if not excused:
+        return None
+    for f in excused:
+        sub.unfail(f)
+    sub.failures = unexcused
+    return {"vector": vid, "entry": e, "status": "NOT_SCORED_AT_THRESHOLD", "n_unscored_leaves": len(excused),
+            "flags": flags[:20], "unscored_discrete_differences": [
+                {k: f[k] for k in ("observable", "path", "rust", "python") if k in f} for f in excused][:20],
+            "unexcused_failures": len(unexcused), "_tally": sub}
+
+
+# ------------------------------------------------------------------------------------------------ integrity checks
+def checks_transient_v3(vectors, py_out, rres):
+    """NN-P-01, NN-P-02, VS-P-01, EV-P-01 (Rust required, own envelope; Python recorded) and the image check."""
+    res = {c: {"rust": [], "python": []} for c in ("NN-P-01", "NN-P-02", "VS-P-01", "EV-P-01")}
+    img_check = []
+    for v in vectors:
+        e = v["entry"]
+        if e not in V3_CODE:
+            continue
+        lvl = level_of(v)
+        ms = mdot_scale_of(v)
+        evs = None
+        if e != "plenum.orbit_sim":
+            evs = [(x.name, x.kind, x.duration_s) for x in pf.event_sequence(
+                py_intake_state(v["args"]["intake"]), v["args"]["r0"], v["args"]["window_s"])]
+        for impl, val in (("rust", rres[v["id"]].get("value") if rres[v["id"]]["outcome"] == "OK" else None),
+                          ("python", py_out[v["id"]][1] if py_out[v["id"]][0] == "OK" else None)):
+            if not isinstance(val, dict):
+                continue
+            bad = {c: [] for c in res}
+
+            def fnum_(x):
+                return unj(x) if isinstance(x, str) else x
+            if e == "plenum.transient_run" and val.get("ok"):
+                Eu, Em = env_of(impl, lvl, "P42", "F42.u"), env_of(impl, lvl, "P42", "F42.mdot")
+                t_start = 0.0
+                for k, sg in enumerate(val["segments"]):
+                    if any(fnum_(x) < 0.0 for x in sg["p"]):
+                        bad["NN-P-01"].append([k, "p"])
+                    if ms is not None and any(fnum_(x) < -Em * ms for x in sg["mdot"]):
+                        bad["NN-P-02"].append([k, "mdot"])
+                    if any(not (-Eu <= fnum_(x) <= 1.0 + Eu) for x in sg["u"]):
+                        bad["VS-P-01"].append([k, "u"])
+                    t = [fnum_(x) for x in sg["t"]]
+                    if (k >= len(evs) or (sg["event"], sg["kind"]) != evs[k][:2] or sg["t_start_s"] != t_start
+                            or t[0] != 0.0 or t[-1] != sg["duration_s"] or any(b <= a for a, b in zip(t, t[1:]))):
+                        bad["EV-P-01"].append(k)
+                    t_start += sg["duration_s"]
+                if len(val["segments"]) != len(evs):
+                    bad["EV-P-01"].append("count")
+                if not (fnum_(val["throughput_kg"]) >= 0.0):
+                    bad["NN-P-02"].append("throughput_kg")
+            if e == "plenum.transient_case" and val.get("metrics"):
+                Eu, Em = env_of(impl, lvl, "P43", "F43.u"), env_of(impl, lvl, "P43", "F43.mdot")
+                for k, m in enumerate(val["metrics"]):
+                    if not (fnum_(m["P_min_Pa"]) >= 0.0):
+                        bad["NN-P-01"].append([k, "P_min_Pa"])
+                    if ms is not None and not (fnum_(m["mdot_min_kgps"]) >= -Em * ms):
+                        bad["NN-P-02"].append([k, "mdot_min_kgps"])
+                    if not (fnum_(m["u_min"]) >= -Eu and fnum_(m["u_max"]) <= 1.0 + Eu):
+                        bad["VS-P-01"].append([k, "u"])
+                    if k >= len(evs) or (m["event"], m["kind"]) != evs[k][:2]:
+                        bad["EV-P-01"].append(k)
+                if len(val["metrics"]) != len(evs):
+                    bad["EV-P-01"].append("count")
+                inv = (val.get("summary") or {}).get("inventory_kg")
+                if inv is not None and not (fnum_(inv) > 0.0):
+                    bad["NN-P-02"].append("inventory_kg")
+            if e == "plenum.orbit_sim" and val.get("ok"):
+                Em = env_of(impl, lvl, "P45", "F45.mdot")
+                if ms is not None and not (fnum_(val["mdot_min_kgps"]) >= -Em * ms):
+                    bad["NN-P-02"].append("mdot_min_kgps")
+            for c, b in bad.items():
+                res[c][impl].append({"vector": v["id"], "ok": not b, "violations": b[:10]})
+        if e in ("plenum.transient_run", "plenum.transient_case") and py_out[v["id"]][0] == "OK" and \
+                rres[v["id"]]["outcome"] == "OK" and (e == "plenum.transient_run" or v["id"] in IMG):
+            imgs = diag_images(v)
+            img_check.append({"vector": v["id"], "ok": all(r["base_equals_reported"] for r in imgs)})
+    out = {}
+    for c, d in res.items():
+        r_ = d["rust"]
+        out[c] = {"n": len(r_), "n_fail": sum(1 for x in r_ if not x["ok"]), "ok": all(x["ok"] for x in r_),
+                  "failures": [x for x in r_ if not x["ok"]][:20],
+                  "python_recorded": {"n": len(d["python"]), "n_fail": sum(1 for x in d["python"] if not x["ok"]),
+                                      "failures": [x for x in d["python"] if not x["ok"]][:20]}}
+    out["IMG-CHECK (f(y) equals the Python reported diagnostic)"] = {
+        "n": len(img_check), "ok": all(x["ok"] for x in img_check),
+        "failures": [x for x in img_check if not x["ok"]][:20]}
+    return out
+
+
+def transient_v3_summary(t, vectors):
+    """Per family / image: the largest fraction of the allowed bound used, and the diagnostic conditioning."""
+    fams = [o for o in t.obs.values() if o["tolerance_class"] == "CONVERGENCE_ENVELOPE"]
+    cond = []
+    for v in vectors:
+        for k, r in enumerate(IMG.get(v["id"], [])):
+            for n in V3_DIAG:
+                cond.append({"vector": v["id"], "segment": k, "quantity": n, "f": r[n]["f"], "W": r[n]["W"],
+                             "kappa": r[n]["kappa"], "W_round": r[n]["W_round"], "kappa_round": r[n]["kappa_round"],
+                             "scored": n not in V5_CASCADE or CONTRACT_VERSION["plenum"] < 5})
+    kap = [c["kappa"] for c in cond]
+    kr = [c["kappa_round"] for c in cond]
+    return {"families": [{k: o.get(k) for k in ("entry", "observable", "n", "n_fail", "max_abs_diff", "max_rel_diff",
+                                               "max_used_frac", "family")} for o in fams],
+            "diagnostic_conditioning": {
+                "n": len(cond), "n_kappa_le_1e2": sum(1 for x in kap if x <= 1e2),
+                "n_kappa_gt_1e6": sum(1 for x in kap if x > 1e6), "n_kappa_inf": sum(1 for x in kap if math.isinf(x)),
+                "n_kappa_round_gt_1e6 (computed digits rounding noise)": sum(1 for x in kr if x > 1e6),
+                "largest_20": sorted(cond, key=lambda c: -c["kappa"] if math.isfinite(c["kappa"]) else -math.inf)[:20],
+                "all": cond}}
+
+
+# ------------------------------------------------------------------------------------------------ envelope record
+def envelope_path(contract) -> str:
+    return os.path.join(ROOT, contract["transient_convergence_procedure_v3"]["step_4_freeze"]["record"])
+
+
+def load_envelope(contract, contract_sha, mode) -> dict:
+    """step_4_freeze: the scoring run reads the committed, unchanged record of this contract; development runs may
+    read a development draft (ABEP_PLENUM_ENVELOPE_DEV)."""
+    path = envelope_path(contract)
+    dev = os.environ.get("ABEP_PLENUM_ENVELOPE_DEV")
+    if mode != "score" and dev:
+        path = dev
+    if not os.path.exists(path):
+        sys.exit(f"REFUSED: envelope record {path} missing (run 'refine plenum' first)")
+    rec = json.load(open(path))
+    meta = {"path": os.path.relpath(path, ROOT) if path.startswith(ROOT) else path, "sha256": sha_file(path)}
+    if mode == "score":
+        rel = os.path.relpath(path, ROOT)
+        if subprocess.run(["git", "ls-files", "--error-unmatch", rel], cwd=ROOT, capture_output=True).returncode:
+            sys.exit(f"REFUSED: envelope record {rel} is not committed")
+        if git("status", "--porcelain", "--", rel):
+            sys.exit(f"REFUSED: envelope record {rel} changed since its commit")
+        meta["commit"] = git("log", "-n1", "--format=%H", "--", rel)
+        if rec.get("mode") != "REFINEMENT_FROZEN":
+            sys.exit("REFUSED: the envelope record is not a frozen refinement record")
+    if rec["contract"]["sha256"] != contract_sha:
+        sys.exit("REFUSED: the envelope record belongs to another contract version")
+    if not rec["checks"]["COMP-P-01"]["ok"]:
+        sys.exit("REFUSED: COMP-P-01 failed in the envelope record")
+    rec["_meta"] = meta
+    return rec
+
+
+class _RtolDefault:
+    """Tightened P45 Python runs: orbit_simulated has no rtol argument, so the default rtol of TransientRun.__init__
+    is set in this process for the duration of the call (registered override mechanics; no file is changed)."""
+
+    def __init__(self, rtol):
+        self.rtol = rtol
+
+    def __enter__(self):
+        self.saved = pf.TransientRun.__init__.__defaults__
+        if self.saved != (pf.RTOL, None):
+            raise RuntimeError(f"unexpected TransientRun defaults {self.saved}")
+        pf.TransientRun.__init__.__defaults__ = (self.rtol, None)
+
+    def __exit__(self, *exc):
+        pf.TransientRun.__init__.__defaults__ = self.saved
+
+
+def refinement_vectors(contract, master, counts) -> list:
+    """step_1_refinement_grid: the held-out draw procedure with the registered counts."""
+    V = []
+    for e_idx, entry in ((42, "plenum.transient_run"), (43, "plenum.transient_case")):
+        g = rng(master, e_idx)
+        n_p, n_r = counts[f"P{e_idx}"]["PROD"], counts[f"P{e_idx}"]["REF"]
+        for i in range(n_p + n_r):
+            ref = i >= n_p
+            V.append({"id": f"R{e_idx}-{'REF' if ref else 'PROD'}-{i:03d}", "entry": entry,
+                      "args": gen_transient_args(g, entry, ref)})
+    g = rng(master, 45)
+    for i in range(counts["P45"]["PROD"]):
+        V.append({"id": f"R45-{i:03d}", "entry": "plenum.orbit_sim", "args": gen_orbit_sim_args(g)})
+    return V
+
+
+def py_run_rtol(v, rtol):
+    if rtol is None:
+        return py_plenum(v)
+    if v["entry"] == "plenum.orbit_sim":
+        with _RtolDefault(rtol):
+            return py_plenum(v)
+    return py_plenum({"id": v["id"], "entry": v["entry"], "args": dict(v["args"], rtol=rtol)})
+
+
+def rust_req_rtol(v, rtol):
+    return {"id": v["id"], "entry": v["entry"], "args": v["args"] if rtol is None else dict(v["args"], rtol=rtol)}
+
+
+def tree_leaves(x, path=()):
+    if isinstance(x, dict):
+        for k, w in x.items():
+            yield from tree_leaves(w, path + (k,))
+    elif isinstance(x, list):
+        for i, w in enumerate(x):
+            yield from tree_leaves(w, path + (i,))
+    else:
+        yield path, x
+
+
+def family_leaves(entry, val) -> dict:
+    """family -> {path: finite float} of one run."""
+    out = {}
+    for path, x in tree_leaves(val):
+        fam = V3_FAMILY[entry].get(keys_of(path))
+        if fam is not None and isinstance(x, float) and math.isfinite(x):
+            out.setdefault(fam, {})[path] = x
+    return out
+
+
+def discrete_leaves(entry, val) -> dict:
+    """non-float leaves (statuses, reasons, booleans, None-ness, non-finite strings) and sample-time leaves."""
+    out = {}
+    for path, x in tree_leaves(val):
+        k = keys_of(path)
+        if k and k[-1] in ("nfev", "message"):
+            continue
+        if not isinstance(x, float) or (k in V3_SAMPLE_TIME and k != ("segments", "t")):
+            out[path] = x
+    return out
+
+
+def run_ok(entry, out) -> bool:
+    if out[0] != "OK" or not isinstance(out[1], dict):
+        return False
+    val = out[1]
+    if entry == "plenum.transient_case":
+        return val.get("summary") is not None
+    return bool(val.get("ok"))
+
+
+def refine_plenum(dev_out=None, dev_counts=None):
+    """transient_convergence_procedure_v3 steps 1-4: the refinement-grid runs and the frozen envelope record (once).
+    dev_out: a development draft from the development seed, written outside the contract directory."""
+    contract, csha, cpath = load_contract("plenum")
+    proc = contract["transient_convergence_procedure_v3"]
+    seeds = contract["campaign_seeds"]
+    if dev_out is None:
+        rec_path = envelope_path(contract)
+        if os.path.exists(rec_path):
+            sys.exit(f"REFUSED: {rec_path} exists; the refinement grid is run once and frozen")
+        dirty = git("status", "--porcelain", "--", "crates", "Cargo.toml", "Cargo.lock", "rust-toolchain.toml",
+                    "scripts/rust_migration")
+        if dirty:
+            sys.exit("REFUSED: uncommitted Rust / harness sources:\n" + dirty)
+        master, counts, mode = seeds["refinement_master_seed"], proc["step_1_refinement_grid"]["counts"], \
+            "REFINEMENT_FROZEN"
+    else:
+        rec_path = os.path.abspath(dev_out)
+        if rec_path.startswith(CDIR):
+            sys.exit("a development draft must not be written into the contract directory")
+        master, counts, mode = seeds["development_master_seed"], dev_counts, "DEVELOPMENT_DRAFT_NOT_FROZEN"
+    changed = [f["path"] for f in contract["reference_implementation"]["files"]
+               if sha_file(os.path.join(ROOT, f["path"])) != f["sha256_at_registration"]]
+    if changed:
+        sys.exit(f"REFUSED_REFERENCE_CHANGED: {changed}")
+    build_rust()
+    fam_scale = v3_families()
+    levels = proc["tolerance_levels"]
+    vectors = refinement_vectors(contract, master, counts)
+    inputs_sha = hashlib.sha256(json.dumps(vectors, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    lv = {v["id"]: level_of(v) for v in vectors}
+    runs = ("N", "T1", "T2")
+    rt = {v["id"]: {"N": None, "T1": levels[lv[v["id"]]]["T1_rtol"], "T2": levels[lv[v["id"]]]["T2_rtol"]}
+          for v in vectors}
+    t0 = time.perf_counter()
+    py = {v["id"]: {r: py_run_rtol(v, rt[v["id"]][r]) for r in runs} for v in vectors}
+    TAP.clear()
+    t_py = time.perf_counter() - t0
+    t0 = time.perf_counter()
+    rs_ = {v["id"]: {} for v in vectors}
+    for r in runs:
+        out, _, _, _ = run_rust([rust_req_rtol(v, rt[v["id"]][r]) for v in vectors])
+        for x in out["results"]:
+            rs_[x["id"]][r] = rust_outcome(x)
+    # COMP-P-01: the composed P45 path at the nominal rtol equals the library orbit_simulated byte for byte
+    p45 = [v for v in vectors if v["entry"] == "plenum.orbit_sim"]
+    lib, raw_lib, _, _ = run_rust([rust_req_rtol(v, None) for v in p45])
+    comp, raw_comp, _, _ = run_rust([rust_req_rtol(v, pf.RTOL) for v in p45])
+    comp_ok = [json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)
+               for a, b in zip(lib["results"], comp["results"])]
+    t_rs = time.perf_counter() - t0
+    impl_out = {"python": py, "rust": rs_}
+    env = {impl: {} for impl in impl_out}
+    excluded = {impl: [] for impl in impl_out}
+    discrete = {impl: {"n": 0, "first_50": []} for impl in impl_out}
+    conv = {impl: {} for impl in impl_out}
+    diag = {impl: {} for impl in impl_out}
+    cons = {impl: {} for impl in impl_out}
+    skipped_scale = {impl: 0 for impl in impl_out}
+    for impl, O in impl_out.items():
+        acc = {}
+        for v in vectors:
+            vid, e, lvl, code = v["id"], v["entry"], lv[v["id"]], V3_CODE[v["entry"]]
+            outs = O[vid]
+            for r in runs:
+                if run_ok(e, outs[r]):
+                    val = outs[r][1]
+                    m = val["summary"]["mass_residual_rel"] if e == "plenum.transient_case" else val["mass_residual_rel"]
+                    c = cons[impl].setdefault(f"{lvl}/{code}/{r}", {"n": 0, "max_mass_residual_rel": 0.0,
+                                                                   "n_above_MASS_TOL": 0})
+                    c["n"] += 1
+                    c["max_mass_residual_rel"] = max(c["max_mass_residual_rel"], unj(m))
+                    c["n_above_MASS_TOL"] += unj(m) > pf.MASS_TOL
+            oks = [run_ok(e, outs[r]) for r in runs]
+            if not all(oks):
+                kinds = [outs[r][1] if outs[r][0] == "ERROR" else ("OK" if oks[i] else "NOT_OK")
+                         for i, r in enumerate(runs)]
+                excluded[impl].append({"vector": vid, "runs": dict(zip(runs, kinds))})
+                continue
+            vals = {r: outs[r][1] for r in runs}
+            dN, dT = discrete_leaves(e, vals["N"]), discrete_leaves(e, vals["T2"])
+            for pth in sorted(set(dN) | set(dT), key=str):
+                if not exact_equal(dN.get(pth), dT.get(pth)):
+                    discrete[impl]["n"] += 1
+                    if len(discrete[impl]["first_50"]) < 50:
+                        discrete[impl]["first_50"].append({"vector": vid, "path": "/".join(map(str, pth)),
+                                                           "N": dN.get(pth), "T2": dT.get(pth)})
+            L = {r: family_leaves(e, vals[r]) for r in runs}
+            shape = {r: {f: set(d) for f, d in L[r].items()} for r in runs}
+            if not (shape["N"] == shape["T1"] == shape["T2"]):
+                excluded[impl].append({"vector": vid, "runs": "structure (family leaf set) differs from T2"})
+                continue
+            for fam in set(L["T2"]) | set(L["N"]):
+                a = acc.setdefault((lvl, code, fam), {"E": None, "n_leaves": 0, "vectors": set(), "argmax": None,
+                                                      "max_N_T2": 0.0, "max_T1_T2": 0.0})
+                for pth, x2 in L["T2"].get(fam, {}).items():
+                    xN, x1 = L["N"].get(fam, {}).get(pth), L["T1"].get(fam, {}).get(pth)
+                    if xN is None or x1 is None:
+                        continue
+                    s = family_scale(fam_scale[fam], v, x2)
+                    if not s:
+                        skipped_scale[impl] += 1
+                        continue
+                    eN, e1 = abs(xN - x2) / s, abs(x1 - x2) / s
+                    ev = eN + e1
+                    a["n_leaves"] += 1
+                    a["vectors"].add(vid)
+                    a["max_N_T2"] = max(a["max_N_T2"], eN)
+                    a["max_T1_T2"] = max(a["max_T1_T2"], e1)
+                    if a["E"] is None or ev > a["E"]:
+                        a["E"] = ev
+                        a["argmax"] = {"vector": vid, "path": "/".join(map(str, pth)), "N": xN, "T1": x1, "T2": x2,
+                                       "scale": s}
+            if e == "plenum.transient_run":
+                for k, (sN, s2) in enumerate(zip(vals["N"]["segments"], vals["T2"]["segments"])):
+                    ind = unj(s2["K_min"]) >= 1 - pf.K_TOL and unj(s2["K_over_K0_max"]) <= 1 + pf.K_TOL
+                    for n in V3_DIAG:
+                        a_, b_ = unj(sN[n]), unj(s2[n])
+                        rel = abs(a_ - b_) / abs(b_) if b_ not in (0.0,) and math.isfinite(a_) and math.isfinite(b_) \
+                            else (0.0 if a_ == b_ else math.inf)
+                        dd = diag[impl].setdefault(f"{lvl}/{n}/{'in_domain' if ind else 'out_of_domain'}",
+                                                   {"n": 0, "max_rel_N_T2": 0.0})
+                        dd["n"] += 1
+                        dd["max_rel_N_T2"] = max(dd["max_rel_N_T2"], rel)
+        for (lvl, code, fam), a in sorted(acc.items()):
+            env[impl].setdefault(lvl, {}).setdefault(code, {})[fam] = {
+                "E": a["E"], "status": "EVALUATED" if a["E"] is not None else "NOT_EVALUATED",
+                "n_leaves": a["n_leaves"], "n_vectors": len(a["vectors"]), "argmax": a["argmax"],
+                "scale": fam_scale[fam]}
+            conv[impl][f"{lvl}/{code}/{fam}"] = {"max_N_T2": a["max_N_T2"], "max_T1_T2": a["max_T1_T2"],
+                                                 "ratio": a["max_T1_T2"] / a["max_N_T2"] if a["max_N_T2"] else None}
+    # model-equivalence diagnostic (development only, not a verdict): converged T2 vs T2 across implementations
+    cross = {}
+    for v in vectors:
+        vid, e, lvl, code = v["id"], v["entry"], lv[v["id"]], V3_CODE[v["entry"]]
+        if not (run_ok(e, py[vid]["T2"]) and run_ok(e, rs_[vid]["T2"])):
+            continue
+        Lp, Lr = family_leaves(e, py[vid]["T2"][1]), family_leaves(e, rs_[vid]["T2"][1])
+        for fam, d in Lp.items():
+            for pth, x in d.items():
+                y = Lr.get(fam, {}).get(pth)
+                s = family_scale(fam_scale[fam], v, x)
+                if y is None or not s:
+                    continue
+                c = cross.setdefault(f"{lvl}/{code}/{fam}", {"n": 0, "max": 0.0, "argmax": None})
+                c["n"] += 1
+                if abs(x - y) / s > c["max"]:
+                    c["max"] = abs(x - y) / s
+                    c["argmax"] = {"vector": vid, "path": "/".join(map(str, pth)), "python": x, "rust": y}
+    combined = {}
+    for lvl in ("PROD", "REF"):
+        for code in ("P42", "P43", "P45"):
+            fams = set(env["python"].get(lvl, {}).get(code, {})) | set(env["rust"].get(lvl, {}).get(code, {}))
+            for fam in sorted(fams):
+                a = env["python"].get(lvl, {}).get(code, {}).get(fam, {}).get("E")
+                b = env["rust"].get(lvl, {}).get(code, {}).get(fam, {}).get("E")
+                combined.setdefault(lvl, {}).setdefault(code, {})[fam] = None if a is None or b is None else a + b
+    needed = {"PROD": ("P42", "P43", "P45"), "REF": ("P42", "P43")}
+    fam_codes = {"P42": [f for f in fam_scale if f.startswith("F42")], "P43": [f for f in fam_scale if
+                                                                              f.startswith("F43")],
+                 "P45": [f for f in fam_scale if f.startswith("F45")]}
+    missing = [f"{impl}/{lvl}/{code}/{fam}" for impl in env for lvl, codes in needed.items() for code in codes
+               for fam in fam_codes[code] if env[impl].get(lvl, {}).get(code, {}).get(fam, {}).get("E") is None]
+    now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    rec = {
+        "schema": "abep_plenum_transient_envelope_v3",
+        "mode": mode,
+        "contract": {"id": contract["id"], "path": os.path.relpath(cpath, ROOT), "sha256": csha,
+                     "registration_commit": git("log", "-n1", "--format=%H", "--", os.path.relpath(cpath, ROOT))},
+        "procedure": "transient_convergence_procedure_v3 steps 1-4 (A9.31 sec. 5); estimator "
+                     "e = (|x_N - x_T2| + |x_T1 - x_T2|) / s_F, E = max over the grid, no multiplier",
+        "date_utc": now,
+        "master_seed": master,
+        "counts": counts,
+        "n_vectors": len(vectors),
+        "inputs_sha256": inputs_sha,
+        "python_commit": contract["reference_implementation"]["python_commit"],
+        "reference_sha256_at_run": {f["path"]: sha_file(os.path.join(ROOT, f["path"]))
+                                    for f in contract["reference_implementation"]["files"]},
+        "head_commit": git("rev-parse", "HEAD"),
+        "build_provenance": provenance(contract),
+        "environment": environment(),
+        "tolerance_levels": proc["tolerance_levels"],
+        "envelopes": env,
+        "combined_E_py_plus_E_rust": combined,
+        "missing_envelopes": missing,
+        "excluded_vectors": {impl: {"n": len(x), "list": x} for impl, x in excluded.items()},
+        "skipped_leaves_zero_scale": skipped_scale,
+        "discrete_N_vs_T2_differences": discrete,
+        "also_recorded_not_used": {
+            "cross_implementation_T2_vs_T2 (model-equivalence diagnostic, not a verdict)": cross,
+            "convergence_ratio max|T1-T2| / max|N-T2|": conv,
+            "segment_cascade_diagnostics_N_vs_T2_relative": diag,
+            "CONS-P-03 mass_residual_rel per run": cons},
+        "checks": {"COMP-P-01": {"n": len(comp_ok), "ok": all(comp_ok) and raw_lib is not None,
+                                 "failures": [p45[i]["id"] for i, x in enumerate(comp_ok) if not x]},
+                   "no_missing_envelope": not missing},
+        "timing_s": {"python": t_py, "rust": t_rs},
+        "statement": "frozen before any held-out (scoring_master_seed) vector is generated or run; never edited "
+                     "after the scoring run" if mode == "REFINEMENT_FROZEN" else
+                     "DEVELOPMENT DRAFT from the development seed: never a scoring input",
+    }
+    rec = sanitize(rec)
+    with open(rec_path, "w") as f:
+        json.dump(rec, f, indent=1, allow_nan=False)
+        f.write("\n")
+    with open(os.path.splitext(rec_path)[0] + ".md", "w") as f:
+        f.write(render_envelope_md(rec))
+    return rec
+
+
+def render_envelope_md(r):
+    L = [f"# Plenum / feed transient envelope record v3 ({r['mode']})", "",
+         f"Contract `{r['contract']['path']}` sha256 `{r['contract']['sha256']}` (registered in "
+         f"`{r['contract']['registration_commit'][:12]}`). Generated from the JSON record next to this file.", "",
+         f"* Procedure: {r['procedure']}.",
+         f"* Seed {r['master_seed']}; {r['n_vectors']} refinement vectors {json.dumps(r['counts'])}; inputs sha256 "
+         f"`{r['inputs_sha256'][:16]}...`.",
+         f"* Python reference commit `{r['python_commit'][:12]}`; code at `{r['head_commit'][:12]}`; "
+         f"{r['build_provenance']['rustc']}; Python {r['environment']['python']}, numpy {r['environment']['numpy']}, "
+         f"scipy {r['environment']['scipy']}.",
+         f"* Checks: {json.dumps({k: v.get('ok', v) if isinstance(v, dict) else v for k, v in r['checks'].items()})}; "
+         f"missing envelopes: {r['missing_envelopes'] or 'none'}.", "",
+         "## Envelopes (normalised by the family scale)", "",
+         "| level | entry | family | scale | E python | E rust | combined | n leaves (py / rust) | worst vector (py) |",
+         "|---|---|---|---|---|---|---|---|---|"]
+    for lvl, codes in r["combined_E_py_plus_E_rust"].items():
+        for code, fams in codes.items():
+            for fam, comb in fams.items():
+                p = r["envelopes"]["python"].get(lvl, {}).get(code, {}).get(fam, {})
+                q = r["envelopes"]["rust"].get(lvl, {}).get(code, {}).get(fam, {})
+                L.append(f"| {lvl} | {code} | {fam} | {p.get('scale')} | {fmt3(p.get('E'))} | {fmt3(q.get('E'))} | "
+                         f"{fmt3(comb)} | {p.get('n_leaves')} / {q.get('n_leaves')} | "
+                         f"{(p.get('argmax') or {}).get('vector')} |")
+    L += ["", "## Recorded, not used", "", "Converged T2 vs T2 across implementations (model-equivalence diagnostic, "
+          "not a verdict), max over the grid in family units:", ""]
+    for k, c in r["also_recorded_not_used"]["cross_implementation_T2_vs_T2 (model-equivalence diagnostic, not a "
+                                             "verdict)"].items():
+        L.append(f"* {k}: {fmt3(c['max'])} (n {c['n']})")
+    L += ["", "Convergence ratio max|T1 - T2| / max|N - T2|:", ""]
+    for impl, d in r["also_recorded_not_used"]["convergence_ratio max|T1-T2| / max|N-T2|"].items():
+        L.append(f"* {impl}: " + "; ".join(f"{k} {fmt3(x['ratio'])}" for k, x in d.items()))
+    L += ["", "Segment cascade diagnostics, relative N - T2 difference (ill-conditioning; scored through the "
+          "primitive image):", ""]
+    for impl, d in r["also_recorded_not_used"]["segment_cascade_diagnostics_N_vs_T2_relative"].items():
+        L.append(f"* {impl}: " + "; ".join(f"{k} {fmt3(x['max_rel_N_T2'])} (n {x['n']})" for k, x in d.items()))
+    L += ["", "CONS-P-03 (mass residual) per run:", ""]
+    for impl, d in r["also_recorded_not_used"]["CONS-P-03 mass_residual_rel per run"].items():
+        L.append(f"* {impl}: " + "; ".join(f"{k} max {fmt3(x['max_mass_residual_rel'])} (above MASS_TOL "
+                                           f"{x['n_above_MASS_TOL']})" for k, x in d.items()))
+    L += ["", "## Excluded vectors and discrete differences", ""]
+    for impl in ("python", "rust"):
+        L.append(f"* {impl}: {r['excluded_vectors'][impl]['n']} vectors excluded (refused / failed run); "
+                 f"{r['discrete_N_vs_T2_differences'][impl]['n']} discrete N-vs-T2 leaf differences; "
+                 f"{r['skipped_leaves_zero_scale'][impl]} leaves with zero scale skipped.")
+    L += ["", f"Statement: {r['statement']}.", ""]
+    return "\n".join(L)
 
 
 # ======================================================================================================================
@@ -2936,6 +3790,34 @@ LEDGER_V = {("plenum", 2): [
                 "robust_over_scenarios (SC-WP-09), verify_state_set_decision_records, PROPELLANT_POLICY / AIR_PATH / "
                 "XE_PATH (SC-WP-12), assessment-layer comparison helpers",
      "authoritative_implementation": "rust: abep_gaspath::upstream"}]}
+# v3 (A9.31 sec. 5 transient procedure): the full v1 scope, transients included
+LEDGER_V[("plenum", 3)] = [
+    {"component": "C-ABEP_SIM_DESIGN_PLENUM_FEED_PY", "requested_status": "PARTIAL_ADMISSION (ADMITTED for the full "
+     "contract v3 scope below, transients included; the row stays PYTHON_REFERENCE while the not_ported items are "
+     "neither ported nor formally retired)",
+     "scope": LEDGER_V[("plenum", 2)][0]["scope"] + "; TransientRun.run (P42 transient_run) and transient_case (P43) "
+              "under the A9.31 sec. 5 convergence-derived envelopes (transient_envelope_v4.json); Rust transient "
+              "integrator with the switching-point fix a9dc2f5",
+     "supersedes_request": "the v2 request (transients excluded) is superseded: P42 / P43 are admitted by v3",
+     "not_ported": LEDGER_V[("plenum", 2)][0]["not_ported"],
+     "authoritative_implementation": "rust: abep_gaspath::{plenum_feed, transient} for the scope above"},
+    {"component": "C-ABEP_SIM_RESERVOIR_PY", "requested_status": "ADMITTED (whole registered module)",
+     "scope": "Reservoir (conductance, steady_state), size_orifice_for_pressure (report form), startup_transient",
+     "authoritative_implementation": "rust: abep_gaspath::reservoir"},
+    dict(LEDGER_V[("plenum", 2)][2])]
+LEDGER_V[("plenum", 4)] = copy.deepcopy(LEDGER_V[("plenum", 3)])
+LEDGER_V[("plenum", 5)] = copy.deepcopy(LEDGER_V[("plenum", 3)])
+LEDGER_V[("plenum", 5)][0]["scope"] = LEDGER_V[("plenum", 5)][0]["scope"].replace(
+    "transient_envelope_v4.json", "transient_envelope_v5.json") + (
+    "; the segment cascade diagnostics K_min / K_over_K0_max / p_stage_max_Pa / P_el_max_W / T_comp_max_K of a "
+    "transient segment are rounding-dominated outside the Gaede domain and carry no admitted value beyond their "
+    "primitives (contract v5 rule_cascade)")
+LEDGER_V[("plenum", 6)] = copy.deepcopy(LEDGER_V[("plenum", 5)])
+LEDGER_V[("plenum", 6)][0]["scope"] = LEDGER_V[("plenum", 6)][0]["scope"].replace(
+    "transient_envelope_v5.json", "transient_envelope_v6.json").replace(
+    "Rust transient integrator with the switching-point fix a9dc2f5",
+    "Rust transient integrator with the switching-point fix a9dc2f5 and the growing-mode guard 361a197")
+assert "361a197" in LEDGER_V[("plenum", 6)][0]["scope"] and "transient_envelope_v6" in LEDGER_V[("plenum", 6)][0]["scope"]
 LEDGER_FAIL["plenum"] = [{"component": c, "requested_status": "PARITY_FAILED (stays PYTHON_REFERENCE; a code fix needs "
                           "a new contract version with a fresh seed)"}
                          for c in ("C-ABEP_SIM_DESIGN_PLENUM_FEED_PY", "C-ABEP_SIM_RESERVOIR_PY",
@@ -3072,6 +3954,15 @@ def run_campaign(key: str, mode: str, capture: bool = False, only=None, replay: 
             sys.exit("REFUSED: uncommitted Rust / harness sources (would be an UNRECORDED_SOURCE_CHANGE):\n" + dirty)
     seeds = contract["campaign_seeds"]
     master = seeds["scoring_master_seed" if mode == "score" else "development_master_seed"]
+    v3 = key == "plenum" and version_of(key) >= 3
+    if v3:
+        # transient_convergence_procedure_v3 step 4: the frozen envelope record is read before any held-out vector
+        ENV.clear()
+        ENV.update(load_envelope(contract, contract_sha, mode))
+        V3_SCALE.clear()
+        V3_SCALE.update(v3_families())
+        IMG.clear()
+        MDS.clear()
     build_rust()
     gen, pyf, rule, checks = SPEC[key]
     vectors = gen(master)
@@ -3152,7 +4043,18 @@ def run_campaign(key: str, mode: str, capture: bool = False, only=None, replay: 
     for ent, pe in per_entry.items():
         n_at = sum(1 for p in proximity if p["entry"] == ent)
         pe["not_scored_at_threshold"] = n_at
-        if n_at > 0.01 * pe["n"]:
+        if v3:
+            # contract v3 decision_rules.proximity_limit: NOT_SCORED_AT_THRESHOLD leaves over the discrete leaves
+            # compared (EXACT_VALUE leaves and the sample-time settling leaves)
+            n_lv = sum(p.get("n_unscored_leaves", 0) for p in proximity if p["entry"] == ent)
+            n_disc = sum(o["n"] for o in summ["observables"] if o["entry"] == ent and (
+                o["tolerance_class"] == "EXACT_VALUE" or any(k in o["observable"] for k in (
+                    "settling_time_s", "flow_recovery_s", "settling_max_s"))))
+            pe["not_scored_at_threshold_leaves"] = n_lv
+            pe["discrete_leaves_compared"] = n_disc
+            if n_lv > 0.01 * n_disc:
+                prox_fail.append(ent)
+        elif n_at > 0.01 * pe["n"]:
             prox_fail.append(ent)
     det_ok = raw1 == raw2 and py_det
     extra_ok = all(x.get("ok", True) for x in extra.values())
@@ -3172,6 +4074,9 @@ def run_campaign(key: str, mode: str, capture: bool = False, only=None, replay: 
         "pass": {"per_test": per_test_ok, "determinism": det_ok, "invariants_and_conservation": extra_ok,
                  "materials_equal_db": mats_ok, "threshold_proximity_limit": not prox_fail, "all": verdict_ok},
     }
+    if v3:
+        out["transient_v3"] = transient_v3_summary(t, vectors)
+        out["envelope_record"] = ENV.get("_meta")
     if mode == "score" or capture:
         out["_capture"] = {"vectors": vectors, "python": {k: list(v) for k, v in py_out.items()},
                            "rust_raw": raw1.decode()}
@@ -3189,6 +4094,10 @@ def merge(t: Tally, sub: Tally):
                 d[f] += o[f]
             for f in ("max_abs_diff", "max_rel_diff", "max_ulp"):
                 d[f] = max(d[f], o[f])
+            if "max_used_frac" in o:
+                d["max_used_frac"] = max(d.get("max_used_frac", 0.0), o["max_used_frac"])
+            if "family" in o:
+                d["family"] = o["family"]
             if "tolerance" in o:
                 d["tolerance"] = o["tolerance"]
     t.failures += sub.failures
@@ -3250,6 +4159,55 @@ VERSION_NOTES = {
                     "exists. The harness generates the P42 / P43 vectors from their own streams and drops them before "
                     "any call; CONS-P-03 is evaluated on P45 only; PERF-P-02 (transient_case) is not measured"],
 }
+VERSION_NOTES[("plenum", 6)] = [
+    "v6 is contract v5 (registered f44dbfe; REGISTERED_NEVER_SCORED, superseded: Rust integrator accepts damped steps "
+    "on unstable modes) with the growing-mode guard 361a197 registered and fresh seeds. The frozen v5 refinement "
+    "record (3eeb574) showed Rust P45 envelopes of 0.782 (F45.mdot) and 0.0311 (F45.P_dev) from R45-192 / R45-331, "
+    "whose closed loops are unstable at the steady start: Radau IIA damped the mode at large steps and the "
+    "step-doubling estimate did not see it, so the nominal Rust run held the setpoint where both implementations "
+    "converge to a 3 % saturating limit cycle. v5 was not scored (near-vacuous P45 bounds, A9.29 sec. 14); its "
+    "record and the defect note rust_defect_v5_growing_mode_damping.md stay as evidence. v5 itself is v4 with the "
+    "cascade diagnostics scored through their primitives and a four-times larger grid; v4 is v3 with the switching-"
+    "point fix a9dc2f5",
+    "order of commits: contract v3, fix a9dc2f5, contract v4, contract v5, the harness / CLI refinement and scoring "
+    "code, the frozen v5 record (not scored), fix 361a197, the defect note, contract v6 (each contract alone), the "
+    "harness version bump, the frozen v6 envelope record (refinement run), the captured scoring run, the reports. "
+    "The parity CLI gained one request option (orbit_sim with an explicit rtol, composed from library calls; "
+    "COMP-P-01 in the record)"]
+VERSION_NOTES[("plenum", 5)] = [
+    "v5 is contract v4 (registered 0aec5a1, superseded before any scored run) with the five segment cascade "
+    "diagnostics scored through their primitives (reported with conditioning; rounding-dominated at and outside the "
+    "edge of the Gaede domain, K quantised in steps of K0 eps) and a four-times larger refinement grid (exceedance "
+    "probability of the grid maximum <= 1.5 % per family and level); fresh seeds. v4 itself is v3 (539f3fe, "
+    "superseded before any scored run) with the transient RUST_DEFECT fix a9dc2f5 (valve-command saturation switch). "
+    "Both supersessions were found in development runs on the development seeds only",
+    "order of commits: contract v3, the RUST_DEFECT fix, contract v4, contract v5 (each alone), the harness / CLI "
+    "refinement and scoring code, the frozen envelope record (refinement run), the captured scoring run, the reports. "
+    "The parity CLI gained one request option (orbit_sim with an explicit rtol, composed from library calls; "
+    "COMP-P-01 in the record)"]
+VERSION_NOTES[("plenum", 4)] = [
+    "v4 is contract v3 (registered 539f3fe, superseded before any scored run: no envelope record, no held-out "
+    "vector) with the transient RUST_DEFECT fix a9dc2f5 registered and fresh seeds. The v3 development draft of the "
+    "refinement procedure (development seed only) exposed an rtol-independent Rust error up to ~6e-7 at the "
+    "valve-command saturation switch; four independent scipy integrations of the reference right-hand side agreed "
+    "with the Python reference to 1.5e-11 there. The fix bisects any step whose end changes the saturation state"]
+VERSION_NOTES[("plenum", 3)] = [
+    "v3 is the full v1 scope with the transients P42 / P43 / P45 under the A9.31 sec. 5 convergence-derived "
+    "procedure (transient_convergence_procedure_v3); v1 (PARITY_FAIL, P42 / P43) and v2 (PARITY_FAIL, P45) stay. "
+    "Every non-transient observable, tolerance, generator, n and rule is v1's, with fresh seeds. The transient "
+    "bounds are the frozen envelope record's E_py + E_rust per family (estimated on the independent refinement grid "
+    "before any held-out vector ran) plus the STEADY floating allowance; nfev / step decomposition / iteration "
+    "counts are not scored; the segment cascade diagnostics are scored through the primitive image with their "
+    "conditioning recorded; proximity is attributed leaf by leaf and counted per leaf",
+    "order of commits: contract v3 (alone), then the harness / CLI refinement and scoring code (the record must cite "
+    "committed code), then the frozen envelope record (refinement run), then the single scoring run and the "
+    "reports. The parity CLI gained one request option (orbit_sim with an explicit rtol, composed from library "
+    "calls; COMP-P-01 in the record); no abep-gaspath library source changed"]
+NOTES_V[("plenum", 6)] = NOTES_V[("plenum", 5)] = NOTES_V[("plenum", 4)] = NOTES_V[("plenum", 3)] = [x for x in NOTES["plenum"]
+                                                  if not x.startswith("pre-scoring disclosure")] + [
+    "harness instrumentation (v3): the tap of TransientRun._segment_record also keeps the run's states at the "
+    "samples (for the primitive image of the cascade diagnostics and the per-segment proximity flags); the reference "
+    "record is unchanged (IMG-CHECK: f(y) equals the reported value bit for bit)"]
 HARNESS_NOTE = ("harness: the contract says the harness is committed 'after this contract and before the scoring run'. "
                 "It was developed with development-seed comparisons (never scored, no report) and committed before "
                 "the single scoring run; every scored generator, tolerance and decision rule is the registered one. "
@@ -3312,6 +4270,10 @@ def write_report(key, res, perf_rows, out_dir=None):
                        res["materials_equal_db"],
                        **{k: v for k, v in res["checks_extra"].items() if k.startswith("INV")}},
         "conservation": {k: v for k, v in res["checks_extra"].items() if k.startswith("CONS")},
+        **({"transient_integrity": {k: v for k, v in res["checks_extra"].items()
+                                    if k.startswith(("NN", "VS", "EV", "IMG"))},
+            "envelope_record": res["envelope_record"], "transient_v3": res["transient_v3"]}
+           if "transient_v3" in res else {}),
         "schema_parity": [o for o in res["per_test"]["observables"]
                           if o["observable"].endswith("{keys}") or o["observable"].endswith("[len]")],
         "performance": {"status": "reported, never a decision criterion", "workloads": perf_rows,
@@ -3442,7 +4404,8 @@ def fmt3(x):
 
 
 def render_md(r):
-    L = [f"# Parity report v1 - {r['contract']['id']}", "",
+    nv = re.search(r"_v(\d+)\.json$", r["contract"]["path"])
+    L = [f"# Parity report v{nv.group(1) if nv else 1} - {r['contract']['id']}", "",
          f"Verdict: **{r['parity_verdict']}** ({r['verdict']}). Generated from the JSON report next to this file.", "",
          f"* Contract: `{r['contract']['path']}` sha256 `{r['contract']['sha256']}`, registered in "
          f"`{r['contract']['registration_commit'][:12]}`.",
@@ -3490,6 +4453,10 @@ def render_md(r):
     tp = r["threshold_proximity"]
     L += ["", "## Threshold proximity", "", f"{len(tp['records'])} vectors NOT_SCORED_AT_THRESHOLD; entries over the 1 % "
           f"limit: {tp['entries_over_proximity_limit'] or 'none'}."]
+    for e, pe in r["vectors_per_entry"].items():
+        if "discrete_leaves_compared" in pe and pe["not_scored_at_threshold_leaves"]:
+            L.append(f"* {e}: {pe['not_scored_at_threshold_leaves']} of {pe['discrete_leaves_compared']} discrete "
+                     f"leaves NOT_SCORED_AT_THRESHOLD (limit 1 %).")
     for p in tp["records"][:20]:
         L.append(f"* `{json.dumps(p)[:300]}`")
     L += ["", "## Invariants and conservation", ""]
@@ -3501,6 +4468,33 @@ def render_md(r):
             L.append(f"* {k}: {json.dumps(v)[:300]}")
     for k, v in r["conservation"].items():
         L.append(f"* {k}: {json.dumps({kk: vv for kk, vv in v.items() if kk != 'failures'})[:300]}")
+    if "transient_v3" in r:
+        er = r["envelope_record"] or {}
+        L += ["", "## Transient procedure v3 (A9.31 sec. 5)", "",
+              f"* Frozen envelope record `{er.get('path')}` sha256 `{er.get('sha256')}`, committed in "
+              f"`{(er.get('commit') or 'NOT COMMITTED')[:12]}` (before any held-out vector was run).",
+              "* Bound per leaf: (E_py + E_rust) x s_F + max(4 ulp, 1e-9 |py|); p_inlet_max_Pa: primitive image W + "
+              "the same floating allowance; K_min, K_over_K0_max, p_stage_max_Pa, P_el_max_W, T_comp_max_K: reported "
+              "with conditioning, scored through their primitives (contract v5).", "",
+              "| entry | observable | family | n | fail | max abs diff | max used fraction of the bound |",
+              "|---|---|---|---|---|---|---|"]
+        for o in r["transient_v3"]["families"]:
+            L.append(f"| {o['entry']} | {o['observable'][:70]} | {o['family']} | {o['n']} | {o['n_fail']} | "
+                     f"{fmt3(o['max_abs_diff'])} | {fmt3(o.get('max_used_frac'))} |")
+        dc = r["transient_v3"]["diagnostic_conditioning"]
+        L += ["", f"Cascade diagnostics conditioning kappa = W / (delta |f|): {dc['n']} values, {dc['n_kappa_le_1e2']} "
+              f"with kappa <= 1e2, {dc['n_kappa_gt_1e6']} with kappa > 1e6 ({dc['n_kappa_inf']} infinite); "
+              f"{dc['n_kappa_round_gt_1e6 (computed digits rounding noise)']} with kappa_round > 1e6 (a 4-ulp change "
+              "of the states moves the computed value by more than 1e6 x its 4-ulp scale: the computed digits are "
+              "rounding noise). Recorded, no tolerance invented.", ""]
+        rep_ = [u for u in r["per_test"]["reported_not_scored"] if any(n in u["observable"] for n in V5_CASCADE)]
+        if rep_:
+            L += ["Reported with conditioning, scored through their primitives (v5):", ""]
+            L += [f"* {u['observable']}: n {u['n']}, max abs diff {fmt3(u['max_abs_diff'])}, max rel diff "
+                  f"{fmt3(u['max_rel_diff'])}" for u in rep_]
+            L.append("")
+        for k, v in r["transient_integrity"].items():
+            L.append(f"* {k}: {json.dumps({kk: vv for kk, vv in v.items() if kk != 'failures'})[:300]}")
     L += ["", "## Performance (reported, never a criterion)", ""]
     for w in r["performance"]["workloads"]:
         L.append(f"* {w['id']} ({w['n_vectors']} vectors): Python {w['python_median_s']:.3f} s, Rust "
@@ -3530,6 +4524,18 @@ def main():
         rep = write_report(key, res, perf(key, res["_capture"]["vectors"]))
         print(rep["parity_verdict"], rep["contract"]["id"], "failures:", rep["per_test"]["n_failures"],
               "(report rebuilt from the captured outputs)")
+        return
+    if len(sys.argv) == 3 and sys.argv[1:] == ["refine", "plenum"]:
+        rec = refine_plenum()
+        print("ENVELOPE RECORD (frozen):", envelope_path(load_contract("plenum")[0]),
+              "missing:", rec["missing_envelopes"], "COMP-P-01:", rec["checks"]["COMP-P-01"]["ok"])
+        return
+    if len(sys.argv) == 5 and sys.argv[1:3] == ["refine-dev", "plenum"]:
+        n = int(sys.argv[4])
+        rec = refine_plenum(dev_out=sys.argv[3], dev_counts={"P42": {"PROD": n, "REF": max(1, n // 3)},
+                                                             "P43": {"PROD": n, "REF": max(1, n // 3)},
+                                                             "P45": {"PROD": n}})
+        print("DEVELOPMENT DRAFT (not frozen):", sys.argv[3], "missing:", rec["missing_envelopes"])
         return
     if len(sys.argv) < 3 or sys.argv[1] not in ("dev", "dev-report", "score") or sys.argv[2] not in SPEC:
         sys.exit(__doc__)
