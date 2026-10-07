@@ -166,6 +166,71 @@ pub fn vs_net_v2(case_id: &str, colocated: bool, ts: f64) -> ThermalCase {
     c
 }
 
+/// The 2.0.0 form of an inherited VS-NET-based verification case (NP-THERMAL prereg v2 inheritance rule: every v1
+/// case applies in v2; only the ICP interface is v2): the v1 IF-ICP-THERMAL-v1 record is replaced by the registered
+/// AL-10 v2 record carrying the v1 record's case fields and evidence class; a v1 key withheld with a status keeps that
+/// status (and any value it carries, so FT-18 still sees it) on the v2 key of the same name, and every v2 key when
+/// every v1 key is withheld; a NON_FIRING record registers zeros; the RECEIVES_ADDED declarations and PART.f_up (a
+/// copy of the case's own PART.ohmic record with the F_UP weights) are added. A case without a v1 record is unchanged.
+pub fn inherited_to_v2(case: &ThermalCase) -> ThermalCase {
+    let mut c = case.clone();
+    let Some(v1) = c.interfaces.icp.take() else { return c };
+    for (node, keys) in RECEIVES_ADDED {
+        if let Some(n) = c.nodes.iter_mut().find(|n| n.id == node) {
+            for k in keys {
+                if !n.receives_interface_keys.iter().any(|x| x == k) {
+                    n.receives_interface_keys.push(k.to_string());
+                }
+            }
+        }
+    }
+    if !c.partitions.contains_key("Q_icp_outflow_upstream_W") {
+        let mut part =
+            c.records.iter().find(|r| r.id.as_deref() == Some("PART.ohmic")).expect("VS-NET PART.ohmic").clone();
+        part.id = Some("PART.f_up".into());
+        let weights: BTreeMap<&str, f64> = F_UP.iter().copied().collect();
+        part.value = Some(json!({ "weights": weights }));
+        c.records.push(part);
+        c.partitions.insert("Q_icp_outflow_upstream_W".into(), "PART.f_up".into());
+    }
+    let mut rec = load_registered_record();
+    rec.case_id = v1.case_id.clone();
+    rec.case_class = v1.case_class.clone();
+    rec.supply_mode = v1.supply_mode.clone();
+    rec.design_state_id = v1.design_state_id.clone();
+    rec.operating_point_id = v1.operating_point_id.clone();
+    let ec = v1.keys.values().find_map(|v| v.evidence_class.clone());
+    let src = v1.keys.values().find_map(|v| v.source.clone());
+    let withheld: Vec<&ValueRecord> = v1.keys.values().filter(|v| v.status.as_deref() != Some("EVALUATED")).collect();
+    let all_withheld = !v1.keys.is_empty() && withheld.len() == v1.keys.len();
+    let non_firing = v1.supply_mode == "NON_FIRING";
+    for (k, vr) in rec.keys.iter_mut() {
+        vr.evidence_class = ec.clone().or(vr.evidence_class.take());
+        vr.source = src.clone().or(vr.source.take());
+        match v1.keys.get(k) {
+            Some(v) if v.status.as_deref() != Some("EVALUATED") => {
+                vr.status = v.status.clone();
+                vr.value = v.value.clone();
+            }
+            _ if all_withheld => {
+                vr.status = withheld[0].status.clone();
+                vr.value = None;
+            }
+            _ if non_firing => vr.value = Some(json!(0.0)),
+            _ => {}
+        }
+    }
+    if non_firing {
+        for shares in rec.node_shares_w.values_mut() {
+            for v in shares.values_mut() {
+                *v = json!(0.0);
+            }
+        }
+    }
+    c.interfaces.icp_v2 = Some(rec);
+    c
+}
+
 pub fn key_mut<'a>(c: &'a mut ThermalCase, k: &str) -> &'a mut ValueRecord {
     c.interfaces.icp_v2.as_mut().unwrap().keys.get_mut(k).unwrap()
 }

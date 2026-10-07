@@ -3,7 +3,8 @@
 //! reports which have no producer, and returns NOT_EVALUATED / INCOMPLETE_EVIDENCE for every output. It holds no beam
 //! divergence, plume potential, transfer fraction, coupling voltage or CEX parameter and never defaults one
 //! (CPL-HON-11): there is no code path that produces a Hall-ON number until an admitted member, the HI-04..HI-06
-//! producers and the VER-23 / VER-24 addenda exist.
+//! producers and the VER-24 addendum exist. VER-23 is cleared (verification_addendum_ver23_v1.json): the pinned
+//! HallThruster.jl takes the coupling potential as its right-boundary input `cathode_coupling_voltage` [V] (CPL-HON-05).
 
 use super::result::CplRecord;
 use super::{IcpModelV2, CPL_HALL_ON};
@@ -121,7 +122,6 @@ pub fn cpl_hall_on(m: &IcpModelV2, source: &HallMemberSource, inp: &CplInputs) -
             );
         }
     }
-    reasons.push(r("VER-23_HALL_COUPLING_POTENTIAL_INPUT_UNVERIFIED", IE, "CPL-HON-05"));
     reasons.push(r("VER-24_EXTRACTION_BOUNDARY_LAW_UNVERIFIED", NE, "CPL-HON-04: V_coupling NOT_EVALUATED"));
     let codes: Vec<String> = reasons.iter().map(|x| x.code.clone()).collect();
     let outputs =
@@ -144,6 +144,6 @@ pub fn cpl_hall_on(m: &IcpModelV2, source: &HallMemberSource, inp: &CplInputs) -
         reasons,
         inputs,
         outputs,
-        verify_items: vec!["VER-23".into(), "VER-24".into()],
+        verify_items: vec!["VER-24".into()],
     }
 }

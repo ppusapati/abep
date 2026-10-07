@@ -209,12 +209,14 @@ fn fc20_cpl_hall_on_is_not_evaluated_and_names_every_missing_input() {
         "HI-06_NO_PRODUCER",
         "HI-07_B_ICP_NOT_REGISTERED",
         "HI-08_CIRCUIT_TOPOLOGY_NOT_REGISTERED",
-        "VER-23_HALL_COUPLING_POTENTIAL_INPUT_UNVERIFIED",
         "VER-24_EXTRACTION_BOUNDARY_LAW_UNVERIFIED",
     ] {
         assert!(codes.contains(c), "{c} missing");
     }
     assert_eq!(r.inputs["HI-02_I_beam_A"].reasons, ["HI-02_NOT_ON_MAP_POINT"]);
+    // VER-23 is cleared by its verification addendum: no HALL_COUPLING_POTENTIAL_INPUT_UNVERIFIED; VER-24 stays open.
+    assert!(!codes.iter().any(|c| c.starts_with("VER-23")));
+    assert_eq!(r.verify_items, ["VER-24"]);
     // No beam / plume / coupling default exists: every output is withheld, whatever the stub carries.
     assert_eq!(r.outputs.len(), CPL_OUTPUT_KEYS.len());
     assert!(r.outputs.values().all(|q| q.value.is_none() && q.status == IcpStatus::NotEvaluated));
@@ -510,5 +512,24 @@ fn nv01_v2_results_are_deterministic() {
     let m = model_v2();
     for c in all_cases() {
         assert_eq!(m.evaluate(&c).to_json(), m.evaluate(&c).to_json(), "{}", c.case_id);
+    }
+}
+
+#[test]
+fn verification_addendum_ver23_is_bound_to_the_pin() {
+    let root = abep_provenance::workspace_repo_root().unwrap();
+    let a: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(root.join(format!("{}/verification_addendum_ver23_v1.json", abep_icp::context::PREREG_DIR)))
+            .unwrap(),
+    )
+    .unwrap();
+    let pinned: toml::Table =
+        std::fs::read_to_string(root.join("hallthruster_bridge/PINNED.toml")).unwrap().parse().unwrap();
+    assert_eq!(a["verify_item"], "VER-23");
+    assert_eq!(a["source"]["commit"].as_str(), pinned["hallthruster"]["commit"].as_str());
+    assert!(a["confirmation"].as_str().unwrap().contains("VER-23 is CLEARED"));
+    for f in a["source"]["files_read"].as_array().unwrap() {
+        let h = f["sha256"].as_str().unwrap();
+        assert!(h.len() == 64 && h.bytes().all(|b| b.is_ascii_hexdigit()), "{f}");
     }
 }

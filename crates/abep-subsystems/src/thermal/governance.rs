@@ -224,6 +224,19 @@ pub struct GovernedContextV2 {
     prereg_v2_sha256: String,
     prereg_v2_md_sha256: String,
     hashes_v2: BTreeMap<String, String>,
+    key_table: Vec<KeyRowV2>,
+}
+
+/// One row of the locked IF-ICP-THERMAL-v2 key table (read from the consumer prereg; equal to the producer's).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct KeyRowV2 {
+    pub id: String,
+    pub key: String,
+    pub role: String,
+    pub plane: String,
+    pub powered_by: String,
+    pub sign: String,
+    pub receiver: String,
 }
 
 /// Canonical sha256 of a key table: sorted-key compact JSON (serde_json maps are ordered).
@@ -305,11 +318,28 @@ impl GovernedContextV2 {
         if table != vocab_rows {
             return Err(schema_err(&prereg_rel, "the consumer vocabulary differs from the locked key table"));
         }
-        Ok(GovernedContextV2 { v1, prereg_v2_sha256: pj, prereg_v2_md_sha256: pm, hashes_v2 })
+        let field = |r: &Value, f: &str| r.get(f).and_then(Value::as_str).unwrap_or_default().to_string();
+        let key_table = rows
+            .iter()
+            .map(|r| KeyRowV2 {
+                id: field(r, "id"),
+                key: field(r, "key"),
+                role: field(r, "role"),
+                plane: field(r, "plane"),
+                powered_by: field(r, "powered_by"),
+                sign: field(r, "sign"),
+                receiver: field(r, "receiver"),
+            })
+            .collect();
+        Ok(GovernedContextV2 { v1, prereg_v2_sha256: pj, prereg_v2_md_sha256: pm, hashes_v2, key_table })
     }
 
     pub fn v1(&self) -> &GovernedContext {
         &self.v1
+    }
+    /// The locked IF-ICP-THERMAL-v2 key table, in table order.
+    pub fn key_table(&self) -> &[KeyRowV2] {
+        &self.key_table
     }
     pub fn prereg_v2_sha256(&self) -> &str {
         &self.prereg_v2_sha256
