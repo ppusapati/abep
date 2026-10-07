@@ -1,0 +1,646 @@
+{
+  "bus_ledger": {
+    "eta_front_end": 0.96,
+    "eta_slot": {
+      "icp_collector_bias": 0.8,
+      "icp_matching_network": 0.85,
+      "icp_rf_source": 0.9
+    },
+    "rows": "LS-01 (tests/power_sys LS_01) with the ICP slot loads taken from the IF-ICP-BUS-v2 record and thermal_control = 3.0 W (VS-NET)",
+    "thermal_control_W": 3.0
+  },
+  "chain": [
+    "NP-ICP-NEUTRALIZER model_version 2 (abep_icp::v2, CM-CAL, CFG-CAP-OFF, SYNTHETIC_TEST_ONLY)",
+    "IF-ICP-THERMAL-v2 adapter (abep_subsystems::thermal::icp_v2_adapter), every producer scenario member",
+    "NP-THERMAL-CATHODELESS 2.0.0 (run_case_v2) on the registered VS-NET",
+    "IF-ICP-BUS-v2 consumer (icp_upstream_loads_v2) of the member's solve member",
+    "CONS-L1 v2 (accounts_from_thermal_v2 + the LS-01 external accounts)"
+  ],
+  "closure_tolerances": {
+    "per_key_exactly_once": "CONS-I2: 1e-12 relative + 1e-12 W (NP-THERMAL E-07 v2)",
+    "producer": "CC-05 / CC-06 / CONS-I3 v2: 1e-10 relative to P_fwd + P_collector_bias (NP-ICP prereg v2)",
+    "slot_load_sum": "CONS-I3: eps_if = 1e-6 x P_icp_slot_load_sum_W + 1e-9 W (NUM-09) and the producer's 1e-10",
+    "system": "CONS-L1: |R| / P_bus < 2 % (CLAUDE.md rule 4); the ICP account mismatch within the producer's 1e-10"
+  },
+  "evidence_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+  "icp_case": {
+    "b_icp_max_t": {
+      "evidence": {
+        "applicability_domain": "analytic verification only; never evidence",
+        "evidence_level": "SYNTHETIC_TEST_ONLY",
+        "quantity_type": "SYNTHETIC_TEST_ONLY",
+        "source": "SYNTHETIC_TEST_ONLY: B_ICP,max",
+        "transformation_chain": "none (synthetic verification input)",
+        "uncertainty": {
+          "kind": "CATEGORICAL"
+        },
+        "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+      },
+      "value": 0.0
+    },
+    "background": null,
+    "bus": {
+      "assist_magnet": {
+        "kind": "NOT_INSTALLED"
+      },
+      "boundary_id": "bus_power_boundary_a9_v2",
+      "eta_rf": {
+        "evidence": {
+          "applicability_domain": "analytic verification only; never evidence",
+          "evidence_level": "SYNTHETIC_TEST_ONLY",
+          "quantity_type": "SYNTHETIC_TEST_ONLY",
+          "source": "SYNTHETIC_TEST_ONLY: eta_RF",
+          "transformation_chain": "none (synthetic verification input)",
+          "uncertainty": {
+            "kind": "CATEGORICAL"
+          },
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+        },
+        "value": 0.8
+      },
+      "flow_control": {
+        "kind": "NOT_INSTALLED"
+      },
+      "ground_facility_rf_generator": false,
+      "match_colocated": {
+        "evidence": {
+          "applicability_domain": "analytic verification only; never evidence",
+          "evidence_level": "SYNTHETIC_TEST_ONLY",
+          "quantity_type": "SYNTHETIC_TEST_ONLY",
+          "source": "SYNTHETIC_TEST_ONLY: match_colocated",
+          "transformation_chain": "none (synthetic verification input)",
+          "uncertainty": {
+            "kind": "CATEGORICAL"
+          },
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+        },
+        "value": true
+      },
+      "p_match_dc_w": {
+        "evidence": {
+          "applicability_domain": "analytic verification only; never evidence",
+          "evidence_level": "SYNTHETIC_TEST_ONLY",
+          "quantity_type": "SYNTHETIC_TEST_ONLY",
+          "source": "SYNTHETIC_TEST_ONLY: P_match,DC",
+          "transformation_chain": "none (synthetic verification input)",
+          "uncertainty": {
+            "kind": "CATEGORICAL"
+          },
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+        },
+        "value": 2.0
+      }
+    },
+    "case_id": "COUPLING-SMOKE-v2/ICP",
+    "chemistry": {
+      "kind": "SYNTHETIC",
+      "set": {
+        "process_classes": {
+          "X": {
+            "ATTACHMENT_NEGATIVE_IONS": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "DISSOCIATION": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "DISSOCIATIVE_IONIZATION": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "ELASTIC_LOSS": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "EXCITATION_ELECTRONIC": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "EXCITATION_ROTATIONAL": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "EXCITATION_VIBRATIONAL": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "IONIZATION": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "ION_NEUTRAL_MOMENTUM_TRANSFER": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "VOLUME_RECOMBINATION": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "WALL_ATOM_RECOMBINATION": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "WALL_METASTABLE_DEEXCITATION": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            }
+          },
+          "X+": {
+            "ATTACHMENT_NEGATIVE_IONS": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "DISSOCIATION": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "DISSOCIATIVE_IONIZATION": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "ELASTIC_LOSS": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "EXCITATION_ELECTRONIC": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "EXCITATION_ROTATIONAL": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "EXCITATION_VIBRATIONAL": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "IONIZATION": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "ION_NEUTRAL_MOMENTUM_TRANSFER": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "VOLUME_RECOMBINATION": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "WALL_ATOM_RECOMBINATION": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            },
+            "WALL_METASTABLE_DEEXCITATION": {
+              "justification": "SYNTHETIC_TEST_ONLY analytic case",
+              "kind": "EXCLUDED"
+            }
+          }
+        },
+        "reactions": [
+          {
+            "id": "ION_X",
+            "kind": "IONIZATION",
+            "products": [
+              [
+                "X+",
+                1
+              ]
+            ],
+            "rate": {
+              "kind": "SYNTHETIC",
+              "rate": {
+                "e_act_ev": 15.0,
+                "k0_m3_s": 1e-13,
+                "power": 0.0,
+                "t_cut_ev": null,
+                "t_ref_ev": 1.0
+              }
+            },
+            "target": "X",
+            "threshold_ev": 15.0,
+            "validity": {
+              "kind": "VERIFIED",
+              "max_mean_energy_ev": 255.0
+            }
+          }
+        ],
+        "set_id": "SYNTHETIC_X",
+        "species": [
+          {
+            "charge": 0,
+            "electronegative": false,
+            "elements": {
+              "X": 1
+            },
+            "mass_kg": 6.6421562664e-26,
+            "name": "X",
+            "recombines_to": null,
+            "wall_products": []
+          },
+          {
+            "charge": 1,
+            "electronegative": false,
+            "elements": {
+              "X": 1
+            },
+            "mass_kg": 6.6421562664e-26,
+            "name": "X+",
+            "recombines_to": null,
+            "wall_products": [
+              [
+                "X",
+                1
+              ]
+            ]
+          }
+        ],
+        "t_e_domain_ev": [
+          1.0,
+          100.0
+        ],
+        "vibrot_t_e_min_ev": 1.0
+      }
+    },
+    "coil_ohmic_split": {
+      "evidence": {
+        "applicability_domain": "analytic verification only; never evidence",
+        "evidence_level": "SYNTHETIC_TEST_ONLY",
+        "quantity_type": "SYNTHETIC_TEST_ONLY",
+        "source": "SYNTHETIC_TEST_ONLY: TK-06 split",
+        "transformation_chain": "none (synthetic verification input)",
+        "uncertainty": {
+          "kind": "CATEGORICAL"
+        },
+        "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+      },
+      "value": {
+        "N_ANTENNA": 0.75,
+        "N_HOUSING": 0.25
+      }
+    },
+    "configuration": "CFG-CAP-OFF",
+    "coupling_evidence": {
+      "kind": "P2_POINT",
+      "point": {
+        "evidence": {
+          "applicability_domain": "analytic verification only; never evidence",
+          "evidence_level": "SYNTHETIC_TEST_ONLY",
+          "quantity_type": "SYNTHETIC_TEST_ONLY",
+          "source": "SYNTHETIC_TEST_ONLY: P2 point",
+          "transformation_chain": "none (synthetic verification input)",
+          "uncertainty": {
+            "kind": "CATEGORICAL"
+          },
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+        },
+        "value": {
+          "at_map_point": true,
+          "content_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "map_id": "SYNTHETIC_MAP",
+          "map_validated": true,
+          "method": "ZM-A",
+          "plane_convention": "RP_ANT",
+          "plasma_state_class": "H_MODE",
+          "q_line_w": 0.3,
+          "q_match_w": 0.2,
+          "r_ant_cold_ohm": 0.4,
+          "record_ids": [
+            "SYN-1"
+          ],
+          "uncertainty_status": "EVALUATED",
+          "z_antenna_hot_im_ohm": 120.0,
+          "z_antenna_hot_re_ohm": 2.0
+        }
+      }
+    },
+    "coupling_mode": "CM-CAL",
+    "dedicated_flow_kg_s": null,
+    "dispositions": {},
+    "dissociation_energies_ev": {},
+    "electrodes": {
+      "evidence": {
+        "applicability_domain": "analytic verification only; never evidence",
+        "evidence_level": "SYNTHETIC_TEST_ONLY",
+        "quantity_type": "SYNTHETIC_TEST_ONLY",
+        "source": "SYNTHETIC_TEST_ONLY: electrodes",
+        "transformation_chain": "none (synthetic verification input)",
+        "uncertainty": {
+          "kind": "CATEGORICAL"
+        },
+        "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+      },
+      "value": {
+        "collector_bias_sweep_v": null,
+        "potentials_v": {
+          "ec": 30.0,
+          "ic": 0.0
+        },
+        "reference": "SYNTHETIC_REFERENCE",
+        "supplies": {
+          "ec": "ICP_COLLECTOR_BIAS",
+          "ic": "ICP_COLLECTOR_BIAS"
+        }
+      }
+    },
+    "f_rf_hz": {
+      "evidence": {
+        "applicability_domain": "analytic verification only; never evidence",
+        "evidence_level": "SYNTHETIC_TEST_ONLY",
+        "quantity_type": "SYNTHETIC_TEST_ONLY",
+        "source": "SYNTHETIC_TEST_ONLY: f_RF",
+        "transformation_chain": "none (synthetic verification input)",
+        "uncertainty": {
+          "kind": "CATEGORICAL"
+        },
+        "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+      },
+      "value": 13560000.0
+    },
+    "gas_mode": {
+      "evidence": {
+        "applicability_domain": "analytic verification only; never evidence",
+        "evidence_level": "SYNTHETIC_TEST_ONLY",
+        "quantity_type": "SYNTHETIC_TEST_ONLY",
+        "source": "SYNTHETIC_TEST_ONLY: gas mode",
+        "transformation_chain": "none (synthetic verification input)",
+        "uncertainty": {
+          "kind": "CATEGORICAL"
+        },
+        "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+      },
+      "value": "G-REUSE"
+    },
+    "geometry": {
+      "evidence": {
+        "applicability_domain": "analytic verification only; never evidence",
+        "evidence_level": "SYNTHETIC_TEST_ONLY",
+        "quantity_type": "SYNTHETIC_TEST_ONLY",
+        "source": "SYNTHETIC_TEST_ONLY: geometry v2",
+        "transformation_chain": "none (synthetic verification input)",
+        "uncertainty": {
+          "kind": "CATEGORICAL"
+        },
+        "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+      },
+      "value": {
+        "geometry_id": "SYNTHETIC_TUBE_V2",
+        "length_m": 0.1,
+        "radius_m": 0.02,
+        "surfaces": [
+          {
+            "area_m2": 0.012566370614359175,
+            "id": "wall",
+            "kind": "DIELECTRIC_FLOATING",
+            "material": "SYN_A",
+            "orientation": "RADIAL",
+            "thermal_node": "N_VESSEL",
+            "transmission": null
+          },
+          {
+            "area_m2": 0.0012566370614359175,
+            "id": "ic",
+            "kind": "ION_COLLECTOR_BIASED",
+            "material": "SYN_B",
+            "orientation": "AXIAL",
+            "thermal_node": "N_COLLECTOR",
+            "transmission": null
+          },
+          {
+            "area_m2": 2e-6,
+            "id": "ec",
+            "kind": "ELECTRON_COLLECTOR",
+            "material": "SYN_B",
+            "orientation": "AXIAL",
+            "thermal_node": "EXPORT",
+            "transmission": null
+          },
+          {
+            "area_m2": 0.0006283185307179587,
+            "id": "up",
+            "kind": "OPEN_UPSTREAM",
+            "material": "OPEN",
+            "orientation": "AXIAL",
+            "thermal_node": "RX_H1_FACE",
+            "transmission": null
+          }
+        ],
+        "volume_mode": {
+          "kind": "ASSUMED_GEOMETRIC_TUBE"
+        }
+      }
+    },
+    "h1_point_id": "SYNTHETIC_POINT",
+    "h_model": {
+      "h_by_surface": {
+        "ec": {
+          "evidence": {
+            "applicability_domain": "analytic verification only; never evidence",
+            "evidence_level": "SYNTHETIC_TEST_ONLY",
+            "quantity_type": "SYNTHETIC_TEST_ONLY",
+            "source": "SYNTHETIC_TEST_ONLY: explicit h",
+            "transformation_chain": "none (synthetic verification input)",
+            "uncertainty": {
+              "kind": "CATEGORICAL"
+            },
+            "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+          },
+          "value": 0.5
+        },
+        "ic": {
+          "evidence": {
+            "applicability_domain": "analytic verification only; never evidence",
+            "evidence_level": "SYNTHETIC_TEST_ONLY",
+            "quantity_type": "SYNTHETIC_TEST_ONLY",
+            "source": "SYNTHETIC_TEST_ONLY: explicit h",
+            "transformation_chain": "none (synthetic verification input)",
+            "uncertainty": {
+              "kind": "CATEGORICAL"
+            },
+            "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+          },
+          "value": 0.5
+        },
+        "up": {
+          "evidence": {
+            "applicability_domain": "analytic verification only; never evidence",
+            "evidence_level": "SYNTHETIC_TEST_ONLY",
+            "quantity_type": "SYNTHETIC_TEST_ONLY",
+            "source": "SYNTHETIC_TEST_ONLY: explicit h",
+            "transformation_chain": "none (synthetic verification input)",
+            "uncertainty": {
+              "kind": "CATEGORICAL"
+            },
+            "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+          },
+          "value": 0.5
+        },
+        "wall": {
+          "evidence": {
+            "applicability_domain": "analytic verification only; never evidence",
+            "evidence_level": "SYNTHETIC_TEST_ONLY",
+            "quantity_type": "SYNTHETIC_TEST_ONLY",
+            "source": "SYNTHETIC_TEST_ONLY: explicit h",
+            "transformation_chain": "none (synthetic verification input)",
+            "uncertainty": {
+              "kind": "CATEGORICAL"
+            },
+            "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+          },
+          "value": 0.5
+        }
+      },
+      "kind": "EXPLICIT"
+    },
+    "hall_demand": null,
+    "neutral_source": {
+      "kind": "REGISTERED_PRESSURE",
+      "mole_fractions": {
+        "evidence": {
+          "applicability_domain": "analytic verification only; never evidence",
+          "evidence_level": "SYNTHETIC_TEST_ONLY",
+          "quantity_type": "SYNTHETIC_TEST_ONLY",
+          "source": "SYNTHETIC_TEST_ONLY: x_k",
+          "transformation_chain": "none (synthetic verification input)",
+          "uncertainty": {
+            "kind": "CATEGORICAL"
+          },
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+        },
+        "value": {
+          "X": 1.0
+        }
+      },
+      "p_icp_pa": {
+        "evidence": {
+          "applicability_domain": "analytic verification only; never evidence",
+          "evidence_level": "SYNTHETIC_TEST_ONLY",
+          "quantity_type": "SYNTHETIC_TEST_ONLY",
+          "source": "SYNTHETIC_TEST_ONLY: p_ICP",
+          "transformation_chain": "none (synthetic verification input)",
+          "uncertainty": {
+            "kind": "CATEGORICAL"
+          },
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+        },
+        "value": 1.0
+      },
+      "t_g_k": {
+        "evidence": {
+          "applicability_domain": "analytic verification only; never evidence",
+          "evidence_level": "SYNTHETIC_TEST_ONLY",
+          "quantity_type": "SYNTHETIC_TEST_ONLY",
+          "source": "SYNTHETIC_TEST_ONLY: T_g",
+          "transformation_chain": "none (synthetic verification input)",
+          "uncertainty": {
+            "kind": "CATEGORICAL"
+          },
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+        },
+        "value": 300.0
+      }
+    },
+    "rf_input": {
+      "kind": "FORWARD",
+      "p_fwd_w": {
+        "evidence": {
+          "applicability_domain": "analytic verification only; never evidence",
+          "evidence_level": "SYNTHETIC_TEST_ONLY",
+          "quantity_type": "SYNTHETIC_TEST_ONLY",
+          "source": "SYNTHETIC_TEST_ONLY: P_fwd",
+          "transformation_chain": "none (synthetic verification input)",
+          "uncertainty": {
+            "kind": "CATEGORICAL"
+          },
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+        },
+        "value": 30.0
+      },
+      "p_refl_w": {
+        "evidence": {
+          "applicability_domain": "analytic verification only; never evidence",
+          "evidence_level": "SYNTHETIC_TEST_ONLY",
+          "quantity_type": "SYNTHETIC_TEST_ONLY",
+          "source": "SYNTHETIC_TEST_ONLY: P_refl",
+          "transformation_chain": "none (synthetic verification input)",
+          "uncertainty": {
+            "kind": "CATEGORICAL"
+          },
+          "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+        },
+        "value": 3.0
+      }
+    },
+    "supply_mode": {
+      "evidence": {
+        "applicability_domain": "analytic verification only; never evidence",
+        "evidence_level": "SYNTHETIC_TEST_ONLY",
+        "quantity_type": "SYNTHETIC_TEST_ONLY",
+        "source": "SYNTHETIC_TEST_ONLY: mode",
+        "transformation_chain": "none (synthetic verification input)",
+        "uncertainty": {
+          "kind": "CATEGORICAL"
+        },
+        "validation_status": "NOT_APPLICABLE_SYNTHETIC"
+      },
+      "value": "SYNTHETIC_TEST_ONLY"
+    },
+    "thermal_boundary": null,
+    "validation_cell_id": null,
+    "wall_coefficients": []
+  },
+  "id": "COUPLING-SMOKE-v2",
+  "label": "SYNTHETIC",
+  "thermal": {
+    "case_id": "COUPLING-SMOKE-v2/THERMAL",
+    "f_rad": "PART.icp_rad of VS-NET (unchanged)",
+    "f_up": {
+      "EXPORT": 0.0625,
+      "H1_ANODE": 0.0625,
+      "H1_POLE_IN": 0.25,
+      "H1_POLE_OUT": 0.25,
+      "H1_WALL_IN": 0.125,
+      "H1_WALL_OUT": 0.125,
+      "N_HOUSING": 0.0625,
+      "N_MOUNT": 0.0625
+    },
+    "match_colocated": true,
+    "network_path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification/vs_net_v1.json",
+    "network_sha256": "64c4bf335354bd9ffc7e4de602156d3ca26b1b6ee614e30558ccc94c897ec9a9",
+    "operating_point_id": "COUPLING-SMOKE-v2/OP-1",
+    "receives_added": {
+      "H1_ANODE": [
+        "Q_icp_outflow_upstream_W"
+      ],
+      "H1_POLE_IN": [
+        "Q_icp_outflow_upstream_W"
+      ],
+      "H1_POLE_OUT": [
+        "Q_icp_outflow_upstream_W"
+      ],
+      "H1_WALL_IN": [
+        "Q_icp_outflow_upstream_W"
+      ],
+      "H1_WALL_OUT": [
+        "Q_icp_outflow_upstream_W"
+      ],
+      "N_COLLECTOR": [
+        "Q_icp_bias_collector_W"
+      ],
+      "N_HOUSING": [
+        "Q_icp_outflow_upstream_W"
+      ],
+      "N_MATCH": [
+        "P_icp_matching_DC_W"
+      ],
+      "N_MOUNT": [
+        "Q_icp_outflow_upstream_W"
+      ]
+    },
+    "sinks_K": 250.0,
+    "tk06_split": {
+      "N_ANTENNA": 0.75,
+      "N_HOUSING": 0.25
+    }
+  }
+}
