@@ -1,0 +1,15 @@
+{
+ "captured_at_python_commit": "ba8adc3b7b3bf9c4a0594a42bed3c609638353a5",
+ "files": {
+  "pareto_blocks": {
+   "file": "f7_pareto_blocks_v1.json.gz",
+   "sha256": "de6ee69f21d4e5b4daba6e1b8bed263598b950b19cae9da49d309ec4d7664f00",
+   "json_sha256": "07d5335d4f020fa1fa9e2d91796669b2790383c74a486aa84d7e4de37889af3c"
+  },
+  "contexts_index": {
+   "file": "f7_contexts_index_v1.json.gz",
+   "sha256": "7354b2c023c11c70000cb622f3fbe5799d0be7b745c537f276fec266ee1ff63c",
+   "json_sha256": "1c144bdb99efb3cc0338fb755a4eb82fff580431b9290353dff21ab46bf2fd77"
+  }
+ }
+}
