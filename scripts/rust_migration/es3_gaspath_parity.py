@@ -5,7 +5,7 @@ Implements the vector generators, reference calls, tolerance classes and decisio
 
 * docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_FILTER_STAGE_PY/parity_prereg_v{1,2}.json  (contract key 'filter')
 * docs/rust_migration/contracts/C-ABEP_SIM_COMPRESSOR_PY/parity_prereg_v{1,2}.json           (contract key 'compressor')
-* docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v{1..6}.json (contract key 'plenum')
+* docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v{1..7}.json (contract key 'plenum')
 
 The active version of each key is CONTRACT_VERSION; a superseded version keeps its report (immutable). Version 2 of
 the filter and compressor contracts repeats version 1 with fresh seeds (see their 'supersedes' records). Version 2 of
@@ -18,13 +18,16 @@ RUST_DEFECT fix registered and fresh seeds (v3 was superseded before any scored 
 Version 5 (v4 superseded before any scored run) scores the five rounding-dominated segment cascade diagnostics through
 their primitives (reported with conditioning) and registers a larger refinement grid. Version 6 (v5 superseded before
 any scored run: its frozen refinement record exposed a Rust integrator that damped growing modes) registers the
-growing-mode guard of the Rust integrator and fresh seeds; the procedure is v5's.
+growing-mode guard of the Rust integrator and fresh seeds; the procedure is v5's. Version 7 (v6 superseded before any
+scored run) adds the input-only stability class (strata S / U / R, stratified held-out and refinement draws), scores
+the unstable stratum against the converged reference (DIV-P-REF-01), reports closing-valve xO extrema and requires the
+non-vacuity check of every scored family before the scoring run (transient_convergence_procedure_v7).
 
 The Python reference is called read-only; the Rust side is the `abep-gaspath-parity` binary of crates/abep-gaspath.
 
     python3 scripts/rust_migration/es3_gaspath_parity.py dev   filter|compressor|plenum   # development seed; no verdict
     python3 scripts/rust_migration/es3_gaspath_parity.py score filter|compressor|plenum   # scoring seed, ONCE
-    python3 scripts/rust_migration/es3_gaspath_parity.py refine plenum                    # v6 envelope record, ONCE
+    python3 scripts/rust_migration/es3_gaspath_parity.py refine plenum                    # v7 envelope record, ONCE
     python3 scripts/rust_migration/es3_gaspath_parity.py refine-dev plenum OUT_JSON N     # development draft only
 
 A scoring run refuses to start when parity_report_v<n>.json exists, when a reference file differs from its registered
@@ -124,7 +127,7 @@ def sha_file(p: str) -> str:
         return hashlib.sha256(f.read()).hexdigest()
 
 
-CONTRACT_VERSION = {"filter": 2, "compressor": 2, "plenum": 6}
+CONTRACT_VERSION = {"filter": 2, "compressor": 2, "plenum": 7}
 
 
 def version_of(key: str, version=None) -> int:
@@ -1834,6 +1837,15 @@ def gen_orbit_sim_args(g):
 
 
 def vectors_plenum(master: int) -> list:
+    V = vectors_plenum_base(master)
+    if v7_on():
+        # transient_convergence_procedure_v7.stability_class: the class of every transient vector, both implementations
+        V += [{"id": v["id"] + "#class", "entry": "plenum.stability_class", "args": v["args"]}
+              for v in list(V) if v["entry"] in TRANSIENT_ENTRIES]
+    return V
+
+
+def vectors_plenum_base(master: int) -> list:
     V = []
 
     def add(vid, entry, args):
@@ -2006,10 +2018,18 @@ def vectors_plenum(master: int) -> list:
     # P42 / P43
     D = design_records()
     for e_idx, entry in ((42, "plenum.transient_run"), (43, "plenum.transient_case")):
-        g = rng(master, e_idx)
-        for i in range(16):
-            ref = i >= 12
-            add(f"P{e_idx}-{'REF' if ref else 'PROD'}-{i:02d}", entry, gen_transient_args(g, entry, ref))
+        if v7_on():
+            # transient_convergence_procedure_v7.stratified_draws.held_out
+            sp = v7_spec()["stratified_draws"]
+            vs, _ = stratified_draw(master, e_idx, entry, sp["held_out"][f"P{e_idx}"], "P",
+                                    sp["max_candidates_per_level"])
+            for x in vs:
+                add(x["id"], x["entry"], x["args"])
+        else:
+            g = rng(master, e_idx)
+            for i in range(16):
+                ref = i >= 12
+                add(f"P{e_idx}-{'REF' if ref else 'PROD'}-{i:02d}", entry, gen_transient_args(g, entry, ref))
         args = {"filter": {"factory": "none"}, "plant": {"design": f3_grid()[0]},
                 "plenum": {"volume_m3": 0.002, "gamma_wall": 0.0, "wall_case": "E", "leak_area_m2": 5e-8},
                 "controller": {"Kp": 2.0, "Ti_s": 1.0, "f_valve_hz": 1.0, "authority": 2.0},
@@ -2040,9 +2060,16 @@ def vectors_plenum(master: int) -> list:
                                                 "amplitude": U(g, 0.05, 0.3), "a_max_m2": auth * float(a_d),
                                                 "n_phase": int(g.integers(8, 33))})
     # P45
-    g = rng(master, 45)
-    for i in range(4):
-        add(f"P45-{i}", "plenum.orbit_sim", gen_orbit_sim_args(g))
+    if v7_on():
+        sp = v7_spec()["stratified_draws"]
+        vs, _ = stratified_draw(master, 45, "plenum.orbit_sim", sp["held_out"]["P45"], "P",
+                                sp["max_candidates_per_level"])
+        for x in vs:
+            add(x["id"], x["entry"], x["args"])
+    else:
+        g = rng(master, 45)
+        for i in range(4):
+            add(f"P45-{i}", "plenum.orbit_sim", gen_orbit_sim_args(g))
     # P46
     add("P46-G-strict_blockers", "plenum.strict_blockers", {})
     g = rng(master, 46)
@@ -2641,6 +2668,8 @@ def rule_plenum(ctx, path, py):
         if e == "plenum.area_for_pressure" and last == "resid":
             tol["a_abs"] = 1e-9
         return ("ULP", tol)
+    if e == "plenum.stability_class":
+        return ("UNSCORED", None)       # class and equilibrium kinds EXACT; Re lambda_max reported
     if e in TRANSIENT_ENTRIES:
         if v3_on():
             return rule_transient_v3(ctx, path, py)
@@ -3007,12 +3036,16 @@ def family_scale(kind, v, ref_value):
     raise RuntimeError(kind)
 
 
-def env_of(impl, level, code, fam):
+def env_of(impl, level, code, fam, v=None):
+    if v7_on():
+        return own_env_v7(impl, v, level, code, fam)
     e = ENV["envelopes"][impl].get(level, {}).get(code, {}).get(fam)
     return None if e is None else e["E"]
 
 
-def env_sum(level, code, fam):
+def env_sum(level, code, fam, v=None):
+    if v7_on():
+        return bound_of(v, level, code, fam)
     a, b = env_of("python", level, code, fam), env_of("rust", level, code, fam)
     return None if a is None or b is None else a + b
 
@@ -3025,7 +3058,7 @@ def diag_images(v) -> list:
     vid = v["id"]
     if vid in IMG:
         return IMG[vid]
-    delta = env_sum(level_of(v), "P42", "F42.p")
+    delta = env_sum(level_of(v), "P42", "F42.p", v)
     out = []
     for tp in TAP.get(vid, []):
         tr_, ev, t0, t, y = tp["tr"], tp["ev"], tp["t0"], tp["t"], tp["y"]
@@ -3066,8 +3099,11 @@ def rule_transient_v3(ctx, path, py):
     fam = V3_FAMILY[e].get(keys)
     lvl = level_of(v)
     if fam is not None:
-        E = env_sum(lvl, V3_CODE[e], fam)
-        s = family_scale(V3_SCALE[fam], v, py if isinstance(py, float) else None)
+        E = env_sum(lvl, V3_CODE[e], fam, v)
+        if v7_on():
+            s = family_scale_v7(v, fam, py if isinstance(py, float) else None)
+        else:
+            s = family_scale(V3_SCALE[fam], v, py if isinstance(py, float) else None)
         if E is None or s is None:
             return ("ENV", {"abs_env": None, "family": fam, "level": lvl, "why": "envelope or scale NOT_EVALUATED"})
         return ("ENV", {"abs_env": E * s, "family": fam, "level": lvl})
@@ -3092,10 +3128,10 @@ def proximity_transient_v3(v, rust, py, sub):
     e, vid, lvl = v["entry"], v["id"], level_of(v)
     taps = TAP.get(vid, [])
     r0, ms = float(v["args"]["r0"]), mdot_scale_of(v)
-    tol_p = env_sum(lvl, "P42", "F42.p") * r0
-    tol_md = env_sum(lvl, "P42", "F42.mdot") * ms
-    tol_u = env_sum(lvl, "P42", "F42.u")
-    tol_uc = env_sum(lvl, "P42", "F42.ucmd_end")
+    tol_p = env_sum(lvl, "P42", "F42.p", v) * r0
+    tol_md = env_sum(lvl, "P42", "F42.mdot", v) * ms
+    tol_u = env_sum(lvl, "P42", "F42.u", v)
+    tol_uc = env_sum(lvl, "P42", "F42.ucmd_end", v)
     flags = []
 
     def sat_flag(k):
@@ -3197,7 +3233,15 @@ def proximity_transient_v3(v, rust, py, sub):
     for f in excused:
         sub.unfail(f)
     sub.failures = unexcused
-    return {"vector": vid, "entry": e, "status": "NOT_SCORED_AT_THRESHOLD", "n_unscored_leaves": len(excused),
+    # contract v7 closing_valve_xO.proximity_counting: excused xO None-ness samples count once per (vector, segment) in
+    # the proximity limit (one governing quantity: the sign of the segment's rounding-level valve opening); all are
+    # reported
+    n_count = len(excused)
+    xo_none = [f for f in excused if keys_of(parse_path(f.get("path", ""))) == ("segments", "xO")]
+    if v7_on() and xo_none:
+        n_count = len(excused) - len(xo_none) + len({parse_path(f["path"])[1] for f in xo_none})
+    return {"vector": vid, "entry": e, "status": "NOT_SCORED_AT_THRESHOLD", "n_unscored_leaves": n_count,
+            "n_excused_leaves": len(excused), "n_xO_none_ness_leaves (v7: counted once per segment)": len(xo_none),
             "flags": flags[:20], "unscored_discrete_differences": [
                 {k: f[k] for k in ("observable", "path", "rust", "python") if k in f} for f in excused][:20],
             "unexcused_failures": len(unexcused), "_tally": sub}
@@ -3227,7 +3271,7 @@ def checks_transient_v3(vectors, py_out, rres):
             def fnum_(x):
                 return unj(x) if isinstance(x, str) else x
             if e == "plenum.transient_run" and val.get("ok"):
-                Eu, Em = env_of(impl, lvl, "P42", "F42.u"), env_of(impl, lvl, "P42", "F42.mdot")
+                Eu, Em = env_of(impl, lvl, "P42", "F42.u", v), env_of(impl, lvl, "P42", "F42.mdot", v)
                 t_start = 0.0
                 for k, sg in enumerate(val["segments"]):
                     if any(fnum_(x) < 0.0 for x in sg["p"]):
@@ -3246,7 +3290,7 @@ def checks_transient_v3(vectors, py_out, rres):
                 if not (fnum_(val["throughput_kg"]) >= 0.0):
                     bad["NN-P-02"].append("throughput_kg")
             if e == "plenum.transient_case" and val.get("metrics"):
-                Eu, Em = env_of(impl, lvl, "P43", "F43.u"), env_of(impl, lvl, "P43", "F43.mdot")
+                Eu, Em = env_of(impl, lvl, "P43", "F43.u", v), env_of(impl, lvl, "P43", "F43.mdot", v)
                 for k, m in enumerate(val["metrics"]):
                     if not (fnum_(m["P_min_Pa"]) >= 0.0):
                         bad["NN-P-01"].append([k, "P_min_Pa"])
@@ -3262,7 +3306,7 @@ def checks_transient_v3(vectors, py_out, rres):
                 if inv is not None and not (fnum_(inv) > 0.0):
                     bad["NN-P-02"].append("inventory_kg")
             if e == "plenum.orbit_sim" and val.get("ok"):
-                Em = env_of(impl, lvl, "P45", "F45.mdot")
+                Em = env_of(impl, lvl, "P45", "F45.mdot", v)
                 if ms is not None and not (fnum_(val["mdot_min_kgps"]) >= -Em * ms):
                     bad["NN-P-02"].append("mdot_min_kgps")
             for c, b in bad.items():
@@ -3282,6 +3326,89 @@ def checks_transient_v3(vectors, py_out, rres):
         "n": len(img_check), "ok": all(x["ok"] for x in img_check),
         "failures": [x for x in img_check if not x["ok"]][:20]}
     return out
+
+
+def transient_v7_summary(vectors, py_out, rres) -> dict:
+    """Report section of contract v7: strata, class agreement, reported-not-scored leaves by category, the unstable
+    stratum against the converged reference (with the Python nominal error, DIV-P-REF-01 evidence) and the frozen
+    non-vacuity check."""
+    strata = {}
+    for v in vectors:
+        if v["entry"] in TRANSIENT_ENTRIES:
+            k = f"{V3_CODE[v['entry']]}/{level_of(v)}/{cls_of(v)['class']}"
+            strata[k] = strata.get(k, 0) + 1
+    cls_rows = []
+    for v in vectors:
+        if v["entry"] != "plenum.stability_class":
+            continue
+        po, rr = py_out[v["id"]], rres[v["id"]]
+        pc = po[1]["class"] if po[0] == "OK" else ("ERROR", po[1])
+        rc = rr["value"]["class"] if rr["outcome"] == "OK" else ("ERROR", rr.get("error_class"))
+        pk = [e["eq"] for e in po[1]["events"]] if po[0] == "OK" else None
+        rk = [e["eq"] for e in rr["value"]["events"]] if rr["outcome"] == "OK" else None
+        cls_rows.append({"vector": v["id"], "python": pc, "rust": rc, "equal": pc == rc and pk == rk})
+    by_cat = {}
+    rep_rows = []
+    seen = set()
+    vmap = {v["id"]: v for v in vectors}
+    for x in REPORTED:
+        key_ = (x["vector"], x["path"], x["category"])
+        if key_ in seen:
+            continue
+        seen.add(key_)
+        v = vmap[x["vector"]]
+        c = by_cat.setdefault(x["category"], {})
+        c[v["entry"]] = c.get(v["entry"], 0) + 1
+        pth = parse_path(x["path"])
+        pv = get_path(py_out[v["id"]][1], pth) if py_out[v["id"]][0] == "OK" else None
+        rv = get_path(rres[v["id"]]["value"], pth) if rres[v["id"]]["outcome"] == "OK" else None
+        rep_rows.append(dict(x, python=pv, rust=rv))
+    unstable = []
+    for v in vectors:
+        if v["entry"] not in TRANSIENT_ENTRIES or cls_of(v)["class"] != "U" or v["id"] not in PYU:
+            continue
+        runs = PYU[v["id"]]
+        rr = rres[v["id"]]
+        row = {"vector": v["id"], "python_outcomes": {r: runs[r][0] for r in runs},
+               "rust_outcome": rr["outcome"], "families": {}}
+        if all(runs[r][0] == "OK" for r in runs) and rr["outcome"] == "OK":
+            e = v["entry"]
+            Lp = {r: family_leaves(e, runs[r][1]) for r in runs}
+            Lr = family_leaves(e, rr["value"])
+            for fam, d in Lp["T2"].items():
+                f = row["families"].setdefault(fam, {"n_scored": 0, "n_not_convergent": 0, "max_rust_N_vs_py_T2": 0.0,
+                                                     "max_python_N_vs_py_T2 (DIV-P-REF-01)": 0.0, "bound": None})
+                f["bound"] = bound_of(v, level_of(v), V3_CODE[e], fam)
+                for pth, x2 in d.items():
+                    if is_closing_xo(v, pth):
+                        continue
+                    xN, x1 = Lp["N"].get(fam, {}).get(pth), Lp["T1"].get(fam, {}).get(pth)
+                    if xN is None or x1 is None or rho_nc(xN, x1, x2):
+                        f["n_not_convergent"] += 1
+                        continue
+                    sc = family_scale_v7(v, fam, x2)
+                    y = Lr.get(fam, {}).get(pth)
+                    if not sc or y is None:
+                        continue
+                    f["n_scored"] += 1
+                    f["max_rust_N_vs_py_T2"] = max(f["max_rust_N_vs_py_T2"], abs(y - x2) / sc)
+                    f["max_python_N_vs_py_T2 (DIV-P-REF-01)"] = max(f["max_python_N_vs_py_T2 (DIV-P-REF-01)"],
+                                                                   abs(xN - x2) / sc)
+            if e == "plenum.orbit_sim":
+                row["P_dev_max_frac"] = {"python_N": runs["N"][1].get("P_dev_max_frac"),
+                                         "python_T1": runs["T1"][1].get("P_dev_max_frac"),
+                                         "python_T2": runs["T2"][1].get("P_dev_max_frac"),
+                                         "rust_N": rr["value"].get("P_dev_max_frac")}
+        unstable.append(row)
+    nv = ENV.get("checks", {}).get("NON_VACUITY", {})
+    return {"strata_scored": strata,
+            "class_agreement": {"n": len(cls_rows), "n_disagree": sum(1 for x in cls_rows if not x["equal"]),
+                                "disagreements": [x for x in cls_rows if not x["equal"]]},
+            "reported_not_scored": {"counts": by_cat, "rows_first_300": rep_rows[:300]},
+            "unstable_stratum (scored against the converged reference, DIV-P-REF-01)": unstable,
+            "non_vacuity (frozen record)": {"ok": nv.get("ok"), "rows": nv.get("rows")},
+            "divergence_record": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/"
+                                 "div_p_ref_01_lsoda_unstable_loops.json"}
 
 
 def transient_v3_summary(t, vectors):
@@ -3306,8 +3433,557 @@ def transient_v3_summary(t, vectors):
                 "all": cond}}
 
 
+# ------------------------------------------------------------------------------------------------ contract v7
+# transient_convergence_procedure_v7: input-only stability class, strata S / U / R, stratified draws, closing-valve
+# xO extrema reported, unstable stratum scored against the converged reference (DIV-P-REF-01), non-vacuity check.
+CLS: dict = {}          # vector id -> Python class record (reference Jacobian, numpy)
+PYU: dict = {}          # U vector id -> {"N", "T1", "T2"} Python reference outcomes (comparison target: T2)
+REPORTED: list = []     # v7 reported-not-scored leaves: {vector, path, category}
+
+
+def v7_on() -> bool:
+    return CONTRACT_VERSION["plenum"] >= 7
+
+
+def v7_spec() -> dict:
+    return load_contract("plenum")[0]["transient_convergence_procedure_v7"]
+
+
+def _py_equilibrium(tr_, intake, setpoint, density, feed_factor, ev):
+    """One equilibrium of the v7 stability class (the same steps as abep_gaspath TransientRun::event_equilibrium)."""
+    co = pf.Chain(intake, tr_.filt, tr_.plant, tr_.plenum).node_coefficients(density)
+    leak_d, fc_d = dict(zip(SPECIES, tr_.leak)), dict(zip(SPECIES, tr_.fc))
+    a, _, _, ok = pf.area_for_pressure(co, setpoint, tr_.k_rec, leak_d, fc_d)
+    if not bool(ok):
+        return {"eq": "CLOSING", "re_max": None}
+    u = float(a) / (tr_.a_max * feed_factor)
+    if u > 1.0:
+        return {"eq": "SAT_OPEN", "re_max": None}
+    p3, _ = pf.solve_pressures(co, float(a), tr_.k_rec, leak_d, fc_d)
+    i_int = (u / tr_.u_ff - 1.0) * tr_.ctrl.Ti_s / tr_.ctrl.Kp
+    y = [float(p3[s]) / tr_.r0 for s in SPECIES] + [u, i_int, 0.0, 0.0, 0.0]
+    _, jac = tr_._make(ev)
+    lam = np.linalg.eigvals(np.asarray(jac(0.0, y), dtype=float)[:5, :5])
+    return {"eq": "UNSAT", "re_max": float(max(lam.real))}
+
+
+def stability_class_of(entry: str, a: dict) -> dict:
+    """transient_convergence_procedure_v7.stability_class (Python side): P42 / P43 the equilibrium of every event of
+    the fixed sequence; P45 the orbit event's quasi-static equilibria at density 1 + A sin(2 pi k / 24), k = 0..23.
+    U: an UNSAT equilibrium has an eigenvalue with Re lambda > 0; R: refused (dead-head ValueError at the design
+    setpoint; P45 also no steady start); S otherwise."""
+    fc, pl, pn, ct = py_filter_case(a["filter"]), py_plant(a["plant"]), py_plenum_obj(a["plenum"]), \
+        py_controller(a["controller"])
+    refused = {"class": "R", "events": []}
+    orbit = entry == "plenum.orbit_sim" or "state" in a
+    des = py_intake_state(a["design"] if orbit else a["intake"])
+    try:
+        tr_ = pf.TransientRun(fc, pl, pn, ct, des, a["r0"])
+    except ValueError:
+        return refused
+    if orbit:
+        st = py_intake_state(a["state"])
+        y0, u_ss = tr_.steady_start(st, a["r0"])
+        if y0 is None or u_ss > 1.0:
+            return refused
+        T = pf.orbital_period_s(st.alt_km)
+        ev = pf.Event(f"O_{st.state}", "orbit", T, a["r0"], 1.0, st, a["amplitude"], T)
+        evs = [_py_equilibrium(tr_, st, a["r0"], 1.0 + a["amplitude"] * math.sin(2.0 * math.pi * k / 24), 1.0, ev)
+               for k in range(24)]
+    else:
+        evs = [_py_equilibrium(tr_, x.intake, x.setpoint_Pa, x.density, x.feed_factor, x)
+               for x in pf.event_sequence(des, a["r0"], a["window_s"])]
+    unstable = any(x["eq"] == "UNSAT" and x["re_max"] > 0.0 for x in evs)
+    return {"class": "U" if unstable else "S", "events": evs}
+
+
+def cls_of(v) -> dict:
+    if v["id"] not in CLS:
+        CLS[v["id"]] = stability_class_of(v["entry"], v["args"])
+    return CLS[v["id"]]
+
+
+def closing_segments(v) -> set:
+    """closing_valve_xO: segment k is a closing-valve segment when event k or event k - 1 has no reachable unsaturated
+    equilibrium because the valve closes (CLOSING); the valve starts event k + 1 shut."""
+    ks = [k for k, x in enumerate(cls_of(v)["events"]) if x["eq"] == "CLOSING"]
+    return set(ks) | {k + 1 for k in ks}
+
+
+def is_closing_xo(v, path) -> bool:
+    """P43 xO extrema of a closing-valve segment (metrics[k].xO_min / xO_max) and the summary xO_flow_min / max of a
+    vector with any closing-valve segment: reported, not scored (sign of a rounding-level valve opening)."""
+    if v["entry"] != "plenum.transient_case" or not path:
+        return False
+    keys = keys_of(path)
+    if keys in (("metrics", "xO_min"), ("metrics", "xO_max")):
+        return isinstance(path[1], int) and path[1] in closing_segments(v)
+    if keys in (("summary", "xO_flow_min"), ("summary", "xO_flow_max")):
+        return bool(closing_segments(v))
+    return False
+
+
+def _is_container(x) -> bool:
+    return isinstance(x, (dict, list))
+
+
+def rho_nc(xn, x1, x2) -> bool:
+    """not_convergent_reference for a float leaf of the Python reference: rho = |x_T1 - x_T2| / |x_N - x_T1| >= 1/2,
+    with the floating allowance f = max(4 ulp(x_T2), 1e-9 |x_T2|): |x_N - x_T1| <= f and |x_T1 - x_T2| <= f is
+    convergent (no change), |x_N - x_T1| <= f < |x_T1 - x_T2| is not."""
+    fl = max(4.0 * math.ulp(x2), 1e-9 * abs(x2))
+    a_, b_ = abs(xn - x1), abs(x1 - x2)
+    if a_ <= fl:
+        return b_ > fl
+    return b_ / a_ >= V7_RHO_LIMIT
+
+
+V7_RHO_LIMIT = 0.5
+
+
+def nc_leaf(v, path) -> bool:
+    """U stratum: a leaf of the Python reference that is not convergent (float: rho_nc; discrete: T1 != T2; any leaf
+    missing or of another type in N / T1 / T2)."""
+    runs = PYU.get(v["id"])
+    if runs is None:
+        return False
+    vals = []
+    for r in ("N", "T1", "T2"):
+        o = runs[r]
+        if o[0] != "OK":
+            return True
+        vals.append(get_path(o[1], path) if path else o[1])
+    if any(_is_container(x) for x in vals):
+        return False
+    xn, x1, x2 = vals
+    if all(isinstance(x, float) for x in (xn, x1, x2)) and all(math.isfinite(x) for x in (xn, x1, x2)):
+        return rho_nc(xn, x1, x2)
+    return not exact_equal(x1, x2)      # discrete / non-finite leaves on their JSON form ("NaN" == "NaN")
+
+
+def skip_v7(entry, path, v) -> bool:
+    """v7 reported-not-scored leaves (recorded with their category): closing-valve xO extrema (S and U) and, in the
+    U stratum, leaves whose Python reference is not convergent (NOT_CONVERGENT_REFERENCE)."""
+    if skip_plenum(entry, path):
+        return True
+    if v is None or entry not in TRANSIENT_ENTRIES or not path:
+        return False
+    if is_closing_xo(v, path):
+        REPORTED.append({"vector": v["id"], "path": "/".join(map(str, path)), "category": "CLOSING_VALVE_XO"})
+        return True
+    if cls_of(v)["class"] == "U" and nc_leaf(v, path):
+        REPORTED.append({"vector": v["id"], "path": "/".join(map(str, path)),
+                         "category": "NOT_CONVERGENT_REFERENCE"})
+        return True
+    return False
+
+
+def stratum_of(v) -> str:
+    return cls_of(v)["class"] if v is not None and v.get("entry") in TRANSIENT_ENTRIES else "S"
+
+
+def bound_of(v, level, code, fam):
+    """The frozen v7 bound of the vector's stratum (family units): S: E_py^S + E_rust^S; U: E_rust^U + D_py^U."""
+    st = "U" if stratum_of(v) == "U" else "S"
+    return ENV["bounds"].get(st, {}).get(level, {}).get(code, {}).get(fam)
+
+
+def own_env_v7(impl, v, level, code, fam):
+    """Own-implementation envelope of the vector's stratum (NN / VS integrity checks): S E_impl^S; U: rust E_rust^U,
+    python (its T2 is the compared output) D_py^U."""
+    st = "U" if stratum_of(v) == "U" else "S"
+    key = impl if st == "S" else ("rust" if impl == "rust" else "python_T1_T2")
+    e = ENV["envelopes"].get(st, {}).get(key, {}).get(level, {}).get(code, {}).get(fam)
+    return None if e is None else e["E"]
+
+
+def family_scale_v7(v, fam, ref_value):
+    """Registered family scale; in the U stratum F45.P_dev is scored relative to the converged reference (|py_T2|)."""
+    if fam in V7_RELATIVE_U and stratum_of(v) == "U":
+        return abs(ref_value) if isinstance(ref_value, float) and math.isfinite(ref_value) and ref_value else None
+    return family_scale(V3_SCALE[fam], v, ref_value)
+
+
+V7_RELATIVE_U = ("F45.P_dev",)
+
+
+def py_plenum_v7(v):
+    """Python reference of a scored vector; a U transient vector is compared with its converged T2 run (DIV-P-REF-01):
+    N, T1 and T2 are evaluated in that order (the instrumentation keeps the T2 run) and recorded."""
+    if v["entry"] in TRANSIENT_ENTRIES and cls_of(v)["class"] == "U":
+        lv = v7_spec()["levels_from"]
+        levels = load_contract("plenum")[0][lv]["tolerance_levels"][level_of(v)]
+        runs = {"N": py_plenum(v), "T1": py_run_rtol(v, levels["T1_rtol"]), "T2": py_run_rtol(v, levels["T2_rtol"])}
+        PYU[v["id"]] = runs
+        return runs["T2"]
+    if v["entry"] == "plenum.stability_class":
+        return py_call(lambda: stability_class_of(v["entry"], v["args"]))
+    return py_plenum(v)
+
+
+def stratified_draw(master, e_idx, entry, sizes, prefix, max_candidates):
+    """stratified_draws: per level a candidate stream default_rng(SeedSequence([master, entry_index, level_index]))
+    (level_index 0 PROD, 1 REF) of the v1 generator; each candidate is classified (input-only, Python reference
+    Jacobian) and accepted while its stratum is not full; ids <prefix><entry_index>-<level>-<class>-<nnn>."""
+    out, stats = [], {}
+    for li, lvl in enumerate(("PROD", "REF")):
+        sz = sizes.get(lvl)
+        if not sz:
+            continue
+        g = np.random.default_rng(np.random.SeedSequence([master, e_idx, li]))
+        cnt = {k: 0 for k in sz}
+        seen = {"S": 0, "U": 0, "R": 0}
+        n = 0
+        while any(cnt[k] < sz[k] for k in sz):
+            n += 1
+            if n > max_candidates:
+                raise RuntimeError(f"stratified draw {prefix}{e_idx} {lvl}: strata not filled in {max_candidates}")
+            args = gen_orbit_sim_args(g) if entry == "plenum.orbit_sim" else gen_transient_args(g, entry, lvl == "REF")
+            c = stability_class_of(entry, args)
+            seen[c["class"]] += 1
+            k = c["class"]
+            if k in sz and cnt[k] < sz[k]:
+                vid = f"{prefix}{e_idx}-{lvl}-{k}-{cnt[k]:03d}"
+                out.append({"id": vid, "entry": entry, "args": args})
+                CLS[vid] = c
+                cnt[k] += 1
+        stats[lvl] = {"candidates": n, "classes_seen": seen, "accepted": cnt}
+    return out, stats
+
+
+def _py3_worker(item):
+    v, rts = item
+    _CUR["vid"] = v["id"]
+    return v["id"], {r: py_run_rtol(v, rt) for r, rt in rts.items()}
+
+
+def run_rust_parallel(reqs, workers=4):
+    """Rust requests split over `workers` CLI processes (requests are independent; results merged by id)."""
+    from concurrent.futures import ThreadPoolExecutor
+    chunks = [reqs[i::workers] for i in range(workers)]
+    with ThreadPoolExecutor(workers) as ex:
+        outs = list(ex.map(lambda ch: run_rust(ch)[0] if ch else {"results": []}, chunks))
+    return {"results": [x for o in outs for x in o["results"]]}
+
+
+def py_runs_parallel(vectors, rts, workers=4):
+    """The refinement's Python reference runs in a fork pool (each run is independent and deterministic)."""
+    import multiprocessing as mp
+    with mp.get_context("fork").Pool(workers) as p:
+        return dict(p.imap_unordered(_py3_worker, [(v, rts[v["id"]]) for v in vectors], chunksize=2))
+
+
+V7_RANGE_FAMILIES = ("F42.p", "F42.mdot", "F42.u", "F42.xO", "F42.ucmd_end", "F43.p", "F43.mdot", "F43.u", "F43.xO",
+                     "F43.setpoint_frac", "F43.valve_travel", "F45.mdot")
+V7_MAGNITUDE_FAMILIES = ("F42.throughput", "F43.overshoot", "F43.valve_travel_total", "F45.P_dev")
+
+
+def refine_plenum_v7(dev_out=None, dev_sizes=None, dev_master=None):
+    """transient_convergence_procedure_v7 refinement: stratified refinement grid (S, U), six runs per vector, S and U
+    envelopes, closing-valve xO record, the non-vacuity check, the frozen record (once)."""
+    contract, csha, cpath = load_contract("plenum")
+    spec = contract["transient_convergence_procedure_v7"]
+    proc = contract[spec["levels_from"]]
+    seeds = contract["campaign_seeds"]
+    if dev_out is None:
+        rec_path = os.path.join(ROOT, spec["record"])
+        if os.path.exists(rec_path):
+            sys.exit(f"REFUSED: {rec_path} exists; the refinement grid is run once and frozen")
+        dirty = git("status", "--porcelain", "--", "crates", "Cargo.toml", "Cargo.lock", "rust-toolchain.toml",
+                    "scripts/rust_migration")
+        if dirty:
+            sys.exit("REFUSED: uncommitted Rust / harness sources:\n" + dirty)
+        master, sizes, mode = seeds["refinement_master_seed"], spec["stratified_draws"]["refinement"], \
+            "REFINEMENT_FROZEN"
+    else:
+        rec_path = os.path.abspath(dev_out)
+        if rec_path.startswith(CDIR):
+            sys.exit("a development draft must not be written into the contract directory")
+        master, sizes, mode = dev_master, dev_sizes, "DEVELOPMENT_DRAFT_NOT_FROZEN"
+    changed = [f["path"] for f in contract["reference_implementation"]["files"]
+               if sha_file(os.path.join(ROOT, f["path"])) != f["sha256_at_registration"]]
+    if changed:
+        sys.exit(f"REFUSED_REFERENCE_CHANGED: {changed}")
+    build_rust()
+    fam_scale = v3_families()
+    V3_SCALE.clear()
+    V3_SCALE.update(fam_scale)
+    levels = proc["tolerance_levels"]
+    t0 = time.perf_counter()
+    vectors, draw_stats = [], {}
+    maxc = spec["stratified_draws"]["max_candidates_per_level"]
+    for code, e_idx, entry in (("P42", 42, "plenum.transient_run"), ("P43", 43, "plenum.transient_case"),
+                               ("P45", 45, "plenum.orbit_sim")):
+        vs, st = stratified_draw(master, e_idx, entry, sizes[code], "R", maxc)
+        vectors += vs
+        draw_stats[code] = st
+    t_draw = time.perf_counter() - t0
+    inputs_sha = hashlib.sha256(json.dumps(vectors, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    lv = {v["id"]: level_of(v) for v in vectors}
+    runs = ("N", "T1", "T2")
+    rt = {v["id"]: {"N": None, "T1": levels[lv[v["id"]]]["T1_rtol"], "T2": levels[lv[v["id"]]]["T2_rtol"]}
+          for v in vectors}
+    t0 = time.perf_counter()
+    py = py_runs_parallel(vectors, rt)
+    t_py = time.perf_counter() - t0
+    t0 = time.perf_counter()
+    rs_ = {v["id"]: {} for v in vectors}
+    for r in runs:
+        out = run_rust_parallel([rust_req_rtol(v, rt[v["id"]][r]) for v in vectors])
+        for x in out["results"]:
+            rs_[x["id"]][r] = rust_outcome(x)
+    p45 = [v for v in vectors if v["entry"] == "plenum.orbit_sim"]
+    lib, raw_lib, _, _ = run_rust([rust_req_rtol(v, None) for v in p45])
+    comp, _, _, _ = run_rust([rust_req_rtol(v, pf.RTOL) for v in p45])
+    comp_ok = [json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)
+               for a, b in zip(lib["results"], comp["results"])]
+    cl_out, _, _, _ = run_rust([{"id": v["id"], "entry": "plenum.stability_class", "args": v["args"]}
+                                for v in vectors])
+    cls_dis = []
+    for x in cl_out["results"]:
+        pyc = CLS[x["id"]]
+        ok_ = x["outcome"] == "OK" and x["value"]["class"] == pyc["class"] and \
+            [e["eq"] for e in x["value"]["events"]] == [e["eq"] for e in pyc["events"]]
+        if not ok_:
+            cls_dis.append({"vector": x["id"], "python": pyc["class"], "rust": x.get("value", {}).get("class")})
+    t_rs = time.perf_counter() - t0
+    # ---- estimators
+    envS = {"python": {}, "rust": {}}
+    envU = {"rust": {}, "python_T1_T2": {}, "python_nominal (DIV-P-REF-01 evidence, not used)": {}}
+    excluded = {"python": [], "rust": []}
+    nc_count, closing = {}, {}
+    sig_leaves = {}         # (stratum, lvl, code, fam) -> per vector list of converged py_T2 values (family units)
+
+    def upd(store, lvl, code, fam, ev, vid, pth, vals):
+        a = store.setdefault(lvl, {}).setdefault(code, {}).setdefault(
+            fam, {"E": None, "n_leaves": 0, "vectors": set(), "argmax": None})
+        a["n_leaves"] += 1
+        a["vectors"].add(vid)
+        if a["E"] is None or ev > a["E"]:
+            a["E"] = ev
+            a["argmax"] = dict({"vector": vid, "path": "/".join(map(str, pth))}, **vals)
+    for v in vectors:
+        vid, e, lvl, code = v["id"], v["entry"], lv[v["id"]], V3_CODE[v["entry"]]
+        st = CLS[vid]["class"]
+        okp = all(run_ok(e, py[vid][r]) for r in runs)
+        okr = all(run_ok(e, rs_[vid][r]) for r in runs)
+        if not okp:
+            excluded["python"].append({"vector": vid, "stratum": st})
+        if not okr:
+            excluded["rust"].append({"vector": vid, "stratum": st})
+        Lp = {r: family_leaves(e, py[vid][r][1]) for r in runs} if okp else None
+        Lr = {r: family_leaves(e, rs_[vid][r][1]) for r in runs} if okr else None
+        per_vec = {}
+        if st == "S":
+            for impl, L in (("python", Lp), ("rust", Lr)):
+                if L is None:
+                    continue
+                if {f: set(d) for f, d in L["N"].items()} != {f: set(d) for f, d in L["T2"].items()} or \
+                        {f: set(d) for f, d in L["T1"].items()} != {f: set(d) for f, d in L["T2"].items()}:
+                    excluded[impl].append({"vector": vid, "stratum": st, "why": "structure differs from T2"})
+                    continue
+                for fam, d in L["T2"].items():
+                    for pth, x2 in d.items():
+                        if is_closing_xo(v, pth):
+                            c = closing.setdefault(lvl, {"n": 0, "max_e": {}, "max_cross_T2": 0.0, "argmax": None})
+                            c["n"] += 1
+                            ee = abs(L["N"][fam][pth] - x2) + abs(L["T1"][fam][pth] - x2)
+                            c["max_e"][impl] = max(c["max_e"].get(impl, 0.0), ee)
+                            continue
+                        s = family_scale(fam_scale[fam], v, x2)
+                        if not s:
+                            continue
+                        xN, x1 = L["N"][fam][pth], L["T1"][fam][pth]
+                        upd(envS[impl], lvl, code, fam, (abs(xN - x2) + abs(x1 - x2)) / s, vid, pth,
+                            {"N": xN, "T1": x1, "T2": x2, "scale": s})
+                        if impl == "python":
+                            per_vec.setdefault(fam, []).append(x2 / s)
+            if Lp is not None and Lr is not None:
+                for fam, d in Lp["T2"].items():
+                    for pth, x2 in d.items():
+                        y2 = Lr["T2"].get(fam, {}).get(pth)
+                        if y2 is not None and is_closing_xo(v, pth):
+                            c = closing[lvl]
+                            if abs(x2 - y2) > c["max_cross_T2"]:
+                                c["max_cross_T2"] = abs(x2 - y2)
+                                c["argmax"] = {"vector": vid, "path": "/".join(map(str, pth)), "python_T2": x2,
+                                               "rust_T2": y2}
+        elif st == "U" and Lp is not None:
+            PYU[vid] = py[vid]
+            for fam, d in Lp["T2"].items():
+                for pth, x2 in d.items():
+                    if is_closing_xo(v, pth):
+                        continue
+                    xN, x1 = Lp["N"].get(fam, {}).get(pth), Lp["T1"].get(fam, {}).get(pth)
+                    cnt = nc_count.setdefault(f"{lvl}/{code}/{fam}", {"scored": 0, "not_convergent": 0})
+                    if xN is None or x1 is None or rho_nc(xN, x1, x2):
+                        cnt["not_convergent"] += 1
+                        continue
+                    s = abs(x2) if fam in V7_RELATIVE_U else family_scale(fam_scale[fam], v, x2)
+                    if not s:
+                        continue
+                    cnt["scored"] += 1
+                    upd(envU["python_T1_T2"], lvl, code, fam, abs(x1 - x2) / s, vid, pth, {"T1": x1, "T2": x2,
+                                                                                         "scale": s})
+                    upd(envU["python_nominal (DIV-P-REF-01 evidence, not used)"], lvl, code, fam,
+                        (abs(xN - x2) + abs(x1 - x2)) / s, vid, pth, {"N": xN, "T1": x1, "T2": x2, "scale": s})
+                    per_vec.setdefault(fam, []).append(x2 / s)
+                    if Lr is not None:
+                        yN, y1, y2 = (Lr[r].get(fam, {}).get(pth) for r in runs)
+                        if None not in (yN, y1, y2):
+                            upd(envU["rust"], lvl, code, fam, (abs(yN - y2) + abs(y1 - y2)) / s, vid, pth,
+                                {"N": yN, "T1": y1, "T2": y2, "python_T2": x2, "scale": s})
+        for fam, xs in per_vec.items():
+            sig_leaves.setdefault((st, lvl, code, fam), []).append(xs)
+
+    def fin(store):
+        for lvl_, codes in store.items():
+            for code_, fams in codes.items():
+                for fam_, a in fams.items():
+                    a["n_vectors"] = len(a.pop("vectors"))
+                    a["status"] = "EVALUATED" if a["E"] is not None else "NOT_EVALUATED"
+    for x in list(envS.values()) + list(envU.values()):
+        fin(x)
+    bounds = {"S": {}, "U": {}}
+    needed = spec["needed_envelopes"]
+    missing = []
+    for st, codes_by_lvl in needed.items():
+        for lvl, codes in codes_by_lvl.items():
+            for code in codes:
+                for fam in [f for f in fam_scale if f.startswith("F" + code[1:])]:
+                    if st == "S":
+                        a = envS["python"].get(lvl, {}).get(code, {}).get(fam, {}).get("E")
+                        b = envS["rust"].get(lvl, {}).get(code, {}).get(fam, {}).get("E")
+                    else:
+                        a = envU["rust"].get(lvl, {}).get(code, {}).get(fam, {}).get("E")
+                        b = envU["python_T1_T2"].get(lvl, {}).get(code, {}).get(fam, {}).get("E")
+                    if a is None or b is None:
+                        missing.append(f"{st}/{lvl}/{code}/{fam}")
+                        continue
+                    bounds[st].setdefault(lvl, {}).setdefault(code, {})[fam] = a + b
+    # ---- non-vacuity (step: before any held-out vector): bound < comparison scale, per stratum / level / family
+    nv_rows = []
+    for st, codes_by_lvl in needed.items():
+        for lvl, codes in codes_by_lvl.items():
+            for code in codes:
+                for fam in [f for f in fam_scale if f.startswith("F" + code[1:])]:
+                    B = bounds[st].get(lvl, {}).get(code, {}).get(fam)
+                    per_v = sig_leaves.get((st, lvl, code, fam), [])
+                    if st == "U" and fam in V7_RELATIVE_U:
+                        sigma, kind = 1.0, "relative: bound x |py_T2| < |py_T2| for every U refinement vector"
+                    elif fam in V7_MAGNITUDE_FAMILIES:
+                        flat = [abs(x) for xs in per_v for x in xs]
+                        sigma = float(np.median(flat)) if flat else None
+                        kind = "median |converged value| over the stratum's refinement leaves"
+                    else:
+                        rngs = [max(xs) - min(xs) for xs in per_v if len(xs) >= 2]
+                        sigma = float(np.median(rngs)) if rngs else None
+                        kind = "median within-vector range of the converged values over the stratum's refinement " \
+                               "vectors with >= 2 leaves"
+                    ok_ = B is not None and sigma is not None and B < sigma
+                    nv_rows.append({"stratum": st, "level": lvl, "entry": code, "family": fam, "bound": B,
+                                    "comparison_scale": sigma, "scale_kind": kind, "ok": ok_,
+                                    "n_vectors": len(per_v)})
+    nv_ok = all(r["ok"] for r in nv_rows)
+    now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    rec = {
+        "schema": "abep_plenum_transient_envelope_v7",
+        "mode": mode,
+        "contract": {"id": contract["id"], "path": os.path.relpath(cpath, ROOT), "sha256": csha,
+                     "registration_commit": git("log", "-n1", "--format=%H", "--", os.path.relpath(cpath, ROOT))},
+        "procedure": "transient_convergence_procedure_v7 (A9.31 sec. 5 estimator per stratum): S: e = (|x_N - x_T2| + "
+                     "|x_T1 - x_T2|) / s_F per implementation, bound E_py^S + E_rust^S; U: E_rust^U (Rust "
+                     "estimator) + D_py^U (max |x_T1 - x_T2| / s_F of the Python reference) over leaves whose "
+                     "reference is convergent (rho < 1/2); no multiplier",
+        "date_utc": now,
+        "master_seed": master,
+        "strata_sizes": sizes,
+        "draw_statistics": draw_stats,
+        "n_vectors": len(vectors),
+        "inputs_sha256": inputs_sha,
+        "python_commit": contract["reference_implementation"]["python_commit"],
+        "reference_sha256_at_run": {f["path"]: sha_file(os.path.join(ROOT, f["path"]))
+                                    for f in contract["reference_implementation"]["files"]},
+        "head_commit": git("rev-parse", "HEAD"),
+        "build_provenance": provenance(contract),
+        "environment": dict(environment(), python_workers=4),
+        "tolerance_levels": levels,
+        "envelopes": {"S": envS, "U": envU},
+        "bounds": bounds,
+        "missing_envelopes": missing,
+        "not_convergent_reference_leaves": nc_count,
+        "closing_valve_xO (reported, not scored)": {
+            "per_level": closing,
+            "known_property": "converged cross-implementation disagreement of an ill-posed observable (the sign of a "
+                              "rounding-level valve opening decides which samples have a defined xO); not resolved "
+                              "by choosing one value; v6 grid instance R43-REF-809 segment 6 xO_min: Rust 0.51716, "
+                              "Python 0.51607 (refinement_v6_p4243_note.md)"},
+        "excluded_vectors": {impl: {"n": len(x), "list": x} for impl, x in excluded.items()},
+        "class_agreement_refinement (Python reference Jacobian vs Rust, recorded)": {
+            "n": len(vectors), "disagreements": cls_dis},
+        "checks": {"COMP-P-01": {"n": len(comp_ok), "ok": all(comp_ok) and raw_lib is not None,
+                                 "failures": [p45[i]["id"] for i, x in enumerate(comp_ok) if not x]},
+                   "no_missing_envelope": not missing,
+                   "NON_VACUITY": {"ok": nv_ok and not missing, "rows": nv_rows}},
+        "timing_s": {"draw_and_classify": t_draw, "python": t_py, "rust": t_rs},
+        "statement": "frozen before any held-out (scoring_master_seed) vector is generated or run; never edited "
+                     "after the scoring run" if mode == "REFINEMENT_FROZEN" else
+                     "DEVELOPMENT DRAFT (exploration / development seed): never a scoring input",
+    }
+    rec = sanitize(rec)
+    with open(rec_path, "w") as f:
+        json.dump(rec, f, indent=1, allow_nan=False)
+        f.write("\n")
+    with open(os.path.splitext(rec_path)[0] + ".md", "w") as f:
+        f.write(render_envelope_md_v7(rec))
+    return rec
+
+
+def render_envelope_md_v7(r):
+    L = [f"# Plenum / feed transient envelope record v7 ({r['mode']})", "",
+         f"Contract `{r['contract']['path']}` sha256 `{r['contract']['sha256']}` (registered in "
+         f"`{(r['contract']['registration_commit'] or '')[:12]}`). Generated from the JSON record next to this file.",
+         "", f"* Procedure: {r['procedure']}.",
+         f"* Seed {r['master_seed']}; {r['n_vectors']} refinement vectors, strata {json.dumps(r['strata_sizes'])}; "
+         f"inputs sha256 `{r['inputs_sha256'][:16]}...`.",
+         f"* Python reference commit `{r['python_commit'][:12]}`; code at `{r['head_commit'][:12]}`; "
+         f"{r['build_provenance']['rustc']}; Python {r['environment']['python']}, numpy {r['environment']['numpy']}, "
+         f"scipy {r['environment']['scipy']}.",
+         f"* Checks: COMP-P-01 {r['checks']['COMP-P-01']['ok']}; no missing envelope {r['checks']['no_missing_envelope']}"
+         f"; NON_VACUITY {r['checks']['NON_VACUITY']['ok']}; class disagreements (refinement, recorded) "
+         f"{len(r['class_agreement_refinement (Python reference Jacobian vs Rust, recorded)']['disagreements'])}.",
+         "", "## Draws", ""]
+    for code, d in r["draw_statistics"].items():
+        for lvl, s in d.items():
+            L.append(f"* {code} {lvl}: {s['candidates']} candidates, classes seen {json.dumps(s['classes_seen'])}, "
+                     f"accepted {json.dumps(s['accepted'])}")
+    L += ["", "## Bounds and non-vacuity (family units; U F45.P_dev relative to the converged reference)", "",
+          "| stratum | level | entry | family | bound | comparison scale | ok | vectors |", "|---|---|---|---|---|---|---|---|"]
+    for x in r["checks"]["NON_VACUITY"]["rows"]:
+        L.append(f"| {x['stratum']} | {x['level']} | {x['entry']} | {x['family']} | {fmt3(x['bound'])} | "
+                 f"{fmt3(x['comparison_scale'])} | {'yes' if x['ok'] else '**NO**'} | {x['n_vectors']} |")
+    L += ["", "## Envelopes", "", "| stratum | estimator | level | entry | family | E | n leaves | argmax vector |",
+          "|---|---|---|---|---|---|---|---|"]
+    for st, ests in r["envelopes"].items():
+        for est, lvls in ests.items():
+            for lvl, codes in lvls.items():
+                for code, fams in codes.items():
+                    for fam, a in fams.items():
+                        L.append(f"| {st} | {est} | {lvl} | {code} | {fam} | {fmt3(a['E'])} | {a['n_leaves']} | "
+                                 f"{(a.get('argmax') or {}).get('vector')} |")
+    L += ["", "## Not-convergent reference leaves (U stratum)", ""]
+    L += [f"* {k}: scored {x['scored']}, NOT_CONVERGENT_REFERENCE {x['not_convergent']}"
+          for k, x in sorted(r["not_convergent_reference_leaves"].items())]
+    L += ["", "## Closing-valve xO extrema (reported, not scored)", "",
+          json.dumps(r["closing_valve_xO (reported, not scored)"], indent=1), "",
+          f"Statement: {r['statement']}", ""]
+    return "\n".join(L)
+
+
 # ------------------------------------------------------------------------------------------------ envelope record
 def envelope_path(contract) -> str:
+    if "transient_convergence_procedure_v7" in contract:
+        return os.path.join(ROOT, contract["transient_convergence_procedure_v7"]["record"])
     return os.path.join(ROOT, contract["transient_convergence_procedure_v3"]["step_4_freeze"]["record"])
 
 
@@ -3335,6 +4011,11 @@ def load_envelope(contract, contract_sha, mode) -> dict:
         sys.exit("REFUSED: the envelope record belongs to another contract version")
     if not rec["checks"]["COMP-P-01"]["ok"]:
         sys.exit("REFUSED: COMP-P-01 failed in the envelope record")
+    if v7_on():
+        if rec.get("schema") != "abep_plenum_transient_envelope_v7":
+            sys.exit("REFUSED: not a v7 envelope record")
+        if mode == "score" and not rec["checks"]["NON_VACUITY"]["ok"]:
+            sys.exit("REFUSED: NON_VACUITY failed in the frozen record (stop before scoring and report)")
     rec["_meta"] = meta
     return rec
 
@@ -3691,7 +4372,8 @@ def render_envelope_md(r):
 # ======================================================================================================================
 SPEC = {"filter": (vectors_filter, py_filter, rule_filter, checks_filter),
         "compressor": (vectors_compressor, py_compressor, rule_compressor, checks_compressor),
-        "plenum": (vectors_plenum, py_plenum, rule_plenum, checks_plenum)}
+        "plenum": (vectors_plenum, py_plenum_v7 if CONTRACT_VERSION["plenum"] >= 7 else py_plenum, rule_plenum,
+                   checks_plenum)}
 PROXIMITY = {"plenum": proximity_plenum}
 PRE = {"plenum": pre_plenum}
 # leaves reported, not scored (integrator / fixed-point statistics; registered in the contracts)
@@ -3701,7 +4383,8 @@ PERF = {"filter": [("PERF-F-01", r"F06-R-", "the 600 random F06 apply vectors; R
         "compressor": [("PERF-C-01", r"C19-G-0$", "synthesize() with the default grid (2160 designs), one inlet"),
                        ("PERF-C-02", r"C02-R-", "the 24 C02 size_for vectors")],
         "plenum": [("PERF-P-01", r"P38-", "the 12 P38 steady sweeps (Rust request also runs the scalar twin)"),
-                   ("PERF-P-02", r"P43-PROD-", "the 12 production transient_case vectors"),
+                   ("PERF-P-02", r"P43-PROD-S-" if CONTRACT_VERSION["plenum"] >= 7 else r"P43-PROD-",
+                    "the 12 production (v7: stable-stratum) transient_case vectors"),
                    ("PERF-P-03", r"P49-S-", "the 300 P49 Reservoir.steady_state vectors")]}
 LEDGER = {"filter": [{"component": "C-ABEP_SIM_DESIGN_FILTER_STAGE_PY", "requested_status": "ADMITTED",
                       "scope": "EV, cole_transmission_probability, perforated_plate_alpha, mean_speed_m_s, "
@@ -3818,6 +4501,13 @@ LEDGER_V[("plenum", 6)][0]["scope"] = LEDGER_V[("plenum", 6)][0]["scope"].replac
     "Rust transient integrator with the switching-point fix a9dc2f5",
     "Rust transient integrator with the switching-point fix a9dc2f5 and the growing-mode guard 361a197")
 assert "361a197" in LEDGER_V[("plenum", 6)][0]["scope"] and "transient_envelope_v6" in LEDGER_V[("plenum", 6)][0]["scope"]
+LEDGER_V[("plenum", 7)] = copy.deepcopy(LEDGER_V[("plenum", 6)])
+LEDGER_V[("plenum", 7)][0]["scope"] = LEDGER_V[("plenum", 7)][0]["scope"].replace(
+    "transient_envelope_v6.json", "transient_envelope_v7.json") + (
+    "; transients by input-only stability stratum (contract v7): stable loops against the stable-stratum envelopes, "
+    "unstable loops against the converged reference (DIV-P-REF-01: the Python nominal transient is not trustworthy on "
+    "unstable loops), xO extrema of closing-valve segments carry no admitted value")
+assert "transient_envelope_v7" in LEDGER_V[("plenum", 7)][0]["scope"]
 LEDGER_FAIL["plenum"] = [{"component": c, "requested_status": "PARITY_FAILED (stays PYTHON_REFERENCE; a code fix needs "
                           "a new contract version with a fresh seed)"}
                          for c in ("C-ABEP_SIM_DESIGN_PLENUM_FEED_PY", "C-ABEP_SIM_RESERVOIR_PY",
@@ -3963,6 +4653,9 @@ def run_campaign(key: str, mode: str, capture: bool = False, only=None, replay: 
         V3_SCALE.update(v3_families())
         IMG.clear()
         MDS.clear()
+        CLS.clear()
+        PYU.clear()
+        REPORTED.clear()
     build_rust()
     gen, pyf, rule, checks = SPEC[key]
     vectors = gen(master)
@@ -4028,8 +4721,11 @@ def run_campaign(key: str, mode: str, capture: bool = False, only=None, replay: 
                            "rust": ro[1] if ro[0] == "ERROR" else "OK", "python_message": (po[2] or "")[:200],
                            "rust_message": (ro[2] or "")[:200], "ok": ok_outcome})
         if po[0] == "OK" and ro[0] == "OK":
+            sk = SKIP.get(key)
+            if key == "plenum" and v7_on():
+                sk = (lambda e_, p_, v_=v: skip_v7(e_, p_, v_))  # noqa: E731
             ctx = {"vector": v, "entry": v["entry"], "inputs": input_floats(v["args"]), "py": po[1], "rust": ro[1],
-                   "skip": SKIP.get(key)}
+                   "skip": sk}
             sub = Tally()
             compare_tree(sub, v["entry"], v["id"], ro[1], po[1], rule, ctx)
             prox = PROXIMITY.get(key, lambda *a: None)(v, ro[1], po[1], sub)
@@ -4077,6 +4773,8 @@ def run_campaign(key: str, mode: str, capture: bool = False, only=None, replay: 
     if v3:
         out["transient_v3"] = transient_v3_summary(t, vectors)
         out["envelope_record"] = ENV.get("_meta")
+    if key == "plenum" and v7_on():
+        out["transient_v7"] = transient_v7_summary(vectors, py_out, rres)
     if mode == "score" or capture:
         out["_capture"] = {"vectors": vectors, "python": {k: list(v) for k, v in py_out.items()},
                            "rust_raw": raw1.decode()}
@@ -4159,6 +4857,16 @@ VERSION_NOTES = {
                     "exists. The harness generates the P42 / P43 vectors from their own streams and drops them before "
                     "any call; CONS-P-03 is evaluated on P45 only; PERF-P-02 (transient_case) is not measured"],
 }
+VERSION_NOTES[("plenum", 7)] = [
+    "v7 is contract v6 (registered aca62b3; REGISTERED_NEVER_SCORED, superseded: P45 envelope dominated by an "
+    "unstable-start stratum and a silent reference defect) with transient_convergence_procedure_v7: input-only "
+    "stability class (both implementations; a disagreement is a scored failure), strata S / U / R with registered "
+    "stratified held-out and refinement draws, the unstable stratum scored against the converged Python reference "
+    "(DIV-P-REF-01) with NOT_CONVERGENT_REFERENCE leaves reported, closing-valve xO extrema reported, and the "
+    "non-vacuity check of every scored family and stratum on the frozen record before the scoring run",
+    "order of commits: ..., contract v6, the v6 frozen record (not scored), the v6 analyses and DIV-P-REF-01, the "
+    "merge of the integration line, the Rust stability-class addition b4de97d, contract v7 (alone), the v7 harness, "
+    "the frozen v7 envelope record (refinement run incl. the non-vacuity check), the captured scoring run, the reports"]
 VERSION_NOTES[("plenum", 6)] = [
     "v6 is contract v5 (registered f44dbfe; REGISTERED_NEVER_SCORED, superseded: Rust integrator accepts damped steps "
     "on unstable modes) with the growing-mode guard 361a197 registered and fresh seeds. The frozen v5 refinement "
@@ -4203,7 +4911,7 @@ VERSION_NOTES[("plenum", 3)] = [
     "committed code), then the frozen envelope record (refinement run), then the single scoring run and the "
     "reports. The parity CLI gained one request option (orbit_sim with an explicit rtol, composed from library "
     "calls; COMP-P-01 in the record); no abep-gaspath library source changed"]
-NOTES_V[("plenum", 6)] = NOTES_V[("plenum", 5)] = NOTES_V[("plenum", 4)] = NOTES_V[("plenum", 3)] = [x for x in NOTES["plenum"]
+NOTES_V[("plenum", 7)] = NOTES_V[("plenum", 6)] = NOTES_V[("plenum", 5)] = NOTES_V[("plenum", 4)] = NOTES_V[("plenum", 3)] = [x for x in NOTES["plenum"]
                                                   if not x.startswith("pre-scoring disclosure")] + [
     "harness instrumentation (v3): the tap of TransientRun._segment_record also keeps the run's states at the "
     "samples (for the primitive image of the cascade diagnostics and the per-segment proximity flags); the reference "
@@ -4274,6 +4982,7 @@ def write_report(key, res, perf_rows, out_dir=None):
                                     if k.startswith(("NN", "VS", "EV", "IMG"))},
             "envelope_record": res["envelope_record"], "transient_v3": res["transient_v3"]}
            if "transient_v3" in res else {}),
+        **({"transient_v7": res["transient_v7"]} if "transient_v7" in res else {}),
         "schema_parity": [o for o in res["per_test"]["observables"]
                           if o["observable"].endswith("{keys}") or o["observable"].endswith("[len]")],
         "performance": {"status": "reported, never a decision criterion", "workloads": perf_rows,
@@ -4468,6 +5177,25 @@ def render_md(r):
             L.append(f"* {k}: {json.dumps(v)[:300]}")
     for k, v in r["conservation"].items():
         L.append(f"* {k}: {json.dumps({kk: vv for kk, vv in v.items() if kk != 'failures'})[:300]}")
+    if "transient_v7" in r:
+        t7 = r["transient_v7"]
+        L += ["", "## Contract v7: strata, class, unstable stratum, reported leaves", "",
+              f"* Scored strata: {json.dumps(t7['strata_scored'])}.",
+              f"* Stability class (both implementations; a disagreement is a scored failure): "
+              f"{t7['class_agreement']['n']} vectors, {t7['class_agreement']['n_disagree']} disagreements.",
+              f"* Reported, not scored: {json.dumps(t7['reported_not_scored']['counts'])} (NOT_CONVERGENT_REFERENCE is "
+              "neither scored nor a pass; CLOSING_VALVE_XO: sign of a rounding-level valve opening).",
+              f"* Non-vacuity (frozen record): {t7['non_vacuity (frozen record)']['ok']}.",
+              f"* Unstable stratum scored against the converged Python reference (T2), "
+              f"`{t7['divergence_record']}`:", ""]
+        for u in t7["unstable_stratum (scored against the converged reference, DIV-P-REF-01)"]:
+            fams = "; ".join(f"{f}: scored {d['n_scored']}, NC {d['n_not_convergent']}, max |rust N - py T2| "
+                             f"{fmt3(d['max_rust_N_vs_py_T2'])} (bound {fmt3(d['bound'])}), python N "
+                             f"{fmt3(d['max_python_N_vs_py_T2 (DIV-P-REF-01)'])}"
+                             for f, d in u["families"].items())
+            extra = f" P_dev {json.dumps(u['P_dev_max_frac'])}" if "P_dev_max_frac" in u else ""
+            L.append(f"  * {u['vector']}: {fams}.{extra}")
+        L.append("")
     if "transient_v3" in r:
         er = r["envelope_record"] or {}
         L += ["", "## Transient procedure v3 (A9.31 sec. 5)", "",
@@ -4524,6 +5252,24 @@ def main():
         rep = write_report(key, res, perf(key, res["_capture"]["vectors"]))
         print(rep["parity_verdict"], rep["contract"]["id"], "failures:", rep["per_test"]["n_failures"],
               "(report rebuilt from the captured outputs)")
+        return
+    if len(sys.argv) == 3 and sys.argv[1:] == ["refine", "plenum"] and v7_on():
+        rec = refine_plenum_v7()
+        print("ENVELOPE RECORD v7 (frozen):", envelope_path(load_contract("plenum")[0]), "missing:",
+              rec["missing_envelopes"], "COMP-P-01:", rec["checks"]["COMP-P-01"]["ok"], "NON_VACUITY:",
+              rec["checks"]["NON_VACUITY"]["ok"])
+        return
+    if len(sys.argv) in (5, 6) and sys.argv[1:3] == ["refine-dev", "plenum"] and v7_on():
+        n = int(sys.argv[4])
+        seed = int(sys.argv[5]) if len(sys.argv) == 6 else load_contract("plenum")[0]["campaign_seeds"][
+            "development_master_seed"]
+        u = max(2, n // 4)
+        rec = refine_plenum_v7(dev_out=sys.argv[3], dev_master=seed,
+                               dev_sizes={"P42": {"PROD": {"S": n, "U": u}, "REF": {"S": max(1, n // 3), "U": 2}},
+                                          "P43": {"PROD": {"S": n, "U": u}, "REF": {"S": max(1, n // 3), "U": 2}},
+                                          "P45": {"PROD": {"S": n, "U": u}}})
+        print("DEVELOPMENT DRAFT v7 (not frozen):", sys.argv[3], "missing:", rec["missing_envelopes"],
+              "NON_VACUITY:", rec["checks"]["NON_VACUITY"]["ok"])
         return
     if len(sys.argv) == 3 and sys.argv[1:] == ["refine", "plenum"]:
         rec = refine_plenum()
