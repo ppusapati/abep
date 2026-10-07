@@ -6,8 +6,12 @@
 //! no discharge quantity. It reads frozen maps, gates them on admitted transport members, interpolates them and keeps
 //! their provenance. The credible transport set is EMPTY: every output needing Hall performance goes through
 //! `status::HallGate` and is NOT_EVALUATED with the reason "credible Hall transport set EMPTY".
+//!
+//! [`envelope`] (NP-HALL-PARAMETRIC-ENVELOPE v1, A9.32) reads the frozen case set and ingests the frozen raw
+//! HallThruster.jl parametric envelope of H-1: PARAMETRIC / NOT_VALIDATED, separate from HallMap and the gate.
 
 pub mod ensemble;
+pub mod envelope;
 mod error;
 pub mod hall_map;
 pub mod py;
