@@ -1,0 +1,609 @@
+{
+ "schema": "abep_new_diagnostic_acceptance_report_v2",
+ "id": "ACCEPT-DIAG-B2-OF-01-INTERP-SENSITIVITY-V2",
+ "prereg": "docs/rust_migration/contracts/DIAG-B2-OF-01-INTERP-SENSITIVITY/acceptance_prereg_v2.json",
+ "prereg_sha256": "a8b826c79dd29db52a3186d8fe22ae468463316568de79112d9904b4c51edcc9",
+ "registered_in": "447bf6325b789d27b71bf2ed4dfd6c0610dc0eb0",
+ "rust_commit": "53db32ee1822e3ce9451cb3f8b6ccaff0c89b27d",
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "pandas": "3.0.2",
+  "platform": "Linux 6.18.44-fc-v77 x86_64",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "thread_env": {
+   "OMP_NUM_THREADS": null,
+   "OPENBLAS_NUM_THREADS": null
+  }
+ },
+ "cargo_test": {
+  "command": "cargo test --workspace --locked",
+  "exit": 0,
+  "n_test_lines": 441,
+  "n_ok": 439,
+  "failed": [],
+  "ignored": [
+   [
+    "rust_and_reference_launch_lines_give_byte_identical_smoke_records",
+    "ignored, REGISTERED_PLATFORM_TEST:PT-02"
+   ],
+   [
+    "smoke_job_runs_with_the_pinned_toolchain_and_writes_its_sidecar",
+    "ignored, REGISTERED_PLATFORM_TEST:PT-01"
+   ]
+  ],
+  "ignored_outside_registered_platform_class": [],
+  "registered_tests": {
+   "AT-01": {
+    "test": "crates/abep-uq/tests/interp_sensitivity.rs::at01_grid_node_is_single_valued_and_equals_the_node_row",
+    "occurrences": 1,
+    "status": "ok",
+    "ok": true
+   },
+   "AT-02": {
+    "test": "crates/abep-uq/tests/interp_sensitivity.rs::at02_survey_default_points_are_rounding_level",
+    "occurrences": 1,
+    "status": "ok",
+    "ok": true
+   },
+   "AT-03": {
+    "test": "crates/abep-uq/tests/interp_sensitivity.rs::at03_survey_maxima_are_reproduced_and_non_conforming",
+    "occurrences": 1,
+    "status": "ok",
+    "ok": true
+   },
+   "AT-04": {
+    "test": "crates/abep-uq/tests/interp_sensitivity.rs::at04_one_ulp_off_the_face_is_not_on_it",
+    "occurrences": 1,
+    "status": "ok",
+    "ok": true
+   },
+   "AT-05": {
+    "test": "crates/abep-uq/tests/interp_sensitivity.rs::at05_cell_interior_and_outer_faces_are_single_valued",
+    "occurrences": 1,
+    "status": "ok",
+    "ok": true
+   },
+   "AT-06": {
+    "test": "crates/abep-uq/tests/interp_sensitivity.rs::at06_out_of_domain_has_no_value",
+    "occurrences": 1,
+    "status": "ok",
+    "ok": true
+   },
+   "AT-07": {
+    "test": "crates/abep-uq/tests/interp_sensitivity.rs::at07_grid_and_face_cross_checks_fail_closed",
+    "occurrences": 1,
+    "status": "ok",
+    "ok": true
+   },
+   "AT-08": {
+    "test": "crates/abep-uq/tests/interp_sensitivity.rs::at08_f7_f8_candidate_points_are_grid_nodes_and_unused_by_the_chain",
+    "occurrences": 1,
+    "status": "ok",
+    "ok": true
+   },
+   "AT-09": {
+    "test": "crates/abep-uq/tests/f8_pipeline.rs::f8_pipeline_invariants_and_diagnostic_invariance",
+    "occurrences": 1,
+    "status": "ok",
+    "ok": true
+   },
+   "AT-10": {
+    "test": "crates/abep-uq/tests/interp_sensitivity.rs::at10_records_are_deterministic",
+    "occurrences": 1,
+    "status": "ok",
+    "ok": true
+   }
+  }
+ },
+ "registered_points": [
+  {
+   "case": "AT-01",
+   "table": "maxwell",
+   "point": [
+    5.0,
+    0.8,
+    0.5,
+    2.0
+   ],
+   "rust_face_geometry": "GRID_NODE",
+   "python_face_geometry": "GRID_NODE",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "ROUNDING_LEVEL",
+   "max_relative_spread": 3.3633053428405635e-16
+  },
+  {
+   "case": "AT-01",
+   "table": "cll",
+   "point": [
+    5.0,
+    0.8,
+    0.5,
+    2.0
+   ],
+   "rust_face_geometry": "GRID_NODE",
+   "python_face_geometry": "GRID_NODE",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "ROUNDING_LEVEL",
+   "max_relative_spread": 3.4512156270559026e-16
+  },
+  {
+   "case": "AT-02",
+   "table": "maxwell",
+   "point": [
+    10.0,
+    0.85,
+    0.5,
+    0.0
+   ],
+   "rust_face_geometry": "GRID_EDGE",
+   "python_face_geometry": "GRID_EDGE",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "ROUNDING_LEVEL",
+   "max_relative_spread": 3.2349481898836653e-16
+  },
+  {
+   "case": "AT-02",
+   "table": "cll",
+   "point": [
+    10.0,
+    0.85,
+    0.5,
+    0.0
+   ],
+   "rust_face_geometry": "GRID_EDGE",
+   "python_face_geometry": "GRID_EDGE",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "ROUNDING_LEVEL",
+   "max_relative_spread": 3.2714909654049795e-16
+  },
+  {
+   "case": "AT-02",
+   "table": "maxwell",
+   "point": [
+    5.0,
+    0.85,
+    0.8,
+    0.0
+   ],
+   "rust_face_geometry": "GRID_EDGE",
+   "python_face_geometry": "GRID_EDGE",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "ROUNDING_LEVEL",
+   "max_relative_spread": 2.6808826124934727e-16
+  },
+  {
+   "case": "AT-02",
+   "table": "cll",
+   "point": [
+    5.0,
+    0.85,
+    0.8,
+    0.0
+   ],
+   "rust_face_geometry": "GRID_EDGE",
+   "python_face_geometry": "GRID_EDGE",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "ROUNDING_LEVEL",
+   "max_relative_spread": 3.0903217232691373e-16
+  },
+  {
+   "case": "AT-02",
+   "table": "maxwell",
+   "point": [
+    10.0,
+    0.85,
+    0.95,
+    0.0
+   ],
+   "rust_face_geometry": "FACE_INTERIOR",
+   "python_face_geometry": "FACE_INTERIOR",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "ROUNDING_LEVEL",
+   "max_relative_spread": 1.8894056475075712e-16
+  },
+  {
+   "case": "AT-02",
+   "table": "cll",
+   "point": [
+    10.0,
+    0.85,
+    0.95,
+    0.0
+   ],
+   "rust_face_geometry": "FACE_INTERIOR",
+   "python_face_geometry": "FACE_INTERIOR",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "ROUNDING_LEVEL",
+   "max_relative_spread": 1.8894056475075712e-16
+  },
+  {
+   "case": "AT-02",
+   "table": "maxwell",
+   "point": [
+    3.0,
+    0.85,
+    0.5,
+    0.0
+   ],
+   "rust_face_geometry": "GRID_EDGE",
+   "python_face_geometry": "GRID_EDGE",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "ROUNDING_LEVEL",
+   "max_relative_spread": 1.5721869784992192e-16
+  },
+  {
+   "case": "AT-02",
+   "table": "cll",
+   "point": [
+    3.0,
+    0.85,
+    0.5,
+    0.0
+   ],
+   "rust_face_geometry": "GRID_EDGE",
+   "python_face_geometry": "GRID_EDGE",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "ROUNDING_LEVEL",
+   "max_relative_spread": 1.5721869784992192e-16
+  },
+  {
+   "case": "AT-02",
+   "table": "maxwell",
+   "point": [
+    5.0,
+    0.85,
+    0.8,
+    2.0
+   ],
+   "rust_face_geometry": "GRID_EDGE",
+   "python_face_geometry": "GRID_EDGE",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "ROUNDING_LEVEL",
+   "max_relative_spread": 0.0
+  },
+  {
+   "case": "AT-02",
+   "table": "cll",
+   "point": [
+    5.0,
+    0.85,
+    0.8,
+    2.0
+   ],
+   "rust_face_geometry": "GRID_EDGE",
+   "python_face_geometry": "GRID_EDGE",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "ROUNDING_LEVEL",
+   "max_relative_spread": 0.0
+  },
+  {
+   "case": "AT-03",
+   "table": "maxwell",
+   "point": [
+    8.227784022690075,
+    0.8374126887937825,
+    0.6952669150405878,
+    2.0
+   ],
+   "rust_face_geometry": "FACE_INTERIOR",
+   "python_face_geometry": "FACE_INTERIOR",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "NON_CONFORMING",
+   "max_relative_spread": 0.047272324792362125
+  },
+  {
+   "case": "AT-03",
+   "table": "cll",
+   "point": [
+    8.227784022690075,
+    0.8374126887937825,
+    0.6952669150405878,
+    2.0
+   ],
+   "rust_face_geometry": "FACE_INTERIOR",
+   "python_face_geometry": "FACE_INTERIOR",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "NON_CONFORMING",
+   "max_relative_spread": 0.09016358632032051
+  },
+  {
+   "case": "AT-03",
+   "table": "cll",
+   "point": [
+    14.915437578732714,
+    0.8108001576950183,
+    0.048672246638759575,
+    2.0
+   ],
+   "rust_face_geometry": "FACE_INTERIOR",
+   "python_face_geometry": "FACE_INTERIOR",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "NON_CONFORMING",
+   "max_relative_spread": 0.1733934754224051
+  },
+  {
+   "case": "AT-03",
+   "table": "cll",
+   "point": [
+    13.642166426737925,
+    0.8551641047390511,
+    0.38885151921681604,
+    2.0
+   ],
+   "rust_face_geometry": "FACE_INTERIOR",
+   "python_face_geometry": "FACE_INTERIOR",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "NON_CONFORMING",
+   "max_relative_spread": 0.13383912101555542
+  },
+  {
+   "case": "AT-03",
+   "table": "maxwell",
+   "point": [
+    15.193095968023385,
+    0.8484514633109874,
+    0.2,
+    3.880158262223903
+   ],
+   "rust_face_geometry": "FACE_INTERIOR",
+   "python_face_geometry": "FACE_INTERIOR",
+   "agree": true,
+   "status": "NUMERICAL_INTERPOLATION_SENSITIVITY",
+   "sensitivity_class": "NON_CONFORMING",
+   "max_relative_spread": 0.03729597039010955
+  },
+  {
+   "case": "AT-05",
+   "table": "maxwell",
+   "point": [
+    4.0,
+    0.85,
+    0.35,
+    1.0
+   ],
+   "rust_face_geometry": "NOT_ON_KNOWN_FACE",
+   "python_face_geometry": "NOT_ON_KNOWN_FACE",
+   "agree": true,
+   "status": "NOT_APPLICABLE",
+   "sensitivity_class": null,
+   "max_relative_spread": null
+  },
+  {
+   "case": "AT-05",
+   "table": "cll",
+   "point": [
+    4.0,
+    0.85,
+    0.35,
+    1.0
+   ],
+   "rust_face_geometry": "NOT_ON_KNOWN_FACE",
+   "python_face_geometry": "NOT_ON_KNOWN_FACE",
+   "agree": true,
+   "status": "NOT_APPLICABLE",
+   "sensitivity_class": null,
+   "max_relative_spread": null
+  },
+  {
+   "case": "AT-05",
+   "table": "maxwell",
+   "point": [
+    4.0,
+    0.8,
+    0.35,
+    1.0
+   ],
+   "rust_face_geometry": "NOT_ON_KNOWN_FACE",
+   "python_face_geometry": "NOT_ON_KNOWN_FACE",
+   "agree": true,
+   "status": "NOT_APPLICABLE",
+   "sensitivity_class": null,
+   "max_relative_spread": null
+  },
+  {
+   "case": "AT-05",
+   "table": "cll",
+   "point": [
+    4.0,
+    0.8,
+    0.35,
+    1.0
+   ],
+   "rust_face_geometry": "NOT_ON_KNOWN_FACE",
+   "python_face_geometry": "NOT_ON_KNOWN_FACE",
+   "agree": true,
+   "status": "NOT_APPLICABLE",
+   "sensitivity_class": null,
+   "max_relative_spread": null
+  },
+  {
+   "case": "AT-05",
+   "table": "maxwell",
+   "point": [
+    20.0,
+    0.9,
+    1.0,
+    5.0
+   ],
+   "rust_face_geometry": "NOT_ON_KNOWN_FACE",
+   "python_face_geometry": "NOT_ON_KNOWN_FACE",
+   "agree": true,
+   "status": "NOT_APPLICABLE",
+   "sensitivity_class": null,
+   "max_relative_spread": null
+  },
+  {
+   "case": "AT-05",
+   "table": "cll",
+   "point": [
+    20.0,
+    0.9,
+    1.0,
+    5.0
+   ],
+   "rust_face_geometry": "NOT_ON_KNOWN_FACE",
+   "python_face_geometry": "NOT_ON_KNOWN_FACE",
+   "agree": true,
+   "status": "NOT_APPLICABLE",
+   "sensitivity_class": null,
+   "max_relative_spread": null
+  },
+  {
+   "case": "AT-06",
+   "table": "maxwell",
+   "point": [
+    2.0,
+    0.85,
+    0.5,
+    0.0
+   ],
+   "rust_face_geometry": "OUT_OF_DOMAIN",
+   "python_face_geometry": "OUT_OF_DOMAIN",
+   "agree": true,
+   "status": "OUT_OF_DOMAIN",
+   "sensitivity_class": null,
+   "max_relative_spread": null
+  },
+  {
+   "case": "AT-06",
+   "table": "maxwell",
+   "point": [
+    20.0000001,
+    0.85,
+    0.5,
+    0.0
+   ],
+   "rust_face_geometry": "OUT_OF_DOMAIN",
+   "python_face_geometry": "OUT_OF_DOMAIN",
+   "agree": true,
+   "status": "OUT_OF_DOMAIN",
+   "sensitivity_class": null,
+   "max_relative_spread": null
+  },
+  {
+   "case": "AT-06",
+   "table": "maxwell",
+   "point": [
+    "NaN",
+    0.85,
+    0.5,
+    0.0
+   ],
+   "rust_face_geometry": "OUT_OF_DOMAIN",
+   "python_face_geometry": "OUT_OF_DOMAIN",
+   "agree": true,
+   "status": "OUT_OF_DOMAIN",
+   "sensitivity_class": null,
+   "max_relative_spread": null
+  },
+  {
+   "case": "AT-04",
+   "table": "cll",
+   "point": [
+    14.915437578732714,
+    0.8108001576950183,
+    0.048672246638759575,
+    2.0000000000000004
+   ],
+   "rust_face_geometry": "NOT_ON_KNOWN_FACE",
+   "python_face_geometry": "NOT_ON_KNOWN_FACE",
+   "agree": true,
+   "status": "NOT_APPLICABLE",
+   "sensitivity_class": null,
+   "max_relative_spread": null
+  }
+ ],
+ "survey_maxima": [
+  {
+   "field": "eta_c",
+   "table": "maxwell",
+   "species": "N2",
+   "survey": 0.03768632268222069,
+   "rust": 0.03768632268222089,
+   "abs_diff": 2.0122792321330962e-16,
+   "within_1e-12": true
+  },
+  {
+   "field": "C_D",
+   "table": "cll",
+   "species": "O",
+   "survey": 0.002217463318732964,
+   "rust": 0.002217463318732822,
+   "abs_diff": 1.4181364416110398e-16,
+   "within_1e-12": true
+  },
+  {
+   "field": "CR_passive",
+   "table": "cll",
+   "species": "N2",
+   "survey": 0.1733934754224049,
+   "rust": 0.1733934754224051,
+   "abs_diff": 1.942890293094024e-16,
+   "within_1e-12": true
+  },
+  {
+   "field": "K_back",
+   "table": "cll",
+   "species": "O2",
+   "survey": 0.061172634747115436,
+   "rust": 0.06117263474711523,
+   "abs_diff": 2.0816681711721685e-16,
+   "within_1e-12": true
+  },
+  {
+   "field": "mass_kg",
+   "table": "maxwell",
+   "species": "N2",
+   "survey": 0.03729597039010955,
+   "rust": 0.03729597039010955,
+   "abs_diff": 0.0,
+   "within_1e-12": true
+  }
+ ],
+ "at10_determinism_two_evaluations_identical": true,
+ "f7_f8_chain_application": {
+  "interpolant_used_by_chain": false,
+  "face_geometry_counts": {
+   "GRID_NODE": 128,
+   "NOT_ON_KNOWN_FACE": 32
+  },
+  "n_points": 160,
+  "n_non_conforming": 0,
+  "grid_node_sensitivity_classes": [
+   "ROUNDING_LEVEL"
+  ],
+  "at08_prediction_holds": true,
+  "source": "the full-grid study of the SC-WP-10 scoring execution"
+ },
+ "verdict": "ACCEPTED",
+ "meaning": "software verification of a numerical diagnostic, not physics validation, not a change of the frozen surface and not a gate PASS",
+ "ledger_update_requested": [
+  "new item DIAG-B2-OF-01 (NUMERICAL_INTERPOLATION_SENSITIVITY diagnostic, abep_uq::interp_sensitivity): ACCEPTED (software verification, not physics)",
+  "abep-intake: additive public accessors IntakeSurface::{species_rows_at, containing_simplex_rows} (admitted interpolation unchanged; C-ABEP_SIM_INTAKE_TPMC_PY admission unaffected)"
+ ],
+ "supersedes": {
+  "path": "docs/rust_migration/contracts/DIAG-B2-OF-01-INTERP-SENSITIVITY/acceptance_prereg_v1.json",
+  "sha256": "c1855b3b32f74028c29851235d52e61694b49210b4e0623a4d3eaaab5e3f9314",
+  "scored_report": "docs/rust_migration/contracts/DIAG-B2-OF-01-INTERP-SENSITIVITY/acceptance_report_v1.json",
+  "scored_report_sha256": "11783b7cffe67908c4740791179c91554868a389a20f79f4b925fee750032baf",
+  "v1_verdict": "NOT_ACCEPTED (kept)"
+ }
+}
