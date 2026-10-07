@@ -29,6 +29,7 @@ pub mod result;
 pub mod solver;
 pub mod status;
 pub mod testkit;
+pub mod v2;
 
 pub use case::IcpCase;
 pub use context::IcpModel;

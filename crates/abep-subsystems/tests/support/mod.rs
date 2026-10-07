@@ -5,6 +5,7 @@
 
 pub mod verify;
 pub mod vs_net;
+pub mod vs_net_v2;
 
 use abep_provenance::git::Git;
 use abep_provenance::workspace_repo_root;
@@ -41,7 +42,30 @@ pub fn run_ctx() -> RunContext {
 }
 
 pub fn run(case: &ThermalCase) -> ThermalOutput {
+    if MODEL_V2.with(|m| m.get()) || MODEL_V2_PROCESS.load(std::sync::atomic::Ordering::SeqCst) {
+        let mut c = vs_net_v2::inherited_to_v2(case);
+        c.model_version = Some(vocab::MODEL_VERSION_V2.into());
+        return abep_subsystems::thermal::run_case_v2(&c, vs_net_v2::gov_v2(), &run_ctx());
+    }
     run_case(case, gov(), &run_ctx())
+}
+
+thread_local! {
+    /// While set (on this test thread), `run` executes every case as a model 2.0.0 case through `run_case_v2` (the
+    /// inherited verification cases of NP-THERMAL prereg v2).
+    static MODEL_V2: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
+/// Process-wide form of the switch, for verification cases that spawn threads (DET-02). Set only by a test binary
+/// whose every test runs model 2.0.0.
+pub static MODEL_V2_PROCESS: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// Run `f` with every `run` executed as model 2.0.0.
+pub fn with_model_v2<T>(f: impl FnOnce() -> T) -> T {
+    MODEL_V2.with(|m| m.set(true));
+    let r = f();
+    MODEL_V2.with(|m| m.set(false));
+    r
 }
 
 pub fn codes(o: &ThermalOutput) -> Vec<String> {
@@ -106,6 +130,7 @@ impl Cb {
                 coil_resistance_relations: BTreeMap::new(),
                 interfaces: Interfaces::default(),
                 partitions: BTreeMap::new(),
+                model_version: None,
             },
             evidence_class: SYN.into(),
         }

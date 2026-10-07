@@ -1,0 +1,15 @@
+{
+ "captured_at_python_commit": "ba8adc3b7b3bf9c4a0594a42bed3c609638353a5",
+ "files": {
+  "f8_study": {
+   "file": "f8_study_v1.json.gz",
+   "sha256": "741703b917d36f9f00172de7a48dca80ff2f58ab7ed41263fb563823a5b3e595",
+   "json_sha256": "095585631e36b708c168561cda27924053b221e288d82cdcd4dcec8dfb38e867"
+  },
+  "numpy_streams": {
+   "file": "numpy_streams_v1.json.gz",
+   "sha256": "ff88d1da94ca3ddbef8b74adbfbb63044aea4fd40b95820933c0a49b69194637",
+   "json_sha256": "1a14bb22953265a2209251a69994e2610d2cc6488885cd18599666e48424a686"
+  }
+ }
+}

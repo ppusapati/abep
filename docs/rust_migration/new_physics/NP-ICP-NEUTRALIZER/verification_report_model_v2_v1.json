@@ -1,0 +1,63 @@
+{
+  "schema": "abep_new_physics_verification_report_v1",
+  "id": "np_icp_neutralizer_model_v2_verification_report_v1",
+  "model_id": "NP-ICP-NEUTRALIZER",
+  "model_version": "2",
+  "report_version": 1,
+  "date": "2026-10-07",
+  "lane": "A9.31: RF/ICP + thermal v2 implementation lane (branch lane-icp-thermal-v2-impl)",
+  "method": "NEW_PHYSICS (no Python reference)",
+  "contract": {
+    "prereg_lock_v2_sha256": "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287",
+    "prereg_v2_json_sha256": "3f0df5b8 (pinned by the lock)",
+    "predecessor_lock_sha256": "e98747e0 (v1, verified on load)",
+    "if_icp_thermal_v2_key_table_sha256": "33e495adadbe94a5113c5f6b9040156ec8309295cca15b812714038beaa51161"
+  },
+  "implementation": {
+    "crate": "crates/abep-icp/src/v2 (case, evaluate, formation, partition, cpl, validation, diagnostics, result, testkit)",
+    "v1_changes": "additive only: the shared registration factored out of v1 (visibility), solver members for PF-01 recombination and H-MS per-species edge factors, a read-only balance_rows accessor, the RX_H1_FACE thermal node; every v1 result is byte-identical to base 1c9e87f (tests/v1_byte_identity.rs, sha256 of six v1 results)",
+    "commits": ["edbbfe1"],
+    "rust_toolchain": "rustc / cargo 1.94.1"
+  },
+  "verification_status": "IMPLEMENTED_UNVERIFIED",
+  "validation_status": "NOT_VALIDATED",
+  "admission_rule_evaluation": {
+    "1_record_and_lock_committed": "MET (7a26d39)",
+    "2_LC_CC_NV_FC_items_pass": "MET for every item with a code path today (list below); cargo test --workspace --locked: 455 passed, 0 failed, 2 ignored (registered platform tests PT-01 / PT-02)",
+    "3_abep_chem_evaluator_admitted": "unchanged",
+    "4_verify_items_cleared": "NOT MET: VER-01, VER-06, VER-07, VER-08, VER-11, VER-12, VER-20, VER-21, VER-22, VER-23, VER-24, VER-25 remain open (each is recorded on the result path where it applies)",
+    "5_matched_consumers": "MET in code: NP-THERMAL-CATHODELESS 2.0.0 consumes IF-ICP-THERMAL-v2 with the identical key table (both sides verify 33e495ad); the power lane's IF-ICP-BUS-v2 consumer passes LC-18 (crates/abep-subsystems commit 2f4b7fc)",
+    "6_admission_record": "not written (admission is the owner's / ledger lane's after item 4)"
+  },
+  "verification_cases": {
+    "analytic": {
+      "LC-12": "tests/v2_analytic.rs lc12_*: n = n_b (T_b = T_g) and n = n_b vbar_b / vbar (T_b != T_g, flag NON_ISOTHERMAL_PASSAGE, VER-20) to 1e-12 for tau in {1, 0.5, 0.1}",
+      "LC-13": "lc13_fc17_per_collision_*: closed vessel, gamma in {1e-3, 0.1, 1}: n_a = S / (gamma (1/4) vbar A) and molecule source S / 2 to 1e-12 from the solver's own balance rows; at gamma = 1 the loss is (1/4) n vbar A; lc13_fc17_flow_balance_*: every {0, 1} gamma vertex member solved with CC-01..CC-03 <= 1e-10",
+      "LC-14": "one ion species: the single H-LIEB member is bit-identical to v1 H-LIEB (T_e, n_e, I_production); two species: h(min lambda) <= h_j,s <= h(max lambda), n_e,j = sum Z h n_i and the floating-sheath electron flux to 1e-12; the three members H-MS / H-LO / H-HI each with CC-01 / CC-03 <= 1e-10",
+      "LC-15": "every ED-08 member of a synthetic X2 / X set with elastic, vibrational, electronic and dissociation channels and two wall materials: the full class energy on its named destination (RAD, WALL[m], OUT) to 1e-12; OUT split A_j tau_j / sum with tau registered, the OUT[UP] / OUT[DOWN] pair without; CC-05 / CC-07 / CC-08 per member",
+      "LC-16": "all-floating and biased tubes: CC-03 v2 <= 1e-10; NOT_SUSTAINED: exact zeros",
+      "LC-17": "CM-CAL with a registered RF chain: RF-S, RF, PL, B, S and CONS-I3 <= 1e-10 (and from the keys directly); SG-01 against the independent closed form and sum C_j = -sum I_j V_j to 1e-12; all-floating C_j = 0 exactly; TK-06 split echoed",
+      "LC-19": "EQ-19 closed forms to 1e-12; lambda_D to 1e-12 against the implementation's eps0 (VER-25 stays on the path); s_j NOT_EVALUATED (VER-22)",
+      "LC-20": "with the pinned N headers: E_form,ref(N^2+) = 44.13525 eV through N -> N+ -> N^2+; route excess of the direct channel 1.5e-4 eV; CC-07 <= 1e-10 in a solve with the excess booked in class X"
+    },
+    "fail_closed": "tests/v2_fail_closed.rs: FC-16, FC-18, FC-19, FC-20, FC-22, FC-23, FC-24, FC-25, FC-26, FC-27, FC-29, FC-30, the registered-today cases (every mode fail-closed with named reasons), the v2 lock / tamper test and NV-01 determinism; FC-14 / FC-21 / FC-17 / FC-28 with their analytic cases",
+    "LC-18": "consumer side, crates/abep-subsystems/tests/thermal_v2.rs (power lane)"
+  },
+  "implementation_interpretations": [
+    "GAP-04 lambda_i,s = 1 / sum_k n_k sigma_s,k is evaluated with one sigma per ion species (the IN-17 registration form): lambda_i,s = 1 / (n_g sigma_s). No per-(ion, neutral) cross section is registered anywhere today; a per-pair form needs a registration-format addendum.",
+    "One ion species (or equal sigma): H-MS, H-LO and H-HI coincide by definition; the evaluator emits the one member H-LIEB (bit-identical to v1) instead of three identical members.",
+    "Partition-only gates (FC-29 D0, net atom consumption) are named on the IF-ICP-THERMAL-v2 record and members, not on the solve status (as v1 withheld its partition gates).",
+    "An IF-ICP-THERMAL-v2 member is CONVERGED only when every key is; a key withheld by its own gate (e.g. the RF-chain keys in CM-ABS) makes the member that status (NE-10).",
+    "BUS2-07: with no IN-19 registration the variant slots BK-04 / BK-05 and TK-14 / TK-15 are NOT_INSTALLED records at exactly 0.",
+    "DOM-17: a registered flight exposure model has no registered inflow form in prereg v2 -> NOT_EVALUATED (DOM-17_EXPOSURE_MODEL_FORM_NOT_IMPLEMENTED).",
+    "UQ-03 sampling is NOT_EVALUATED until the admitted ABEP RNG exists (SC-WP-10); the ED-08 scenario set is complete per case."
+  ],
+  "preregistration_consistency": "No conflict with prereg v2 found. Nothing in the frozen records was edited.",
+  "what_stays_open": [
+    "Admission item 4 (verify items listed above)",
+    "IN-25 D0(N2) registration (FC-29 gate on EM-N2 partitions)",
+    "A producer -> consumer record adapter (status vocabulary CONVERGED -> EVALUATED and the value-record evidence attributes) for orchestration: the interfaces match by key table; the adapter belongs to the orchestration lane",
+    "NE-01..NE-14 unchanged: every flight output stays fail-closed today"
+  ],
+  "ledger_update_requested": "NP-ICP-NEUTRALIZER model_version 2: RUST_IMPL (IMPLEMENTED_UNVERIFIED), commit edbbfe1; v1 stays as recorded."
+}

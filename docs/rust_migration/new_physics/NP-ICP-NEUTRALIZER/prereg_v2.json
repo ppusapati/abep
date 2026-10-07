@@ -1,0 +1,2454 @@
+{
+ "schema": "abep_new_physics_prereg_v1",
+ "id": "NP-ICP-NEUTRALIZER",
+ "title": "Predictive steady 0-D model of the downstream 13.56 MHz RF/ICP electron source / neutralizer of hall_icp_neutralizer - preregistration v2 (A9.31 secs. 7-10)",
+ "prereg_version": "v2",
+ "model_version": "2",
+ "status": "PREREGISTERED_NOT_IMPLEMENTED",
+ "method": "NEW_PHYSICS",
+ "method_path": "preregistered model -> Rust -> analytic / independent-evidence verification -> admission (A9.28 msg 1 sec. 5; A9.29 sec. 4). No synthetic Python reference.",
+ "target_crate": "abep-icp",
+ "work_packages": {
+  "owner": "SC-WP-03",
+  "coupled": [
+   "SC-WP-02",
+   "SC-WP-05",
+   "SC-WP-06",
+   "SC-WP-09",
+   "SC-WP-11"
+  ]
+ },
+ "lane": "A9.31 batch 3: RF/ICP v2 preregistration lane (branch lane-icp-v2-prereg); owner priority 2-3 (A9.31 sec. 22)",
+ "registered": "2026-10-06",
+ "base_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c (origin/integration/simulation-complete, A9.31 verbatim record)",
+ "drafted_by": "agent session for the RF/ICP v2 preregistration lane; not reviewed by the owner",
+ "decided_by": "Owner rulings are cited by record and sha256 (A9.31 secs. 7-10, A9.30 secs. 3-5) and applied word for word; every resolution below is derived from conservation, dimensional consistency, a registered source or an explicit bounding branch. No statement here is a new owner decision.",
+ "change_rule": "Frozen by prereg_lock_v2.json at commit. Any later change is a dated addendum or a v3, never an edit. v1 (prereg_v1.json, PREREG.md, prereg_lock_v1.json, addenda 01 / 02, verification reports v1 / v2) is immutable history and is not edited. Clearing a 'verify' item is a verification addendum that records the locator read; if the source differs from the text here, a v3 is required before that code path is admitted.",
+ "implementation_gate": "No model_version 2 code before this record and its lock are committed (A9.29 sec. 13; plan v3.1 gate_a9_29). The v1 implementation (abep-icp, model_version 1, Rust e404c15) stays the v1 record's implementation; v2 is added as model_version 2 beside it and verifies the v2 lock on load. Each open verify item and each NOT_EVALUATED / INCOMPLETE_EVIDENCE gate blocks only the outputs listed against it.",
+ "predecessor": {
+  "status": "IMMUTABLE_HISTORY (A9.31 sec. 9: 'v1 and its reports remain immutable')",
+  "files": [
+   {
+    "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v1.json",
+    "sha256": "5d496ea6538ef65999c3cb8b1f4274622dc060889b1cf14f46a0a02a855a91a8"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/PREREG.md",
+    "sha256": "3af97940032b2ebff530d92c886a6690ceca30a21ed6d8bf5354d7cca79f36cc"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_lock_v1.json",
+    "sha256": "e98747e04694bf849164350be3ef4c7b458fccc918777c224066eebf55fa82af"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/addendum_01_a9_30.json",
+    "sha256": "f8e122492bde654d74a155f4544e51ce0b13ed639b2f510aa453384e333569c9"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/addendum_02_chem_air.json",
+    "sha256": "7c1dd1f70e5e93f810e655fd7b8e177fd3032fbe39fca95954f6b35aec1c2279"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v1.json",
+    "sha256": "11ddb2a2684f1803b7a5fac94cb3307f59cb60e4e9a8e46d2abc2c449f4e5284"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v1.md",
+    "sha256": "80bf66d2c24da48fbd32de59cad262dc2c6d29b6b78f725f6bd7586f63b5ebfe"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v2.json",
+    "sha256": "cea8211649beafe0f0e6a7fd32c0e74d543f06765105442215cca00456168704"
+   },
+   {
+    "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_v2.md",
+    "sha256": "f5a1dc32a633cf254251110c98fc6a425774f7b71419ad68def70bc6fd8c90ac"
+   }
+  ]
+ },
+ "inheritance_rule": "Every item of prereg_v1.json (by id), as re-pointed by addendum_01_a9_30 (G-A930-AIR) and addendum_02_chem_air (NP-ICP-CHEM-AIR pointers, strictest text applies), is part of v2 verbatim unless this record lists it under replaced_items or retired_items. Added items extend it. Where v2 and an inherited item differ, v2 governs; where v2 and NP-ICP-CHEM-AIR v1 differ on a chemistry item, the stricter text applies (addendum_02 consistency_rule). Nothing inherited is relaxed: every replaced item is equal or stricter, or resolves a recorded defect (PF / GAP) from conservation, dimensional consistency, a registered source or a bounding branch.",
+ "governing_records": [
+  {
+   "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+   "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+   "message_text_sha256": "ab7705efeb0835b9443cebd86018cd5c29bdbc3f29d6f618c147dab1e7dec75a",
+   "role": "A9.31 secs. 7, 8, 9, 10 applied word for word (scope_traceability); sec. 14 stop rule; sec. 22 priority"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_06_A9_31_next_batch_owner_rulings_and_architecture_proof.json",
+   "sha256": "6f7c82eac2ac6c07e09324934d94bce8ca7613c2dd80cb496222264b7afe5f86",
+   "role": "machine-readable companion of A9.31"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+   "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f",
+   "role": "A9.30 secs. 3-4 (O / O2 chemistry via NP-ICP-CHEM-AIR; AIR_PRIMARY admission gate) and sec. 5 (bus_power_boundary_a9_v2; flight C1 loads NONE; 1.5 kW assessment only)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_30_push_authorization_o_o2_chemistry_and_bus_boundary_rulings.json",
+   "sha256": "1f61b11e01cbadef6822c2ef40fa6092f2f772a1f9d7601dff38f5aa72e075a4",
+   "role": "machine-readable companion of A9.30"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md",
+   "sha256": "5c223f6df59f579deb1ef4788fecf5857c6fa3ff4f365f23738b2c1b7f251989",
+   "role": "sec. 4 minimum scope (v1 traceability inherited), sec. 13 gate, sec. 14 speed rule"
+  },
+  {
+   "path": "CLAUDE.md",
+   "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3",
+   "role": "rules 3, 4, 6, 9, 10; A9 binding statuses; A9.30 bus-boundary text"
+  },
+  {
+   "path": "docs/EVIDENCE.md",
+   "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
+   "role": "evidence attributes per input (IN-22 inherited)"
+  }
+ ],
+ "evidence_records_used_added": [
+  {
+   "path": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_v1.json",
+   "sha256": "24b74bc6e485e9156059b132c8f5ccb4b854b971a58b879eb34a960b76f70e9a",
+   "role": "NP-ICP-CHEM-AIR v1: D-CHEM, CA-ICP-v1, AIR-WALL-01..06 (gamma per collision, beta, quenching), AIR-EXC-12, AIR-NL-01, IF-CHEM-REG-v1, UE-01..06"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json",
+   "sha256": "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef",
+   "role": "chemistry contract lock (unchanged)"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json",
+   "sha256": "e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c",
+   "role": "consumer v1 (IK-01..IK-07, IFI-1..5, HS-00, B_PPU_RF, nodes) - immutable history"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification_report_v1.json",
+   "sha256": "7a355efd6e3ccd926f04afec5487f1cc42f5bedeffa4bcab63bdeb16a96bbb7e",
+   "role": "consumer finding F-01 / Q-01 (IF-ICP-THERMAL-v1 label carries two different key sets)"
+  },
+  {
+   "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+   "sha256": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980",
+   "role": "bus_power_boundary_a9_v2: slot load planes, rf_power_planes, ledger rule P_bus = sum P_W / (eta_slot eta_front_end)"
+  },
+  {
+   "path": "schemas/interfaces/bus_power_boundary_a9_v2.json",
+   "sha256": "6c01742e3b1088a7aa9ed05674ba4cf83f2322259c80273ecccdfc032886f20a",
+   "role": "boundary schema"
+  },
+  {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_prereg_v1.json",
+   "sha256": "d3336303a8f4d62ec146706b3f85f2abaffe6c053238910af3cf4c97c1bf75f6",
+   "role": "rust_only_registered_interfaces: IF-ICP-BUS-v1 consumer rule and the registered plane finding"
+  },
+  {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_report_v1.json",
+   "sha256": "e416e76757eac1ab8a5be5c2b6ee9fe55da31f3d6ff814a62c75727fbeb2c1f0",
+   "role": "SC-WP-05 finding: P_icp_bus_W mixes planes (supply input for the bias slot, load plane for RF / match)"
+  },
+  {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_report_v1.md",
+   "sha256": "fb33143188890bdd6ee0c46b67b12c23a5ea4d202e35530468972263b3fc3d72",
+   "role": "same, human-readable"
+  },
+  {
+   "path": "crates/abep-subsystems/src/power/icp_bus.rs",
+   "sha256": "5492b0f207b06cdf6d8de8c717db740946177225f2f45ba3ee88e35172853218",
+   "role": "admitted IF-ICP-BUS-v1 consumer (KEY_MAP at load planes); read, not changed"
+  },
+  {
+   "path": "crates/abep-subsystems/src/power/system_ledger.rs",
+   "sha256": "993adfc4fe3d78b33f1d2ec404b85defcdcfb08e470adc8c6f3513f79acc6bc4",
+   "role": "admitted CONS-L1 (planes Load / SupplyInput / Bus; ledger P_loss counted as supply loss outside the accounts; v1 ICP account reads Q_icp_boundary_W); read, not changed"
+  },
+  {
+   "path": "hallthruster_bridge/hall_map_schema_v1.json",
+   "sha256": "f371b43bced1020d55e2b28303c877220f41395767cdf6ebab6019475e9bdde9",
+   "role": "Hall map fields available to CPL-HALL-ON (discharge_current_A, ion_current_A, mass_eff, divergence_eff, ...)"
+  },
+  {
+   "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+   "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
+   "role": "credible set members [] (CPL-HALL-ON gate)"
+  },
+  {
+   "path": "hallthruster_bridge/PINNED.toml",
+   "sha256": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280",
+   "role": "HallThruster.jl pin (VER-23)"
+  },
+  {
+   "path": "docs/architecture_comparison/interstage/INTERSTAGE_MODEL.md",
+   "sha256": "2a08e8045d1cb61a121e84dc9f7bba268a1ec7b66476057d9093b4e044f6d616",
+   "role": "citation registry (Lieberman 2015 slides; Chiggiato 2014); per-species h_s precedent text (cited, not ported)"
+  },
+  {
+   "path": "data/chemistry/icp/ICP_CHEM_PINNED.toml",
+   "sha256": "074daff90b00dd1dd6ca776c845c7897bbd84b4217ec014e70fb374a16f16eb2",
+   "role": "IF-CHEM-REG-v1 registry pin; xs/ representations (INT-18)"
+  }
+ ],
+ "approved_interpretations": [
+  {
+   "id": "INT-16",
+   "ruling": "A9.31 sec. 9: 'INT-16 is APPROVED: registered-table T_e scan ends at the highest temperature admitted by all required registered tables. Do not extrapolate beyond table validity.'",
+   "v2_rule": "IN-24 v2: with registered tables the T_e root scan ends at T_e,end = min over every required registered table of (2/3) max_mean_energy_eV; that end is a scan node and is reported (IN-24_T_E_SCAN_END). No rate is evaluated above a table's verified limit (IX-05); a root beyond the end is OUT_OF_DOMAIN by DOM-01 and is not searched. SYNTHETIC_TEST_ONLY sets keep the 0.1-150 eV grid.",
+   "status": "APPROVED_A9_31_SEC_9"
+  },
+  {
+   "id": "INT-17",
+   "ruling": "A9.31 sec. 9: 'INT-17 is APPROVED: ion formation energy uses the least-energy registered formation route for consistency checks, while route identity remains traceable.'",
+   "v2_rule": "EQ-18 v2 / CC-07 v2: E_form,ref(ion) = min over registered formation routes of the summed header energies; every event keeps its route id; the route excess E_r - (E_form,ref(products) - E_form,ref(reactants)) >= 0 is booked explicitly in energy class X (ED-01) and reported per route (OUT-12 route_excess_W); it is never added energy and never dropped.",
+   "status": "APPROVED_A9_31_SEC_9"
+  },
+  {
+   "id": "INT-18",
+   "ruling": "A9.31 sec. 9: 'INT-18 is APPROVED: reused-table source representations live under xs/ with capture id, builder/source/table hashes and provenance.'",
+   "v2_rule": "EQ-06 v2 note: the direct-integral representation of every reused registered table lives under data/chemistry/icp/xs/ (one file per table) with capture id, builder script sha256, source sha256, table sha256 and provenance; a table with no registered representation keeps EQ-06_REPRESENTATION_NOT_REGISTERED (INCOMPLETE_EVIDENCE).",
+   "status": "APPROVED_A9_31_SEC_9"
+  }
+ ],
+ "owner_rulings_applied": [
+  {
+   "id": "OQ-NPICP-01",
+   "ruling": "A9.30 sec. 5 (addendum_01): bus_power_boundary_a9_v2",
+   "status": "RESOLVED (A9.30)",
+   "fields": [
+    "IF-ICP-BUS-v2.target_boundary"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-02",
+   "ruling": "A9.31 sec. 10: 'A VERIFIED but not bench-validated model-derived I_e,cap does NOT satisfy HC-05. HC-05 stays: NOT_EVALUATED outside a VALIDATED_BENCH domain cell. Measured I_e,cap supersedes the model at the measured point.'",
+   "status": "RESOLVED (A9.31)",
+   "fields": [
+    "assessment_separation_v2.AS-02",
+    "assessment_separation_v2.AS-03",
+    "FC-26"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-03",
+   "ruling": "A9.31 sec. 10: 'Do NOT invent a Hall-parameter or gyroradius threshold. Report: omega_ce / nu_m, r_ce / R but keep the affected capacity result INCOMPLETE_EVIDENCE until a sourced criterion is registered.'",
+   "status": "RESOLVED (A9.31)",
+   "fields": [
+    "DOM-06 v2",
+    "EQ-19",
+    "LC-19",
+    "FC-21"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-04",
+   "ruling": "A9.31 sec. 10: 'The existing completeness-audit methodology may be reused as a SCREENING CONVENTION over the ICP chemistry domain. Do not automatically transfer a Hall completeness verdict. Evaluate all ICP process classes over D-CHEM. An unbounded material omission blocks chemistry admission.'",
+   "status": "RESOLVED (A9.31)",
+   "fields": [
+    "chemistry_screen_v2.CS-01..CS-06",
+    "FC-25"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-05",
+   "ruling": "none in A9.31 for the parent; A9.31 OQ-CHEM-13 prefers primary Xe measurements (chemistry contract)",
+   "status": "OPEN (Xe / Ar sources to register; XE_CONTINGENCY, EM-XE, EM-AR stay INCOMPLETE_EVIDENCE)",
+   "fields": [
+    "NE-04",
+    "NE-05"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-06",
+   "ruling": "A9.30 secs. 3-4 (addendum_01)",
+   "status": "RESOLVED (A9.30)",
+   "fields": [
+    "G-A930-AIR (inherited)"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-07",
+   "ruling": "A9.31 sec. 10: 'Calibration / validation records must be split before measurement values are examined. Use planned record IDs / operating points and a frozen custody list. Do not randomly split repeated measurements after seeing results. No CM-CAL result becomes VALIDATED_BENCH until the held-out set passes.'",
+   "status": "RESOLVED (A9.31)",
+   "fields": [
+    "VC-06 v2",
+    "VC-08",
+    "IN-27",
+    "FC-22"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-08",
+   "ruling": "A9.31 sec. 10: 'APPROVED through the matched thermal-interface v2 decision above.' (sec. 7)",
+   "status": "RESOLVED (A9.31)",
+   "fields": [
+    "IF-ICP-THERMAL-v2"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-09",
+   "ruling": "A9.31 sec. 10: 'Report Debye-length and sheath-width ratios. Do not create an unsourced hard threshold.'",
+   "status": "RESOLVED (A9.31)",
+   "fields": [
+    "DOM-07 v2",
+    "EQ-20",
+    "VER-22",
+    "VER-25"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-10",
+   "ruling": "A9.31 sec. 10: 'Lawful source acquisition is authorized. No paywall bypass or fabricated transcription.'",
+   "status": "RESOLVED (A9.31)",
+   "fields": [
+    "verify_gate_v2",
+    "VER-03..05, VER-13, VER-15 (inherited), VER-19..VER-25"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-11",
+   "ruling": "A9.31 sec. 10: 'For final SIMULATION_COMPLETE, a Hall-ON neutralization coupling contract IS required. Preregister the v2 Hall-ON coupling now, but gate numerical execution on an admitted Hall member. Until a Hall member exists: CFG-FLIGHT-HALL-ON = NOT_EVALUATED. Do not invent beam/plume parameters.'",
+   "status": "RESOLVED (A9.31): contract preregistered, execution gated",
+   "fields": [
+    "CPL-HALL-ON-v1",
+    "OUT-07 v2",
+    "FC-03 (inherited)",
+    "FC-20"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-12",
+   "ruling": "A9.31 sec. 10: 'GEOMETRIC_TUBE is approved as a declared unvalidated modelling assumption for the preliminary predictive model. Label it: ASSUMED_GEOMETRIC_TUBE. It is not bench validation. A registered effective volume from diagnostics supersedes it when available.'",
+   "status": "RESOLVED (A9.31)",
+   "fields": [
+    "IN-10 v2",
+    "DOM-16",
+    "FC-23"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-13",
+   "ruling": "A9.31 sec. 10: 'Freeze P1/P2 calibration and validation sets before the data are inspected. Report r_u. Do not invent an informativeness acceptance threshold yet.'",
+   "status": "RESOLVED (A9.31)",
+   "fields": [
+    "VC-03 v2",
+    "VC-06 v2",
+    "IN-27"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-14",
+   "ruling": "A9.31 sec. 10: 'For validation: measured p_ICP is preferred / determining. For flight prediction: FLOW_BALANCE may supply neutral density only when its upstream conductance / feed model is admitted for that domain. No arbitrary inflow-fraction bound.'",
+   "status": "RESOLVED (A9.31)",
+   "fields": [
+    "IN-12 v2",
+    "VC-07",
+    "DOM-14",
+    "DOM-15",
+    "FC-24",
+    "FC-27"
+   ]
+  },
+  {
+   "id": "OQ-NPICP-15",
+   "ruling": "A9.31 sec. 10: 'Resolved by the matched thermal v2 decision.' (sec. 7)",
+   "status": "RESOLVED (A9.31)",
+   "fields": [
+    "IF-ICP-THERMAL-v2",
+    "CONF-11 (resolved)"
+   ]
+  }
+ ],
+ "resolutions": [
+  {
+   "id": "PF-01",
+   "title": "recombination-factor ambiguity (EQ-02)",
+   "v1_defect": "EQ-02 removes (gamma_k / 2) (1/4) n_k vbar_k A_wall atoms per second while NP-ICP-CHEM-AIR AIR-WALL-02 / -03 define gamma as the per-collision recombination probability (O + wall -> 1/2 O2); with gamma in [0, 1] the literal v1 form cannot reach the physical maximum (verification_report_v1 PF-01).",
+   "basis": [
+    "registered physical source: the coefficient's definition is owned by NP-ICP-CHEM-AIR (AIR-WALL-02 / -03: per-collision probability) and the wall impingement rate (1/4) n vbar A is Chiggiato 2014 sec. 2.1 (registered)",
+    "conservation: nuclei balance of the recombination stoichiometry X + wall -> 1/2 X2",
+    "dimensional consistency: gamma dimensionless in [0, 1]; (1/4) n vbar A [s^-1]"
+   ],
+   "v2_rule": "EQ-02 v2: atom sink at wall surface j = gamma_k,m(j) (1/4) n_k vbar_k A_j [atoms/s]; molecule source = 1/2 of the sum over j (element-exact). gamma per (atomic species, wall material m) per IN-18 v2: a sourced value with its uncertainty, or the unweighted physical-bound vertex set gamma in {0, 1} per (species, material) (A9.31 OQ-CHEM-09 '[0,1] envelopes'). The recombination energy D0(X2) per molecule formed (1/2 D0 per atom recombined) is released at j: fraction beta (AIR-WALL-04; sourced or vertex {0, 1}) to the surface (W_j, Q_icp_plasma_wall_W), 1 - beta to energy class N (ED-01).",
+   "replaces": [
+    "EQ-02 recombination term",
+    "IN-18"
+   ],
+   "status_effect": "v1 withholding PREREG_FINDING_PF-01_EQ02_ATOM_RECOMBINATION_FACTOR is retired: gamma > 0 is evaluable in FLOW_BALANCE, each gamma vertex as its own scenario member (ED-08).",
+   "model_form_note": "the uniform-density wall flux (1/4) n vbar A at large gamma is a 0-D model-form assumption (MF-04); a depletion-corrected form recalled from memory is not used (VER-19)",
+   "verification": [
+    "LC-13",
+    "FC-17",
+    "CC-01",
+    "CC-02"
+   ]
+  },
+  {
+   "id": "PF-02",
+   "title": "background inflow without residence / conductance basis (EQ-02)",
+   "v1_defect": "background inflow Gamma_bg = (1/4) n_b vbar_b sum_j A_open,j carries no transmission probability while effusion carries A_open,j tau_j; for tau < 1 the no-plasma, no-feed equilibrium is n = n_b (vbar_b / vbar) / tau instead of the reciprocity value (verification_report_v1 PF-02).",
+   "basis": [
+    "registered physical source: Chiggiato 2014 Eq. 13 / Eqs. 19-21 (registered): the net molecular-flow throughput of a passage is Q = C (p_up - p_down) with C = C' A tau, so the same tau multiplies the flux in each direction",
+    "conservation / equilibrium: with no plasma, no feed and T_b = T_g the net flow through every open end must vanish at n = n_b (detailed balance); only the tau-symmetric form satisfies it"
+   ],
+   "v2_rule": "EQ-02 v2: Gamma_bg,k = sum over open ends j of (1/4) n_b,k vbar_b,k A_open,j tau_j, with vbar_b,k at the registered T_b. Applies only to a registered isotropic Maxwellian background (bench: VI-GAS-05 p_b, T_b measured). If T_b differs from T_g beyond their combined registered uncertainty the case carries flag NON_ISOTHERMAL_PASSAGE and that path is gated by VER-20 (reciprocity of the transmission probability in a non-isothermal passage). A directed (hyperthermal) flight ambient flux is not this form: flight background needs a registered exposure model, else INCOMPLETE_EVIDENCE (DOM-17).",
+   "replaces": [
+    "EQ-02 background term",
+    "IN-13"
+   ],
+   "status_effect": "v1 withholding PREREG_FINDING_PF-02_BACKGROUND_INFLOW_WITHOUT_TAU is retired; LC-12 checks the equilibrium.",
+   "verification": [
+    "LC-12",
+    "FC-18"
+   ]
+  },
+  {
+   "id": "GAP-01",
+   "title": "neutral-energy split (EQ-16)",
+   "v1_defect": "'deposited on the walls ... or carried out with outflowing neutrals in proportion to their loss channels' gives no operational split for elastic, vibrational and rotational energy given to neutrals (verification_report_v1 GAP-01); withheld for every real gas.",
+   "basis": [
+    "conservation: the energy given to neutrals is fully allocated to wall surfaces or open ends (no remainder)",
+    "explicit bounding branch: T_g is a registered input and the neutral energy balance is not solved, so the split (energy accommodation at each wall material, unsourced) cannot be identified; the unweighted vertex set {WALL[m] for each wall material m, OUT} is an outer bound containing every accommodation coefficient in [0, 1] and every geometry",
+    "0-D model form (registered EQ-02 / EQ-03): within one material, impingement is proportional to A_j; between open ends, exit is proportional to A_j tau_j"
+   ],
+   "v2_rule": "Energy class N (ED-01) = elastic recoil + vibrational + rotational excitation energy + (1 - beta) recombination energy. Destination vertex set D_N = {WALL[m] for each registered wall material m} U {OUT} (ED-02, ED-04, ED-05). No 50/50 or other point split.",
+   "replaces": [
+    "EQ-16 notes (neutral energy)"
+   ],
+   "status_effect": "v1 withholding PREREG_GAP_EQ16_NEUTRAL_ENERGY_SPLIT is retired; the partition keys are emitted per scenario member and as the envelope.",
+   "model_form_note": "MF-01: T_g stays a registered input; the vertex set bounds the disposition without changing T_g.",
+   "verification": [
+    "LC-15",
+    "CC-08"
+   ]
+  },
+  {
+   "id": "GAP-02",
+   "title": "atom-formation-energy disposal (EQ-16 / EQ-18)",
+   "v1_defect": "atom formation and fragment energy need the atom loss channels; REGISTERED_PRESSURE has no atom balance and FLOW_BALANCE needed gamma (PF-01); the partition was withheld whenever dissociation or dissociative ionization is present.",
+   "basis": [
+    "conservation: energy created in the volume as atom formation energy (registered D0, IN-25) is released at the surfaces where atoms recombine or carried out by effusing atoms",
+    "registered source: D0 per molecule from a registered source (IN-25); beta per AIR-WALL-04",
+    "explicit bounding branch: where no atom balance is solved (REGISTERED_PRESSURE) the release location is the outer vertex set {WALL[m], OUT}"
+   ],
+   "v2_rule": "Energy class A (ED-01) = atom formation energy 1/2 D0(X2) per atom created, relative to the ground-state molecules of the delivered feed (EQ-18 v2). FLOW_BALANCE: determined by the solved atom balance of EQ-02 v2 for each gamma member (recombination at j -> beta to W_j, 1 - beta to class N; effused atoms -> per open end). REGISTERED_PRESSURE: vertex set D_A = {WALL[m]} U {OUT} (beta applies under WALL[m]). The excess E_r - Delta E_form of a dissociative channel (fragment kinetic / internal energy) is class X (ED-01), never class A. A molecule without a registered D0 makes the partition keys INCOMPLETE_EVIDENCE (naming IN-25); the solve and I_e,cap are unaffected.",
+   "replaces": [
+    "EQ-18",
+    "EQ-16 notes (formation energy)"
+   ],
+   "status_effect": "v1 withholding PREREG_GAP_EQ18_ATOM_FORMATION_ENERGY_DISPOSAL is retired except for the IN-25 registration gate (FC-29).",
+   "verification": [
+    "LC-15",
+    "CC-07 v2",
+    "CC-08",
+    "FC-29"
+   ]
+  },
+  {
+   "id": "GAP-03",
+   "title": "CARRIED_OUT partition (IN-23)",
+   "v1_defect": "the CARRIED_OUT disposition has no registered split between the open ends.",
+   "basis": [
+    "registered model form: the neutral exit rate through open end j is the EQ-02 effusion term (1/4) n vbar A_j tau_j, so carried-out neutral-borne energy leaves through j in proportion to A_j tau_j when every tau_j is registered",
+    "explicit bounding branch: when any tau_j is unregistered, the end split is the vertex pair {OUT[UP], OUT[DOWN]}"
+   ],
+   "v2_rule": "ED-05: OUT energy of any class is split over the open ends in proportion to A_j tau_j (flag UNIFORM_ISOTROPIC_NEUTRAL_EXIT, MF-03) when every tau_j is registered; otherwise the vertex pair OUT[UP] / OUT[DOWN]. Ion- and electron-borne energy through an open end is computed per end from its fluxes (unchanged).",
+   "replaces": [
+    "IN-23 CARRIED_OUT semantics"
+   ],
+   "status_effect": "v1 withholding PREREG_GAP_EQ16_CARRIED_OUT_SPLIT is retired.",
+   "verification": [
+    "LC-15"
+   ]
+  },
+  {
+   "id": "GAP-04",
+   "title": "multi-species H-LIEB treatment (EQ-05 with EQ-08 / EQ-09)",
+   "v1_defect": "per-species sigma_i gives per-species h_j, while EQ-08 / EQ-09 define one h per surface; multi-ion H-LIEB with distinct sigma was withheld.",
+   "basis": [
+    "dimensional consistency / definition: the ion-neutral collision probability per unit length over independent neutral targets is sum_k n_k sigma_s,k, so lambda_i,s = 1 / sum_k n_k sigma_s,k (reduces to the v1 1/(n_g sigma_i) for one neutral species)",
+    "conservation: quasi-neutrality at each sheath edge, n_e,j = sum_s Z_s n_i,s,j (EQ-03 principle), fixes the electron edge density once the ion edge densities are given",
+    "explicit bounding branch: the edge-to-centre ratio of each species in a multi-ion plasma is not identified by the registered single-ion source (Lieberman 2015 slides 38 / 44); h(lambda) is monotone increasing, so the common-h pair evaluated at min_s lambda_i,s and max_s lambda_i,s brackets every assignment whose effective lambda lies within the species range"
+   ],
+   "v2_rule": "EQ-05 v2 / EQ-22: three unweighted solve members. H-MS: h_j,s from EQ-05 with lambda_i,s; ion flux h_j,s n_i,s u_B,s; electron edge density n_e,j = sum_s Z_s h_j,s n_i,s in EQ-08 / EQ-09 in place of h_j n_e. H-LO: common h_j = h(min_s lambda_i,s) for all species. H-HI: common h_j = h(max_s lambda_i,s). With one ion species, or equal lambda_i,s, the three members are identical to v1 H-LIEB. Flag MULTI_ION_H_ENVELOPE; no member is a nominal (FC-26). Sheath-edge speed per species stays EQ-04 (MF-02, VER-21).",
+   "replaces": [
+    "EQ-05 (lambda_i definition, multi-ion form)",
+    "EQ-08 / EQ-09 electron edge density"
+   ],
+   "status_effect": "v1 withholding PREREG_GAP_MULTISPECIES_H_LIEB is retired; H-LIEB still needs registered sigma (IN-17, CHG-06) and DOM-05.",
+   "verification": [
+    "LC-14",
+    "FC-28"
+   ]
+  },
+  {
+   "id": "GAP-05",
+   "title": "registered-table scan / CC-03 normalisation acknowledgement",
+   "v1_defect": "CC-03 'relative to max |I_j|' degenerates when every surface floats (all net currents are rounding noise); the v1 implementation normalised by the largest current component; INT-16 (scan end) was recorded for acknowledgement.",
+   "basis": [
+    "dimensional / numerical consistency: the rounding error of a signed sum of currents scales with the magnitudes of the summed one-sided components, not with the net; this is the v1 TOL-SOLVE convention ('relative to its largest term')",
+    "owner approval of INT-16 (A9.31 sec. 9)"
+   ],
+   "v2_rule": "CC-03 v2: I_scale = max over surfaces j and components of e A_j max(sum_s Z_s Gamma_i,s,j, Gamma_e,j) (> 0 for any sustained state); |sum_j I_j| <= 1e-10 I_scale; every floating |I_j| <= 1e-10 I_scale; |I_production - sum_j e A_j sum_s Z_s Gamma_i,s,j| <= 1e-10 I_production. NOT_SUSTAINED (n_e = 0): every current is exactly 0. Tolerance value unchanged. IN-24 v2 adopts INT-16 (approved_interpretations).",
+   "replaces": [
+    "CC-03",
+    "IN-24"
+   ],
+   "status_effect": "acknowledged and registered; no output status changes",
+   "verification": [
+    "LC-16"
+   ]
+  }
+ ],
+ "energy_disposition": {
+  "purpose": "operational form of EQ-16 v2 for every energy that is not computed per surface from charged-particle fluxes (PF-01, GAP-01, GAP-02, GAP-03, INT-17). Each class is allocated in full; no remainder; no point split where the physics does not identify one.",
+  "items": [
+   {
+    "id": "ED-01",
+    "name": "energy classes",
+    "rule": "ION / ELEC: ion- and electron-borne energy at each surface and open end (L_j and ion formation energy F_j released where ions are neutralized; F at an open end leaves with the ions) - computed per surface, no disposition choice (wall energy terms VER-12 inherited). X: electronic excitation per channel; the excess E_r - Delta E_form of every channel whose products carry less formation energy than its header (dissociative excitation / ionization fragments); the INT-17 route excess. N: elastic recoil n_k k_m,k (3 m_e / M_k)(T_e - T_g) V e n_e; vibrational and rotational excitation; (1 - beta) of wall recombination energy. A: atom formation energy (1/2 D0 per atom created)."
+   },
+   {
+    "id": "ED-02",
+    "name": "destinations",
+    "rule": "RAD -> Q_icp_radiation_W (class X only). WALL[m] -> Q_icp_plasma_wall_W on the wall surfaces of material m (W_j). OUT -> Q_icp_outflow_upstream_W / Q_icp_outflow_downstream_W (ED-05). A surface registered as the electron sink receives its WALL share inside Q_icp_extraction_W (TK-09)."
+   },
+   {
+    "id": "ED-03",
+    "name": "sourced dispositions",
+    "rule": "A channel with a sourced disposition (VER-11 cleared for that state: RADIATED_OPTICALLY_THIN, WALL_QUENCHED or CARRIED_OUT, or a sourced branching) uses it. An UNRESOLVED channel takes the class-X vertex set {RAD} U {WALL[m]} U {OUT}. This widens the v1 pair ALL_RADIATED / ALL_WALL (and NP-ICP-CHEM-AIR AIR-EXC-12) by the CARRIED_OUT vertex, which is the quench-probability-0 limit of AIR-WALL-06 for a metastable: stricter, never weaker (addendum_02 consistency rule)."
+   },
+   {
+    "id": "ED-04",
+    "name": "wall distribution",
+    "rule": "Energy sent to WALL is distributed over wall surfaces in proportion to c_j A_j when the class coefficient c_j (gamma for class A recombination, quench probability for WALL_QUENCHED, energy accommodation for class N) is sourced for every wall surface; otherwise by the per-material vertex WALL[m] (all of it on the surfaces of material m, area-weighted inside m). Area weighting inside one material is exact under the registered 0-D uniform isotropic neutral distribution with a common coefficient (MF-03, flag AREA_WEIGHTED_WITHIN_MATERIAL). With one registered wall material the set has one WALL vertex."
+   },
+   {
+    "id": "ED-05",
+    "name": "open-end split",
+    "rule": "OUT energy is split over the open ends in proportion to A_j tau_j when every tau_j is registered (EQ-02 effusion terms; flag UNIFORM_ISOTROPIC_NEUTRAL_EXIT); otherwise by the vertex pair OUT[UP] / OUT[DOWN]."
+   },
+   {
+    "id": "ED-06",
+    "name": "class A in FLOW_BALANCE",
+    "rule": "Allocated by the solved atom balance of each gamma member: recombination at surface j -> beta to W_j, 1 - beta to class N; effused atoms -> their formation energy leaves through each open end with the computed effusion rate. No vertex choice is needed for class A in FLOW_BALANCE."
+   },
+   {
+    "id": "ED-07",
+    "name": "class A in REGISTERED_PRESSURE",
+    "rule": "No atom balance is solved; class A takes the vertex set {WALL[m]} U {OUT}; under WALL[m], beta in {0, 1} (or sourced) sends 1 - beta to class N."
+   },
+   {
+    "id": "ED-08",
+    "name": "scenario members",
+    "rule": "Solve members = chemistry variants (UQ-02) x unsourced gamma vertices per (atomic species, wall material) in FLOW_BALANCE x {H-MS, H-LO, H-HI} for multi-ion H-LIEB. Partition members (post-processing of one solve) = destination vertex of class X x of class N x of class A (REGISTERED_PRESSURE) x beta vertices x end-split vertices. Members are unweighted, never averaged, never narrowed; every output carries scenario_member_id; the envelope over members is OUT-13 scenario_envelope. Each member closes exactly (CC-05 v2, CC-08). Keys are linear in the class allocations, so for each key and each receiver the extreme loads are attained on these vertex members; the producer emits every member and flags, for every key and every IN-10 node, the members with the extreme load (consumer-registered partitions such as f_rad and f_up are applied by the consumer)."
+   },
+   {
+    "id": "ED-09",
+    "name": "fragment kinetic energy",
+    "rule": "NP-ICP-CHEM-AIR AIR-NL-01 keeps all neutrals at T_g in the particle balance; the energy the electrons lose to fragments (class X excess) is allocated by ED-03, never dropped."
+   }
+  ],
+  "model_form_limitations": [
+   {
+    "id": "MF-01",
+    "text": "T_g is a registered input; the neutral energy balance is not solved. The class-N vertex set bounds where the energy goes without changing T_g."
+   },
+   {
+    "id": "MF-02",
+    "text": "Each ion species enters its sheath at its own Bohm speed (EQ-04); multi-ion sheath-edge speeds are a model-form assumption (VER-21)."
+   },
+   {
+    "id": "MF-03",
+    "text": "Uniform, isotropic neutral distribution of the 0-D model: the basis of area weighting inside one material and of the A_j tau_j exit split."
+   },
+   {
+    "id": "MF-04",
+    "text": "Uniform-density wall flux (1/4) n vbar A at any gamma (VER-19)."
+   },
+   {
+    "id": "MF-05",
+    "text": "CPL-HALL-ON: current-free plume and the registered cathode-common topology (CPL-HON-03)."
+   }
+  ]
+ },
+ "replaced_items": {
+  "equations": [
+   {
+    "id": "EQ-02",
+    "name": "neutral particle balance, FLOW_BALANCE mode (v2: PF-01, PF-02, OQ-NPICP-14)",
+    "form": "0 = Gamma_in,k + sum_{open j} (1/4) n_b,k vbar_b,k A_open,j tau_j + V sum_r nu_r,k R_r + sum_{wall j} sum_s w_s,k Gamma_i,s,j A_j - sum_{open j} (1/4) n_k vbar_k A_open,j tau_j - sum_{wall j} gamma_k,m(j) (1/4) n_k vbar_k A_j + (1/2) sum_{a -> k} sum_{wall j} gamma_a,m(j) (1/4) n_a vbar_a A_j",
+    "notes": "Gamma_in,k is the delivered flow into the ICP from an ADMITTED upstream conductance / feed model for the case domain (OQ-NPICP-14); the v1 inflow fraction f_in is retired. The last term credits the molecule k formed by recombination of atom a (nuclei-exact). w_s,k: element-conserving wall-neutralization products per ion (AIR-WALL-01 branching pair for molecular ions). Domain DOM-04 (Kn > 0.5) inherited.",
+    "source": "Chiggiato 2014 Eqs. 3, 13, 19-21, sec. 2.1 (registered); NP-ICP-CHEM-AIR AIR-WALL-01..04 (definitions); PF-01 / PF-02 resolutions",
+    "status": "REGISTERED (FLOW_BALANCE for flight additionally gated by DOM-14)"
+   },
+   {
+    "id": "EQ-05",
+    "name": "edge-to-centre factors (v2: GAP-04)",
+    "form": "H-LIEB: h_R(lambda) = 0.8 (4 + R / lambda)^(-1/2), h_L(lambda) = 0.86 (3 + L / (2 lambda))^(-1/2); lambda_i,s = 1 / sum_k n_k sigma_s,k; members H-MS (h_j,s = h(lambda_i,s)), H-LO (common h(min_s lambda_i,s)), H-HI (common h(max_s lambda_i,s)); H-EXPLICIT: sourced h_j or h_j,s",
+    "source": "Lieberman 2015 slides 38, 43, 44 (registered); lambda additivity by definition; member set by GAP-04",
+    "domain": "B = 0, cylinder, total pressure < 100 mTorr (DOM-05, inherited); an open tube end as an axial h_L surface stays VER-07",
+    "status": "REGISTERED form; sigma_s,k INCOMPLETE_EVIDENCE (IN-17)"
+   },
+   {
+    "id": "EQ-08",
+    "name": "floating-surface sheath (v2 electron edge density)",
+    "form": "sum_s Z_s Gamma_i,s,j = (1/4) n_e,j vbar_e exp(-V_s / T_e) with Gamma_i,s,j = h_j,s n_i,s u_B,s and n_e,j = sum_s Z_s h_j,s n_i,s (H-MS) or n_e,j = h_j n_e (common h); single species: V_s = (T_e / 2) ln(M / (2 pi m_e))",
+    "source": "Lieberman 2015 slide 48 (registered); sheath-edge quasi-neutrality (GAP-04)",
+    "status": "REGISTERED"
+   },
+   {
+    "id": "EQ-09",
+    "name": "electrode surface fluxes (v2 electron edge density)",
+    "form": "as v1 EQ-09 with h_j n_e replaced by n_e,j of EQ-08 v2",
+    "source": "as v1; electron-saturation branch VER-06",
+    "status": "retarding branch REGISTERED; saturation branch verify"
+   },
+   {
+    "id": "EQ-15",
+    "name": "bus-plane quantities (v2: IF-ICP-BUS-v2, plane-explicit)",
+    "form": "P_icp_rf_source_DC_W = (P_fwd - P_refl) / eta_RF with eta_RF = (P_fwd - P_refl) / P_RF,DC registered at the generator DC input (slot icp_rf_source load plane); Q_icp_rf_conversion_loss_W = P_icp_rf_source_DC_W - P_icp_rf_forward_W; P_icp_matching_DC_W = registered input; P_icp_collector_bias_W = -sum over every non-floating surface connected to a registered electrode supply (IN-26) of I_j V_j (= sum_j C_j; the supply output, i.e. the icp_collector_bias slot load plane when the only supply is the flight-type ICP collector supply); a GROUND_FACILITY_ONLY supply in the circuit flags the value INCLUDES_GROUND_FACILITY_SUPPLY and makes it a bench value, never a bus value (BUS2-04); in CFG-FLIGHT-HALL-ON the Hall discharge loop is not an electrode supply of this key (CPL-HON-08); P_icp_slot_load_sum_W = sum of the installed ICP slot loads. NP-ICP never divides by a slot or front-end efficiency.",
+    "source": "bus_power_boundary_a9_v2 slots / rf_power_planes / ledger rule; VI-RF-09 eta_RF definition",
+    "status": "REGISTERED form; eta_RF PENDING"
+   },
+   {
+    "id": "EQ-16",
+    "name": "energy partition definitions and closures (v2)",
+    "form": "RF-S: P_icp_rf_source_DC_W = Q_icp_rf_conversion_loss_W + P_icp_rf_forward_W. RF: P_icp_rf_forward_W = P_icp_rf_reflected_W + Q_icp_line_W + Q_icp_match_W + Q_icp_coil_ohmic_W + P_icp_abs_W. PL: P_icp_abs_W = Q_icp_plasma_wall_W + Q_icp_extraction_W + Q_icp_radiation_W + Q_icp_outflow_upstream_W + Q_icp_outflow_downstream_W. B: P_icp_collector_bias_W = Q_icp_bias_collector_W + Q_icp_bias_export_W. S: P_icp_slot_load_sum_W = P_icp_rf_source_DC_W + P_icp_matching_DC_W + P_icp_collector_bias_W (+ installed variants). Per surface j: Q_j^kin = L_j + C_j exactly (sign convention SG-01); RF-powered surface deposit D_j = L_j + F_j + W_j; total surface heat Q_j = D_j + C_j.",
+    "notes": "Every term is computed from the converged state and the scenario member; none is a remainder. Q_icp_plasma_wall_W = sum over ICP-module wall surfaces of D_j; Q_icp_extraction_W = D_ec at the electron sink; outflow keys = D at the open ends (incl. ED-05 shares).",
+    "source": "energy conservation (CLAUDE.md rule 4); EQ-07 per-particle energies; A9.31 sec. 7",
+    "status": "REGISTERED"
+   },
+   {
+    "id": "EQ-18",
+    "name": "formation-energy bookkeeping (v2: GAP-02, INT-17)",
+    "form": "Reference: ground-state neutral molecules of the delivered feed. E_form(atom of X2) = 1/2 D0(X2) (IN-25). E_form,ref(ion) = E_form(parent neutral) + least-energy registered ionization route (INT-17). Per event of reaction r: Delta E_form,r = sum products - sum reactants; route / fragment excess E_r - Delta E_form,r >= 0 (NP-ICP-CHEM-AIR FC-CHEM-03 guarantees the sign) is class X (ED-01). Ions neutralized at a surface release E_form,ref(ion) - E_form(neutral product) there (F_j; at the electron sink inside Q_icp_extraction_W, v1 INT-03 adopted); ions and atoms leaving through an open end carry their formation energy out.",
+    "source": "registered headers and registered D0 (IN-25); INT-17 (approved); wall surface energy terms VER-12 (inherited)",
+    "status": "REGISTERED; D0(N2) to register (IN-25)"
+   }
+  ],
+  "inputs": [
+   {
+    "id": "IN-10",
+    "name": "plasma geometry, effective volume and bounding surfaces (v2: OQ-NPICP-12, sec. 7 mapping)",
+    "symbol": "R, L, V, {surface_j: A_j, type_j (DIELECTRIC_FLOATING | CONDUCTOR_FLOATING | ION_COLLECTOR_BIASED | ELECTRON_COLLECTOR | OPEN_UPSTREAM | OPEN_DOWNSTREAM), material_j, thermal_node_j}",
+    "thermal_node_rule": "wall surfaces of the ICP module -> N_VESSEL | N_ANTENNA | N_MOUNT | N_COLLECTOR | N_HOUSING; ELECTRON_COLLECTOR -> EXPORT (bench facility hardware) or the plume (flight); OPEN_UPSTREAM -> RX-H1-FACE via Q_icp_outflow_upstream_W; OPEN_DOWNSTREAM -> EXPORT via Q_icp_outflow_downstream_W. The v1 wall-surface mapping to H1_FACES is retired (upstream energy reaches H-1 only through RX-H1-FACE).",
+    "volume_modes": "ASSUMED_GEOMETRIC_TUBE (V = pi R^2 L of the dielectric bore): a declared unvalidated modelling assumption for the preliminary predictive model, never bench validation; every output carries flag ASSUMED_GEOMETRIC_TUBE. REGISTERED_EFFECTIVE (V_eff, A_eff from registered diagnostics) supersedes it for that geometry id when available: requesting ASSUMED_GEOMETRIC_TUBE where a REGISTERED_EFFECTIVE record exists is MODEL_ERROR (DOM-16).",
+    "status_today": "INCOMPLETE_EVIDENCE: all F6 geometry TBD"
+   },
+   {
+    "id": "IN-12",
+    "name": "pressure / neutral density (v2: OQ-NPICP-14)",
+    "symbol": "REGISTERED_PRESSURE: p_ICP, T_g | FLOW_BALANCE: Gamma_in,k from an admitted conductance / feed model, tau_j",
+    "rule": "Validation: measured p_ICP (VI-GAS-03, ICD ICP-27) is determining; a validation comparison point without it is NOT_EVALUATED (VC-07, DOM-15). Flight prediction: FLOW_BALANCE only when its upstream conductance / feed model is ADMITTED for that domain (DOM-14); no inflow-fraction bound (f_in retired).",
+    "status_today": "INCOMPLETE_EVIDENCE (VI-GAS-03 / VI-GAS-04 TBD); flight FLOW_BALANCE NOT_EVALUATED (no admitted conductance model for the ICP inlet)"
+   },
+   {
+    "id": "IN-13",
+    "name": "background neutral source (v2: PF-02)",
+    "symbol": "bench: p_b, T_b of an isotropic Maxwellian facility background; flight: registered exposure model",
+    "rule": "EQ-02 v2 background term with tau_j; T_b vs T_g per PF-02; flight hyperthermal ambient needs a registered exposure model (DOM-17)",
+    "status_today": "bench: no records; flight: no exposure model -> INCOMPLETE_EVIDENCE"
+   },
+   {
+    "id": "IN-18",
+    "name": "wall coefficients per (species, material) (v2: PF-01, GAP-01, GAP-02)",
+    "symbol": "gamma_X,m (recombination per collision), beta_m (recombination energy accommodation), q_X*,m (quench probability), alpha_E,m (energy accommodation of neutral-borne energy)",
+    "rule": "sourced value with its stated uncertainty, else the physical-bound vertex set {0, 1} (A9.31 OQ-CHEM-09; NP-ICP-CHEM-AIR AIR-WALL-02..04, -06). alpha_E enters only through the ED-04 vertex structure (no point value).",
+    "status_today": "every material OPEN -> vertex sets only"
+   },
+   {
+    "id": "IN-19",
+    "name": "RF chain efficiency and matching actuator draw (v2: plane-explicit)",
+    "symbol": "eta_RF = (P_fwd - P_refl) / P_RF,DC at the generator DC input; P_match,DC; match_colocated",
+    "rule": "eta_bias is RETIRED as an NP-ICP input: the bias-supply conversion efficiency is the bus ledger's efficiency record of slot icp_collector_bias (bus_power_boundary_a9_v2), never applied by NP-ICP (BUS2-03). A registration carrying eta_bias is refused (MODEL_ERROR, INPUT_RETIRED_V2).",
+    "status_today": "PENDING"
+   },
+   {
+    "id": "IN-23",
+    "name": "energy disposition per inelastic channel (v2)",
+    "rule": "RADIATED_OPTICALLY_THIN | WALL_QUENCHED | CARRIED_OUT | sourced branching | UNRESOLVED; UNRESOLVED -> class-X vertex set (ED-03); CARRIED_OUT -> ED-05 end split",
+    "status_today": "UNRESOLVED (vertex set)"
+   },
+   {
+    "id": "IN-24",
+    "name": "numerical settings (v2: INT-16 adopted; v1 implementation settings registered)",
+    "rule": "T_e root scan: log grid with 301 points from 0.1 eV to T_e,end (INT-16) for registered tables, to 150 eV for SYNTHETIC_TEST_ONLY sets; T_e,end is a scan node, reported IN-24_T_E_SCAN_END. n_e scan 1e8-1e21 m^-3, 10 points per decade. Bisection to adjacent doubles, limit 400 halvings -> MODEL_ERROR. H-LIEB fixed point in FLOW_BALANCE: 500 iterations, relative 1e-14. phi_p closed form per collection regime. Numerical policy, not physics.",
+    "status_today": "REGISTERED"
+   }
+  ],
+  "domain_checks": [
+   {
+    "id": "DOM-06",
+    "check": "magnetization (v2: OQ-NPICP-03): B_ICP,max registered; report omega_ce / nu_m and r_ce / R (EQ-19)",
+    "on_fail": "B_ICP,max absent -> INCOMPLETE_EVIDENCE; registered 0 -> in domain; > 0 -> the diagnostics are reported (labelled DIAGNOSTIC_UNMAGNETIZED_SOLVE, when a solve exists) and every plasma-state, capacity and partition output is INCOMPLETE_EVIDENCE (DOM-06_NO_SOURCED_MAGNETIZATION_CRITERION) until a sourced criterion is registered. No threshold is set."
+   },
+   {
+    "id": "DOM-07",
+    "check": "quasi-neutrality / thin sheath (v2: OQ-NPICP-09): report lambda_D / min(R, L), lambda_D / R and s_j / R per biased or floating surface (EQ-20)",
+    "on_fail": "reported only; no threshold. s_j is NOT_EVALUATED until VER-22 is cleared; lambda_D carries VER-25 on eps0."
+   }
+  ],
+  "conservation_checks": [
+   {
+    "id": "CC-03",
+    "check": "charge / current (v2: GAP-05): |sum_j I_j| and every floating |I_j| <= 1e-10 I_scale, I_scale = max_j e A_j max(sum_s Z_s Gamma_i,s,j, Gamma_e,j); ion production current = total ion loss current within 1e-10 I_production; NOT_SUSTAINED: all currents exactly 0",
+    "tolerance": "<= 1e-10 (unchanged value)"
+   },
+   {
+    "id": "CC-05",
+    "check": "IF-ICP-THERMAL-v2 closures RF, PL, B and per surface Q_j^kin = L_j + C_j, for every scenario member separately; every key except Q_icp_bias_collector_W / Q_icp_bias_export_W >= 0; every surface Q_j >= 0",
+    "tolerance": "<= 1e-10 relative to P_fwd + P_collector_bias (P_abs + P_collector_bias in CM-ABS); per surface 1e-12"
+   },
+   {
+    "id": "CC-06",
+    "check": "slot loads (v2): P_icp_slot_load_sum_W = sum of installed ICP slot loads; Q_icp_rf_conversion_loss_W >= 0 (P_icp_rf_source_DC_W >= P_icp_rf_forward_W; declared assumption kept: a violating eta_RF registration is MODEL_ERROR); P_icp_collector_bias_W >= 0 (BUS2-08); RF-S and S closures",
+    "tolerance": "<= 1e-10"
+   },
+   {
+    "id": "CC-07",
+    "check": "formation-energy bookkeeping (v2: INT-17): energy created in the volume (sum over events of Delta E_form,r) = released at surfaces + carried out; route / fragment excess booked in class X and reported",
+    "tolerance": "<= 1e-10"
+   }
+  ],
+  "validation_criteria": [
+   {
+    "id": "VC-03",
+    "name": "informativeness (v2: OQ-NPICP-13)",
+    "rule": "r_u = u_input / u_meas is reported with every comparison. No informativeness acceptance threshold is set."
+   },
+   {
+    "id": "VC-06",
+    "name": "freeze before data (v2: OQ-NPICP-07 / -13)",
+    "rule": "Before any measurement value of a P1 / P2 campaign is examined, a partition record (IN-27) is committed and sha256-frozen: planned record ids and operating points, each assigned to CAL or VAL; the measurands calibrated and the measurands validated; the frozen custody list (who holds which raw files, their sha256 once acquired, and the statement that no value was examined). Partition is by planned record id / operating point only: every repeat of one planned operating point belongs to one partition; repeated measurements are never split randomly or after results are seen. VAL is held out: no VAL record or VAL operating point is used for calibration."
+   }
+  ],
+  "outputs": [
+   {
+    "id": "OUT-07",
+    "name": "electron current available for neutralization (CFG-FLIGHT-HALL-ON)",
+    "keys": {
+     "I_e_neutralization_available_A": "A (CPL-HALL-ON)",
+     "V_coupling_V": "V (CPL-HALL-ON)"
+    },
+    "note": "NOT_EVALUATED until CPL-HALL-ON may execute (credible set EMPTY)"
+   },
+   {
+    "id": "OUT-08",
+    "name": "plasma / RF loss partition",
+    "keys": "IF-ICP-THERMAL-v2 keys (W), per scenario member"
+   },
+   {
+    "id": "OUT-09",
+    "name": "heat deposition by surface and node (v2)",
+    "keys": {
+     "Q_icp_kinetic_by_surface_W": "L_j",
+     "Q_icp_formation_by_surface_W": "F_j",
+     "Q_icp_neutral_borne_by_surface_W": "W_j by class X / N / A",
+     "Q_icp_bias_by_surface_W": "C_j (signed)",
+     "Q_icp_surface_total_W": "Q_j = L_j + F_j + W_j + C_j (>= 0)",
+     "Q_icp_plasma_wall_by_node_W": "per node via IN-10 v2",
+     "Q_icp_coil_ohmic_split_W": "registered split or INCOMPLETE_EVIDENCE"
+    }
+   },
+   {
+    "id": "OUT-11",
+    "name": "bus-plane quantities",
+    "keys": "IF-ICP-BUS-v2 keys (W), each with its plane"
+   },
+   {
+    "id": "OUT-12",
+    "name": "domain / convergence status (v2 additions)",
+    "keys": {
+     "scenario_member_id": "ED-08",
+     "per_receiver_extreme_members": "ED-08",
+     "route_excess_W": "INT-17, per route",
+     "magnetization_diagnostics": "EQ-19",
+     "sheath_diagnostics": "EQ-20",
+     "volume_mode": "ASSUMED_GEOMETRIC_TUBE | REGISTERED_EFFECTIVE",
+     "validation_cell_id": "VC-04 cell of the point",
+     "flags_added": "ASSUMED_GEOMETRIC_TUBE, MULTI_ION_H_ENVELOPE, AREA_WEIGHTED_WITHIN_MATERIAL, UNIFORM_ISOTROPIC_NEUTRAL_EXIT, NON_ISOTHERMAL_PASSAGE, DIAGNOSTIC_UNMAGNETIZED_SOLVE, INCLUDES_GROUND_FACILITY_SUPPLY"
+    }
+   },
+   {
+    "id": "OUT-13",
+    "name": "uncertainty envelope",
+    "keys": "as v1, per scenario member; scenario_envelope over the ED-08 members"
+   },
+   {
+    "id": "OUT-14",
+    "name": "provenance",
+    "keys": {
+     "model_id": "NP-ICP-NEUTRALIZER",
+     "model_version": "2",
+     "prereg_lock_sha256": "sha256 of prereg_lock_v2.json",
+     "interface_ids": "IF-ICP-THERMAL-v2, IF-ICP-BUS-v2, IF-ICP-HALL-v1, IF-ICP-FEED-v1, CPL-HALL-ON-v1",
+     "input_sha256": "",
+     "rust_commit": "",
+     "contract_id": ""
+    }
+   }
+  ],
+  "uncertainty": [
+   {
+    "id": "UQ-02",
+    "rule": "Epistemic choices are an unweighted scenario set (ED-08): chemistry variants, gamma / beta / quench vertices, energy-disposition vertices, end-split vertices, H members. Outputs per member and as the envelope; never weighted, averaged or narrowed."
+   }
+  ],
+  "exclusions": [
+   {
+    "id": "EX-12",
+    "rule": "CFG-CAP-OFF has no Hall beam. CFG-FLIGHT-HALL-ON represents beam / CEX ions crossing or reaching the ICP only through a registered plume model (CPL-HON-07); without one the configuration is NOT_EVALUATED. No beam or plume parameter is defaulted."
+   }
+  ],
+  "assessment_separation": "replaced by assessment_separation_v2",
+  "fail_closed_tests": [
+   {
+    "id": "FC-14",
+    "assert": "a registered B_ICP,max > 0: magnetization diagnostics present and labelled; every plasma-state, capacity and partition output INCOMPLETE_EVIDENCE (DOM-06_NO_SOURCED_MAGNETIZATION_CRITERION)"
+   },
+   {
+    "id": "FC-16",
+    "assert": "IF-ICP-THERMAL-v2 record: RF-powered keys (TK-01..TK-04, TK-06..TK-11) carry powered_by RF_SOURCE; TK-05 ICP_MATCH_ACTUATOR; TK-12 / TK-13 ICP_BIAS_SUPPLY; no Hall-discharge-powered term (Q_hall_return_to_icp_W, Q_hall_plume_to_icp_W, any CPL-HALL-ON circuit share) is computed into any IF-ICP-THERMAL-v2 key; every key present as a full record (value or explicit status)"
+   }
+  ]
+ },
+ "retired_items": [
+  {
+   "item": "P_icp_bus_W",
+   "was": "IF-ICP-BUS-v1 / IF-ICP-THERMAL-v1 key: P_RF,DC + P_match,DC + P_bias / eta_bias (mixed planes; SC-WP-05 finding)",
+   "now": "never emitted by model_version 2; replaced by P_icp_slot_load_sum_W (LOAD_PLANE_SUM, a closure reference, never a bus draw); the spacecraft-side ICP draw is only the bus ledger's sum of P_bus_W over the ICP slots"
+  },
+  {
+   "item": "eta_bias (IN-19)",
+   "was": "NP-ICP input converting the bias output to a DC input",
+   "now": "the ledger's efficiency record of slot icp_collector_bias"
+  },
+  {
+   "item": "Q_icp_bias_supply_loss_W",
+   "was": "bias-supply conversion loss booked by NP-ICP at B_PPU_RF",
+   "now": "the ledger's P_loss of slot icp_collector_bias (true PPU conversion loss; A9.31 sec. 7 'only true PPU conversion loss -> PPU heat')"
+  },
+  {
+   "item": "Q_icp_rf_generator_loss_W",
+   "was": "P_RF,DC - (P_fwd - P_refl): one key containing the reflected power",
+   "now": "two keys: Q_icp_rf_conversion_loss_W (= P_RF,DC - P_fwd) and P_icp_rf_reflected_W, each booked once"
+  },
+  {
+   "item": "f_in (IN-12 FLOW_BALANCE inflow fraction)",
+   "was": "registered inflow fraction of the delivered feed",
+   "now": "Gamma_in from an admitted conductance / feed model only (OQ-NPICP-14: 'No arbitrary inflow-fraction bound')"
+  },
+  {
+   "item": "v1 withholding reasons PREREG_FINDING_PF-01 / PF-02, PREREG_GAP_EQ16_NEUTRAL_ENERGY_SPLIT, PREREG_GAP_EQ18_ATOM_FORMATION_ENERGY_DISPOSAL, PREREG_GAP_EQ16_CARRIED_OUT_SPLIT, PREREG_GAP_MULTISPECIES_H_LIEB",
+   "was": "INCOMPLETE_EVIDENCE gates of the v1 implementation",
+   "now": "resolved by the resolutions block; the IN-25 D0 gate (FC-29) remains"
+  },
+  {
+   "item": "thermal_node H1_FACES for wall surfaces (IN-10)",
+   "was": "a surface could map to H-1 faces",
+   "now": "H-1 receives ICP energy only through RX-H1-FACE (TK-10) and the consumer f_rad"
+  }
+ ],
+ "added_items": {
+  "inputs": [
+   {
+    "id": "IN-25",
+    "name": "molecular dissociation energies",
+    "symbol": "D0(X2)",
+    "unit": "eV",
+    "producer": "registered source per molecule: D0(O2) per NP-ICP-CHEM-AIR AIR-WALL-02 (SONG2026 sec. II.G, cited there); D0(N2) per AIR-WALL-03 'cited at build' (candidate: Song et al., JPCRD 52, 023104 (2023), registered in the repository; value read at registration, not quoted here)",
+    "evidence_class": "level 4 when registered",
+    "status_today": "O2: cited in NP-ICP-CHEM-AIR; N2: to register (FC-29 gate)"
+   },
+   {
+    "id": "IN-26",
+    "name": "electrode supply identity",
+    "symbol": "supply_j per non-floating surface",
+    "values": "ICP_COLLECTOR_BIAS (flight slot icp_collector_bias) | GROUND_FACILITY_ONLY (bench supply, never spacecraft bus power; flag INCLUDES_GROUND_FACILITY_SUPPLY) | HALL_DISCHARGE_LOOP (CPL-HALL-ON only)",
+    "status_today": "NOT_EVALUATED (P1-IT-36, ICD ICP-21)"
+   },
+   {
+    "id": "IN-27",
+    "name": "calibration / validation partition record",
+    "symbol": "partition_id, sha256",
+    "producer": "VC-06 v2, committed before any value is examined",
+    "status_today": "none (no P1 / P2 data)"
+   }
+  ],
+  "equations": [
+   {
+    "id": "EQ-19",
+    "name": "magnetization diagnostics (DOM-06 v2)",
+    "form": "omega_ce / nu_m = e B_ICP,max / (m_e nu_m), nu_m = sum_k n_k k_m,k(T_e); r_ce / R = m_e vbar_perp / (e B_ICP,max R), vbar_perp = (pi e T_e / (2 m_e))^(1/2) (mean speed of a two-dimensional Maxwellian, a definition of the reported diagnostic)",
+    "status": "REGISTERED (diagnostic only; no criterion)"
+   },
+   {
+    "id": "EQ-20",
+    "name": "sheath diagnostics (DOM-07 v2)",
+    "form": "lambda_D = (eps0 T_e / (e n_e))^(1/2) (T_e in eV); ratios lambda_D / min(R, L), lambda_D / R; s_j / R with s_j the Child-law sheath width for the surface potential drop (form VER-22)",
+    "status": "lambda_D REGISTERED (eps0 VER-25); s_j verify"
+   },
+   {
+    "id": "EQ-22",
+    "name": "multi-ion edge relation (GAP-04)",
+    "form": "n_e,j = sum_s Z_s h_j,s n_i,s (H-MS); n_e,j = h_j n_e (H-LO / H-HI / single species)",
+    "status": "REGISTERED"
+   },
+   {
+    "id": "SG-01",
+    "name": "sign convention (A9.31 sec. 7 'registered sign convention')",
+    "form": "I_j = net conventional current from the plasma into surface j (positive for net ion arrival or net electron emission); V_j and phi_p are potentials against the registered reference; L_j = e A_j [Gamma_e,j (2 T_e + max(0, phi_p - V_j)) + sum_s Z_s Gamma_i,s,j T_e / 2] >= 0; C_j = I_j (phi_p - V_j) (signed); Q_j^kin = L_j + C_j = e A_j [Gamma_e,j (2 T_e + max(0, V_j - phi_p)) + sum_s Z_s Gamma_i,s,j (T_e / 2 + max(0, phi_p - V_j))] >= 0; sum_j C_j = -sum_j I_j V_j because sum_j I_j = 0; floating surfaces and open ends: I_j = 0, C_j = 0.",
+    "status": "REGISTERED (exact identity; checked by LC-17)"
+   }
+  ],
+  "domain_checks": [
+   {
+    "id": "DOM-14",
+    "check": "FLOW_BALANCE for a flight case requires an ADMITTED upstream conductance / feed model for its domain",
+    "on_fail": "NOT_EVALUATED (FLOW_BALANCE_UPSTREAM_MODEL_NOT_ADMITTED)"
+   },
+   {
+    "id": "DOM-15",
+    "check": "a validation comparison point requires measured p_ICP (REGISTERED_PRESSURE)",
+    "on_fail": "NOT_EVALUATED for that comparison (P_ICP_NOT_MEASURED); FLOW_BALANCE never substitutes"
+   },
+   {
+    "id": "DOM-16",
+    "check": "volume mode: ASSUMED_GEOMETRIC_TUBE flagged on every output; superseded by a REGISTERED_EFFECTIVE record for the same geometry id",
+    "on_fail": "ASSUMED_GEOMETRIC_TUBE requested while a REGISTERED_EFFECTIVE record exists -> MODEL_ERROR"
+   },
+   {
+    "id": "DOM-17",
+    "check": "background inflow form only for a registered isotropic Maxwellian background",
+    "on_fail": "flight ambient without a registered exposure model -> INCOMPLETE_EVIDENCE"
+   },
+   {
+    "id": "DOM-18",
+    "check": "T_b vs T_g within combined registered uncertainty",
+    "on_fail": "flag NON_ISOTHERMAL_PASSAGE; path gated by VER-20"
+   }
+  ],
+  "conservation_checks": [
+   {
+    "id": "CC-08",
+    "check": "energy-disposition closure: for every scenario member and every class (X, N, A), the energy allocated to RAD + WALL + OUT equals the class energy",
+    "tolerance": "<= 1e-10 relative to the class energy (exact 0 for a zero class)"
+   }
+  ],
+  "analytic_limiting_cases": [
+   {
+    "id": "LC-12",
+    "case": "PF-02 background equilibrium",
+    "setup": "P_abs = 0, no feed, single gas, background n_b at T_b; tau_j in {1, 0.5, 0.1}",
+    "pass": "T_b = T_g: n = n_b to 1e-12 for every tau; T_b != T_g: n = n_b vbar_b / vbar to 1e-12 with flag NON_ISOTHERMAL_PASSAGE"
+   },
+   {
+    "id": "LC-13",
+    "case": "PF-01 recombination",
+    "setup": "synthetic closed vessel (no open end), one wall material, volume atom source S, gamma in {1e-3, 0.1, 1}",
+    "pass": "n_a = S / (gamma (1/4) vbar_a A_wall) to 1e-12; molecule source = S / 2 to 1e-12; at gamma = 1 the atom loss equals (1/4) n vbar A (not half of it)"
+   },
+   {
+    "id": "LC-14",
+    "case": "GAP-04 members",
+    "setup": "one ion species; then two ion species with distinct lambda_i,s",
+    "pass": "one species: H-MS, H-LO, H-HI bit-identical to the v1 H-LIEB result; two species: h(min lambda) <= h_j,s <= h(max lambda) per surface, n_e,j = sum_s Z_s h_j,s n_i,s to 1e-12, CC-01..CC-03 per member"
+   },
+   {
+    "id": "LC-15",
+    "case": "disposition vertices",
+    "setup": "synthetic set with elastic, vibrational, excitation and dissociation channels; two wall materials; tau registered, then unregistered",
+    "pass": "each vertex places the full class energy on its named destination (1e-12 relative); per member CC-05 / CC-08; with tau registered the OUT split equals A_j tau_j / sum (1e-12); unregistered tau gives the OUT[UP] / OUT[DOWN] pair"
+   },
+   {
+    "id": "LC-16",
+    "case": "GAP-05 normalisation",
+    "setup": "all-floating tube; then a biased collector",
+    "pass": "I_scale > 0 and normalised residuals <= 1e-10 in both; NOT_SUSTAINED gives exact zeros"
+   },
+   {
+    "id": "LC-17",
+    "case": "IF-ICP-THERMAL-v2 closures and SG-01",
+    "setup": "biased-electrode synthetic case in CM-CAL with a registered RF chain",
+    "pass": "RF-S, RF, PL, B, S closures and the grand sum equal P_icp_slot_load_sum_W to 1e-10; Q_j^kin = L_j + C_j equals the independent closed form of SG-01 to 1e-12; sum_j C_j = -sum_j I_j V_j to 1e-12; all-floating: C_j = 0 exactly"
+   },
+   {
+    "id": "LC-18",
+    "case": "IF-ICP-BUS-v2 plane identity",
+    "setup": "synthetic record and a synthetic bus_power_boundary_a9_v2 ledger with eta_slot, eta_front_end < 1 (consumer-side test in the power lane)",
+    "pass": "NP-ICP values equal the slot load-plane values exactly; the ledger reproduces P_bus = P_W / (eta_slot eta_front_end); the CONS-L1 ICP account closes with the ledger P_loss as supply loss outside the account (no Q_icp_boundary_W)"
+   },
+   {
+    "id": "LC-19",
+    "case": "DOM-06 / DOM-07 diagnostics",
+    "setup": "synthetic T_e, n_e, n_g, B",
+    "pass": "EQ-19 and lambda_D closed forms to 1e-12; s_j NOT_EVALUATED until VER-22"
+   },
+   {
+    "id": "LC-20",
+    "case": "INT-17 route excess",
+    "setup": "registered N2/N headers (N -> N^2+ direct 44.1354 eV vs N -> N+ -> N^2+ 14.534 + 29.60125 eV)",
+    "pass": "E_form,ref(N^2+) = 44.13525 eV; route excess of the direct route 1.5e-4 eV per event booked in class X; CC-07 v2 exact to 1e-10"
+   }
+  ],
+  "fail_closed_tests": [
+   {
+    "id": "FC-17",
+    "assert": "PF-01: the (gamma / 2) factor is absent (LC-13); gamma > 0 is evaluated per vertex member"
+   },
+   {
+    "id": "FC-18",
+    "assert": "PF-02: background inflow always carries tau_j; flight ambient without a registered exposure model -> INCOMPLETE_EVIDENCE"
+   },
+   {
+    "id": "FC-19",
+    "assert": "retired items: a model_version 2 record never carries P_icp_bus_W, Q_icp_rf_generator_loss_W or Q_icp_bias_supply_loss_W; an eta_bias or f_in registration is refused (MODEL_ERROR, INPUT_RETIRED_V2)"
+   },
+   {
+    "id": "FC-20",
+    "assert": "CPL-HALL-ON: with the real ensemble (members []) CFG-FLIGHT-HALL-ON is NOT_EVALUATED (CREDIBLE_HALL_TRANSPORT_SET_EMPTY); with a synthetic admitted-member stub each missing coupling input (CPL-HON-02) is named NOT_EVALUATED / INCOMPLETE_EVIDENCE; no beam / plume default exists"
+   },
+   {
+    "id": "FC-21",
+    "assert": "DOM-06 v2 (see FC-14 v2)"
+   },
+   {
+    "id": "FC-22",
+    "assert": "a validation comparison without a frozen IN-27 partition, or on a record outside it, is NOT_EVALUATED; a CM-CAL cell is never VALIDATED_BENCH before its held-out VAL set passes VC-04"
+   },
+   {
+    "id": "FC-23",
+    "assert": "ASSUMED_GEOMETRIC_TUBE flagged on every output; requested where a REGISTERED_EFFECTIVE record exists -> MODEL_ERROR"
+   },
+   {
+    "id": "FC-24",
+    "assert": "flight FLOW_BALANCE without an admitted upstream conductance / feed model -> NOT_EVALUATED"
+   },
+   {
+    "id": "FC-25",
+    "assert": "CA-ICP screening: an UNBOUNDED_OMISSION in any process class over D-CHEM -> INCOMPLETE_EVIDENCE for every chemistry-dependent output of that mode; no Hall completeness verdict is read"
+   },
+   {
+    "id": "FC-26",
+    "assert": "every output carries scenario_member_id; no nominal member is selected among H members or disposition vertices; raw output carries validation_cell_id and no HC-05 / margin / threshold (FC-11 inherited)"
+   },
+   {
+    "id": "FC-27",
+    "assert": "a validation point without measured p_ICP -> NOT_EVALUATED for that comparison"
+   },
+   {
+    "id": "FC-28",
+    "assert": "multi-ion H-LIEB with distinct sigma is evaluated as the three-member set (no longer withheld)"
+   },
+   {
+    "id": "FC-29",
+    "assert": "a dissociating molecule without a registered D0 (IN-25) -> partition keys INCOMPLETE_EVIDENCE naming it; solve and I_e,cap unaffected"
+   },
+   {
+    "id": "FC-30",
+    "assert": "model_version 2 records carry interface ids IF-ICP-THERMAL-v2 / IF-ICP-BUS-v2 and target boundary bus_power_boundary_a9_v2; no v1 interface id is emitted by the v2 path; no c1_ / cathode-slot key; no 1500 W or 1.5 kW constant in abep-icp"
+   }
+  ],
+  "verify_items": [
+   {
+    "id": "VER-19",
+    "item": "wall loss at large gamma: depletion-corrected forms (Motz-Wise-type correction; Chantry 1987) recalled from memory, not used",
+    "used_by": "MF-04 (documentation only)"
+   },
+   {
+    "id": "VER-20",
+    "item": "reciprocity of the transmission probability of a passage with T_b != T_g (diffuse re-emission)",
+    "used_by": "PF-02 non-isothermal path"
+   },
+   {
+    "id": "VER-21",
+    "item": "sheath-edge (Bohm) speeds in plasmas with two or more positive ion species (individual vs common speed; e.g. Baalrud, Hegna and Callen 2009, recalled from memory)",
+    "used_by": "MF-02"
+   },
+   {
+    "id": "VER-22",
+    "item": "Child-law sheath width s = (sqrt(2) / 3) lambda_D (2 V / T_e)^(3/4) (Lieberman and Lichtenberg 2005, recalled from memory)",
+    "used_by": "DOM-07 v2 s_j"
+   },
+   {
+    "id": "VER-23",
+    "item": "how the pinned HallThruster.jl v0.23.1 (bfb3019f) represents the cathode / coupling potential (read from the pinned source)",
+    "used_by": "CPL-HON-05"
+   },
+   {
+    "id": "VER-24",
+    "item": "electron-extraction boundary law of an RF plasma electron source emitting into a Hall plume (plasma-contactor / double-layer physics; published sources to be located)",
+    "used_by": "CPL-HON-04"
+   },
+   {
+    "id": "VER-25",
+    "item": "vacuum permittivity eps0 (CODATA 2022 value; the v1 implementation used a recalled value)",
+    "used_by": "EQ-20"
+   }
+  ]
+ },
+ "verify_gate_v2": "Inherited from v1: no verify item enters an admitted code path before a verification addendum records the source read (lawful acquisition only: A9.31 OQ-NPICP-10 'No paywall bypass or fabricated transcription').",
+ "chemistry_screen_v2": {
+  "ruling": "A9.31 sec. 10 OQ-NPICP-04 (verbatim in owner_rulings_applied)",
+  "items": [
+   {
+    "id": "CS-01",
+    "rule": "The frozen completeness-audit methodology is reused only as a SCREENING CONVENTION: NP-ICP-CHEM-AIR CA-ICP-v1 (metrics F_P, F_P_coll, F_ion, F_S_s, F_e_loss, alpha_neg; thresholds; ambiguity and cross-check rules) over D-CHEM (T_e 2-30 eV; low-threshold window 0.2-30 eV; p_ICP <= 13.3322 Pa)."
+   },
+   {
+    "id": "CS-02",
+    "rule": "No Hall completeness verdict transfers (CA-11): reused N2/N processes are included by default and excluded only by an ICP-domain bound."
+   },
+   {
+    "id": "CS-03",
+    "rule": "Every ICP process class of the v1 process-class gate is evaluated for every species: ionization; excitation (electronic, vibrational, rotational); dissociation; dissociative ionization; elastic loss; ion-neutral momentum transfer / charge exchange; wall atom recombination; metastable wall quenching; volume recombination; attachment / negative ions; plus the CA-ICP-v1 classes (dissociative and radiative recombination, ion-molecule, stepwise, superelastic, heterogeneous NO formation)."
+   },
+   {
+    "id": "CS-04",
+    "rule": "Per composition / design state, not globally (A9.31 OQ-CHEM-14): CG-AIR, CG-N2, CG-XE and the Stage-E envelope frozen in a dated addendum before any run (OQ-CHEM-04)."
+   },
+   {
+    "id": "CS-05",
+    "rule": "An omitted process with no bound (UNBOUNDED_OMISSION) blocks chemistry admission for its mode: every chemistry-dependent output of that mode is INCOMPLETE_EVIDENCE (A9.31 OQ-CHEM-15; FC-25). An unevaluable process is never accepted because it is inconvenient."
+   },
+   {
+    "id": "CS-06",
+    "rule": "Verdicts are recorded per process under data/chemistry/icp/audit/ against sha256-pinned snapshots (CA-08 / CA-09); no fit, bench, Hall or validation result decides a verdict (CA-10)."
+   }
+  ],
+  "status_today": "CA-ICP-v1 NOT_RUN -> EM-N2, AIR and XE chemistry-dependent outputs INCOMPLETE_EVIDENCE (unchanged)"
+ },
+ "assessment_separation_v2": {
+  "items": [
+   {
+    "id": "AS-01",
+    "rule": "Raw output provides I_e_cap_A (CFG-CAP-OFF) with its envelope, status, validation_status and validation_cell_id; I_e_neutralization_available_A (CFG-FLIGHT-HALL-ON, CPL-HALL-ON) with I_d at the same point. No ratio, margin, HC id, threshold or RFP label is formed in raw output (EX-05, FC-11 inherited)."
+   },
+   {
+    "id": "AS-02",
+    "rule": "OQ-NPICP-02: a model-derived I_e,cap enters HC-05 only at a point inside a VALIDATED_BENCH domain cell (VC-04); a VERIFIED but not bench-validated model value never does. Outside such a cell HC-05 is NOT_EVALUATED (MODEL_NOT_VALIDATED_IN_DOMAIN)."
+   },
+   {
+    "id": "AS-03",
+    "rule": "A measured I_e,cap (ICP45_CAPACITY record meeting A9.5 P1Q-16) supersedes the model at the measured point: assessment uses the measured record there and the model value is not used at that point."
+   },
+   {
+    "id": "AS-04",
+    "rule": "M_n = I_e,cap / I_d - 1 and its lower bound are formed only in abep-assess with the inherited P1-IT-29 rule; a Hall-ON neutralization value is never an I_e,cap comparison point (VC-05 inherited) and never satisfies HC-05 by itself."
+   },
+   {
+    "id": "AS-05",
+    "rule": "The RFP 1.5 kW bus limit is assessment-only (A9.30 sec. 5, A9.31 sec. 8): NP-ICP reads no requirement value."
+   }
+  ]
+ },
+ "validation_plan_v2": {
+  "replaced": [
+   "VC-03",
+   "VC-06"
+  ],
+  "added": [
+   {
+    "id": "VC-07",
+    "name": "pressure basis",
+    "rule": "Measured p_ICP is the determining neutral-density input of every validation comparison (OQ-NPICP-14); a point without it is NOT_EVALUATED (DOM-15)."
+   },
+   {
+    "id": "VC-08",
+    "name": "held-out gate",
+    "rule": "No CM-CAL result becomes VALIDATED_BENCH until its held-out VAL set passes VC-04 (OQ-NPICP-07). Calibration records never validate the quantity they calibrated (inherited principle)."
+   }
+  ]
+ },
+ "system_coupling_interfaces": {
+  "IF-ICP-HALL-v1": "inherited unchanged (CFG-CAP-OFF pair to assessment; status NOT_EVALUATED: CREDIBLE_HALL_TRANSPORT_SET_EMPTY, I_D_MAX_H1_NOT_REGISTERED); HC-05 use per assessment_separation_v2",
+  "IF-ICP-FEED-v1": "inherited unchanged (G-REUSE mdot_icp_dedicated = 0 exactly)",
+  "IF-ICP-THERMAL-v2": {
+   "purpose": "couple RF/ICP losses into NP-THERMAL-CATHODELESS v2 at their physical destinations (A9.31 sec. 7). Producer: this record. Consumer: NP-THERMAL-CATHODELESS prereg_v2 (matched key table, same ids, same receivers).",
+   "replaces": "IF-ICP-THERMAL-v1 (both versions of that label: the NP-ICP v1 eleven-key partition and the NP-THERMAL v1 seven-key IK-01..IK-07 set); v1 stays immutable history",
+   "configuration_scope": "CFG-CAP-OFF and SYNTHETIC / PARAMETRIC cases. A CFG-FLIGHT-HALL-ON record is NOT_EVALUATED until CPL-HALL-ON may execute and its thermal coupling keys have a registered consumer version (CPL-HON-08).",
+   "energy_source_rule": "Each watt enters through the interface of the supply that powers it, once. RF chain -> TK-01..TK-04, TK-06..TK-11; matching actuator -> TK-05; electrode-bias supply -> TK-12, TK-13; Hall discharge -> IF-HALL-THERMAL (never here); PPU supply conversion loss -> the bus ledger P_loss (never here).",
+   "keys": [
+    {
+     "id": "TK-R1",
+     "key": "P_icp_slot_load_sum_W",
+     "role": "REFERENCE",
+     "meaning": "sum of the installed ICP slot loads at their bus_power_boundary_a9_v2 load planes (icp_rf_source + icp_matching_network + icp_collector_bias, + an installed variant slot). NOT a spacecraft-side bus draw (that is the bus ledger's P_bus_W).",
+     "plane": "LOAD_PLANE_SUM",
+     "powered_by": "-",
+     "sign": ">= 0",
+     "receiver": "none (closure reference IFI2-07, CONS-I3)"
+    },
+    {
+     "id": "TK-R2",
+     "key": "P_icp_rf_source_DC_W",
+     "role": "REFERENCE",
+     "meaning": "RF generator DC input (= slot icp_rf_source load plane generator_dc_input)",
+     "plane": "LOAD (icp_rf_source)",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "none (closure reference IFI2-03)"
+    },
+    {
+     "id": "TK-R3",
+     "key": "P_icp_rf_forward_W",
+     "role": "REFERENCE",
+     "meaning": "forward RF power at RP-CPL (generator / 50-ohm side of the local match); measurement plane, never plasma power",
+     "plane": "RF_FORWARD",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "none (closure reference IFI2-03 / IFI2-04)"
+    },
+    {
+     "id": "TK-R4",
+     "key": "P_icp_abs_W",
+     "role": "REFERENCE",
+     "meaning": "RF power absorbed by the plasma electrons (OUT-01)",
+     "plane": "PLASMA",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "none (closure reference IFI2-04 / IFI2-05)"
+    },
+    {
+     "id": "TK-R5",
+     "key": "P_icp_collector_bias_W",
+     "role": "REFERENCE",
+     "meaning": "power delivered by the registered electrode-bias supplies into the plasma-electrode circuit, -sum_j I_j V_j over bias-connected surfaces (= slot icp_collector_bias load plane 'supply output V_bias x I_collector' when the only supply is the flight-type ICP collector supply)",
+     "plane": "LOAD (icp_collector_bias)",
+     "powered_by": "ICP_BIAS_SUPPLY (+ GROUND_FACILITY_ONLY supplies in a bench case, flagged)",
+     "sign": ">= 0 (a sinking supply is OUT_OF_DOMAIN, BUS2-08)",
+     "receiver": "none (closure reference IFI2-06)"
+    },
+    {
+     "id": "TK-01",
+     "key": "Q_icp_rf_conversion_loss_W",
+     "role": "BOOKED",
+     "meaning": "RF generator DC-to-RF conversion loss = P_icp_rf_source_DC_W - P_icp_rf_forward_W (declared assumption kept from v1 CC-06: the source does not recover reflected power)",
+     "plane": "inside the RF source (load side of the slot plane)",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "B_PPU_RF sub-account RF_SOURCE (or a registered electronics node)"
+    },
+    {
+     "id": "TK-02",
+     "key": "P_icp_rf_reflected_W",
+     "role": "BOOKED",
+     "meaning": "reflected RF power at RP-CPL, absorbed in the RF source",
+     "plane": "RF_REFLECTED",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "B_PPU_RF sub-account RF_SOURCE (or a registered electronics node)"
+    },
+    {
+     "id": "TK-03",
+     "key": "Q_icp_line_W",
+     "role": "BOOKED_OR_DEPOSITED",
+     "meaning": "50-ohm line / feedthrough loss between RP-CPL and RP-MIN",
+     "plane": "RF line",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "B_PPU_RF sub-account RF_CHAIN, or N_MATCH for a registered co-located segment"
+    },
+    {
+     "id": "TK-04",
+     "key": "Q_icp_match_W",
+     "role": "BOOKED_OR_DEPOSITED",
+     "meaning": "RF loss inside the matching network (P2 two-port); the line loss is not inside it",
+     "plane": "RF match",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "N_MATCH iff match_colocated (ICD ICP-13), else B_PPU_RF sub-account RF_CHAIN"
+    },
+    {
+     "id": "TK-05",
+     "key": "P_icp_matching_DC_W",
+     "role": "BOOKED_OR_DEPOSITED",
+     "meaning": "matching-network tuning actuator / controller DC draw (= slot icp_matching_network load plane; 0 W explicit for a registered fixed passive match), dissipated in the actuator / controller",
+     "plane": "LOAD (icp_matching_network)",
+     "powered_by": "ICP_MATCH_ACTUATOR",
+     "sign": ">= 0",
+     "receiver": "N_MATCH iff match_colocated, else B_PPU_RF sub-account RF_CHAIN"
+    },
+    {
+     "id": "TK-06",
+     "key": "Q_icp_coil_ohmic_W",
+     "role": "DEPOSITED",
+     "meaning": "I_ant^2 R_ant: the whole non-plasma antenna-circuit loss at RP-ANT, incl. induced (eddy) loss in nearby conductors (RP-ANT convention)",
+     "plane": "RP-ANT",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "registered conductor split over {N_ANTENNA, N_COLLECTOR, N_HOUSING, N_MOUNT}, weights summing to 1 (a registration may state N_ANTENNA 1.0 with its evidence); unregistered -> INCOMPLETE_EVIDENCE on both sides (no default split)"
+    },
+    {
+     "id": "TK-07",
+     "key": "Q_icp_plasma_wall_W",
+     "role": "DEPOSITED",
+     "meaning": "RF-powered plasma heat on ICP-module surfaces in contact with the plasma: sum over those surfaces of L_j + F_j + W_j (EQ-16 v2)",
+     "plane": "PLASMA -> surfaces",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "producer per-surface partition over the IN-10 v2 surface -> node map {N_VESSEL, N_ANTENNA (if exposed), N_MOUNT, N_COLLECTOR, N_HOUSING}; always emitted with the key"
+    },
+    {
+     "id": "TK-08",
+     "key": "Q_icp_radiation_W",
+     "role": "DEPOSITED_OR_EXPORTED",
+     "meaning": "optical / UV radiation leaving the plasma volume (optically thin)",
+     "plane": "PLASMA",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "consumer-registered partition f_rad over ICP nodes, H-1 pole faces and EXPORT (unchanged from v1 IK-05)"
+    },
+    {
+     "id": "TK-09",
+     "key": "Q_icp_extraction_W",
+     "role": "EXPORTED",
+     "meaning": "RF-powered energy arriving at the registered electron sink: L_ec + F_ec + W_ec (bench: dedicated electron collector, facility hardware; flight: Hall plume)",
+     "plane": "PLASMA -> electron sink",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "EXPORT"
+    },
+    {
+     "id": "TK-10",
+     "key": "Q_icp_outflow_upstream_W",
+     "role": "DEPOSITED_OR_EXPORTED",
+     "meaning": "RF-powered ion, electron, formation and neutral-borne energy leaving through the upstream open end (toward the H-1 exit face)",
+     "plane": "PLASMA -> OPEN_UPSTREAM",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "RX-H1-FACE: registered H-1-facing receiver interface (consumer partition f_up)"
+    },
+    {
+     "id": "TK-11",
+     "key": "Q_icp_outflow_downstream_W",
+     "role": "EXPORTED",
+     "meaning": "the same through the downstream open end (plume / space), excluding the electron-sink term",
+     "plane": "PLASMA -> OPEN_DOWNSTREAM",
+     "powered_by": "RF_SOURCE",
+     "sign": ">= 0",
+     "receiver": "EXPORT (never internal heat)"
+    },
+    {
+     "id": "TK-12",
+     "key": "Q_icp_bias_collector_W",
+     "role": "DEPOSITED",
+     "meaning": "electrode-circuit energy deposited on ICP-module electrodes: sum of C_j = I_j (phi_p - V_j) over bias-connected module surfaces (ion collector -> N_COLLECTOR)",
+     "plane": "bias circuit -> surfaces",
+     "powered_by": "ICP_BIAS_SUPPLY",
+     "sign": "signed (per-surface Q_j check IFI2-08)",
+     "receiver": "N_COLLECTOR (producer per-surface partition; another bias-connected module surface only through its IN-10 v2 node)"
+    },
+    {
+     "id": "TK-13",
+     "key": "Q_icp_bias_export_W",
+     "role": "EXPORTED",
+     "meaning": "electrode-circuit energy at the electron sink, C_ec",
+     "plane": "bias circuit -> electron sink",
+     "powered_by": "ICP_BIAS_SUPPLY",
+     "sign": "signed",
+     "receiver": "EXPORT"
+    },
+    {
+     "id": "TK-14",
+     "key": "P_icp_flow_control_W",
+     "role": "VARIANT",
+     "meaning": "dedicated ICP feed valve driver output (slot flow_control_icp_feed). G-REUSE: NOT_INSTALLED, a full record with value 0 exactly (evidence DEFINITION, A9.1 HIQ-06)",
+     "plane": "LOAD (flow_control_icp_feed)",
+     "powered_by": "ICP_FEED_VALVE_DRIVER",
+     "sign": ">= 0",
+     "receiver": "installed variant -> INCOMPLETE_EVIDENCE until its receiver node is registered"
+    },
+    {
+     "id": "TK-15",
+     "key": "P_icp_assist_magnet_W",
+     "role": "VARIANT",
+     "meaning": "ICP assist-magnet coil load (slot icp_assist_magnet). First build unmagnetized: NOT_INSTALLED, full record with value 0 exactly (evidence DEFINITION)",
+     "plane": "LOAD (icp_assist_magnet)",
+     "powered_by": "ICP_ASSIST_MAGNET_SUPPLY",
+     "sign": ">= 0",
+     "receiver": "installed variant -> OUT_OF_DOMAIN (thermal D-05; NP-ICP DOM-06)"
+    }
+   ],
+   "sign_convention": "SG-01 (added_items.equations)",
+   "per_surface_convention": "Q_j^kin = L_j + C_j exactly (A9.31 sec. 7); total surface heat Q_j = L_j + F_j + W_j + C_j >= 0. The record carries per-surface L_j, F_j, W_j, C_j, the surface -> node map and the partitions of TK-07 and TK-12 by node.",
+   "closures": {
+    "IFI2-03 RF-S": "P_icp_rf_source_DC_W = Q_icp_rf_conversion_loss_W + P_icp_rf_forward_W",
+    "IFI2-04 RF": "P_icp_rf_forward_W = P_icp_rf_reflected_W + Q_icp_line_W + Q_icp_match_W + Q_icp_coil_ohmic_W + P_icp_abs_W",
+    "IFI2-05 PL": "P_icp_abs_W = Q_icp_plasma_wall_W + Q_icp_radiation_W + Q_icp_extraction_W + Q_icp_outflow_upstream_W + Q_icp_outflow_downstream_W",
+    "IFI2-06 B": "P_icp_collector_bias_W = Q_icp_bias_collector_W + Q_icp_bias_export_W",
+    "IFI2-07 S": "P_icp_slot_load_sum_W = P_icp_rf_source_DC_W + P_icp_matching_DC_W + P_icp_collector_bias_W (+ installed variants)",
+    "CONS-I3 grand": "P_icp_slot_load_sum_W = Q_icp_rf_conversion_loss_W + P_icp_rf_reflected_W + Q_icp_line_W + Q_icp_match_W + P_icp_matching_DC_W + Q_icp_coil_ohmic_W + Q_icp_plasma_wall_W + Q_icp_radiation_W + Q_icp_extraction_W + Q_icp_outflow_upstream_W + Q_icp_outflow_downstream_W + Q_icp_bias_collector_W + Q_icp_bias_export_W (+ installed variants with registered receivers): every watt of the ICP slot loads has exactly one destination class (node, RX-H1-FACE, EXPORT, B_PPU_RF) and none is a remainder"
+   },
+   "producer_tolerance": "CC-05 v2 / CC-06 v2 (1e-10); consumer identity tolerance eps_if (NP-THERMAL NUM-09)",
+   "b_ppu_rf_booking": "B_PPU_RF receives only RF-source and RF-chain electronics dissipation, by key: sub-account RF_SOURCE = TK-01 + TK-02; sub-account RF_CHAIN = TK-03 (unless co-located) + TK-04 and TK-05 (unless match_colocated). The PPU supply conversion loss of every ICP slot (true PPU conversion loss) is the bus ledger's P_loss_W (bus_power_boundary_a9_v2 ledger), counted by CONS-L1 as supply loss outside the account; it is never an IF-ICP-THERMAL-v2 key. Nothing is booked as a remainder (the v1 consumer IK-07 Q_icp_boundary_W is retired).",
+   "scenario_members": "one record per ED-08 member; the record flags the per-receiver extreme members (consumer minimum set)",
+   "hall_powered_heat_excluded": "Q_hall_return_to_icp_W, Q_hall_plume_to_icp_W and every CPL-HALL-ON circuit share stay outside these keys (FC-16 v2)",
+   "consumes": "T_wall per surface / node, T_gas, T_coil (inherited; the orchestrator owns the ICP-thermal fixed point)",
+   "status_today": "NOT_EVALUATED (geometry, coupling evidence, chemistry admission and P1 / P2 evidence missing); key contract fixed now"
+  },
+  "IF-ICP-BUS-v2": {
+   "purpose": "make every NP-ICP electrical key's plane explicit and map it onto bus_power_boundary_a9_v2 slots (A9.31 sec. 8: needed, because IF-ICP-BUS-v1 P_icp_bus_W mixed planes - SC-WP-05 parity_report_v1 finding).",
+   "target_boundary": "bus_power_boundary_a9_v2 (A9.30 sec. 5; A9.31 sec. 8). The A5-era bus_power_boundary_v1 is not reopened.",
+   "keys": [
+    {
+     "id": "BK-01",
+     "key": "P_icp_rf_source_DC_W",
+     "plane": "LOAD",
+     "plane_definition": "13.56 MHz RF generator DC input terminals (bus_power_boundary_a9_v2 rf_power_planes 'generator_dc_input', crosses_bus_boundary true: the ledger load of slot icp_rf_source)",
+     "slot": "icp_rf_source",
+     "slot_state": "INSTALLED",
+     "producer_form": "(P_fwd - P_refl) / eta_RF, eta_RF registered at this plane (IN-19 v2)"
+    },
+    {
+     "id": "BK-02",
+     "key": "P_icp_matching_DC_W",
+     "plane": "LOAD",
+     "plane_definition": "DC input of the matching network's tuning actuators / controller (0 W explicit for a fixed passive match)",
+     "slot": "icp_matching_network",
+     "slot_state": "INSTALLED",
+     "producer_form": "registered input echoed (IN-19 v2)"
+    },
+    {
+     "id": "BK-03",
+     "key": "P_icp_collector_bias_W",
+     "plane": "LOAD",
+     "plane_definition": "electron-extraction collector / bias supply OUTPUT (V_bias x I_collector), the slot's load plane; the supply's conversion efficiency is the ledger's own efficiency record for this slot",
+     "slot": "icp_collector_bias",
+     "slot_state": "INSTALLED",
+     "producer_form": "-sum_j I_j V_j over the surfaces of the registered electrode supplies (EQ-15 v2); a bus value only without a GROUND_FACILITY_ONLY supply (BUS2-04); no eta applied by NP-ICP"
+    },
+    {
+     "id": "BK-04",
+     "key": "P_icp_assist_magnet_W",
+     "plane": "LOAD",
+     "plane_definition": "ICP assist-magnet coil terminals",
+     "slot": "icp_assist_magnet",
+     "slot_state": "VARIANT_ONLY (first build unmagnetized: NOT_INSTALLED, exact 0 record)",
+     "producer_form": "registered input echoed only in a declared variant"
+    },
+    {
+     "id": "BK-05",
+     "key": "P_icp_flow_control_W",
+     "plane": "LOAD",
+     "plane_definition": "dedicated ICP gas-feed valve / flow-controller driver outputs",
+     "slot": "flow_control_icp_feed",
+     "slot_state": "VARIANT_ONLY (G-REUSE: NOT_INSTALLED, exact 0 record)",
+     "producer_form": "registered input echoed only in a declared G-ATM / G-XE variant"
+    },
+    {
+     "id": "BK-06",
+     "key": "P_icp_slot_load_sum_W",
+     "plane": "LOAD_PLANE_SUM",
+     "plane_definition": "sum of BK-01..BK-05 load-plane values; a reference for the thermal closure, NEVER a bus draw",
+     "slot": "none",
+     "slot_state": "-",
+     "producer_form": "sum"
+    },
+    {
+     "id": "BK-07",
+     "key": "P_icp_rf_forward_W",
+     "plane": "RF_FORWARD",
+     "plane_definition": "rf_power_planes 'forward' (measurement quantity, crosses_bus_boundary false)",
+     "slot": "none",
+     "slot_state": "-",
+     "producer_form": "CM-CAL / CM-PRED only; NOT_EVALUATED in CM-ABS"
+    },
+    {
+     "id": "BK-08",
+     "key": "P_icp_rf_reflected_W",
+     "plane": "RF_REFLECTED",
+     "plane_definition": "rf_power_planes 'reflected' (measurement quantity)",
+     "slot": "none",
+     "slot_state": "-",
+     "producer_form": "as BK-07"
+    },
+    {
+     "id": "BK-09",
+     "key": "P_icp_delivered_W",
+     "plane": "RF_DELIVERED",
+     "plane_definition": "rf_power_planes 'delivered_to_load' at RP-ANT (measurement quantity, <= forward - reflected)",
+     "slot": "none",
+     "slot_state": "-",
+     "producer_form": "EQ-12 P_delivered"
+    },
+    {
+     "id": "BK-10",
+     "key": "Q_icp_rf_conversion_loss_W",
+     "plane": "INSIDE_LOAD",
+     "plane_definition": "generator DC-to-RF conversion loss, downstream of the icp_rf_source load plane (not a ledger P_loss)",
+     "slot": "none",
+     "slot_state": "-",
+     "producer_form": "BK-01 - BK-07"
+    }
+   ],
+   "rules": [
+    {
+     "id": "BUS2-01",
+     "rule": "Every key carries plane in {LOAD, LOAD_PLANE_SUM, RF_FORWARD, RF_REFLECTED, RF_DELIVERED, INSIDE_LOAD}. Only LOAD keys map to slots, one key per slot (BK-01..BK-05)."
+    },
+    {
+     "id": "BUS2-02",
+     "rule": "NP-ICP emits no SUPPLY_INPUT or BUS value (no P_W / eta_slot, no P_bus_W, no P_loss_W, no eta_front_end, no P_bus,1ms,max); those are the bus ledger's (abep_subsystems::power, ADMITTED)."
+    },
+    {
+     "id": "BUS2-03",
+     "rule": "eta_RF is defined at the generator DC input (= the icp_rf_source load plane) and is internal to the load; the ledger's eta_slot for icp_rf_source is the supply path feeding that plane. No efficiency is applied twice."
+    },
+    {
+     "id": "BUS2-04",
+     "rule": "Flight: the flight ledger consumes CFG-FLIGHT-HALL-ON records only (NOT_EVALUATED today, CPL-HALL-ON). CFG-CAP-OFF records are bench / parametric records; a value carrying INCLUDES_GROUND_FACILITY_SUPPLY or a laboratory generator is GROUND_FACILITY_ONLY and never spacecraft bus power."
+    },
+    {
+     "id": "BUS2-05",
+     "rule": "Flight conventional cathode heater / keeper: NONE. No key exists for c1_heater, c1_keeper, c1_common_tie or filter_getter; those slots are NOT_INSTALLED in hall_icp_neutralizer (A9.30 sec. 5; A9.31 sec. 8)."
+    },
+    {
+     "id": "BUS2-06",
+     "rule": "Raw bus quantities are physical loads only; the RFP 1.5 kW value is never read (assessment only)."
+    },
+    {
+     "id": "BUS2-07",
+     "rule": "Variant slots: icp_assist_magnet and flow_control_icp_feed are emitted as full NOT_INSTALLED records (exact 0, evidence DEFINITION) unless a declared variant installs them."
+    },
+    {
+     "id": "BUS2-08",
+     "rule": "P_icp_collector_bias_W < 0 (a supply absorbing power) is OUT_OF_DOMAIN (BIAS_SUPPLY_SINKING_NOT_REGISTERED) unless a bidirectional supply is registered."
+    },
+    {
+     "id": "BUS2-09",
+     "rule": "Start-up and transient peaks are not represented (steady model); P_bus,1ms,max comes from the ledger's registered evidence."
+    }
+   ],
+   "consumer_side": "abep_subsystems::power::icp_bus reads IF-ICP-BUS-v1 today (admitted; KEY_MAP already at these load planes). A v2 consumer path is added additively by the power lane: interface id 'IF-ICP-BUS-v2', target boundary check, the same five slot keys, P_icp_bus_W absent (its presence is MODEL_ERROR), configuration CFG-FLIGHT-HALL-ON for the flight ledger; CONS-L1 ICP account at Plane::Load for icp_rf_source, icp_matching_network, icp_collector_bias with deposited / exported / booked from IF-ICP-THERMAL-v2 (LC-18). The v1 consumer path is not changed.",
+   "status_today": "NOT_EVALUATED (flight: CPL-HALL-ON gated; eta_RF PENDING; P_fwd needs CM-CAL or CM-PRED)"
+  },
+  "CPL-HALL-ON-v1": {
+   "purpose": "the Hall-ON neutralization coupling contract required for final SIMULATION_COMPLETE (A9.31 OQ-NPICP-11). Preregistered now; numerical execution gated.",
+   "items": [
+    {
+     "id": "CPL-HON-01",
+     "name": "gate",
+     "rule": "Executes only with an ADMITTED HallThruster.jl ensemble member (credible set non-empty, admission record incl. o4_dispositions_file; never a screening candidate) and a design-specific Hall map point (Vyovrinda geometry and B(z)) carrying the pinned commit, at the registered operating point. Until then CFG-FLIGHT-HALL-ON = NOT_EVALUATED (reasons CREDIBLE_HALL_TRANSPORT_SET_EMPTY / HALL_MEMBER_NOT_ADMITTED), asserted in tests (FC-03, FC-20)."
+    },
+    {
+     "id": "CPL-HON-02",
+     "name": "required inputs (no default; each absent input is named)",
+     "inputs": [
+      {
+       "id": "HI-01",
+       "quantity": "I_d [A]",
+       "producer": "hall_map_schema_v1 discharge_current_A (admitted member)"
+      },
+      {
+       "id": "HI-02",
+       "quantity": "I_beam [A]",
+       "producer": "hall_map_schema_v1 ion_current_A"
+      },
+      {
+       "id": "HI-03",
+       "quantity": "V_d, magnet setpoint",
+       "producer": "map operating-point axes"
+      },
+      {
+       "id": "HI-04",
+       "quantity": "per-species neutral flux leaving the Hall exit and its transfer to the ICP inlet",
+       "producer": "NO_PRODUCER: the schema has no per-species exit neutral flux (mass_eff is a scalar) and no admitted Hall-exit -> ICP transfer model exists (OQ-NPICP-14) -> NOT_EVALUATED"
+      },
+      {
+       "id": "HI-05",
+       "quantity": "beam / CEX ion flux, energy and charge state crossing or reaching ICP surfaces",
+       "producer": "NO_PRODUCER: needs a registered plume model (divergence_eff is a scalar) -> NOT_EVALUATED (EX-12 v2)"
+      },
+      {
+       "id": "HI-06",
+       "quantity": "plume potential at the extraction boundary (sink reference)",
+       "producer": "NO_PRODUCER -> NOT_EVALUATED"
+      },
+      {
+       "id": "HI-07",
+       "quantity": "B in the ICP volume at the Hall-ON magnet state",
+       "producer": "IN-15 (VI-HD-06); DOM-06 v2 applies"
+      },
+      {
+       "id": "HI-08",
+       "quantity": "discharge-circuit topology: return of the discharge supply to the ICP reference node; any other return path (spacecraft ground tie) with its current",
+       "producer": "registered ICD / circuit record (ICD ICP-20 / ICP-21); absent -> NOT_EVALUATED"
+      }
+     ]
+    },
+    {
+     "id": "CPL-HON-03",
+     "name": "current demand",
+     "rule": "With the registered cathode-common topology and no other registered return path, Kirchhoff on the discharge loop gives the electron current the ICP must emit: I_e,emit = I_d (I_beam to the beam, I_d - I_beam into the channel); a registered extra path adds its registered current (MF-05)."
+    },
+    {
+     "id": "CPL-HON-04",
+     "name": "extraction and coupling voltage",
+     "rule": "The ICP solve (EQ-03..EQ-11, with HI-04 neutral inflow and HI-05 ion sources) runs with the extraction boundary at an unknown sink potential V_sink against the ICP reference; V_coupling_V is the root of I_e,extracted(V_sink) = I_e,emit. The extraction-boundary law is VER-24: until it is cleared, only the saturation bound I_e,ext <= (1/4) e n_e,edge vbar_e A_ext (EQ-09 / EQ-11, EQ-22; saturation branch VER-06) is reported as I_e_neutralization_available_A (an upper bound, VC-02 semantics) and V_coupling_V is NOT_EVALUATED; if I_e,emit exceeds that bound the raw state is DEMAND_ABOVE_EXTRACTION_UPPER_BOUND (a physics fact, never a verdict)."
+    },
+    {
+     "id": "CPL-HON-05",
+     "name": "Hall-side feedback",
+     "rule": "V_coupling changes the Hall operating point; the system orchestrator owns the Hall <-> ICP fixed point (|Delta V_coupling| <= 1e-6 V and relative current balance <= 1e-10, at most 100 iterations, else MODEL_ERROR; numerical policy). Until VER-23 shows how the pinned HallThruster.jl takes the coupling potential (or the map carries it as an axis), coupled outputs are INCOMPLETE_EVIDENCE (HALL_COUPLING_POTENTIAL_INPUT_UNVERIFIED)."
+    },
+    {
+     "id": "CPL-HON-06",
+     "name": "neutral source",
+     "rule": "G-REUSE in flight: the ICP neutral inflow is the Hall exhaust neutral flux transferred by an admitted model (HI-04); no inflow fraction is assumed."
+    },
+    {
+     "id": "CPL-HON-07",
+     "name": "beam and CEX ions",
+     "rule": "Hall-produced ions reaching ICP surfaces enter EQ-10 as additional ion current at those surfaces; their arrival kinetic energy is Hall-powered (IF-HALL-THERMAL HK-09); their sheath energy (phi_p - V_j) at the surface is electrode-circuit energy (CPL-HON-08)."
+    },
+    {
+     "id": "CPL-HON-08",
+     "name": "energy attribution",
+     "rule": "In Hall-ON the electrode circuit is powered jointly by the ICP bias supply and the Hall discharge loop. The per-surface split of C_j between the two supplies is not identifiable (with sum_j I_j = 0, any reassignment of phi_p sum_{j in S} I_j between supplies conserves energy), so no per-surface supply split is made. The contract reports the supply terminal energies P_icp_collector_bias_W (= -sum over bias electrodes I_j V_j, slot icp_collector_bias) and P_cpl_hall_loop_at_icp_W (= -I_sink V_sink, inside the Hall discharge slot power) and the jointly powered deposition in coupling keys Q_cpl_hallon_circuit_by_surface_W (C_j at ICP surfaces, signed) and Q_cpl_hallon_circuit_export_W (C_sink, EXPORT), with P_icp_collector_bias_W + P_cpl_hall_loop_at_icp_W = sum of the two (<= 1e-10). These keys are never inside an IF-ICP-THERMAL-v2 key (FC-16 v2). Before execution a matched consumer version registers them once, with IF-HALL-THERMAL HK-08 defined so that the same C_j is never carried twice, and CONS-L1 compares them with a joint account of hall_discharge and icp_collector_bias at their load planes."
+    },
+    {
+     "id": "CPL-HON-09",
+     "name": "outputs",
+     "rule": "I_e_neutralization_available_A (bound or value with status), V_coupling_V, I_d and I_beam echoed with the member id, the CPL-HON-08 energies; the pair (I_e, I_d) goes to assessment; no ratio is formed here."
+    },
+    {
+     "id": "CPL-HON-10",
+     "name": "validation",
+     "rule": "Hall-ON bench records (NEUTRALIZATION_CONSISTENCY; P1 / P3 coupled H-1 + ICP) validate V_coupling and the current balance under VC-01, VC-06 v2 and VC-07; they are never I_e,cap comparison points (VC-05)."
+    },
+    {
+     "id": "CPL-HON-11",
+     "name": "no invention",
+     "rule": "No beam divergence, plume potential, transfer fraction, coupling voltage or CEX parameter is defaulted; each comes from an admitted producer or a registered measurement."
+    }
+   ],
+   "status_today": "NOT_EVALUATED: credible Hall transport set EMPTY; HI-04, HI-05, HI-06 have no producer; VER-23, VER-24 open"
+  }
+ },
+ "open_owner_items_v2": [
+  {
+   "id": "OQ-NPICP-05",
+   "status": "OPEN",
+   "question": "Xe and Ar electron-impact sources to register (A9.31 OQ-CHEM-13 prefers primary Xe measurements)."
+  }
+ ],
+ "repository_conflicts_v2": [
+  {
+   "id": "CONF-11",
+   "status": "RESOLVED by IF-ICP-THERMAL-v2 and NP-THERMAL-CATHODELESS prereg_v2 (A9.31 sec. 7)"
+  },
+  {
+   "id": "CONF-12",
+   "where": "admitted consumers abep_subsystems::power::icp_bus (IF-ICP-BUS-v1) and system_ledger::accounts_from_thermal (reads Q_icp_boundary_W, IF-ICP-THERMAL-v1)",
+   "handling": "unchanged (admitted, immutable); v2 consumer paths are added additively by the power / thermal implementation lanes under their own registrations; listed in ledger_update_requested"
+  },
+  {
+   "id": "CONF-13",
+   "where": "NP-ICP-CHEM-AIR AIR-EXC-12 bounding pair (RADIATED / WALL_QUENCHED)",
+   "handling": "v2 vertex set adds CARRIED_OUT and per-material WALL vertices: stricter; the chemistry contract is not edited (addendum_02 consistency rule: strictest applies)"
+  },
+  {
+   "id": "CONF-14",
+   "where": "chemistry registry CV-03 sets neutral formation energies to 0 (INT-17 check reference)",
+   "handling": "a consistency-check reference only; the energy partition uses registered D0 (IN-25) for atoms; no conflict"
+  },
+  {
+   "id": "CONF-15",
+   "where": "NP-THERMAL v1 IK-02 sends an undeclared coil loss wholly to N_ANTENNA; NP-ICP v1 makes the undeclared split NOT_EVALUATED",
+   "handling": "IF-ICP-THERMAL-v2 TK-06: registered split required on both sides, else INCOMPLETE_EVIDENCE (no default split; Takahashi TK-27 reports eddy heating of the electrode)"
+  },
+  {
+   "id": "CONF-16",
+   "where": "v1 FC-14 / INT-10 withheld the whole plasma result for B > 0",
+   "handling": "v2 DOM-06 keeps every plasma, capacity and partition output INCOMPLETE_EVIDENCE and adds only the two diagnostic ratios (A9.31 OQ-NPICP-03)"
+  }
+ ],
+ "not_evaluated_today_v2": [
+  {
+   "id": "NE-01",
+   "what": "flight I_e,cap",
+   "status": "INCOMPLETE_EVIDENCE",
+   "why": "geometry and electrodes TBD (inherited)"
+  },
+  {
+   "id": "NE-02",
+   "what": "R_p, X, eta_p, P_fwd",
+   "status": "NOT_EVALUATED",
+   "why": "no P2 data; CM-PRED VER-03..05"
+  },
+  {
+   "id": "NE-03",
+   "what": "AIR_PRIMARY, EM-O2B",
+   "status": "INCOMPLETE_EVIDENCE",
+   "why": "NP_ICP_CHEM_AIR_NOT_ADMITTED; NEG-CRIT; SB-NO"
+  },
+  {
+   "id": "NE-04",
+   "what": "XE_CONTINGENCY, EM-XE",
+   "status": "INCOMPLETE_EVIDENCE",
+   "why": "no admitted Xe set"
+  },
+  {
+   "id": "NE-05",
+   "what": "EM-AR",
+   "status": "INCOMPLETE_EVIDENCE",
+   "why": "no Ar set"
+  },
+  {
+   "id": "NE-06",
+   "what": "EM-N2 point results",
+   "status": "INCOMPLETE_EVIDENCE",
+   "why": "CA-ICP-v1 NOT_RUN; sigma_s,k; geometry; 11 channels without representation; D0(N2) (IN-25)"
+  },
+  {
+   "id": "NE-07",
+   "what": "IF-ICP-HALL-v1",
+   "status": "NOT_EVALUATED",
+   "why": "credible set EMPTY; I_d,max,H1 not registered"
+  },
+  {
+   "id": "NE-08",
+   "what": "CFG-FLIGHT-HALL-ON, OUT-07, CPL-HALL-ON",
+   "status": "NOT_EVALUATED",
+   "why": "CPL-HON-01 gate; HI-04..HI-06 no producer; VER-23, VER-24"
+  },
+  {
+   "id": "NE-09",
+   "what": "IF-ICP-BUS-v2 flight values",
+   "status": "NOT_EVALUATED",
+   "why": "Hall-ON gated; eta_RF PENDING"
+  },
+  {
+   "id": "NE-10",
+   "what": "IF-ICP-THERMAL-v2 values",
+   "status": "NOT_EVALUATED",
+   "why": "follows NE-01..06"
+  },
+  {
+   "id": "NE-11",
+   "what": "magnetized cells",
+   "status": "INCOMPLETE_EVIDENCE",
+   "why": "no sourced magnetization criterion (diagnostics reported)"
+  },
+  {
+   "id": "NE-12",
+   "what": "validation status above NOT_VALIDATED",
+   "status": "NOT_EVALUATED",
+   "why": "no P1 / P2 data; no IN-27 partition"
+  },
+  {
+   "id": "NE-13",
+   "what": "u_model_form",
+   "status": "NOT_EVALUATED",
+   "why": "no validation residuals"
+  },
+  {
+   "id": "NE-14",
+   "what": "flight neutral density (FLOW_BALANCE)",
+   "status": "NOT_EVALUATED",
+   "why": "no admitted upstream conductance / feed model for the ICP inlet (DOM-14)"
+  }
+ ],
+ "admission_rule_v2": {
+  "software_admission": "model_version 2 is VERIFIED when: (1) this record and prereg_lock_v2.json are committed; (2) abep-icp passes every inherited and added LC, CC, NV and FC item under cargo test --workspace --locked; (3) the abep-chem rate evaluator stays admitted; (4) every verify item on an admitted code path is cleared by a verification addendum; (5) the matched consumers exist: NP-THERMAL-CATHODELESS v2 consumes IF-ICP-THERMAL-v2 with the identical key table, and the power lane's IF-ICP-BUS-v2 consumer path passes LC-18; (6) an admission record pins the Rust commit, the test log and this lock's sha256.",
+  "partial_admission": "inherited (CFG-CAP-OFF / CM-ABS core first; CM-PRED and CPL-HALL-ON separately)",
+  "validation_status": "NOT_VALIDATED on every output until a domain cell reaches VALIDATED_BENCH under VC-04 / VC-08",
+  "simulation_complete_role": "the RF/ICP block of the A9.29 sec. 15 chain; final SIMULATION_COMPLETE also needs CPL-HALL-ON executed on an admitted member (A9.31 OQ-NPICP-11)"
+ },
+ "ledger_update_requested": "none by this record (docs only). For lane A1: NP-ICP-NEUTRALIZER gains PREREG_MODEL model_version 2 (this lock); v1 stays RUST_IMPL with verification_report_v2. Follow-on implementation: abep-icp model_version 2; NP-THERMAL v2 consumer; power-lane IF-ICP-BUS-v2 consumer path and CONS-L1 v2 ICP account (additive, CONF-12).",
+ "scope_traceability": {
+  "source": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md (sha256 ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc), secs. 7, 8, 9, 10; every bullet below is quoted from the record",
+  "SEC_7_ICP_THERMAL": [
+   {
+    "item": "S7-01",
+    "verbatim": "Create matched interface v2.",
+    "fields": [
+     "system_coupling_interfaces.IF-ICP-THERMAL-v2",
+     "NP-THERMAL-CATHODELESS/prereg_v2.json (consumer, identical key table)"
+    ]
+   },
+   {
+    "item": "S7-02",
+    "verbatim": "Do NOT accept the current approximation that sends the entire residual to B_PPU_RF.",
+    "fields": [
+     "IF-ICP-THERMAL-v2.b_ppu_rf_booking",
+     "retired_items (Q_icp_bias_supply_loss_W, P_icp_bus_W)",
+     "CONS-I3 grand"
+    ]
+   },
+   {
+    "item": "S7-03",
+    "verbatim": "The physically separated quantities already exposed by NP-ICP shall be consumed at their proper destinations.",
+    "fields": [
+     "IF-ICP-THERMAL-v2.keys[*].receiver"
+    ]
+   },
+   {
+    "item": "S7-04a",
+    "verbatim": "reflected RF power;",
+    "fields": [
+     "TK-02 P_icp_rf_reflected_W"
+    ]
+   },
+   {
+    "item": "S7-04b",
+    "verbatim": "line loss;",
+    "fields": [
+     "TK-03 Q_icp_line_W"
+    ]
+   },
+   {
+    "item": "S7-04c",
+    "verbatim": "matching loss;",
+    "fields": [
+     "TK-04 Q_icp_match_W",
+     "TK-05 P_icp_matching_DC_W"
+    ]
+   },
+   {
+    "item": "S7-04d",
+    "verbatim": "antenna-circuit / coil loss;",
+    "fields": [
+     "TK-06 Q_icp_coil_ohmic_W",
+     "CONF-15"
+    ]
+   },
+   {
+    "item": "S7-04e",
+    "verbatim": "absorbed plasma power;",
+    "fields": [
+     "TK-R4 P_icp_abs_W"
+    ]
+   },
+   {
+    "item": "S7-04f",
+    "verbatim": "collector-bias power;",
+    "fields": [
+     "TK-R5 P_icp_collector_bias_W",
+     "BK-03"
+    ]
+   },
+   {
+    "item": "S7-04g",
+    "verbatim": "collector-bias deposition;",
+    "fields": [
+     "TK-12 Q_icp_bias_collector_W"
+    ]
+   },
+   {
+    "item": "S7-04h",
+    "verbatim": "exported bias power;",
+    "fields": [
+     "TK-13 Q_icp_bias_export_W"
+    ]
+   },
+   {
+    "item": "S7-04i",
+    "verbatim": "upstream carried-out power;",
+    "fields": [
+     "TK-10 Q_icp_outflow_upstream_W"
+    ]
+   },
+   {
+    "item": "S7-04j",
+    "verbatim": "downstream carried-out power.",
+    "fields": [
+     "TK-11 Q_icp_outflow_downstream_W"
+    ]
+   },
+   {
+    "item": "S7-05",
+    "verbatim": "Approve the per-surface convention: Q_j = L_j + C_j subject to the registered sign convention and conservation check.",
+    "fields": [
+     "SG-01",
+     "EQ-16 v2",
+     "IF-ICP-THERMAL-v2.per_surface_convention",
+     "CC-05 v2",
+     "LC-17"
+    ]
+   },
+   {
+    "item": "S7-06a",
+    "verbatim": "RF-source / conversion losses -> B_PPU_RF or appropriate electronics node;",
+    "fields": [
+     "TK-01",
+     "TK-02",
+     "TK-03",
+     "TK-04",
+     "TK-05",
+     "IF-ICP-THERMAL-v2.b_ppu_rf_booking"
+    ]
+   },
+   {
+    "item": "S7-06b",
+    "verbatim": "collector deposition -> N_COLLECTOR;",
+    "fields": [
+     "TK-12"
+    ]
+   },
+   {
+    "item": "S7-06c",
+    "verbatim": "upstream plasma/outflow energy -> registered H-1-facing receiver / interface;",
+    "fields": [
+     "TK-10 (RX-H1-FACE)",
+     "IN-10 v2 thermal_node_rule"
+    ]
+   },
+   {
+    "item": "S7-06d",
+    "verbatim": "downstream exported power -> EXPORT, not internal heat;",
+    "fields": [
+     "TK-11",
+     "TK-09"
+    ]
+   },
+   {
+    "item": "S7-06e",
+    "verbatim": "bias export -> EXPORT;",
+    "fields": [
+     "TK-13"
+    ]
+   },
+   {
+    "item": "S7-06f",
+    "verbatim": "only true PPU conversion loss -> PPU heat.",
+    "fields": [
+     "IF-ICP-THERMAL-v2.b_ppu_rf_booking",
+     "retired_items Q_icp_bias_supply_loss_W",
+     "BUS2-02"
+    ]
+   },
+   {
+    "item": "S7-07",
+    "verbatim": "No energy may disappear.",
+    "fields": [
+     "CONS-I3 grand",
+     "EQ-16 v2",
+     "CC-05 v2",
+     "CC-06 v2",
+     "CC-08",
+     "energy_disposition ED-01..ED-09"
+    ]
+   },
+   {
+    "item": "S7-08",
+    "verbatim": "No term may be double-counted.",
+    "fields": [
+     "IF-ICP-THERMAL-v2.energy_source_rule",
+     "retired_items Q_icp_rf_generator_loss_W",
+     "FC-16 v2",
+     "CPL-HON-08",
+     "BUS2-03"
+    ]
+   },
+   {
+    "item": "S7-09",
+    "verbatim": "Preserve IF-ICP-THERMAL-v1 and NP-THERMAL-CATHODELESS v1 as immutable history.",
+    "fields": [
+     "predecessor",
+     "IF-ICP-THERMAL-v2.replaces",
+     "change_rule"
+    ]
+   },
+   {
+    "item": "S7-10",
+    "verbatim": "Create versioned v2 records.",
+    "fields": [
+     "this record (prereg_v2.json, PREREG_v2.md, prereg_lock_v2.json)",
+     "NP-THERMAL-CATHODELESS prereg_v2"
+    ]
+   }
+  ],
+  "SEC_8_ICP_BUS": [
+   {
+    "item": "S8-01",
+    "verbatim": "Use bus_power_boundary_a9_v2.",
+    "fields": [
+     "IF-ICP-BUS-v2.target_boundary"
+    ]
+   },
+   {
+    "item": "S8-02",
+    "verbatim": "Create a matched IF-ICP-BUS-v2 only if needed to make the v2 thermal interface and active ledger mapping explicit.",
+    "fields": [
+     "IF-ICP-BUS-v2.purpose (needed: SC-WP-05 plane finding)",
+     "IF-ICP-BUS-v2.consumer_side",
+     "LC-18"
+    ]
+   },
+   {
+    "item": "S8-03",
+    "verbatim": "Do not reopen the old A5 bus boundary.",
+    "fields": [
+     "IF-ICP-BUS-v2.target_boundary"
+    ]
+   },
+   {
+    "item": "S8-04",
+    "verbatim": "Flight conventional cathode heater / keeper: NONE.",
+    "fields": [
+     "BUS2-05",
+     "FC-30",
+     "FC-11 (inherited)"
+    ]
+   },
+   {
+    "item": "S8-05",
+    "verbatim": "Raw bus ledger contains physical loads only.",
+    "fields": [
+     "BUS2-01",
+     "BUS2-02",
+     "BUS2-06",
+     "BUS2-07"
+    ]
+   },
+   {
+    "item": "S8-06",
+    "verbatim": "The RFP 1.5 kW value stays in assessment, never raw power physics.",
+    "fields": [
+     "BUS2-06",
+     "AS-05",
+     "FC-30"
+    ]
+   }
+  ],
+  "SEC_9_NP_ICP_V2": [
+   {
+    "item": "S9-01",
+    "verbatim": "Do NOT close these by an owner choosing unsourced physical constants.",
+    "fields": [
+     "resolutions[*].basis",
+     "IN-18 v2",
+     "IN-25"
+    ]
+   },
+   {
+    "item": "S9-02",
+    "verbatim": "Do NOT patch v1 with ad-hoc addenda that merely make the code admissible.",
+    "fields": [
+     "prereg_version v2",
+     "change_rule"
+    ]
+   },
+   {
+    "item": "S9-03a",
+    "verbatim": "PF-01 recombination-factor ambiguity",
+    "fields": [
+     "resolutions PF-01",
+     "EQ-02 v2",
+     "LC-13",
+     "FC-17"
+    ]
+   },
+   {
+    "item": "S9-03b",
+    "verbatim": "PF-02 background inflow without residence/conductance basis",
+    "fields": [
+     "resolutions PF-02",
+     "EQ-02 v2",
+     "IN-13 v2",
+     "DOM-17",
+     "DOM-18",
+     "LC-12",
+     "FC-18"
+    ]
+   },
+   {
+    "item": "S9-03c",
+    "verbatim": "GAP-01 neutral-energy split",
+    "fields": [
+     "resolutions GAP-01",
+     "ED-01",
+     "ED-04",
+     "ED-05",
+     "LC-15"
+    ]
+   },
+   {
+    "item": "S9-03d",
+    "verbatim": "GAP-02 atom-formation-energy disposal",
+    "fields": [
+     "resolutions GAP-02",
+     "EQ-18 v2",
+     "ED-06",
+     "ED-07",
+     "IN-25",
+     "FC-29"
+    ]
+   },
+   {
+    "item": "S9-03e",
+    "verbatim": "GAP-03 CARRIED_OUT partition",
+    "fields": [
+     "resolutions GAP-03",
+     "ED-05",
+     "IN-23 v2"
+    ]
+   },
+   {
+    "item": "S9-03f",
+    "verbatim": "GAP-04 multi-species H-LIEB treatment",
+    "fields": [
+     "resolutions GAP-04",
+     "EQ-05 v2",
+     "EQ-08 v2",
+     "EQ-09 v2",
+     "EQ-22",
+     "LC-14",
+     "FC-28"
+    ]
+   },
+   {
+    "item": "S9-03g",
+    "verbatim": "GAP-05 registered-table scan / normalisation acknowledgement",
+    "fields": [
+     "resolutions GAP-05",
+     "CC-03 v2",
+     "IN-24 v2",
+     "LC-16"
+    ]
+   },
+   {
+    "item": "S9-04",
+    "verbatim": "v1 and its reports remain immutable.",
+    "fields": [
+     "predecessor"
+    ]
+   },
+   {
+    "item": "S9-05",
+    "verbatim": "v2 must resolve each item from: conservation; dimensional consistency; registered physical source; explicit bounding branch; not from an invented point value.",
+    "fields": [
+     "resolutions[*].basis"
+    ]
+   },
+   {
+    "item": "S9-06",
+    "verbatim": "Where the physics cannot yet identify a unique split: use a registered bounding pair / interval, or return INCOMPLETE_EVIDENCE.",
+    "fields": [
+     "ED-03",
+     "ED-04",
+     "ED-05",
+     "ED-07",
+     "ED-08",
+     "EQ-05 v2 members",
+     "FC-29"
+    ]
+   },
+   {
+    "item": "S9-07",
+    "verbatim": "Do not use 50/50 splits or other convenience assumptions.",
+    "fields": [
+     "resolutions GAP-01 v2_rule",
+     "ED-04",
+     "ED-05",
+     "TK-06",
+     "CPL-HON-08"
+    ]
+   },
+   {
+    "item": "S9-08",
+    "verbatim": "INT-16 is APPROVED: registered-table T_e scan ends at the highest temperature admitted by all required registered tables. Do not extrapolate beyond table validity.",
+    "fields": [
+     "approved_interpretations INT-16",
+     "IN-24 v2"
+    ]
+   },
+   {
+    "item": "S9-09",
+    "verbatim": "INT-17 is APPROVED: ion formation energy uses the least-energy registered formation route for consistency checks, while route identity remains traceable.",
+    "fields": [
+     "approved_interpretations INT-17",
+     "EQ-18 v2",
+     "CC-07 v2",
+     "LC-20"
+    ]
+   },
+   {
+    "item": "S9-10",
+    "verbatim": "INT-18 is APPROVED: reused-table source representations live under xs/ with capture id, builder/source/table hashes and provenance.",
+    "fields": [
+     "approved_interpretations INT-18"
+    ]
+   }
+  ],
+  "SEC_10_ICP_ASSESSMENT_USE": [
+   {
+    "item": "S10-02a",
+    "verbatim": "A VERIFIED but not bench-validated model-derived I_e,cap does NOT satisfy HC-05.",
+    "fields": [
+     "AS-02"
+    ]
+   },
+   {
+    "item": "S10-02b",
+    "verbatim": "HC-05 stays: NOT_EVALUATED outside a VALIDATED_BENCH domain cell.",
+    "fields": [
+     "AS-02",
+     "OUT-12 validation_cell_id"
+    ]
+   },
+   {
+    "item": "S10-02c",
+    "verbatim": "Measured I_e,cap supersedes the model at the measured point.",
+    "fields": [
+     "AS-03"
+    ]
+   },
+   {
+    "item": "S10-03a",
+    "verbatim": "Do NOT invent a Hall-parameter or gyroradius threshold.",
+    "fields": [
+     "DOM-06 v2",
+     "EQ-19"
+    ]
+   },
+   {
+    "item": "S10-03b",
+    "verbatim": "Report: omega_ce / nu_m r_ce / R but keep the affected capacity result INCOMPLETE_EVIDENCE until a sourced criterion is registered.",
+    "fields": [
+     "DOM-06 v2",
+     "EQ-19",
+     "LC-19",
+     "FC-14 v2",
+     "CONF-16"
+    ]
+   },
+   {
+    "item": "S10-04a",
+    "verbatim": "The existing completeness-audit methodology may be reused as a SCREENING CONVENTION over the ICP chemistry domain.",
+    "fields": [
+     "CS-01"
+    ]
+   },
+   {
+    "item": "S10-04b",
+    "verbatim": "Do not automatically transfer a Hall completeness verdict.",
+    "fields": [
+     "CS-02"
+    ]
+   },
+   {
+    "item": "S10-04c",
+    "verbatim": "Evaluate all ICP process classes over D-CHEM.",
+    "fields": [
+     "CS-03",
+     "CS-04"
+    ]
+   },
+   {
+    "item": "S10-04d",
+    "verbatim": "An unbounded material omission blocks chemistry admission.",
+    "fields": [
+     "CS-05",
+     "FC-25"
+    ]
+   },
+   {
+    "item": "S10-07a",
+    "verbatim": "Calibration / validation records must be split before measurement values are examined.",
+    "fields": [
+     "VC-06 v2",
+     "IN-27"
+    ]
+   },
+   {
+    "item": "S10-07b",
+    "verbatim": "Use planned record IDs / operating points and a frozen custody list.",
+    "fields": [
+     "VC-06 v2"
+    ]
+   },
+   {
+    "item": "S10-07c",
+    "verbatim": "Do not randomly split repeated measurements after seeing results.",
+    "fields": [
+     "VC-06 v2"
+    ]
+   },
+   {
+    "item": "S10-07d",
+    "verbatim": "No CM-CAL result becomes VALIDATED_BENCH until the held-out set passes.",
+    "fields": [
+     "VC-08",
+     "FC-22"
+    ]
+   },
+   {
+    "item": "S10-08",
+    "verbatim": "APPROVED through the matched thermal-interface v2 decision above.",
+    "fields": [
+     "IF-ICP-THERMAL-v2"
+    ]
+   },
+   {
+    "item": "S10-09a",
+    "verbatim": "Report Debye-length and sheath-width ratios.",
+    "fields": [
+     "DOM-07 v2",
+     "EQ-20",
+     "LC-19"
+    ]
+   },
+   {
+    "item": "S10-09b",
+    "verbatim": "Do not create an unsourced hard threshold.",
+    "fields": [
+     "DOM-07 v2"
+    ]
+   },
+   {
+    "item": "S10-10",
+    "verbatim": "Lawful source acquisition is authorized. No paywall bypass or fabricated transcription.",
+    "fields": [
+     "verify_gate_v2"
+    ]
+   },
+   {
+    "item": "S10-11a",
+    "verbatim": "For final SIMULATION_COMPLETE, a Hall-ON neutralization coupling contract IS required.",
+    "fields": [
+     "CPL-HALL-ON-v1",
+     "admission_rule_v2.simulation_complete_role"
+    ]
+   },
+   {
+    "item": "S10-11b",
+    "verbatim": "Preregister the v2 Hall-ON coupling now, but gate numerical execution on an admitted Hall member.",
+    "fields": [
+     "CPL-HON-01"
+    ]
+   },
+   {
+    "item": "S10-11c",
+    "verbatim": "Until a Hall member exists: CFG-FLIGHT-HALL-ON = NOT_EVALUATED.",
+    "fields": [
+     "CPL-HON-01",
+     "FC-20",
+     "NE-08"
+    ]
+   },
+   {
+    "item": "S10-11d",
+    "verbatim": "Do not invent beam/plume parameters.",
+    "fields": [
+     "CPL-HON-02",
+     "CPL-HON-11",
+     "EX-12 v2"
+    ]
+   },
+   {
+    "item": "S10-12a",
+    "verbatim": "GEOMETRIC_TUBE is approved as a declared unvalidated modelling assumption for the preliminary predictive model.",
+    "fields": [
+     "IN-10 v2 volume_modes"
+    ]
+   },
+   {
+    "item": "S10-12b",
+    "verbatim": "Label it: ASSUMED_GEOMETRIC_TUBE",
+    "fields": [
+     "IN-10 v2",
+     "OUT-12 flags",
+     "FC-23"
+    ]
+   },
+   {
+    "item": "S10-12c",
+    "verbatim": "It is not bench validation.",
+    "fields": [
+     "IN-10 v2 volume_modes"
+    ]
+   },
+   {
+    "item": "S10-12d",
+    "verbatim": "A registered effective volume from diagnostics supersedes it when available.",
+    "fields": [
+     "DOM-16",
+     "FC-23"
+    ]
+   },
+   {
+    "item": "S10-13a",
+    "verbatim": "Freeze P1/P2 calibration and validation sets before the data are inspected.",
+    "fields": [
+     "VC-06 v2",
+     "IN-27"
+    ]
+   },
+   {
+    "item": "S10-13b",
+    "verbatim": "Report r_u.",
+    "fields": [
+     "VC-03 v2"
+    ]
+   },
+   {
+    "item": "S10-13c",
+    "verbatim": "Do not invent an informativeness acceptance threshold yet.",
+    "fields": [
+     "VC-03 v2"
+    ]
+   },
+   {
+    "item": "S10-14a",
+    "verbatim": "For validation: measured p_ICP is preferred / determining.",
+    "fields": [
+     "IN-12 v2",
+     "VC-07",
+     "DOM-15",
+     "FC-27"
+    ]
+   },
+   {
+    "item": "S10-14b",
+    "verbatim": "For flight prediction: FLOW_BALANCE may supply neutral density only when its upstream conductance / feed model is admitted for that domain.",
+    "fields": [
+     "IN-12 v2",
+     "DOM-14",
+     "FC-24",
+     "NE-14"
+    ]
+   },
+   {
+    "item": "S10-14c",
+    "verbatim": "No arbitrary inflow-fraction bound.",
+    "fields": [
+     "retired_items f_in",
+     "EQ-02 v2 notes"
+    ]
+   },
+   {
+    "item": "S10-15",
+    "verbatim": "Resolved by the matched thermal v2 decision.",
+    "fields": [
+     "IF-ICP-THERMAL-v2",
+     "repository_conflicts_v2 CONF-11"
+    ]
+   }
+  ],
+  "A9_30_SEC_5": [
+   {
+    "item": "A930-5a",
+    "verbatim": "Flight C1 cathode loads: NONE",
+    "fields": [
+     "BUS2-05"
+    ]
+   },
+   {
+    "item": "A930-5b",
+    "verbatim": "The 1.5 kW RFP limit remains ASSESSMENT ONLY.",
+    "fields": [
+     "BUS2-06",
+     "AS-05"
+    ]
+   }
+  ]
+ },
+ "references_added": [
+  "Chiggiato, 'Vacuum Technology for Ion Sources', arXiv:1404.0960 (2014), Eqs. 3, 13, 19-21, sec. 2.1 (registered; PF-02 conductance form)",
+  "Lieberman 2015 short-course slides 38, 41, 43, 44, 48, 50 (registered; GAP-04 single-ion form)",
+  "NP-ICP-CHEM-AIR v1 AIR-WALL-01..06, AIR-EXC-12, AIR-NL-01, CA-ICP-v1, D-CHEM (registered contract)",
+  "bus_power_boundary_a9_v2 (registered record)",
+  "Not in the repository (verify): Chantry 1987; Baalrud, Hegna and Callen 2009; Lieberman and Lichtenberg 2005 (Child law); CODATA 2022 eps0"
+ ]
+}

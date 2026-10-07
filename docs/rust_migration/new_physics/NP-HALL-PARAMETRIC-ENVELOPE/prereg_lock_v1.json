@@ -1,0 +1,13 @@
+{
+ "id": "np_hall_parametric_envelope_prereg_lock_v1",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "locked": "2026-10-07",
+ "note": "sha256 of the NP-HALL-PARAMETRIC-ENVELOPE v1 preregistration (A9.32; status PREREGISTERED_NOT_RUN), committed alone before any case generation or HallThruster.jl run; any change after this lock is a new, dated version or addendum, never an edit",
+ "base_commit": "8a53b13",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/",
+ "files": {
+  "prereg_v1.json": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d",
+  "PREREG.md": "733509bd863bd786f3f809958a20f91dacf55c2ad45d7bd4290eef44eafdc54d",
+  "input_audit_v1.json": "d84d59ca3cd0fd3dd61939c7392214ff63c20e4fe204ddcba0f6b8b7583e64b0"
+ }
+}

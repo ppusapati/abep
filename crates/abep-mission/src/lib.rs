@@ -1,5 +1,7 @@
 //! Spacecraft interaction of the ABEP Rust simulator (SC-WP-04): the reference spacecraft drag interface, the F1
-//! intake-face drag per design state and the statewise T - D raw record, plus the statewise quantifier.
+//! intake-face drag per design state and the statewise T - D raw record, plus the statewise quantifier. Mission layer
+//! (SC-WP-09): [`propagation`] (mission_env state propagation, PARITY-C-ABEP_SIM_MISSION_ENV_PY-PROPAGATION-V1) and
+//! [`integration`] (NP-MISSION-INTEGRATION v1, new physics, preregistered).
 //!
 //! Python references (migration parity, `docs/rust_migration/contracts/`):
 //! * `abep_sim/spacecraft_reference_drag.py` -> [`reference_drag`], `statewise_margin` in [`statewise`]
@@ -18,8 +20,10 @@
 //! reference exception class in the message (`ValueError: ...`), status OUT_OF_DOMAIN.
 
 pub mod intake_drag;
+pub mod integration;
 pub mod objective;
 pub mod parity;
+pub mod propagation;
 pub(crate) mod pyval;
 pub mod reference_drag;
 pub mod statewise;

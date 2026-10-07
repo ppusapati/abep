@@ -1,0 +1,10 @@
+[package]
+name = "abep-rng"
+description = "Registered numpy PCG64 / SeedSequence / Generator stream semantics for the ABEP design / UQ sampling stream (A9.29 sec. 7, RM-OQ-03 EXACT_STREAM); never used by the TPMC kernel."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]

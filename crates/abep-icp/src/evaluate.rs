@@ -31,16 +31,16 @@ const S_ME: IcpStatus = IcpStatus::ModelError;
 
 /// Reasons collected per output group. `plasma` blocks the solve.
 #[derive(Default)]
-struct Gate {
-    plasma: Vec<Reason>,
-    coupling: Vec<Reason>,
-    bus: Vec<Reason>,
-    sat: Vec<Reason>,
-    hall: Vec<Reason>,
-    dedicated: Vec<Reason>,
+pub(crate) struct Gate {
+    pub(crate) plasma: Vec<Reason>,
+    pub(crate) coupling: Vec<Reason>,
+    pub(crate) bus: Vec<Reason>,
+    pub(crate) sat: Vec<Reason>,
+    pub(crate) hall: Vec<Reason>,
+    pub(crate) dedicated: Vec<Reason>,
 }
 
-fn r(code: &str, status: IcpStatus, detail: impl Into<String>) -> Reason {
+pub(crate) fn r(code: &str, status: IcpStatus, detail: impl Into<String>) -> Reason {
     Reason::new(code, status, detail)
 }
 
@@ -105,15 +105,15 @@ impl IcpModel {
     }
 }
 
-struct Evaluator<'a> {
-    m: &'a IcpModel,
-    case: &'a IcpCase,
-    num: &'a NumericalSettings,
-    flags: BTreeSet<String>,
-    verify: BTreeSet<String>,
+pub(crate) struct Evaluator<'a> {
+    pub(crate) m: &'a IcpModel,
+    pub(crate) case: &'a IcpCase,
+    pub(crate) num: &'a NumericalSettings,
+    pub(crate) flags: BTreeSet<String>,
+    pub(crate) verify: BTreeSet<String>,
 }
 
-fn evidence_records(c: &IcpCase) -> Vec<(String, &EvidenceRecord)> {
+pub(crate) fn evidence_records(c: &IcpCase) -> Vec<(String, &EvidenceRecord)> {
     let mut v: Vec<(String, &EvidenceRecord)> =
         vec![("IN-01.supply_mode".into(), &c.supply_mode.evidence), ("IN-02.gas_mode".into(), &c.gas_mode.evidence)];
     if let Some(f) = &c.f_rf_hz {
@@ -230,11 +230,38 @@ impl Evaluator<'_> {
 
     /// Steps (1) and (2): input registration and input domain. Returns the chemistry set when one is usable.
     fn registration(&mut self, g: &mut Gate) -> Option<ChemistrySet> {
+        let recs = evidence_records(self.case);
+        let set = self.registration_common(&recs, g);
+        // B_ICP (DOM-06, FC-14).
+        match &self.case.b_icp_max_t {
+            None => g.plasma.push(r("DOM-06_B_ICP_NOT_REGISTERED", S_IE, "B_ICP,max absent (VI-HD-06; NE-11)")),
+            Some(b) if !(b.value.is_finite() && b.value >= 0.0) => {
+                g.plasma.push(r("DOM-06_B_ICP_INVALID", S_ME, format!("{}", b.value)))
+            }
+            Some(b) if b.value > 0.0 => g.plasma.push(r(
+                "DOM-06_MAGNETIZATION_CRITERION_OPEN",
+                S_IE,
+                format!("B_ICP,max = {} T > 0: no sourced criterion until OQ-NPICP-03 (FC-14)", b.value),
+            )),
+            Some(_) => {}
+        }
+        self.geometry_gate(set.as_ref(), g);
+        self.downstream_gates(g);
+        set
+    }
+
+    /// The part of steps (1) and (2) that model_version 2 shares unchanged: evidence attributes (IN-22) over `recs`,
+    /// FC-15, IN-01, the configuration gate (FC-03), the coupling mode, the RF input domain, IN-07 / DOM-11 and the
+    /// chemistry by mode with its contract gate. Returns the chemistry set when one is usable.
+    pub(crate) fn registration_common(
+        &mut self,
+        recs: &[(String, &EvidenceRecord)],
+        g: &mut Gate,
+    ) -> Option<ChemistrySet> {
         let c = self.case;
         let m = self.m;
         // IN-22 evidence attributes and FC-15 synthetic / evidence separation.
-        let recs = evidence_records(c);
-        for (name, e) in &recs {
+        for (name, e) in recs {
             for a in e.missing_attributes() {
                 g.plasma.push(r(&format!("IN-22:{name}.{a}"), S_IE, format!("evidence attribute missing: {a}")));
             }
@@ -500,21 +527,6 @@ impl Evaluator<'_> {
         if let Some(set) = &set {
             self.chemistry_gate(set, g);
         }
-        // B_ICP (DOM-06, FC-14).
-        match &c.b_icp_max_t {
-            None => g.plasma.push(r("DOM-06_B_ICP_NOT_REGISTERED", S_IE, "B_ICP,max absent (VI-HD-06; NE-11)")),
-            Some(b) if !(b.value.is_finite() && b.value >= 0.0) => {
-                g.plasma.push(r("DOM-06_B_ICP_INVALID", S_ME, format!("{}", b.value)))
-            }
-            Some(b) if b.value > 0.0 => g.plasma.push(r(
-                "DOM-06_MAGNETIZATION_CRITERION_OPEN",
-                S_IE,
-                format!("B_ICP,max = {} T > 0: no sourced criterion until OQ-NPICP-03 (FC-14)", b.value),
-            )),
-            Some(_) => {}
-        }
-        self.geometry_gate(set.as_ref(), g);
-        self.downstream_gates(g);
         set
     }
 
@@ -1036,6 +1048,7 @@ impl Evaluator<'_> {
                 t_g_k: t_g,
                 p_abs_w: p_abs,
                 direct,
+                recombination: Vec::new(),
             },
             cal,
         ))

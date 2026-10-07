@@ -3,6 +3,24 @@
 version = 4
 
 [[package]]
+name = "abep-assess"
+version = "0.1.0"
+dependencies = [
+ "abep-atmos",
+ "abep-config",
+ "abep-data",
+ "abep-gaspath",
+ "abep-hall",
+ "abep-icp",
+ "abep-mission",
+ "abep-provenance",
+ "abep-subsystems",
+ "abep-types",
+ "flate2",
+ "serde_json",
+]
+
+[[package]]
 name = "abep-atmos"
 version = "0.1.0"
 dependencies = [
@@ -73,6 +91,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "abep-design"
+version = "0.1.0"
+dependencies = [
+ "abep-atmos",
+ "abep-config",
+ "abep-data",
+ "abep-gaspath",
+ "abep-mission",
+ "abep-provenance",
+ "abep-subsystems",
+ "abep-types",
+ "serde_json",
+]
+
+[[package]]
 name = "abep-gaspath"
 version = "0.1.0"
 dependencies = [
@@ -123,6 +156,7 @@ dependencies = [
  "abep-hall",
  "abep-provenance",
  "abep-types",
+ "flate2",
  "serde",
  "serde_json",
  "toml",
@@ -133,9 +167,15 @@ name = "abep-mission"
 version = "0.1.0"
 dependencies = [
  "abep-atmos",
+ "abep-chem",
+ "abep-config",
  "abep-data",
+ "abep-hall",
+ "abep-icp",
  "abep-provenance",
+ "abep-subsystems",
  "abep-types",
+ "serde",
  "serde_json",
 ]
 
@@ -149,6 +189,10 @@ dependencies = [
  "sha2",
  "toml",
 ]
+
+[[package]]
+name = "abep-rng"
+version = "0.1.0"
 
 [[package]]
 name = "abep-subsystems"
@@ -168,6 +212,23 @@ name = "abep-types"
 version = "0.1.0"
 dependencies = [
  "serde",
+ "serde_json",
+ "sha2",
+]
+
+[[package]]
+name = "abep-uq"
+version = "0.1.0"
+dependencies = [
+ "abep-atmos",
+ "abep-design",
+ "abep-gaspath",
+ "abep-intake",
+ "abep-mission",
+ "abep-provenance",
+ "abep-rng",
+ "abep-types",
+ "flate2",
  "serde_json",
  "sha2",
 ]

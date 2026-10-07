@@ -70,6 +70,10 @@ pub enum ThermalNode {
     Export,
     #[serde(rename = "H1_FACES")]
     H1Faces,
+    /// model_version 2 (IN-10 v2): the upstream open end delivers its outflow to RX-H1-FACE, the registered H-1-facing
+    /// receiver interface of NP-THERMAL-CATHODELESS v2 (TK-10). Refused by the v1 surface contract.
+    #[serde(rename = "RX_H1_FACE")]
+    RxH1Face,
 }
 
 impl ThermalNode {
@@ -82,11 +86,12 @@ impl ThermalNode {
             ThermalNode::NHousing => "N_HOUSING",
             ThermalNode::Export => "EXPORT",
             ThermalNode::H1Faces => "H1_FACES",
+            ThermalNode::RxH1Face => "RX_H1_FACE",
         }
     }
 
     pub fn is_neutralizer_node(self) -> bool {
-        !matches!(self, ThermalNode::Export | ThermalNode::H1Faces)
+        !matches!(self, ThermalNode::Export | ThermalNode::H1Faces | ThermalNode::RxH1Face)
     }
 }
 

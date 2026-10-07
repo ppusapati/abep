@@ -1,0 +1,769 @@
+{
+ "schema": "abep_assess_rfp_constraint_matrix_v1",
+ "architecture": "hall_icp_neutralizer",
+ "acceptance": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/acceptance_v1.json",
+ "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+ "row_fields": [
+  "id",
+  "requirement",
+  "threshold",
+  "raw_physics_result",
+  "uncertainty_model_domain",
+  "evidence_status",
+  "rfp_assessment_status"
+ ],
+ "assessment_vocabulary": [
+  "COMPLIES",
+  "DOES_NOT_COMPLY",
+  "DOES_NOT_CLOSE",
+  "INCOMPLETE_EVIDENCE",
+  "NOT_EVALUATED",
+  "OUT_OF_DOMAIN",
+  "MODEL_ERROR"
+ ],
+ "rows": [
+  {
+   "id": "RFP-ALT",
+   "requirement": "altitude 180-230 km",
+   "threshold": {
+    "gate": "altitude_band_km",
+    "value_km": [
+     180.0,
+     230.0
+    ],
+    "source": "config/constraints/engineering_constraints_v1.json altitude_band_km"
+   },
+   "raw_physics_result": {
+    "design_state_set": "atmosphere_msis21_orbit_v1_design_states_v2",
+    "design_state_set_sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+    "n_states": 196,
+    "n_required_states": 196,
+    "alt_km_min": 180.0,
+    "alt_km_max": 230.0,
+    "thrust": {
+     "status": "NOT_EVALUATED",
+     "reason": "credible Hall transport set EMPTY",
+     "admitted_members": [],
+     "source": "abep_hall::status::HallGate (hallthruster_bridge/ensemble/transport_ensemble_v0.json)"
+    },
+    "spacecraft_drag": {
+     "status": "NOT_EVALUATED",
+     "reason": "host-spacecraft drag ICD absent (S6.18 / F1-ID-08: no spacecraft geometry)"
+    },
+    "status": "EVALUATED",
+    "source": "abep_data::design_states::DesignStateSet::load (frozen, hash-verified)"
+   },
+   "uncertainty_model_domain": {
+    "states_inside_band": 196,
+    "states_outside_band": [],
+    "atmosphere_model": "frozen NRLMSIS 2.1 design-state set v2 (hash-verified; no live MSIS)",
+    "uncertainty": "solar / geomagnetic / season / local-time envelope represented by the frozen states; unweighted"
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "model-derived environment; no operating evidence",
+    "basis": "operation over the band needs thrust and spacecraft drag at every required state"
+   },
+   "rfp_assessment_status": {
+    "status": "NOT_EVALUATED",
+    "basis": "operation over the band is assessed statewise (HC-08 over 196 required states): thrust and / or spacecraft drag not evaluated at every required state (no admitted Hall member / host-spacecraft ICD); NOT_EVALUATED, never counted as satisfied",
+    "gates": [
+     {
+      "gate": "HC-08",
+      "status": "NOT_EVALUATED",
+      "value_status": "TBD",
+      "n_required_states": 196,
+      "reason": "thrust and / or spacecraft drag not evaluated at every required state (no admitted Hall member / host-spacecraft ICD); NOT_EVALUATED, never counted as satisfied"
+     }
+    ]
+   }
+  },
+  {
+   "id": "RFP-ATM-PRIMARY",
+   "requirement": "primary propellant: ambient atmospheric gas",
+   "threshold": {
+    "gate": "propellant_capability.ambient_atmosphere",
+    "value": "delivered atmospheric air",
+    "source": "config/constraints/engineering_constraints_v1.json propellant_capability"
+   },
+   "raw_physics_result": {
+    "supply_mode": "AIR_PRIMARY",
+    "path_role": "PRIMARY",
+    "air_path": [
+     "intake",
+     "filter",
+     "compressor",
+     "atmospheric_gas_chamber",
+     "valve"
+    ],
+    "composition_range_required_states": {
+     "x_O": [
+      0.050450073817025765,
+      0.8596124101253814
+     ],
+     "x_N2": [
+      0.07989172744446714,
+      0.8844436728892985
+     ],
+     "x_O2": [
+      0.003543341895032222,
+      0.07832201866909773
+     ]
+    },
+    "delivered_atmospheric_mass_flow": {
+     "status": "NOT_EVALUATED",
+     "reason": "no delivered-flow record for a selected design point (F7 / F8 robust selection, SC-WP-10)"
+    },
+    "hall_on_delivered_air": {
+     "status": "NOT_EVALUATED",
+     "reason": "credible Hall transport set EMPTY",
+     "admitted_members": [],
+     "source": "abep_hall::status::HallGate (hallthruster_bridge/ensemble/transport_ensemble_v0.json)"
+    },
+    "icp_air_chemistry": {
+     "status": "INCOMPLETE_EVIDENCE",
+     "tier1_processes_not_verified": 12,
+     "source": "abep_icp::IcpModel::chem_air_tier1_gaps (NP-ICP-CHEM-AIR registry)"
+    },
+    "status": "NOT_EVALUATED"
+   },
+   "uncertainty_model_domain": {
+    "chemistry_domain": "AIR_PRIMARY and XE_CONTINGENCY are separate modes; mixed Xe / air compositions are OUT_OF_DOMAIN in chemistry v1 (A9.31 OQ-CHEM-10); AIR chemistry INCOMPLETE_EVIDENCE until the NO materiality bound exists (OQ-CHEM-02)",
+    "uncertainty": "not quantified: no delivered flow and no Hall operation on the delivered air evaluated"
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "none (declared path and supply mode only)",
+    "basis": "a declared path is not determining evidence (S6.22)"
+   },
+   "rfp_assessment_status": {
+    "status": "NOT_EVALUATED",
+    "basis": "needs a delivered-flow record, an admitted Hall evaluation on the delivered air and an admitted ICP AIR chemistry",
+    "gates": [
+     {
+      "check": "propellant_paths_check",
+      "structure": "TWO_SEPARATE_PATHS_DECLARED",
+      "status": "NOT_EVALUATED"
+     }
+    ]
+   }
+  },
+  {
+   "id": "RFP-XE-CONTINGENCY",
+   "requirement": "contingency capability: Xe",
+   "threshold": {
+    "gate": "propellant_capability.xe",
+    "value": "bounded functional",
+    "source": "config/constraints/engineering_constraints_v1.json propellant_capability"
+   },
+   "raw_physics_result": {
+    "supply_mode": "XE_CONTINGENCY",
+    "path_role": "CONTINGENCY_EMERGENCY",
+    "xe_path": [
+     "xe_tank",
+     "valve"
+    ],
+    "xe_planning_cases_kg": [
+     2.0,
+     5.0,
+     10.0
+    ],
+    "mission_xe_load": "NOT_ADMITTED",
+    "hall_on_xe": {
+     "status": "NOT_EVALUATED",
+     "reason": "credible Hall transport set EMPTY",
+     "admitted_members": [],
+     "source": "abep_hall::status::HallGate (hallthruster_bridge/ensemble/transport_ensemble_v0.json)"
+    },
+    "icp_xe_chemistry": {
+     "status": "INCOMPLETE_EVIDENCE",
+     "tier1_processes_not_verified": 4,
+     "source": "abep_icp::IcpModel::chem_air_tier1_gaps (NP-ICP-CHEM-AIR registry)"
+    },
+    "status": "NOT_EVALUATED"
+   },
+   "uncertainty_model_domain": {
+    "role": "Xe is the contingency / emergency supply mode (A9.19); the loaded cases are planning / sensitivity cases, not a selected load",
+    "uncertainty": "not quantified: Xe operation not evaluated"
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "none (declared supply mode and path only)",
+    "basis": "Xe operation of the Hall + ICP not evaluated"
+   },
+   "rfp_assessment_status": {
+    "status": "NOT_EVALUATED",
+    "basis": "Xe capability not demonstrated (HC-10 capability evidence absent)",
+    "gates": []
+   }
+  },
+  {
+   "id": "RFP-THRUST-12MN-SUSTAINED",
+   "requirement": "sustained thrust basis >= 12 mN",
+   "threshold": {
+    "gate": "HC-01",
+    "value": 0.012,
+    "provenance": {
+     "gate": "HC-01",
+     "value": 0.012,
+     "source": "config/constraints/engineering_constraints_v1.json",
+     "key": "thrust_sustained_min_mN x 1e-3",
+     "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+    },
+    "units": "N"
+   },
+   "raw_physics_result": {
+    "thrust_N": null,
+    "objective_record": null,
+    "hall": {
+     "status": "NOT_EVALUATED",
+     "reason": "credible Hall transport set EMPTY",
+     "admitted_members": [],
+     "source": "abep_hall::status::HallGate (hallthruster_bridge/ensemble/transport_ensemble_v0.json)"
+    },
+    "status": "NOT_EVALUATED"
+   },
+   "uncertainty_model_domain": {
+    "hall_model_domain": "credible Hall transport set EMPTY (P5-Xe not identifiable; P5-N2 v1 INCONCLUSIVE, permanent); no design-specific Hall map",
+    "uncertainty": "two-layer Hall uncertainty: layer 2 (transferable closures) is empty"
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "none",
+    "basis": "thrust exists only from an admitted Hall member with a design-specific map, or a measured H-1 thrust"
+   },
+   "rfp_assessment_status": {
+    "status": "NOT_EVALUATED",
+    "basis": "HC-01 and HC-08 statewise; no evaluable value (fail closed: never counted as satisfied)",
+    "gates": [
+     {
+      "id": "HC-01",
+      "rvm": "RVM-02",
+      "rfp": "RFP-P18-06",
+      "quantity": "T (sustained, atmospheric propellant)",
+      "rule": ">= 0.012 N",
+      "status": "NOT_EVALUATED",
+      "value_status": null,
+      "basis": "no evaluable value (fail closed: never counted as satisfied)"
+     },
+     {
+      "gate": "HC-08",
+      "status": "NOT_EVALUATED",
+      "value_status": "TBD",
+      "n_required_states": 196,
+      "reason": "thrust and / or spacecraft drag not evaluated at every required state (no admitted Hall member / host-spacecraft ICD); NOT_EVALUATED, never counted as satisfied"
+     }
+    ]
+   }
+  },
+  {
+   "id": "RFP-THRUST-25MN-CAPABILITY",
+   "requirement": "demonstrated / capability target 25 mN",
+   "threshold": {
+    "gate": "HC-02",
+    "value": 0.025,
+    "provenance": {
+     "gate": "HC-02",
+     "value": 0.025,
+     "source": "config/constraints/engineering_constraints_v1.json",
+     "key": "thrust_capability_mN x 1e-3",
+     "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+    },
+    "units": "N"
+   },
+   "raw_physics_result": {
+    "thrust_N": null,
+    "objective_record": null,
+    "hall": {
+     "status": "NOT_EVALUATED",
+     "reason": "credible Hall transport set EMPTY",
+     "admitted_members": [],
+     "source": "abep_hall::status::HallGate (hallthruster_bridge/ensemble/transport_ensemble_v0.json)"
+    },
+    "status": "NOT_EVALUATED"
+   },
+   "uncertainty_model_domain": {
+    "hall_model_domain": "credible Hall transport set EMPTY (P5-Xe not identifiable; P5-N2 v1 INCONCLUSIVE, permanent); no design-specific Hall map",
+    "uncertainty": "two-layer Hall uncertainty: layer 2 (transferable closures) is empty"
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "none",
+    "basis": "thrust exists only from an admitted Hall member with a design-specific map, or a measured H-1 thrust"
+   },
+   "rfp_assessment_status": {
+    "status": "NOT_EVALUATED",
+    "basis": "HC-02; no evaluable value (fail closed: never counted as satisfied)",
+    "gates": [
+     {
+      "id": "HC-02",
+      "rvm": "RVM-03",
+      "rfp": "RFP-P18-06; RFP-P18-10",
+      "quantity": "demonstrated thrust capability at P_bus < 1500 W",
+      "rule": ">= 0.025 N",
+      "status": "NOT_EVALUATED",
+      "value_status": null,
+      "basis": "no evaluable value (fail closed: never counted as satisfied)"
+     }
+    ]
+   }
+  },
+  {
+   "id": "RFP-PBUS-LT-1500W",
+   "requirement": "bus power < 1.5 kW",
+   "threshold": {
+    "gate": "HC-03",
+    "value": 1500.0,
+    "provenance": {
+     "gate": "HC-03",
+     "value": 1500.0,
+     "source": "config/constraints/engineering_constraints_v1.json",
+     "key": "p_bus_max_W",
+     "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+    },
+    "units": "W",
+    "note": "A9.30 sec. 5: assessment only; bus_power_boundary_a9_v2"
+   },
+   "raw_physics_result": {
+    "boundary": "bus_power_boundary_a9_v2",
+    "configuration": "hall_icp_neutralizer",
+    "ledger_status": "PARTIAL_BOUNDARY",
+    "P_bus_W": null,
+    "P_bus_lower_bound_W": 0.0,
+    "n_tbd_terms": 24,
+    "power_basis": null,
+    "load_evidence_classes": [
+     "assumed"
+    ],
+    "startup_step_ledgers_registered": 0,
+    "flight_cathode_heater_keeper_loads": "NONE (A9.30; C1 GROUND_REFERENCE_ONLY)",
+    "status": "INCOMPLETE_EVIDENCE",
+    "source": "abep_subsystems::power::official_flight_ledger / objective::bus_power_official"
+   },
+   "uncertainty_model_domain": {
+    "uncertainty": "TBD loads and supply efficiencies; the lower bound sums the evidenced terms only",
+    "lower_bound_reaches_limit": false
+   },
+   "evidence_status": {
+    "status": "INCOMPLETE_EVIDENCE",
+    "evidence_class": "ledger load classes (TBD terms present)",
+    "basis": "official ledger status and TBD terms"
+   },
+   "rfp_assessment_status": {
+    "status": "NOT_EVALUATED",
+    "basis": "HC-03: no evaluable value (fail closed: never counted as satisfied)",
+    "gates": [
+     {
+      "id": "HC-03",
+      "rvm": "RVM-04",
+      "rfp": "RFP-P18-10",
+      "quantity": "P_bus,1ms,max (steady and start-up, A9-02 gate)",
+      "rule": "< 1500 W",
+      "status": "NOT_EVALUATED",
+      "value_status": "NOT_EVALUATED",
+      "basis": "no evaluable value (fail closed: never counted as satisfied)"
+     },
+     {
+      "check": "rfp_power_gate",
+      "run": false,
+      "reason": "no registered start-up step ledger (row 108: the gate covers start-up transients)"
+     }
+    ]
+   }
+  },
+  {
+   "id": "RFP-WET-MASS-LT-40KG",
+   "requirement": "complete wet mass < 40 kg",
+   "threshold": {
+    "gate": "HC-04",
+    "value": 40.0,
+    "provenance": {
+     "gate": "HC-04",
+     "value": 40.0,
+     "source": "config/constraints/engineering_constraints_v1.json",
+     "key": "wet_mass_max_kg",
+     "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+    },
+    "units": "kg"
+   },
+   "raw_physics_result": {
+    "record": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+    "record_sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+    "dry_known_kg": 38.34901052,
+    "wet_known_kg_by_xe_case_kg": {
+     "2.0": 40.34901052,
+     "5.0": 43.34901052,
+     "10.0": 48.34901052
+    },
+    "mission_xe_load": "NOT_ADMITTED",
+    "wet_mass_objective": {
+     "status": "NOT_EVALUATED",
+     "value": null
+    },
+    "status": "INCOMPLETE_EVIDENCE",
+    "source": "abep_subsystems::mass::v5 (pinned record), mass_gates, wet_mass::wet_mass_pinned"
+   },
+   "uncertainty_model_domain": {
+    "uncertainty": "planning MEV values with the 10 % bid system margin (A9.26); no CBE and no measured mass; AL-07 PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT (AFI-02-RA1 open)",
+    "governed_cases": "the loaded Xe planning cases of the record; no favourable Xe load is selected (A9.31 sec. 18 Q6; mission Xe load not admitted)"
+   },
+   "evidence_status": {
+    "status": "INCOMPLETE_EVIDENCE",
+    "evidence_class": "planning-allocation (owner MEV allocations / MEV planning floors)",
+    "basis": "budget evaluation without CBE or measured mass (RVM-06 INCOMPLETE_EVIDENCE)"
+   },
+   "rfp_assessment_status": {
+    "status": "DOES_NOT_CLOSE",
+    "basis": "wet planning mass >= 40 kg at every governed Xe case (3 of 3)",
+    "gates": [
+     {
+      "id": "HC-04",
+      "rvm": "RVM-06",
+      "rfp": "RFP-P18-11",
+      "quantity": "wet propulsion-system mass",
+      "rule": "< 40 kg",
+      "status": "NOT_EVALUATED",
+      "value_status": "NOT_EVALUATED",
+      "basis": "no evaluable value (fail closed: never counted as satisfied)"
+     },
+     {
+      "gate": "mass compliance",
+      "status": "INCOMPLETE_EVIDENCE",
+      "record_status": "MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED",
+      "hard_40_wet_state_by_loaded_case": {
+       "2.0": "DOES_NOT_CLOSE",
+       "5.0": "DOES_NOT_CLOSE",
+       "10.0": "DOES_NOT_CLOSE"
+      },
+      "dry_known_kg": 38.34901052,
+      "xe_input": {
+       "mission_xe_load": "NOT_ADMITTED",
+       "reading": "the 2 / 5 / 10 kg LOADED cases are planning / sensitivity cases; no Xe load is selected"
+      },
+      "source": "A9.25 msg 8 sec. 8; A9.26 sections 4 and 7 (DOES_NOT_CLOSE stays visible; no PASS)"
+     }
+    ],
+    "per_case": [
+     {
+      "xe_case_kg": 2.0,
+      "wet_planning_kg": 40.34901052,
+      "closes_on_planning_basis": false,
+      "governed_record_state": "DOES_NOT_CLOSE"
+     },
+     {
+      "xe_case_kg": 5.0,
+      "wet_planning_kg": 43.34901052,
+      "closes_on_planning_basis": false,
+      "governed_record_state": "DOES_NOT_CLOSE"
+     },
+     {
+      "xe_case_kg": 10.0,
+      "wet_planning_kg": 48.34901052,
+      "closes_on_planning_basis": false,
+      "governed_record_state": "DOES_NOT_CLOSE"
+     }
+    ],
+    "governed_record_reference": {
+     "reference_kg": [
+      40.0,
+      40.0,
+      40.0
+     ],
+     "equals_configured_limit": true,
+     "note": "the record's own HARD_40_WET states are carried as context, never rewritten"
+    }
+   }
+  },
+  {
+   "id": "RFP-ATM-XE-COMPATIBILITY",
+   "requirement": "atmospheric + Xe compatibility",
+   "threshold": {
+    "gate": "HC-10",
+    "value": 1.0,
+    "provenance": {
+     "gate": "HC-10",
+     "value": 1.0,
+     "source": "config/assessment/gate_thresholds_v1.json",
+     "key": "gates.HC-10",
+     "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+    },
+    "units": "-"
+   },
+   "raw_physics_result": {
+    "supply_modes": [
+     "AIR_PRIMARY",
+     "XE_CONTINGENCY"
+    ],
+    "air_path": [
+     "intake",
+     "filter",
+     "compressor",
+     "atmospheric_gas_chamber",
+     "valve"
+    ],
+    "xe_path": [
+     "xe_tank",
+     "valve"
+    ],
+    "hall_on_air_and_xe": {
+     "status": "NOT_EVALUATED",
+     "reason": "credible Hall transport set EMPTY",
+     "admitted_members": [],
+     "source": "abep_hall::status::HallGate (hallthruster_bridge/ensemble/transport_ensemble_v0.json)"
+    },
+    "icp_air_chemistry": {
+     "status": "INCOMPLETE_EVIDENCE",
+     "tier1_processes_not_verified": 12,
+     "source": "abep_icp::IcpModel::chem_air_tier1_gaps (NP-ICP-CHEM-AIR registry)"
+    },
+    "icp_xe_chemistry": {
+     "status": "INCOMPLETE_EVIDENCE",
+     "tier1_processes_not_verified": 4,
+     "source": "abep_icp::IcpModel::chem_air_tier1_gaps (NP-ICP-CHEM-AIR registry)"
+    },
+    "propellant_capability_record": null,
+    "status": "NOT_EVALUATED"
+   },
+   "uncertainty_model_domain": {
+    "mode_separation": "separate supply modes; mixed Xe / air compositions OUT_OF_DOMAIN in chemistry v1 (A9.31 OQ-CHEM-10)",
+    "uncertainty": "not quantified: neither mode is evaluated end to end"
+   },
+   "evidence_status": {
+    "status": "NOT_EVALUATED",
+    "evidence_class": "none (structure declared)",
+    "basis": "air AND Xe operation not demonstrated"
+   },
+   "rfp_assessment_status": {
+    "status": "NOT_EVALUATED",
+    "basis": "HC-10: no evaluable value (fail closed: never counted as satisfied); paths TWO_SEPARATE_PATHS_DECLARED",
+    "gates": [
+     {
+      "id": "HC-10",
+      "rvm": "A9.15 RFP-compliant propellant policy",
+      "rfp": "RFP-P18-08; RFP-P17-05",
+      "quantity": "ambient-air AND Xe operating capability with two separate propellant tanks / paths (1 = both demonstrated)",
+      "rule": ">= 1 -",
+      "status": "NOT_EVALUATED",
+      "value_status": null,
+      "basis": "no evaluable value (fail closed: never counted as satisfied)"
+     },
+     {
+      "check": "propellant_paths_check",
+      "structure": "TWO_SEPARATE_PATHS_DECLARED",
+      "status": "NOT_EVALUATED",
+      "reason": "air and Xe operating capability not yet demonstrated (a declared path is not determining evidence, S6.22)"
+     }
+    ]
+   }
+  }
+ ],
+ "engineering_gates": {
+  "hard_constraints": [
+   {
+    "id": "HC-01",
+    "rvm": "RVM-02",
+    "rfp": "RFP-P18-06",
+    "quantity": "T (sustained, atmospheric propellant)",
+    "rule": ">= 0.012 N",
+    "status": "NOT_EVALUATED",
+    "value_status": null,
+    "basis": "no evaluable value (fail closed: never counted as satisfied)"
+   },
+   {
+    "id": "HC-02",
+    "rvm": "RVM-03",
+    "rfp": "RFP-P18-06; RFP-P18-10",
+    "quantity": "demonstrated thrust capability at P_bus < 1500 W",
+    "rule": ">= 0.025 N",
+    "status": "NOT_EVALUATED",
+    "value_status": null,
+    "basis": "no evaluable value (fail closed: never counted as satisfied)"
+   },
+   {
+    "id": "HC-03",
+    "rvm": "RVM-04",
+    "rfp": "RFP-P18-10",
+    "quantity": "P_bus,1ms,max (steady and start-up, A9-02 gate)",
+    "rule": "< 1500 W",
+    "status": "NOT_EVALUATED",
+    "value_status": "NOT_EVALUATED",
+    "basis": "no evaluable value (fail closed: never counted as satisfied)"
+   },
+   {
+    "id": "HC-04",
+    "rvm": "RVM-06",
+    "rfp": "RFP-P18-11",
+    "quantity": "wet propulsion-system mass",
+    "rule": "< 40 kg",
+    "status": "NOT_EVALUATED",
+    "value_status": "NOT_EVALUATED",
+    "basis": "no evaluable value (fail closed: never counted as satisfied)"
+   },
+   {
+    "id": "HC-05",
+    "rvm": "RVM-15",
+    "rfp": null,
+    "quantity": "M_n,LB: lower uncertainty bound of M_n = I_e,cap / I_d,max,H1 - 1 (A9.24 item 5; the point difference I_e,cap - I_d,max is never the acceptance criterion; no lower bound -> NOT_EVALUATED)",
+    "rule": "> 0 -",
+    "status": "NOT_EVALUATED",
+    "value_status": null,
+    "basis": "no lower uncertainty bound M_n,LB of M_n = I_e,cap / I_d,max,H1 - 1 with its uncertainty basis (fail closed: NOT_EVALUATED; a point difference I_e,cap - I_d,max never closes HC-05)"
+   },
+   {
+    "id": "HC-06",
+    "rvm": "RVM-17",
+    "rfp": null,
+    "quantity": "thermal margin below validated limits",
+    "rule": ">= 50 K",
+    "status": "NOT_EVALUATED",
+    "value_status": null,
+    "basis": "no evaluable value (fail closed: never counted as satisfied)"
+   },
+   {
+    "id": "HC-07",
+    "rvm": "RVM-12",
+    "rfp": "RFP-P19-01",
+    "quantity": "cumulative firing time capability",
+    "rule": "> 15000 h",
+    "status": "NOT_EVALUATED",
+    "value_status": null,
+    "basis": "no evaluable value (fail closed: never counted as satisfied)"
+   },
+   {
+    "id": "HC-08",
+    "rvm": "AG-13 (owner decision A9.13 S6.15 / OQ-F78-01; A9.14 S9.7 statewise quantifier)",
+    "rfp": "RFP-P18-04; RFP-P18-06",
+    "quantity": "T_available(state) - D_spacecraft(state) at EVERY required state (statewise; worst state governs; the orbit average never hides a deficit)",
+    "rule": "T_available(state) - D_spacecraft(state) at EVERY required state (statewise; worst state governs; the orbit average never hides a deficit)",
+    "status": "NOT_EVALUATED",
+    "value_status": null,
+    "basis": "no statewise record over the required state set (a single value never closes a statewise constraint; A9.13 S6.15 / S6.21 / A9.14 S9.7)"
+   },
+   {
+    "id": "HC-09",
+    "rvm": "F1 C-DRAG-RFP (RFP thrust max as recorded, F1-P-11)",
+    "rfp": null,
+    "quantity": "intake-face drag at every orbit state",
+    "rule": "<= 0.025 N",
+    "status": "NOT_EVALUATED",
+    "value_status": null,
+    "basis": "no evaluable value (fail closed: never counted as satisfied)"
+   },
+   {
+    "id": "HC-10",
+    "rvm": "A9.15 RFP-compliant propellant policy",
+    "rfp": "RFP-P18-08; RFP-P17-05",
+    "quantity": "ambient-air AND Xe operating capability with two separate propellant tanks / paths (1 = both demonstrated)",
+    "rule": ">= 1 -",
+    "status": "NOT_EVALUATED",
+    "value_status": null,
+    "basis": "no evaluable value (fail closed: never counted as satisfied)"
+   },
+   {
+    "id": "HC-11",
+    "rvm": "AG-12 (owner decision A9.13 S6.21 / F9-OQ-02)",
+    "rfp": "RFP-P18-06; RFP-P18-05",
+    "quantity": "statewise feed-state sufficiency (mdot, P, T, composition, ripple) vs the requirement derived from the required thrust and a VALIDATED H-1 map (no fixed mg/s gate)",
+    "rule": "statewise feed-state sufficiency (mdot, P, T, composition, ripple) vs the requirement derived from the required thrust and a VALIDATED H-1 map (no fixed mg/s gate)",
+    "status": "NOT_EVALUATED",
+    "value_status": null,
+    "basis": "no statewise record over the required state set (a single value never closes a statewise constraint; A9.13 S6.15 / S6.21 / A9.14 S9.7)"
+   },
+   {
+    "id": "HC-12",
+    "rvm": "A9.13 S6.17 / S6.12 feed-quality",
+    "rfp": "-",
+    "quantity": "compressor / plenum ripple <= measured H-1 ripple tolerance",
+    "rule": "compressor / plenum ripple <= measured H-1 ripple tolerance",
+    "status": "NOT_EVALUATED",
+    "value_status": null,
+    "basis": "measured H-1 tolerance / ripple not evaluated (A9.13 S6.17)"
+   }
+  ],
+  "HC-05": {
+   "gate": "HC-05",
+   "rule": "M_n,LB > HC-05 threshold (config/assessment/gate_thresholds_v1.json), M_n = I_e,cap / I_d,max,H1 - 1",
+   "status": "NOT_EVALUATED",
+   "value_status": null,
+   "reason_code": "NO_NEUTRALIZATION_RECORD",
+   "reason": "no IF-ICP-HALL-v1 record at a registered point (H-01)",
+   "M_n": null,
+   "u_M_n": null,
+   "M_n_LB": null,
+   "threshold": 0.0,
+   "authority": "A9.24 item 5; A9.29 sec. 4; A9.31 sec. 10; P1-IT-29"
+  },
+  "rvm_and_icp_gate": {
+   "GNG-ICP-01": {
+    "status": "NOT_EVALUATED",
+    "reason": "no owner-accepted GO / NO-GO criterion (criteria PENDING_OWNER_ACCEPTANCE); fail closed (A9.21)"
+   },
+   "lock1_release_reportable": false,
+   "rvm_gate_snapshot": {
+    "rvm_hall_status": {
+     "credible_set": "EMPTY",
+     "p5_n2_v1": "INCONCLUSIVE (permanent)",
+     "absolute_0d_results": "WITHDRAWN"
+    },
+    "rvm_status_counts": {
+     "hall_icp_neutralizer": {
+      "PASS": 0,
+      "FAIL": 0,
+      "NOT_EVALUATED": 27,
+      "OUT_OF_DOMAIN": 0,
+      "INCOMPLETE_EVIDENCE": 3,
+      "NUMERICAL_FAILURE": 0
+     }
+    },
+    "ground_reference_rvm_status_counts": {
+     "label": "GROUND_ONLY_LAB_REFERENCE (A9.20): RVM cells of the C1 ground / laboratory reference; never a flight configuration (A9.19) and never flight compliance evidence",
+     "counts": {
+      "hall_c1_reference": {
+       "PASS": 0,
+       "FAIL": 0,
+       "NOT_EVALUATED": 29,
+       "OUT_OF_DOMAIN": 0,
+       "INCOMPLETE_EVIDENCE": 1,
+       "NUMERICAL_FAILURE": 0
+      }
+     }
+    }
+   },
+   "rvm_replay": {
+    "cells": 60,
+    "reproduce_committed": 60
+   },
+   "rvm_sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
+  }
+ },
+ "neutralization": {
+  "quantities": {
+   "I_d_max_H1": {
+    "value_A": null,
+    "status": "NOT_EVALUATED"
+   },
+   "I_e_cap": {
+    "value_A": null,
+    "status": "NOT_EVALUATED"
+   },
+   "M_n_point": null,
+   "M_n_point_role": "MODEL_QUANTITY_NOT_A_GATE (A9.31 sec. 18 Q3; HC-05 uses M_n,LB only)"
+  },
+  "icp_flight_hall_on": "CFG-FLIGHT-HALL-ON NOT_EVALUATED: needs an admitted HallThruster.jl member (NP-ICP NE-08) and a registered I_d,max,H1"
+ },
+ "assessment_status_counts": {
+  "COMPLIES": 0,
+  "DOES_NOT_COMPLY": 0,
+  "DOES_NOT_CLOSE": 1,
+  "INCOMPLETE_EVIDENCE": 0,
+  "NOT_EVALUATED": 7,
+  "OUT_OF_DOMAIN": 0,
+  "MODEL_ERROR": 0
+ },
+ "raw_inputs_digest_sha256": "9668f1a9142dd43259ba419f25bf80d01aa2b585cb7d31d314c880baa4fa9b76",
+ "what_this_is_not": [
+  "not the architecture conclusion (A9.31 sec. 20 belongs to the decisive run with SC-WP-09 / SC-WP-10)",
+  "not a relabelling of any raw status",
+  "not a threshold change and not RFP document work"
+ ]
+}

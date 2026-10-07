@@ -1,0 +1,801 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_MISSION_ENV_PY-PROPAGATION-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "component": {
+  "inventory_id": "C-ABEP_SIM_MISSION_ENV_PY",
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W3",
+  "kernel_basis": "simulation_completion_programme_v1_1.json SC-WP-09 element 'state propagation (mission_env kernel; mission_scenario_v2)' (EXISTING_PHYSICS_PARITY); inventory v3.1 row C-ABEP_SIM_MISSION_ENV_PY: ACTIVE_SELECTED_ARCHITECTURE_PHYSICS, MIGRATE_UNDER_PREREG_PARITY, classification_confidence_v3_1 PLAN_APPROVED_A9_29. The constants subset (J2, OMEGA_E, Spacecraft, sso_inclination_deg) is already ADMITTED under PARITY-C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL-V1 (abep_atmos::mission_env_kernel) and is reused, not re-contracted. This is the second function-subset contract of the component (RM-R17), in its own directory",
+  "scope": "named function subset: SOLAR_CONST, beta_angle, eclipse_fraction, worst_eclipse_fraction, array_area_for, propagate (the state-propagation kernel)",
+  "functions_or_entry_points": [
+   "abep_sim/mission_env.py::SOLAR_CONST",
+   "abep_sim/mission_env.py::beta_angle",
+   "abep_sim/mission_env.py::eclipse_fraction",
+   "abep_sim/mission_env.py::worst_eclipse_fraction",
+   "abep_sim/mission_env.py::array_area_for",
+   "abep_sim/mission_env.py::propagate"
+  ],
+  "out_of_scope": [
+   "abep_sim/mission_env.py::spacecraft_drag: NOT PORTED. Unsourced defaults (bus_cd 2.2, the 2.4 array drag coefficient, bus_frontal_m2 0.25; audited as SRD-01 in abep_sim/spacecraft_reference_drag.py) and only class-H callers (archengine.py, mission5.py). Lane brief SC-WP-09 (A9.31): it stays out unless an owner record says otherwise. The active spacecraft-drag interface is the admitted SC-WP-04 reference drag (REFERENCE/PARAMETRIC, freeze_status NOT_EVALUATED).",
+   "abep_sim/mission_env.py::pointing_factors: AUDITED_NOT_PORTED. Its only caller is spacecraft_drag (not ported) plus a historical test; it draws a numpy PCG64 / ziggurat-normal stream (no Rust port exists) from the unsourced Spacecraft.pointing_sigma_deg default. A9.31 sec. 3 principle: dead code is not ported for completeness; if an active consumer appears, that dependency stops, the kernel is preregistered and admitted first. Listed in SC-WP-09 python_implementations; flagged for the owner in the report.",
+   "abep_sim/mission_env.py::plume_interaction and ARRAY_AREAL_KG_M2: not in the SC-WP-09 element list; callers are class H (mission5.py, archengine.py).",
+   "abep_sim/configuration.py::load_mission_scenario: already ADMITTED under PARITY-C-ABEP_SIM_CONFIGURATION_PY (abep_config::loaders::load_mission_scenario / OperatingInputs); reused, never duplicated.",
+   "J2, OMEGA_E, Spacecraft, sso_inclination_deg: ADMITTED under PARITY-C-ABEP_SIM_MISSION_ENV_PY-CONSTANTS_KERNEL-V1; reused."
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE (no K-id registered; see kernel_basis)",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "abep_sim/mission5.py (run_phase5 / run_mission_generic drivers; class H, RET)",
+   "abep_sim/archengine.py (class H)"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-09 (element 'state propagation')",
+  "owner_disposition_a9_29": "NOT_APPLICABLE"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of these functions was executed and before any Rust code of them was written (lane SC-WP-09 mission, A9.31 sec. 12). The registration commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "lane": {
+  "id": "WP09-MISSION",
+  "execution_step": "A9.31 sec. 12 batch",
+  "work_package": "SC-WP-09",
+  "branch": "lane-wp09-mission",
+  "authority": "A9.31 secs. 12, 14, 22; simulation_completion_programme_v1_1.json SC-WP-09"
+ },
+ "reference_implementation": {
+  "python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+  "python_commit_note": "0d8922c = origin/integration/simulation-complete at lane start (A9.31 record); the bid record 5eee4b8 / 2de86ab is never a reference commit for new work",
+  "files": [
+   {
+    "path": "abep_sim/mission_env.py",
+    "sha256_at_registration": "f568fba29678852565b03821e85dd7cce1fb18ec623ab2ca282e521a97f164af"
+   },
+   {
+    "path": "abep_sim/constants.py",
+    "sha256_at_registration": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+   },
+   {
+    "path": "abep_sim/materials.py",
+    "sha256_at_registration": "08e2ddddfc9380780e71bc15957fa82a9e879fc36046c266c669b037c2194feb"
+   },
+   {
+    "path": "abep_sim/operating_inputs.py",
+    "sha256_at_registration": "24161b918d996ed991358021471d3188e5584666479e828617c257b4c816eb99"
+   },
+   {
+    "path": "abep_sim/configuration.py",
+    "sha256_at_registration": "45900b79e3639ab382ec740bbd6b453d03e58ab7bd6368f93abdc17cabdacacc"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "pandas": "3.0.2 (DataFrame / Series reductions of propagate; bottleneck NOT installed, so Series.mean / median use numpy)",
+   "requirements_lock_sha256": "recorded at scoring",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1 (set by the harness)",
+    "OPENBLAS_NUM_THREADS": "1 (set by the harness)"
+   },
+   "recorded_again_at_scoring": "python / numpy / pandas versions, CPU model and thread env are re-read and written into the report; a version change is INPUT_MISMATCH (not a verdict)"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-mission (module propagation; SC-WP-09 target crate). Reuses abep_atmos::mission_env_kernel (J2, Spacecraft), abep_atmos::pyfloat (degrees, radians, py_mod, py_pow, py_int), abep_types::constants (MU_EARTH, R_EARTH), abep_chem::numpy::pairwise_sum (numpy float64 add.reduce) and abep_config::OperatingInputs (array_area_for P_cap_W = None)",
+  "functions_or_entry_points": [
+   "abep_mission::propagation::SOLAR_CONST",
+   "abep_mission::propagation::beta_angle(inc_deg, raan_deg, sun_lon_deg, sun_dec_deg) -> AbepResult<f64>",
+   "abep_mission::propagation::eclipse_fraction(alt_km, beta_deg) -> AbepResult<f64>",
+   "abep_mission::propagation::worst_eclipse_fraction(sc, alt_km) -> AbepResult<f64>",
+   "abep_mission::propagation::array_area_for(p_prop_w, sc, alt_km, years, rho_max_over_design, p_cap_w) -> AbepResult<f64> (p_cap_w explicit; the None case resolves P_cap_W from abep_config::OperatingInputs.p_bus_max_w exactly as operating_inputs.P_BUS_MAX_W does)",
+   "abep_mission::propagation::propagate(sc, alt0_km, hours, dt_h, drag_fn, thrust_fn, raan0_deg, epoch_day) -> AbepResult<Propagation> (drag_fn(alt, t_h) -> (D, rho); thrust_fn(alt, t_h, ThrustContext{rho, p_avail_w}) -> (T, P_bus))",
+   "CLI: cargo run --release --locked -p abep-mission --bin abep-mission-env-parity (JSON calls on stdin, JSON results on stdout)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml channel 1.94.1)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/**",
+   "crates/abep-atmos/src/mission_env_kernel.rs",
+   "crates/abep-atmos/src/pyfloat.rs",
+   "crates/abep-chem/src/numpy.rs",
+   "crates/abep-mission/src/propagation.rs",
+   "crates/abep-mission/src/bin/abep_mission_env_parity.rs"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE: architecture-independent environment / orbit kernel",
+  "model_set_hash": "NOT_APPLICABLE: no frozen data file is read (array_area_for with P_cap_W = None reads config/mission/mission_scenario_v2.json through the admitted configuration loader; sha256 885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49)",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "both implementations must report these exact values for every run; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/mission_env.py": "f568fba29678852565b03821e85dd7cce1fb18ec623ab2ca282e521a97f164af",
+  "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+  "config/mission/mission_scenario_v2.json": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49"
+ },
+ "frozen_data_read_only": [
+  "config/mission/mission_scenario_v2.json (via the admitted loaders; never written)"
+ ],
+ "inputs": {
+  "harness": "scripts/rust_migration/parity_mission_env_propagation_v1.py",
+  "spacecraft_transport": "a Spacecraft is passed as its 17 dataclass fields (JSON); Python builds Spacecraft(**fields), Rust builds abep_atmos::mission_env_kernel::Spacecraft with the same values. Fields not drawn keep the dataclass default",
+  "registered_closure_families": {
+   "rule": "propagate takes injected callables. The parity inputs are the registered closed-form families below, implemented identically (same operation order) in the harness (Python) and in the parity binary (Rust). They are SYNTHETIC_TEST_DATA_NOT_EVIDENCE: no atmosphere, drag or thruster claim; the frozen-data drag / thrust of the active simulator never enters this contract",
+   "DF-EXP": "drag_fn(alt, t_h): a = R_EARTH + alt * 1e3; rho = rho0 * exp(-(alt - h0) / H); V = sqrt(MU_EARTH / a); D = 0.5 * rho * V ** 2 * CdA; returns (D, {'rho': rho}). Parameters rho0 [kg m-3], h0 [km], H [km], CdA [m2]",
+   "TF-CONST": "thrust_fn(alt, t_h, atm): returns (T0, P0)",
+   "TF-POWER": "thrust_fn(alt, t_h, atm): P = min(Pmax, atm['_P_avail']); returns (k * P, P)  (Python min: the first argument unless the second is smaller)",
+   "TF-TRACK": "thrust_fn(alt, t_h, atm): a = R_EARTH + alt * 1e3; V = sqrt(MU_EARTH / a); D = 0.5 * atm['rho'] * V ** 2 * CdA; returns (f * D, P0)"
+  },
+  "golden_vectors": {
+   "source": "registered list",
+   "list_or_generator": [
+    "beta_angle at (inc, raan, sun_lon, dec) = (96.33, 0, 0, 0), (96.33, 90, 0, 0), (96.33, 270, 80.0, 23.44 sin(80 deg)), (0, 0, 0, 0), (90, 45, 30, -23.44), (180, 10, 350, 10)",
+    "eclipse_fraction at alt 200 and beta 0, 30, 60, 70, 75, 80, 89.9; alt 180, 230 at beta 0; alt 1000 at beta 0, 50",
+    "worst_eclipse_fraction(Spacecraft(), alt) at alt 180, 200, 230",
+    "array_area_for(P, Spacecraft(), 200, 3.0, 1.39, P_cap) for P = 700, 1000, 1500, 5000 and P_cap = None and 1500.0",
+    "propagate(Spacecraft(), 200, 240, 1.0, DF-EXP(rho0 2.5e-10, h0 200, H 40, CdA 0.3), TF-CONST(0.012, 900)) with raan0 None and epoch_day 80; the same with TF-POWER(k 2e-5, Pmax 1400) and with TF-TRACK(f 1.0, CdA 0.3, P0 900)"
+   ]
+  },
+  "edge_cases": [
+   {
+    "id": "E-P-01",
+    "entry": "eclipse_fraction",
+    "inputs": {
+     "alt_km": 200.0,
+     "beta_deg": 90.0
+    },
+    "note": "cos(b) tiny positive, arg >= 1 -> 0.0"
+   },
+   {
+    "id": "E-P-02",
+    "entry": "eclipse_fraction",
+    "inputs": {
+     "alt_km": 200.0,
+     "beta_deg": 120.0
+    },
+    "note": "cos(b) < 0 -> arg = 0.0 -> 0.5 (reference behaviour, reproduced)"
+   },
+   {
+    "id": "E-P-03",
+    "entry": "eclipse_fraction",
+    "inputs": {
+     "alt_km": -100.0,
+     "beta_deg": 0.0
+    },
+    "note": "a < R_EARTH: max(a^2 - R^2, 0) = 0 -> 0.5"
+   },
+   {
+    "id": "E-P-04",
+    "entry": "propagate",
+    "inputs": "Spacecraft(), alt0 200, hours 5000, dt_h 2.0, DF-EXP(rho0 5e-9, h0 200, H 30, CdA 1.0), TF-CONST(0, 0)",
+    "note": "re-entry: the loop breaks below 150 km; reentered = True"
+   },
+   {
+    "id": "E-P-05",
+    "entry": "propagate",
+    "inputs": "hours 2.0, dt_h 1.0 (two rows)",
+    "note": "len(df) <= 2 -> raan_drift_deg_per_day = 0.0"
+   },
+   {
+    "id": "E-P-06",
+    "entry": "propagate",
+    "inputs": "raan0_deg = 123.0, epoch_day = 355.5",
+    "note": "explicit RAAN and epoch"
+   },
+   {
+    "id": "E-P-07",
+    "entry": "array_area_for",
+    "inputs": "years = 0.0, rho_max_over_design = 0.0",
+    "note": "zero propulsion power after scaling"
+   }
+  ],
+  "randomized_domain": {
+   "entries": [
+    {
+     "entry_index": 0,
+     "entry": "beta_angle",
+     "count": 400,
+     "draw": "inc = U(0, 180); raan = U(-720, 720); sun_lon = U(-720, 720); dec = U(-23.44, 23.44) (draw order: four arrays of 400 in that order)"
+    },
+    {
+     "entry_index": 1,
+     "entry": "eclipse_fraction",
+     "count": 400,
+     "draw": "alt = U(-100, 3000); beta = U(-120, 120)"
+    },
+    {
+     "entry_index": 2,
+     "entry": "worst_eclipse_fraction",
+     "count": 100,
+     "draw": "inc_deg = U(0, 180); ltan_h = U(0, 24); alt = U(150, 1000)"
+    },
+    {
+     "entry_index": 3,
+     "entry": "array_area_for",
+     "count": 150,
+     "draw": "P = U(0, 5000); alt = U(150, 400); years = U(0, 10); rho_ratio = U(0.5, 2); cap = U(100, 3000); cap_none = U(0, 1) < 0.2; array_eff = U(0.1, 0.4); array_deg_per_yr = U(0, 0.05); eps_eff = U(0.5, 1); bus_housekeeping_W = U(0, 300); inc_deg = U(0, 180); ltan_h = U(0, 24)"
+    },
+    {
+     "entry_index": 4,
+     "entry": "propagate",
+     "count": 120,
+     "draw": "per vector i: family = ['TF-CONST', 'TF-POWER', 'TF-TRACK'][i % 3]; alt0 = U(180, 230); dt_h = U(0.25, 12); steps = integers(1, 400); hours = dt_h * steps + U(0, 1) * dt_h; mass_kg = U(50, 300); inc_deg = U(0, 180); ltan_h = U(0, 24); array_area_m2 = U(0.5, 6); raan0 = U(0, 360) if U(0, 1) < 0.5 else None; epoch_day = U(0, 365); rho0 = 10 ** U(-11, -9); h0 = U(180, 230); H = U(20, 60); CdA = U(0.05, 1.0); T0 = U(0, 0.05); P0 = U(0, 2000); k = U(0, 5e-5); Pmax = U(0, 2000); f = U(0, 2) (all draws made for every vector, in this order)"
+    }
+   ],
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim"
+  },
+  "vector_totals": {
+   "beta_angle": "6 golden + 400 randomized + domain-error vectors",
+   "eclipse_fraction": "12 golden + 3 edge + 400 randomized + domain-error vectors",
+   "worst_eclipse_fraction": "3 golden + 100 randomized + domain-error vectors",
+   "array_area_for": "8 golden + 1 edge + 150 randomized + domain-error vectors",
+   "propagate": "3 golden + 3 edge + 120 randomized + domain-error vectors",
+   "constants": "SOLAR_CONST"
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 731909203,
+  "development_master_seed": 731909103,
+  "derivation": "rng_e = numpy.random.default_rng(numpy.random.SeedSequence([master_seed, e])) with e the entry index in inputs.randomized_domain; one generator per entry, draws in the registered order; the draws define input values only (both implementations are deterministic)",
+  "entry_indices": {
+   "beta_angle": 0,
+   "eclipse_fraction": 1,
+   "worst_eclipse_fraction": 2,
+   "array_area_for": 3,
+   "propagate": 4
+  },
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the admitted statistical contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: no design / UQ sampling in the scoped functions",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: no TPMC call",
+   "other_streams": "NOT_APPLICABLE: no scoped function draws random numbers (pointing_factors, the only RNG user of the module, is out of scope); the harness draws input vectors once and passes identical float values (JSON shortest round-trip repr) to both implementations",
+   "migration_parity_dataset": "seeds, draw order and captured reference outputs stay exactly reproducible (immutable)",
+   "after_rust_authority": "not applicable"
+  },
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; the scoring execution is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "SOLAR_CONST": {
+   "list": [
+    {
+     "name": "SOLAR_CONST",
+     "units": "W m-2",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "bit pattern equal",
+     "definition": "1361.0"
+    }
+   ]
+  },
+  "beta_angle": {
+   "list": [
+    {
+     "name": "beta_deg",
+     "units": "deg",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-13
+     },
+     "definition": "degrees(asin(cos d sin i sin(O - ls) + sin d cos i)) with i, O, ls, d = radians(inputs)"
+    },
+    {
+     "name": "status",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "EVALUATED or the mapped status of the Python exception (and its class)"
+    }
+   ]
+  },
+  "eclipse_fraction": {
+   "list": [
+    {
+     "name": "eclipse_frac",
+     "units": "1",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-15
+     },
+     "definition": "a = R_EARTH + 1e3 alt; b = radians(|beta|); arg = sqrt(max(a ** 2 - R_EARTH ** 2, 0)) / (a cos b) if cos b > 0 else 0; 0 if arg >= 1 or cos b == 0 else acos(arg) / pi"
+    },
+    {
+     "name": "status",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "as above"
+    }
+   ]
+  },
+  "worst_eclipse_fraction": {
+   "list": [
+    {
+     "name": "f_ecl_max",
+     "units": "1",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "a_abs": 1e-15
+     },
+     "definition": "max over day = 0, 2, ..., 364 of eclipse_fraction(alt, beta_angle(inc, raan(day), sun_lon(day), dec(day))) with sun_lon = (day / 365.25 * 360) % 360, dec = 23.44 sin(radians(sun_lon)), raan = (sun_lon + (ltan_h - 12) * 15) % 360; start 0.0; Python max keeps the running value unless the new one is greater"
+    },
+    {
+     "name": "status",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "as above"
+    }
+   ]
+  },
+  "array_area_for": {
+   "list": [
+    {
+     "name": "array_area_m2",
+     "units": "m2",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-13
+     },
+     "definition": "(min(P * rho_ratio, P_cap) + hk) / (SOLAR_CONST * eff * (1 - deg * years) * (1 - f_ecl_max) * eps) with f_ecl_max = worst_eclipse_fraction(sc, alt)"
+    },
+    {
+     "name": "status",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "as above"
+    }
+   ]
+  },
+  "propagate": {
+   "list": [
+    {
+     "name": "n_rows",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "number of DataFrame rows (loop length incl. the re-entry break)"
+    },
+    {
+     "name": "rows[*].t_h",
+     "units": "h",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "bit pattern equal (k * dt_h)",
+     "definition": "k dt_h"
+    },
+    {
+     "name": "rows[*].{alt_km, beta_deg, eclipse_frac, D_mN, T_mN, P_bus_W, P_need_W, P_avail_W, power_margin_W, rho}",
+     "units": "km, deg, 1, mN, mN, W, W, W, W, kg m-3",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12,
+      "a_abs": 1e-12
+     },
+     "definition": "the per-step quantities of propagate (secular J2 RAAN drift, beta, eclipse, energy-balance altitude rate 2 a^1.5 (T - D) / (m sqrt(MU)), array power); a recurrence, so the relative clause covers ulp-level differences carried forward"
+    },
+    {
+     "name": "rows[*].raan_deg",
+     "units": "deg",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12,
+      "a_abs": 1e-09,
+      "comparison": "on the circle: d = |rust - py|; d = min(d, 360 - d)"
+     },
+     "definition": "raan % 360"
+    },
+    {
+     "name": "reentered",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "df.alt_km.iloc[-1] < 150"
+    },
+    {
+     "name": "min_alt_km, mean_eclipse, min_power_margin_W",
+     "units": "km, 1, W",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12,
+      "a_abs": 1e-12
+     },
+     "definition": "pandas Series min / mean (numpy float64 add.reduce pairwise summation divided by the count) / min"
+    },
+    {
+     "name": "hours_power_short",
+     "units": "h",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "bit pattern equal",
+     "definition": "(count of rows with power_margin_W < 0) * dt_h"
+    },
+    {
+     "name": "raan_drift_deg_per_day",
+     "units": "deg day-1",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-09,
+      "a_abs": 1e-09
+     },
+     "definition": "median(|diff(raan_deg)|) / (dt_h / 24) if rows > 2 else 0.0 (median: middle element, or the mean (a + b) / 2 of the two middle elements)"
+    },
+    {
+     "name": "status",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "EVALUATED or the mapped status of the Python exception (and its class)"
+    }
+   ]
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "not used",
+  "EXACT_VALUE": "integers, strings, booleans, statuses, error classes, row counts, and floats that are copied or formed by one exactly reproducible product (t_h, hours_power_short): equal (floats by value, -0.0 == 0.0)",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp * ulp(py) OR |rust - py| <= r_rel * |py| OR |rust - py| <= a_abs, with the clauses fixed per observable above (an absent clause is not applied); ulp(py) = 2^(floor(log2|py|) - 52) (py = 0: smallest subnormal)",
+  "SOLVER_TOLERANCE": "not used (no iterative solver)",
+  "STATISTICAL": "not used (deterministic functions)",
+  "EXACT_STREAM": "not used (no RNG in the scoped functions)"
+ },
+ "tolerance_basis": {
+  "independence": "fixed before any comparison from the operation list",
+  "registered": "both implementations evaluate glibc sin / cos / asin / acos / sqrt / exp / pow (CPython math.* and float ** int call libm; Rust f64 methods call the same libm) and IEEE basic operations in the same order. k_ulp = 4 covers an LLVM rewrite of pow(x, 2.0) into x * x (< 1 ulp against glibc pow) propagated through one more libm call. propagate is a recurrence over up to ~400 steps: r_rel 1e-12 bounds an ulp-level difference amplified along the trajectory (the altitude rate is smooth in alt); a_abs 1e-12 covers quantities that cross zero (power margin, T - D in mN). raan is periodic: compared on the circle so that a wrap at 0 / 360 caused by an ulp is not a spurious failure. raan_drift is a median of differences of a mod-360 quantity: r_rel 1e-9 / a_abs 1e-9"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-P-01",
+   "statement": "double-run determinism of the CLI output (byte-identical) and of the Python values",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-P-02",
+   "statement": "propagate rows: t_h = k dt_h for k = 0..n-1 (strictly increasing), eclipse_frac in [0, 1], P_need_W = P_bus_W + bus_housekeeping_W exactly, power_margin_W = P_avail_W - P_need_W exactly, raan_deg in [0, 360)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-P-03",
+   "statement": "worst_eclipse_fraction(sc, alt) >= eclipse_fraction(alt, beta) for every (day, beta) of its own scan (it is their running maximum)",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": true,
+  "reason": "propagate integrates an energy balance: the semi-major-axis rate from the specific orbital energy -MU / (2a) and the power (T - D) V",
+  "checks": [
+   {
+    "id": "CONS-P-01",
+    "statement": "per step, the altitude increment equals dadt * dt_h * 3600 / 1e3 with dadt = 2 a^1.5 (T - D) / (m sqrt(MU)) evaluated from the row values of the previous altitude (recomputed by the harness from the previous altitude and the row D_mN / T_mN of each implementation)",
+    "tolerance": "|row increment - recomputed increment| <= 1e-9 |recomputed increment| + 1e-12 km, every step, both implementations"
+   },
+   {
+    "id": "CONS-P-02",
+    "statement": "T - D = 0 for every step (TF-TRACK with f = 1) keeps the altitude exactly constant in both implementations",
+    "tolerance": "EXACT_VALUE on alt_km"
+   }
+  ]
+ },
+ "domain_and_error_parity": {
+  "mapping": {
+   "ValueError (math domain error: sqrt of a negative, asin / acos outside [-1, 1], sin / cos of inf; int(nan))": "OUT_OF_DOMAIN",
+   "ZeroDivisionError": "OUT_OF_DOMAIN",
+   "OverflowError (float ** int, int(inf))": "OUT_OF_DOMAIN",
+   "AttributeError / IndexError (propagate with zero rows: empty DataFrame)": "OUT_OF_DOMAIN"
+  },
+  "cases": [
+   {
+    "id": "DE-P-01",
+    "entry": "beta_angle",
+    "inputs": {
+     "inc_deg": "+inf",
+     "raan_deg": 0.0,
+     "sun_lon_deg": 0.0,
+     "sun_dec_deg": 0.0
+    },
+    "expected_python": "ValueError (sin of inf)",
+    "expected_rust": "OUT_OF_DOMAIN"
+   },
+   {
+    "id": "DE-P-02",
+    "entry": "eclipse_fraction",
+    "inputs": {
+     "alt_km": -6371.0,
+     "beta_deg": 0.0
+    },
+    "expected_python": "ZeroDivisionError (a cos b = 0)",
+    "expected_rust": "OUT_OF_DOMAIN"
+   },
+   {
+    "id": "DE-P-03",
+    "entry": "eclipse_fraction",
+    "inputs": {
+     "alt_km": 1e+160,
+     "beta_deg": 0.0
+    },
+    "expected_python": "OverflowError (a ** 2)",
+    "expected_rust": "OUT_OF_DOMAIN"
+   },
+   {
+    "id": "DE-P-04",
+    "entry": "eclipse_fraction",
+    "inputs": {
+     "alt_km": 200.0,
+     "beta_deg": "+inf"
+    },
+    "expected_python": "ValueError (cos of inf)",
+    "expected_rust": "OUT_OF_DOMAIN"
+   },
+   {
+    "id": "DE-P-05",
+    "entry": "array_area_for",
+    "inputs": "Spacecraft(array_deg_per_yr = 0.1), years = 10.0 (eol = 0)",
+    "expected_python": "ZeroDivisionError",
+    "expected_rust": "OUT_OF_DOMAIN"
+   },
+   {
+    "id": "DE-P-06",
+    "entry": "propagate",
+    "inputs": "hours 0.5, dt_h 1.0 (zero rows)",
+    "expected_python": "AttributeError (empty DataFrame has no alt_km)",
+    "expected_rust": "OUT_OF_DOMAIN"
+   },
+   {
+    "id": "DE-P-07",
+    "entry": "propagate",
+    "inputs": "dt_h 0.0",
+    "expected_python": "ZeroDivisionError",
+    "expected_rust": "OUT_OF_DOMAIN"
+   },
+   {
+    "id": "DE-P-08",
+    "entry": "propagate",
+    "inputs": "alt0 -7000.0 (a < 0)",
+    "expected_python": "ValueError (sqrt of MU / a ** 3 < 0)",
+    "expected_rust": "OUT_OF_DOMAIN"
+   },
+   {
+    "id": "DE-P-09",
+    "entry": "propagate",
+    "inputs": "hours NaN",
+    "expected_python": "ValueError (int(nan))",
+    "expected_rust": "OUT_OF_DOMAIN"
+   },
+   {
+    "id": "DE-P-10",
+    "entry": "eclipse_fraction",
+    "inputs": {
+     "alt_km": 200.0,
+     "beta_deg": "NaN"
+    },
+    "expected_python": "returns 0.5",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "divergence": "DIV-P-01"
+   },
+   {
+    "id": "DE-P-11",
+    "entry": "beta_angle",
+    "inputs": {
+     "inc_deg": "NaN",
+     "raan_deg": 0.0,
+     "sun_lon_deg": 0.0,
+     "sun_dec_deg": 0.0
+    },
+    "expected_python": "returns nan",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "divergence": "DIV-P-01"
+   },
+   {
+    "id": "DE-P-12",
+    "entry": "array_area_for",
+    "inputs": "P_prop_W = NaN",
+    "expected_python": "returns nan (Python min keeps the NaN first argument)",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "divergence": "DIV-P-01"
+   },
+   {
+    "id": "DE-P-13",
+    "entry": "propagate",
+    "inputs": "TF-CONST with T0 = NaN",
+    "expected_python": "returns NaN rows",
+    "expected_rust": "OUT_OF_DOMAIN",
+    "divergence": "DIV-P-01"
+   }
+  ],
+  "mapping_rule": "every Python exception class maps to exactly one Rust error variant / status (the Rust message starts with the Python class name, e.g. 'ValueError: ...'); no Rust path returns a value where Python fails, or fails where Python returns, except DIV-P-01",
+  "documented_divergence": [
+   {
+    "id": "DIV-P-01",
+    "statement": "a NaN float input of beta_angle / eclipse_fraction / worst_eclipse_fraction / array_area_for / propagate, or a NaN value returned by a propagate closure: Python propagates NaN or silently clips it; Rust refuses (OUT_OF_DOMAIN)",
+    "disposition": "fail-closed (CLAUDE.md rule 3); scored by DE-P-10..13 with the registered divergent outcome"
+   },
+   {
+    "id": "DIV-P-02",
+    "statement": "propagate returns a pandas DataFrame plus summary floats in Python; Rust returns a row vector (same columns, same order) plus the same summary fields",
+    "disposition": "schema parity on column names / order / summary keys"
+   },
+   {
+    "id": "DIV-P-03",
+    "statement": "Python's power_demand_fn argument of propagate is accepted and unused; the Rust signature omits it",
+    "disposition": "no observable"
+   },
+   {
+    "id": "DIV-P-04",
+    "statement": "Python array_area_for(P_cap_W = None) imports operating_inputs.P_BUS_MAX_W (mission_scenario_v2 p_bus_throttling_cap_W through the configuration loader); the Rust function takes P_cap_W explicitly and the parity binary resolves None with abep_config::OperatingInputs::load (the admitted port of the same loader)",
+    "disposition": "scored by the cap_none vectors"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE"
+  ],
+  "rules": [
+   "propagate row columns and order: t_h, alt_km, raan_deg, beta_deg, eclipse_frac, D_mN, T_mN, P_bus_W, P_need_W, P_avail_W, power_margin_W, rho",
+   "propagate summary keys: reentered, min_alt_km, mean_eclipse, min_power_margin_W, hours_power_short, raan_drift_deg_per_day"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "captured Python outputs at python_commit"
+  ],
+  "rule": "references are read as committed; never regenerated (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_MISSION_ENV_PY-PROPAGATION/reference_outputs/",
+   "captured_at_python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+   "sha256_manifest": "reference_outputs/MANIFEST.json, written by the scoring run",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired"
+  },
+  "historical_golden_rule": "RM-R28: not used"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "reason": "no HallThruster.jl path",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (recorded for completeness; not used)"
+ },
+ "performance_measurement": {
+  "status": "RECORDED_NOT_GATING: propagate wall time of the three golden runs (Python vs Rust release), median of 3",
+  "workloads": [
+   "propagate golden G-PROP-1..3"
+  ],
+  "repeats": 3
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every vector meets its tolerance class; every status and Python exception class maps exactly (DIV-P-01 vectors score the registered divergent outcome)",
+  "aggregate": "NOT_APPLICABLE (no STATISTICAL entry point)",
+  "exact_invariants_required": true,
+  "conservation_required": true,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED iff every per-test, invariant, conservation, domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED, PARITY_FAIL <=> NOT_ADMITTED",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "parity_vocabulary": [
+   "PARITY_PASS",
+   "PARITY_FAIL"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for these functions (within the registered domain); new production results come from Rust and carry implementation = rust, rust_commit and this contract id. It is NOT physics validation, and the spacecraft defaults / closure families stay what they are (CODE_DEFAULT / PARAMETRIC, SYNTHETIC_TEST_DATA_NOT_EVIDENCE)",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to the scoped functions; no observable depends on spacecraft_drag, pointing_factors or a class-H driver (RM-R20)",
+  "scoring_once": "the scoring comparison runs once (scoring_master_seed); the harness refuses a second scoring run when parity_report_v1.json exists; development runs (development_master_seed) never write a report"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a mission prediction: propagate integrates caller-supplied drag / thrust callables; with today's admitted inputs thrust is NOT_EVALUATED (credible Hall set EMPTY) and the host-spacecraft drag is NOT_EVALUATED (no ICD), so the active mission integration (NP-MISSION-INTEGRATION) does not call it",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission",
+  "not a promotion of the Spacecraft code defaults or of the orbit defaults (inc_deg / ltan_h CODE_DEFAULT / PARAMETRIC) (RM-R27)",
+  "not a gate PASS"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_MISSION_ENV_PY-PROPAGATION/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_mission_env_propagation_v1.py",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS (inventory v3.1, PLAN_APPROVED_A9_29)",
+   "no observable, input or code path belongs to the excluded legacy vocabulary; the harness imports abep_sim.mission_env only (not mission5 / archengine)",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration",
+  "inputs": [
+   {
+    "id": "Spacecraft defaults (array_eff 0.29, array_deg_per_yr 0.03, eps_eff 0.90, bus_housekeeping_W 120, mass_kg 150, array_area_m2 2.0)",
+    "value_status": "CODE_DEFAULT, unsourced (no registered evidence record)",
+    "open_action": "a registered host-spacecraft record supersedes them",
+    "committed_labels": [
+     "CODE_DEFAULT"
+    ]
+   },
+   {
+    "id": "Spacecraft.inc_deg / ltan_h",
+    "value_status": "CODE_DEFAULT / PARAMETRIC (A9.17 ORBIT)",
+    "open_action": "TBD from the mission ICD",
+    "committed_labels": [
+     "CODE_DEFAULT / PARAMETRIC"
+    ]
+   },
+   {
+    "id": "SOLAR_CONST 1361 W m-2",
+    "value_status": "literature constant carried by the reference (verify: Kopp & Lean 2011 TSI 1360.8 +/- 0.5 W m-2, from memory)",
+    "open_action": "none for parity",
+    "committed_labels": [
+     "verify"
+    ]
+   },
+   {
+    "id": "array_area_for rho_max_over_design 1.39, years 3.0 defaults",
+    "value_status": "CODE_DEFAULT of the reference",
+    "open_action": "callers pass registered values",
+    "committed_labels": [
+     "CODE_DEFAULT"
+    ]
+   }
+  ],
+  "check": "VS-P-01: the Rust module documents these as CODE_DEFAULT; no requirement / CBE / measured label"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS (otherwise NOT_APPLICABLE)",
+  "status": "NOT_APPLICABLE",
+  "reason": "EXISTING_PHYSICS_PARITY contract"
+ }
+}

@@ -1,0 +1,527 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY",
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W12",
+  "scope": "named function subset (RM-R17 kernel granularity) of abep_sim/assessment/design_gates.py, coupled with the assessment functions other rows left for SC-WP-11: bus_boundary_a9_v2.rfp_power_gate (the RFP P_bus gate, A9.30 sec. 5 assessment only), design_synthesis.bus_power's gate_verdict field, upstream_a9_13.statewise_envelope (the mapping of the admitted statewise quantifier's PASS / FAIL onto the constraint vocabulary) and the P1-IT-29 M_n arithmetic kernel p1_reducer.icp45a_margin (A9.29 sec. 4: M_n is evaluated in assessment only)",
+  "coupled_inventory_ids": [
+   "C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY",
+   "C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY",
+   "C-ABEP_SIM_PROGRAMME_DESIGN_SYNTHESIS_PY",
+   "C-ABEP_SIM_DESIGN_UPSTREAM_A9_13_PY",
+   "C-DOCS_EXPERIMENTS_HALL_ICP_P1_ICP_BENCH"
+  ],
+  "functions_or_entry_points": [
+   "E1 abep_sim/assessment/design_gates.py::HARD_CONSTRAINTS, HARD_CONSTRAINT_LIMITS, GATE_THRESHOLDS['limits'], PRE_EVALUATED_OBJECTIVES (the table with its limits)",
+   "E2 abep_sim/assessment/design_gates.py::evaluate_constraints (+ _from_u13, _cmp)",
+   "E3 abep_sim/assessment/design_gates.py::hard_constraint_partition",
+   "E4 abep_sim/assessment/design_gates.py::constraint_met_value_kinds",
+   "E5 abep_sim/assessment/design_gates.py::bus_power_gate == abep_sim/bus_boundary_a9_v2.py::rfp_power_gate",
+   "E6 abep_sim/programme/design_synthesis.py::bus_power -> field gate_verdict only (supplied ledgers; official flight path)",
+   "E7 abep_sim/assessment/design_gates.py::ripple_feed_quality",
+   "E8 abep_sim/design/upstream_a9_13.py::statewise_envelope",
+   "E9 abep_sim/assessment/design_gates.py::statewise_drag_compensation (+ upstream_a9_13._rec_value)",
+   "E10 abep_sim/assessment/design_gates.py::feed_state_sufficiency",
+   "E11 abep_sim/assessment/design_gates.py::pareto_s6_17 (+ upstream_a9_13._dominates)",
+   "E12 abep_sim/assessment/design_gates.py::propellant_paths_check (+ a9_19_architecture.propellant_path_roles)",
+   "E13 abep_sim/assessment/design_gates.py::rvm_gate_snapshot (committed RVM record)",
+   "E14 abep_sim/assessment/design_gates.py::owner_state, status_label, apply_to_questions (owner-question state v5)",
+   "E15 docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py::icp45a_margin"
+  ],
+  "out_of_scope": [
+   "abep_sim/assessment/design_gates.py::gate_snapshot: it wraps robust_optimizer.design_gate_snapshot (F8, SC-WP-10, not admitted); stays PYTHON_REFERENCE until the F8 snapshot is admitted (rvm_gate_snapshot, its assessment half, is E13)",
+   "every other function of bus_boundary_a9_v2 / design_synthesis / upstream_a9_13 / p1_reducer (other rows; the raw bus ledger is admitted in abep-subsystems::power)",
+   "abep_sim/statewise.py::statewise_quantifier: ADMITTED in abep-mission (PARITY-C-ABEP_SIM_STATEWISE_PY-V1); consumed here, not re-implemented (one authoritative implementation)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "abep_sim/hard_gates.py, abep_sim/assessment/arch_constraints.py, abep_sim/assessment/closure_checks.py (class H, NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH; never reproduced)",
+   "the C1 / hall_c1_reference branches: refused (flight configuration only, A9.19 / A9.20); RVM ground-reference counts are carried only as the labelled GROUND_ONLY_LAB_REFERENCE block of E13"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-11 (elements 'separate requirement assessment' and 'HC gates (HC-01..HC-12)')",
+  "owner_disposition_a9_29": "NOT_APPLICABLE"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of these functions (lane SC-WP-11, branch lane-wp11-assess). No Rust implementation of the component exists at registration. The registration commit is recorded in the report.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "lane": {
+  "id": "SC-WP-11",
+  "work_package": "SC-WP-11",
+  "branch": "lane-wp11-assess (from origin/integration/simulation-complete 0d8922cfe39b5bb7f90ddf290702342182eb5d7c)",
+  "authority": "A9.29 secs. 4, 13-15; A9.31 secs. 10, 12, 17; A9.30 sec. 5; A9.22 layer separation; simulation_completion_programme_v1_1.json SC-WP-11 (sha256 5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a)"
+ },
+ "reference_implementation": {
+  "python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+  "python_commit_note": "origin/integration/simulation-complete at lane start; never the bid record",
+  "files": [
+   {
+    "path": "abep_sim/assessment/design_gates.py",
+    "sha256_at_registration": "394c8d04e86bfc90a9c0fcfd5b1c0efffed3c0bb769fdeed023fd9bf4606dd93",
+    "role": "reference (E1-E14)"
+   },
+   {
+    "path": "abep_sim/bus_boundary_a9.py",
+    "sha256_at_registration": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a",
+    "role": "reference: rfp_power_gate code object and its gate constants (E5)"
+   },
+   {
+    "path": "abep_sim/bus_boundary_a9_v2.py",
+    "sha256_at_registration": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26",
+    "role": "reference: rfp_power_gate rebound to the v2 globals (E5; bus_power_boundary_a9_v2)"
+   },
+   {
+    "path": "abep_sim/design/upstream_a9_13.py",
+    "sha256_at_registration": "384b24086c1cc779707d7cb958b9ccd8cb58edf337d629727d923ab659a30af5",
+    "role": "reference: statewise_envelope (E8) and the helpers _rec_value, combine_value_status, constraint_status, cite, PARETO_OBJECTIVES_S6_17, HARD_CONSTRAINTS_FIRST, PROPELLANT_POLICY used by E7-E12"
+   },
+   {
+    "path": "abep_sim/programme/design_synthesis.py",
+    "sha256_at_registration": "a9ee90672ad99c352e4ce77f74a5078ec742119dfd347ebbd485f22894838455",
+    "role": "reference: bus_power gate_verdict field only (E6)"
+   },
+   {
+    "path": "abep_sim/statewise.py",
+    "sha256_at_registration": "ec90f2282467e4877c4d10c32f12368f400102bd5889da49902077cdfb55e63e",
+    "role": "admitted quantifier called by statewise_envelope (Rust: abep_mission::statewise, admitted)"
+   },
+   {
+    "path": "abep_sim/design/a9_19_architecture.py",
+    "sha256_at_registration": "8a4ccfb00fc2bb5a9f00b8a405e9c816e2d025d6d91c8bbef25f50300d4d226b",
+    "role": "reference: propellant_path_roles and cite (E12)"
+   },
+   {
+    "path": "abep_sim/design/architecture_optimizer.py",
+    "sha256_at_registration": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af",
+    "role": "reference: status vocabulary, RVM_REL, CONFIGURATIONS (E2, E13)"
+   },
+   {
+    "path": "abep_sim/design/engineering_constraints.py",
+    "sha256_at_registration": "c4f70d306ec4b2e8e5bfff8d8aac347df4961fd573e5a87ccd2dd4fc599bf5fd",
+    "role": "reference: REQUIREMENT_LIMITS HC-01..HC-04 (E1)"
+   },
+   {
+    "path": "abep_sim/configuration.py",
+    "sha256_at_registration": "45900b79e3639ab382ec740bbd6b453d03e58ab7bd6368f93abdc17cabdacacc",
+    "role": "reference: load_gate_thresholds (E1)"
+   },
+   {
+    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py",
+    "sha256_at_registration": "140cc9cf68b40b585bd8b096fcd66b6fb9a3344608c88f4e759b0587d5da7a65",
+    "role": "reference: icp45a_margin kernel only (E15)"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "blas": "not used (stdlib-only reference functions)",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+   }
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-assess (new crate crates/abep-assess)",
+  "placement": "programme_v3_1 dependency rule: physics <- design / uq <- assess <- evidence <- cli. abep-assess depends on abep-types, abep-provenance, abep-config (thresholds), and reuses admitted physics crates without duplication: abep-mission (statewise_quantifier, objective vocabulary), abep-gaspath (combine_value_status, constraint_status, H1Tolerance, cite, RFP_CLAUSES, FEED_STATE_FIELDS), abep-config architecture (propellant-path roles, cite). No physics crate depends on abep-assess (crate-graph test).",
+  "functions_or_entry_points": [
+   "abep_assess::thresholds::Thresholds (HC-01..HC-04 from config/constraints/engineering_constraints_v1.json, HC-05..HC-12 from config/assessment/gate_thresholds_v1.json, via abep_config loaders only)",
+   "abep_assess::gates::{hard_constraints, evaluate_constraints, hard_constraint_partition, constraint_met_value_kinds}",
+   "abep_assess::power_gate::{rfp_power_gate, bus_power_gate_verdict}",
+   "abep_assess::statewise::{statewise_envelope, statewise_drag_compensation, feed_state_sufficiency, ripple_feed_quality}",
+   "abep_assess::pareto::pareto_s6_17",
+   "abep_assess::propellant::propellant_paths_check",
+   "abep_assess::rvm::rvm_gate_snapshot",
+   "abep_assess::owner_state::{owner_state, status_label, apply_to_questions}",
+   "abep_assess::neutralization::icp45a_margin",
+   "harness interface: binary `abep-assess-parity eval <calls.json>` (writes Python-shaped results as JSON)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/**",
+   "crates/abep-config/src/**",
+   "crates/abep-mission/src/**",
+   "crates/abep-gaspath/src/**",
+   "crates/abep-assess/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it",
+  "threshold_rule": "every requirement limit is read from the frozen configuration through abep-config (engineering constraints: thrust_sustained_min_mN x 1e-3 = HC-01, thrust_capability_mN x 1e-3 = HC-02, p_bus_max_W = HC-03 and the rfp_power_gate limit, wet_mass_max_kg = HC-04; gate thresholds: HC-05..HC-12); no requirement number is a literal in abep-assess and nothing is parsed from RFP text. HC-08 / HC-11 margins are formed against the configured limit (T - D - limit_HC08; min field margin - limit_HC11); both limits are 0.0 in the frozen configuration, so x - 0.0 == x reproduces the reference bit for bit"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "config/architecture/hall_icp_neutralizer_v1.json sha256 7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3 (E12 path roles / cite)",
+  "model_set_hash": "NOT_APPLICABLE: no model is evaluated",
+  "design_state_set_hash": "NOT_APPLICABLE: statewise vectors are harness-generated state lists (the 196-state ids are used as golden state ids only)",
+  "rule": "the harness records these values for the run; a mismatch with the registered values voids the run (INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "config/MANIFEST.json": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+  "config/assessment/gate_thresholds_v1.json": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+  "config/constraints/engineering_constraints_v1.json": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+  "docs/requirements/rvm_a9/rvm_a9_v1.json": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4",
+  "docs/budgets/owner_decisions/owner_questions_state_v5.json": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd",
+  "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+  "docs/decisions/OD_2026_10_06_A9_31_next_batch_owner_rulings_and_architecture_proof.json": "6f7c82eac2ac6c07e09324934d94bce8ca7613c2dd80cb496222264b7afe5f86",
+  "docs/rust_migration/simulation_completion_programme_v1_1.json": "5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a"
+ },
+ "frozen_data_read_only": [
+  "config/** (thresholds, constraints, architecture)",
+  "docs/requirements/rvm_a9/rvm_a9_v1.json (E13)",
+  "docs/budgets/owner_decisions/owner_questions_state_v5.json (E14)",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json (state ids of the golden statewise vectors only)"
+ ],
+ "inputs": {
+  "harness": "scripts/rust_migration/parity_assess_v1.py (committed after this contract and before the scoring run)",
+  "transport": "JSON; non-finite floats as the strings 'NaN', '+inf', '-inf' inside a {'float': ...} wrapper; Python callables (thrust_fn, drag_fn, offered_fn, required_thrust_fn, h1_map.min_feed_state, margin_fn) are supplied as per-state_id tables (the reference callables are lambdas over the same tables; a duplicate state_id keeps the last table entry in both)",
+  "golden_vectors": {
+   "source": "registered list",
+   "count": 14,
+   "list_or_generator": {
+    "G-01": "E1 the hard-constraint table with its limits",
+    "G-02": "E2 values {} (every objective missing)",
+    "G-03": "E2 the official design_synthesis objectives of the flight configuration: P_bus_W NOT_EVALUATED with gate_verdict NOT_EVALUABLE, every other objective missing",
+    "G-04": "E5 a COMPLETE p_bus_1ms_max ledger with a conformant gate measurement, one start-up step: PASS",
+    "G-05": "E5 the official flight ledger (bus_boundary_a9_v2.ledger with the registered official loads) as steady and start-up step: NOT_EVALUABLE",
+    "G-06": "E6 bus_power official flight path gate_verdict (NOT_EVALUABLE)",
+    "G-07": "E8 the 196 required design-state ids with margins rho_i - median(rho) and value_status EVIDENCE",
+    "G-08": "E9 the 196 states, thrust TBD, drag REFERENCE_PARAMETRIC (the governed state today)",
+    "G-09": "E9 the 196 states, synthetic thrust and drag (SYNTHETIC_TEST_DATA_NOT_EVIDENCE)",
+    "G-10": "E10 h1_map None (no validated H-1 map: NOT_EVALUATED)",
+    "G-11": "E12 MODELLED_PROPELLANT_PATHS (AIR_PATH with filter / XE_PATH) and None",
+    "G-12": "E13 rvm_gate_snapshot of the committed RVM",
+    "G-13": "E14 owner_state / status_label of every question id in owner_questions_state_v5.json, plus 'NO-SUCH-ID'",
+    "G-14": "E15 icp45a_margin(10.0, 8.0, 1.6448536269514722, 0.2, 0.1)"
+   }
+  },
+  "edge_cases": [
+   {
+    "id": "E-01",
+    "inputs": "E2 HC-05 record without uncertainty_basis",
+    "note": "NOT_EVALUATED (A9.24 item 5)"
+   },
+   {
+    "id": "E-02",
+    "inputs": "E2 HC-05 record with uncertainty_basis and no validation_basis",
+    "note": "DIV-01 (A9.31 sec. 10)"
+   },
+   {
+    "id": "E-03",
+    "inputs": "E2 HC-05 record with uncertainty_basis and validation_basis VALIDATED_BENCH / MEASURED",
+    "note": "compared exactly with the reference"
+   },
+   {
+    "id": "E-04",
+    "inputs": "E2 HC-03 record with gate_verdict PASS / FAIL / NOT_EVALUABLE under each value status",
+    "note": "verdict mapping"
+   },
+   {
+    "id": "E-05",
+    "inputs": "E2 value -0.0, int values, +inf / NaN values, value at the limit (strict and non-strict comparators)",
+    "note": "comparison and format"
+   },
+   {
+    "id": "E-06",
+    "inputs": "E2 pre-evaluated records with every upstream status and average_hides_violation true",
+    "note": "_from_u13 mapping"
+   },
+   {
+    "id": "E-07",
+    "inputs": "E5 empty start-up list, a dict / str start-up, a ledger of another boundary_version",
+    "note": "BoundaryA9Error refusals"
+   },
+   {
+    "id": "E-08",
+    "inputs": "E5 peak_sampled basis below / above the limit, unstated basis FAIL, p_bus_1ms_max FAIL, PASS without conformant measurement, lower bound at the limit",
+    "note": "every verdict branch"
+   },
+   {
+    "id": "E-09",
+    "inputs": "E7 h1 None, TBD tolerance, ripple None / TBD / -0.1 / bool / NaN, unknown ripple status, wrong-quantity tolerance",
+    "note": "every branch and refusal"
+   },
+   {
+    "id": "E-10",
+    "inputs": "E9 empty state list, thrust / drag state_id mismatch, unknown status, non-finite value_N, hall_admitted true with EVIDENCE thrust",
+    "note": "refusals and the admitted path"
+   },
+   {
+    "id": "E-11",
+    "inputs": "E10 fixed_mass_flow_gate given, SYNTHETIC map, required_thrust_fn None, a missing feed field, a state outside the map domain, ripple 0",
+    "note": "every branch"
+   },
+   {
+    "id": "E-12",
+    "inputs": "E11 weights given, VIOLATED rows, NOT_EVALUATED constraints, non-finite / bool objectives, ties",
+    "note": "Pareto rules"
+   },
+   {
+    "id": "E-13",
+    "inputs": "E12 empty air path, missing Xe path, shared tank, filter misplaced, C1 branch on the Xe path, air path not starting at the intake",
+    "note": "A913RuleError texts"
+   }
+  ],
+  "randomized_domain": {
+   "count": 3900,
+   "draw": "one generator per entry (campaign_seeds.derivation); counts per entry: E2 600, E3 150, E4 150, E5 500, E6 150, E7 400, E8 300, E9 300, E10 300, E11 300, E12 300, E14 150, E15 300",
+   "distribution": {
+    "E2": "each objective of the table independently: missing (p 0.25) or a record with status drawn from the five objective statuses plus one unknown string, value from {finite float near the limit (limit x U(0.5, 1.5)), int, -0.0, +inf, NaN, None}, HC-05 records with / without uncertainty_basis and validation_basis in {absent, None, VALIDATED_BENCH, MEASURED, NOT_VALIDATED}, HC-03 records with gate_verdict in {absent, PASS, FAIL, NOT_EVALUABLE}, pre-evaluated records with an upstream constraint status (or an unknown one) and average_hides_violation",
+    "E3/E4": "lists of 1-6 evaluations whose constraints carry random statuses / value statuses",
+    "E5": "1-4 start-up steps; ledgers built by bus_boundary_a9_v2.ledger over the flight slots with loads drawn per slot (measured / model-derived / assumed / TBD), power_basis drawn from POWER_BASES + None, gate measurement conformant / non-conformant / absent, totals spread around 1500 W; plus mutated ledger dicts (boundary_version, booked_tbd_slots removed)",
+    "E6": "the E5 ledger pairs as design_synthesis.bus_power supplied={'steady', 'startup', 'synthetic'?}",
+    "E7": "ripple_frac in {U(0, 0.2), 0, int, None, -U(0, 1), NaN, True}, ripple_status and tolerance status from VALUE_STATUSES (+ one unknown), tolerance value U(0.01, 0.2)",
+    "E8": "2-12 states (some weighted), margins U(-1, 1) or exact 0.0 / -0.0, value_status from VALUE_STATUSES",
+    "E9": "2-10 states, thrust / drag records with statuses from VALUE_STATUSES and value_N U(0, 0.03), hall_admitted random",
+    "E10": "2-8 states, offered feed fields U(0.5, 2) x nominal with random missing fields, required thrust records, map table entries (or None = outside domain), map status VALIDATED / SYNTHETIC / other",
+    "E11": "2-10 rows, constraint statuses from the constraint vocabulary, objectives U(0, 1) with random missing / NaN / bool entries, small integer grid for ties",
+    "E12": "random permutations / omissions / insertions of the AIR_PATH and XE_PATH node names plus 'xe_tank_2', 'cathode_x', 'c1', 'chamber_shared'",
+    "E14": "random lists of question records (ids drawn from v5 ids and unknown ids; with / without status)",
+    "E15": "i_e_cap U(0, 20), I_d,max U(0.5, 10), k U(1.6, 3), u_e U(1e-4, 1), u_d U(1e-4, 1)"
+   }
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 2026100611,
+  "development_master_seed": 2026100601,
+  "derivation": "rng_e = random.Random(master_seed * 1000 + e), e the entry index (E1..E15 -> 1..15) of inputs.randomized_domain; draws in the registered order; the draws define input values only (both implementations are deterministic)",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): roles registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: no design / UQ sampling in the component",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: no TPMC call",
+   "other_streams": "NOT_APPLICABLE: neither implementation draws random numbers; the harness draws input vectors once and passes identical values to both",
+   "migration_parity_dataset": "seeds, draw order and captured reference outputs stay exactly reproducible (immutable)"
+  },
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "all_entries": [
+   {
+    "name": "outcome, error class and message",
+    "tolerance_class": "EXACT_VALUE",
+    "tolerance": "equal",
+    "definition": "RETURNED or RAISED; for the registered classes A913RuleError, BoundaryA9Error, OptimizerError and RuntimeError the class and the message are equal; for any other Python exception class (KeyError / TypeError / AttributeError on records outside the documented shapes) only the outcome RAISED is required (Rust fails closed with MODEL_ERROR; DIV-04)"
+   },
+   {
+    "name": "returned value: keys, key order, nesting, strings, booleans, null, ints and floats",
+    "tolerance_class": "EXACT_VALUE",
+    "tolerance": "equal (floats by bit pattern) after the registered DIV-01 transformation",
+    "definition": "canonical JSON of the returned value; sets (E4) as sorted lists; tuples as lists"
+   }
+  ],
+  "E15": [
+   {
+    "name": "M_n, u_M_n, M_n_lower",
+    "tolerance_class": "ULP_BOUNDED",
+    "tolerance": "k_ulp = 4",
+    "definition": "IEEE division, pow(x, 2) (= x * x), sqrt and fused-free subtraction; bit identity expected"
+   }
+  ]
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "not used",
+  "EXACT_VALUE": "integers, strings, booleans, null, statuses, verdicts, error classes / messages, key sets and order, and floats (bit pattern): equal",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp * ulp(py); ulp(py) = 2^(floor(log2|py|) - 52) for normal py, the smallest subnormal for py = 0 or subnormal",
+  "SOLVER_TOLERANCE": "not used",
+  "STATISTICAL": "not used",
+  "EXACT_STREAM": "not used"
+ },
+ "tolerance_basis": {
+  "independence": "fixed before any comparison",
+  "registered": "assessment logic is comparisons, copies and IEEE basic operations (feed margins: division and subtraction in the reference order); E15 uses pow / sqrt, k_ulp = 4 (template proposal), bit identity expected"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-G-01",
+   "statement": "no constraint status MET_ON_SUPPLIED_VALUES on a value status other than EVALUATED / SYNTHETIC_TEST_ONLY_NOT_EVIDENCE (E2); never a PASS / COMPLY word in an E2 / E7-E12 result",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-G-02",
+   "statement": "HC-05 is MET or VIOLATED in Rust only on a record with uncertainty_basis AND validation_basis in {VALIDATED_BENCH, MEASURED} (A9.31 sec. 10)",
+   "required_in_both": false,
+   "rust_only": true
+  },
+  {
+   "id": "INV-G-03",
+   "statement": "assessment never modifies its input: the canonical JSON of every input record is byte-identical before and after the call (both implementations)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-G-04",
+   "statement": "threshold provenance: the Rust HC-01..HC-12 limits equal the abep_config engineering-constraint / gate-threshold values; crates/abep-assess/src contains no numeric literal 1500, 40, 0.012, 0.025, 50.0 or 15000 used as a limit (static scan of the source)",
+   "required_in_both": false,
+   "rust_only": true
+  },
+  {
+   "id": "INV-G-05",
+   "statement": "the statewise quantifier is called, not re-implemented: crates/abep-assess has no function named statewise_quantifier and calls abep_mission::statewise::statewise_quantifier (static scan)",
+   "required_in_both": false,
+   "rust_only": true
+  },
+  {
+   "id": "INV-G-06",
+   "statement": "double-run determinism: two Rust processes give byte-identical stdout on the same call file",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": false,
+  "reason": "assessment comparisons; no balance is formed",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "mapping": {
+   "A913RuleError": "OUT_OF_DOMAIN, class and message equal",
+   "BoundaryA9Error": "OUT_OF_DOMAIN, class and message equal",
+   "OptimizerError": "OUT_OF_DOMAIN, class and message equal",
+   "other Python classes": "Rust RAISED (MODEL_ERROR), class not scored (DIV-04)"
+  },
+  "cases": "edge cases E-07, E-09, E-10, E-11, E-12, E-13 and the randomized refusals"
+ },
+ "documented_divergences": [
+  {
+   "id": "DIV-01",
+   "entry": "E2 HC-05",
+   "statement": "A9.31 sec. 10 (owner ruling 2026-10-06, after the reference was written): an HC-05 record with uncertainty_basis but without validation_basis in {VALIDATED_BENCH, MEASURED} is NOT_EVALUATED in Rust, while the reference compares its value. Registered transformation of the reference output for such a record: the HC-05 row's status becomes NOT_EVALUATED, value_status is kept, and basis becomes exactly 'A9.31 sec. 10 (OQ-NPICP-02): a model-derived I_e,cap that is VERIFIED but not bench-validated does not satisfy HC-05; NOT_EVALUATED outside a VALIDATED_BENCH domain cell (a measured I_e,cap supersedes the model at the measured point); the record carries no qualifying validation_basis'. Records with a qualifying validation_basis (the reference ignores the key) and records without uncertainty_basis are compared untransformed.",
+   "authority": "A9.31 sec. 10 (binding for this lane)"
+  },
+  {
+   "id": "DIV-02",
+   "entry": "E1, E2, E5",
+   "statement": "limits are read through abep-config from the frozen configuration (no module literal). Equal values on the registered configuration; observable outputs identical (rfp_power_gate limit_W 1500.0, gate texts rendered with format(limit, 'g') = '1500' and format(limit / 1000, 'g') = '1.5')"
+  },
+  {
+   "id": "DIV-03",
+   "entry": "E8-E10",
+   "statement": "callables are supplied as tables (inputs.transport); semantics identical, including duplicate state ids (last entry wins)"
+  },
+  {
+   "id": "DIV-04",
+   "entry": "all",
+   "statement": "records outside the documented shapes (a non-mapping record, a missing required key, a string where a number is expected) raise KeyError / TypeError / AttributeError in the reference; Rust refuses with MODEL_ERROR. Outcome RAISED is required, the class is not scored"
+  },
+  {
+   "id": "DIV-05",
+   "entry": "E13, E14",
+   "statement": "Rust verifies the sha256 of the committed RVM / owner-question records against pinned_inputs_sha256 and refuses a changed file (MODEL_ERROR); the reference reads whatever is present. Identical outputs on the registered files"
+  }
+ ],
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE (results are the reference dicts)"
+  ],
+  "rules": [
+   "result keys, nesting and order identical",
+   "constraint / value status vocabularies identical"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "captured Python outputs at python_commit"
+  ],
+  "rule": "references are read as committed; never regenerated (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY/reference_outputs/",
+   "captured_at_python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+   "sha256_manifest": "reference_outputs/MANIFEST.json, written by the scoring run",
+   "purpose": "a cargo test replays them in CI after Python is retired"
+  },
+  "historical_golden_rule": "RM-R28: not used"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "reason": "no HallThruster.jl path",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (recorded; not used)"
+ },
+ "performance_measurement": {
+  "status": "NOT_APPLICABLE: assessment over small records",
+  "workloads": [],
+  "repeats": 0
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every vector meets its tolerance class after the registered DIV-01 transformation",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": false,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED iff every per-test, invariant, domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED, PARITY_FAIL <=> NOT_ADMITTED",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "no_retuning": "a failure is reported; a changed tolerance, input set, seed or rule is v2 with fresh scoring seeds"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output may be cited by the bid package unless the owner re-freezes",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (terminal package state, A9.29 sec. 3)"
+ },
+ "what_this_is_not": [
+  "not a requirement verdict on the architecture: the scored vectors are synthetic / registered records; HC gates on today's raw results stay NOT_EVALUATED / INCOMPLETE_EVIDENCE",
+  "not a change of any threshold, requirement, frozen dataset or golden",
+  "not a re-implementation or move of the admitted statewise quantifier (it stays in abep-mission under its admitted contract)",
+  "not authority before admission; not a gate PASS (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_assess_v1.py score gates",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance",
+   "environment",
+   "per-test results",
+   "invariants",
+   "domain/error",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are not ported (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+   "no excluded legacy path",
+   "no physics crate depends on abep-assess (crate-graph test)"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27",
+  "check": "evidence / value statuses of the supplied records are carried, never upgraded (INV-G-01)"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS",
+  "status": "NOT_APPLICABLE"
+ }
+}

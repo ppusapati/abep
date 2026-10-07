@@ -7,6 +7,8 @@ use serde::Serialize;
 use std::collections::BTreeMap;
 
 pub const OUTPUT_SCHEMA: &str = "abep_np_thermal_output_v1";
+/// Model 2.0.0 outputs (O-11, O-13, O-17 v2 additions).
+pub const OUTPUT_SCHEMA_V2: &str = "abep_np_thermal_output_v2";
 pub const NOT_VALIDATED: &str = "NOT_VALIDATED";
 
 /// O-01 run status (prereg `status_vocabulary`). `Converged` maps to `EvalStatus::Evaluated`.
@@ -179,6 +181,28 @@ pub struct InterfaceDerived {
     pub cons_i2_residual_w: f64,
     #[serde(rename = "CONS_I2_bound_W")]
     pub cons_i2_bound_w: f64,
+    /// Model 2.0.0 only: the IF-ICP-THERMAL-v2 consumer bookkeeping (absent from every v1 output).
+    #[serde(rename = "IF_ICP_THERMAL_v2", skip_serializing_if = "Option::is_none")]
+    pub icp_v2: Option<IcpV2Derived>,
+}
+
+/// Model 2.0.0 consumer bookkeeping of one IF-ICP-THERMAL-v2 record (O-11, O-13, CONS-I3), per time index.
+#[derive(Debug, Clone, Default, Serialize)]
+pub struct IcpV2Derived {
+    pub scenario_member_id: String,
+    /// B_PPU_RF booked heat per sub-account (RF_SOURCE, RF_CHAIN); no remainder key.
+    #[serde(rename = "B_PPU_RF_sub_account_W")]
+    pub b_ppu_rf_sub_account_w: BTreeMap<String, Vec<f64>>,
+    /// Per key: (deposited on nodes, exported, booked) of TK-01..TK-13.
+    pub deposition: BTreeMap<String, [Vec<f64>; 3]>,
+    /// CONS-I3: sum over TK-01..TK-13 of (deposited + exported + booked) - P_icp_slot_load_sum_W, worst index.
+    #[serde(rename = "CONS_I3_residual_W")]
+    pub cons_i3_residual_w: Option<f64>,
+    #[serde(rename = "CONS_I3_bound_W")]
+    pub cons_i3_bound_w: Option<f64>,
+    /// Per node: TK-07 share + TK-12 share (IFI2-08), per time index.
+    #[serde(rename = "ICP_electrode_and_wall_node_total_W")]
+    pub node_total_w: BTreeMap<String, Vec<f64>>,
 }
 
 #[derive(Debug, Clone, Default, Serialize)]
@@ -233,6 +257,11 @@ pub struct Provenance {
     pub a9_status: String,
     pub binding_statuses: BTreeMap<String, String>,
     pub validation_status: String,
+    /// Model 2.0.0 only (O-17 v2, FT-23): the producer scenario member and the producer lock sha256.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub scenario_member_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub producer_lock_sha256: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize)]

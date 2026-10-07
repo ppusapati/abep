@@ -1,0 +1,34 @@
+{
+  "schema": "abep_new_physics_verification_addendum_v1",
+  "id": "np_icp_neutralizer_verification_addendum_ver23_v1",
+  "model_id": "NP-ICP-NEUTRALIZER",
+  "model_version": "2",
+  "verify_item": "VER-23",
+  "item_text": "how the pinned HallThruster.jl v0.23.1 (bfb3019f) represents the cathode / coupling potential (read from the pinned source)",
+  "used_by": "CPL-HON-05 (Hall-side feedback; CPL-HALL-ON-v1)",
+  "gate": "NP-ICP prereg v1 verify_gate (inherited by v2): a verification addendum records the source read (locator, access, sha256 where lawful) and confirms the text",
+  "date": "2026-10-07",
+  "source": {
+    "repository": "https://github.com/UM-PEPL/HallThruster.jl",
+    "commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+    "pin_record": "hallthruster_bridge/PINNED.toml (version 0.23.1, the same commit)",
+    "licence": "MIT",
+    "access": "anonymous git fetch of the pinned commit (depth 1) through the session's git proxy, 2026-10-07; read only, nothing executed",
+    "files_read": [
+      {"path": "src/simulation/configuration.jl", "sha256": "99993adce3c4196098beb389177a72a705595b1f70ef0f853079330fd43486f9", "lines": "76-78, 86-90, 213-216, 351, 471, 480"},
+      {"path": "src/simulation/electron_update.jl", "sha256": "9f4c00153e39ad980a92e4417621375efcef61aea80567bbb81c33fdb1932f30", "lines": "84-87, 113-164"},
+      {"path": "src/simulation/potential.jl", "sha256": "c654c7b23b3a77ae450af8bdff7ab7086cb43f0b542529bcd07d96cdefeccfd3", "lines": "19-34"},
+      {"path": "src/simulation/electron_energy.jl", "sha256": "36caa2d5453ffb2a7ea12ef410ba38dff684705acdc05a95319486d0248b67bf", "lines": "138-155"},
+      {"path": "src/simulation/types.jl", "sha256": "252254f630d74e6028ef209d4d22ae95168c86a6ea3f025edaf92aac8ce62577", "lines": "127, 137"}
+    ]
+  },
+  "read": {
+    "coupling_potential": "The cathode is not modelled as a device: it is the right (downstream) boundary of the 1-D domain. Its potential is the configuration input `cathode_coupling_voltage` [V] ('The potential at the right boundary of the simulation. **Default:** `0`', configuration.jl 76-78; default 0.0 at 213; converted to volts at 351; passed to the parameters at 480).",
+    "where_it_enters": "electron_update.jl 85-89: V_L = Vd[] + Vs[] (discharge voltage plus the anode sheath potential) and V_R = params.cathode_coupling_voltage; the discharge current is I = (Delta V + int1) / int2 with Delta V = V_L - V_R (lines 161-162). The potential profile is integrated from V_L at the left edge (potential.jl 33-34: cumtrapz!(phi, ..., V_L)), so the right-boundary potential enters through the current that the momentum-integral closure returns.",
+    "electron_temperature": "The electron temperature at the same boundary is a Dirichlet value Te_R = `cathode_Tev` (default 2.0 eV; configuration.jl 86-90, 215, 471; electron_energy.jl 151-154: 0.5 (n_eps[end-1]/n_e[end-1] + n_eps[end]/n_e[end]) = 3/2 Te_R).",
+    "not_present": "No cathode emission current, no coupling-voltage solve and no neutralizer model: the coupling potential is an input of the Hall run, never an output."
+  },
+  "confirmation": "VER-23 is answered as CPL-HON-05 asks: the pinned HallThruster.jl takes the coupling potential as the scalar input `cathode_coupling_voltage` [V] (right-boundary potential, with the right-boundary electron temperature `cathode_Tev` a separate input). A Hall <-> ICP fixed point therefore sets V_coupling as that input of each Hall run (or as a map axis). VER-23 is CLEARED.",
+  "consequence": "CPL-HALL-ON-v1 no longer carries VER-23_HALL_COUPLING_POTENTIAL_INPUT_UNVERIFIED (abep-icp v2 cpl.rs). Nothing else changes: CPL-HALL-ON-v1 stays NOT_EVALUATED (credible Hall transport set EMPTY, HI-04..HI-06 without producer, HI-08 not registered, VER-24 open), and no Hall map yet carries cathode_coupling_voltage as an axis (a map-generation registration, not this addendum).",
+  "test": "crates/abep-icp/tests/v2_fail_closed.rs fc20_* (the reason is absent, VER-24 remains) and verification_addendum_ver23_is_bound_to_the_pin"
+}

@@ -4872,6 +4872,183 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   parallel and sets the primary objective: the hall_icp_neutralizer architecture proof (decisive 196-state run, RFP
   constraint matrix, controlled comparison, one of conclusions A-D).
 
+## 2026-10-06 — RF/ICP v2 preregistration lane: NP-ICP-NEUTRALIZER prereg v2 and NP-THERMAL-CATHODELESS prereg v2 (A9.31 secs. 7-10; docs only)
+
+- **NP-ICP-NEUTRALIZER v2** (`7a26d39`, lock `a180ceef…`, prereg_v2.json `3f0df5b8…`, PREREG_v2.md `2a4ff426…`). v1, its
+  addenda and both verification reports are unchanged. Every v1 item not replaced or retired is inherited verbatim.
+  - PF-01: γ is per collision (AIR-WALL-02/03), so the atom sink is γ ¼ n v̄ A. γ comes per (species, material) from the
+    {0, 1} vertex set unless sourced.
+  - PF-02: background inflow carries τ_j (Chiggiato Q = C Δp; detailed balance). Flight hyperthermal ambient needs a
+    registered exposure model.
+  - GAP-01..03: energy classes X / N / A with registered destination vertex sets (RAD, WALL per material, OUT; end split
+    ∝ A_j τ_j or the UP/DOWN pair). There is no point split. Atom formation uses the registered D0 (D0(N2) still to
+    register, otherwise the partition is INCOMPLETE_EVIDENCE).
+  - GAP-04: λ_i,s = 1/Σ n_k σ_s,k, with members H-MS / H-LO / H-HI; all three equal v1 for one ion species.
+  - GAP-05: CC-03 is scaled by the largest current component.
+  - INT-16/17/18 are adopted as approved. The sec. 10 rulings are applied: HC-05 only inside a VALIDATED_BENCH cell,
+    with a measured value superseding the model; ω_ce/ν_m and r_ce/R reported with no threshold; CA-ICP-v1 as a screen
+    where an unbounded omission blocks; a frozen CAL/VAL partition; ASSUMED_GEOMETRIC_TUBE; measured p_ICP determining
+    for validation.
+- **IF-ICP-BUS-v2**: load-plane values only, mapped onto `bus_power_boundary_a9_v2` slots. `P_icp_bus_W` (mixed planes,
+  SC-WP-05 finding), η_bias and `Q_icp_bias_supply_loss_W` are retired, because the bias-supply loss is the ledger's
+  P_loss. There is no flight cathode key, and 1.5 kW stays in assessment.
+- **CPL-HALL-ON-v1**: the Hall-ON coupling contract, preregistered with execution gated on an admitted Hall member.
+  CFG-FLIGHT-HALL-ON stays NOT_EVALUATED. HI-04..06 (exit neutrals and their transfer, beam/CEX ions, plume potential)
+  have no producer. Per-surface supply attribution of the jointly powered circuit energy is not identifiable, so it goes
+  into coupling keys, never into ICP keys.
+- **NP-THERMAL-CATHODELESS v2** (`37939f5`, lock `727689fe…`, prereg_v2.json `6828f3e2…`, PREREG_v2.md `b94b95fa…`)
+  consumes IF-ICP-THERMAL-v2 byte for byte (key-table sha256 `33e495ad…`). Destinations:
+  - RF-source losses → B_PPU_RF RF_SOURCE;
+  - line / match / actuator → N_MATCH or RF_CHAIN;
+  - collector deposition → N_COLLECTOR;
+  - upstream outflow → RX-H1-FACE, a registered partition over existing H-1 / mount / housing nodes and EXPORT, with no
+    new node;
+  - downstream outflow, extraction and bias export → EXPORT.
+
+  The IK-07 remainder is retired in favour of exact identities and CONS-I3. Every other v1 criterion is inherited.
+- **Open:** OQ-NPICP-05 (Xe / Ar sources); VER-19..25; D0(N2) registration; v2 consumer paths in
+  `abep_subsystems::power` (additive). No code, Python or frozen data was changed.
+
+## 2026-10-06 — SC-WP-11 assessment: crate abep-assess, two contracts ADMITTED, RFP constraint matrix ACCEPTED (no Python, config or frozen data changed)
+
+- **Contracts**, each committed alone before any comparison: design gates `0dfe17e2…` (design_gates.py plus the parts
+  other lanes left for SC-WP-11: bus_boundary_a9_v2.rfp_power_gate, design_synthesis.bus_power gate_verdict,
+  upstream_a9_13.statewise_envelope, p1_reducer.icp45a_margin; DIV-01 = A9.31 sec. 10 HC-05 rule), RVM rules + GNG-ICP-01
+  `f67e2fc8…`. Acceptance prereg ACCEPT-NI-ABEP-ASSESS-RFP-MATRIX-V1 `ed5bf752…` (A9.31 sec. 17 matrix, HC-05 evaluator).
+- **Rust:** new crate `crates/abep-assess` (gates, power_gate, statewise, pareto, propellant, rvm, icp_gate,
+  owner_state, neutralization, matrix). Thresholds come only from config through abep-config. It reuses the admitted
+  abep-mission statewise quantifier (called, not moved: its admitted contract places it in abep-mission), abep-gaspath
+  vocabulary, abep-config architecture, abep-subsystems power / mass and abep-icp. Crate-graph test: no physics crate
+  depends on abep-assess.
+- **Scored once: both PARITY_PASS / ADMITTED.** 5199 and 2813 vectors, 0 failures, 0 ulp. All 60 committed RVM cells
+  and the committed GNG-ICP-01 status (NOT_EVALUATED) replay exactly. CI replay `tests/captured_replay.rs`.
+- **Acceptance: ACCEPTED** (AC-01..AC-10; execution 1 aborted on a full shared disk before any report). Matrix on
+  today's admitted raw results: 7 of 8 requirements NOT_EVALUATED; wet mass DOES_NOT_CLOSE at the governed 2 / 5 /
+  10 kg Xe cases (40.35 / 43.35 / 48.35 kg planning values, evidence INCOMPLETE_EVIDENCE); P_bus official ledger
+  PARTIAL_BOUNDARY (24 TBD terms, lower bound 0 W, no start-up ledgers); HC-05 and GNG-ICP-01 NOT_EVALUATED.
+- **Not ported:** gate_snapshot (wraps the F8 snapshot, SC-WP-10), the RVM document builder and the RFP registration
+  builder (PYTHON_REFERENCE). hard_gates / arch_constraints / closure_checks are class H.
+- **Results:** `cargo test --workspace --locked` 427 passed, 0 failed, 2 ignored (registered PT-01 / PT-02). fmt and
+  clippy are clean. `ci_checks` 12/12. The full pytest run stopped at ~78 % when the shared disk filled during
+  concurrent full runs (disk rule of 2026-10-06). The affected files (layer separation, RVM, ICP gate, gate thresholds,
+  dependency rule, bid guard, repo integrity, Rust CI) pass: 303 passed.
+- **Ledger request** (in each report; the ledger was not edited): partial admissions of design_gates, bus boundary v2
+  (rfp_power_gate), design_synthesis (gate_verdict), upstream_a9_13 (statewise_envelope), P1 bench (icp45a_margin) and
+  RVM (rules, GNG-ICP-01); NI-ABEP-ASSESS-RFP-MATRIX ACCEPTED.
+
+## 2026-10-07 — A9.31 sec. 19 architecture comparison v1 (analysis record; no model, config, frozen data or decision changed)
+
+- **Record:** `docs/architecture/architecture_proof/architecture_comparison_v1.json` (authoritative, sha256 `52cea11a…`)
+  and `architecture_comparison_v1.md` (`89e62d7e…`). Status ANALYSIS_RECORD_NOT_A_DECISION. Base `442730f`.
+- **Scope:** seven alternatives × eleven criteria = 77 rows. The alternatives are A (Hall + Xe-fed LaB6 hollow cathode),
+  B (selected `hall_icp_neutralizer`), C (electrodeless-only / magnetic nozzle), D1 / D2 (upstream RF / ECR pre-ionizer + Hall
+  + cathode), D3 (gridded ion) and D4 (RF||Hall v2 / A8, no inputs on this line). Each row carries the basis type, evidence
+  status and class, sources pinned by sha256 (39 files), and a scoped qualitative ranking. No row is verdict-bearing.
+- **Common basis:** the frozen RFP envelope (engineering_constraints_v1, manifest `3a85581e…`) and the 196 frozen design states.
+  Only B has been evaluated on the 196 states and on `bus_power_boundary_a9_v2`; the boundary-parity table records where each
+  other alternative sits. No cross-boundary numeric comparison is made.
+- **Withdrawn results:** no withdrawn absolute 0-D result is used. Three mechanism-level notes ("probably robust") are cited,
+  labelled MECHANISM_LEVEL_PROBABLY_ROBUST. They cover grids (CEX / perveance), magnetic nozzles (energy per particle) and
+  RF pre-ionizers; the pre-ionizer note is recorded as not confirmed by the later break-even overlays, which straddle.
+- **Findings (input to the A9.31 sec. 20 integrator, not the conclusion):**
+  - No alternative has an admitted thrust, P_bus or closed mass. No investigated alternative is better supported than B on
+    any criterion with determining evidence.
+  - B is favoured on architecture / mechanism grounds: no Xe consumable in air mode, no thermionic emitter in the O-bearing
+    plume, no continuous Xe feed branch, and (conditionally) Xe mass.
+  - A is favoured on evidence maturity: neutralization, control, and neutralizer electrical power per ampere (Xe analogs).
+  - A is retired by owner decision (A9.19 / A9.20), not by a physics veto. C and D3 are excluded at mechanism level only.
+    D1 / D2 are historical and not eliminated.
+  - Gaps that block a determination are listed as CD-01..CD-14; the decisive ones are CD-01, CD-02, CD-03 and CD-06.
+- Generated by a lane scratchpad script (not committed); the JSON is the record.
+
+## 2026-10-06 — SC-WP-09 mission: state propagation ADMITTED; NP-MISSION-INTEGRATION v1 preregistered, implemented and VERIFIED (no Python, config or frozen data changed)
+
+- **Contract first** (`1a8101e`, sha256 `89db4ba5…`): PARITY-C-ABEP_SIM_MISSION_ENV_PY-PROPAGATION-V1 covers SOLAR_CONST,
+  beta_angle, eclipse_fraction, worst_eclipse_fraction, array_area_for and propagate.
+  - spacecraft_drag stays out: unsourced defaults and only class-H callers (lane brief).
+  - pointing_factors is AUDITED_NOT_PORTED: its sole caller is spacecraft_drag (owner question OQ-MI-03).
+  - load_mission_scenario and the constants kernel were already admitted and are reused.
+- **Scored once: PARITY_PASS / ADMITTED** (`fc59291`, seed 731909203). 1222 vectors, every float bit-identical
+  (0 ulp), 126 propagate runs (20,742 rows). Four NaN inputs are refused in Rust (DIV-P-01). A CI replay of the
+  captured references was added (`tests/propagation_reference_replay.rs`).
+- **NP-MISSION-INTEGRATION v1** was preregistered alone (`cd52b05`; prereg `9d3a7202…`, lock `7c206ee3…`). Addendum 01
+  (`093568a`, before any code) scopes FT-10: the environment layer reads `config/constraints` only for the
+  altitude-band domain pin.
+  - It integrates the 26,280 h mission basis and the independent 15,000 h firing scenario over the frozen 196-state
+    set, for AIR_PRIMARY, XE_CONTINGENCY and NON_FIRING.
+  - Per state it carries the A9.31 sec. 16 fields, with G-REUSE / G-ATM / G-XE ICP routing.
+  - Time accounting and the Xe / atmospheric ledgers are exact (Shewchuk expansions).
+  - Fail-closed statuses propagate. Parametric results (F1 intake drag, PB-AO bound, Xe planning cases) stay in a
+    separate layer. No RFP threshold, no M_n, no Xe × duration.
+- **Rust** (`eabfbf7`): `abep-mission::propagation` and `abep-mission::integration::{model, quantity, exact, today,
+  testkit}`. CLIs `abep-mission-env-parity` and `abep-mission-integration` (today | summary | al-export).
+  `today::run_admitted` is the hook of the decisive 196-state architecture run.
+- **Verification report v1: VERIFIED** (`c64d918`). AL-01..AL-11, CONS, FT-01..FT-15 and DET pass. IV-01, an exact
+  rational check, ran 2853 checks with 0 disagreements.
+  - Today's run: the environment fields are EVALUATED for all 196 states.
+  - Hall, I_e,cap, thrust, T − D, P_bus, thermal, intake / feed, mass and every mission total are NOT_EVALUATED.
+    The reasons are: the credible set is EMPTY, NP-ICP is not admitted, the bus ledger is PARTIAL_BOUNDARY, there is
+    no design point, no host drag ICD, no CBE, the Xe load is not frozen, and no schedule is registered.
+- **Results:** `cargo test --workspace --locked` 445 passed, 0 failed, 2 ignored (registered platform tests PT-01 / PT-02). fmt and clippy are clean. `ci_checks` 12/12. pytest
+  4232 passed, 5 skipped, 1 xfailed (two full runs hit a shared-disk ENOSPC; the affected files were rerun clean with basetemp outside the tree).
+- **Ledger request** (in the reports; the ledger was not edited): C-ABEP_SIM_MISSION_ENV_PY function subset ADMITTED;
+  NP-MISSION-INTEGRATION VERIFIED.
+- **Owner questions:**
+  - OQ-MI-01: a mission schedule record.
+  - OQ-MI-02: confirm G-REUSE.
+  - OQ-MI-03: confirm pointing_factors not ported.
+  - OQ-MI-04: a v2 altitude coupling.
+  - OQ-MI-05: NON_FIRING loads.
+
+## 2026-10-07 — A9.32 owner decision recorded: Hall thrust critical path, parametric feasibility envelope
+
+- **What:** owner directive recorded verbatim as `docs/decisions/OD_2026_10_07_A9_32_HALL_THRUST_CRITICAL_PATH_PARAMETRIC_ENVELOPE.md` (sha256 `69e9a00d77a7c51717a1d9cf6738c238090b23812195c8b37bfab560f33a0e6f`), with companion `docs/decisions/OD_2026_10_07_A9_32_hall_thrust_critical_path_parametric_envelope.json`.
+- **Directive:** no new broad architecture work; complete mission, F7/F8, RF/ICP + thermal v2 and plenum/feed v6. In parallel,
+  preregister and run a HallThruster.jl parametric feasibility envelope for the selected H1 geometry using only sourced / registered
+  transport assumptions, labelled PARAMETRIC / NOT_VALIDATED, and feed it into the decisive 196-state closure run. The result reports
+  (a) physics-feasible and (b) evidence-qualified / admitted states separately.
+  - Non-closing under the favorable but defensible envelope → Hall+RF PHYSICALLY_NON_CLOSING.
+  - A feasible region with an empty credible set → SELECT_WITH_EVIDENCE_CONDITIONS.
+  - Archival, golden and clean-install work do not gate the conclusion.
+- **Unchanged:** the credible Hall transport set stays EMPTY; HallMap admission is unchanged; the HallThruster.jl pin (rule 7) is unchanged.
+- **Environment note:** this session's network policy denies the Julia download hosts, so score-bearing Hall runs wait on that.
+
+## 2026-10-07 — RF/ICP + thermal v2 implementation lane: NP-ICP model_version 2, NP-THERMAL 2.0.0, IF-ICP-BUS-v2 consumer (additive)
+
+- **NP-ICP-NEUTRALIZER model_version 2** (`edbbfe1`, `crates/abep-icp/src/v2`) is added beside v1 and verifies lock
+  `a180ceef…` on load. It implements:
+  - EQ-02 v2 (PF-01 per-collision recombination, PF-02 background inflow through τ_j);
+  - the GAP-04 members H-MS / H-LO / H-HI;
+  - CC-03 v2;
+  - the ED-01..ED-09 disposition, with one IF-ICP-THERMAL-v2 record per ED-08 member;
+  - IF-ICP-BUS-v2;
+  - CPL-HALL-ON-v1 as a typed NOT_EVALUATED contract;
+  - VC-03/06/07/08 validation gating and the EQ-19 / EQ-20 diagnostics.
+
+  Tests: LC-12..LC-17, LC-19, LC-20, FC-14 and FC-16..FC-30. Every v1 result is byte-identical to base `1c9e87f`
+  (`tests/v1_byte_identity.rs`).
+- **NP-THERMAL-CATHODELESS 2.0.0** (`2f4b7fc`) adds `run_case_v2` and `GovernedContextV2`, which verifies lock
+  `727689fe…`, its v1 predecessor, the producer anchor and key table `33e495ad…` on both sides. The consumer implements
+  E-07 v2 deposition by key: B_PPU_RF RF_SOURCE / RF_CHAIN with no remainder, the RX-H1-FACE f_up, the registered TK-06
+  split, and the producer TK-07 / TK-12 node shares. It also implements IFI2-01..IFI2-11, CONS-I3 and FT-19..FT-23.
+  The AL-10 v2 synthetic record (sha256 `3419b518…`) was registered and committed alone before the scored run
+  (`a18ceb5`).
+- **Power lane:** `icp_upstream_loads_v2` reads IF-ICP-BUS-v2 load planes exactly (BUS2-01/04/07; `P_icp_bus_W` is
+  refused). `accounts_from_thermal_v2` provides the CONS-L1 v2 ICP account at the load planes, with the ledger P_loss
+  outside the account; LC-18 passes.
+- The v1 thermal, IF-ICP-BUS-v1 and CONS-L1 outputs and `vs_net_v1.json` are byte-identical.
+- **Results:** workspace 455 passed, 0 failed, 2 ignored (PT-01 / PT-02). test-register reports 0 violations. fmt and
+  clippy `-D warnings` are clean on the changed crates.
+- **Status:** both models are IMPLEMENTED_UNVERIFIED (open verify items) and NOT_VALIDATED. No preregistration conflict
+  was found, and no frozen record was edited. Reports: `verification_report_model_v2_v1.json` in both model
+  directories.
+- **Open:**
+  - D0(N2);
+  - VER-01/06/07/08/11/12/20..25;
+  - a producer → consumer record adapter for orchestration;
+  - RI-PART f_up and TK-06 split for real configurations;
+  - CFG-FLIGHT-HALL-ON (CPL-HALL-ON).
+
 ## 2026-10-07 — Plenum / feed transients (SC-WP-02): v5 superseded unscored (Rust integrator damped growing modes), growing-mode guard, contract v6 registered and refined; v6 scoring held for a decision
 
 - **v5** (`parity_prereg_v5.json`, `1b382387…`, `f44dbfe`): cascade diagnostics scored through their primitives, a
@@ -4901,6 +5078,126 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   P_dev and 0.725 × mdot_scale, so the P45 test would be near-vacuous for the ~97 % stable held-out vectors. Decision
   (score v6 as registered, or a v7 with a per-vector stability class) is with the coordinator / owner. No Python, frozen
   data or admitted output changed.
+
+## 2026-10-07 — RF/ICP + thermal v2 follow-up: coupling smoke case, verify items, NP-THERMAL 2.0.0 VERIFIED
+
+- **Adapter** `abep_subsystems::thermal::icp_v2_adapter` maps the serialized NP-ICP v2 thermal member record to the
+  thermal 2.0.0 input by the locked key table. Status CONVERGED → EVALUATED; withheld statuses are kept; anything else
+  is refused, as are duplicated, renamed or dropped keys.
+- **Coupling smoke case:** one registered SYNTHETIC case, committed alone (`6a4f961`, sha256 `a08a263c…`). It runs
+  ICP v2 → adapter → thermal 2.0.0 → IF-ICP-BUS-v2 → CONS-L1 v2 in `crates/abep-mission/tests/coupling_smoke_v2.rs`.
+  abep-subsystems gains no dependency (INV-A05).
+  - Every energy key is booked exactly once: residual 0 per key; 1.4e-14 W against the 36.01 W slot-load sum; the ICP
+    account mismatch is 0.0 W.
+  - Duplicated, renamed and dropped keys, unmapped statuses and double counts are refused.
+- **Verify items (NP-ICP v2):**
+  - VER-23 is cleared by `verification_addendum_ver23_v1.json`, a read of the pinned HallThruster.jl `bfb3019f`. The
+    coupling potential is the right-boundary input `cathode_coupling_voltage`. CPL-HALL-ON-v1 keeps VER-24 only and
+    stays NOT_EVALUATED.
+  - Every other item stays open, each with its reason and what would close it. The sources are not registered and
+    publisher / NIST / arXiv hosts are blocked here. VER-02 is added to the list: report v1 had omitted it.
+  - The status stays IMPLEMENTED_UNVERIFIED.
+- **NP-THERMAL-CATHODELESS 2.0.0** is **VERIFIED** under `admission_rule_v2`:
+  - the inherited AL / FT / DET / IV-02 cases pass through `run_case_v2`;
+  - AL-10 v2, CONS-I3, FT-19..23 and the producer key-table hash are met;
+  - CONS-L1 is now evaluated;
+  - IV-01 was re-run in a non-authoritative scratch: steady 6.5e-11 K, transient 0.009 K at matched refinement,
+    energy 2.7e-13.
+
+  It is not admitted until ADM-04, and stays NOT_VALIDATED. Report v1's "pending the producer" condition was not part
+  of the rule.
+- **Reports:** `verification_report_model_v2_v2.json` / `.md` in both model directories, and `.md` companions for v1.
+- **Results:** workspace 507 passed, 0 failed, 2 ignored. D0(N2) and the real-configuration f_up / TK-06 partitions
+  stay open (no registered source).
+
+## 2026-10-07 — Hall-thrust critical path (A9.32): NP-HALL-PARAMETRIC-ENVELOPE v1 preregistered; case generation, workflow and 196-state closure harness (no run yet)
+
+- **Input audit** (`input_audit_v1.json`, `1559dbd`):
+  - **H-1 B(z) is NOT registered** (H1F-BZ-01 TBD: no FEMM of MC-1, no measured map). Only the H1F-BZ-02 shape target
+    and the H1F-BZ-03 peak band 69.93–268.6 G exist. The two P5 Peterson 2001 shapes are the only sourced numeric
+    profiles.
+  - No H-1 design point is selected; there are 7 FEMM-authorised analysis points.
+  - The credible set is EMPTY; only sgb-screen-01..09 are registered.
+  - There is no Hall O / O2 chemistry, while atomic O is 5–86 % of the inflow over the required states.
+  - No H-1 Xe flow is registered. Every non-Hall input is open.
+- **Preregistration** (`6358665`, committed alone):
+  - Hashes: `prereg_v1.json` `3275f857…`, `PREREG.md` `733509bd…`, lock `25ecfa88…`.
+  - Grid: 4536 vacuum cases. XE plus N2_PROXY × 7 geometry analysis points × 2 SOURCED_SURROGATE B shapes (P5,
+    peak-at-exit, band ends) × 3 V_d × 3 flows × 9 candidates. Numerics are scaled from P5-N2.
+  - Run-status rule: NUMERICAL_FAILURE > OUT_OF_DOMAIN > NOT_SUSTAINED > PASS.
+  - Favorable-but-defensible definition. The surrogate-B(z) rule is asymmetric: a closure can support
+    SELECT_WITH_EVIDENCE_CONDITIONS with EC-BZ; a non-closure is never PHYSICALLY_NON_CLOSING.
+  - AIR layer (a) is NOT_EVALUATED. N2_PROXY is diagnostic only.
+  - Classification procedure C0..C4 with the NOT_DETERMINABLE branch.
+- **Code** (`382c5c4`, `9364b25`, `ea69ae9`; additive):
+  - `abep-hall::envelope`: frozen case set, run status, sha-pinned ingestion.
+  - `abep-julia-bridge::envelope_cases` and `abep-h1-envelope-cases` (generate / check / run-shard / freeze). The case
+    file is `c4a73dbb…`; the dry run checks it against bridge_lib.jl `run_case`. The Julia driver is
+    `driver/h1_envelope_driver.jl`.
+  - `abep-assess::closure` and `abep-assess-closure`: the two-layer 196-state run.
+  - `.github/workflows/h1-parametric-envelope.yml`: workflow_dispatch only, 64 shards, freeze. Not triggered.
+  - `driver/run_local.sh`.
+- **Closure run today** (`closure_run_today_v1.json`): **NOT_DETERMINABLE** (C1).
+  - Blockers: HALL_ENVELOPE_NOT_RUN, AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED, and the open non-Hall inputs.
+  - 0 / 196 states are physics-feasible in layer (a); 0 are evidence-qualified in layer (b).
+- **Execution:** Julia is not installable here (403), so no Hall run was made. The estimate is about 100–150 CPU-h.
+- **Open owner questions:** OQ-HPE-01..06 (surrogate rule, Hall O / O2, Xe flow, non-Hall bounds, execution, numerics).
+
+## 2026-10-07 — SC-WP-10 design / UQ: F7 and F8 contracts ADMITTED in Rust; abep-rng stream EXACT_STREAM; B2-OF-01 diagnostic ACCEPTED (acceptance v2); robust set EMPTY (no Python or frozen data changed)
+
+- **Preregistered first, each committed alone:** B2-OF-01 diagnostic acceptance v1 (`1f92483`, prereg `c1855b3b…`,
+  before any diagnostic code), F7 contract (`7ccbeb9`, `920d11fc…`) and F8 contract (`b70623d`, `06559c1a…`).
+- **Rust** (`0311af2`):
+  - `abep-rng`: numpy 2.4.4 SeedSequence / PCG64 / `Generator.standard_normal` (ziggurat tables copied from the
+    v2.4.4 sdist), `random()` and intake_synthesis `stable_seed`. It is the registered design / UQ stream (A9.29
+    sec. 7, EXACT_STREAM) and is never used by the TPMC kernel.
+  - `abep-design` (F7): inputs, `upstream_context`, Pareto / layers, `context_pareto` design part and the
+    `rank_full_system` refusal stages. It reuses abep-gaspath / abep-mission / abep-subsystems / abep-config and depends
+    on no assessment or evidence crate.
+  - `abep-uq` (F8): survivors, scenario robustness, the seeded TPMC-statistics Monte Carlo, robust Pareto, the carried
+    robust set, sensitivities and the study runner with the binding-constraint decomposition. It also holds the B2-OF-01
+    `interp_sensitivity` diagnostic, plus additive `IntakeSurface` accessors in abep-intake; the admitted interpolation
+    is unchanged.
+- **Scoring.**
+  - The first scoring execution (2026-10-06) aborted before any comparison. Three context-bin writes of the Rust study
+    left zero-byte files on the shared scratch volume, and the harness, which did not check the study outcome, stopped
+    reading `contexts.json`.
+  - Fix (`ba8adc3`): harness only, no random draw consumed, Rust source unchanged. The harness clears the study
+    directory, checks free space and checks the study outcome. The abort is recorded in both reports'
+    `campaign_history`.
+  - **Scored once (`c94b727`): both PARITY_PASS / ADMITTED, 0 failures.**
+    - F7: 900 vector calls plus the full-grid study (100 contexts, 4,752,000 feasibility bits identical, 1279 Pareto
+      members); max 28 ulp.
+    - F8: 3882 calls plus the study; max 256 ulp (3.6e-15 absolute, inside the registered 1e-9 relative bound).
+    - Captured reference outputs (Pareto blocks, context index, F8 study, numpy stream samples) are under each
+      contract's `reference_outputs/`.
+- **Study result (both implementations agree).** 90 survivors, none feasible in all 10 scenarios, so the **robust set is
+  EMPTY**:
+  - feasible-scenario tiers 1:13, 2:25, 3:24, 4:17, 5:9, 6:2;
+  - infeasibility reasons: TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE 452, GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0 273;
+  - the representative is refused and the gates are unchanged (INV-F8-01/02/04).
+- **B2-OF-01 diagnostic.**
+  - Acceptance v1 scored once: **NOT_ACCEPTED** (`ea8f902`, kept). Every substantive check passed, but the harness
+    counted cargo's `test result:` summary line as a test with status `0.53s`. It also omitted the AT-09 test
+    (`tests/f8_pipeline.rs`).
+  - Acceptance v2 (`447bf63`, `a8b826c7…`) copies every case verbatim and changes only the test-evidence rule: a
+    workspace run with the registered test of each AT case.
+  - v2 scored once: **ACCEPTED** (`bbe0855`).
+    - All registered points classify identically in Rust and in an independent Python classification from the frozen
+      CSV, and the survey maxima are reproduced within 2.1e-16.
+    - AT-08 holds on the 160 chain points (128 GRID_NODE ROUNDING_LEVEL, 32 NOT_ON_KNOWN_FACE, interpolant unused).
+  - This is software verification, not physics, and not a change of the frozen surface.
+- **Performance** (reported, never a criterion; single thread): Rust F7 3252 s wall vs Python 2353 s CPU; F8 98 s vs
+  122 s. The Rust F7 study is slower than the reference.
+- **Tests:**
+  - New: `abep-design` unit tests and `abep-uq` tests `f8_pipeline.rs`, `interp_sensitivity.rs` and the CI replay
+    `reference_replay.rs` (captured numpy streams, bit for bit).
+  - `cargo test --workspace --locked`: 439 passed, 0 failed, 2 ignored (registered platform tests PT-01 / PT-02).
+  - fmt and clippy are clean. `ci_checks` 12/12. pytest: 4232 passed, 5 skipped, 1 xfailed.
+- **Ledger request** (in the reports; the ledger was not edited):
+  - F7 and F8 partial admissions, plus the partial admissions of `context_pareto` (design part), the
+    `rank_full_system` refusal stages and `require_all_admitted_scenarios` / `robust_over_scenarios`.
+  - The abep-rng stream as infrastructure, and the new item DIAG-B2-OF-01 ACCEPTED.
 
 ## 2026-10-07 — Plenum / feed v6 superseded unscored; reference defect DIV-P-REF-01; v7 not registered (second cause in P43 xO)
 
