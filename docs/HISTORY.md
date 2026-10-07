@@ -5142,3 +5142,59 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   - 0 / 196 states are physics-feasible in layer (a); 0 are evidence-qualified in layer (b).
 - **Execution:** Julia is not installable here (403), so no Hall run was made. The estimate is about 100–150 CPU-h.
 - **Open owner questions:** OQ-HPE-01..06 (surrogate rule, Hall O / O2, Xe flow, non-Hall bounds, execution, numerics).
+
+## 2026-10-07 — SC-WP-10 design / UQ: F7 and F8 contracts ADMITTED in Rust; abep-rng stream EXACT_STREAM; B2-OF-01 diagnostic ACCEPTED (acceptance v2); robust set EMPTY (no Python or frozen data changed)
+
+- **Preregistered first, each committed alone:** B2-OF-01 diagnostic acceptance v1 (`1f92483`, prereg `c1855b3b…`,
+  before any diagnostic code), F7 contract (`7ccbeb9`, `920d11fc…`) and F8 contract (`b70623d`, `06559c1a…`).
+- **Rust** (`0311af2`):
+  - `abep-rng`: numpy 2.4.4 SeedSequence / PCG64 / `Generator.standard_normal` (ziggurat tables copied from the
+    v2.4.4 sdist), `random()` and intake_synthesis `stable_seed`. It is the registered design / UQ stream (A9.29
+    sec. 7, EXACT_STREAM) and is never used by the TPMC kernel.
+  - `abep-design` (F7): inputs, `upstream_context`, Pareto / layers, `context_pareto` design part and the
+    `rank_full_system` refusal stages. It reuses abep-gaspath / abep-mission / abep-subsystems / abep-config and depends
+    on no assessment or evidence crate.
+  - `abep-uq` (F8): survivors, scenario robustness, the seeded TPMC-statistics Monte Carlo, robust Pareto, the carried
+    robust set, sensitivities and the study runner with the binding-constraint decomposition. It also holds the B2-OF-01
+    `interp_sensitivity` diagnostic, plus additive `IntakeSurface` accessors in abep-intake; the admitted interpolation
+    is unchanged.
+- **Scoring.**
+  - The first scoring execution (2026-10-06) aborted before any comparison. Three context-bin writes of the Rust study
+    left zero-byte files on the shared scratch volume, and the harness, which did not check the study outcome, stopped
+    reading `contexts.json`.
+  - Fix (`ba8adc3`): harness only, no random draw consumed, Rust source unchanged. The harness clears the study
+    directory, checks free space and checks the study outcome. The abort is recorded in both reports'
+    `campaign_history`.
+  - **Scored once (`c94b727`): both PARITY_PASS / ADMITTED, 0 failures.**
+    - F7: 900 vector calls plus the full-grid study (100 contexts, 4,752,000 feasibility bits identical, 1279 Pareto
+      members); max 28 ulp.
+    - F8: 3882 calls plus the study; max 256 ulp (3.6e-15 absolute, inside the registered 1e-9 relative bound).
+    - Captured reference outputs (Pareto blocks, context index, F8 study, numpy stream samples) are under each
+      contract's `reference_outputs/`.
+- **Study result (both implementations agree).** 90 survivors, none feasible in all 10 scenarios, so the **robust set is
+  EMPTY**:
+  - feasible-scenario tiers 1:13, 2:25, 3:24, 4:17, 5:9, 6:2;
+  - infeasibility reasons: TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE 452, GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0 273;
+  - the representative is refused and the gates are unchanged (INV-F8-01/02/04).
+- **B2-OF-01 diagnostic.**
+  - Acceptance v1 scored once: **NOT_ACCEPTED** (`ea8f902`, kept). Every substantive check passed, but the harness
+    counted cargo's `test result:` summary line as a test with status `0.53s`. It also omitted the AT-09 test
+    (`tests/f8_pipeline.rs`).
+  - Acceptance v2 (`447bf63`, `a8b826c7…`) copies every case verbatim and changes only the test-evidence rule: a
+    workspace run with the registered test of each AT case.
+  - v2 scored once: **ACCEPTED** (`bbe0855`).
+    - All registered points classify identically in Rust and in an independent Python classification from the frozen
+      CSV, and the survey maxima are reproduced within 2.1e-16.
+    - AT-08 holds on the 160 chain points (128 GRID_NODE ROUNDING_LEVEL, 32 NOT_ON_KNOWN_FACE, interpolant unused).
+  - This is software verification, not physics, and not a change of the frozen surface.
+- **Performance** (reported, never a criterion; single thread): Rust F7 3252 s wall vs Python 2353 s CPU; F8 98 s vs
+  122 s. The Rust F7 study is slower than the reference.
+- **Tests:**
+  - New: `abep-design` unit tests and `abep-uq` tests `f8_pipeline.rs`, `interp_sensitivity.rs` and the CI replay
+    `reference_replay.rs` (captured numpy streams, bit for bit).
+  - `cargo test --workspace --locked`: 439 passed, 0 failed, 2 ignored (registered platform tests PT-01 / PT-02).
+  - fmt and clippy are clean. `ci_checks` 12/12. pytest: 4232 passed, 5 skipped, 1 xfailed.
+- **Ledger request** (in the reports; the ledger was not edited):
+  - F7 and F8 partial admissions, plus the partial admissions of `context_pareto` (design part), the
+    `rank_full_system` refusal stages and `require_all_admitted_scenarios` / `robust_over_scenarios`.
+  - The abep-rng stream as infrastructure, and the new item DIAG-B2-OF-01 ACCEPTED.
