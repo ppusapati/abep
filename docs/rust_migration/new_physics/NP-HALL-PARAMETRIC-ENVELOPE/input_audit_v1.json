@@ -1,0 +1,725 @@
+{
+ "schema": "np_hall_parametric_envelope_input_audit_v1",
+ "id": "NP-HALL-PARAMETRIC-ENVELOPE/input_audit_v1",
+ "date": "2026-10-07",
+ "lane": "lane-hall-parametric-envelope",
+ "base_commit": "8a53b13",
+ "directive": {
+  "A9.32": {
+   "path": "docs/decisions/OD_2026_10_07_A9_32_hall_thrust_critical_path_parametric_envelope.json",
+   "pointer": "/owner_decision_summary",
+   "sha256": "b3deaf25c9db25ed7fe349d28b8c4b7585d434c9e90f952d9757ee725473ddde"
+  },
+  "A9.32_verbatim": {
+   "path": "docs/decisions/OD_2026_10_07_A9_32_HALL_THRUST_CRITICAL_PATH_PARAMETRIC_ENVELOPE.md",
+   "pointer": "/",
+   "sha256": "69e9a00d77a7c51717a1d9cf6738c238090b23812195c8b37bfab560f33a0e6f"
+  },
+  "A9.31_secs_15_23": {
+   "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+   "pointer": "/",
+   "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc"
+  }
+ },
+ "purpose": "Audit of every input the A9.32 HallThruster.jl parametric feasibility envelope for H-1 needs, BEFORE the preregistration: what is registered, where, with what status and evidence class, and what is missing. No Hall run exists for any H-1 case; nothing here is a Hall result.",
+ "method": "read-only inspection of the cited records at the base commit; every value is copied from the cited pointer (file sha256 recorded). Assembled by the lane; no value is computed except the B(z) file statistics (max, argmax, extent) of the two sourced P5 profiles.",
+ "headline_findings": [
+  "H1 B(z) is NOT registered: H1F-BZ-01 = TBD_AFTER_EVIDENCE (no FEMM of MC-1, no measured H-1 map). Registered for H-1: a qualitative shape target (H1F-BZ-02, OPEN, inferred: monotonic rise, peak at or just downstream of z = L, low field at the anode), a peak centreline B_r band 69.93-268.6 G (H1F-BZ-03, OPEN, model-derived, owner-accepted FEMM target band A9.14 F5-OQ-05, NOT a transport optimum) and a capability of 403 G (H1F-BZ-04, OPEN). The only sourced numeric B(z) shapes in the repository are the two P5 Peterson 2001 profiles, registered REFERENCE_FOR_P5_ONLY (bz_reference rule: no P5 value is transferred to H-1 as a design value).",
+  "No H-1 design point is selected: H1F-CH-11 = TBD_AFTER_EVIDENCE. The registered geometry is the H1 freeze-candidate window (h, d_mean, L; OPEN) with 7 owner-authorised FEMM analysis points (A9.14 F5-OQ-01, ANALYSIS_POINTS_NOT_SELECTION).",
+  "Transport: the credible set is EMPTY; the only registered transport assumptions within the physical prior (a <= 1/16) are the nine ScaledGaussianBohm screening candidates sgb-screen-01..09 (all a = 1/16, profile in channel-length units), identified on P5 xenon (applicability: xenon, P5-like channel, 230-274 V, 5 mg/s). Every H-1 case extrapolates them; P5-N2 v1 left all nine INCONCLUSIVE / NOT ELIGIBLE.",
+  "Chemistry: Xe uses the pinned HallThruster.jl built-in tables (no project validity manifest). The only Hall air chemistry is N2/N abep-n2n-0.11 (COMPLETE_FOR_P5_N2_VALIDATION, domain T_e 2-30 eV). There is NO Hall O / O2 chemistry, while atomic O is 5.0-86.0 % of the inflow over the required states: an honest AIR Hall envelope is not possible; N2 runs can only be an N2_PROXY diagnostic.",
+  "Xe operating point: no registered H-1 Xe flow (xe_accounting_a9_v3 XV2-17 / XV2-18 TBD).",
+  "Numerical settings for the H-1 geometry are not registered (transport v2 DRAFT RG-04 open); the only registered settings are those of the P5-N2 campaign (200 cells over 0.1 m, dt 5 ns, 2 ms, averaging from 1 ms).",
+  "Non-Hall inputs of layer (a) are open today: host drag (no ICD), P_bus (official ledger PARTIAL_BOUNDARY, 24 TBD terms, lower bound 0 W), delivered flow (no frozen design point), ICP (NP-ICP-NEUTRALIZER ledger status RUST_IMPL, not admitted), mass (planning DOES_NOT_CLOSE, INCOMPLETE_EVIDENCE, no CBE), thermal and life (NOT_EVALUATED).",
+  "Execution environment: this container's network policy denies julialang-s3.julialang.org and pkg.julialang.org (403); HallThruster.jl cannot be installed here (A9.32 recorder note)."
+ ],
+ "items": [
+  {
+   "id": "AUD-GEOM",
+   "input": "H-1 channel geometry (h, d_mean, L; r_in, r_out)",
+   "registered": "window only; design point NOT selected",
+   "status": "PARTIAL_REGISTERED_WINDOW_AND_ANALYSIS_POINTS",
+   "values": {
+    "h_mm": [
+     7.758,
+     17.21
+    ],
+    "d_mean_mm": [
+     45.37,
+     100.6
+    ],
+    "L_mm": [
+     66.74,
+     206.5
+    ],
+    "design_point": "TBD - engineering point to be selected on non-performance criteria (FEMM feasibility, thermal margin, packaging, mass, manufacturability, adjustable-anode / insert capability) after the authorised FEMM analysis points are run; not selected yet",
+    "analysis_points": [
+     {
+      "probe": "A_min_dh_min L/h 8.603",
+      "h_mm": 11.94,
+      "d_mean_mm": 45.37,
+      "L_mm": 102.7,
+      "femm_authorised_analysis_point": false,
+      "source": {
+       "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+       "pointer": "/x_hall_design_space/probe_evaluations/0",
+       "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+      }
+     },
+     {
+      "probe": "A_min_dh_min L/h 12.0",
+      "h_mm": 11.94,
+      "d_mean_mm": 45.37,
+      "L_mm": 143.3,
+      "femm_authorised_analysis_point": false,
+      "source": {
+       "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+       "pointer": "/x_hall_design_space/probe_evaluations/2",
+       "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+      }
+     },
+     {
+      "probe": "A_min_dh_max L/h 8.603",
+      "h_mm": 7.758,
+      "d_mean_mm": 69.82,
+      "L_mm": 66.74,
+      "femm_authorised_analysis_point": true,
+      "source": {
+       "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+       "pointer": "/x_hall_design_space/probe_evaluations/4",
+       "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+      }
+     },
+     {
+      "probe": "A_min_dh_max L/h 12.0",
+      "h_mm": 7.758,
+      "d_mean_mm": 69.82,
+      "L_mm": 93.1,
+      "femm_authorised_analysis_point": true,
+      "source": {
+       "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+       "pointer": "/x_hall_design_space/probe_evaluations/6",
+       "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+      }
+     },
+     {
+      "probe": "A_max_dh_min L/h 8.603",
+      "h_mm": 17.21,
+      "d_mean_mm": 65.38,
+      "L_mm": 148.1,
+      "femm_authorised_analysis_point": true,
+      "source": {
+       "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+       "pointer": "/x_hall_design_space/probe_evaluations/8",
+       "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+      }
+     },
+     {
+      "probe": "A_max_dh_min L/h 12.0",
+      "h_mm": 17.21,
+      "d_mean_mm": 65.38,
+      "L_mm": 206.5,
+      "femm_authorised_analysis_point": true,
+      "source": {
+       "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+       "pointer": "/x_hall_design_space/probe_evaluations/10",
+       "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+      }
+     },
+     {
+      "probe": "A_max_dh_max L/h 8.603",
+      "h_mm": 11.18,
+      "d_mean_mm": 100.6,
+      "L_mm": 96.18,
+      "femm_authorised_analysis_point": true,
+      "source": {
+       "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+       "pointer": "/x_hall_design_space/probe_evaluations/12",
+       "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+      }
+     },
+     {
+      "probe": "A_max_dh_max L/h 12.0",
+      "h_mm": 11.18,
+      "d_mean_mm": 100.6,
+      "L_mm": 134.2,
+      "femm_authorised_analysis_point": true,
+      "source": {
+       "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+       "pointer": "/x_hall_design_space/probe_evaluations/14",
+       "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+      }
+     },
+     {
+      "probe": "RP-1 anchor (not a selection)",
+      "h_mm": 12.0,
+      "d_mean_mm": 70.0,
+      "L_mm": 103.2,
+      "femm_authorised_analysis_point": true,
+      "source": {
+       "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+       "pointer": "/x_hall_design_space/probe_evaluations/16",
+       "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+      }
+     }
+    ]
+   },
+   "freeze_status": {
+    "H1F-CH-02..10": "OPEN",
+    "H1F-CH-11": "TBD_AFTER_EVIDENCE"
+   },
+   "sources": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "pointer": "/x_hall_design_space",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "pointer": "/parameters/10",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "pointer": "/femm_analysis_points",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/F5-OQ-01",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
+    }
+   ],
+   "usable_for_envelope": "the 7 FEMM-authorised analysis points (6 window corners + RP-1 anchor), labelled ANALYSIS_POINT_NOT_DESIGN_SELECTION; the two corners outside the window under worst-case assumptions are not authorised and are not used",
+   "forbidden_sources": "P5, ECHT and 0-D HallChannel defaults are forbidden as H-1 design-value sources (HW-H1-03)",
+   "hw_h1_03": {
+    "path": "docs/experiments/hardware/hardware_requirements_v1.json",
+    "pointer": "/requirements/10",
+    "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0"
+   }
+  },
+  {
+   "id": "AUD-BZ",
+   "input": "H-1 centreline B_r(z)",
+   "registered": "NO (shape TBD; qualitative target and peak band only)",
+   "status": "NOT_REGISTERED",
+   "values": {
+    "H1F-BZ-01": "TBD - none exists: no FEMM of MC-1 and no measured H-1 map; the P5 Peterson 2001 profile is a reference for P5 only (bz_reference section)",
+    "H1F-BZ-02": "monotonic rise toward the exit, peak at or just downstream of z = L; field near the anode as low as the circuit allows (numeric B_anode/B_peak TBD)",
+    "H1F-BZ-03_G": [
+     69.93,
+     268.6
+    ],
+    "H1F-BZ-04_G": 403.0,
+    "rLe_rule_table_G": {
+     "10": {
+      "h_min_G": 155.1,
+      "h_max_G": 69.93
+     },
+     "20": {
+      "h_min_G": 219.3,
+      "h_max_G": 98.9
+     },
+     "30": {
+      "h_min_G": 268.6,
+      "h_max_G": 121.1
+     }
+    },
+    "sourced_shapes_in_repository": {
+     "P5B16": {
+      "n_points": 89,
+      "z_first_mm": 2.18,
+      "z_last_mm": 94.26,
+      "B_max_G": 101.76,
+      "z_at_B_max_mm": 28.23,
+      "B_first_G": 20.46,
+      "B_last_G": 17.86,
+      "exit_plane_in_file_mm": 38.0
+     },
+     "P5B30": {
+      "n_points": 90,
+      "z_first_mm": 4.05,
+      "z_last_mm": 96.62,
+      "B_max_G": 122.8,
+      "z_at_B_max_mm": 30.4,
+      "B_first_G": 31.6,
+      "B_last_G": 21.05,
+      "exit_plane_in_file_mm": 38.0
+     }
+    }
+   },
+   "sources": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "pointer": "/parameters/34",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "pointer": "/parameters/35",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "pointer": "/parameters/36",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "pointer": "/parameters/37",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "pointer": "/bz_reference",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+    },
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "pointer": "/bz_target_envelope",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+    },
+    {
+     "path": "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+     "pointer": "/",
+     "sha256": "65216f4d713be929b9c59f101711301d933df7b2ae1ed3478b36aa3772926625"
+    },
+    {
+     "path": "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_3p0kW.csv",
+     "pointer": "/",
+     "sha256": "1f1cb42cdc9a2b40b527e8e0a8daf5d4559c460ba8e4342e4f488e4ce283efe2"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/F5-OQ-05",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
+    }
+   ],
+   "gap": "no Vyovrinda-specific B(z) exists; the H-1 shape cannot be taken from evidence",
+   "envelope_options": [
+    "STOP (report the gap only)",
+    "bounded SOURCED_SURROGATE family built only from the two sourced P5 shapes, rigidly registered (never stretched) with their peak at the H-1 exit plane (the H1F-BZ-02 peak position) and scaled to the H1F-BZ-03 band endpoints; labelled SOURCED_SURROGATE_P5_SHAPE_NOT_H1_BZ; never an H-1 design value; its effect on the A9.32 classification must be preregistered"
+   ],
+   "p5_shape_vs_h1_target": "the P5 peak sits inside the P5 channel (28.23 / 30.40 mm vs the 38 mm exit in file coordinates); a peak-at-exit registration matches the H1F-BZ-02 peak position but the gradient, width and anode ratio remain P5 properties"
+  },
+  {
+   "id": "AUD-OPDOMAIN",
+   "input": "H-1 operating domain (V_d, delivered flow, power)",
+   "registered": "YES as bands / allocation values",
+   "status": "REGISTERED_BANDS",
+   "values": {
+    "V_d_band_V": [
+     180,
+     350
+    ],
+    "P_d_band_W_A5_allocation": [
+     650.0,
+     1350.0
+    ],
+    "flows_kgps": {
+     "design_case_min": 3.77e-07,
+     "design_case_max": 1.287e-06,
+     "delivered_max_A5": 3.2e-06
+    },
+    "H1F-CH-12": {
+     "nominal_sizing_flow_mg_s_approx": 1.3,
+     "operability_thermal_characterization_mg_s": [
+      0.38,
+      3.2
+     ]
+    },
+    "H1F-AN-10": "rated to the relaxed 350 V V_d end plus transient / qualification margin (margin TBD)"
+   },
+   "evidence_class": {
+    "flows": "owner-allocation",
+    "V_d_band": "owner-allocation / model-derived (A5)"
+   },
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "pointer": "/channel/V_d_band_V",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+    },
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "pointer": "/channel/P_d_band_W",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+    },
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "pointer": "/channel/flows_kgps",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "pointer": "/parameters/11",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "pointer": "/parameters/22",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8"
+    }
+   ],
+   "note": "flows are delivered ATMOSPHERIC flows; the P_d band is the A5 bus allocation, not a physical limit (the RFP limit is P_bus < 1500 W, assessment only)"
+  },
+  {
+   "id": "AUD-XEOP",
+   "input": "H-1 Xe operating flow",
+   "registered": "NO",
+   "status": "NOT_REGISTERED",
+   "values": {
+    "XV2-17": "TBD (fallback hours and flow)",
+    "XV2-18": "TBD (bounded functional Xe mode flow)"
+   },
+   "sources": [
+    {
+     "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "pointer": "/",
+     "sha256": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe"
+    }
+   ],
+   "gap": "no H-1 Xe flow; an envelope can only reuse the registered H-1 mass-flow range, labelled XE_FLOW_FROM_H1_ATM_RANGE"
+  },
+  {
+   "id": "AUD-TRANSPORT",
+   "input": "anomalous transport",
+   "registered": "screening candidates only; credible set EMPTY",
+   "status": "REGISTERED_SCREENING_CANDIDATES_NOT_ADMITTED",
+   "values": {
+    "members": [],
+    "screening_candidates": [
+     {
+      "id": "sgb-screen-01",
+      "family": "ScaledGaussianBohm",
+      "parameters": {
+       "anom_scale": 0.0625,
+       "barrier_scale": 0.8,
+       "center_L": 0.9,
+       "width_L": 0.25
+      },
+      "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units"
+     },
+     {
+      "id": "sgb-screen-02",
+      "family": "ScaledGaussianBohm",
+      "parameters": {
+       "anom_scale": 0.0625,
+       "barrier_scale": 0.97,
+       "center_L": 1.0,
+       "width_L": 0.1
+      },
+      "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units"
+     },
+     {
+      "id": "sgb-screen-03",
+      "family": "ScaledGaussianBohm",
+      "parameters": {
+       "anom_scale": 0.0625,
+       "barrier_scale": 0.97,
+       "center_L": 0.9,
+       "width_L": 0.1
+      },
+      "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units"
+     },
+     {
+      "id": "sgb-screen-04",
+      "family": "ScaledGaussianBohm",
+      "parameters": {
+       "anom_scale": 0.0625,
+       "barrier_scale": 0.97,
+       "center_L": 1.1,
+       "width_L": 0.1
+      },
+      "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units"
+     },
+     {
+      "id": "sgb-screen-05",
+      "family": "ScaledGaussianBohm",
+      "parameters": {
+       "anom_scale": 0.0625,
+       "barrier_scale": 0.9,
+       "center_L": 1.1,
+       "width_L": 0.25
+      },
+      "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units"
+     },
+     {
+      "id": "sgb-screen-06",
+      "family": "ScaledGaussianBohm",
+      "parameters": {
+       "anom_scale": 0.0625,
+       "barrier_scale": 0.9,
+       "center_L": 1.0,
+       "width_L": 0.25
+      },
+      "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units"
+     },
+     {
+      "id": "sgb-screen-07",
+      "family": "ScaledGaussianBohm",
+      "parameters": {
+       "anom_scale": 0.0625,
+       "barrier_scale": 0.9,
+       "center_L": 0.9,
+       "width_L": 0.25
+      },
+      "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units"
+     },
+     {
+      "id": "sgb-screen-08",
+      "family": "ScaledGaussianBohm",
+      "parameters": {
+       "anom_scale": 0.0625,
+       "barrier_scale": 0.97,
+       "center_L": 0.9,
+       "width_L": 0.25
+      },
+      "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units"
+     },
+     {
+      "id": "sgb-screen-09",
+      "family": "ScaledGaussianBohm",
+      "parameters": {
+       "anom_scale": 0.0625,
+       "barrier_scale": 0.97,
+       "center_L": 1.0,
+       "width_L": 0.25
+      },
+      "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units"
+     }
+    ],
+    "super_bohm_policy": "anom_scale > 1/16 sets are not admissible under current evidence; usable only as diagnostic/sensitivity cases, never as screening candidates or members.",
+    "p5_n2_v1": [
+     "sgb-screen-01",
+     "sgb-screen-02",
+     "sgb-screen-03",
+     "sgb-screen-04",
+     "sgb-screen-05",
+     "sgb-screen-06",
+     "sgb-screen-07",
+     "sgb-screen-08",
+     "sgb-screen-09"
+    ]
+   },
+   "sources": [
+    {
+     "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+     "pointer": "/screening_candidates",
+     "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
+    },
+    {
+     "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+     "pointer": "/members",
+     "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
+    },
+    {
+     "path": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
+     "pointer": "/decision",
+     "sha256": "0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c"
+    },
+    {
+     "path": "docs/validation/hall_transport_v2_prereg/hall_transport_v2_prereg_DRAFT.json",
+     "pointer": "/candidates/transfer_hypothesis",
+     "sha256": "24de36ed89b4455783d4f38becdcb97effbbd37dc28f93d90f54d3c8798a68d2"
+    }
+   ],
+   "finding": "all nine are within the physical prior (a = 1/16); every H-1 case is outside their applicability domain (TRANSPORT_EXTRAPOLATED); center_L / width_L transfer to the H-1 L as in the transport v2 DRAFT transfer hypothesis"
+  },
+  {
+   "id": "AUD-CHEM",
+   "input": "Hall chemistry per supply mode",
+   "status": "XE_BUILTIN; AIR_NOT_REGISTERED (N2/N only)",
+   "values": {
+    "xe": "HallThruster.jl v0.23.1 built-in Xe (no project validity manifest; chemistry_trustworthy reduces to converged and sustained, transport v2 DRAFT chemistry.xenon)",
+    "n2_reaction_set": "abep-n2n-0.11 COMPLETE_FOR_P5_N2_VALIDATION; domain T_e 2-30 eV (mean 3-45 eV); f_out rule 1e-12, never relaxed",
+    "o_o2_hall": "NONE (NP-ICP-CHEM-AIR is the ICP chemistry only; A9.30 does not reopen Hall O/O2)",
+    "air_composition_required_states": {
+     "x_O": [
+      0.050450073817025765,
+      0.8596124101253814
+     ],
+     "x_N2": [
+      0.07989172744446714,
+      0.8844436728892985
+     ],
+     "x_O2": [
+      0.003543341895032222,
+      0.07832201866909773
+     ]
+    }
+   },
+   "sources": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "pointer": "/reaction_set",
+     "sha256": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280"
+    },
+    {
+     "path": "hallthruster_bridge/propellants/n2_n.toml",
+     "pointer": "/",
+     "sha256": "4f10db747cfb11cfefb8080a9cad52e502c2ab11f0e485ac644a532b929607de"
+    },
+    {
+     "path": "hallthruster_bridge/propellants/rate_validity.toml",
+     "pointer": "/",
+     "sha256": "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a"
+    },
+    {
+     "path": "hallthruster_bridge/prereg/p5_n2_run_status_rule_v1.json",
+     "pointer": "/chemistry_trust_rule",
+     "sha256": "e72eb4c65417ebda87fbb1f2df75b3d97156f4a4a25207a336197872d88151e0"
+    },
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "pointer": "/rows (RFP-ATM-PRIMARY raw_physics_result composition_range_required_states)",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622"
+    },
+    {
+     "path": "docs/validation/hall_transport_v2_prereg/hall_transport_v2_prereg_DRAFT.json",
+     "pointer": "/chemistry",
+     "sha256": "24de36ed89b4455783d4f38becdcb97effbbd37dc28f93d90f54d3c8798a68d2"
+    }
+   ],
+   "finding": "AIR layer (a) cannot be honest without Hall O / O2 chemistry; N2 is a proxy only and is not a bound in either direction (O is lighter and has a lower ionization energy and no molecular losses)"
+  },
+  {
+   "id": "AUD-NUMERICS",
+   "input": "numerical settings for the H-1 geometry",
+   "registered": "NO (P5-N2 settings only)",
+   "status": "NOT_REGISTERED_FOR_H1",
+   "values": {
+    "p5_n2_settings": {
+     "cells": 200,
+     "domain_m": 0.1,
+     "dt_s": 5e-09,
+     "duration_s": 0.002,
+     "average_start_s": 0.001
+    },
+    "transport_v2_RG-04": "TBD - requires the owner's convergence decision"
+   },
+   "sources": [
+    {
+     "path": "hallthruster_bridge/cases/p5_n2.json",
+     "pointer": "/cases/0",
+     "sha256": "03f8e838adbb9074f03d8e916b09f84bacc81c3efe9afa2947c6b4dbb73ab1df"
+    },
+    {
+     "path": "docs/validation/hall_transport_v2_prereg/hall_transport_v2_prereg_DRAFT.json",
+     "pointer": "/runnability_gates",
+     "sha256": "24de36ed89b4455783d4f38becdcb97effbbd37dc28f93d90f54d3c8798a68d2"
+    }
+   ]
+  },
+  {
+   "id": "AUD-PIN",
+   "input": "HallThruster.jl pin and bridge library",
+   "status": "REGISTERED",
+   "values": {
+    "version": "0.23.1",
+    "commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+    "julia": "1.11.7"
+   },
+   "sources": [
+    {
+     "path": "hallthruster_bridge/PINNED.toml",
+     "pointer": "/hallthruster",
+     "sha256": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280"
+    },
+    {
+     "path": "hallthruster_bridge/Manifest.toml",
+     "pointer": "/julia_version",
+     "sha256": "a98c1a6e9cdf491ef602ef7cd1d08371b2bbe3da4e1df74e45a1c9d84f6c5634"
+    },
+    {
+     "path": "hallthruster_bridge/bridge_lib.jl",
+     "pointer": "/",
+     "sha256": "cf26aab8607b640ebb78be9715f2c7c5d957f145ac17f52c1b23db2e980e21ab"
+    },
+    {
+     "path": "hallthruster_bridge/hall_map_schema_v1.json",
+     "pointer": "/conventions",
+     "sha256": "f371b43bced1020d55e2b28303c877220f41395767cdf6ebab6019475e9bdde9"
+    }
+   ]
+  },
+  {
+   "id": "AUD-NONHALL",
+   "input": "non-Hall inputs of layer (a)",
+   "status": "OPEN",
+   "values": {
+    "host_drag": "NOT_EVALUATED: host-spacecraft drag ICD absent (S6.18 / F1-ID-08)",
+    "intake_drag": "PARAMETRIC_SENSITIVITY_ONLY at a caller-supplied F1 design point; no design point",
+    "P_bus": {
+     "ledger_status": "PARTIAL_BOUNDARY",
+     "n_tbd_terms": 24,
+     "P_bus_lower_bound_W": 0.0,
+     "boundary": "bus_power_boundary_a9_v2"
+    },
+    "delivered_flow": "NOT_EVALUATED: no frozen design point (F7 / F8, SC-WP-10)",
+    "icp": "NP-ICP-NEUTRALIZER ledger status RUST_IMPL (not ADMITTED); I_e,cap NOT_EVALUATED",
+    "mass": {
+     "dry_known_kg": 38.34901052,
+     "wet_known_kg_by_xe_case_kg": {
+      "2.0": 40.34901052,
+      "5.0": 43.34901052,
+      "10.0": 48.34901052
+     },
+     "mission_xe_load": "NOT_ADMITTED",
+     "status": "INCOMPLETE_EVIDENCE",
+     "rfp_assessment": "DOES_NOT_CLOSE",
+     "evidence_class": "planning-allocation (owner MEV allocations / MEV planning floors)"
+    },
+    "thermal": "NOT_EVALUATED (NP-THERMAL-CATHODELESS NE-01 / NE-02: Hall and ICP heat loads)",
+    "life": "NOT_EVALUATED"
+   },
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/NI-ABEP-ASSESS-RFP-MATRIX/rfp_constraint_matrix_run_v1.json",
+     "pointer": "/rows",
+     "sha256": "b03f03913ee5486b7436ed05b4ed250c82b5a55d092ce62a3a9fc6d65c0b1622"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "pointer": "/",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
+    },
+    {
+     "path": "docs/rust_migration/migration_state_v1.json",
+     "pointer": "/new_items",
+     "sha256": "9efda2404698950c7ef922736d00a929f9171ebd66200f20a5c559beb0d6fa44"
+    },
+    {
+     "path": "config/constraints/engineering_constraints_v1.json",
+     "pointer": "/constraints",
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e"
+    },
+    {
+     "path": "config/assessment/gate_thresholds_v1.json",
+     "pointer": "/gates",
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b"
+    },
+    {
+     "path": "docs/architecture/architecture_proof/architecture_comparison_v1.json",
+     "pointer": "/",
+     "sha256": "52cea11a1f84d35c4db984969661b1f447916453e7261872f7d0f82ef35aaafe"
+    }
+   ],
+   "rule_reminder": "PHYSICALLY_NON_CLOSING is never assigned because evidence is missing or because of planning allocations alone"
+  }
+ ],
+ "missing_for_a_determinable_classification": [
+  "H-1 B(z) (FEMM of MC-1 or a measured map) - H1F-BZ-01",
+  "H-1 design point (h, d_mean, L) - H1F-CH-11",
+  "Hall O / O2 chemistry (AIR_PRIMARY Hall)",
+  "admitted Hall transport member (credible set EMPTY) - only for layer (b)",
+  "H-1 Xe operating flow (XV2-17 / XV2-18)",
+  "registered H-1 numerical settings and grid-adequacy check (RG-04)",
+  "delivered-flow record at a frozen design point (F7 / F8)",
+  "complete bus ledger (24 TBD terms)",
+  "host-spacecraft drag ICD",
+  "admitted NP-ICP-NEUTRALIZER I_e,cap",
+  "CBE / measured mass and the frozen Xe load",
+  "thermal and life evaluations"
+ ]
+}
