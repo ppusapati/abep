@@ -5386,3 +5386,35 @@ Lane `lane-hall-chem-air`, base `b730764`.
   - Every other TOML keeps the original check.
 - **Unchanged:** abep-n2n-0.11, the N2 configurations and validity file, the audit snapshots, the P5-N2 records,
   `bridge_lib.jl`, HallMap admission, the credible set (EMPTY), and the HallThruster.jl pin.
+
+## 2026-10-08 — H1 Hall envelope run (M1): XE grid run and frozen; addendum A3 numerics check A3_NOT_ADEQUATE
+
+Lane `lane-hall-envelope-runs` (A9.32 / A9.33 / A9.34). Everything here is PARAMETRIC / NOT_VALIDATED. The credible set
+stays EMPTY and nothing enters layer (b).
+- **Install.** Julia 1.11.7 from julialang-s3 (published checksum verified), at `/opt/julia-1.11.7`, depot
+  `/opt/julia-depot`. `hallthruster_bridge/` was instantiated from the committed Manifest without resolve; the checkout
+  stayed unchanged. HallThruster.jl v0.23.1 `bfb3019f`: check_pin passes, and the installed tree hash `7505b3a2…` equals
+  the Manifest git-tree-sha1 and the pinned commit's tree. Threads / BLAS 1 in every run.
+- **Prereg addendum A3, numerics adequacy (RG-04)** (`ca1b895e…`, lock `b840f1b0…`, committed alone before any refined
+  run or grid case beyond smoke).
+  - Check set: 17 seeded XE cases (16 domain corners on the shortest / longest domain, 1 centre).
+  - Refinements: R1 = 2 × cells (also refines the CFL-limited step; the solver steps adaptively) and R3 = 2 × duration.
+  - Criteria: status and quiet class identical; thrust and I_d within 2 %. A margin tier allows up to 10 %.
+  - AIR is covered by reference; N2_PROXY is not covered.
+- **A3 result, scored once: A3_NOT_ADEQUATE** (`a3_numerics_result_v1.json`).
+  - 12 of 34 comparisons fail. Three status flips, including PASS → NUMERICAL_FAILURE under both refinements.
+  - δ_T = 209 % and δ_I = 28.7 % (R1, `XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-350|MF-HI|sgb-screen-08`).
+  - Registered consequence: every XE PASS / NOT_SUSTAINED point is NUMERICS_NOT_CONVERGED, an unknown that is never
+    feasible and never an evaluated non-closure. v1 records and numerics are unchanged.
+  - The overlay is implemented in `abep_hall::envelope::a3_overlay` and `abep_assess::closure::evaluate_hall_test_a3`
+    (additive; the v1 functions are unchanged).
+- **XE grid** (2268 cases, 64 shards through the Rust launch, 2–3 single-thread workers). Frozen raw `40198e0f…`,
+  manifest `b9efec88…`, under `runs/xe_v1/`. 5.2 CPU-h in total, 8.3 s mean per case.
+  - Statuses: PASS 1287, NOT_SUSTAINED 89, NUMERICAL_FAILURE 892, OUT_OF_DOMAIN 0.
+  - The 17 A3 R0 records equal the grid records.
+  - Closure dry run (labelled, not M2): XE_FUNC is NOT_DETERMINABLE_IN_ENVELOPE (892 NUMERICAL_FAILURE + 1376
+    NUMERICS_NOT_CONVERGED unknowns). Classification NOT_DETERMINABLE (C4).
+- **Ingestion change:** each family is ingested complete or absent, so a family-filtered (`--family XE`) envelope can
+  be ingested. A partial family is still MODEL_ERROR.
+- **AIR:** A3 AIR check tooling, and the corner-stage record (stage 1 = CP-YHI-DIS, LP-BOUNDED, information only), are
+  committed before any AIR run.

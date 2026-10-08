@@ -197,7 +197,7 @@ pub fn select_check_set_as(
     let vd = axis_order(&cases, |c| &c.vd_id);
     let mf = axis_order(&cases, |c| &c.mdot_id);
     let tr = axis_order(&cases, |c| &c.transport_id);
-    if geoms.len() % 2 == 0 || bp.len() != 2 || vd.len() % 2 == 0 || mf.len() % 2 == 0 {
+    if geoms.len().is_multiple_of(2) || bp.len() != 2 || vd.len().is_multiple_of(2) || mf.len().is_multiple_of(2) {
         return Err(model("axis lengths do not define the A3 corners and centre"));
     }
     // geometry by v1 cell count (min over shapes), ties by file order
@@ -638,8 +638,11 @@ pub fn compare_with(
     }
 }
 
+/// The largest relative change of an observable and the comparison where it occurs.
+pub type Delta = Option<(f64, String)>;
+
 /// The addendum outcome of a family's comparisons and (delta_T, delta_I) with their keys.
-pub fn outcome(cmp: &[Comparison]) -> (Outcome, Option<(f64, String)>, Option<(f64, String)>) {
+pub fn outcome(cmp: &[Comparison]) -> (Outcome, Delta, Delta) {
     let argmax = |f: fn(&Comparison) -> Option<f64>| {
         cmp.iter().filter_map(|c| f(c).map(|x| (x, format!("{}|{}", c.v1_key, c.refinement)))).fold(
             None,
