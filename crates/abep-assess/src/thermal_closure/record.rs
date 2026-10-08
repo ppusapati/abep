@@ -280,8 +280,8 @@ pub fn closure_record(ctx: &Context) -> Result<Value, ClosureError> {
     let cycling = json!({
         "N_cycles_bound": ms["thermal_cycling"]["N_cycles_bound"],
         "hot_cold_swing_K": {"H1_ANODE": swing("H1_ANODE"), "N_COLLECTOR": swing("N_COLLECTOR"), "H1_WALL_IN": swing("H1_WALL_IN"), "H1_WALL_OUT": swing("H1_WALL_OUT")},
-        "anode_minus_outer_wall_C1_K": d_hot,
-        "anode_radial_differential_growth_C1_mm": d_hot.map(|d| mism.iter().map(|m| m * d / 100.0).collect::<Vec<_>>()),
+        "anode_minus_outer_wall_TC1_K": d_hot,
+        "anode_radial_differential_growth_TC1_mm": d_hot.map(|d| mism.iter().map(|m| m * d / 100.0).collect::<Vec<_>>()),
         "anode_radial_differential_growth_over_swing_mm": swing("H1_ANODE").map(|s| mism.iter().map(|m| m * s / 100.0).collect::<Vec<_>>()),
     });
     let materials_screening = json!({"source": ms["source"], "ceilings": screening, "dcr_triggers": triggers, "fired": fired, "thermal_cycling": cycling});
@@ -426,6 +426,14 @@ pub fn closure_record(ctx: &Context) -> Result<Value, ClosureError> {
     let q_sc = GOVERNING_HOT.iter().filter_map(|id| runs[*id].q_sc_w).fold(f64::NEG_INFINITY, f64::max);
     let q_sc = if q_sc.is_finite() { Some(q_sc) } else { None };
     let q_sc_alloc = 50.0;
+    // Reporting only (no verdict, no reselection): the smallest grid point whose TC1 and TC3 heat into the spacecraft
+    // is within the 50 W governing allocation.
+    let q_sc_reading = grid_rows
+        .iter()
+        .find(|r| {
+            [&r["TC1"], &r["TC3"]].iter().all(|c| c["Q_into_spacecraft_W"].as_f64().is_some_and(|q| q <= q_sc_alloc))
+        })
+        .map(|r| json!({"A_RH_m2": r["A_RH_m2"], "G_RH_W_K": r["G_RH_W_K"], "TC1_Q_W": r["TC1"]["Q_into_spacecraft_W"], "TC3_Q_W": r["TC3"]["Q_into_spacecraft_W"]}));
 
     // 9. Closure state (prereg closure_state_rule).
     let confirmed = selected.2 == "FEASIBLE_CONFIRMED";
@@ -467,7 +475,7 @@ pub fn closure_record(ctx: &Context) -> Result<Value, ClosureError> {
         "allowables": allow,
         "sensitivities": sens,
         "boundary_units": units,
-        "spacecraft_interface": {"Q_into_spacecraft_max_hot_W": q_sc, "owner_provisional_allocation_W": {"governing": 50.0, "contingency_ceiling": 100.0, "stretch": 25.0}, "within_governing_allocation": q_sc.map(|q| q <= q_sc_alloc), "T_SC_sensitivity_changes_a_verdict": icd_change, "status": "REFERENCE_PENDING_ICD"},
+        "spacecraft_interface": {"Q_into_spacecraft_max_hot_W": q_sc, "owner_provisional_allocation_W": {"governing": 50.0, "contingency_ceiling": 100.0, "stretch": 25.0}, "within_governing_allocation": q_sc.map(|q| q <= q_sc_alloc), "smallest_grid_point_within_allocation_TC1_TC3": q_sc_reading, "T_SC_sensitivity_changes_a_verdict": icd_change, "status": "REFERENCE_PENDING_ICD"},
         "closure": {
             "state": state,
             "dcr_nodes": dcr_nodes,
@@ -530,7 +538,7 @@ load inputs `{}` (sha256 `{}`); Rust commit `{}`.\n\n",
         st(&sel["basis"]),
         f1(&sel["R_HALL_mass_kg_at_4_kg_m2"])
     ));
-    m.push_str("## Nodes (governing hot cases TC1-C4 with 1.2 x heat loads; cold TC5 / TC6)\n\n");
+    m.push_str("## Nodes (governing hot cases TC1-TC4 with 1.2 x heat loads; cold TC5 / TC6)\n\n");
     m.push_str(
         "| node | limit class | limit degC | ceiling (limit - 50 K) | T max hot degC | margin K | verdict | required \
 capability degC | coating capability degC | T min cold op / non-op degC |\n|---|---|---|---|---|---|---|---|---|---|\n",
@@ -626,12 +634,48 @@ heater non-op W |\n|---|---|---|---|---|---|\n",
             ));
         }
     }
+    m.push_str("\n## P8 materials screening ceilings and DCR triggers (T max hot, 1.2 x loads)\n\n");
+    m.push_str("| node | grade | ceiling degC | T max hot degC | headroom K |\n|---|---|---|---|---|\n");
+    if let Some(c) = rec["materials_screening"]["ceilings"].as_object() {
+        for (n, rows) in c {
+            for (g, r) in rows.as_object().cloned().unwrap_or_default() {
+                m.push_str(&format!(
+                    "| {n} | {g} | {} | {} | {} |\n",
+                    f1(&r["ceiling_C"]),
+                    f1(&r["T_max_hot_C"]),
+                    f1(&r["headroom_K"])
+                ));
+            }
+        }
+    }
+    m.push_str("\n| trigger | node | above degC | fires | action |\n|---|---|---|---|---|\n");
+    for t in rec["materials_screening"]["dcr_triggers"].as_array().cloned().unwrap_or_default() {
+        m.push_str(&format!(
+            "| {} | {} | {} | {} | {} |\n",
+            st(&t["id"]),
+            st(&t["node"]),
+            f1(&t["above_C"]),
+            t["fires"],
+            st(&t["action"])
+        ));
+    }
+    m.push_str(&format!(
+        "\nThermal cycling: cycle bound {}; hot / cold swing K {}; anode - outer wall (TC1) {} K, radial differential growth \
+(TC1) {} mm, over the swing {} mm.\n",
+        rec["materials_screening"]["thermal_cycling"]["N_cycles_bound"],
+        rec["materials_screening"]["thermal_cycling"]["hot_cold_swing_K"],
+        f1(&rec["materials_screening"]["thermal_cycling"]["anode_minus_outer_wall_TC1_K"]),
+        rec["materials_screening"]["thermal_cycling"]["anode_radial_differential_growth_TC1_mm"],
+        rec["materials_screening"]["thermal_cycling"]["anode_radial_differential_growth_over_swing_mm"]
+    ));
     let sc = &rec["spacecraft_interface"];
     m.push_str(&format!(
         "\n## Spacecraft interface\n\nMax heat into the spacecraft (hot cases): {} W against the owner provisional 50 W \
-governing allocation; the T_SC 20 / 40 / 60 degC sensitivity changes a verdict: {}. Status REFERENCE_PENDING_ICD.\n\n",
+governing allocation; the T_SC 20 / 40 / 60 degC sensitivity changes a verdict: {}; smallest R_HALL grid point \
+keeping TC1 and TC3 within 50 W: {}. Status REFERENCE_PENDING_ICD.\n\n",
         f1(&sc["Q_into_spacecraft_max_hot_W"]),
-        sc["T_SC_sensitivity_changes_a_verdict"]
+        sc["T_SC_sensitivity_changes_a_verdict"],
+        sc["smallest_grid_point_within_allocation_TC1_TC3"]
     ));
     m.push_str("## Sensitivities (non-governing, TC1)\n\n| sensitivity | node T max degC (TC1) |\n|---|---|\n");
     if let Some(s) = rec["sensitivities"].as_object() {
