@@ -31,6 +31,15 @@ mass = 15.999
 flow_rate_kg_s = 0.0
 temperature_K = 500.0
 
+[[species]]
+symbol = "O2"
+name = "Molecular Oxygen"
+max_charge = 1
+gamma = 1.4
+mass = 31.998
+flow_rate_kg_s = 0.0
+temperature_K = 500.0
+
 [[reactions]]
 type = "elastic"
 target_species = "N2"
@@ -180,3 +189,8 @@ rate_coeff_file = "../propellants/ionization_N_to_N_Z2plus_hms2017.dat"   # Hahn
 type = "electron_impact"
 equation = "O + e -> O(+) + 2e"
 rate_coeff_file = "ionization_O_thompson1995.dat"   # HA-O-ION-01 variant: Thompson et al. 1995 via NIST SRD 107
+
+[[reactions]]
+type = "electron_impact"
+equation = "O2 + e -> O2(+) + 2e"
+rate_coeff_file = "ionization_O2_song2026.dat"   # HA-O2-ION-01: SONG2026 Table VII sigma(O2+)

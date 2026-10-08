@@ -17,6 +17,11 @@ status = "verified"
 max_mean_energy_eV = 255.0
 basis = "Thompson, Shah & Gilbody 1995 points via NIST SRD 107 span 14.1-2000 eV (ramp from 13.618 eV); held-tail share 0.0028 % at 255 eV mean energy (docs/chemistry/o_o2/v0/manifest_nist107_o_v0.json source_support_limit 255)"
 
+["ionization_O2_song2026.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "SONG2026 (accepted manuscript; version of record not accessed, OQ-HA-01) Table VII sigma(O2+) spans 13.0-998 eV, held above; held-tail share 0.998 % at 255 eV (v0 manifest); source-support limit 255 eV mean energy = highest mean energy with held-tail rate share < 1 % (recomputed from xs/ by abep_chem::hall_air::support_limit)"
+
 ["../propellants/elastic_N2_song2023.dat"]
 status = "verified"
 max_mean_energy_eV = 255.0
