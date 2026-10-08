@@ -10,7 +10,7 @@ validation claim.**
 
 ## Reused abep-n2n-0.11 tables (referenced in place)
 
-The 27 files of `../propellants/n2_n.toml`, plus `dissociative_ionization_N2_lower.dat` and `elastic_N_wang2014_bsr.dat`,
+The 29 files of `../propellants/n2_n.toml`, plus `dissociative_ionization_N2_lower.dat` and `elastic_N_wang2014_bsr.dat`,
 are named in the AIR configurations as `../propellants/<file>`. Rules:
 - They are sha256-pinned in `AIR_PINNED.toml [reuse]`.
 - Their validity entries are mirrored in `rate_validity.toml`. A mirror that differs from the source entry is refused.
@@ -25,3 +25,4 @@ DRAFT transcription by `scripts/chemistry/extract_hall_air_xs.py`. The tables ar
 
 | table | process | role | source | range (eV) | stated uncertainty | validity (mean energy, eV) | status |
 |---|---|---|---|---|---|---|---|
+| `ionization_O_beb_kd2002.dat` | HA-O-ION-01 | nominal (BEB / Thompson pair) | Kim & Desclaux 2002 BEB via NIST SRD 107 (raw sha256 `76df7f7a…`, not committed); byte-identical copy of the v0 table `1e3a377e…` | 13.618–5000 | none in the table; SONG2026 ≥ 20 % | verified 255 | IN_REPO_VERIFIED |

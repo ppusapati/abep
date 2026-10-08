@@ -15,12 +15,11 @@ consumer = "NP-HALL-PARAMETRIC-ENVELOPE AIR family (addendum); bridge_lib.jl che
 loader = "abep_chem::hall_air::AirSet::load"
 
 [reaction_set]
-label = "abep-air-0.0"
+label = "abep-air-0.1"
 status = "INCOMPLETE_EVIDENCE"
-nominal_config = ""
-configs = []
+nominal_config = "air_nominal.toml"
+configs = ["air_nominal.toml"]
 tier1_gaps = [
-  "HA-O-ION-01",
   "HA-O-EL-01",
   "HA-O-EXC-01",
   "HA-O2-ION-01",
@@ -39,11 +38,15 @@ blocking = [
 ]
 history = [
   "abep-air-0.0 (2026-10-08): skeleton under NP-HALL-CHEM-AIR v1 (lock 1884e42f): the 29 abep-n2n-0.11 tables (n2_n.toml nominal + N2 DI lower + N elastic Wang) referenced in place with mirrored validity entries; no O / O2 table; no configuration",
+  "abep-air-0.1 (2026-10-08): + O ionization HA-O-ION-01 nominal ionization_O_beb_kd2002.dat (Kim & Desclaux 2002 BEB via NIST SRD 107; byte-identical copy of the v0 table, validity 255 eV); new configuration air_nominal.toml = the 29 n2_n.toml reactions referenced in place + O (max_charge 1); correction to the 0.0 line: [reuse] holds 31 tables (n2_n.toml's 29 + N2 DI lower + N elastic Wang), not 29",
 ]
 
 [files]
-"PROVENANCE.md" = "ca25218f2b23462f188a39c60d9df8ba0fc3f6094d771dc0490a3de96417cd9f"
-"rate_validity.toml" = "d993714ed65e2307dd559d4740ba2cd59892fa3cfbe8cefa105a3c1eaaed8608"
+"PROVENANCE.md" = "44c6747fe74a271deed81f04d9fadde948eddf3d7306ac356348bdddf50b7fbe"
+"air_nominal.toml" = "6cb6aec5f25367d79d28382b438b50c7802073647d0236fb0e7101ca70ae8e36"
+"ionization_O_beb_kd2002.dat" = "1e3a377ede12d2fb20a9f4384c001b04e0d4ec260c4723cea5e1e261103e134e"
+"ionization_O_beb_kd2002.dat.source" = "bc40a68e5740e1a997901d687df13668e31eaca2128e1da361afbe7991bc884f"
+"rate_validity.toml" = "6c4c6bb8803eccb20edbefe83a71f0f4d92f2c6ea6205c8301f14d8f1f3c4206"
 
 [reuse]
 "../propellants/elastic_N2_song2023.dat" = { sha256 = "d70d9252e961ec6bfe16a0a480020dfdcf3a3aa1032cf2d23b7b3a51a455c47d", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
@@ -79,3 +82,4 @@ history = [
 "../propellants/ionization_N_to_N_Z2plus_hms2017.dat" = { sha256 = "a7a6f8fd84f2a3b316002e2aba22d605f152166a5364358b5317d163054133c1", target = "N", process = "HA-N2N-01", role = "NOMINAL" }
 
 [tables]
+"ionization_O_beb_kd2002.dat" = { target = "O", process = "HA-O-ION-01", role = "NOMINAL (BEB member of the unweighted BEB / Thompson pair)", kind = "COPY_OF_V0", v0 = "docs/chemistry/o_o2/v0/tables/ionization_O_beb_kd2002.dat", v0_sha256 = "1e3a377ede12d2fb20a9f4384c001b04e0d4ec260c4723cea5e1e261103e134e" }

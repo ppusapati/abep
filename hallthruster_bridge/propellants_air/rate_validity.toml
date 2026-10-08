@@ -7,6 +7,11 @@
 # DOM-AIR-02) is a separate check. Entries keyed ../propellants/<file> mirror the abep-n2n-0.11 entries byte for byte in
 # meaning (status, limit, basis); abep_chem::hall_air refuses a mirror that differs.
 
+["ionization_O_beb_kd2002.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "Kim & Desclaux 2002 BEB via NIST SRD 107 spans 13.62-5000 eV; held-tail share 0.000000 % at 255 eV mean energy (docs/chemistry/o_o2/v0/manifest_nist107_o_v0.json source_support_limit 255)"
+
 ["../propellants/elastic_N2_song2023.dat"]
 status = "verified"
 max_mean_energy_eV = 255.0
