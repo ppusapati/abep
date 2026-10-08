@@ -406,3 +406,40 @@ fn the_a5_record_is_deterministic_and_carries_no_synthetic_value() {
     assert_eq!(d.get("states").and_then(Value::as_list).map(<[Value]>::len), Some(196));
     assert_eq!(d.get("f7_members").and_then(Value::as_list).map(<[Value]>::len), Some(1279));
 }
+
+// ------------------------------------------------------------------------------------------------ committed records
+
+fn committed(name: &str) -> (String, String) {
+    let rel = format!("{}/{name}", abep_assess::closure_m1::NP_DIR);
+    let text = std::fs::read_to_string(repo().join(&rel)).unwrap();
+    let v = abep_types::pyjson::loads(&text).unwrap();
+    let commit = v.as_dict().unwrap().get("rust_commit").and_then(Value::as_str).unwrap().to_string();
+    (text, commit)
+}
+
+#[test]
+fn committed_record_is_the_a5_record_of_today() {
+    let (text, commit) = committed("intake_closure_a5_v1.json");
+    let mut inp = base().clone();
+    inp.today.mission.provenance.rust_commit = commit;
+    let out = evaluate(&inp).unwrap();
+    let now = to_json(&intake_record(&inp, &out, "A5_INTAKE_CLOSURE_V1").unwrap()).unwrap();
+    assert_eq!(now, text, "byte-identical regeneration");
+    assert!(!text.contains("SYNTHETIC"));
+}
+
+#[test]
+fn committed_dry_run_v2_is_the_harness_v2_record_of_today() {
+    let (text, commit) = committed("closure_run_m1_dryrun_v2.json");
+    let mut inp = base().clone();
+    inp.today.mission.provenance.rust_commit = commit;
+    let out = evaluate(&inp).unwrap();
+    let now = to_json(&abep_assess::closure_m1::record::record_v2(&inp, &out, "M1_DRY_RUN_NOT_DECISIVE")).unwrap();
+    assert_eq!(now, text, "byte-identical regeneration");
+    let v = abep_types::pyjson::loads(&text).unwrap();
+    let c = v.as_dict().unwrap().get("classification").unwrap().as_dict().unwrap();
+    assert_eq!(c.get("result").and_then(Value::as_str), Some(NOT_DETERMINABLE));
+    assert_eq!(c.get("procedure_step").and_then(Value::as_str), Some("C1"));
+    assert!(v.as_dict().unwrap().get("intake_closure_a5").unwrap().as_dict().unwrap().contains_key("addendum_a5"));
+    assert!(!text.contains("SYNTHETIC"));
+}
