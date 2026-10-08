@@ -2,7 +2,8 @@
 
 **Engineering evidence:** `docs/closure/icp/icp_closure_v1.json` / `.md` (sha256 of the JSON
 `3ddf55039b4f682983cfd728ded3bec6bb6e7e1cb73551ccee32521815b1016c`) and registration ICP-CLOSURE-REG-v1 (lock
-`5a03e399…`).
+`5a03e399…`). The collector sheath-energy window is `docs/closure/icp/icp_collector_window_a1_v1.json` (sha256
+`c414954b13c7e54475d8732de82f37051f07e4bd9e7cc273ccd56fac7098eee6`, addendum A1, lock `76880994…`).
 
 **Internal closure state:** BLOCKED BY SPECIFIC MISSING EVIDENCE. The text below is written for the technical proposal.
 It states the design baseline and the verification approach. It does not claim a demonstrated electron-current
@@ -25,6 +26,11 @@ precedent, not a performance basis.
 - **Collector.** A separately biased, metered C-type ion-collecting electrode, 100 mm long, of nickel-chromium alloy
   (Inconel 600 primary, Inconel 601 backup).
 - **Isolation.** The ICP body floats on a 350 V isolation class.
+- **Collector operating point.** The collector is operated near its floating potential, with a low collector sheath
+  voltage. This limits ion-impact energy and sputter erosion of the collector over the firing life. The floating-body,
+  separately biased topology lets the collector sheath voltage be set independently of the Hall discharge voltage.
+  The collector bias range and its erosion allowance are finalized with the measured sputter yields of the procured
+  alloy and the measured collector sheath potential (engineering model verification).
 - **Gas feed.** The neutralizer reuses the neutral gas leaving the Hall thruster, so it has no dedicated feed. A capped
   dedicated port is retained for the xenon variant.
 - **RF chain.** An adjustable local matching network sits at the ICP module. The RF chain is rated for a forward-power
@@ -59,6 +65,8 @@ neutralizer supplies an electron current at least equal to the Hall discharge cu
    using a dedicated, isolated, instrumented electron collector over the bias range. The test gases are argon
    (engineering), nitrogen, an oxygen-bearing mixture, and xenon.
 3. **Coupled test.** A coupled Hall-thruster + neutralizer test that confirms current balance and coupling voltage.
+   It also measures the collector sheath potential with a retarding-field analyzer, and tracks collector recession on
+   a serialized, replaceable collector.
 4. **Engineering model verification.** The neutralization margin is formed against the measured Hall discharge
    current with a preregistered uncertainty rule. The ICP go / no-go gate before design lock is fail-closed: it reads
    NOT EVALUATED until its evidence exists.
@@ -81,6 +89,13 @@ thruster field analysis and confirmed by measurement.
   0.1 published anchor. It is the reason the impedance map and the capacity bench come first.
 - "Does not, in principle, limit" rests only on energy conservation (B3 / B4 of the closure record). It is not a
   performance claim.
+- Collector sputtering (P8 input; addendum A1, `icp_collector_window_a1_v1.json`):
+  - The allowed collector sheath drop is about 24–37 V (N⁺ → Ni prior, 0.5–2 mm allowance). The analog
+    cathode-common 140 / 220 V is excluded.
+  - The window is open at T_e ≤ 5 eV. Reachability at that bias is NOT_EVALUATED (model).
+  - The DCR on DBF1-ICP-04 is not triggered; its trigger condition is pre-declared.
+  - Do not quote a recession or bias value as a requirement. The proposal states the near-floating operating principle
+    only.
 - The open evidence is in `icp_closure_v1.md` sec. 5:
   - rate-set admission;
   - O⁺ / O₂⁺ edge factor;

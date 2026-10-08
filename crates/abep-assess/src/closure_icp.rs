@@ -956,3 +956,238 @@ pub fn render(v: &Value) -> AssessResult<String> {
     out.push('\n');
     Ok(out)
 }
+
+// ------------------------------------------------------------------------------------------- addendum A1 (P8 input)
+
+pub const A1_REL: &str = "docs/closure/icp/icp_closure_registration_a1_v1.json";
+pub const A1_SHA256: &str = "73d177fc5aa8dfcf85d51a284ea2d7cb381055072c02304f155179a54796983c";
+pub const A1_LOCK_REL: &str = "docs/closure/icp/icp_closure_registration_a1_lock_v1.json";
+pub const A1_LOCK_SHA256: &str = "768809949bff34138de3de97b63bf32b80cd1ccc64fe6f715518bb1e7fe56636";
+pub const P8_REL: &str = "docs/closure/materials/materials_gates_v1.json";
+pub const P8_SHA256: &str = "f3b6e04507429db87b3f94a3a355bb6e87cb78d97ca9bd1f902a766ea667fee1";
+pub const A1_RECORD_REL: &str = "docs/closure/icp/icp_collector_window_a1_v1.json";
+
+/// E_floor / T_e = 1/2 + (1/2) ln(M / (2 pi m_e)) (REF-LIEB15 slides 41, 48; P8 DA-03 relation).
+pub fn floor_over_te(m_u: f64) -> f64 {
+    0.5 + 0.5 * (m_u * AMU / (2.0 * PI * abep_icp::constants::M_E)).ln()
+}
+
+/// f_max = 1 - exp(-(E* - E_floor) / T_e), or None when E* <= E_floor (WINDOW_CLOSED).
+pub fn f_max(e_star_ev: f64, t_e_ev: f64, m_u: f64) -> Option<f64> {
+    let gap = e_star_ev - t_e_ev * floor_over_te(m_u);
+    (gap > 0.0).then(|| 1.0 - (-gap / t_e_ev).exp())
+}
+
+/// u_B = (e T_e / M)^(1/2) [m/s].
+pub fn u_bohm(t_e_ev: f64, m_u: f64) -> f64 {
+    (E_CHARGE * t_e_ev / (m_u * AMU)).sqrt()
+}
+
+/// The A1 record (deterministic).
+pub fn build_a1(repo: &Path) -> AssessResult<Value> {
+    let lock = read_verified(&repo.join(A1_LOCK_REL), A1_LOCK_SHA256)?;
+    let lock: J = serde_json::from_slice(&lock).map_err(|e| me(format!("{A1_LOCK_REL}: {e}")))?;
+    if lock.pointer("/files/icp_closure_registration_a1_v1.json").and_then(J::as_str) != Some(A1_SHA256)
+        || lock.pointer("/parent_lock/sha256").and_then(J::as_str) != Some(LOCK_SHA256)
+        || lock.pointer("/p8_record/sha256").and_then(J::as_str) != Some(P8_SHA256)
+    {
+        return Err(me(format!("{A1_LOCK_REL}: pins differ")));
+    }
+    load_registration(repo)?;
+    let a1: J = serde_json::from_slice(&read_verified(&repo.join(A1_REL), A1_SHA256)?)
+        .map_err(|e| me(format!("{A1_REL}: {e}")))?;
+    let p8: J = serde_json::from_slice(&read_verified(&repo.join(P8_REL), P8_SHA256)?)
+        .map_err(|e| me(format!("{P8_REL}: {e}")))?;
+    // The registered E* rows and currents must be the P8 DA-03 values.
+    let da03 = p8
+        .get("analyses")
+        .and_then(J::as_array)
+        .and_then(|l| l.iter().find(|x| x.get("id").and_then(J::as_str) == Some("DA-03")))
+        .ok_or_else(|| me("P8 DA-03"))?;
+    let p8_rows = da03.get("ion_energy_ceiling").and_then(J::as_array).ok_or_else(|| me("DA-03 ceiling"))?;
+    let rows = ptr(&a1, "/inputs/E_star_eV/rows")?.as_array().ok_or_else(|| me("A1 E* rows"))?;
+    if rows.len() != p8_rows.len() {
+        return Err(me("A1 E* rows differ from P8 DA-03"));
+    }
+    for (r, p) in rows.iter().zip(p8_rows) {
+        let same = r.get("allowance_mm").and_then(J::as_f64) == p.get("allowance_mm").and_then(J::as_f64)
+            && r.get("I_A").and_then(J::as_f64) == p.get("I_A").and_then(J::as_f64)
+            && r.get("E_star").and_then(J::as_f64) == p.get("E_star_eV_Nplus_Ni_prior").and_then(J::as_f64);
+        if !same {
+            return Err(me(format!("A1 E* row {r} differs from P8 DA-03 {p}")));
+        }
+    }
+    let cfg = abep_config::baseline::load_dbf1(repo)?;
+    let a_c = 2.0 * PI * cfg.icp.radius_m * cfg.icp.collector_axial_length_m;
+    let tes = nums(&a1, "/inputs/T_e_grid_eV/values")?;
+    let e_iz_air = num(&a1, "/inputs/E_iz_min_eV/AIR_with_NO")?;
+    let e_iz_xe = num(&a1, "/inputs/E_iz_min_eV/XE")?;
+    let p_env = num(&a1, "/inputs/P_abs_envelope_W/value")?;
+    let eps = nums(&a1, "/inputs/analog_epsilon_ext_eV_Xe/values")?;
+    let ions = ptr(&a1, "/inputs/ions")?.as_object().ok_or_else(|| me("ions"))?;
+    let mass = |k: &str| ions.get(k).and_then(J::as_f64).ok_or_else(|| me(format!("ion mass {k}")));
+    // Floors per ion and T_e.
+    let mut floors = Dict::new();
+    for ion in ["N+", "N2+", "O+", "O2+", "Xe+"] {
+        let m = mass(ion)?;
+        let mut d = Dict::new();
+        d.insert("E_floor_over_T_e", f(floor_over_te(m)));
+        d.insert("E_floor_eV_on_T_e_grid", Value::List(tes.iter().map(|t| f(t * floor_over_te(m))).collect()));
+        d.insert(
+            "E_star_window",
+            s(if ion == "N+" { "EVALUATED (P8 N+ -> Ni prior)" } else { "NOT_EVALUATED (no P8 prior for this ion)" }),
+        );
+        floors.insert(ion, Value::Dict(d));
+    }
+    // Windows and reachability (N+, AIR) per E* row and T_e.
+    let m_n = mass("N+")?;
+    let mut table = vec![];
+    let mut open_any = false;
+    let mut summary = vec![];
+    for r in rows {
+        let mut te_open_max: Option<f64> = None;
+        let allowance = r.get("allowance_mm").and_then(J::as_f64).unwrap_or(f64::NAN);
+        let i_d = r.get("I_A").and_then(J::as_f64).unwrap_or(f64::NAN);
+        let e_star = r.get("E_star").and_then(J::as_f64).unwrap_or(f64::NAN);
+        for &te in &tes {
+            let dphi_max = e_star - 0.5 * te;
+            let v_fl = 0.5 * te * (m_n * AMU / (2.0 * PI * abep_icp::constants::M_E)).ln();
+            let row = match f_max(e_star, te, m_n) {
+                None => dict(vec![
+                    ("allowance_mm", f(allowance)),
+                    ("I_d_A", f(i_d)),
+                    ("E_star_eV", f(e_star)),
+                    ("T_e_eV", f(te)),
+                    ("E_floor_eV", f(te * floor_over_te(m_n))),
+                    ("window", s("WINDOW_CLOSED")),
+                ]),
+                Some(fm) => {
+                    open_any = true;
+                    let p_min = i_d / fm * e_iz_air;
+                    if p_min <= p_env {
+                        te_open_max = Some(te_open_max.map_or(te, |x: f64| x.max(te)));
+                    }
+                    dict(vec![
+                        ("allowance_mm", f(allowance)),
+                        ("I_d_A", f(i_d)),
+                        ("E_star_eV", f(e_star)),
+                        ("T_e_eV", f(te)),
+                        ("E_floor_eV", f(te * floor_over_te(m_n))),
+                        ("window", s("OPEN")),
+                        ("dPhi_floating_V", f(v_fl)),
+                        ("dPhi_max_V", f(dphi_max)),
+                        ("f_max", f(fm)),
+                        ("collector_ion_flux_current_min_A", f(i_d / fm)),
+                        ("n_s_req_m3", f(i_d / (E_CHARGE * u_bohm(te, m_n) * a_c * fm))),
+                        ("P_abs_min_cons_W", f(p_min)),
+                        (
+                            "conservation",
+                            s(if p_min <= p_env { "NOT_EXCLUDED_BY_CONSERVATION" } else { "EXCLUDED_BY_CONSERVATION" }),
+                        ),
+                    ])
+                }
+            };
+            table.push(row);
+        }
+        summary.push(dict(vec![
+            ("allowance_mm", f(allowance_of(r))),
+            ("I_d_A", f(r.get("I_A").and_then(J::as_f64).unwrap_or(f64::NAN))),
+            ("E_star_eV", f(r.get("E_star").and_then(J::as_f64).unwrap_or(f64::NAN))),
+            ("T_e_max_open_and_not_excluded_eV", te_open_max.map_or(Value::Null, f)),
+        ]));
+    }
+    // Xe: floor only (no E*); the analog P_abs needed to carry I_d at f = 1 (most favourable).
+    let mut xe = vec![];
+    for i_d in nums(&a1, "/inputs/required_collector_current_A/values")? {
+        let mut d = Dict::new();
+        d.insert("I_d_A", f(i_d));
+        d.insert("P_abs_min_cons_W_at_f_1", f(i_d * e_iz_xe));
+        d.insert("P_abs_analog_W_at_f_1", Value::List(eps.iter().map(|e| f(i_d * e)).collect()));
+        xe.push(Value::Dict(d));
+    }
+    // CFG-CAP-OFF bias-grid classification (dPhi ~ V_bias; information).
+    let grid = nums(&load_registration(repo)?, "/inputs/2/value/V_bias_grid_V")?;
+    let dphi_hi = rows.iter().filter_map(|r| r.get("E_star").and_then(J::as_f64)).fold(f64::NEG_INFINITY, f64::max)
+        - 0.5 * tes.iter().copied().fold(f64::INFINITY, f64::min);
+    let bias = Value::List(
+        grid.iter()
+            .map(|v| {
+                dict(vec![
+                    ("V_bias_V", f(*v)),
+                    (
+                        "class",
+                        s(if *v <= dphi_hi {
+                            "INSIDE_THE_LARGEST_ALLOWED_DROP (2 mm, T_e 2 eV)"
+                        } else {
+                            "ABOVE_EVERY_ALLOWED_DROP"
+                        }),
+                    ),
+                ])
+            })
+            .collect(),
+    );
+    Ok(dict(vec![
+        ("schema", s("abep_assess_icp_collector_window_a1_v1")),
+        ("id", s("ICP-CLOSURE-v1-A1")),
+        (
+            "provenance",
+            dict(vec![
+                ("addendum", s(format!("{A1_REL} (sha256 {A1_SHA256}; lock {A1_LOCK_SHA256})"))),
+                ("parent", s(format!("{REG_REL} (sha256 {REG_SHA256}; lock {LOCK_SHA256})"))),
+                ("p8_record", s(format!("{P8_REL} (sha256 {P8_SHA256})"))),
+                ("dbf1_config", s(abep_config::baseline::DBF1_CONFIG_SHA256)),
+            ]),
+        ),
+        (
+            "labels",
+            sl(["NECESSARY_CONDITION", "NOT_A_PERFORMANCE_PREDICTION", "T_E_PARAMETRIC"].map(String::from)),
+        ),
+        ("A_coll_m2", f(a_c)),
+        ("floors", Value::Dict(floors)),
+        ("window_N_plus_AIR", Value::List(table)),
+        ("window_summary_N_plus", Value::List(summary)),
+        ("window_open_somewhere_on_the_T_e_grid", Value::Bool(open_any)),
+        ("xe_information", Value::List(xe)),
+        ("cfg_cap_off_bias_grid", bias),
+        (
+            "requirement",
+            s("collector sheath drop dPhi = phi_p - V_c within (V_fl, E*/e - T_e/2] (window_N_plus_AIR rows): the \
+               collector runs a few T_e below floating; a cathode-common collector with the Hall discharge voltage across \
+               its sheath (analog 140 / 220 V) is outside every allowance"),
+        ),
+        (
+            "reachability",
+            s("NOT_EVALUATED by the model (I_e,cap and T_e withheld: chemistry not admitted). Necessary conditions only: \
+               the window is open for N+ at the lower T_e of the grid and conservation does not exclude the required \
+               collector current inside the 500 W envelope there; at the allowed bias the collector ion flux is I_d / \
+               f_max and the required edge density is n_s,req"),
+        ),
+        (
+            "p8_feedback",
+            s("P8 DA-03 uses an ion flux equal to I_d; at a near-floating collector the ion flux is I_d / f > I_d, so the \
+               P8 E* is a favourable ceiling and the self-consistent ceiling is lower (P8 to re-evaluate with I_d / f)"),
+        ),
+        (
+            "dcr",
+            dict(vec![
+                // T_e is a withheld model output: a parametric T_e never triggers the DCR (A1 dcr_rule).
+                ("state", s("DCR_NOT_TRIGGERED_PENDING_EVIDENCE")),
+                ("item", s("DBF1-ICP-04")),
+                (
+                    "rule",
+                    s("A1 dcr_rule: triggered only when a CONVERGED model T_e or an EM measurement shows the window \
+                       closed or conservation-excluded at the operating point; a parametric T_e never triggers it"),
+                ),
+                (
+                    "trigger_condition",
+                    s("operating T_e above T_e_max_open_and_not_excluded_eV of window_summary_N_plus (chosen allowance), or I_e,cap at dPhi \
+                       <= dPhi_max below I_d with the HC-05 margin"),
+                ),
+            ]),
+        ),
+    ]))
+}
+
+fn allowance_of(r: &J) -> f64 {
+    r.get("allowance_mm").and_then(J::as_f64).unwrap_or(f64::NAN)
+}

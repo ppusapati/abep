@@ -151,3 +151,31 @@ fn every_case_carries_the_registered_inputs_with_complete_evidence() {
         }
     }
 }
+
+#[test]
+fn committed_a1_collector_window_record_is_the_record_of_today() {
+    let v = build_a1(&repo()).expect("A1 record builds");
+    let committed = std::fs::read_to_string(repo().join(A1_RECORD_REL)).expect("committed A1 record");
+    assert_eq!(render(&v).unwrap(), committed, "byte-identical regeneration of {A1_RECORD_REL}");
+    // A parametric T_e never triggers the DBF1-ICP-04 DCR (A1 dcr_rule).
+    assert_eq!(at(&v, &["dcr", "state"]).as_str(), Some("DCR_NOT_TRIGGERED_PENDING_EVIDENCE"));
+}
+
+#[test]
+fn a1_sheath_relations_are_the_independent_closed_forms() {
+    // E_floor / T_e = 1/2 + 1/2 ln(M / (2 pi m_e)); the P8 DA-03 table gives 4.655 (N+) and 5.774 (Xe+).
+    let me = 9.109_383_713_9e-31;
+    let fl = |mu: f64| 0.5 + 0.5 * (mu * 1.660_539_066_60e-27 / (2.0 * std::f64::consts::PI * me)).ln();
+    for mu in [14.00643, 31.99806, 131.287] {
+        assert!((floor_over_te(mu) - fl(mu)).abs() <= 1e-13);
+    }
+    assert!((floor_over_te(14.00643) - 4.655).abs() < 5e-4);
+    assert!((floor_over_te(131.287) - 5.774).abs() < 5e-4);
+    // f_max: no window at E* = E_floor; 1 - e^-1 one T_e above it.
+    let te = 3.0;
+    let e0 = te * floor_over_te(14.00643);
+    assert_eq!(f_max(e0, te, 14.00643), None);
+    assert!((f_max(e0 + te, te, 14.00643).unwrap() - (1.0 - (-1.0f64).exp())).abs() <= 1e-12);
+    let ub = (1.602_176_634e-19_f64 * 3.0 / (14.00643 * 1.660_539_066_60e-27)).sqrt();
+    assert!((u_bohm(3.0, 14.00643) - ub).abs() <= 1e-9 * ub);
+}
