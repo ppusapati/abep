@@ -1,0 +1,54 @@
+{
+ "schema": "abep_new_physics_verification_addendum_v1",
+ "id": "np_icp_neutralizer_verification_addendum_a938_source_reads_v1",
+ "model_id": "NP-ICP-NEUTRALIZER",
+ "model_version": "2",
+ "date": "2026-10-08",
+ "lane": "L-ICP-CLOSURE (A9.38 P4)",
+ "gate": "NP-ICP prereg v1 verify_gate (inherited by v2): a verification addendum records the source read (locator, access, sha256 where lawful) and confirms the text",
+ "purpose": "Records the reachable source reads of 2026-10-08 against the open verify items of verification_report_model_v2_v2. Only VER-25 is cleared (verification_addendum_ver25_v1.json, with its code change). The items below are recorded as read; none is cleared here and no code path changes, for the reason given per item.",
+ "items": [
+  {
+   "verify_item": "VER-01",
+   "item_text": "Lieberman & Lichtenberg 2005 ch. 10: global particle / energy balance form and the statement that T_e is set by the particle balance",
+   "source_read": {"citation": "M. A. Lieberman, short course 'Principles of plasma discharges and materials processing' (2015), REF-LIEB15", "url": "https://people.eecs.berkeley.edu/~lieber/Day1View150315crop.pdf", "accessed_utc": "2026-10-08T14:08Z", "document_sha256": "498b6c11edd7291320c41fcf329ddf4347a3852a0a3b8c02ddac4607ecb3c9f4", "locators": "slide 46 (particle balance K_iz n_g n0 pi R^2 l = (2 pi R^2 h_l n0 + 2 pi R l h_R n0) u_B; K_iz(T_e)/u_B(T_e) = 1/(n_g d_eff)); slide 50 (power balance P_abs = (h_l n0 2 pi R^2 + h_R n0 2 pi R l) u_B e E_T); slide 51 ('Particle balance => electron temperature Te (independent of plasma density)', 'Power balance => plasma density n0')"},
+   "finding": "The same author's course states the global particle / energy balance form and the T_e-from-particle-balance statement exactly as the item text describes. The named source (the book, ch. 10) is not read: no lawful copy was reached.",
+   "status": "CONFIRMED_BY_SAME_AUTHOR_COURSE_NOT_CLEARED",
+   "why_not_cleared": "verification_report_model_v2_v2 names the book chapter as the closing read. Accepting REF-LIEB15 in its place is left to the NP-ICP verification owner (ledger_update_requested); VER-01 stays on the path."
+  },
+  {
+   "verify_item": "VER-02",
+   "item_text": "elastic electron energy-loss term n_k k_m,k (3 m_e / M_k)(T_e - T_g)",
+   "source_read": {"citation": "REF-LIEB15", "document_sha256": "498b6c11edd7291320c41fcf329ddf4347a3852a0a3b8c02ddac4607ecb3c9f4", "locators": "slide 39: 'K_iz E_c = K_iz E_iz + K_ex E_ex + K_el (2m/M)(3Te/2)'; '(3m/M) Te are energies lost by an electron due to an ... elastic scattering collision'"},
+   "finding": "The (3 m_e / M) T_e loss per elastic collision is confirmed in the cold-gas limit. The - T_g term is not in the source text.",
+   "status": "PARTIALLY_CONFIRMED_NOT_CLEARED",
+   "why_not_cleared": "The T_g term remains from memory; with T_g = 300 K (0.026 eV) it changes the term by <= 1.3 % over T_e >= 2 eV. Not cleared."
+  },
+  {
+   "verify_item": "VER-09",
+   "item_text": "ion-neutral cross-section sources: Phelps, JPCRD 20, 557 (1991) (nitrogen ions); Phelps, J. Appl. Phys. 76, 747 (1994) (argon); Miller et al., J. Appl. Phys. 91, 984 (2002) (xenon); bibliographic details from memory",
+   "source_read": {"citation": "A. V. Phelps, J. Phys. Chem. Ref. Data 20, 557-573 (1991), doi 10.1063/1.555889 (NIST-hosted reprint)", "url": "https://srd.nist.gov/jpcrdreprint/1.555889.pdf", "accessed_utc": "2026-10-08T14:13Z", "document_sha256": "2ad461a1792b7624bf8ca3532548879ddd912126b4c0a16701d975845bbaef62", "locators": "Table 1 (N+ + N2) and Table 3 (N2+ + N2), column Q_m; Fig. 3; p. 562 text"},
+   "finding": "The nitrogen-ion source and its bibliographic details are confirmed and read (used by ICP-CLOSURE-REG-v1 RI-05). Phelps 1994 is not read. Miller et al. 2002 is not read: pubs.aip.org answers 403. GK2008 p. 57 cites it as 'about 10^-18 m^2'.",
+   "status": "PARTIALLY_CONFIRMED_NOT_CLEARED",
+   "why_not_cleared": "Two of the three sources are unread."
+  },
+  {
+   "verify_item": "VER-22",
+   "item_text": "Child-law sheath width",
+   "source_read": {"citation": "REF-LIEB15", "document_sha256": "498b6c11edd7291320c41fcf329ddf4347a3852a0a3b8c02ddac4607ecb3c9f4", "locators": "slide 49: 'The sheath thickness s (~ 0.5 cm) is given by the Child Law J_i = e n_s u_B = (4/9) eps0 (2e/M)^1/2 V_s^3/2 / s^2'; slides 73-75 (homogeneous and collisionless Child-law sheaths)"},
+   "finding": "The collisionless Child-law form is confirmed.",
+   "status": "FORM_CONFIRMED_NOT_IMPLEMENTED",
+   "why_not_cleared": "s_j is not implemented, so its output stays NOT_EVALUATED with reason VER-22_CHILD_LAW_SHEATH_WIDTH. Implementing it is a v2 code step for the NP-ICP verification owner. It is a reported diagnostic with no threshold."
+  }
+ ],
+ "still_blocked": [
+  {"verify_item": "VER-06", "source": "Baalrud, Hershkowitz & Longmier, Phys. Plasmas 14, 042109 (2007)", "barrier": "pubs.aip.org HTTP 403 (publisher); no arXiv copy found (export.arxiv.org author search, 2026-10-08)"},
+  {"verify_item": "VER-07", "source": "Chabert et al., Phys. Plasmas 19, 073512 (2012)", "barrier": "pubs.aip.org HTTP 403; HAL record hal-01549430 holds metadata only (no file)"},
+  {"verify_item": "VER-08", "source": "no registered source for the Z > 1 Bohm speed", "barrier": "REF-LIEB15 treats Z = 1 only"},
+  {"verify_item": "VER-12", "source": "surface energy terms (work function, ion neutralization energy)", "barrier": "no surface-physics source read; REF-LIEB15 gives 2 T_e per electron and V_s + T_e/2 per ion only"},
+  {"verify_item": "VER-20", "source": "non-isothermal transmission reciprocity", "barrier": "Chiggiato 2014 (arXiv:1404.0960) treats isothermal molecular flow only"},
+  {"verify_item": "VER-21", "source": "Baalrud, Hegna & Callen, PRL (2009)", "barrier": "journals.aps.org HTTP 403; no arXiv copy found"},
+  {"verify_item": "VER-24", "source": "extraction-boundary law", "barrier": "no published law located"}
+ ],
+ "ledger_update_requested": "NP-ICP-NEUTRALIZER verification: VER-25 cleared (v2). The NP-ICP verification owner decides whether REF-LIEB15 closes VER-01 and implements VER-22."
+}

@@ -1,0 +1,35 @@
+{
+ "schema": "abep_new_physics_verification_addendum_v1",
+ "id": "np_icp_neutralizer_verification_addendum_ver25_v1",
+ "model_id": "NP-ICP-NEUTRALIZER",
+ "model_version": "2",
+ "verify_item": "VER-25",
+ "item_text": "vacuum permittivity eps0 used by the EQ-20 Debye-length diagnostic: the implementation carried the CODATA 2018 value 'from memory: verify'; prereg v2 asks for a lawful NIST read, recorded in an addendum, then a v2-only constant",
+ "used_by": "EQ-20 lambda_D (DOM-07 reported ratios lambda_D_over_min_R_L, lambda_D_over_R); no threshold, no gate",
+ "gate": "NP-ICP prereg v1 verify_gate (inherited by v2): a verification addendum records the source read (locator, access, sha256 where lawful) and confirms the text",
+ "date": "2026-10-08",
+ "lane": "L-ICP-CLOSURE (A9.38 P4)",
+ "source": {
+  "citation": "NIST, CODATA Internationally recommended 2022 values of the Fundamental Physical Constants: vacuum electric permittivity",
+  "url": "https://physics.nist.gov/cgi-bin/cuu/Value?ep0",
+  "accessed_utc": "2026-10-08T14:21:57Z",
+  "access": "public NIST web page fetched through the session proxy (no login, no paywall)",
+  "document_sha256": "d5f84475858c17bd437940c51f2e0934baf3da7bc462f0e29ab7db7e59fd9721",
+  "sha256_note": "HTML as served; the page embeds per-request script tokens, so a re-fetch has other bytes. The registration ICP-CLOSURE-REG-v1 SR-01 records the same read."
+ },
+ "read": {
+  "quantity": "vacuum electric permittivity",
+  "numerical_value": "8.854 187 8188 x 10^-12 F m^-1",
+  "standard_uncertainty": "0.000 000 0014 x 10^-12 F m^-1",
+  "source_line": "Source: 2022 CODATA recommended values"
+ },
+ "value_registered": {
+  "constant": "abep_icp::v2::diagnostics::EPS0_CODATA2022",
+  "value_F_per_m": 8.8541878188e-12,
+  "previous": "abep_icp::constants::EPS0 = 8.8541878128e-12 (CODATA 2018, recalled from memory); unchanged, still used by the v1 path (v1 byte identity)",
+  "relative_change_of_lambda_D": "+3.4e-10 (sqrt of the eps0 ratio), reported diagnostics only"
+ },
+ "confirmation": "VER-25 is CLEARED for model_version 2: the CODATA 2022 eps0 is read from NIST and registered as the v2-only constant EPS0_CODATA2022; EQ-20 uses it and VER-25 is no longer inserted into verify_items_on_path. Nothing else changes: no output other than the two lambda_D ratios moves, and those carry no threshold (DOM-07).",
+ "consequence": "crates/abep-icp/src/v2/diagnostics.rs (EPS0_CODATA2022, debye_length) and crates/abep-icp/src/v2/evaluate.rs (VER-25 removed from the on-path set). v1 code and constants unchanged.",
+ "test": "crates/abep-icp/tests/v2_analytic.rs lc19_diagnostic_closed_forms (CODATA 2022 value written out independently; v1 EPS0 bytes kept); crates/abep-icp/tests/v2_fail_closed.rs verification_addendum_ver25_is_bound_to_the_constant"
+}

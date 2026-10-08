@@ -494,8 +494,11 @@ fn lc19_diagnostic_closed_forms() {
     assert!(rel(diagnostics::omega_ce_over_nu_m(b, nu), e * b / (me * nu)) <= 1e-12);
     let vperp = (PI * e * te / (2.0 * me)).sqrt();
     assert!(rel(diagnostics::r_ce_over_r(te, b, r), me * vperp / (e * b * r)) <= 1e-12);
-    // lambda_D with the implementation's eps0 (VER-25 stays on the path: the CODATA 2022 value is not yet read in).
-    assert!(rel(diagnostics::debye_length(te, ne), (EPS0 * te / (e * ne)).sqrt()) <= 1e-12);
+    // lambda_D with the CODATA 2022 eps0 (VER-25 cleared, verification_addendum_ver25_v1.json), written out here.
+    let eps0_2022 = 8.854_187_818_8e-12;
+    assert!(rel(diagnostics::debye_length(te, ne), (eps0_2022 * te / (e * ne)).sqrt()) <= 1e-12);
+    // The shared v1 constant keeps its bytes (CODATA 2018); model_version 2 alone carries the 2022 value.
+    assert_eq!(EPS0.to_bits(), 8.854_187_812_8e-12_f64.to_bits());
 }
 
 #[test]
