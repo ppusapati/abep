@@ -24,6 +24,16 @@ pub mod rec;
 pub mod reservoir;
 pub mod rotor_strength;
 pub mod transient;
+
+/// The contract-v8 input-only stability class of the feed loop (equilibria of an event sequence; no time-domain
+/// record), the surface consumers outside this crate use. The plain transient records stay crate-internal for
+/// downstream readers (tests/transient_status_v8.rs guard); time-domain outputs go through the `*_assessed` entries.
+pub mod stability {
+    pub use crate::transient::{
+        stability_class_events, stability_class_orbit, Controller, Equilibrium, EquilibriumKind, StabilityClass,
+        StabilityReport, WINDOW_S,
+    };
+}
 pub mod upstream;
 
 pub use error::{GasPathError, PyClass, PyResult};

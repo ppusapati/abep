@@ -13,9 +13,13 @@
 //! conservation bounds (step CA4 between C0 and C1; additive: without an eligible A4 failure nothing changes).
 //! [`intake`] adds the addendum A5 M2 intake closure (A9.35): a registered intake / gas-path design that misses the A4
 //! necessary condition in every surface scenario adds A5-NH-INTAKE (DESIGN_VARIABLE_LIMIT, never eligible).
+//! [`dbf1`] / [`dbf1_record`] add the addendum A8 M2 evaluation of the frozen DBF-1 design point (A9.37; every Hall
+//! field NOT_EVALUATED, HALL_NUMERICS_NOT_CONVERGED, A9.36).
 
 pub mod conservation;
 pub mod conservation_record;
+pub mod dbf1;
+pub mod dbf1_record;
 pub mod gather;
 pub mod intake;
 pub mod intake_record;

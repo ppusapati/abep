@@ -1,0 +1,140 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a8_m2_dbf1_v1",
+ "addendum": "A8 (M2 196-state RFP closure of the DBF-1 design point)",
+ "amends": "NP-HALL-PARAMETRIC-ENVELOPE harness v2 (addendum A2) by an additive evaluation mode; v1, A1..A6 and every committed record are not edited. A7 is reserved for the A9.36 Hall numerics lane (converged RP-1 envelope).",
+ "status": "PREREGISTERED_BEFORE_M2_EXECUTION",
+ "status_label": "ACTUAL_DESIGN_EVALUATION (DBF-1) / PARAMETRIC / NOT_VALIDATED / NOT_A_PERFORMANCE_PREDICTION",
+ "date": "2026-10-08",
+ "lane": "lane-dbf1-m2",
+ "base_commit": "8f7e33a (DBF-1 committed alone on 53469dd)",
+ "drafted_by": "agent session under A9.34 milestone governance (no owner review of lane-level registrations); nothing here is an owner decision",
+ "mandate": "A9.37: freeze DBF-1, then execute M2 against DBF-1. A9.36: no Hall thrust value enters M2 while A6 is STOP_NO_LEVEL_CONVERGED. A9.34: M2 196-STATE RFP CLOSURE; plenum / feed v8 PARITY_FAIL stands, use the governed Python reference for the transient path. A9.35: a failing current design is DESIGN_VARIABLE_LIMIT unless a registered envelope bound proves no permissible intake closes.",
+ "registered_before": "any A8 code, any DBF-1 quantity on any design state, any feed-stability evaluation of the DBF-1 design and any M2 execution. Results seen before registration: the A5 record (all registered designs incl. the DBF-1 vector in its covered contexts), the A4 record, the M1 dry run v2, the A6 study STOP result and DBF-1 itself (its deficiencies BD-01..06).",
+ "governing_records": {
+  "docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md": "fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43",
+  "docs/decisions/OD_2026_10_08_A9_37_dbf_1_design_baseline_freeze.json": "716f933c2f65cdf19fe5f872a8bb5aa6bb94531afd4d7931509f5eb82519cbb1",
+  "docs/decisions/OD_2026_10_08_A9_36_M1_NOT_READY_HALL_NUMERICS_INVESTIGATION.md": "d573a93b5fadd43721eeec35c3235b7af3f65e3a062508c593017638e3b03440",
+  "docs/decisions/OD_2026_10_08_A9_35_A4_REG_01_OPEN_INTAKE_CLOSURE_RULE.md": "7175987a80ffc730c0b910091ec02929cb7930b47b7c4436a5edc772da59ade5",
+  "docs/decisions/OD_2026_10_08_A9_34_MILESTONE_GOVERNANCE_M1_M2_M3.md": "284a8339ac9d821d19f6484c844822662d9f19ec02d2074d641d432785df3de1",
+  "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+  "docs/milestones/M1_architecture_physics_ready/m1_audit_v2.json": "dd1e10e354c08411188edcb44af6a46c76207c5f041cded7dde288e91c88ae01",
+  "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/a6_convergence_study_result_v1.json": "97f9b5d0f515e4d4992941027dd5a96da0d9a533cc20c23d921d3b84e12eca45",
+  "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/a3_numerics_result_v1.json": "285e7fe2b8cda483409be218a2615a23643d850607b32b766f4b7fbcd77b84bc",
+  "docs/baseline/DBF-1/dbf1_lock_v1.json": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907",
+  "docs/baseline/DBF-1/dbf1_v1.json": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+  "docs/baseline/DBF-1/dbf1_config_v1.json": "5bd76159fb9761b5c47619fb42217f05c24841d7009067ac71dcedf731759864"
+ },
+ "predecessor_locks": {
+  "prereg_lock_v1.json": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3",
+  "prereg_addendum_a1_air_family_lock.json": "35388e247ffdcc7af2a605e46f29d955ec29875893d3f7342e6411110f3d17a6",
+  "prereg_addendum_a2_lock.json": "774bf7618e0afafa40fe252d782d3112c71f2958ed7fe51b33e9c5d3dba617dd",
+  "prereg_addendum_a3_numerics_lock_v1.json": "b840f1b080c94be58472ccb07f6cf35cc9ad8822161ff9a1440ecb55c76e04bd",
+  "prereg_addendum_a4_lock.json": "5a03333e9a18f9bd85fe7bf0359b81d541bf45a4c7c91f0b4e12076f5cb92dcc",
+  "prereg_addendum_a5_lock.json": "d143fd4c97909f06717e1f993ee800bb3e6a610681acaf5fa30c7c715359b544",
+  "prereg_addendum_a5_1_lock.json": "d56e34f99277aa8dabcbf614d2e7c3d3427be011356a0db4485558ba611bbddd",
+  "prereg_addendum_a6_xe_converged_grid_lock_v1.json": "e0a97161f8599ab0c11770751d95fac9cbd68a50b24de3bc6201d9ab6d2b089a"
+ },
+ "principle": [
+  "Evaluate the ONE frozen design (DBF-1) at all 196 frozen design states, both required modes (AIR_PRIMARY, XE_CONTINGENCY), both layers ((a) parametric DBF-1 evaluation, (b) admitted-only, unchanged).",
+  "No design value is read from anywhere but dbf1_config_v1.json through abep_config::baseline (sha256 pin + DBF-1 lock, fail closed); no search, no selection, no favourable scenario.",
+  "Every Hall thrust / I_d / P_d field is NOT_EVALUATED with blocker HALL_NUMERICS_NOT_CONVERGED (A9.36).",
+  "C0 / CA4 / C1..C4 (A9.32 with A4), A9.35, A2, A4 and A5 are applied unchanged; every A8 code is never eligible for PHYSICALLY_NON_CLOSING.",
+  "Physics / assessment separation: kernels compute raw quantities; HC thresholds are read through abep-config in abep-assess only; the DBF-1 allocations (1,350 W, 300 W, 34 kg) are design-allocation information, never RFP gates."
+ ],
+ "paths": {
+  "P-ENV": "unchanged (admitted mission run hook; 196 states)",
+  "P-FLOW-DBF1 (AIR)": {
+   "producer": "the admitted F7 steady chain (abep_gaspath::plenum_feed intake_side + steady_sweep at the DBF-1 P_set, filter, compressor plant and plenum (V, WALL-G0), abep_design upstream inputs) - the A5 rerun path",
+   "evaluated": "the DBF-1 upstream design in EVERY admitted surface scenario (DBF1-IN-03, 10) at every harness state: steady bits / in-domain, delivered mdot, species mole fractions, compressor electrical power, captured flow (F1 IF-A1 species x A)",
+   "cross_check": "in every scenario where the DBF-1 vector is a committed F7 Pareto member, its statewise minimum delivered flow over the F7 state list equals the committed value within the A5.1 tolerance max(4 ulp, 1e-9 relative); else MODEL_ERROR (no record)",
+   "scenario_rule": "no scenario is chosen (A9.13 S6.16): per state, the unfavourable value is the minimum over admitted scenarios and the favourable the maximum; both are reported"
+  },
+  "P-FEED-STABILITY-DBF1 (AIR)": {
+   "quantity": "contract-v8 input-only stability class of the DBF-1 feed loop (DBF1-IN-07 controller) at each (state, scenario) whose steady point is in domain: the equilibria of event_sequence(intake state, P_set, 60 s) (E0 hold, setpoint x1.1 and back, feed path x0.8 and back, supply x0.9, x1.1, back); S stable, U unstable (an UNSAT equilibrium with Re lambda > 0), R refused (dead-head at the setpoint)",
+   "authoritative": "the governed Python reference (A9.34; plenum / feed v8 PARITY_FAIL stands): scripts/m2/dbf1_feed_stability_reference.py evaluates the class on the reference module's own functions (abep_sim/design/plenum_feed.py TransientRun, Chain.node_coefficients, area_for_pressure, solve_pressures, the TransientRun Jacobian; numpy eigvals), exactly as the v7 / v8 Python side (scripts/rust_migration/es3_gaspath_parity.py _py_equilibrium); its output record is committed and pinned in the M2 run manifest before execution",
+   "cross_check_R2": "Rust abep_gaspath::transient::stability_class_events computes the same class on every input; class and every equilibrium kind must agree (as the v7 / v8 scored stability class); a disagreement is MODEL_ERROR (no record). The Python class is used",
+   "typed_status": "U -> FEED_LOOP_UNSTABLE_EQUILIBRIUM (time-domain outputs ILL_POSED_UNSTABLE_EQUILIBRIUM, never consumed); R -> the steady point is out of domain (dead-head); no transient time-domain value is consumed"
+  },
+  "P-ICP-DBF1": {
+   "producer": "NP-ICP v2 (abep_icp::v2, lock a180ceef...) per mode on the registered-today v2 case with the DBF-1 registrations added: geometry (ASSUMED_GEOMETRIC_TUBE, radius 0.06 m, length 0.15 m; surfaces: dielectric vessel wall 2 pi R (L - 0.10 m) [N_VESSEL], biased ion collector 2 pi R 0.10 m [N_COLLECTOR], upstream open end pi R^2 [RX_H1_FACE], downstream open end pi R^2 [EXPORT]; materials DBF1-ICP-07 / DBF1-MAT-03), each with an evidence record (quantity type ASSUMED, level 7, source dbf1_v1.json item ids, validation NOT_VALIDATED)",
+   "not_registered": "absorbed RF power / coupling evidence, electrode potentials and supplies, neutral-source pressure / inflow, edge-factor source and the AIR / Xe rate sets stay unregistered (operating points or evidence, not design values: DBF1-BD-06); the model reports why",
+   "use": "NH-ICP exactly as A2 (I_e,cap,fav vs I_d at a Hall closing point; none exists)"
+  },
+  "P-CPL": "unchanged (A2)",
+  "P-PBUS-DBF1": {
+   "ledger": "the A2 layer (a) ledger (bus_power_boundary_a9_v2, ADMITTED ledger function) with overrides: the NP-ICP v2 loads of the mode (if any) and, AIR, the compressor draw of the DBF-1 design at the state = minimum over its in-domain scenarios (favourable lower bound; eligible: ADMITTED F7 chain)",
+   "NH-PBUS": "A2 rule verbatim (no Hall closing point -> OPEN unless the eligible non-Hall lower bound reaches HC-03)",
+   "allocation_information": "P_common,LB (common-group loads) vs 300 W, P_nonHall,LB vs 1,350 W and HC-03 1,500 W (abep-config): margins reported per (state, mode); never a constraint"
+  },
+  "P-THERMAL-DBF1": "thermal 2.0.0 governed context at the DBF-1 topology (DBF1-TH-01); no flight thermal case, spacecraft interface REFERENCE_PENDING_ICD, Hall loads NOT_EVALUATED -> NH-THERMAL OPEN with the A2 codes",
+  "P-MASS-DBF1": "mass v5 wet-mass objective (ADMITTED) as A2: no CBE -> NH-MASS OPEN; information: the DBF-1 policy (10 %, <= 34 kg nominal dry, 2 kg reference Xe) against the provisional planning roll-up and the 40 kg limit, and the DBF-1 compressor model mass against AL-02; planning values never eligible (HR-07)",
+  "P-LIFE-DBF1": "A2 rule; codes LIFE_NOT_EVALUATED, HALL_WALL_LIFE_INPUTS_NOT_TRUSTWORTHY and A8_DBF1_ANODE_MATERIAL_FROZEN_P4_EVIDENCE_INCOMPLETE (replaces ANODE_MATERIAL_OPEN: the material is frozen, its P4 gate evidence is incomplete)",
+  "P-TD-DBF1 (AIR)": {
+   "drag": "D(s, scenario) = q(s) (C_D A_ref)_RC-DIAMANT + D_intake(s, scenario) by the admitted abep_mission::reference_drag (intake_accounting separate_term; flag INTAKE_OVERLAP_UNRESOLVED carried) with q(s) = 1/2 rho v^2 of the F1 envelope atmosphere of the state and D_intake = F1 drag per unit frontal area (abep_mission::intake_drag, theta 0) x 0.25 m^2 (intake_cd passed as (D/A) / q)",
+   "T_required": "T_required(s, scenario) = D(s, scenario) (T - D >= 0, A9.13 S6.15); reported per state as [min, max] over scenarios and as a distribution against HC-01 (12 mN) and HC-02 (25 mN)",
+   "NH-TD": "OPEN: T_available is NOT_EVALUATED (HALL_NUMERICS_NOT_CONVERGED); code HOST_DRAG_REFERENCE_PENDING_CUSTOMER_ICD carried; never eligible",
+   "sensitivity": "D_body of every SR-DRAG-01 pool case reported per state (information, never classified)"
+  },
+  "P-HALL": {
+   "rule": "A9.36: A6 is STOP_NO_LEVEL_CONVERGED and A3 A3_NOT_ADEQUATE; no Hall envelope is ingested in M2. Every Hall test of every mode (AIR T12, T25; XE XE_FUNC) is NOT_EVALUATED with the single code HALL_NUMERICS_NOT_CONVERGED; no Hall thrust, I_d or P_d value enters any A8 quantity",
+   "category": "HALL_NUMERICS_NOT_CONVERGED -> MISSING_EVIDENCE (A9.31 sec. 21; v1 rule for NUMERICAL_FAILURE-driven Hall unknowns); report type model-numerics",
+   "later_converged_envelope": "when the A9.36 numerics lane registers a converged RP-1 envelope (addendum A7, its own lock and frozen raw manifest), it is consumed WITHOUT a DBF-1 change (input completion, A9.37 recorder note): only points of the DBF-1 hardware configuration (G-RP1, BZ-P5B16) with B_peak inside the DBF1-BZ-02 band and V_d inside DBF1-H1-05 enter; the v1 / A1 / A6 Hall test rules of the family apply to that subset; joint point conditions (A2: ICP, flow at the DBF-1 delivered flow) apply; the result is a new run manifest and an M2 record v2 (v1 immutable). An envelope without DBF-1-hardware points leaves the Hall NOT_EVALUATED; moving to other hardware needs a DCR"
+  },
+  "P-LAYER-B": "unchanged (admitted components only; credible Hall set EMPTY)",
+  "A4 / A5": "evaluated exactly as in harness v2 (same kernels, same records); the A5-NH-INTAKE cell constraints stay in the AIR cells unchanged"
+ },
+ "dbf1_necessary_conditions": {
+  "id": "A8-NH-INTAKE-DBF1 (AIR)",
+  "levels": {
+   "L-AREA-DBF1": "A_eff,DBF1 = 0.25 m^2 >= A_req(s, T) (A4 K-AREQ at P_avail)",
+   "L-CAP-DBF1": "mdot_cap,DBF1(s, scenario) >= mdot_req,in(s, T) (A4 K-MDOT-REQ at P_avail + q_max A)",
+   "L-DEL-DBF1": "mdot_del,DBF1(s, scenario) >= mdot_req,in(s, T); a scenario where the steady point is out of domain or the feed loop is U or R counts as failing"
+  },
+  "T": "T12 = HC-01, T25 = HC-02 (per state, as A5), and TD = D(s, scenario) of the same scenario",
+  "statewise": "per (state, level, T): FAILS_IN_EVERY_SCENARIO (no admitted scenario passes), PASSES_IN_EVERY_SCENARIO (information; nothing established), SCENARIO_DEPENDENT",
+  "constraint": "a required AIR cell with any FAILS_IN_EVERY_SCENARIO level gains A8-NH-INTAKE-DBF1: status NON_CLOSING, never eligible, codes A8_DBF1_{AREA,CAPTURE,DELIVERED}_BELOW_REQUIRED_{T12,T25,TD}, category DESIGN_VARIABLE_LIMIT (A9.35); otherwise the constraint is OPEN with code A8_DBF1_NECESSARY_CONDITION_MET_NOTHING_ESTABLISHED or SCENARIO_DEPENDENT (blocking, since a necessary condition establishes nothing)",
+  "margins": "k = required / actual per level, T and scenario; per state k_fav (best scenario) and k_unfav (worst scenario)"
+ },
+ "nh_flow_dbf1": {
+  "id": "NH-FLOW (AIR), replacing the A2 robust-set reading for the frozen design",
+  "rules": [
+   "if the DBF-1 steady point is out of domain (or the stability class is R) in some admitted scenario at the state -> OPEN, code A8_DBF1_GAS_PATH_OUT_OF_DOMAIN_IN_SCENARIO (DESIGN_VARIABLE_LIMIT; the scenarios and steady reasons are listed)",
+   "else if the class is U in some admitted scenario -> NON_CLOSING, never eligible, code FEED_LOOP_UNSTABLE_EQUILIBRIUM (A2 category DESIGN_VARIABLE_LIMIT)",
+   "else -> OPEN, code NO_HALL_CLOSING_POINT (no Hall closing point to evaluate the flow at, A9.36)"
+  ],
+  "XE": "XE_FEED_FLOW_NOT_REGISTERED (A2, unchanged; DBF-1 freezes no Xe flow)"
+ },
+ "classification": {
+  "procedure": "C0, CA4 (A4), C1..C4 verbatim over the A8 per-(state, mode) constraint lists",
+  "C1_reading": "C1 'no frozen envelope ingested' holds (A9.36 forbids ingesting the unconverged envelope); its blocker is reported as HALL_NUMERICS_NOT_CONVERGED (the envelope ran; its numerics did not converge) with the cell count, followed by every open blocker with state counts",
+  "expected": "NOT_DETERMINABLE at C1 with HALL_NUMERICS_NOT_CONVERGED first (A9.36), and the DBF-1 non-Hall findings (A8-NH-INTAKE-DBF1, NH-FLOW) as DESIGN_VARIABLE_LIMIT blockers",
+  "never": "an A8 code never makes PHYSICALLY_NON_CLOSING; only CA4 (an eligible A4 bound on a FROZEN area limit, none registered) or C2 on an eligible evaluated non-closure can",
+  "binding_constraint": "per (state, mode): the first eligible non-closure, else the first NON_CLOSING, else the first OPEN constraint in the constraint order (Hall tests, NH-FLOW, NH-ICP, NH-PBUS, NH-TD, NH-MASS, NH-THERMAL, NH-LIFE, A5-NH-INTAKE, A8-NH-INTAKE-DBF1); its first code and its category",
+  "hall_vs_non_hall": "Hall closure (HALL_* constraints) and non-Hall closure (NH-*, A5, A8) are reported separately per mode",
+  "blocker_types": {
+   "physics": "FUNDAMENTAL_ARCHITECTURE_LIMIT",
+   "design-variable": "DESIGN_VARIABLE_LIMIT",
+   "model-numerics": "HALL_NUMERICS_NOT_CONVERGED and NUMERICAL_FAILURE-driven codes",
+   "model-domain": "MODEL_DOMAIN_LIMIT",
+   "missing-evidence": "every other open code"
+  }
+ },
+ "record": {
+  "mode": "abep-assess-closure --harness v2 --m2-dbf1 --feed-stability-reference FILE --feed-stability-sha256 HEX --out m2_closure_record_v1.json (schema abep_assess_m2_dbf1_closure_v1)",
+  "location": "docs/milestones/M2_196_state_rfp_closure/",
+  "run_manifest": "m2_run_manifest_v1.json committed alone before execution: input commit, DBF-1 lock, every addendum lock (v1, A1..A6, A8), the Python feed-stability reference record sha256 and every pinned record sha256",
+  "content": "per state and mode: layer (a) and (b) statuses, each constraint (status, codes, margins), the binding constraint and its category; T_required = D(state) distribution vs 12 / 25 mN; counts per layer and mode; the classification with step and blockers; Hall closure separate from non-Hall closure; DBF-1 deficiencies by id",
+  "execution": "run twice; the two outputs must be byte-identical before commit"
+ },
+ "fail_closed": [
+  "any pin (DBF-1 lock / config, addendum locks, F7 / F8 / F1 records, the Python reference record) that does not verify -> no record",
+  "a F7 cross-check outside the A5.1 tolerance, a Python / Rust stability-class disagreement or a producer MODEL_ERROR -> no record",
+  "a missing quantity is NOT_EVALUATED with its reason, never a pass"
+ ],
+ "verification": [
+  "tests: DBF-1 pin / lock refusal; A8 constraint logic on synthetic inputs (SYNTHETIC_TEST_DATA_NOT_EVIDENCE); Hall fields never evaluated; no A8 code eligible; stability disagreement refused; committed record regenerated byte for byte"
+ ],
+ "determinism": "pure functions of pinned inputs; BTreeMap ordering; byte-identical double run",
+ "change_control": "any change after this lock is a new, dated addendum; a design change is a DBF-1 DCR"
+}
