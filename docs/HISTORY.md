@@ -5597,3 +5597,12 @@ stays EMPTY and nothing enters layer (b).
   - Feed loop (governed Python reference, Rust agreement 1960 / 1960): S 1916, R 44 (dead-head in maxwell / cll α 0–0.2 at 18 states), U 0.
   - T_required = D(state) 1.16–54.5 mN; worst-case scenario per state: 83 states ≤ 12 mN, 73 in 12–25 mN, 40 > 25 mN.
   - Report `M2_REPORT_v1.{json,md}`; conclusion-category input D. The M3 decision is not written.
+
+## 2026-10-08 — A9.38 owner decision recorded: architecture frozen; design-closure programme
+
+- **What:** owner decision recorded verbatim as `docs/decisions/OD_2026_10_08_A9_38_ARCHITECTURE_FROZEN_DESIGN_CLOSURE_PROGRAMME.md` (sha256 `7bc06a0044283ba054b60a55a99bae84b6f7aea2cb5e4283d3a627ff543b9bcf`), with companion `docs/decisions/OD_2026_10_08_A9_38_architecture_frozen_design_closure_programme.json`.
+- **Architecture frozen (2026-10-08):** intake → active compressor / plenum / feed → Hall → 13.56 MHz RF/ICP neutralizer; air primary, Xe contingency; electromagnetic Hall field; H1 reference geometry; 1,350 W / < 1,500 W; ≤ 34 kg dry; 2 kg Xe. No architecture trade reopened.
+- **DBF-1 is the controlled baseline:** changes go through a formal DCR with a quantitative reason and a preregistered evaluation method.
+- **Priorities P1–P9:** intake / compressor DCR redesign; Hall RP-1 convergence; H1 B(z); RF/ICP closure and the AIR audit; mass; power; thermal; materials; host-drag C_D·A interface constraint.
+- **Sequence:** Hall + intake DCR + ICP / AIR in parallel → mass / power / thermal → M2 rerun → M3.
+- **Documentation:** engineering evidence plus a submission-safe statement for every item, using the six closure states.
