@@ -1,0 +1,82 @@
+{
+ "schema": "abep_closure_state_v1",
+ "item": "P9",
+ "title": "Host-spacecraft drag interface (A9.38 Priority 9)",
+ "date": "2026-10-08",
+ "lane": "L-POWER-ICD",
+ "closure_state": "REFERENCE/ICD DEPENDENT",
+ "closure_criterion_met": "allowable host C_D A per state / altitude registered as interface requirement IR-HOST-DRAG-01",
+ "remaining_dependency": "customer host-spacecraft ICD (body, arrays, attitude, C_D model, accommodation; A9.13 S6.18); DCR-001 intake drag (rebuild with --record after the M2 rerun on the revised baseline)",
+ "governing": {
+  "T12_sustained": {
+   "CDA_host_max_m2_all_states": null,
+   "CDA_host_max_m2_over_states_with_positive": 0.00196077,
+   "governing_state": "ds2:ECSS_ST_HIGH:alt195:lat-73.0000:lst15:lon240:doy1",
+   "n_states_no_positive_host_CDA_unfavourable": 13,
+   "n_states_no_positive_host_CDA_in_every_scenario": 11
+  },
+  "T25_capability": {
+   "CDA_host_max_m2_all_states": 0.22106,
+   "CDA_host_max_m2_over_states_with_positive": 0.22106,
+   "governing_state": "ds2:ECSS_ST_HIGH:alt180:lat-73.0000:lst15:lon240:doy1",
+   "n_states_no_positive_host_CDA_unfavourable": 0,
+   "n_states_no_positive_host_CDA_in_every_scenario": 0
+  }
+ },
+ "by_altitude_T25_m2": {
+  "alt180": {
+   "worst_min": 0.22106,
+   "worst_min_over_states_with_positive": 0.22106,
+   "typical_median": 0.92658,
+   "max": 3.0888
+  },
+  "alt195": {
+   "worst_min": 0.574486,
+   "worst_min_over_states_with_positive": 0.574486,
+   "typical_median": 1.67164,
+   "max": 6.74113
+  },
+  "alt215": {
+   "worst_min": 1.19861,
+   "worst_min_over_states_with_positive": 1.19861,
+   "typical_median": 3.32831,
+   "max": 17.704
+  },
+  "alt230": {
+   "worst_min": 1.80428,
+   "worst_min_over_states_with_positive": 1.80428,
+   "typical_median": 5.10427,
+   "max": 34.1162
+  }
+ },
+ "RC_DIAMANT_states_gt_25mN": 40,
+ "evidence": [
+  {
+   "path": "docs/closure/icd/host_drag_cda_envelope_v1.json",
+   "sha256": "9c83354100795212bbe555968f502c20c38bf325c21968049cafd5699a5e08f9"
+  },
+  {
+   "path": "docs/closure/icd/host_drag_cda_envelope_v1.md",
+   "sha256": "c4f2fe6b5c820774d819501781989b93f93075c8a6c80a9dca235adbaedebd05"
+  },
+  {
+   "path": "docs/closure/icd/build_host_drag_cda_envelope.py",
+   "sha256": "6b9af3ef02b7eb88823925b488d8e6257e55a272152ef0acf5fb491f3e753530"
+  },
+  {
+   "path": "docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json",
+   "sha256": "600cf229ecdb5f91f0471f03cfdd6d287486ad21e9d9ebadde3cdafa54a37394"
+  },
+  {
+   "path": "docs/baseline/DBF-1/dbf1_v1.json",
+   "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f"
+  }
+ ],
+ "statement": {
+  "path": "docs/closure/statements/P9_host_drag_interface.md",
+  "sha256": "3004befd16df7801acd20993addaa2a04de76ebe2cafc4b0301a98d8259c2a67"
+ },
+ "regenerate": [
+  "python3 docs/closure/icd/build_host_drag_cda_envelope.py"
+ ]
+}
