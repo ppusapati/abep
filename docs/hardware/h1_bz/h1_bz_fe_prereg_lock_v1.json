@@ -1,0 +1,14 @@
+{
+ "id": "h1_bz_fe_prereg_lock_v1",
+ "locked": "2026-10-08",
+ "note": "sha256 of the H-1 / MC-1 FE B(z) preregistration (status PREREGISTERED_NOT_RUN) and its B-H input data, committed alone before any verification, convergence or production solve; any change after this lock is a new dated prereg version, never an edit. The solver / build code hashes at lock time are recorded (informational; every result records the code hashes it ran with).",
+ "base_commit": "b6dbfd0",
+ "files": {
+  "docs/hardware/h1_bz/h1_bz_fe_prereg_v1.json": "88b8a768e088783e0f00ab52166e55a0e3bb7a6614b9b632acf8358250fefa5a",
+  "docs/hardware/h1_bz/bh_curves_v1.json": "6f940f88bf672e0d4e29b109081a5c6e1506e8f566a9b2e56c54361971f22747"
+ },
+ "code_at_lock": {
+  "docs/hardware/h1_bz/h1_bz_fe_solver.py": "aa2ecbeb436eea27dbe8624680dd0390e4c86d77889f2953a71e692d151a6236",
+  "docs/hardware/h1_bz/build_h1_bz_fe.py": "2ef0535856bd3c0025dba2e4c333deadc90000ef7cd7dabe690bf8c23c87325e"
+ }
+}
