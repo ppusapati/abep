@@ -56,6 +56,22 @@ fn refinements_change_only_the_registered_numerics() {
 }
 
 #[test]
+fn committed_a3_air_case_file_reproduces_and_pins_the_a1_launch() {
+    use abep_julia_bridge::envelope_a3_air as air;
+    assert_eq!(air::check(&repo()).unwrap(), 51);
+    let job = air::shard_job(&repo(), 0, "/tmp/out", &|_| None).unwrap();
+    let ins: Vec<&str> = job.inputs.iter().map(|x| x.0.as_str()).collect();
+    for r in [air::A3_AIR_DRIVER_REL, air::A3_AIR_CASES_REL, a3::A3_LOCK_REL, "hallthruster_bridge/air_bridge_lib.jl"] {
+        assert!(ins.contains(&r), "{r}");
+    }
+    for (p, sha) in &job.inputs {
+        abep_provenance::read_verified(&repo().join(p), sha).unwrap();
+    }
+    let pins: Vec<String> = air::record_pins(&repo()).unwrap().into_iter().map(|x| x.0).collect();
+    assert!(pins.contains(&"chemistry_mode".to_string()) && pins.contains(&"air_config_sha256".to_string()));
+}
+
+#[test]
 fn committed_xe_result_reproduces_from_the_frozen_runs() {
     let r = repo();
     let dir = r.join("docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE");

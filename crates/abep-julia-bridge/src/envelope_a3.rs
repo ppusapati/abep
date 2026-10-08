@@ -175,7 +175,18 @@ pub fn select_check_set(
     family: Family,
     cells: &BTreeMap<String, i64>,
 ) -> AbepResult<Vec<CheckCase>> {
-    let fam = family.as_str();
+    select_check_set_as(cs, family, family.as_str(), None, cells)
+}
+
+/// The selection rule on the axes of the v1 family `family`, with `fam` in the seed texts and keys; `compositions`
+/// (AIR scope) adds the composition corner picked by the seed before the transport id in the key.
+pub fn select_check_set_as(
+    cs: &env::CaseSet,
+    family: Family,
+    fam: &str,
+    compositions: Option<&[String]>,
+    cells: &BTreeMap<String, i64>,
+) -> AbepResult<Vec<CheckCase>> {
     let cases: Vec<&env::CaseInfo> = cs.cases.iter().filter(|c| c.family == family).collect();
     if cases.is_empty() {
         return Err(model(format!("no v1 case of family {fam}")));
@@ -219,9 +230,63 @@ pub fn select_check_set(
             let base = format!("{SEED}|{fam}|{g}|{b}|{v}|{m}");
             let s = &bz[pick(&format!("{base}|bz_shape"), bz.len())];
             let t = &tr[pick(&format!("{base}|transport"), tr.len())];
-            CheckCase { role, key: format!("{fam}|{g}|{s}|{b}|{v}|{m}|{t}") }
+            let key = match compositions {
+                Some(cp) => {
+                    format!("{fam}|{g}|{s}|{b}|{v}|{m}|{}|{t}", cp[pick(&format!("{base}|composition"), cp.len())])
+                }
+                None => format!("{fam}|{g}|{s}|{b}|{v}|{m}|{t}"),
+            };
+            CheckCase { role, key }
         })
         .collect())
+}
+
+/// The R0 / R1 / R3 cases of one check case (`base` is its frozen case object from `label`): only cells (R1) or
+/// duration and averaging start (R3) change; identity fields are added and the case hash is recomputed.
+pub fn refine(base: &Value, c: &CheckCase, label: &str) -> AbepResult<Vec<Value>> {
+    let Value::Dict(d) = base else { return Err(model("case is not an object")) };
+    let base_sha = get_str(base, "case_sha256", label)?.to_string();
+    let cells = get(base, "cells").and_then(|v| if let Value::Int(i) = v { i.as_i64() } else { None });
+    let cells = cells.ok_or_else(|| schema(label, "cells"))?;
+    let dur = finite(get(base, "duration_s")).ok_or_else(|| schema(label, "duration_s"))?;
+    let mut out = Vec::new();
+    for r in REFINEMENTS {
+        let mut n = d.clone();
+        n.remove("case_sha256");
+        let key = format!("{}|{r}", c.key);
+        n.insert("key", sval(&key));
+        n.insert("id", sval(&key));
+        match r {
+            R1 => n.insert("cells", Value::int(2 * cells)),
+            R3 => {
+                n.insert("duration_s", fval(2.0 * dur));
+                n.insert("average_start_s", fval(dur));
+            }
+            _ => {}
+        }
+        n.insert("a3_refinement", sval(r));
+        n.insert("a3_role", sval(c.role));
+        n.insert("v1_key", sval(&c.key));
+        n.insert("v1_case_sha256", sval(&base_sha));
+        let h = case_hash(&Value::Dict(n.clone()))?;
+        n.insert("case_sha256", sval(&h));
+        out.push(Value::Dict(n));
+    }
+    Ok(out)
+}
+
+/// The frozen v1 case set and the v1 cell count per geometry (minimum over shapes).
+pub fn v1_case_set_and_cells(repo: &Path) -> AbepResult<(Value, env::CaseSet, BTreeMap<String, i64>)> {
+    let (v1doc, v1sha) = v1_case_doc(repo)?;
+    let cs = env::parse_case_set(&v1doc, &v1sha)?;
+    let mut cells = BTreeMap::new();
+    for c in get(&v1doc, "cases").and_then(Value::as_list).ok_or_else(|| schema(env::CASES_REL, "cases"))? {
+        let n = get(c, "cells").and_then(|v| if let Value::Int(i) = v { i.as_i64() } else { None });
+        let n = n.ok_or_else(|| schema(env::CASES_REL, "cells"))?;
+        let e = cells.entry(get_str(c, "geometry_id", env::CASES_REL)?.to_string()).or_insert(n);
+        *e = (*e).min(n);
+    }
+    Ok((v1doc, cs, cells))
 }
 
 /// Build the A3 case-file document: every check case at R0 / R1 / R3, the selection checked against the addendum.
@@ -258,33 +323,7 @@ pub fn build_case_doc(repo: &Path) -> AbepResult<Value> {
     let mut out = Vec::new();
     for c in &sel {
         let v1 = by_key.get(c.key.as_str()).ok_or_else(|| model(format!("check case {} not in v1", c.key)))?;
-        let Value::Dict(d) = v1 else { return Err(model("v1 case is not an object")) };
-        let v1_sha = get_str(v1, "case_sha256", env::CASES_REL)?.to_string();
-        let cells = get(v1, "cells").and_then(|v| if let Value::Int(i) = v { i.as_i64() } else { None });
-        let cells = cells.ok_or_else(|| schema(env::CASES_REL, "cells"))?;
-        let dur = finite(get(v1, "duration_s")).ok_or_else(|| schema(env::CASES_REL, "duration_s"))?;
-        for r in REFINEMENTS {
-            let mut n = d.clone();
-            n.remove("case_sha256");
-            let key = format!("{}|{r}", c.key);
-            n.insert("key", sval(&key));
-            n.insert("id", sval(&key));
-            match r {
-                R1 => n.insert("cells", Value::int(2 * cells)),
-                R3 => {
-                    n.insert("duration_s", fval(2.0 * dur));
-                    n.insert("average_start_s", fval(dur));
-                }
-                _ => {}
-            }
-            n.insert("a3_refinement", sval(r));
-            n.insert("a3_role", sval(c.role));
-            n.insert("v1_key", sval(&c.key));
-            n.insert("v1_case_sha256", sval(&v1_sha));
-            let h = case_hash(&Value::Dict(n.clone()))?;
-            n.insert("case_sha256", sval(&h));
-            out.push(Value::Dict(n));
-        }
+        out.extend(refine(v1, c, env::CASES_REL)?);
     }
     Ok(dict(vec![
         ("schema", sval(A3_CASES_SCHEMA)),

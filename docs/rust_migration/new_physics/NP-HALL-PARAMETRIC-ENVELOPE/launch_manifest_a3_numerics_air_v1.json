@@ -1,0 +1,23 @@
+{
+ "schema": "np_hall_parametric_envelope_a3_numerics_air_launch_manifest_v1",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "layer": "PARAMETRIC / NOT_VALIDATED",
+ "addendum_sha256": "ca1b895efbf5c469fb0fe26951acf695bf4b39685e7cac65fcc708d0a8a7b20f",
+ "addendum_lock_sha256": "b840f1b080c94be58472ccb07f6cf35cc9ad8822161ff9a1440ecb55c76e04bd",
+ "air_launch_manifest": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/launch_manifest_air_v1.json",
+ "air_launch_manifest_sha256": "7b9b661529647b1d44c063fda0de1190b2ee072509b6b9bff5f6bb37f269a767",
+ "cases": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/cases/h1_parametric_envelope_a3_numerics_air_cases_v1.json",
+ "cases_sha256": "e58e9dda8058ba0cbae4cdfb24a7ae452f2b5318c80c1ffe362d04eea7bfd839",
+ "driver": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/driver/h1_envelope_a3_air_driver.jl",
+ "driver_sha256": "cb908501aa81cd09fb4cac978164e19b34e8fb58d2e28fe1e18b0761f448a2c2",
+ "n_cases": 51,
+ "n_shards": 3,
+ "shard_rule": "case index i (0-based, file order) belongs to shard i mod n_shards",
+ "thread_env": {
+  "JULIA_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1"
+ },
+ "mode": "vacuum"
+}

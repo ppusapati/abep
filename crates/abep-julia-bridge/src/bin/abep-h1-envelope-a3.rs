@@ -7,10 +7,12 @@
 //!   freeze --name NAME --out DIR FILE...             freeze A3 shard outputs into <NAME>_raw.jsonl.gz + manifest
 //!   score --manifest M --manifest-sha256 H --rust-commit SHA --out DIR
 //!                                                    score once: a3_numerics_result_v1.json / A3_NUMERICS_RESULT.md
+//!   --family AIR                                     (generate / check / run-shard / freeze / score) the AIR scope
 //!   determinism --manifest M --manifest-sha256 H --grid-manifest G --grid-sha256 GH
 //!                                                    report-only: R0 records against the frozen grid records
 
 use abep_julia_bridge::envelope_a3::{self, A3_SHARDS};
+use abep_julia_bridge::envelope_a3_air;
 use abep_provenance::find_repo_root;
 use abep_types::pyjson::{self, DumpOptions, Value};
 use std::io::Read;
@@ -63,7 +65,18 @@ fn main() -> ExitCode {
             }
         },
     };
+    let air = match opt(&args, "--family").as_deref() {
+        None | Some("XE") => false,
+        Some("AIR") => true,
+        Some(_) => return usage(),
+    };
     let result: Result<String, String> = match cmd.as_str() {
+        "generate" if air => envelope_a3_air::write_generated(&root)
+            .map(|()| "A3 AIR case file and launch manifest written".into())
+            .map_err(|e| e.to_string()),
+        "check" if air => envelope_a3_air::check(&root)
+            .map(|n| format!("OK: {n} A3 AIR cases reproduce byte for byte"))
+            .map_err(|e| e.to_string()),
         "generate" => envelope_a3::write_generated(&root)
             .map(|()| "A3 case file and launch manifest written".into())
             .map_err(|e| e.to_string()),
@@ -79,7 +92,8 @@ fn main() -> ExitCode {
             if shard >= A3_SHARDS {
                 return usage();
             }
-            envelope_a3::run_shard(&root, shard, &out)
+            let run = if air { envelope_a3_air::run_shard } else { envelope_a3::run_shard };
+            run(&root, shard, &out)
                 .map(|s| format!("A3 shard {shard} done; sidecar {:?}", s.output_sha256))
                 .map_err(|e| e.to_string())
         }
@@ -101,7 +115,8 @@ fn main() -> ExitCode {
             if files.is_empty() {
                 return usage();
             }
-            envelope_a3::freeze(&root, &name, &files, &PathBuf::from(out))
+            let freeze = if air { envelope_a3_air::freeze } else { envelope_a3::freeze };
+            freeze(&root, &name, &files, &PathBuf::from(out))
                 .map(|(p, sha)| format!("frozen: {} sha256 {sha}", p.display()))
                 .map_err(|e| e.to_string())
         }
@@ -114,12 +129,14 @@ fn main() -> ExitCode {
             ) else {
                 return usage();
             };
-            envelope_a3::score(&root, &PathBuf::from(m), &h, &c).map_err(|e| e.to_string()).and_then(|(v, md)| {
+            let score = if air { envelope_a3_air::score } else { envelope_a3::score };
+            score(&root, &PathBuf::from(m), &h, &c).map_err(|e| e.to_string()).and_then(|(v, md)| {
                 let mut t = pyjson::dumps(&v, &DumpOptions::config_writer()).map_err(|e| format!("{e:?}"))?;
                 t.push('\n');
                 let dir = PathBuf::from(out);
-                std::fs::write(dir.join("a3_numerics_result_v1.json"), t).map_err(|e| e.to_string())?;
-                std::fs::write(dir.join("A3_NUMERICS_RESULT.md"), md).map_err(|e| e.to_string())?;
+                let (jf, mf) = envelope_a3::result_files(if air { "AIR" } else { "XE" });
+                std::fs::write(dir.join(jf), t).map_err(|e| e.to_string())?;
+                std::fs::write(dir.join(mf), md).map_err(|e| e.to_string())?;
                 let o = v.as_dict().and_then(|d| d.get("outcome")).and_then(Value::as_str).unwrap_or("?").to_string();
                 Ok(format!("A3 outcome {o}"))
             })
