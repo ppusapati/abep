@@ -328,7 +328,8 @@ pub struct RecordPins {
     pub cases_file_sha256: String,
 }
 
-/// Check a complete record list against the frozen case set and pins; any defect refuses the whole envelope.
+/// Check a record list against the frozen case set and pins (each family complete or absent); any defect refuses the
+/// whole envelope.
 pub fn ingest_records(cases: &CaseSet, records: &[Value], pins: &RecordPins) -> AbepResult<Vec<EnvelopePoint>> {
     let by_key = cases.by_key();
     let mut got: BTreeMap<String, EnvelopePoint> = BTreeMap::new();
@@ -362,11 +363,28 @@ pub fn ingest_records(cases: &CaseSet, records: &[Value], pins: &RecordPins) -> 
             return Err(model(format!("duplicate raw record key {key}")));
         }
     }
-    let missing: Vec<String> = cases.keys().into_iter().filter(|k| !got.contains_key(k)).collect();
+    // A family is run completely or not at all (a family-filtered run, launch manifest `--family`): every key of a
+    // family with at least one record is expected; a family without records is absent (its Hall tests are
+    // NOT_EVALUATED, HALL_ENVELOPE_NOT_RUN). A partial family is MODEL_ERROR.
+    let present: BTreeSet<Family> = got.values().map(|p| p.case.family).collect();
+    if present.is_empty() {
+        return Err(model("raw envelope without records"));
+    }
+    let missing: Vec<&str> = cases
+        .cases
+        .iter()
+        .filter(|c| present.contains(&c.family) && !got.contains_key(&c.key))
+        .map(|c| c.key.as_str())
+        .collect();
     if !missing.is_empty() {
         return Err(model(format!("{} expected records missing (first {})", missing.len(), missing[0])));
     }
-    Ok(cases.cases.iter().map(|c| got.remove(&c.key).expect("every key present")).collect())
+    Ok(cases
+        .cases
+        .iter()
+        .filter(|c| present.contains(&c.family))
+        .map(|c| got.remove(&c.key).expect("present"))
+        .collect())
 }
 
 /// An ingested, frozen envelope.
