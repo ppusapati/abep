@@ -2,7 +2,8 @@
 
 Item P7 (A9.38 Priority 7). Closure state: **DCR REQUIRED** (one item: the location of the RF matching network; every
 other node meets the design rule or carries a defined verification requirement). Engineering evidence:
-`docs/closure/thermal/thermal_closure_v1.json` / `.md` (lane L-THERMAL), preregistration
+`docs/closure/thermal/thermal_closure_v2.json` / `.md` (lane L-THERMAL; load inputs v2 from the P6 power ledger; v1 on
+the registered-assumption inputs is kept as history), preregistration
 `docs/closure/thermal/thermal_cases_prereg_v1.json` (lock `thermal_cases_prereg_lock_v1.json`), DCR request
 `docs/closure/thermal/dcr_request_P7_match_v1.json`. Design baseline: DBF-1 (`docs/baseline/DBF-1/dbf1_v1.json`, items
 DBF1-TH-01..03).
@@ -81,17 +82,18 @@ and are to be finalized at PDR/CDR.
 
 - **Model basis.** The case class is PARAMETRIC, because FLIGHT_CONDITIONAL is NOT_EVALUATED: there is no host thermal
   ICD, the credible Hall set is empty, and NP-ICP is not admitted. Model validation status is NOT_VALIDATED. The loads
-  are registered assumptions until the L-POWER-ICD ledger and DCR-001 land. The record reruns unchanged with
-  `thermal_load_inputs_v2`.
-- **Reference values** (from `thermal_closure_v1.json`; never acceptance criteria):
-  - inner winding 475 degC against a 488 degC design ceiling;
-  - anode 561 degC: the required stage-2 capability is 611 degC, and the P8 ceilings are 930 / 1150 degC;
+  are the P6 power-ledger terms (inputs v2) plus registered assumptions. The compressor is still the DBF-1 compressor.
+  When DCR-001 lands, the record reruns unchanged with `thermal_load_inputs_v3`.
+- **Reference values** (from `thermal_closure_v2.json`; never acceptance criteria):
+  - inner winding 446 degC against a 488 degC design ceiling;
+  - anode 512 degC: the required stage-2 capability is 562 degC, and the P8 ceilings are 930 / 1150 degC (no trigger);
   - collector 510 degC;
-  - walls 487 / 465 degC against 850 degC;
+  - walls 454 / 434 degC against 850 degC;
   - N_MATCH 184 degC against 60 degC;
-  - R_HALL 0.02 m^2 node-limited; 0.15 m^2 at 10 W/K holds the TC1 / TC3 heat into the spacecraft within 50 W;
-  - PPU 257 W (0.71 m^2 at 30 degC);
+  - R_HALL 0.02 m^2 node-limited; 0.15 m^2 at 5 W/K holds the TC1 / TC3 heat into the spacecraft within 50 W
+    (90 W at 0.02 m^2);
+  - PPU 225 W (0.62 m^2 at 30 degC);
   - RF generator 400 W (1.10 m^2);
-  - compressor 15.7 W (DBF1-IN-08 basis, flagged for DCR-001).
+  - compressor 13.4 W (DBF1-IN-08 basis, flagged for DCR-001).
 - **Inner-winding allowable.** The inner winding limits the continuous discharge power to about 1114 W under the rule.
   The 1350 W P_d band end exceeds it (S1, non-governing).

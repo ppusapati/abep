@@ -5675,3 +5675,12 @@ stays EMPTY and nothing enters layer (b).
   - boundary units: PPU 257 W (0.71 m²), RF generator 400 W (1.10 m²), compressor 15.7 W (flagged for DCR-001).
 - **P7 closure state: DCR REQUIRED** (N_MATCH; draft `dcr_request_P7_match_v1.json` on DBF1-RF-03, with R-1 isolation (no DCR) and R-2 relocation as the routes to preregister). Statement `docs/closure/statements/P7_thermal.md`.
 - Reruns on load inputs v2 (L-POWER-ICD, DCR-001) need no method change. No DBF-1 value, frozen record, model or golden changed.
+- **Rerun on load inputs v2** (P6 power ledger v1 `23e33669…`, which landed during the lane: discharge ceiling 912 W at the 1,500 W gate, conservative supply efficiencies). Same preregistration and harness; record `thermal_closure_v2.{json,md}` (Rust fb29e96, sha256 `06b26333…`) now governs:
+  - inner coil 446 °C (margin 42 K);
+  - anode 512 °C;
+  - walls 454 / 434 °C;
+  - N_MATCH unchanged (184 °C);
+  - heat into the spacecraft 90 W (0.15 m² / 5 W/K meets 50 W);
+  - PPU 225 W (0.62 m²).
+
+  The state stays **DCR REQUIRED** (N_MATCH).
