@@ -5566,3 +5566,13 @@ stays EMPTY and nothing enters layer (b).
 - **Exit criteria (A9.34):** H1 envelope has run (XE v1 frozen; A3 and A6 show XE NUMERICS_NOT_CONVERGED); Hall AIR chemistry EXPLICITLY_BOUNDED; RF/ICP coupling available in layer (a); harness consumes all 13 paths (none BLOCKED). All met.
 - **Carried findings:** XE numerics not converged; AIR chemistry bounded / information only; AIR intake and delivered flow short → DESIGN_VARIABLE_LIMIT; A4-REG-01 open; credible set EMPTY.
 - **Decision:** M1 EXIT; M2 196-STATE RFP CLOSURE starts immediately.
+
+## 2026-10-08 — A9.36 recorded; M1 audit v2: software paths connected, physics NOT READY (HALL_NUMERICS_NOT_CONVERGED)
+
+- **A9.36:** owner instruction recorded verbatim as `docs/decisions/OD_2026_10_08_A9_36_M1_NOT_READY_HALL_NUMERICS_INVESTIGATION.md`, with companion JSON.
+- **M1 audit v2** (`docs/milestones/M1_architecture_physics_ready/m1_audit_v2.json` + `M1_AUDIT_v2.md`) supersedes v1 (kept unedited, sha256 `a3c497fc74e1d882e2776b2f1bbe3397c6b57e91a4b09cd778f6dcb22e635cd2`).
+  - Part 1, software paths connected: YES (13 paths, none BLOCKED).
+  - Part 2, physics ready for architecture closure: NOT READY FOR DECISIVE M2 HALL CLOSURE; single critical blocker HALL_NUMERICS_NOT_CONVERGED (A3 NOT_ADEQUATE, A6 STOP_NO_LEVEL_CONVERGED).
+  - The CA-HALL-AIR-v1 audit was still running at close (229 / 576).
+- **M2:** the M2 lane started after audit v1 was stopped before any commit; M2 is not started.
+- **Next:** a narrow Hall numerical-method investigation; after a converged subset, rerun the registered envelope under a new addendum and proceed to M2.
