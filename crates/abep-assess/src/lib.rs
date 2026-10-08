@@ -19,6 +19,7 @@
 //! the A9.32 classification ([`closure`]).
 
 pub mod closure;
+pub mod envelope_summary;
 pub mod error;
 pub mod gates;
 pub mod icp_gate;
