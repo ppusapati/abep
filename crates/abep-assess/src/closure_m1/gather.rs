@@ -83,18 +83,42 @@ pub fn verify_a2(repo: &Path) -> AssessResult<()> {
     Ok(())
 }
 
-/// Is A1 on this line (both files present and hash-verified)? A present but different file is refused.
+/// Is A1 on this line (json, md and lock present and hash-verified, superseding the A2-named identity)? A partial or
+/// different A1 is refused.
 pub fn a1_on_line(repo: &Path) -> AssessResult<bool> {
-    let (a, l) = (repo.join(A1_REL), repo.join(A1_LOCK_REL));
-    match (a.exists(), l.exists()) {
-        (false, false) => Ok(false),
-        (true, true) => {
-            read_verified(&a, A1_SHA256)?;
-            read_verified(&l, A1_LOCK_SHA256)?;
-            Ok(true)
-        }
-        _ => Err(model_error("A1 addendum and its lock must be present together")),
+    let files = [(A1_REL, A1_SHA256), (A1_MD_REL, A1_MD_SHA256), (A1_LOCK_REL, A1_LOCK_SHA256)];
+    let present: Vec<bool> = files.iter().map(|(r, _)| repo.join(r).exists()).collect();
+    if present.iter().all(|p| !p) {
+        return Ok(false);
     }
+    if !present.iter().all(|p| *p) {
+        return Err(model_error("A1 json, md and lock must be present together"));
+    }
+    for (r, sha) in files {
+        read_verified(&repo.join(r), sha)?;
+    }
+    let a1 = json(repo, A1_REL, A1_SHA256)?;
+    if !st(at(&a1, &["supersedes", "record"])).contains(A1_NAMED_IN_A2_SHA256) {
+        return Err(model_error("A1 does not supersede the addendum_01 identity A2 names"));
+    }
+    Ok(true)
+}
+
+/// The Hall AIR reaction set (NP-HALL-CHEM-AIR): label, status and admission, as read through abep-chem.
+pub fn air_chemistry(repo: &Path) -> AssessResult<(bool, Value)> {
+    let set = abep_chem::hall_air::AirSet::load(repo)?;
+    let adm = set.admission();
+    let admission = match &adm {
+        Ok(()) => "ADMITTED_FOR_PARAMETRIC_ENVELOPE".to_string(),
+        Err(e) => e.to_string(),
+    };
+    let info = super::record::d(vec![
+        ("contract", Value::str(abep_chem::hall_air::CONTRACT_ID)),
+        ("label", Value::str(set.label.clone())),
+        ("status", Value::str(set.status.as_str())),
+        ("admission", Value::str(admission)),
+    ]);
+    Ok((adm.is_ok(), info))
 }
 
 /// P-FLOW from the admitted F7 / F8 records (captured reference outputs; the robust set carried unchanged).
@@ -496,11 +520,15 @@ pub fn gather_m1(
         return Err(model_error("AIR points supplied but addendum A1 is not on this line"));
     }
     let today = gather(repo, rust_commit)?;
+    let (air_admitted, air_chem) = air_chemistry(repo)?;
     let air = match air {
         Some(a) if a1 => AirHall::Ingested(a),
         Some(_) => return Err(model_error("AIR points supplied but addendum A1 is not on this line")),
         None => {
-            let mut codes = vec![v1::AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED.to_string()];
+            let mut codes = vec![];
+            if !air_admitted {
+                codes.push(v1::AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED.to_string());
+            }
             if !a1 {
                 codes.push(AIR_FAMILY_ADDENDUM_A1_NOT_ON_LINE.into());
             }
@@ -526,6 +554,7 @@ pub fn gather_m1(
         xe: envelope,
         air,
         a1_on_line: a1,
+        air_chemistry: air_chem,
         flow,
         icp,
         mp,

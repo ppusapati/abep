@@ -248,6 +248,7 @@ fn air(points_at: &[(&str, f64, f64, f64)]) -> AirHallInput {
         corners: CORNERS.iter().map(|c| c.to_string()).collect(),
         state_exclusions: BTreeMap::new(),
         bz_family_kind: env::BzFamilyKind::SourcedSurrogate,
+        bounded: false,
         provenance: SYNTHETIC.into(),
     }
 }
@@ -697,13 +698,15 @@ fn a2_and_a1_pins_are_verified() {
     }
     assert!(!a1_on_line(&t).unwrap());
     std::fs::write(t.join(A1_REL), b"{}").unwrap();
-    assert!(a1_on_line(&t).is_err(), "A1 without its lock");
-    std::fs::write(t.join(A1_LOCK_REL), b"{}").unwrap();
-    assert!(a1_on_line(&t).is_err(), "A1 with other bytes");
+    assert!(a1_on_line(&t).is_err(), "A1 without its md and lock");
+    let t3 = scratch("a1");
+    copy_into(&t3, &[A1_REL, A1_MD_REL, A1_LOCK_REL]);
+    assert!(a1_on_line(&t3).unwrap(), "A1 proper supersedes the identity A2 names");
+    tamper(&t3, A1_REL);
+    assert!(a1_on_line(&t3).is_err(), "A1 with other bytes");
+    let _ = std::fs::remove_dir_all(&t3);
     let _ = std::fs::remove_dir_all(&t);
-    // AIR points without A1 on this line are refused before anything is read.
-    let a = air(&[("G1", 1e-6, 0.030, 3.0)]);
-    assert!(gather_m1(&repo(), None, Some(a), "test").is_err());
+    assert!(base().a1_on_line, "A1 is on this line");
 }
 
 #[test]
@@ -723,4 +726,22 @@ fn f7_f8_and_plenum_records_are_pinned() {
         let _ = std::fs::remove_dir_all(&t2);
     }
     let _ = std::fs::remove_dir_all(&t);
+}
+
+#[test]
+fn p_air_bounded_launch_path_is_information_only() {
+    let mut inp = synthetic_chain();
+    let mut a = air(&[("G1", 1e-6, 0.030, 3.0), ("G2", 3e-6, 0.030, 1.0)]);
+    a.bounded = true;
+    with_air(&mut inp, a);
+    let o = evaluate(&inp).unwrap();
+    for id in ["HALL_T12_AT_PBUS", "HALL_T25_CAPABILITY"] {
+        for c in constraint(&o, Mode::AirPrimary, id) {
+            assert_eq!(c.status, NOT_DETERMINABLE_IN_ENVELOPE);
+            assert!(!c.eligible_close && !c.eligible_non_close);
+            assert!(c.codes.contains(&AIR_CHEMISTRY_BOUNDED_NOT_COMPLETE.to_string()));
+            assert!(c.detail.starts_with("BOUNDED_INFORMATION_CLOSES_AT_ALL_CORNERS"));
+        }
+    }
+    assert!(substituted(&inp, &o).classification != SELECT_WITH_EVIDENCE_CONDITIONS);
 }

@@ -929,7 +929,14 @@ pub fn record_v2(inp: &M1Inputs, out: &M1Outcome, run_label: &str) -> Value {
         ),
         (
             "addendum_a1",
-            d(vec![("on_this_line", Value::Bool(inp.a1_on_line)), ("path", s(A1_REL)), ("sha256", s(A1_SHA256)), ("lock_sha256", s(A1_LOCK_SHA256))]),
+            d(vec![
+                ("on_this_line", Value::Bool(inp.a1_on_line)),
+                ("path", s(A1_REL)),
+                ("sha256", s(A1_SHA256)),
+                ("lock_sha256", s(A1_LOCK_SHA256)),
+                ("supersedes_a2_named_identity", s(A1_NAMED_IN_A2_SHA256)),
+                ("air_chemistry", inp.air_chemistry.clone()),
+            ]),
         ),
         ("architecture", s("hall_icp_neutralizer")),
         ("rust_commit", s(ti.mission.provenance.rust_commit.clone())),
@@ -1027,6 +1034,7 @@ pub fn record_v2(inp: &M1Inputs, out: &M1Outcome, run_label: &str) -> Value {
                 AirHall::NotAvailable(c) => d(vec![("status", s(NOT_EVALUATED)), ("codes", sl(c))]),
                 AirHall::Ingested(a) => d(vec![
                     ("status", s("INGESTED")),
+                    ("launch_path", s(if a.bounded { "LP-BOUNDED (information only)" } else { "LP-COMPLETE" })),
                     ("provenance", s(a.provenance.clone())),
                     ("n_points", Value::int(a.points.len() as i64)),
                     ("corners", sl(&a.corners)),

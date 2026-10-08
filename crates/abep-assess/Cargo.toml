@@ -26,6 +26,8 @@ abep-config.workspace = true
 abep-data.workspace = true
 abep-hall.workspace = true
 abep-atmos.workspace = true
+# Hall AIR reaction-set admission state (NP-HALL-CHEM-AIR, abep_chem::hall_air) read by the closure's P-HALL-AIR path.
+abep-chem.workspace = true
 # Admitted physics crates consumed (never duplicated): only this crate and abep-cli use them as plain path dependencies.
 abep-mission = { path = "../abep-mission" }
 abep-gaspath = { path = "../abep-gaspath" }

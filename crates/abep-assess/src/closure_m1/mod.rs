@@ -17,7 +17,7 @@ pub mod record;
 use crate::closure::{
     self as v1, category, evaluate_hall_test, evaluate_mode, evidence_conditions_hall, hall_not_evaluated,
     ClosureOutcome, Constraint, HallLimits, HallTest, HallTestResult, ModeEval, StateRef, TodayInputs,
-    CLOSES_IN_ENVELOPE, NON_CLOSING, NOT_DETERMINABLE, NOT_DETERMINABLE_IN_ENVELOPE, NOT_EVALUATED, OPEN,
+    CLOSES_IN_ENVELOPE, NON_CLOSING, NOT_DETERMINABLE, NOT_DETERMINABLE_IN_ENVELOPE, NOT_EVALUATED,
     PHYSICALLY_NON_CLOSING, PHYSICS_FEASIBLE, PHYSICS_NON_CLOSING, REQUIRED_MODES, SELECT_WITH_EVIDENCE_CONDITIONS,
 };
 use abep_hall::envelope::{BzFamilyKind, Envelope, EnvelopePoint, Family, RunStatus};
@@ -37,11 +37,20 @@ pub const A2_MD_SHA256: &str = "8fe091b4dbb08715d18db28b03e3315d3cfa9ee443ff3af9
 pub const A2_LOCK_REL: &str =
     "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a2_lock.json";
 pub const A2_LOCK_SHA256: &str = "774bf7618e0afafa40fe252d782d3112c71f2958ed7fe51b33e9c5d3dba617dd";
-/// A1 (AIR family, lane-hall-chem-air): consumed by its own rules once it is on this line.
-pub const A1_REL: &str = "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/addendum_01_air_family.json";
-pub const A1_SHA256: &str = "4988bdfd4aad30a171c4dae9ffa8d3436ee94c1aaaedcb56a3c06ffe1533dd90";
-pub const A1_LOCK_REL: &str = "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/addendum_01_lock.json";
-pub const A1_LOCK_SHA256: &str = "efc96af4259c74c0c632ee515c00f29f6aff70df14775e62a5d72afa619927d5";
+/// A1 (AIR family). A2 named it by `addendum_01_air_family` (lane-hall-chem-air, sha256 below); that record was
+/// superseded before any AIR run by `prereg_addendum_a1_air_family` (A1 proper, which carries its rules verbatim and adds
+/// the bounded launch path). The harness reads A1 proper and checks that it supersedes the A2-named identity.
+pub const A1_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a1_air_family.json";
+pub const A1_SHA256: &str = "7d7a7ba91f382775a1eed842af83587b0f1fc5b762f85ef68022ac03d23c7b0d";
+pub const A1_MD_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/PREREG_ADDENDUM_A1_AIR_FAMILY.md";
+pub const A1_MD_SHA256: &str = "d1a3e26b86ddd629aeaa8c3a2f6b0db6ac85a3463c2923f40e29dc5be21a1183";
+pub const A1_LOCK_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a1_air_family_lock.json";
+pub const A1_LOCK_SHA256: &str = "35388e247ffdcc7af2a605e46f29d955ec29875893d3f7342e6411110f3d17a6";
+/// The A1 identity A2 names (addendum_01_air_family.json), superseded by A1 proper.
+pub const A1_NAMED_IN_A2_SHA256: &str = "4988bdfd4aad30a171c4dae9ffa8d3436ee94c1aaaedcb56a3c06ffe1533dd90";
 
 pub const LAYER_A: &str = abep_hall::envelope::LAYER_A_LABEL;
 pub const SYNTHETIC: &str = "SYNTHETIC_TEST_DATA_NOT_EVIDENCE";
@@ -65,6 +74,7 @@ pub const ENVIRONMENT_NOT_EVALUATED: &str = "ENVIRONMENT_NOT_EVALUATED";
 pub const T_MINUS_D_RULE_NOT_REGISTERED: &str = "T_MINUS_D_EVALUATION_NOT_REGISTERED_IN_A2";
 pub const BUS_LEDGER_ABOVE_LIMIT_AT_JOINT_POINTS: &str = "BUS_LEDGER_ABOVE_LIMIT_AT_JOINT_POINTS";
 pub const AIR_FAMILY_ADDENDUM_A1_NOT_ON_LINE: &str = "AIR_FAMILY_ADDENDUM_A1_NOT_ON_LINE";
+pub const AIR_CHEMISTRY_BOUNDED_NOT_COMPLETE: &str = "AIR_CHEMISTRY_BOUNDED_NOT_COMPLETE";
 pub const HALL_NON_CLOSING_UNDER_AIR_ENVELOPE: &str = "HALL_NON_CLOSING_UNDER_AIR_ENVELOPE";
 pub const AIR_COMPOSITION_NOT_REGISTERED: &str = "AIR_COMPOSITION_NOT_REGISTERED";
 pub const AIR_CHEMISTRY_NOMINAL_ONLY: &str = "AIR_CHEMISTRY_NOMINAL_ONLY";
@@ -84,6 +94,7 @@ pub fn category_a2(code: &str) -> &'static str {
         | ICP_CAPACITY_BELOW_HALL_I_D
         | JOINT_CLOSING_POINT_ABSENT => "DESIGN_VARIABLE_LIMIT",
         HALL_NON_CLOSING_UNDER_AIR_ENVELOPE => "DESIGN_VARIABLE_LIMIT / MODEL_DOMAIN_LIMIT",
+        AIR_CHEMISTRY_BOUNDED_NOT_COMPLETE => "MODEL_DOMAIN_LIMIT",
         ENVIRONMENT_NOT_EVALUATED | MATERIALITY_BOUND_REQUIRED_HE | MATERIALITY_BOUND_REQUIRED_AR => {
             "MODEL_DOMAIN_LIMIT"
         }
@@ -214,6 +225,8 @@ pub struct AirHallInput {
     /// state -> A1 state_applicability code (SB-He / SB-Ar).
     pub state_exclusions: BTreeMap<String, String>,
     pub bz_family_kind: BzFamilyKind,
+    /// Ingested under A1 LP-BOUNDED (BV-AIR-LL): information only, never a closure or a non-closure.
+    pub bounded: bool,
     pub provenance: String,
 }
 
@@ -230,6 +243,8 @@ pub struct M1Inputs {
     pub xe: Option<Envelope>,
     pub air: AirHall,
     pub a1_on_line: bool,
+    /// The Hall AIR reaction set (NP-HALL-CHEM-AIR) label and admission state, as read.
+    pub air_chemistry: Value,
     pub flow: FlowPath,
     pub icp: IcpPath,
     pub mp: MassPowerA9V5,
@@ -384,6 +399,26 @@ pub fn evaluate_air_test(t: HallTest, a: &AirHallInput, lim: &HallLimits) -> Hal
     r.n_closing = passing.len();
     let c = &mut r.constraint;
     c.eligible_non_close = false;
+    if a.bounded {
+        // A1 bounded_variant_outcome: reported as labelled information; NOT_DETERMINABLE whatever it says.
+        c.status = NOT_DETERMINABLE_IN_ENVELOPE;
+        c.eligible_close = false;
+        c.codes = vec![AIR_CHEMISTRY_BOUNDED_NOT_COMPLETE.to_string()];
+        if a.bz_family_kind == BzFamilyKind::SourcedSurrogate {
+            c.codes.push(v1::H1_BZ_NOT_REGISTERED.into());
+        }
+        c.codes.sort();
+        c.detail = format!(
+            "{} (BOUNDED_ONE_SIDED_LOWER_ELECTRON_IMPACT_LOSS_NOT_COMPLETE; A1 LP-BOUNDED, information only)",
+            if hw.is_empty() {
+                "BOUNDED_INFORMATION_NO_CLOSURE_FOUND"
+            } else {
+                "BOUNDED_INFORMATION_CLOSES_AT_ALL_CORNERS"
+            }
+        );
+        c.evidence_conditions = vec![];
+        return r;
+    }
     if !hw.is_empty() {
         c.status = CLOSES_IN_ENVELOPE;
         c.eligible_close = true;
