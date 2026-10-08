@@ -1,0 +1,12 @@
+{
+ "id": "np_hall_parametric_envelope_prereg_addendum_a3_numerics_lock_v1",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "locked": "2026-10-08",
+ "note": "sha256 of NP-HALL-PARAMETRIC-ENVELOPE addendum A3 (numerics adequacy, RG-04; status PREREGISTERED_NOT_RUN), committed alone before the A3 case file, any refined run and any v1 grid case beyond the listed smoke runs; v1 files unchanged; any change after this lock is a new, dated addendum",
+ "base_commit": "64a078e",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/",
+ "files": {
+  "prereg_addendum_a3_numerics_v1.json": "ca1b895efbf5c469fb0fe26951acf695bf4b39685e7cac65fcc708d0a8a7b20f",
+  "PREREG_ADDENDUM_A3_NUMERICS.md": "474fffcfc3212f21d791019310f46b769cbfba316f58aec6268600384781e359"
+ }
+}
