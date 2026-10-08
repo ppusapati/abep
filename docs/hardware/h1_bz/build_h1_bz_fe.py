@@ -1,4 +1,4 @@
-"""H-1 / MC-1 FE-derived B(z) (lane L-H1-BZ, A9.38 P3): runs the preregistered evaluation h1_bz_fe_prereg_v3.json (v1, v2 superseded, kept).
+"""H-1 / MC-1 FE-derived B(z) (lane L-H1-BZ, A9.38 P3): runs the preregistered evaluation h1_bz_fe_prereg_v4.json (v1-v3 superseded, kept).
 
 Stages (each writes a raw JSON under the scratch directory given by --work; nothing in the repository is written until
 --emit):
@@ -29,8 +29,8 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, HERE)
 import h1_bz_fe_solver as S  # noqa: E402
 
-PREREG = os.path.join(HERE, "h1_bz_fe_prereg_v3.json")
-LOCK = os.path.join(HERE, "h1_bz_fe_prereg_lock_v3.json")
+PREREG = os.path.join(HERE, "h1_bz_fe_prereg_v4.json")
+LOCK = os.path.join(HERE, "h1_bz_fe_prereg_lock_v4.json")
 BHFILE = os.path.join(HERE, "bh_curves_v1.json")
 OUT_JSON = os.path.join(HERE, "h1_bz_fe_v1.json")
 OUT_MD = os.path.join(HERE, "H1_BZ_FE_v1.md")
@@ -124,7 +124,7 @@ def problem(P, rects, NI_total, level, split=None, box_scale=1.0):
                      mid_z1=m["medium_region"]["z_max_mm"] * MM, mid_factor=m["medium_region"]["factor"],
                      growth=m["growth"], h_far=m["h_far_m"],
                      extra_r=[x * MM for x in (g["d_mean_mm"] / 2, g["d_mean_mm"] / 2 - g["h_mm"] / 2,
-                                               g["d_mean_mm"] / 2 + g["h_mm"] / 2)],
+                                               g["d_mean_mm"] / 2 + g["h_mm"] / 2)] + [x * MM for x in m["axis_lines_mm"]],
                      extra_z=[0.0, L * MM, 2 * L * MM])
 
 
@@ -312,10 +312,10 @@ def run_convergence(P, work):
     for lev in C["levels"]:
         cache = {}
         out["levels"][lev] = {}
-        A = None
+        A, NIp = None, None
         for NI in C["NI_A"]:
             t = time.time()
-            pb, sol = solve_case(P, rects, NI, lev, bhs["BH-NOM"], cache, A0=A)
+            pb, sol = solve_case(P, rects, NI, lev, bhs["BH-NOM"], cache, A0=None if A is None else A * (NI / NIp))
             s = summarize(P, pb, sol, bhs["BH-NOM"])
             if sol.status != "OK":
                 out["levels"][lev][str(NI)] = s
@@ -325,7 +325,7 @@ def run_convergence(P, work):
             d["profile_z_mm_step_1"] = [float(x) for x in z[::10]]
             d["profile_Br_G_step_1"] = [float(x) for x in br[::10]]
             out["levels"][lev][str(NI)] = d
-            A = sol.A
+            A, NIp = sol.A, NI
             print(lev, NI, d["B_peak_G"], d["z_peak_mm"], d["B_anode_over_B_peak"], d["seconds"], flush=True)
     # far-boundary check at the box level / current
     for scale in (1.0, C["box_check"]["scale"]):
@@ -387,16 +387,22 @@ def ni_for(sweep, target):
     return None
 
 
-def run_sweep(P, work):
+def run_sweep(P, work, only=None):
     bhs = bh_sets()
     out = {"variants": {}, "exact": {}, "split": {}}
     for v in variants(P):
+        if only is not None and v["id"] not in only:
+            continue
         lev = P["uncertainty"]["level"] if v["id"] != "NOM" else P["production"]["level"]
         rects, dims = layout(P, v.get("t_w"), v.get("w_p"), v.get("placement"))
-        cache, A, rows = {}, None, []
-        for NI in P["operating"]["NI_sweep_A"]:
+        cache, A, NIp, rows = {}, None, None, []
+        todo = list(P["operating"]["NI_sweep_A"] if v["id"] == "NOM" else P["uncertainty"]["NI_sweep_A"])
+        ext = [] if v["id"] == "NOM" else list(P["uncertainty"]["NI_sweep_extension_A"])
+        top = max(P["operating"]["B_peak_targets_G"].values())
+        while todo:
+            NI = todo.pop(0)
             t = time.time()
-            pb, sol = solve_case(P, rects, NI, lev, bhs[v["bh"]], cache, A0=A)
+            pb, sol = solve_case(P, rects, NI, lev, bhs[v["bh"]], cache, A0=None if A is None else A * (NI / NIp))
             s = summarize(P, pb, sol, bhs[v["bh"]])
             if sol.status != "OK":
                 rows.append(dict(s, NI_A=NI))
@@ -405,9 +411,10 @@ def run_sweep(P, work):
             d["NI_A"] = NI
             d["seconds"] = round(time.time() - t, 1)
             rows.append(d)
-            A = sol.A
-            print(v["id"], lev, NI, round(d["B_peak_G"], 2), round(d["z_peak_minus_L_mm"], 2),
-                  round(d["B_anode_over_B_peak"], 4), d["seconds"], flush=True)
+            A, NIp = sol.A, NI
+            print(v["id"], lev, NI, d["seconds"], flush=True)
+            if not todo and ext and d["B_peak_G"] < top:
+                todo.append(ext.pop(0))   # preregistered extension: bracket every target
         out["variants"][v["id"]] = {"variant": v, "level": lev, "dims": dims, "sweep": rows}
         # exact-level solves (secant on NI) for the band ends and the capability
         exact = {}
@@ -421,10 +428,10 @@ def run_sweep(P, work):
             res = None
             for _ in range(8):
                 if fa is None:
-                    pb, sa = solve_case(P, rects, ni_a, lev, bhs[v["bh"]], cache, A0=A)
+                    pb, sa = solve_case(P, rects, ni_a, lev, bhs[v["bh"]], cache, A0=A * (ni_a / NIp))
                     fa = summarize(P, pb, sa, bhs[v["bh"]])
                 if fb is None:
-                    pb, sb = solve_case(P, rects, ni_b, lev, bhs[v["bh"]], cache, A0=A)
+                    pb, sb = solve_case(P, rects, ni_b, lev, bhs[v["bh"]], cache, A0=A * (ni_b / NIp))
                     fb = summarize(P, pb, sb, bhs[v["bh"]])
                 if not (isinstance(fa, tuple) and isinstance(fb, tuple)):
                     break
@@ -451,7 +458,7 @@ def run_sweep(P, work):
         out["exact"][v["id"]] = exact
     # operating sensitivity: inner / outer NI split at the nominal geometry (L2), at the BP-HI NI of the nominal sweep
     rects, _ = layout(P)
-    nom_hi = out["exact"]["NOM"].get("BP-HI", {}).get("NI_A")
+    nom_hi = out["exact"].get("NOM", {}).get("BP-HI", {}).get("NI_A")
     if nom_hi:
         for sp in P["operating"]["split_sensitivity"]:
             pb, sol = solve_case(P, rects, nom_hi, P["uncertainty"]["level"], bhs["BH-NOM"], {}, split=sp)
@@ -496,8 +503,10 @@ def main():
     elif stage == "convergence":
         r = run_convergence(P, work)
         r["evaluation"] = evaluate_convergence(P, r)
-    elif stage == "sweep":
-        r = run_sweep(P, work)
+    elif stage.startswith("sweep"):
+        only = stage.split(":", 1)[1].split(",") if ":" in stage else None
+        r = run_sweep(P, work, only)
+        stage = "sweep_" + ("-".join(only) if only else "all")
     else:
         raise SystemExit("emit is done by emit_h1_bz_fe.py")
     r["_meta"] = {"stage": stage, "seconds": round(time.time() - t0, 1), "solver": S.SOLVER_ID,

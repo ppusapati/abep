@@ -25,7 +25,7 @@ import numpy as np
 import scipy.sparse.linalg as spla
 from scipy.special import ellipe, ellipk
 import skfem
-from skfem import Basis, BilinearForm, ElementTriP2, LinearForm, MeshTri
+from skfem import Basis, BilinearForm, ElementTriP2, Functional, LinearForm, MeshTri
 
 MU0 = 4e-7 * math.pi
 NU0 = 1.0 / MU0
@@ -63,6 +63,15 @@ class BH:
         slopes = np.diff(self.H) / np.diff(self.B)
         i = np.clip(np.searchsorted(self.B, b, side="right") - 1, 0, len(slopes) - 1)
         return np.where(b >= self.B[-1], NU0, slopes[i])
+
+    def energy(self, b):
+        """magnetic energy density w(B) = int_0^B H(b) db (J/m^3), exact for the piecewise-linear H(B)."""
+        b = np.abs(np.asarray(b, float))
+        seg = np.concatenate([[0.0], np.cumsum(0.5 * (self.H[1:] + self.H[:-1]) * np.diff(self.B))])
+        i = np.clip(np.searchsorted(self.B, b, side="right") - 1, 0, len(self.B) - 1)
+        h0 = self.H[i]
+        hb = self.h_of_b(b)
+        return seg[i] + 0.5 * (h0 + hb) * (b - self.B[i])
 
     def nu_dnu(self, b):
         """nu(|B|) and d nu / d(|B|^2) = (H'(B) - nu) / (2 B^2) (0 on the first, linear segment)."""
@@ -213,6 +222,11 @@ def _res(v, w):
     return w["nu"] * (w["Br"] * (-v.grad[1]) + w["Bz"] * v.grad[0]) - w["J"] * v
 
 
+@Functional
+def _energy(w):
+    return w["wB"] * w.x[0]
+
+
 @LinearForm
 def _l(v, w):
     return w["J"] * v
@@ -228,10 +242,12 @@ def setup(pb: Problem, mesh_cache=None):
     return mesh, basis
 
 
-def solve_problem(pb: Problem, bh: dict, *, tol_res=1e-7, tol_step=1e-10, max_it=60, mesh_cache=None, A0=None):
+def solve_problem(pb: Problem, bh: dict, *, tol_res=1e-7, tol_step=1e-8, max_it=60, mesh_cache=None, A0=None):
     """Damped Newton on the nonlinear magnetostatic equations. bh maps iron keys ('hiperco', 'iron') to BH objects.
-    Converged when the relative residual ||R|| / ||F|| < tol_res AND the last relative Newton step < tol_step
-    (prereg v2: the v1 values 1e-9 / 1e-9 sit below the double-precision residual floor of iron/air problems).
+    Converged when the relative residual ||R|| / ||F|| < tol_res AND the relative size of the full (undamped) Newton
+    direction < tol_step (prereg v2: the v1 values 1e-9 / 1e-9 sit below the double-precision residual floor of iron/air
+    problems). Line search (prereg v4): backtracking on the convex magnetic energy functional
+    E = int w(|B|) r dr dz - int J psi dr dz (Armijo), so a piecewise-linear B-H kink cannot stall the Newton iteration.
     Returns Solution (status OK | MODEL_ERROR); a non-converged state is never returned as a field."""
     mesh, basis = setup(pb, mesh_cache)
     mat = _mat_per_element(mesh, pb.rects)
@@ -268,19 +284,22 @@ def solve_problem(pb: Problem, bh: dict, *, tol_res=1e-7, tol_step=1e-10, max_it
         bm = np.sqrt(br ** 2 + bz ** 2)
         nu = np.full(bm.shape, NU0)
         dnu = np.zeros(bm.shape)
+        wB = 0.5 * NU0 * bm ** 2
         for k in iron_keys:
             m = is_iron[k]
             nu[m], dnu[m] = bh[k].nu_dnu(bm[m])
-        return br, bz, nu, dnu
+            wB[m] = bh[k].energy(bm[m])
+        return br, bz, nu, dnu, wB
 
     def residual(A):
-        br, bz, nu, dnu = state(A)
+        br, bz, nu, dnu, wB = state(A)
         R = _res.assemble(basis, nu=nu, Br=br, Bz=bz, J=Jq)
-        return R, (br, bz, nu, dnu)
+        E = float(_energy.assemble(basis, wB=wB)) - float(F @ A)
+        return R, (br, bz, nu, dnu), E
 
     A = np.zeros(basis.N) if A0 is None else np.array(A0, float)
     A[D] = 0.0
-    R, st = residual(A)
+    R, st, E = residual(A)
     rn = np.linalg.norm(R[free]) / nF
     lu, it, step = None, 0, float("inf")
     for it in range(1, max_it + 1):
@@ -298,18 +317,23 @@ def solve_problem(pb: Problem, bh: dict, *, tol_res=1e-7, tol_step=1e-10, max_it
             delta = lu.solve(rhs)
         full = np.zeros(basis.N)
         full[free] = delta
-        alpha = 1.0
-        for _ in range(12):
+        slope = float(R[free] @ delta)                 # dE/dalpha at alpha = 0 (< 0 for a descent direction)
+        alpha, accepted = 1.0, False
+        for _ in range(30):
             A_try = A + alpha * full
-            R_try, st_try = residual(A_try)
+            R_try, st_try, E_try = residual(A_try)
             rn_try = np.linalg.norm(R_try[free]) / nF
-            if rn_try <= (1.0 - 1e-4 * alpha) * rn or rn_try < tol_res:
+            if E_try <= E + 1e-4 * alpha * slope or rn_try < tol_res:
+                accepted = True
                 break
             alpha *= 0.5
-        else:
+        step = np.linalg.norm(delta) / max(np.linalg.norm(A[free] + delta), 1e-300)
+        if not accepted:
+            # energy can no longer decrease within round-off: converged only if the residual criterion already holds
+            if rn < tol_res:
+                break
             return Solution("MODEL_ERROR", None, basis, mesh, it, rn, step, basis.N, "Newton line search failed")
-        step = alpha * np.linalg.norm(delta) / max(np.linalg.norm(A_try[free]), 1e-300)
-        A, R, st, rn = A_try, R_try, st_try, rn_try
+        A, R, st, rn, E = A_try, R_try, st_try, rn_try, E_try
         if rn < tol_res and step < tol_step:
             break
         if not iron_keys and rn < tol_res:
@@ -330,12 +354,17 @@ def _bmag_q(basis, A):
     return np.sqrt(br ** 2 + bz ** 2)
 
 
+AXIS_EVAL_R = 5e-5  # m: on-axis values are taken at this radius (B_r = 0 by symmetry, B_z = 2 psi / r^2)
+
+
 def field_at(sol: Solution, r, z):
     """B_r, B_z, A at points (r, z) (m). Gradient evaluated in the element found by the element finder; on a z-aligned
     grid line B_r = -(1/r) dpsi/dz is the tangential derivative of the continuous psi and is single-valued. Returns
-    (B_r, B_z, A_phi = psi / r) for r > 0 (NaN at r = 0; the on-axis B_z is 2 psi / r^2 at a small r)."""
+    (B_r, B_z, A_phi = psi / r); a point at r = 0 is evaluated at AXIS_EVAL_R as B_r = 0, B_z = 2 psi / r^2."""
     basis = sol.basis
     x = np.vstack([np.asarray(r, float).ravel(), np.asarray(z, float).ravel()])
+    on_axis = x[0] <= 0.0
+    x[0] = np.where(on_axis, AXIS_EVAL_R, x[0])
     cells = basis.mesh.element_finder(mapping=basis.mapping)(*x)
     pts = basis.mapping.invF(x[:, :, np.newaxis], tind=cells)
     val = np.zeros(x.shape[1])
@@ -347,8 +376,11 @@ def field_at(sol: Solution, r, z):
         val += coef * phi.value[:, 0]
         gr += coef * phi.grad[0][:, 0]
         gz += coef * phi.grad[1][:, 0]
-    rr = np.where(x[0] > 0, x[0], np.nan)          # r = 0 is not evaluated (NaN, fail loud); use r > 0
-    return -gz / rr, gr / rr, val / rr
+    rr = x[0]
+    br, bz, a = -gz / rr, gr / rr, val / rr
+    br = np.where(on_axis, 0.0, br)
+    bz = np.where(on_axis, 2.0 * val / rr ** 2, bz)
+    return br, bz, a
 
 
 def iron_bmax(sol: Solution, pb: Problem, bh: dict):
