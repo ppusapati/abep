@@ -26,3 +26,4 @@ DRAFT transcription by `scripts/chemistry/extract_hall_air_xs.py`. The tables ar
 | table | process | role | source | range (eV) | stated uncertainty | validity (mean energy, eV) | status |
 |---|---|---|---|---|---|---|---|
 | `ionization_O_beb_kd2002.dat` | HA-O-ION-01 | nominal (BEB / Thompson pair) | Kim & Desclaux 2002 BEB via NIST SRD 107 (raw sha256 `76df7f7a…`, not committed); byte-identical copy of the v0 table `1e3a377e…` | 13.618–5000 | none in the table; SONG2026 ≥ 20 % | verified 255 | IN_REPO_VERIFIED |
+| `ionization_O_thompson1995.dat` | HA-O-ION-01 | variant (BEB / Thompson pair) | Thompson, Shah & Gilbody 1995 measured points via NIST SRD 107 (raw sha256 `76df7f7a…`); byte-identical copy of the v0 table `a1fe0dcd…`; ramp 13.618 → 14.1 eV assumed | 13.618–2000 | not stated in the table; Thompson / BEB 0.868–1.064 (20–200 eV); NIST column partial vs counting total: verify (VER-HA-03) | verified 255 | IN_REPO_VERIFIED |

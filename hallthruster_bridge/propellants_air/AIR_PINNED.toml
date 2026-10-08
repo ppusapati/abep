@@ -15,10 +15,10 @@ consumer = "NP-HALL-PARAMETRIC-ENVELOPE AIR family (addendum); bridge_lib.jl che
 loader = "abep_chem::hall_air::AirSet::load"
 
 [reaction_set]
-label = "abep-air-0.1"
+label = "abep-air-0.2"
 status = "INCOMPLETE_EVIDENCE"
 nominal_config = "air_nominal.toml"
-configs = ["air_nominal.toml"]
+configs = ["air_nominal.toml", "air_alt.toml"]
 tier1_gaps = [
   "HA-O-EL-01",
   "HA-O-EXC-01",
@@ -39,14 +39,18 @@ blocking = [
 history = [
   "abep-air-0.0 (2026-10-08): skeleton under NP-HALL-CHEM-AIR v1 (lock 1884e42f): the 29 abep-n2n-0.11 tables (n2_n.toml nominal + N2 DI lower + N elastic Wang) referenced in place with mirrored validity entries; no O / O2 table; no configuration",
   "abep-air-0.1 (2026-10-08): + O ionization HA-O-ION-01 nominal ionization_O_beb_kd2002.dat (Kim & Desclaux 2002 BEB via NIST SRD 107; byte-identical copy of the v0 table, validity 255 eV); new configuration air_nominal.toml = the 29 n2_n.toml reactions referenced in place + O (max_charge 1); correction to the 0.0 line: [reuse] holds 31 tables (n2_n.toml's 29 + N2 DI lower + N elastic Wang), not 29",
+  "abep-air-0.2 (2026-10-08): + O ionization variant ionization_O_thompson1995.dat (Thompson et al. 1995 via NIST SRD 107; byte-identical copy of the v0 table, validity 255 eV); new configuration air_alt.toml (AIR-ALT: Thompson O ionization, N2 DI lower, N elastic Wang); rest as 0.1",
 ]
 
 [files]
-"PROVENANCE.md" = "44c6747fe74a271deed81f04d9fadde948eddf3d7306ac356348bdddf50b7fbe"
+"PROVENANCE.md" = "0e1fa06407a9e99a337428d0f3f54c3bfd505441fa788242be2d6dbf5ab1cd76"
+"air_alt.toml" = "9274fa25f0f6dd714c1af07bf573f79f8fbe7bf80eabb3571e69580e64738f40"
 "air_nominal.toml" = "6cb6aec5f25367d79d28382b438b50c7802073647d0236fb0e7101ca70ae8e36"
 "ionization_O_beb_kd2002.dat" = "1e3a377ede12d2fb20a9f4384c001b04e0d4ec260c4723cea5e1e261103e134e"
 "ionization_O_beb_kd2002.dat.source" = "bc40a68e5740e1a997901d687df13668e31eaca2128e1da361afbe7991bc884f"
-"rate_validity.toml" = "6c4c6bb8803eccb20edbefe83a71f0f4d92f2c6ea6205c8301f14d8f1f3c4206"
+"ionization_O_thompson1995.dat" = "a1fe0dcdf786ee84a5de58ac996bac8130318298103575b383450fcd1e40e6b4"
+"ionization_O_thompson1995.dat.source" = "7d9ec542dea2a454b7703bcafcae0b288df9e5a652c7e6f331d4a6f84f9fd2bd"
+"rate_validity.toml" = "ecf53879603de46ef682a35c38e6e1be852d521265a40133f13034ddf3e7216b"
 
 [reuse]
 "../propellants/elastic_N2_song2023.dat" = { sha256 = "d70d9252e961ec6bfe16a0a480020dfdcf3a3aa1032cf2d23b7b3a51a455c47d", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
@@ -83,3 +87,4 @@ history = [
 
 [tables]
 "ionization_O_beb_kd2002.dat" = { target = "O", process = "HA-O-ION-01", role = "NOMINAL (BEB member of the unweighted BEB / Thompson pair)", kind = "COPY_OF_V0", v0 = "docs/chemistry/o_o2/v0/tables/ionization_O_beb_kd2002.dat", v0_sha256 = "1e3a377ede12d2fb20a9f4384c001b04e0d4ec260c4723cea5e1e261103e134e" }
+"ionization_O_thompson1995.dat" = { target = "O", process = "HA-O-ION-01", role = "VARIANT (Thompson member of the unweighted BEB / Thompson pair)", kind = "COPY_OF_V0", v0 = "docs/chemistry/o_o2/v0/tables/ionization_O_thompson1995.dat", v0_sha256 = "a1fe0dcdf786ee84a5de58ac996bac8130318298103575b383450fcd1e40e6b4" }

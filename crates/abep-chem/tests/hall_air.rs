@@ -183,10 +183,7 @@ fn refusals_are_model_errors() {
 #[test]
 fn an_o_target_reaction_on_n2_data_is_refused() {
     let set = AirSet::load(&repo()).unwrap();
-    let Some(nominal) = set.nominal_config.clone() else {
-        // No configuration yet (abep-air-0.0): the guard is exercised on a synthetic configuration below.
-        return synthetic_surrogate_refused();
-    };
+    let nominal = set.nominal_config.clone().expect("air_nominal.toml is registered since abep-air-0.1");
     let root = scratch("surrogate");
     let p = root.join(AIR_DIR).join(&nominal);
     let text = std::fs::read_to_string(&p).unwrap();
@@ -200,19 +197,20 @@ fn an_o_target_reaction_on_n2_data_is_refused() {
     let _ = std::fs::remove_dir_all(&root);
 }
 
-fn synthetic_surrogate_refused() {
-    let root = scratch("surrogate0");
-    let cfg = "[[species]]\nsymbol = \"O\"\nmax_charge = 1\n\n[[species]]\nsymbol = \"N2\"\nmax_charge = 1\n\n\
-               [[reactions]]\ntype = \"elastic\"\ntarget_species = \"O\"\nrate_coeff_file = \"../propellants/elastic_N2_song2023.dat\"\n";
-    std::fs::write(root.join(AIR_DIR).join("air_bad.toml"), cfg).unwrap();
-    let pin = repin(&root, |t| {
-        t.replacen("configs = []", "configs = [\"air_bad.toml\"]", 1).replacen(
-            "[files]\n",
-            "[files]\n\"air_bad.toml\" = \"0\"\n",
-            1,
-        )
-    });
-    let e = AirSet::load_pinned(&root, &pin).unwrap_err();
-    assert!(e.to_string().contains("HR-04"), "{e}");
-    let _ = std::fs::remove_dir_all(&root);
+#[test]
+fn the_alternative_configuration_swaps_only_registered_pair_members() {
+    let set = AirSet::load(&repo()).unwrap();
+    let (Some(nom), Some(alt)) = (set.configs.get("air_nominal.toml"), set.configs.get("air_alt.toml")) else {
+        panic!("air_nominal.toml and air_alt.toml are registered since abep-air-0.2");
+    };
+    assert_eq!(nom.species, alt.species);
+    assert_eq!(nom.reactions.len(), alt.reactions.len());
+    for (a, b) in nom.reactions.iter().zip(&alt.reactions) {
+        assert_eq!((&a.kind, &a.equation, &a.target), (&b.kind, &b.equation, &b.target));
+        if a.file != b.file {
+            let (ta, tb) = (&set.tables[&a.file], &set.tables[&b.file]);
+            assert_eq!(ta.process, tb.process, "{} / {}", a.file, b.file);
+            assert!(ta.role.starts_with("NOMINAL") && tb.role.starts_with("VARIANT"), "{} / {}", a.file, b.file);
+        }
+    }
 }
