@@ -1,4 +1,4 @@
-"""H-1 / MC-1 FE-derived B(z) (lane L-H1-BZ, A9.38 P3): runs the preregistered evaluation h1_bz_fe_prereg_v1.json.
+"""H-1 / MC-1 FE-derived B(z) (lane L-H1-BZ, A9.38 P3): runs the preregistered evaluation h1_bz_fe_prereg_v2.json (v1 superseded, kept).
 
 Stages (each writes a raw JSON under the scratch directory given by --work; nothing in the repository is written until
 --emit):
@@ -29,8 +29,8 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, HERE)
 import h1_bz_fe_solver as S  # noqa: E402
 
-PREREG = os.path.join(HERE, "h1_bz_fe_prereg_v1.json")
-LOCK = os.path.join(HERE, "h1_bz_fe_prereg_lock_v1.json")
+PREREG = os.path.join(HERE, "h1_bz_fe_prereg_v2.json")
+LOCK = os.path.join(HERE, "h1_bz_fe_prereg_lock_v2.json")
 BHFILE = os.path.join(HERE, "bh_curves_v1.json")
 OUT_JSON = os.path.join(HERE, "h1_bz_fe_v1.json")
 OUT_MD = os.path.join(HERE, "H1_BZ_FE_v1.md")
@@ -194,6 +194,9 @@ def run_verify(P, work):
         pb.coil_NI = {"c": NI}
         t = time.time()
         sol = S.solve_problem(pb, {})
+        if sol.status != "OK":
+            res[key] = {"status": sol.status, "note": sol.note, "pass": False}
+            continue
         zz = np.arange(V["V1"]["z_range_mm"][0], V["V1"]["z_range_mm"][1] + 1e-9, 1.0)
         re = V["V1"]["axis_eval_r_mm"] * MM
         _, _, a = S.field_at(sol, np.full(zz.size, re), zz * MM)
@@ -230,6 +233,9 @@ def run_verify(P, work):
         pb.mid_z1 = 0.1
         t = time.time()
         sol = S.solve_problem(pb, {"iron": lin})
+        if sol.status != "OK":
+            res[f"V2_halfspace_mu{mur:g}"] = {"status": sol.status, "note": sol.note, "pass": False}
+            continue
         rr, zz = np.meshgrid(np.array(v2["eval_r_mm"]) * MM, np.array(v2["eval_z_mm"]) * MM)
         rr, zz = rr.ravel(), zz.ravel()
         br, bz, _ = S.field_at(sol, rr, zz)
@@ -259,6 +265,9 @@ def run_verify(P, work):
             t = time.time()
             bh = {mat: bhs["BH-NOM"][mat]}
             sol = S.solve_problem(pb, bh)
+            if sol.status != "OK":
+                res[f"V3_{mat}_H{H:g}"] = {"status": sol.status, "note": sol.note, "pass": False}
+                continue
             zc = 0.5 * v3["height_mm"] * MM
             _, bz_fe_core, _ = S.field_at(sol, np.array([0.5 * v3["core_r_mm"] * MM]), np.array([zc]))
             _, bz_fe_gap, _ = S.field_at(sol, np.array([0.5 * (v3["core_r_mm"] + v3["coil_r_mm"][0]) * MM]), np.array([zc]))

@@ -227,9 +227,10 @@ def setup(pb: Problem, mesh_cache=None):
     return mesh, basis
 
 
-def solve_problem(pb: Problem, bh: dict, *, tol_res=1e-9, tol_step=1e-9, max_it=60, mesh_cache=None, A0=None):
+def solve_problem(pb: Problem, bh: dict, *, tol_res=1e-7, tol_step=1e-10, max_it=60, mesh_cache=None, A0=None):
     """Damped Newton on the nonlinear magnetostatic equations. bh maps iron keys ('hiperco', 'iron') to BH objects.
-    Converged when the relative residual ||R|| / ||F|| < tol_res AND the last relative Newton step < tol_step.
+    Converged when the relative residual ||R|| / ||F|| < tol_res AND the last relative Newton step < tol_step
+    (prereg v2: the v1 values 1e-9 / 1e-9 sit below the double-precision residual floor of iron/air problems).
     Returns Solution (status OK | MODEL_ERROR); a non-converged state is never returned as a field."""
     mesh, basis = setup(pb, mesh_cache)
     mat = _mat_per_element(mesh, pb.rects)
