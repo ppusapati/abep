@@ -688,8 +688,8 @@ ASSUMPTIONS = [
                      "RAM_NORMAL_UPPER_BOUND)"},
     {"id": "A-AN-01", "class": "assumption", "evidence_level": 7,
      "statement": "the anode collecting area is the channel annulus (H1F-AN-03 anode geometry TBD); ion impact energy "
-                  "at the anode stays below the lowest constituent sputter threshold prior (~15.5 eV, N+ -> Cr "
-                  "generic) because the anode is the most positive electrode and ions reach it only from the "
+                  "at the anode stays below the lowest constituent sputter threshold prior (~14.9 eV, N+ -> Al "
+                  "generic, IN601; ~15.5 eV, N+ -> Cr generic, IN600) because the anode is the most positive electrode and ions reach it only from the "
                   "near-anode potential excess of a few T_e",
      "verification": "anode metrology on the replaceable serialized EM anode (AOL-RC-01, AOL-PM-03 / -04); near-anode "
                      "potential from the converged RP-1 Hall solution (P2) when admitted"},
@@ -771,8 +771,8 @@ def build_gates() -> list:
                     f"{p}-SPUTTER", mat, f"{app} ({role})", items, "sputtering / erosion (anode)",
                     "PASS_BY_ANALYSIS_WITH_ASSUMPTION", ["EV-05", "EV-13"], [], ["A-AN-01"],
                     "the anode collects electrons; ions reach it only with the near-anode potential excess of a few "
-                    "T_e, below the N+ -> Ni prior threshold (21.9 eV) and the lowest constituent prior (N+ -> Cr "
-                    "generic 15.5 eV); no accessed source identifies ion bombardment as an anode driver and the one "
+                    "T_e, below the N+ -> Ni prior threshold (21.9 eV) and the lowest constituent priors (N+ -> Cr "
+                    "15.5 eV; N+ -> Al 14.9 eV for IN601; generic, level 6); no accessed source identifies ion bombardment as an anode driver and the one "
                     "analog anode failure was oxidation (AOL-M01). Confirmation by EM anode metrology "
                     "(AOL-RC-01 / AOL-PM-03) is part of the plasma-exposure test"))
                 g.append(gate(

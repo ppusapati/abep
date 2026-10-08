@@ -101,7 +101,7 @@ Verdict counts: EM_VERIFICATION_REQUIRED 32, NOT_APPLICABLE 2, PASS_BY_ANALYSIS_
 
 ### IN600-AN-SPUTTER - PASS_BY_ANALYSIS_WITH_ASSUMPTION
 
-- Basis: the anode collects electrons; ions reach it only with the near-anode potential excess of a few T_e, below the N+ -> Ni prior threshold (21.9 eV) and the lowest constituent prior (N+ -> Cr generic 15.5 eV); no accessed source identifies ion bombardment as an anode driver and the one analog anode failure was oxidation (AOL-M01). Confirmation by EM anode metrology (AOL-RC-01 / AOL-PM-03) is part of the plasma-exposure test.
+- Basis: the anode collects electrons; ions reach it only with the near-anode potential excess of a few T_e, below the N+ -> Ni prior threshold (21.9 eV) and the lowest constituent priors (N+ -> Cr 15.5 eV; N+ -> Al 14.9 eV for IN601; generic, level 6); no accessed source identifies ion bombardment as an anode driver and the one analog anode failure was oxidation (AOL-M01). Confirmation by EM anode metrology (AOL-RC-01 / AOL-PM-03) is part of the plasma-exposure test.
 
 ### IN600-AN-DEPOSITION - EM_VERIFICATION_REQUIRED
 
@@ -181,7 +181,7 @@ Verdict counts: EM_VERIFICATION_REQUIRED 32, NOT_APPLICABLE 2, PASS_BY_ANALYSIS_
 
 ### IN601-AN-SPUTTER - PASS_BY_ANALYSIS_WITH_ASSUMPTION
 
-- Basis: the anode collects electrons; ions reach it only with the near-anode potential excess of a few T_e, below the N+ -> Ni prior threshold (21.9 eV) and the lowest constituent prior (N+ -> Cr generic 15.5 eV); no accessed source identifies ion bombardment as an anode driver and the one analog anode failure was oxidation (AOL-M01). Confirmation by EM anode metrology (AOL-RC-01 / AOL-PM-03) is part of the plasma-exposure test.
+- Basis: the anode collects electrons; ions reach it only with the near-anode potential excess of a few T_e, below the N+ -> Ni prior threshold (21.9 eV) and the lowest constituent priors (N+ -> Cr 15.5 eV; N+ -> Al 14.9 eV for IN601; generic, level 6); no accessed source identifies ion bombardment as an anode driver and the one analog anode failure was oxidation (AOL-M01). Confirmation by EM anode metrology (AOL-RC-01 / AOL-PM-03) is part of the plasma-exposure test.
 
 ### IN601-AN-DEPOSITION - EM_VERIFICATION_REQUIRED
 
@@ -354,7 +354,7 @@ Verdict counts: EM_VERIFICATION_REQUIRED 32, NOT_APPLICABLE 2, PASS_BY_ANALYSIS_
 |---|---|---|---|---|
 | A-ATT-01 | assumption | 7 | the H-1 / ICP exit openings face the wake: the outward normal of every retained-material surface exposed to the free stream is within 60 deg of the anti-velocity direction (drag-compensating thrust is along-track by mission function) | spacecraft attitude / layout ICD (P9 / host ICD); analysis at PDR |
 | A-LAY-01 | assumption | 7 | no ram-facing spacecraft surface reflects or re-emits ram AO into the H-1 channel or the ICP bore at a rate comparable with the feed-borne dose (DA-02) | host layout ICD; free-molecular view-factor analysis at PDR (AO register flag RAM_NORMAL_UPPER_BOUND) |
-| A-AN-01 | assumption | 7 | the anode collecting area is the channel annulus (H1F-AN-03 anode geometry TBD); ion impact energy at the anode stays below the lowest constituent sputter threshold prior (~15.5 eV, N+ -> Cr generic) because the anode is the most positive electrode and ions reach it only from the near-anode potential excess of a few T_e | anode metrology on the replaceable serialized EM anode (AOL-RC-01, AOL-PM-03 / -04); near-anode potential from the converged RP-1 Hall solution (P2) when admitted |
+| A-AN-01 | assumption | 7 | the anode collecting area is the channel annulus (H1F-AN-03 anode geometry TBD); ion impact energy at the anode stays below the lowest constituent sputter threshold prior (~14.9 eV, N+ -> Al generic, IN601; ~15.5 eV, N+ -> Cr generic, IN600) because the anode is the most positive electrode and ions reach it only from the near-anode potential excess of a few T_e | anode metrology on the replaceable serialized EM anode (AOL-RC-01, AOL-PM-03 / -04); near-anode potential from the converged RP-1 Hall solution (P2) when admitted |
 | A-ICP-01 | assumption | 6 | the ion current collected by the ICP collector equals the Hall discharge current (current continuity of the floating ICP body with a separately biased, metered ion collector: DBF1-ICP-01 / -04; Takahashi topology) | collector current metering on the EM ICP (DBF1-ICP-04 'separately biased and metered') |
 | A-CYC-01 | assumption | 7 | at most one full-amplitude thermal cycle per orbit over the 26,280 h mission (eclipse and / or firing on-off); the mission schedule is not registered (OQ-MI-01) | mission operations concept / schedule registration (SCH-05) |
 

@@ -35,14 +35,14 @@ Each mechanism has a verification method.
 - The retained materials sit inside aft-facing openings. Direct ram atomic oxygen reaching them is negligible
   compared with the oxygen carried internally by the propellant. Their oxygen compatibility is therefore governed by
   the internal discharge environment, and it is verified there.
-- The nickel-chromium alloys form non-volatile oxides, so they do not recede under atomic oxygen in the way polymers
-  and carbon do.
+- The nickel-chromium alloys form non-volatile oxides, so they are not expected to recede under atomic oxygen in the
+  way polymers and carbon do.
 - Ion sputtering of the anode is assessed not to be a life driver, because ions reach the anode only at low energy.
-  EM anode metrology confirms this.
+  Engineering-model anode metrology will confirm it.
 - The ICP collector's sputter life is set by the energy of the ions striking it. The neutralizer operating point is
-  therefore specified to keep the collector sheath energy low. Sputter-product deposition on the neutralizer
-  dielectric and on the Hall exit insulators is to be controlled by electrode geometry and is monitored with witness
-  samples.
+  therefore to be specified to keep the collector sheath energy low. Sputter-product deposition on the neutralizer
+  dielectric and on the Hall exit insulators is to be controlled by electrode geometry and will be monitored with
+  witness samples.
 
 **Verification approach.** Literature gives the material families and their mechanisms. It does not qualify these
 materials in this service condition. Qualification evidence will come from a staged programme. Acceptance criteria
@@ -63,7 +63,7 @@ are pre-registered before exposure, and every stage carries full traceability.
    flight-life claim.
 
 Material temperature limits come from the integrated EM confirmation, with the programme's 50 K thermal margin. Data
-sheet ratings are used only for screening. Final material release is at CDR, after EM verification.
+sheet ratings are used only for screening. Final material release is to be finalized at CDR, after EM verification.
 
 ## Design intent and demonstrated evidence
 
