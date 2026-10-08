@@ -123,6 +123,34 @@ fn v1_case_doc(repo: &Path) -> AbepResult<(Value, String)> {
     Ok((doc, sha))
 }
 
+/// What differs between the A3 check of the XE family and of the AIR family (addendum A3 scope).
+pub struct Spec {
+    pub family: &'static str,
+    pub cases_rel: &'static str,
+    pub launch_rel: &'static str,
+    pub driver_rel: &'static str,
+    pub raw_schema: &'static str,
+    pub shard_prefix: &'static str,
+    pub frozen_by: &'static str,
+    /// The family's registered run-status rule.
+    pub status: fn(&Value) -> RunStatus,
+}
+
+fn xe_status(r: &Value) -> RunStatus {
+    env::run_status(Family::Xe, r)
+}
+
+pub const XE: Spec = Spec {
+    family: "XE",
+    cases_rel: A3_CASES_REL,
+    launch_rel: A3_LAUNCH_REL,
+    driver_rel: A3_DRIVER_REL,
+    raw_schema: A3_RAW_SCHEMA,
+    shard_prefix: "a3_s",
+    frozen_by: "abep-h1-envelope-a3 freeze",
+    status: xe_status,
+};
+
 /// One selected check case.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CheckCase {
@@ -337,7 +365,11 @@ pub fn check(repo: &Path) -> AbepResult<usize> {
 }
 
 fn launch_manifest(repo: &Path) -> AbepResult<Value> {
-    loads(&std::fs::read(repo.join(A3_LAUNCH_REL)).map_err(|e| io(A3_LAUNCH_REL, e))?, A3_LAUNCH_REL)
+    launch_manifest_of(repo, &XE)
+}
+
+fn launch_manifest_of(repo: &Path, spec: &Spec) -> AbepResult<Value> {
+    loads(&std::fs::read(repo.join(spec.launch_rel)).map_err(|e| io(spec.launch_rel, e))?, spec.launch_rel)
 }
 
 /// The A3 shard job with every input hash the driver relies on.
@@ -397,7 +429,18 @@ pub fn run_shard(repo: &Path, shard: usize, out_dir: &str) -> AbepResult<crate::
 
 /// Freeze A3 shard outputs: records sorted by key (unique), one gzip JSONL (mtime 0) and its manifest.
 pub fn freeze(repo: &Path, name: &str, shards: &[PathBuf], out_dir: &Path) -> AbepResult<(PathBuf, String)> {
-    let lm = launch_manifest(repo)?;
+    freeze_with(repo, &XE, name, shards, out_dir)
+}
+
+/// [`freeze`] for the family `spec`.
+pub fn freeze_with(
+    repo: &Path,
+    spec: &Spec,
+    name: &str,
+    shards: &[PathBuf],
+    out_dir: &Path,
+) -> AbepResult<(PathBuf, String)> {
+    let lm = launch_manifest_of(repo, spec)?;
     let mut by_key: BTreeMap<String, String> = BTreeMap::new();
     let mut rows = Vec::new();
     for p in shards {
@@ -435,18 +478,18 @@ pub fn freeze(repo: &Path, name: &str, shards: &[PathBuf], out_dir: &Path) -> Ab
     let raw_name = format!("{name}_raw.jsonl.gz");
     std::fs::write(out_dir.join(&raw_name), &gz).map_err(|e| io(&raw_name, e))?;
     let m = dict(vec![
-        ("schema", sval(A3_RAW_SCHEMA)),
+        ("schema", sval(spec.raw_schema)),
         ("name", sval(name)),
         ("layer", sval(env::LAYER_A_LABEL)),
         ("addendum_lock_sha256", sval(A3_LOCK_SHA256)),
         ("prereg_lock_sha256", sval(env::LOCK_SHA256)),
-        ("cases_file_sha256", sval(get_str(&lm, "cases_sha256", A3_LAUNCH_REL)?)),
-        ("driver_sha256", sval(get_str(&lm, "driver_sha256", A3_LAUNCH_REL)?)),
+        ("cases_file_sha256", sval(get_str(&lm, "cases_sha256", spec.launch_rel)?)),
+        ("driver_sha256", sval(get_str(&lm, "driver_sha256", spec.launch_rel)?)),
         ("n_records", Value::int(by_key.len() as i64)),
         ("raw_file", sval(&raw_name)),
         ("raw_sha256", sval(&sha256_hex(&gz))),
         ("shards", Value::List(rows)),
-        ("frozen_by", sval("abep-h1-envelope-a3 freeze")),
+        ("frozen_by", sval(spec.frozen_by)),
     ]);
     let mut mt = pyjson::dumps(&m, &DumpOptions::config_writer()).map_err(|e| model(e.to_string()))?;
     mt.push('\n');
@@ -508,7 +551,18 @@ fn quiet(rec: Option<&Value>) -> Option<bool> {
 
 /// Compare one refined record with its R0 record (either may be absent: absent is NUMERICAL_FAILURE, v1 rule).
 pub fn compare(v1_key: &str, refinement: &str, r0: Option<&Value>, rk: Option<&Value>) -> Comparison {
-    let st = |r: Option<&Value>| r.map_or(RunStatus::NumericalFailure, |r| env::run_status(Family::Xe, r));
+    compare_with(xe_status, v1_key, refinement, r0, rk)
+}
+
+/// [`compare`] under the run-status rule `status`.
+pub fn compare_with(
+    status: fn(&Value) -> RunStatus,
+    v1_key: &str,
+    refinement: &str,
+    r0: Option<&Value>,
+    rk: Option<&Value>,
+) -> Comparison {
+    let st = |r: Option<&Value>| r.map_or(RunStatus::NumericalFailure, status);
     let (s0, sk) = (st(r0), st(rk));
     let c_status = s0 == sk;
     let c_quiet = (s0 != RunStatus::NumericalFailure && sk != RunStatus::NumericalFailure)
@@ -580,16 +634,27 @@ pub fn read_frozen(
     manifest: &Path,
     manifest_sha256: &str,
 ) -> AbepResult<(BTreeMap<String, Value>, String)> {
+    read_frozen_with(repo, &XE, &[], manifest, manifest_sha256)
+}
+
+/// [`read_frozen`] for the family `spec`; every record must also carry each `(field, value)` of `pins`.
+pub fn read_frozen_with(
+    repo: &Path,
+    spec: &Spec,
+    pins: &[(String, String)],
+    manifest: &Path,
+    manifest_sha256: &str,
+) -> AbepResult<(BTreeMap<String, Value>, String)> {
     let label = manifest.to_string_lossy().to_string();
     let m = loads(&read_verified(manifest, manifest_sha256)?, &label)?;
-    if get_str(&m, "schema", &label)? != A3_RAW_SCHEMA {
+    if get_str(&m, "schema", &label)? != spec.raw_schema {
         return Err(schema(&label, "not an A3 raw manifest"));
     }
     if get_str(&m, "addendum_lock_sha256", &label)? != A3_LOCK_SHA256 {
         return Err(schema(&label, "produced under another A3 lock"));
     }
-    let lm = launch_manifest(repo)?;
-    let cases_sha = get_str(&lm, "cases_sha256", A3_LAUNCH_REL)?.to_string();
+    let lm = launch_manifest_of(repo, spec)?;
+    let cases_sha = get_str(&lm, "cases_sha256", spec.launch_rel)?.to_string();
     if get_str(&m, "cases_file_sha256", &label)? != cases_sha {
         return Err(schema(&label, "produced from another A3 case file"));
     }
@@ -600,14 +665,15 @@ pub fn read_frozen(
     flate2::read::GzDecoder::new(gz.as_slice())
         .read_to_string(&mut text)
         .map_err(|e| schema(raw_name, e.to_string()))?;
-    let doc = loads(&read_verified(&repo.join(A3_CASES_REL), &cases_sha)?, A3_CASES_REL)?;
+    let cr = spec.cases_rel;
+    let doc = loads(&read_verified(&repo.join(cr), &cases_sha)?, cr)?;
     let mut want: BTreeMap<String, String> = BTreeMap::new();
-    for c in get(&doc, "cases").and_then(Value::as_list).ok_or_else(|| schema(A3_CASES_REL, "cases"))? {
+    for c in get(&doc, "cases").and_then(Value::as_list).ok_or_else(|| schema(cr, "cases"))? {
         let h = case_hash(c)?;
-        if get_str(c, "case_sha256", A3_CASES_REL)? != h {
-            return Err(schema(A3_CASES_REL, "case_sha256 mismatch"));
+        if get_str(c, "case_sha256", cr)? != h {
+            return Err(schema(cr, "case_sha256 mismatch"));
         }
-        want.insert(get_str(c, "key", A3_CASES_REL)?.to_string(), h);
+        want.insert(get_str(c, "key", cr)?.to_string(), h);
     }
     let commit = abep_hall::hall_map::pinned_commit(&repo.to_string_lossy(), None).map_err(AbepError::from)?;
     let mut recs = BTreeMap::new();
@@ -623,6 +689,11 @@ pub fn read_frozen(
             ("cases_file_sha256", cases_sha.as_str()),
         ] {
             if get(&r, f).and_then(Value::as_str) != Some(w) {
+                return Err(model(format!("A3 record {key}: {f} != {w}")));
+            }
+        }
+        for (f, w) in pins {
+            if get(&r, f).and_then(Value::as_str) != Some(w.as_str()) {
                 return Err(model(format!("A3 record {key}: {f} != {w}")));
             }
         }
@@ -647,15 +718,34 @@ fn optb(x: Option<bool>) -> Value {
 
 /// Score the frozen A3 raw envelope once: (result JSON value, markdown summary).
 pub fn score(repo: &Path, manifest: &Path, manifest_sha256: &str, rust_commit: &str) -> AbepResult<(Value, String)> {
+    score_with(repo, &XE, &[], manifest, manifest_sha256, rust_commit)
+}
+
+/// The check cases (v1 keys) of an A3 case file, in file order.
+fn check_keys(repo: &Path, spec: &Spec) -> AbepResult<Vec<String>> {
+    let doc = loads(&std::fs::read(repo.join(spec.cases_rel)).map_err(|e| io(spec.cases_rel, e))?, spec.cases_rel)?;
+    let mut keys: Vec<String> = Vec::new();
+    for c in get(&doc, "cases").and_then(Value::as_list).ok_or_else(|| schema(spec.cases_rel, "cases"))? {
+        let k = get_str(c, "v1_key", spec.cases_rel)?;
+        if keys.last().map(String::as_str) != Some(k) {
+            keys.push(k.to_string());
+        }
+    }
+    Ok(keys)
+}
+
+/// [`score`] for the family `spec` (record pins as in [`read_frozen_with`]).
+pub fn score_with(
+    repo: &Path,
+    spec: &Spec,
+    pins: &[(String, String)],
+    manifest: &Path,
+    manifest_sha256: &str,
+    rust_commit: &str,
+) -> AbepResult<(Value, String)> {
     let add = load_addendum(repo)?;
-    let (recs, raw_sha) = read_frozen(repo, manifest, manifest_sha256)?;
-    let keys: Vec<String> = get(&add, "check_set")
-        .and_then(|c| get(c, "xe_keys"))
-        .and_then(Value::as_list)
-        .ok_or_else(|| schema(ADDENDUM_REL, "xe_keys"))?
-        .iter()
-        .filter_map(|v| v.as_str().map(str::to_string))
-        .collect();
+    let (recs, raw_sha) = read_frozen_with(repo, spec, pins, manifest, manifest_sha256)?;
+    let keys = check_keys(repo, spec)?;
     let rec = |k: &str, r: &str| recs.get(&format!("{k}|{r}"));
     let mut cmp = Vec::new();
     let mut rows = Vec::new();
@@ -663,7 +753,7 @@ pub fn score(repo: &Path, manifest: &Path, manifest_sha256: &str, rust_commit: &
         let r0 = rec(k, R0);
         for r in [R1, R3] {
             let rk = rec(k, r);
-            let c = compare(k, r, r0, rk);
+            let c = compare_with(spec.status, k, r, r0, rk);
             let report: Vec<(&str, Value)> = [
                 "ion_current_A",
                 "mass_eff",
@@ -723,9 +813,7 @@ pub fn score(repo: &Path, manifest: &Path, manifest_sha256: &str, rust_commit: &
                 .map(|s| {
                     let n = keys
                         .iter()
-                        .filter(|k| {
-                            rec(k, r).map_or(RunStatus::NumericalFailure, |x| env::run_status(Family::Xe, x)) == *s
-                        })
+                        .filter(|k| rec(k, r).map_or(RunStatus::NumericalFailure, spec.status) == *s)
                         .count();
                     (s.as_str(), Value::int(n as i64))
                 })
@@ -738,7 +826,7 @@ pub fn score(repo: &Path, manifest: &Path, manifest_sha256: &str, rust_commit: &
         ("model_id", sval("NP-HALL-PARAMETRIC-ENVELOPE")),
         ("addendum", sval("A3 numerics adequacy (RG-04)")),
         ("layer", sval(env::LAYER_A_LABEL)),
-        ("family", sval("XE")),
+        ("family", sval(spec.family)),
         ("addendum_sha256", sval(ADDENDUM_SHA256)),
         ("addendum_lock_sha256", sval(A3_LOCK_SHA256)),
         ("raw_manifest_sha256", sval(manifest_sha256)),
@@ -773,6 +861,14 @@ fn yn(x: Option<bool>) -> &'static str {
     }
 }
 
+/// (result JSON, result page) file names of a family's A3 result.
+pub fn result_files(family: &str) -> (&'static str, &'static str) {
+    match family {
+        "XE" => ("a3_numerics_result_v1.json", "A3_NUMERICS_RESULT.md"),
+        _ => ("a3_numerics_result_air_v1.json", "A3_NUMERICS_RESULT_AIR.md"),
+    }
+}
+
 fn render_md(
     result: &Value,
     cmp: &[Comparison],
@@ -782,8 +878,12 @@ fn render_md(
 ) -> String {
     let g = |k: &str| get(result, k).and_then(Value::as_str).unwrap_or("").to_string();
     let mut s = String::new();
-    s.push_str("# NP-HALL-PARAMETRIC-ENVELOPE addendum A3: numerics adequacy result (XE)\n\n");
-    s.push_str("`a3_numerics_result_v1.json` is authoritative; this page restates it. PARAMETRIC / NOT_VALIDATED. Scored once ");
+    let fam = g("family");
+    s.push_str(&format!("# NP-HALL-PARAMETRIC-ENVELOPE addendum A3: numerics adequacy result ({fam})\n\n"));
+    s.push_str(&format!(
+        "`{}` is authoritative; this page restates it. PARAMETRIC / NOT_VALIDATED. Scored once ",
+        result_files(&fam).0
+    ));
     s.push_str(&format!(
         "from the frozen A3 raw envelope (manifest sha256 `{}`, raw `{}`).\n\n",
         g("raw_manifest_sha256"),

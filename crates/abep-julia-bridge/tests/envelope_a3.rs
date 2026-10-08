@@ -56,6 +56,23 @@ fn refinements_change_only_the_registered_numerics() {
 }
 
 #[test]
+fn committed_xe_result_reproduces_from_the_frozen_runs() {
+    let r = repo();
+    let dir = r.join("docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE");
+    let m = dir.join("runs/a3_numerics_v1_XE/h1_parametric_envelope_a3_numerics_v1_XE_raw_manifest.json");
+    let sha = "6ff25d22ebb6f7419827fc5d2ab51472a87e44c2ce2826ceedbb831eeff0d296";
+    let (v, md) = a3::score(&r, &m, sha, "e58502a2").unwrap();
+    let mut t = pyjson::dumps(&v, &pyjson::DumpOptions::config_writer()).unwrap();
+    t.push('\n');
+    let (jf, mf) = a3::result_files("XE");
+    assert_eq!(t, std::fs::read_to_string(dir.join(jf)).unwrap());
+    assert_eq!(md, std::fs::read_to_string(dir.join(mf)).unwrap());
+    assert_eq!(v.as_dict().unwrap().get("outcome").unwrap().as_str(), Some("A3_NOT_ADEQUATE"));
+    // A tampered manifest pin is refused.
+    assert!(a3::score(&r, &m, &"0".repeat(64), "x").is_err());
+}
+
+#[test]
 fn shard_job_pins_the_a3_inputs() {
     let job = a3::shard_job(&repo(), 1, "/tmp/out", &|_| None).unwrap();
     assert_eq!(job.args[1], a3::A3_DRIVER_REL);
