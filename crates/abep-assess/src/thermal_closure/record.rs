@@ -518,9 +518,10 @@ fn f1(v: &Value) -> String {
 pub fn markdown(rec: &Value) -> String {
     let st = |v: &Value| v.as_str().unwrap_or("").to_string();
     let mut m = String::new();
-    m.push_str("# P7 thermal closure v1 (DBF-1, frozen topology)\n\n");
+    let ver = rec["load_inputs"]["id"].as_str().and_then(|x| x.rsplit('-').next()).unwrap_or("v1").to_string();
+    m.push_str(&format!("# P7 thermal closure {ver} (DBF-1, frozen topology)\n\n"));
     m.push_str(&format!(
-        "Companion of `thermal_closure_v1.json` (the JSON governs). Model NP-THERMAL-CATHODELESS 2.0.0, case class \
+        "Companion of `thermal_closure_{ver}.json` (the JSON governs). Model NP-THERMAL-CATHODELESS 2.0.0, case class \
 PARAMETRIC (label PARAMETRIC_NOT_A_PREDICTION), validation status NOT_VALIDATED. Preregistration `{}` (sha256 `{}`); \
 load inputs `{}` (sha256 `{}`); Rust commit `{}`.\n\n",
         st(&rec["preregistration"]["path"]),

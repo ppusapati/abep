@@ -11,22 +11,24 @@ use abep_subsystems::thermal::RunContext;
 use serde_json::Value;
 use std::sync::OnceLock;
 
-const RECORD: &str = "docs/closure/thermal/thermal_closure_v1.json";
 const INPUTS: &str = "docs/closure/thermal/thermal_load_inputs_v1.json";
+const INPUTS_V2: &str = "docs/closure/thermal/thermal_load_inputs_v2.json";
+
+fn load(inputs: &str) -> Context {
+    let root = workspace_repo_root().unwrap();
+    let repo = Git::new(&root);
+    let commit = repo.stdout(&["rev-parse", "--verify", "HEAD^{commit}"]).unwrap();
+    Context::load(&root, inputs, RunContext { rust_commit: commit, rust_tree_dirty: false }).unwrap()
+}
 
 fn ctx() -> &'static Context {
     static C: OnceLock<Context> = OnceLock::new();
-    C.get_or_init(|| {
-        let root = workspace_repo_root().unwrap();
-        let git = Git::new(&root);
-        let commit = git.stdout(&["rev-parse", "--verify", "HEAD^{commit}"]).unwrap();
-        Context::load(&root, INPUTS, RunContext { rust_commit: commit, rust_tree_dirty: false }).unwrap()
-    })
+    C.get_or_init(|| load(INPUTS))
 }
 
-fn record() -> Value {
+fn record(rel: &str) -> Value {
     let root = workspace_repo_root().unwrap();
-    serde_json::from_slice(&std::fs::read(root.join(RECORD)).unwrap()).unwrap()
+    serde_json::from_slice(&std::fs::read(root.join(rel)).unwrap()).unwrap()
 }
 
 #[test]
@@ -55,9 +57,13 @@ fn a_changed_preregistration_is_refused() {
 }
 
 #[test]
-fn the_committed_record_reproduces() {
-    let c = ctx();
-    let rec = record();
+fn the_committed_records_reproduce() {
+    reproduces(ctx(), "docs/closure/thermal/thermal_closure_v1.json");
+    reproduces(&load(INPUTS_V2), "docs/closure/thermal/thermal_closure_v2.json");
+}
+
+fn reproduces(c: &Context, rel: &str) {
+    let rec = record(rel);
     assert_eq!(rec["preregistration"]["sha256"].as_str(), Some(c.prereg.sha256.as_str()));
     assert_eq!(rec["load_inputs"]["sha256"].as_str(), Some(c.inputs_sha256.as_str()));
     let sel = &rec["design_lever_search"]["selected"];
