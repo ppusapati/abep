@@ -1042,6 +1042,7 @@ pub fn record_v2(inp: &M1Inputs, out: &M1Outcome, run_label: &str) -> Value {
                 ]),
             },
         ),
+        ("conservation_bounds_a4", super::conservation_record::record_block(inp, out)),
         ("hall_specific_closure_a", Value::Dict(hall_v)),
         ("constraint_closure_a", Value::Dict(nh_v)),
         ("binding_constraint", Value::Dict(binding)),
