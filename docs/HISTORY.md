@@ -5606,3 +5606,54 @@ stays EMPTY and nothing enters layer (b).
 - **Priorities P1–P9:** intake / compressor DCR redesign; Hall RP-1 convergence; H1 B(z); RF/ICP closure and the AIR audit; mass; power; thermal; materials; host-drag C_D·A interface constraint.
 - **Sequence:** Hall + intake DCR + ICP / AIR in parallel → mass / power / thermal → M2 rerun → M3.
 - **Documentation:** engineering evidence plus a submission-safe statement for every item, using the six closure states.
+
+## 2026-10-08 — P8 materials closure gates v1 (A9.38 Priority 8, lane L-MATERIALS)
+
+- **What:** `docs/closure/materials/materials_gates_v1.{json,md}` (builder `build_materials_gates_v1.py`, `--check` reproduces both; every repository input sha256-pinned, fail closed) and the submission-safe statement `docs/closure/statements/P8_materials.md`.
+- **Scope:** the four retained DBF-1 selections, unchanged:
+  - INCONEL 600 / 601 for the anode and the ICP collector;
+  - BN-SiO2 / BN for the channel wall.
+- **Gates (42):** each of the four materials (on each application) is assessed for:
+  - atomic oxygen, external ram and internal feed-borne;
+  - plasma exposure;
+  - sputtering / erosion;
+  - deposition;
+  - thermal (continuous-use temperature and cycling);
+  - the electrical behaviour of the oxide scale.
+
+  Each gate carries its evidence (class, level, source, domain, uncertainty) and one verdict:
+  - **PASS_BY_ANALYSIS_WITH_ASSUMPTION 8:** external ram AO on aft-facing surfaces (free-molecular wake flux ≤ 3e-6 of ram for normals within 60°) and anode sputtering;
+  - **EM_VERIFICATION_REQUIRED 32**, each with its named coupon / EM test;
+  - **NOT_APPLICABLE 2:** ceramic oxide-scale conduction;
+  - **FAIL 0.**
+
+  No P4 gate cell is changed: they stay INCOMPLETE_EVIDENCE, and the P4 vocabulary never emits PASS.
+- **Design-driving findings:**
+  - **ICP collector sputtering.** The collector collects ~I_d as ions. At the Takahashi analog sheath energies of 140 / 220 eV, the N⁺→Ni prior gives 33–210 mm of recession over 15,000 h. A 0.5–2 mm allowance needs a mean ion energy E* of 26–38 eV, which is an operating-point requirement on P4 / BD-06. A DCR trigger is registered on DBF1-ICP-04, not on the material.
+  - **Anode temperature.** The supplier oxidation-data domains give screening ceilings of 930 °C (IN600) and 1150 °C (IN601) after the 50 K margin. The only repository anode temperature (≥ 1190 °C, inadmissible context) is above both. P7 decides, and DCR triggers are registered.
+  - **Internal O dose.** The internal atomic-O throughput dose at the anode plane is 8e26–3e28 m⁻² at the 12 mN necessary flow, of the order of the external ram bound. The AO coupon fluence is set from it.
+  - **Wall erosion.** The only air-mode analog life indication (PPS1350, 7000–9500 h) is below the 15,000 h firing basis.
+- **External sources:** Special Metals IN600 / IN601 bulletins, read 2026-10-08 (sha256 `89a3ba65…`, `261c20c2…`; not committed).
+- **P8 closure state: FROZEN FOR EM.**
+- No DBF-1 value, frozen record, model or golden changed.
+
+## 2026-10-08 — A9.38 P6 power ledger closed except the Hall discharge term; P9 host C_D·A interface constraint registered (lane-power-icd)
+
+- **P9** (`docs/closure/icd/host_drag_cda_envelope_v1.{json,md}`, builder `build_host_drag_cda_envelope.py`, read from the M2 record `600cf229…`): IR-HOST-DRAG-01 is (C_D·A)_host,max(s) = (T − D_intake(s)) / q(s), evaluated in the unfavourable admitted surface scenario (S6.16). T is 25 mN (capability, statewise limit) or 12 mN (sustained design target).
+  - At 25 mN the governing value is 0.221 m² (alt 180 km, ST_HIGH). Worst / typical by altitude: 180 km 0.22 / 0.93, 195 km 0.57 / 1.67, 215 km 1.20 / 3.33, 230 km 1.80 / 5.10 m².
+  - No state is infeasible at 25 mN.
+  - At 12 mN, 13 states (alt 180 km, LT_HIGH / ST_HIGH; 11 in every scenario) have no positive host C_D·A: the DBF-1 intake face alone exceeds 12 mN there. This is carried to DCR-001.
+  - RC-DIAMANT gives 40 states above 25 mN (consistent with M2). DCR-001 updates the envelope by an M2 rerun and `--record`.
+  - Closure state **REFERENCE/ICD DEPENDENT** (closure criterion met). Statement: `docs/closure/statements/P9_host_drag_interface.md`.
+- **P6 code** (additive): `abep_subsystems::power::closure_v1` builds the ledger from the sha256-pinned term register `power_closure_inputs_v1.json` (`a588c0db…`). `abep_assess::power_closure` and the bin `abep-assess-power-closure` add the HC-03 quantities from config. Admitted ledger, allocation and official-ledger functions are unchanged; the official A9-02 ledger still lists its 24 TBD terms.
+- **P6 record** (`docs/closure/power/power_ledger_v1.{json,md}`): 27 terms closed (24 official TBD entries, plus the front end and the two harness terms), 0 TBD.
+  - Sources: Osuga 2005 / Rhodes 2024 / NewOrbit / Volkmar / Moog PFCV analogs, H2-1 coil sizing, the M2 compressor model, and frozen engineering assumptions with bounds.
+  - Hall discharge power is **DESIGN_ALLOCATION_NOT_PREDICTED**.
+  - P-NOM: P_d 784 W closes 1,350 W (margin 150 W to 1,500 W).
+  - P-12: P_d 650 W gives 1,192 W (margins 158 / 308 W).
+  - P-25 (P_d 1,350 W band end): 2,016 W.
+  - P-WORST (MC-1 capability magnets): 2,130 W.
+  - P-XE (650 W): 1,184 W.
+  - Discharge ceiling P_d,max: 784 W at 1,350 W and 911 W at 1,500 W (conservative corner 676 W). The derived Hall requirement is T/P_d ≥ 27.4 mN/kW at 25 mN and ≥ 15.3 mN/kW at 12 mN.
+  - RF trade line: each 100 W of forward power costs about 129 W of discharge ceiling. Compressor headroom inside the 300 W common allocation is 231 W.
+  - Closure state **BLOCKED BY SPECIFIC MISSING EVIDENCE** (HALL_NUMERICS_NOT_CONVERGED: P_d at 12 / 25 mN). Statement: `docs/closure/statements/P6_power.md`.
