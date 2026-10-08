@@ -187,6 +187,30 @@ fn freeze_then_ingest_round_trip_with_synthetic_records() {
 }
 
 #[test]
+fn a_family_filtered_envelope_ingests_complete_families_only() {
+    let r = repo();
+    let cs = env::load_case_set(&r).unwrap();
+    let commit = abep_hall::hall_map::pinned_commit(&r.to_string_lossy(), None).unwrap();
+    let lines: Vec<String> = cs
+        .cases
+        .iter()
+        .enumerate()
+        .filter(|(_, c)| c.family == Family::Xe)
+        .map(|(i, c)| synthetic_record(c, &commit, &cs.sha256, i))
+        .collect();
+    let base = PathBuf::from(env!("CARGO_TARGET_TMPDIR")).join("np_hpe_xe_only");
+    let _ = std::fs::remove_dir_all(&base);
+    let (m, s) = freeze(&r, "xe", &write_shards(&base.join("s"), &lines, 3), &base.join("f")).unwrap();
+    let e = env::ingest(&r, &m, &s).unwrap();
+    assert_eq!(e.family_points(Family::Xe).count(), 2268);
+    assert_eq!(e.family_points(Family::N2Proxy).count(), 0, "a family that was not run is absent");
+    // A partial family is refused.
+    let (m2, s2) = freeze(&r, "xe_short", &write_shards(&base.join("p"), &lines[1..], 3), &base.join("pf")).unwrap();
+    assert!(env::ingest(&r, &m2, &s2).is_err());
+    let _ = std::fs::remove_dir_all(&base);
+}
+
+#[test]
 fn workflow_is_dispatch_only_and_freezes_with_the_rust_tool() {
     let w = std::fs::read_to_string(repo().join(".github/workflows/h1-parametric-envelope.yml")).unwrap();
     assert!(w.contains("on:\n  workflow_dispatch:"), "workflow_dispatch trigger");

@@ -19,6 +19,10 @@ path = "src/bin/abep_assess_matrix.rs"
 name = "abep-assess-closure"
 path = "src/bin/abep_assess_closure.rs"
 
+[[bin]]
+name = "abep-assess-envelope-summary"
+path = "src/bin/abep_assess_envelope_summary.rs"
+
 [dependencies]
 abep-types.workspace = true
 abep-provenance.workspace = true

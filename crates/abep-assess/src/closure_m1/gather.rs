@@ -551,9 +551,18 @@ pub fn gather_m1(
     let hc06_k = today.thresholds.limit("HC-06");
     let hc07_h = today.thresholds.limit("HC-07");
     let hc08_n = today.thresholds.limit("HC-08");
+    let xe_a3 = match &envelope {
+        Some(_) => {
+            abep_hall::envelope::a3_overlay(repo, abep_hall::envelope::Family::Xe)
+                .map_err(|e| model_error(e.to_string()))?
+                .0
+        }
+        None => abep_hall::envelope::A3Overlay::NotRun,
+    };
     Ok(M1Inputs {
         today,
         xe: envelope,
+        xe_a3,
         air,
         a1_on_line: a1,
         air_chemistry: air_chem,

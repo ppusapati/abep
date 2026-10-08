@@ -22,12 +22,12 @@ pub mod intake_record;
 pub mod record;
 
 use crate::closure::{
-    self as v1, category, evaluate_hall_test, evaluate_mode, evidence_conditions_hall, hall_not_evaluated,
-    ClosureOutcome, Constraint, HallLimits, HallTest, HallTestResult, ModeEval, StateRef, TodayInputs,
-    CLOSES_IN_ENVELOPE, NON_CLOSING, NOT_DETERMINABLE, NOT_DETERMINABLE_IN_ENVELOPE, NOT_EVALUATED,
+    self as v1, category, evaluate_hall_test, evaluate_hall_test_a3, evaluate_mode, evidence_conditions_hall,
+    hall_not_evaluated, ClosureOutcome, Constraint, HallLimits, HallTest, HallTestResult, ModeEval, StateRef,
+    TodayInputs, CLOSES_IN_ENVELOPE, NON_CLOSING, NOT_DETERMINABLE, NOT_DETERMINABLE_IN_ENVELOPE, NOT_EVALUATED,
     PHYSICALLY_NON_CLOSING, PHYSICS_FEASIBLE, PHYSICS_NON_CLOSING, REQUIRED_MODES, SELECT_WITH_EVIDENCE_CONDITIONS,
 };
-use abep_hall::envelope::{BzFamilyKind, Envelope, EnvelopePoint, Family, RunStatus};
+use abep_hall::envelope::{A3Overlay, BzFamilyKind, Envelope, EnvelopePoint, Family, RunStatus};
 use abep_mission::integration::Mode;
 use abep_subsystems::power::official::MassPowerA9V5;
 use abep_subsystems::power::slots::Slot;
@@ -252,6 +252,8 @@ pub enum AirHall {
 pub struct M1Inputs {
     pub today: TodayInputs,
     pub xe: Option<Envelope>,
+    /// The committed addendum A3 overlay of the XE family (A3_NOT_RUN without an envelope or a committed result).
+    pub xe_a3: A3Overlay,
     pub air: AirHall,
     pub a1_on_line: bool,
     /// The Hall AIR reaction set (NP-HALL-CHEM-AIR) label and admission state, as read.
@@ -523,7 +525,7 @@ pub fn hall_tests(inp: &M1Inputs, m: Mode, lim: &HallLimits) -> Vec<HallTestResu
                 }
                 Some(e) => {
                     let pts: Vec<&EnvelopePoint> = e.family_points(Family::Xe).collect();
-                    evaluate_hall_test(*t, Family::Xe, &pts, lim, e.bz_family_kind)
+                    evaluate_hall_test_a3(*t, Family::Xe, &pts, lim, e.bz_family_kind, inp.xe_a3)
                 }
             })
             .collect(),

@@ -330,7 +330,8 @@ pub struct RecordPins {
     pub cases_file_sha256: String,
 }
 
-/// Check a complete record list against the frozen case set and pins; any defect refuses the whole envelope.
+/// Check a record list against the frozen case set and pins (each family complete or absent); any defect refuses the
+/// whole envelope.
 pub fn ingest_records(cases: &CaseSet, records: &[Value], pins: &RecordPins) -> AbepResult<Vec<EnvelopePoint>> {
     let by_key = cases.by_key();
     let mut got: BTreeMap<String, EnvelopePoint> = BTreeMap::new();
@@ -365,11 +366,94 @@ pub fn ingest_records(cases: &CaseSet, records: &[Value], pins: &RecordPins) -> 
             return Err(model(format!("duplicate raw record key {key}")));
         }
     }
-    let missing: Vec<String> = cases.keys().into_iter().filter(|k| !got.contains_key(k)).collect();
+    // A family is run completely or not at all (a family-filtered run, launch manifest `--family`): every key of a
+    // family with at least one record is expected; a family without records is absent (its Hall tests are
+    // NOT_EVALUATED, HALL_ENVELOPE_NOT_RUN). A partial family is MODEL_ERROR.
+    let present: BTreeSet<Family> = got.values().map(|p| p.case.family).collect();
+    if present.is_empty() {
+        return Err(model("raw envelope without records"));
+    }
+    let missing: Vec<&str> = cases
+        .cases
+        .iter()
+        .filter(|c| present.contains(&c.family) && !got.contains_key(&c.key))
+        .map(|c| c.key.as_str())
+        .collect();
     if !missing.is_empty() {
         return Err(model(format!("{} expected records missing (first {})", missing.len(), missing[0])));
     }
-    Ok(cases.cases.iter().map(|c| got.remove(&c.key).expect("every key present")).collect())
+    Ok(cases
+        .cases
+        .iter()
+        .filter(|c| present.contains(&c.family))
+        .map(|c| got.remove(&c.key).expect("present"))
+        .collect())
+}
+
+/// Committed result of addendum A3 (numerics adequacy, RG-04) for the XE family.
+pub const A3_RESULT_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/a3_numerics_result_v1.json";
+pub const A3_RESULT_SCHEMA: &str = "np_hall_parametric_envelope_a3_numerics_result_v1";
+pub const A3_LOCK_SHA256: &str = "b840f1b080c94be58472ccb07f6cf35cc9ad8822161ff9a1440ecb55c76e04bd";
+/// Label / blocker of a point whose numerics the A3 check did not support (never feasible, never a non-closure).
+pub const NUMERICS_NOT_CONVERGED: &str = "NUMERICS_NOT_CONVERGED";
+
+/// The A3 overlay of a family (addendum A3 consequence). Raw records and v1 run statuses are never changed.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum A3Overlay {
+    /// No committed A3 result: the v1 rules apply unchanged.
+    NotRun,
+    /// A3_ADEQUATE: the v1 numerics stand.
+    Adequate,
+    /// A3_ADEQUATE_WITH_NUMERICAL_MARGIN: point tests evaluated at T (1 - delta_t) and P_d (1 + delta_i).
+    Margin { delta_t: f64, delta_i: f64 },
+    /// A3_NOT_ADEQUATE: every PASS and NOT_SUSTAINED point is NUMERICS_NOT_CONVERGED (an unknown).
+    NotAdequate,
+}
+
+impl A3Overlay {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            A3Overlay::NotRun => "A3_NOT_RUN",
+            A3Overlay::Adequate => "A3_ADEQUATE",
+            A3Overlay::Margin { .. } => "A3_ADEQUATE_WITH_NUMERICAL_MARGIN",
+            A3Overlay::NotAdequate => "A3_NOT_ADEQUATE",
+        }
+    }
+
+    /// Is a point of this status evaluated physics under the overlay?
+    pub fn evaluated_physics(self, s: RunStatus) -> bool {
+        s.is_evaluated_physics() && self != A3Overlay::NotAdequate
+    }
+}
+
+/// The committed A3 overlay of `family` and the sha256 of the result it was read from (fail closed: a result file that
+/// exists but does not parse, carries another lock or an unknown outcome is an error).
+pub fn a3_overlay(repo: &Path, family: Family) -> AbepResult<(A3Overlay, Option<String>)> {
+    let p = repo.join(A3_RESULT_REL);
+    if family != Family::Xe || !p.is_file() {
+        return Ok((A3Overlay::NotRun, None));
+    }
+    let bytes = std::fs::read(&p).map_err(|e| AbepError::Io { path: A3_RESULT_REL.into(), message: e.to_string() })?;
+    let sha = sha256_hex(&bytes);
+    let v = loads_bytes(&bytes, A3_RESULT_REL)?;
+    if get_str(&v, "schema", A3_RESULT_REL)? != A3_RESULT_SCHEMA
+        || get_str(&v, "addendum_lock_sha256", A3_RESULT_REL)? != A3_LOCK_SHA256
+        || get_str(&v, "family", A3_RESULT_REL)? != family.as_str()
+    {
+        return Err(schema(A3_RESULT_REL, "not an A3 result of this family under the A3 lock"));
+    }
+    let delta = |k: &str| get(&v, k).and_then(|d| finite_num(get(d, "value")));
+    let o = match get_str(&v, "outcome", A3_RESULT_REL)? {
+        "A3_ADEQUATE" => A3Overlay::Adequate,
+        "A3_ADEQUATE_WITH_NUMERICAL_MARGIN" => A3Overlay::Margin {
+            delta_t: delta("delta_T").ok_or_else(|| schema(A3_RESULT_REL, "delta_T"))?,
+            delta_i: delta("delta_I").ok_or_else(|| schema(A3_RESULT_REL, "delta_I"))?,
+        },
+        "A3_NOT_ADEQUATE" => A3Overlay::NotAdequate,
+        other => return Err(schema(A3_RESULT_REL, format!("unknown A3 outcome {other}"))),
+    };
+    Ok((o, Some(sha)))
 }
 
 /// An ingested, frozen envelope.
