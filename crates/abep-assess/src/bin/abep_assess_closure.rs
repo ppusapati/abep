@@ -10,11 +10,11 @@
 use abep_assess::closure::{closure_record, to_json};
 use abep_assess::closure_m1::conservation_record::conservation_bounds_record;
 use abep_assess::closure_m1::intake_record::intake_closure_record;
-use abep_assess::closure_m1::record::{closure_record_v2, readiness_record};
+use abep_assess::closure_m1::record::{closure_record_v2_a6, readiness_record};
 use std::path::PathBuf;
 
 const USAGE: &str = "usage: abep-assess-closure [--repo DIR] [--harness v1|v2] [--readiness] [--conservation-bounds] [--intake-closure] \
-[--envelope MANIFEST --envelope-sha256 HEX] [--run-label LABEL] [--rust-commit SHA] [--out FILE]";
+[--envelope MANIFEST --envelope-sha256 HEX] [--envelope-xe-a6 MANIFEST --envelope-xe-a6-sha256 HEX] [--run-label LABEL] [--rust-commit SHA] [--out FILE]";
 
 fn fail(e: impl std::fmt::Display) -> ! {
     eprintln!("{e}");
@@ -31,6 +31,7 @@ fn main() {
     let (mut repo, mut out, mut env, mut env_sha, mut commit) = (None, None, None, None, String::new());
     let (mut harness, mut ready, mut label) = ("v1".to_string(), false, "UNLABELLED".to_string());
     let (mut bounds, mut intake) = (false, false);
+    let (mut a6, mut a6_sha) = (None, None);
     let mut i = 0;
     while i < args.len() {
         if args[i] == "--readiness" || args[i] == "--conservation-bounds" || args[i] == "--intake-closure" {
@@ -45,6 +46,8 @@ fn main() {
             ("--out", Some(v)) => out = Some(PathBuf::from(v)),
             ("--envelope", Some(v)) => env = Some(PathBuf::from(v)),
             ("--envelope-sha256", Some(v)) => env_sha = Some(v.clone()),
+            ("--envelope-xe-a6", Some(v)) => a6 = Some(PathBuf::from(v)),
+            ("--envelope-xe-a6-sha256", Some(v)) => a6_sha = Some(v.clone()),
             ("--rust-commit", Some(v)) => commit = v.clone(),
             ("--harness", Some(v)) if v == "v1" || v == "v2" => harness = v.clone(),
             ("--run-label", Some(v)) => label = v.clone(),
@@ -58,6 +61,16 @@ fn main() {
         (None, None) => None,
         _ => {
             eprintln!("--envelope and --envelope-sha256 go together (the frozen raw envelope is sha-pinned)");
+            std::process::exit(2);
+        }
+    };
+    let xe_a6 = match (a6, a6_sha) {
+        (Some(p), Some(h)) if harness == "v2" && !ready => {
+            Some(abep_hall::envelope::ingest_a6(&repo, &p, &h).unwrap_or_else(|e| fail(e)))
+        }
+        (None, None) => None,
+        _ => {
+            eprintln!("--envelope-xe-a6 and --envelope-xe-a6-sha256 go together and need --harness v2 (addendum A6)");
             std::process::exit(2);
         }
     };
@@ -76,7 +89,7 @@ fn main() {
     } else if ready {
         readiness_record(&repo, envelope, &commit)
     } else if harness == "v2" {
-        closure_record_v2(&repo, envelope, None, &commit, &label)
+        closure_record_v2_a6(&repo, envelope, xe_a6, None, &commit, &label)
     } else {
         closure_record(&repo, envelope.as_ref(), &commit)
     }

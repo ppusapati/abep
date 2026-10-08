@@ -107,6 +107,12 @@ pub fn family_summary(e: &Envelope, f: Family, lim: &HallLimits) -> Value {
         ("by_V_d", breakdown(&pts, f, lim, |p| p.case.vd_id.clone())),
         ("by_mdot", breakdown(&pts, f, lim, |p| p.case.mdot_id.clone())),
         ("by_hardware", breakdown(&pts, f, lim, |p| format!("{}|{}", p.case.geometry_id, p.case.bz_shape_id))),
+        (
+            "by_hardware_transport",
+            breakdown(&pts, f, lim, |p| {
+                format!("{}|{}|{}", p.case.geometry_id, p.case.bz_shape_id, p.case.transport_id)
+            }),
+        ),
     ])
 }
 

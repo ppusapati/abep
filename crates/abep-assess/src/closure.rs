@@ -69,6 +69,9 @@ pub enum HallTest {
     T12,
     T25,
     XeFunc,
+    /// Addendum A6 XE tests (non-degenerate): T >= HC-01 / HC-02 at P_bus,fav < HC-03.
+    XeT12,
+    XeT25,
 }
 
 impl HallTest {
@@ -77,7 +80,14 @@ impl HallTest {
             HallTest::T12 => "HALL_T12_AT_PBUS",
             HallTest::T25 => "HALL_T25_CAPABILITY",
             HallTest::XeFunc => "HALL_XE_FUNCTIONAL_AT_PBUS",
+            HallTest::XeT12 => "HALL_XE_T12_AT_PBUS",
+            HallTest::XeT25 => "HALL_XE_T25_CAPABILITY_AT_PBUS",
         }
+    }
+
+    /// The XE_CONTINGENCY tests when an addendum A6 XE envelope is supplied.
+    pub fn of_xe_a6() -> &'static [HallTest] {
+        &[HallTest::XeT12, HallTest::XeT25]
     }
 
     /// The tests of a required mode.
@@ -107,8 +117,8 @@ pub fn point_passes(test: HallTest, p: &EnvelopePoint, lim: &HallLimits) -> bool
     let power_ok = pd + lim.p_non_hall_lb_w < lim.p_bus_max_w;
     power_ok
         && match test {
-            HallTest::T12 => t >= lim.thrust_min_n,
-            HallTest::T25 => t >= lim.thrust_capability_n,
+            HallTest::T12 | HallTest::XeT12 => t >= lim.thrust_min_n,
+            HallTest::T25 | HallTest::XeT25 => t >= lim.thrust_capability_n,
             HallTest::XeFunc => t > 0.0,
         }
 }
@@ -224,8 +234,8 @@ pub fn evaluate_hall_test_a3(
         return hall_not_evaluated(test, HALL_ENVELOPE_NOT_RUN, "no frozen envelope point of this family");
     }
     let threshold = match test {
-        HallTest::T12 => lim.thrust_min_n,
-        HallTest::T25 => lim.thrust_capability_n,
+        HallTest::T12 | HallTest::XeT12 => lim.thrust_min_n,
+        HallTest::T25 | HallTest::XeT25 => lim.thrust_capability_n,
         HallTest::XeFunc => 0.0,
     };
     let mut closing: BTreeMap<(String, String), BTreeSet<String>> = BTreeMap::new();

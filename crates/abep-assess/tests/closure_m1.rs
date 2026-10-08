@@ -767,3 +767,49 @@ fn committed_dry_run_is_the_harness_v2_record_of_today() {
     assert_eq!(at(&now, &["classification"]), at(&v, &["classification"]));
     assert_eq!(at(&now, &["readiness"]), at(&v, &["readiness"]));
 }
+
+/// Addendum A6: with an A6 XE envelope the XE_CONTINGENCY Hall constraints are HALL_XE_T12_AT_PBUS and
+/// HALL_XE_T25_CAPABILITY_AT_PBUS over the A6 points; degenerate discharges (T > 0 but far below HC-01) never pass.
+#[test]
+fn a6_xe_envelope_carries_the_non_degenerate_xe_tests() {
+    let cs = env::load_case_set(&repo()).unwrap();
+    let synthetic = |t: f64, pd: f64| -> Envelope {
+        let points = cs
+            .cases
+            .iter()
+            .filter(|c| c.family == Family::Xe)
+            .map(|c| EnvelopePoint {
+                case: c.clone(),
+                status: RunStatus::Pass,
+                thrust_n: Some(t),
+                discharge_power_w: Some(pd),
+                discharge_current_a: Some(pd / c.vd_v),
+                ion_current_a: None,
+                te_max_ev: None,
+            })
+            .collect();
+        Envelope {
+            manifest_rel: "SYNTHETIC_TEST_DATA_NOT_EVIDENCE".into(),
+            manifest_sha256: "SYNTHETIC".into(),
+            raw_sha256: "SYNTHETIC".into(),
+            cases_sha256: "SYNTHETIC".into(),
+            bz_family_kind: cs.bz_family_kind,
+            points,
+        }
+    };
+    let lim = base().today.limits;
+    let mut inp = base().clone();
+    inp.xe_a6 = Some(synthetic(1e-18, 1e-13));
+    let h = hall_tests(&inp, Mode::XeContingency, &lim);
+    let ids: Vec<&str> = h.iter().map(|r| r.constraint.id.as_str()).collect();
+    assert_eq!(ids, ["HALL_XE_T12_AT_PBUS", "HALL_XE_T25_CAPABILITY_AT_PBUS"]);
+    assert!(h.iter().all(|r| r.constraint.status != CLOSES_IN_ENVELOPE), "degenerate discharges never close");
+    inp.xe_a6 = Some(synthetic(0.030, 900.0));
+    let h = hall_tests(&inp, Mode::XeContingency, &lim);
+    assert!(h.iter().all(|r| r.constraint.status == CLOSES_IN_ENVELOPE && r.constraint.eligible_close));
+    assert!(h[0].constraint.evidence_conditions.iter().any(|e| e == EC_NUM_A6));
+    let out = evaluate(&inp).unwrap();
+    assert!(!constraint(&out, Mode::XeContingency, "HALL_XE_T12_AT_PBUS").is_empty());
+    let rec = record_v2(&inp, &out, "TEST");
+    assert!(st(at(&rec, &["xe_hall_source"])).starts_with("A6"));
+}

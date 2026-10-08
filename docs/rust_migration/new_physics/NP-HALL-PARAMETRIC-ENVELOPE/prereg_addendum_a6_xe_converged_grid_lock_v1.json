@@ -1,0 +1,12 @@
+{
+ "id": "np_hall_parametric_envelope_prereg_addendum_a6_xe_converged_grid_lock_v1",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "locked": "2026-10-08",
+ "note": "sha256 of NP-HALL-PARAMETRIC-ENVELOPE addendum A6 (XE grid at study-converged numerics; status PREREGISTERED_NOT_RUN), committed alone before any A6 case file or run; v1, A3 and their records unchanged; any change after this lock is a new, dated addendum",
+ "base_commit": "20e32bd",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/",
+ "files": {
+  "prereg_addendum_a6_xe_converged_grid_v1.json": "004643cc2c0306ba44d096387d430600503ce3b9e5e3064d11a37c929e257281",
+  "PREREG_ADDENDUM_A6_XE_CONVERGED_GRID.md": "c2fcb6a8d06288774fd6d5797bbcf7ca3d1dab3d5cf41288dbc20ff86c73450d"
+ }
+}

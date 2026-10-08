@@ -5509,7 +5509,7 @@ Lane `lane-hall-chem-air`, base `b730764`.
   (DESIGN_VARIABLE_LIMIT, scenario rule, CA4 first), pins, determinism, and byte-identical regeneration of both
   committed records.
 
-## 2026-10-08 — H1 Hall envelope run (M1): XE grid run and frozen; addendum A3 numerics check A3_NOT_ADEQUATE
+## 2026-10-08 — H1 Hall envelope run (M1): XE grid run and frozen; A3 numerics A3_NOT_ADEQUATE (XE and AIR); A6 convergence study STOP
 
 Lane `lane-hall-envelope-runs` (A9.32 / A9.33 / A9.34). Everything here is PARAMETRIC / NOT_VALIDATED. The credible set
 stays EMPTY and nothing enters layer (b).
@@ -5538,5 +5538,24 @@ stays EMPTY and nothing enters layer (b).
     NUMERICS_NOT_CONVERGED unknowns). Classification NOT_DETERMINABLE (C4).
 - **Ingestion change:** each family is ingested complete or absent, so a family-filtered (`--family XE`) envelope can
   be ingested. A partial family is still MODEL_ERROR.
-- **AIR:** A3 AIR check tooling, and the corner-stage record (stage 1 = CP-YHI-DIS, LP-BOUNDED, information only), are
-  committed before any AIR run.
+- **AIR (A3 scope by reference, LP-BOUNDED BV-AIR-LL-NOM, information only).** The AIR check (51 runs) was frozen
+  (`d4ae6582…`) and scored once: **A3_NOT_ADEQUATE**.
+  - 14 of 34 comparisons fail, with status and quiet-class flips.
+  - Thrust changes reach 272× under R3, and ~3e14 relative under R1 on a near-zero R0 discharge.
+  - The corner-stage record (CP-YHI-DIS) was committed before any AIR run. By coordinator ruling the corner stage was not
+    run, and AIR work stopped there.
+- **Harness v2 wiring.** Harness v2 applies the committed A3 overlay to XE (`numerics_a3_xe`, recorded only with an
+  envelope).
+- **Prereg addendum A6, XE grid at study-converged numerics** (`004643cc…`, lock `e0a97161…`; coordinator ruling,
+  committed alone before any A6 run).
+  - Ladder: L0 (v1) / L1 / L2 / L3 = 1 / 2 / 4 / 8 × cells, with dt scaled alongside; plus LkD = 2 × duration.
+  - Study set: 22 cases. 14 are seeded, one per hardware configuration. 8 are mandatory: the A3 failure cases.
+  - Production rule: the coarsest k ≤ 2 whose G(k) and D(k) both pass at 2 %. If none passes, STOP.
+  - Non-degenerate XE tests HALL_XE_T12_AT_PBUS / HALL_XE_T25_CAPABILITY_AT_PBUS (HC-01 / HC-02 at P_bus < HC-03, one
+    hardware configuration) replace XE_FUNC in harness v2 when an A6 envelope is supplied. They are implemented with
+    `ingest_a6` and `abep-assess-closure --envelope-xe-a6`.
+- **A6 study, 154 runs, frozen (`07f52f79…`), scored once: STOP_NO_LEVEL_CONVERGED** (`a6_convergence_study_result_v1.json`).
+  - Failures out of 22 cases: G(0) 11, D(0) 7, G(1) 6, D(1) 4, G(2) 6, D(2) 5.
+  - Thrust changes: L2→L3 up to 46 %; the duration doubling at L1 / L2 up to 13–14 %.
+  - Observed order over L1–L3 is mostly 0.6–0.7 or negative.
+  - Consequence: no A6 grid. XE stays NUMERICS_NOT_CONVERGED, which is a finding.
