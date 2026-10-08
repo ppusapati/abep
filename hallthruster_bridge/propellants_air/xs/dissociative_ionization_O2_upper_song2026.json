@@ -1,0 +1,202 @@
+{
+ "schema": "hall_air_xs_v1",
+ "contract": "NP-HALL-CHEM-AIR",
+ "prereg": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_v1.json",
+ "prereg_lock_sha256": "1884e42ff98ee07a634500ce338eef9dc3749bf4e5c053b058aec9b764674518",
+ "process": "HA-O2-DI-01",
+ "role": "NOMINAL (upper member of the O+ / O2^2+ pair)",
+ "target": "O2",
+ "reaction": "e + O2 -> O+ + O + 2e",
+ "table": "hallthruster_bridge/propellants_air/dissociative_ionization_O2_upper_song2026.dat",
+ "v0_table": "docs/chemistry/o_o2/v0/tables/dissociative_ionization_O2_upper_song2026.dat",
+ "v0_table_sha256": "1657e407cef90ba8a951ef7a862a93788afe20906057a924ab5c5470db749c04",
+ "header_label": "Ionization energy",
+ "threshold_eV": 18.738,
+ "tail": "hold",
+ "eps_max_eV": 300.0,
+ "source_text": "NP-HALL-CHEM-AIR HA-O2-DI-01 (NOMINAL (upper member of the O+ / O2^2+ pair)). e + O2 -> O(+) + O + 2e (upper). Cross section: Song, Cho, Karwasz, Kokoouline, Tennyson & Bartschat, J. Phys. Chem. Ref. Data 55, 013102 (2026), doi:10.1063/5.0287254, accepted manuscript (UCL Discovery, sha256 32d163a3...), version of record NOT accessed (NP-HALL-CHEM-AIR status IN_REPO_PENDING_VERSION_OF_RECORD, OQ-HA-01); SONG2026 Table VII, column O+ (+O2^2+); stated uncertainty 7 % (SONG2026 Table VII caption) + O+/O2^2+ ambiguity (upper/lower pair). Points = the v0 DRAFT transcription (docs/chemistry/o_o2/v0/build_tables_song2026.py, sha256 c9ff00198737...), extracted unchanged by scripts/chemistry/extract_hall_air_xs.py. Choices: linear ramp 18.738 -> 23 eV (PROPOSED, mirrors N2 DI owner decision); held tail above 998 eV. Header 18.738 eV: 18.738 eV = D0(O2) 5.12 eV (SONG2026 Sec. II.G) + IE(O) 13.618 eV (II1990 Table 2.1): inferred minimum fixed sink, mirrors the owner-decided N2 DI header (abep-n2n-0.4); fragment kinetic energy not added; PROPOSED. Maxwellian-integrated by the admitted Rust port of abep_sim/rate_tables.py (abep_chem::reference; crates/abep-chem/examples/build_hall_air_tables.rs); byte-identical to the v0 table. Energy column = mean electron energy 3/2 Te. Evidence level 4 (docs/EVIDENCE.md); quantity type: measured (evaluated), transcribed; threshold segment assumed (linear ramp).",
+ "provenance": {
+  "citation": "Song, Cho, Karwasz, Kokoouline, Tennyson & Bartschat, J. Phys. Chem. Ref. Data 55, 013102 (2026), doi:10.1063/5.0287254, accepted manuscript (UCL Discovery, sha256 32d163a3...), version of record NOT accessed (NP-HALL-CHEM-AIR status IN_REPO_PENDING_VERSION_OF_RECORD, OQ-HA-01)",
+  "source_location": "SONG2026 Table VII, column O+ (+O2^2+)",
+  "transformation_chain": "Straub et al. 1996 -> Lindsay & Mangan 2003 -> SONG2026 Table VII -> transcribed -> linear threshold ramp -> Maxwellian integration",
+  "extraction": "v0 builder specs() arrays, unchanged (shortest round-trip floats)",
+  "v0_builder": "docs/chemistry/o_o2/v0/build_tables_song2026.py",
+  "v0_builder_sha256": "c9ff001987371f4ca2ab5e79a0d097c770a846da5ea71dae358832734078d3ac",
+  "extracted_by": "scripts/chemistry/extract_hall_air_xs.py"
+ },
+ "stated_uncertainty": "7 % (SONG2026 Table VII caption) + O+/O2^2+ ambiguity (upper/lower pair)",
+ "evidence_level": 4,
+ "quantity_type": "measured (evaluated), transcribed; threshold segment assumed (linear ramp)",
+ "header_basis": "18.738 eV = D0(O2) 5.12 eV (SONG2026 Sec. II.G) + IE(O) 13.618 eV (II1990 Table 2.1): inferred minimum fixed sink, mirrors the owner-decided N2 DI header (abep-n2n-0.4); fragment kinetic energy not added; PROPOSED",
+ "units": {
+  "E": "eV",
+  "sigma": "m^2"
+ },
+ "n_points": 41,
+ "points": [
+  [
+   18.738,
+   0.0
+  ],
+  [
+   23.0,
+   1.67e-22
+  ],
+  [
+   28.0,
+   7.81e-22
+  ],
+  [
+   33.0,
+   1.69e-21
+  ],
+  [
+   38.0,
+   2.58e-21
+  ],
+  [
+   43.0,
+   3.33e-21
+  ],
+  [
+   48.0,
+   4.1899999999999996e-21
+  ],
+  [
+   53.0,
+   4.8999999999999994e-21
+  ],
+  [
+   58.0,
+   5.53e-21
+  ],
+  [
+   63.0,
+   6.2099999999999996e-21
+  ],
+  [
+   68.0,
+   6.79e-21
+  ],
+  [
+   73.0,
+   7.17e-21
+  ],
+  [
+   78.0,
+   7.51e-21
+  ],
+  [
+   83.0,
+   8.01e-21
+  ],
+  [
+   88.0,
+   8.27e-21
+  ],
+  [
+   93.0,
+   8.55e-21
+  ],
+  [
+   98.0,
+   8.709999999999999e-21
+  ],
+  [
+   108.0,
+   9e-21
+  ],
+  [
+   118.0,
+   9.1e-21
+  ],
+  [
+   138.0,
+   9.13e-21
+  ],
+  [
+   158.0,
+   9.05e-21
+  ],
+  [
+   178.0,
+   8.91e-21
+  ],
+  [
+   198.0,
+   8.639999999999999e-21
+  ],
+  [
+   223.0,
+   8.299999999999999e-21
+  ],
+  [
+   248.0,
+   7.94e-21
+  ],
+  [
+   273.0,
+   7.55e-21
+  ],
+  [
+   298.0,
+   7.209999999999999e-21
+  ],
+  [
+   348.0,
+   6.59e-21
+  ],
+  [
+   398.0,
+   6.109999999999999e-21
+  ],
+  [
+   448.0,
+   5.6200000000000006e-21
+  ],
+  [
+   498.0,
+   5.26e-21
+  ],
+  [
+   548.0,
+   4.87e-21
+  ],
+  [
+   598.0,
+   4.5699999999999996e-21
+  ],
+  [
+   648.0,
+   4.3199999999999996e-21
+  ],
+  [
+   698.0,
+   4.149999999999999e-21
+  ],
+  [
+   748.0,
+   3.8799999999999996e-21
+  ],
+  [
+   798.0,
+   3.6899999999999996e-21
+  ],
+  [
+   848.0,
+   3.55e-21
+  ],
+  [
+   898.0,
+   3.36e-21
+  ],
+  [
+   948.0,
+   3.26e-21
+  ],
+  [
+   998.0,
+   3.1699999999999998e-21
+  ]
+ ]
+}

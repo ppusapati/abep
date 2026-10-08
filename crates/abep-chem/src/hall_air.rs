@@ -32,7 +32,7 @@ pub const N2_DIR: &str = "hallthruster_bridge/propellants";
 pub const PINNED_FILE: &str = "AIR_PINNED.toml";
 /// sha256 of `hallthruster_bridge/propellants_air/AIR_PINNED.toml` this build is registered against. Every change of the
 /// set (one table per commit) updates it.
-pub const AIR_PINNED_SHA256: &str = "ff2cf13645a273a1cd5830caa456372822c7fde163473e45db73aee449c38dbe";
+pub const AIR_PINNED_SHA256: &str = "e9ca590ae5f6bd396fff2fdf48b880ef8f4b018d2f13d70958da3c66d5152171";
 pub const CONTRACT_ID: &str = "NP-HALL-CHEM-AIR";
 pub const PREREG_REL: &str = "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_v1.json";
 pub const PREREG_SHA256: &str = "306712f78bbbf17e8aa50e804559c36a80680dbebc8ecf0f47f2c244443ea70f";
