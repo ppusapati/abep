@@ -1,13 +1,16 @@
-//! NP-HALL-PARAMETRIC-ENVELOPE addendum 01 (AIR family): the case file reproduces from Rust, every case is a v1
-//! N2_PROXY row with a registered composition and feed, the bridge reads what the cases carry, and the launch gate is
-//! closed while the AIR reaction set is not admitted (asserted, never skipped). No test spawns Julia.
+//! NP-HALL-PARAMETRIC-ENVELOPE prereg addendum A1 (AIR family): the case file reproduces from Rust, every case is a v1
+//! N2_PROXY row with a registered composition and feed, the bridge reads what the cases carry, LP-COMPLETE is closed while
+//! the AIR reaction set is not admitted, and LP-BOUNDED opens only for the registered BV-AIR-LL-NOM pins, with the label on
+//! the manifest (asserted, never skipped). No test spawns Julia.
 
 use abep_julia_bridge::air_cases::{
-    air_launch_manifest, check_air, freeze_air, v1_n2_rows, AIR_CASES_REL, AIR_CONFIG, AIR_RATE_DIR, V1_FIELDS,
+    air_launch_manifest, check_air, check_bounded_variant, v1_n2_rows, LaunchPath, AIR_CASES_REL, AIR_CONFIG,
+    AIR_LAUNCH_MANIFEST_REL, AIR_RATE_DIR, BV_BLOCKER, BV_LABEL, BV_MEMBER, BV_SET_ID, ENV_ADDENDUM_ID,
+    ENV_ADDENDUM_LOCK_SHA256, V1_FIELDS,
 };
 use abep_julia_bridge::envelope_cases::check_rate_files;
 use abep_provenance::workspace_repo_root;
-use abep_types::pyjson::{self, Value};
+use abep_types::pyjson::{self, DumpOptions, Value};
 use abep_types::EvalStatus;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
@@ -103,10 +106,45 @@ fn run_case_air_reads_what_the_cases_carry() {
 }
 
 #[test]
-fn the_launch_gate_is_closed_while_the_air_set_is_not_admitted() {
-    let e = air_launch_manifest(&repo()).unwrap_err();
+fn lp_complete_is_closed_while_the_air_set_is_not_admitted() {
+    let e = air_launch_manifest(&repo(), LaunchPath::Complete).unwrap_err();
     assert_eq!(e.status(), EvalStatus::IncompleteEvidence, "{e}");
     assert!(e.to_string().contains("HA-O-EL-01"));
-    let e = freeze_air(&repo(), "x", &[], &std::env::temp_dir()).unwrap_err();
-    assert_eq!(e.status(), EvalStatus::IncompleteEvidence, "{e}");
+}
+
+#[test]
+fn the_case_file_header_names_addendum_a1() {
+    let text = std::fs::read_to_string(repo().join(AIR_CASES_REL)).unwrap();
+    let head = &text[..text.find("\"cases\"").unwrap()];
+    assert!(head.contains(&format!("\"addendum\": \"{ENV_ADDENDUM_ID}\"")));
+    assert!(head.contains(ENV_ADDENDUM_LOCK_SHA256));
+}
+
+#[test]
+fn lp_bounded_opens_only_for_the_registered_bv_air_ll_nominal_member() {
+    let set = abep_chem::hall_air::AirSet::load(&repo()).unwrap();
+    check_bounded_variant(&repo(), &set).unwrap();
+    let lm = air_launch_manifest(&repo(), LaunchPath::Bounded).unwrap();
+    let d = lm.as_dict().unwrap();
+    let get = |k: &str| d.get(k).unwrap().as_str().unwrap().to_string();
+    assert_eq!(get("chemistry_mode"), "BOUNDED_VARIANT");
+    assert_eq!(get("chemistry_bound_set"), BV_SET_ID);
+    assert_eq!(get("chemistry_bound_member"), BV_MEMBER);
+    assert_eq!(get("chemistry_bound_label"), BV_LABEL);
+    assert_eq!(get("chemistry_bound_blocker"), BV_BLOCKER);
+    assert_eq!(get("air_label"), "abep-air-0.7");
+    assert_eq!(get("air_config"), AIR_CONFIG);
+    // the committed manifest is exactly the LP-BOUNDED regeneration
+    let mut t = pyjson::dumps(&lm, &DumpOptions::config_writer()).unwrap();
+    t.push('\n');
+    assert_eq!(std::fs::read_to_string(repo().join(AIR_LAUNCH_MANIFEST_REL)).unwrap(), t);
+}
+
+#[test]
+fn lp_bounded_refuses_another_reaction_set_label() {
+    let mut set = abep_chem::hall_air::AirSet::load(&repo()).unwrap();
+    set.label = "abep-air-9.9".into();
+    let e = check_bounded_variant(&repo(), &set).unwrap_err();
+    assert_eq!(e.status(), EvalStatus::ModelError, "{e}");
+    assert!(e.to_string().contains("BV-AIR-LL"));
 }

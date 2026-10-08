@@ -5358,12 +5358,27 @@ Lane `lane-hall-chem-air`, base `b730764`.
     reader `air_audit`.
   - Expected outcome even after it runs: wall recombination cannot be excluded without a sourced γ, so the set would be
     NOT_REPRESENTABLE_IN_PINNED_SOLVER. 15 processes are UNBOUNDED_OMISSION.
-- **NP-HALL-PARAMETRIC-ENVELOPE addendum 01, AIR family** (`4988bdfd…`, lock `efc96af4…`; v1 untouched).
-  - 9072 cases: v1 N2_PROXY rows × 4 corners, Rust-generated.
+- **A9.34 M1 item "Hall AIR chemistry available or explicitly bounded": delivered EXPLICITLY_BOUNDED.**
+  - Registered in NP-HALL-CHEM-AIR addendum 03 (`bcf18240…`, lock `20485e24…`).
+  - Bounding variant set BV-AIR-LL, label `BOUNDED_ONE_SIDED_LOWER_ELECTRON_IMPACT_LOSS_NOT_COMPLETE`. Its members are
+    the sha256-pinned `air_nominal.toml` and `air_alt.toml` at abep-air-0.7.
+  - Stated direction, D-1: at a fixed plasma state, the set's electron inelastic power, O momentum transfer and O2
+    dissociation are lower bounds.
+  - No direction is claimed for ionizing, heavy-particle, wall or attachment omissions, or for any Hall observable.
+  - Never claimed complete. Status stays INCOMPLETE_EVIDENCE.
+- **NP-HALL-PARAMETRIC-ENVELOPE prereg addendum A1, AIR family** (`7d7a7ba9…`, lock `35388e24…`; v1 untouched).
+  - A1 supersedes addendum 01 (`4988bdfd…`, lock `efc96af4…`, a182f71) before any AIR run, by coordinator naming. The
+    addendum 01 files are kept unchanged as history.
+  - 9072 cases: v1 N2_PROXY rows × 4 corners, Rust-generated. Only the header changed; every `case_sha256` is unchanged.
   - Composition is uncontrolled: a test must close at every corner. AIR non-closure is never eligible for
     PHYSICALLY_NON_CLOSING.
-  - Launch gate: refused (INCOMPLETE_EVIDENCE). AIR layer (a) stays NOT_EVALUATED, and the A9.32 classification stays
-    NOT_DETERMINABLE.
+  - Launch paths are always requested explicitly (`abep-air-cases launch-manifest --path complete|bounded`):
+    - LP-COMPLETE is refused (INCOMPLETE_EVIDENCE).
+    - LP-BOUNDED is open for BV-AIR-LL-NOM only. `launch_manifest_air_v1.json` is committed with chemistry_mode
+      BOUNDED_VARIANT.
+  - Every record carries the mode and the BV label. Results are information only: the constraint status is
+    NOT_DETERMINABLE with blocker AIR_CHEMISTRY_BOUNDED_NOT_COMPLETE, never SELECT and never PHYSICALLY_NON_CLOSING.
+  - The A9.32 classification stays NOT_DETERMINABLE.
 - **Test maintenance:** `tests/test_o_o2_chemistry_v0.py::test_tables_are_unused_by_solver_configs_and_code`.
   - Its basename proxy flagged the authorized Hall AIR set, which holds copies of the v0 tables under the same names.
   - For `propellants_air/` and `audit_air/` the test now asserts the real property instead: no configuration reads a file

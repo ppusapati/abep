@@ -4,9 +4,11 @@
 //!   audit-check                                          regenerate in memory: byte-equal to the committed files
 //!   audit-freeze --name NAME --out DIR FILE...           freeze audit shard outputs (sorted gzip JSONL + sha manifest)
 //!   audit-verdicts --manifest M --manifest-sha256 H --out F   verdicts from a frozen record file only
-//!   generate                                             write the AIR family case file (NP-HALL-PARAMETRIC-ENVELOPE add. 01)
+//!   generate                                             write the AIR family case file (NP-HALL-PARAMETRIC-ENVELOPE A1)
 //!   check                                                regenerate in memory: byte-equal to the committed AIR case file
-//!   launch-manifest                                      write the AIR launch manifest; refused unless the AIR set is admitted
+//!   launch-manifest --path complete|bounded              write the AIR launch manifest for an explicitly requested path:
+//!                                                        complete = LP-COMPLETE (refused unless the AIR set is admitted),
+//!                                                        bounded = LP-BOUNDED (registered BV-AIR-LL-NOM, labelled)
 //!   freeze --name NAME --out DIR FILE...                 freeze AIR shard outputs (needs the AIR launch manifest)
 
 use abep_julia_bridge::{air_audit, air_cases};
@@ -21,7 +23,7 @@ fn opt(args: &[String], name: &str) -> Option<String> {
 
 fn usage() -> ExitCode {
     eprintln!(
-        "usage: abep-air-cases audit-generate|audit-check|audit-freeze --name NAME --out DIR FILE...|audit-verdicts --manifest M --manifest-sha256 H --out F|generate|check|launch-manifest|freeze --name NAME --out DIR FILE... [--root PATH]"
+        "usage: abep-air-cases audit-generate|audit-check|audit-freeze --name NAME --out DIR FILE...|audit-verdicts --manifest M --manifest-sha256 H --out F|generate|check|launch-manifest --path complete|bounded|freeze --name NAME --out DIR FILE... [--root PATH]"
     );
     ExitCode::from(2)
 }
@@ -64,7 +66,13 @@ fn main() -> ExitCode {
         "generate" => air_cases::write_air(&root).map(|()| "AIR case file written".into()),
         "check" => air_cases::check_air(&root).map(|n| format!("OK: {n} AIR cases reproduce byte for byte")),
         "launch-manifest" => {
-            air_cases::write_air_launch_manifest(&root).map(|()| "AIR launch manifest written (gate open)".into())
+            let path = match opt(&args, "--path").as_deref() {
+                Some("complete") => air_cases::LaunchPath::Complete,
+                Some("bounded") => air_cases::LaunchPath::Bounded,
+                _ => return usage(),
+            };
+            air_cases::write_air_launch_manifest(&root, path)
+                .map(|()| format!("AIR launch manifest written (gate open, chemistry_mode {})", path.chemistry_mode()))
         }
         "freeze" => {
             let (Some(name), Some(out)) = (opt(&args, "--name"), opt(&args, "--out")) else { return usage() };

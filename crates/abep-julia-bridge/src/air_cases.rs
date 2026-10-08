@@ -9,9 +9,10 @@
 //! * [`build_audit_doc`]: the 576-case CA-HALL-AIR-v1 blind state envelope (addendum 01), with the snapshot
 //!   [`audit_manifest`] that pins its configurations, rate files, bound tables and case file.
 //! * [`freeze_audit`]: shard outputs -> one sorted gzip JSONL and its sha256 manifest (read by `air_audit`).
-//! * [`build_air_doc`]: the 9072-case AIR family of NP-HALL-PARAMETRIC-ENVELOPE addendum 01 (every v1 N2_PROXY row x the
-//!   four corners); [`air_launch_manifest`] is its launch gate: refused unless the AIR reaction set is admitted
-//!   (COMPLETE_FOR_PARAMETRIC_ENVELOPE).
+//! * [`build_air_doc`]: the 9072-case AIR family of NP-HALL-PARAMETRIC-ENVELOPE prereg addendum A1 (every v1 N2_PROXY
+//!   row x the four corners); [`air_launch_manifest`] is its launch gate with two explicitly requested paths:
+//!   LP-COMPLETE (refused unless the AIR reaction set is COMPLETE_FOR_PARAMETRIC_ENVELOPE) and LP-BOUNDED (the
+//!   registered bounding variant set BV-AIR-LL of NP-HALL-CHEM-AIR addendum 03, labelled, never a closure).
 
 use crate::envelope_cases::render_case_doc;
 use abep_data::design_states::DesignStateSet;
@@ -548,14 +549,26 @@ pub fn freeze_records(
     Ok((mp, sha256_hex(mt.as_bytes())))
 }
 
-// ------------------------------------------------------------------------------------------ AIR family (addendum 01)
+// ----------------------------------------------------------------------------------- AIR family (prereg addendum A1)
 
+/// NP-HALL-PARAMETRIC-ENVELOPE prereg addendum A1 (supersedes addendum_01_air_family, a182f71, before any AIR run).
+pub const ENV_ADDENDUM_ID: &str = "prereg_addendum_a1_air_family";
 pub const ENV_ADDENDUM_REL: &str =
-    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/addendum_01_air_family.json";
-pub const ENV_ADDENDUM_SHA256: &str = "4988bdfd4aad30a171c4dae9ffa8d3436ee94c1aaaedcb56a3c06ffe1533dd90";
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a1_air_family.json";
+pub const ENV_ADDENDUM_SHA256: &str = "7d7a7ba91f382775a1eed842af83587b0f1fc5b762f85ef68022ac03d23c7b0d";
 pub const ENV_ADDENDUM_LOCK_REL: &str =
-    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/addendum_01_lock.json";
-pub const ENV_ADDENDUM_LOCK_SHA256: &str = "efc96af4259c74c0c632ee515c00f29f6aff70df14775e62a5d72afa619927d5";
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a1_air_family_lock.json";
+pub const ENV_ADDENDUM_LOCK_SHA256: &str = "35388e247ffdcc7af2a605e46f29d955ec29875893d3f7342e6411110f3d17a6";
+/// NP-HALL-CHEM-AIR addendum 03: the registered bounding variant set BV-AIR-LL (A9.34 M1 EXPLICITLY_BOUNDED).
+pub const CHEM_ADDENDUM03_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/addendum_03_bounded_treatment.json";
+pub const CHEM_ADDENDUM03_SHA256: &str = "bcf18240f2c5044041a33abfb6de7df1ba8267e4b2df888bb507b114d6205155";
+pub const CHEM_ADDENDUM03_LOCK_REL: &str = "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/addendum_03_lock.json";
+pub const CHEM_ADDENDUM03_LOCK_SHA256: &str = "20485e2401c848b88475524c13756445c2b06512c37e86087cfdb92eacb46d13";
+pub const BV_SET_ID: &str = "BV-AIR-LL";
+pub const BV_MEMBER: &str = "BV-AIR-LL-NOM";
+pub const BV_LABEL: &str = "BOUNDED_ONE_SIDED_LOWER_ELECTRON_IMPACT_LOSS_NOT_COMPLETE";
+pub const BV_BLOCKER: &str = "AIR_CHEMISTRY_BOUNDED_NOT_COMPLETE";
 pub const AIR_CASES_REL: &str =
     "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/cases/h1_parametric_envelope_air_cases_v1.json";
 pub const AIR_CASES_SCHEMA: &str = "np_hall_parametric_envelope_air_cases_v1";
@@ -580,7 +593,7 @@ pub const AIR_LABELS: [&str; 8] = [
     "CHEMISTRY_NOMINAL_ONLY",
 ];
 
-/// The AIR family case document (addendum 01): every v1 N2_PROXY row x the four composition corners.
+/// The AIR family case document (addendum A1): every v1 N2_PROXY row x the four composition corners.
 pub fn build_air_doc(repo: &Path) -> AbepResult<Value> {
     load_json(repo, ENV_ADDENDUM_REL, ENV_ADDENDUM_SHA256)?;
     read_verified(&repo.join(ENV_ADDENDUM_LOCK_REL), ENV_ADDENDUM_LOCK_SHA256)?;
@@ -599,11 +612,11 @@ pub fn build_air_doc(repo: &Path) -> AbepResult<Value> {
     Ok(dict(vec![
         ("schema", sval(AIR_CASES_SCHEMA)),
         ("model_id", sval("NP-HALL-PARAMETRIC-ENVELOPE")),
-        ("addendum", sval("addendum_01_air_family")),
+        ("addendum", sval(ENV_ADDENDUM_ID)),
         ("layer", sval("PARAMETRIC / NOT_VALIDATED")),
         (
             "status",
-            sval("PREREGISTERED_NOT_RUN: no AIR launch manifest until the AIR reaction set is COMPLETE_FOR_PARAMETRIC_ENVELOPE"),
+            sval("PREREGISTERED_NOT_RUN: launch path LP-COMPLETE once the AIR reaction set is COMPLETE_FOR_PARAMETRIC_ENVELOPE; until then only LP-BOUNDED (BV-AIR-LL-NOM, labelled, never a closure or a non-closure)"),
         ),
         ("addendum_sha256", sval(ENV_ADDENDUM_SHA256)),
         ("addendum_lock_sha256", sval(ENV_ADDENDUM_LOCK_SHA256)),
@@ -644,14 +657,81 @@ pub fn check_air(repo: &Path) -> AbepResult<usize> {
     Ok(ptr(&doc, "/cases", "AIR cases")?.as_list().map(|l| l.len()).unwrap_or(0))
 }
 
-/// The AIR launch manifest (addendum 01 launch_gate). Refused unless the AIR reaction set is admitted
-/// (COMPLETE_FOR_PARAMETRIC_ENVELOPE): INCOMPLETE_EVIDENCE or MODEL_ERROR naming every open item otherwise.
-pub fn air_launch_manifest(repo: &Path) -> AbepResult<Value> {
+/// Launch path of the AIR family (addendum A1 launch_gate). Always requested explicitly: no path falls back to the other.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LaunchPath {
+    /// LP-COMPLETE: the AIR reaction set is admitted (COMPLETE_FOR_PARAMETRIC_ENVELOPE).
+    Complete,
+    /// LP-BOUNDED: the registered bounding variant set BV-AIR-LL, member BV-AIR-LL-NOM, as labelled information.
+    Bounded,
+}
+
+impl LaunchPath {
+    pub fn chemistry_mode(self) -> &'static str {
+        match self {
+            LaunchPath::Complete => "COMPLETE",
+            LaunchPath::Bounded => "BOUNDED_VARIANT",
+        }
+    }
+}
+
+/// LP-BOUNDED conditions (addendum A1 launch_gate.LP-BOUNDED (1)-(5)): addendum 03 and its lock verify, and the loaded
+/// set, `AIR_PINNED.toml`, `rate_validity.toml` and the configuration this case file runs are the registered BV-AIR-LL
+/// pins. Refused (MODEL_ERROR) when the set is admitted: BV-AIR-LL is then superseded by LP-COMPLETE.
+pub fn check_bounded_variant(repo: &Path, set: &abep_chem::hall_air::AirSet) -> AbepResult<()> {
+    if set.admission().is_ok() {
+        return Err(model("the AIR set is admitted: LP-BOUNDED is superseded, use LP-COMPLETE"));
+    }
+    let a3 = load_json(repo, CHEM_ADDENDUM03_REL, CHEM_ADDENDUM03_SHA256)?;
+    read_verified(&repo.join(CHEM_ADDENDUM03_LOCK_REL), CHEM_ADDENDUM03_LOCK_SHA256)?;
+    let what = "chem addendum 03";
+    if str_at(&a3, "/m1_delivery/delivered", what)? != "EXPLICITLY_BOUNDED"
+        || str_at(&a3, "/bounding_variant_set/id", what)? != BV_SET_ID
+        || str_at(&a3, "/bounding_variant_set/label", what)? != BV_LABEL
+    {
+        return Err(model("chem addendum 03 does not register BV-AIR-LL with its label"));
+    }
+    let rs = ptr(&a3, "/bounding_variant_set/reaction_set", what)?;
+    let want_label = str_at(rs, "/label", what)?;
+    if set.label != want_label {
+        return Err(model(format!("AIR set label {} is not the BV-AIR-LL reaction set {want_label}", set.label)));
+    }
+    let sha = |rel: &str| abep_provenance::sha256_file(&repo.join(rel));
+    let pinned = sha("hallthruster_bridge/propellants_air/AIR_PINNED.toml")?;
+    if pinned != str_at(rs, "/air_pinned_sha256", what)? {
+        return Err(model(format!("AIR_PINNED.toml sha256 {pinned} is not the BV-AIR-LL pin")));
+    }
+    let validity = sha("hallthruster_bridge/propellants_air/rate_validity.toml")?;
+    if validity != str_at(rs, "/rate_validity_sha256", what)? {
+        return Err(model(format!("rate_validity.toml sha256 {validity} is not the BV-AIR-LL pin")));
+    }
+    let members = ptr(&a3, "/bounding_variant_set/members", what)?.as_list().unwrap_or(&[]);
+    let nom = members
+        .iter()
+        .find(|m| m.as_dict().and_then(|d| d.get("id")).and_then(|v| v.as_str()) == Some(BV_MEMBER))
+        .ok_or_else(|| model("BV-AIR-LL-NOM not registered"))?;
+    let cfg_rel = format!("{BRIDGE_DIR}/{AIR_CONFIG}");
+    if str_at(nom, "/config", what)? != cfg_rel {
+        return Err(model(format!("BV-AIR-LL-NOM is not {cfg_rel}")));
+    }
+    let cfg = sha(&cfg_rel)?;
+    if cfg != str_at(nom, "/sha256", what)? {
+        return Err(model(format!("{cfg_rel} sha256 {cfg} is not the BV-AIR-LL-NOM pin")));
+    }
+    Ok(())
+}
+
+/// The AIR launch manifest (addendum A1 launch_gate) for an explicitly requested path. LP-COMPLETE is refused unless the
+/// AIR reaction set is admitted (INCOMPLETE_EVIDENCE or MODEL_ERROR naming every open item otherwise); LP-BOUNDED is
+/// refused unless [`check_bounded_variant`] passes.
+pub fn air_launch_manifest(repo: &Path, path: LaunchPath) -> AbepResult<Value> {
     let set = abep_chem::hall_air::AirSet::load(repo)?;
-    set.admission()?;
+    match path {
+        LaunchPath::Complete => set.admission()?,
+        LaunchPath::Bounded => check_bounded_variant(repo, &set)?,
+    }
     check_air(repo)?;
-    let nominal =
-        set.nominal_config.clone().ok_or_else(|| model("admitted AIR set without a nominal configuration"))?;
+    let nominal = set.nominal_config.clone().ok_or_else(|| model("AIR set without a nominal configuration"))?;
     if format!("{AIR_RATE_DIR}/{nominal}") != AIR_CONFIG {
         return Err(model(format!("the AIR family runs {AIR_CONFIG}, the set's nominal is {nominal}")));
     }
@@ -662,6 +742,7 @@ pub fn air_launch_manifest(repo: &Path) -> AbepResult<Value> {
     }
     let sha = |rel: &str| abep_provenance::sha256_file(&repo.join(rel));
     let validity = set.files.get("rate_validity.toml").ok_or_else(|| model("rate_validity.toml not pinned"))?;
+    let bounded = |v: &str| if path == LaunchPath::Bounded { sval(v) } else { Value::Null };
     Ok(dict(vec![
         ("schema", sval(AIR_LAUNCH_SCHEMA)),
         ("model_id", sval("NP-HALL-PARAMETRIC-ENVELOPE")),
@@ -680,12 +761,19 @@ pub fn air_launch_manifest(repo: &Path) -> AbepResult<Value> {
         ("rate_files", Value::Dict(rates)),
         ("thread_env", dict(crate::envelope_cases::THREAD_PIN.iter().map(|(k, v)| (*k, sval(v))).collect())),
         ("mode", sval("vacuum")),
+        ("chemistry_mode", sval(path.chemistry_mode())),
+        ("chemistry_bound_set", bounded(BV_SET_ID)),
+        ("chemistry_bound_member", bounded(BV_MEMBER)),
+        ("chemistry_bound_label", bounded(BV_LABEL)),
+        ("chemistry_bound_blocker", bounded(BV_BLOCKER)),
+        ("chem_addendum_03_sha256", bounded(CHEM_ADDENDUM03_SHA256)),
+        ("chem_addendum_03_lock_sha256", bounded(CHEM_ADDENDUM03_LOCK_SHA256)),
     ]))
 }
 
-/// Write the AIR launch manifest (only through the gate).
-pub fn write_air_launch_manifest(repo: &Path) -> AbepResult<()> {
-    let lm = air_launch_manifest(repo)?;
+/// Write the AIR launch manifest (only through the gate, for the requested path).
+pub fn write_air_launch_manifest(repo: &Path, path: LaunchPath) -> AbepResult<()> {
+    let lm = air_launch_manifest(repo, path)?;
     let mut t = pyjson::dumps(&lm, &DumpOptions::config_writer()).map_err(|e| model(e.to_string()))?;
     t.push('\n');
     std::fs::write(repo.join(AIR_LAUNCH_MANIFEST_REL), t)
