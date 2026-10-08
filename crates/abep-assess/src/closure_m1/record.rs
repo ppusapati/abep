@@ -699,6 +699,14 @@ pub fn record_v2(inp: &M1Inputs, out: &M1Outcome, run_label: &str) -> Value {
     if let (Some(_), Value::Dict(d)) = (&inp.xe, &mut rec) {
         d.insert("numerics_a3_xe", s(inp.xe_a3.as_str()));
     }
+    // NP-HALL-PARAMETRIC-ENVELOPE addendum A6: the XE_CONTINGENCY Hall tests run on the A6 envelope.
+    if let (Some(e), Value::Dict(d)) = (&inp.xe_a6, &mut rec) {
+        d.insert("envelope_xe_a6", envelope_summary(Some(e)));
+        d.insert(
+            "xe_hall_source",
+            s("A6 (HALL_XE_T12_AT_PBUS, HALL_XE_T25_CAPABILITY_AT_PBUS on one hardware configuration); the v1 XE envelope is reported only"),
+        );
+    }
     rec
 }
 
@@ -1106,7 +1114,20 @@ pub fn closure_record_v2(
     rust_commit: &str,
     run_label: &str,
 ) -> AssessResult<Value> {
-    let inp = gather_m1(repo, envelope, air, rust_commit)?;
+    closure_record_v2_a6(repo, envelope, None, air, rust_commit, run_label)
+}
+
+/// [`closure_record_v2`] with an addendum A6 XE envelope (ingested by abep_hall::envelope::ingest_a6).
+pub fn closure_record_v2_a6(
+    repo: &Path,
+    envelope: Option<Envelope>,
+    xe_a6: Option<Envelope>,
+    air: Option<AirHallInput>,
+    rust_commit: &str,
+    run_label: &str,
+) -> AssessResult<Value> {
+    let mut inp = gather_m1(repo, envelope, air, rust_commit)?;
+    inp.xe_a6 = xe_a6;
     let out = evaluate(&inp)?;
     Ok(record_v2(&inp, &out, run_label))
 }

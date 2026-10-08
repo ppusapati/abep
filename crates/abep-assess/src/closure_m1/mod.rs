@@ -254,6 +254,10 @@ pub struct M1Inputs {
     pub xe: Option<Envelope>,
     /// The committed addendum A3 overlay of the XE family (A3_NOT_RUN without an envelope or a committed result).
     pub xe_a3: A3Overlay,
+    /// Addendum A6 XE envelope (separate frozen version). When present it carries the XE_CONTINGENCY Hall tests
+    /// (HALL_XE_T12_AT_PBUS, HALL_XE_T25_CAPABILITY_AT_PBUS on one hardware configuration); the v1 envelope is then
+    /// reported only.
+    pub xe_a6: Option<Envelope>,
     pub air: AirHall,
     pub a1_on_line: bool,
     /// The Hall AIR reaction set (NP-HALL-CHEM-AIR) label and admission state, as read.
@@ -363,11 +367,54 @@ pub fn mode_points<'a>(inp: &'a M1Inputs, m: Mode) -> Vec<Pt<'a>> {
             AirHall::NotAvailable(_) => vec![],
         },
         _ => inp
-            .xe
+            .xe_a6
             .as_ref()
+            .or(inp.xe.as_ref())
             .map(|e| e.family_points(Family::Xe).map(|p| Pt { p, corner: None }).collect())
             .unwrap_or_default(),
     }
+}
+
+/// The Hall tests of a mode for these inputs (A6 replaces the XE functional test when an A6 envelope is supplied).
+pub fn tests_of(inp: &M1Inputs, m: Mode) -> &'static [HallTest] {
+    match (m, &inp.xe_a6) {
+        (Mode::XeContingency, Some(_)) => HallTest::of_xe_a6(),
+        _ => HallTest::of_mode(m),
+    }
+}
+
+/// EC-NUM of a closure on the A6 XE envelope.
+pub const EC_NUM_A6: &str =
+    "EC-NUM: numerical adequacy shown on the addendum A6 convergence-study set only (22 cases; sampled, not per point)";
+
+/// The A6 XE Hall tests: both must close on one hardware configuration (as A1 for AIR).
+fn xe_a6_tests(e: &Envelope, lim: &HallLimits) -> Vec<HallTestResult> {
+    let pts: Vec<&EnvelopePoint> = e.family_points(Family::Xe).collect();
+    let mut rs: Vec<HallTestResult> =
+        HallTest::of_xe_a6().iter().map(|t| evaluate_hall_test(*t, Family::Xe, &pts, lim, e.bz_family_kind)).collect();
+    for r in &mut rs {
+        for ec in &mut r.constraint.evidence_conditions {
+            if ec.starts_with("EC-NUM") {
+                *ec = EC_NUM_A6.into();
+            }
+        }
+    }
+    let common: Option<BTreeSet<(String, String)>> = rs.iter().fold(None, |acc, r| {
+        let k: BTreeSet<(String, String)> = r.closing.keys().cloned().collect();
+        Some(match acc {
+            None => k,
+            Some(a) => a.intersection(&k).cloned().collect(),
+        })
+    });
+    if rs.iter().all(|r| r.constraint.eligible_close) && common.is_some_and(|c| c.is_empty()) {
+        for r in &mut rs {
+            r.constraint.status = NOT_DETERMINABLE_IN_ENVELOPE;
+            r.constraint.eligible_close = false;
+            r.constraint.codes = vec![v1::HALL_NO_COMMON_HARDWARE.to_string()];
+            r.constraint.evidence_conditions = vec![];
+        }
+    }
+    rs
 }
 
 /// Hardware configurations on which `pts` covers every corner (no corner: any point).
@@ -480,6 +527,9 @@ pub fn air_evidence_conditions() -> Vec<String> {
 
 /// The Hall tests of a mode at one P_nonHall,LB (state-independent apart from the bound and the AIR exclusions).
 pub fn hall_tests(inp: &M1Inputs, m: Mode, lim: &HallLimits) -> Vec<HallTestResult> {
+    if let (Mode::XeContingency, Some(e)) = (m, &inp.xe_a6) {
+        return xe_a6_tests(e, lim);
+    }
     let tests = HallTest::of_mode(m);
     match m {
         Mode::AirPrimary => match &inp.air {
@@ -674,7 +724,7 @@ pub fn evaluate(inp: &M1Inputs) -> crate::AssessResult<M1Outcome> {
                 _ => None,
             };
             let hall = match &excluded {
-                Some(code) => HallTest::of_mode(m)
+                Some(code) => tests_of(inp, m)
                     .iter()
                     .map(|t| hall_not_evaluated(*t, code, "A1 state_applicability: unresolved species bound"))
                     .collect(),
@@ -699,7 +749,7 @@ pub fn evaluate(inp: &M1Inputs) -> crate::AssessResult<M1Outcome> {
                 (AirHall::Ingested(a), Mode::AirPrimary) => a.corners.clone(),
                 _ => vec![],
             };
-            let tests = HallTest::of_mode(m);
+            let tests = tests_of(inp, m);
             let passing: Vec<Vec<Pt>> = tests
                 .iter()
                 .map(|t| pts.iter().copied().filter(|x| v1::point_passes(*t, x.p, &lim)).collect())
@@ -1014,7 +1064,7 @@ pub fn evaluate(inp: &M1Inputs) -> crate::AssessResult<M1Outcome> {
         (Some(_), _, _) => return Err(crate::error::model_error("A5 needs the A4 evaluation of the same run")),
         _ => None,
     };
-    let outcome = classify_v2(ti.credible_set_empty, inp.xe.is_some(), &states);
+    let outcome = classify_v2(ti.credible_set_empty, inp.xe.is_some() || inp.xe_a6.is_some(), &states);
     Ok(M1Outcome { outcome, states, lb_groups, a4, a5 })
 }
 

@@ -563,6 +563,7 @@ pub fn gather_m1(
         today,
         xe: envelope,
         xe_a3,
+        xe_a6: None,
         air,
         a1_on_line: a1,
         air_chemistry: air_chem,
