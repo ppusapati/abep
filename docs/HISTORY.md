@@ -5293,3 +5293,11 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
   Python transient output is not trustworthy on unstable loops at any tolerance (DIV-P-REF-01 + A1). The admitted
   compressor v2 and filter v1 / v2 reports record abep-gaspath sources changed in `361a197`, `b4de97d` and `b5018a9`,
   with outputs byte-identical.
+
+## 2026-10-08 — A9.33 owner decision recorded: Hall run location, Hall air chemistry, plenum / feed v8
+
+- **What:** the owner's answers to three structured questions, recorded verbatim as `docs/decisions/OD_2026_10_08_A9_33_HALL_RUN_LOCATION_HALL_AIR_CHEMISTRY_PLENUM_V8.md` (sha256 `2a14ce4b6ffa28da6009be18e155bc63d3a48b18ecd5a6256f7e1ec09ff35d6f`), with companion `docs/decisions/OD_2026_10_08_A9_33_hall_run_location_hall_air_chemistry_plenum_v8.json`.
+- **Hall runs:** the preregistered NP-HALL-PARAMETRIC-ENVELOPE v1 grid runs in this session's container once the Julia hosts are allowed; Xe family first.
+- **Hall air chemistry:** a narrow, preregistered, sourced Hall O/O2 chemistry contract for AIR_PRIMARY is authorized (extends A9.30, which limited O/O2 to the ICP). No fabricated coefficients; AIR Hall stays NOT_EVALUATED until admitted.
+- **Plenum / feed:** the v8 scored result (PARITY_FAIL / NOT_ADMITTED) stands; transients stay PYTHON_REFERENCE; no v9 now.
+- **Unchanged:** credible Hall set EMPTY; HallMap admission; HallThruster.jl pin; P5 campaign closed.
