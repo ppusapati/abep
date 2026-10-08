@@ -5576,3 +5576,10 @@ stays EMPTY and nothing enters layer (b).
   - The CA-HALL-AIR-v1 audit was still running at close (229 / 576).
 - **M2:** the M2 lane started after audit v1 was stopped before any commit; M2 is not started.
 - **Next:** a narrow Hall numerical-method investigation; after a converged subset, rerun the registered envelope under a new addendum and proceed to M2.
+
+## 2026-10-08 — A9.37 owner decision recorded: DBF-1 design baseline freeze before M2
+
+- **What:** owner directive recorded verbatim as `docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md` (sha256 `fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43`), with companion `docs/decisions/OD_2026_10_08_A9_37_dbf_1_design_baseline_freeze.json`.
+- **DBF-1:** freeze one specific current design for hall_icp_neutralizer from repository values only (intake, compressor, H1 RP-1 geometry, magnetic target, ICP geometry, 13.56 MHz RF envelope, 1,350 W design / 1,500 W gate with 300 W common load, 10 % margin, ≤ 34 kg nominal dry, 2 kg reference Xe, thermal topology, primary / backup materials, reference host-drag geometry). Incomplete evidence: freeze the selected assumption with its evidence class and uncertainty. An intake / compressor baseline that does not close is a BASELINE_DEFICIENCY.
+- **Change control:** after DBF-1, any design change needs a formal DCR with its physical / evidence reason before rerun.
+- **Then:** M2 against DBF-1. A9.36 still bars Hall thrust values while A6 is STOP.
