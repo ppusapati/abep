@@ -15,7 +15,7 @@ use super::*;
 use crate::error::{model_error, AssessResult};
 use abep_config::baseline::Dbf1Config;
 use abep_gaspath::plenum_feed::{intake_side, reasons_from_bits, steady_sweep};
-use abep_gaspath::transient::{stability_class_events, Controller, StabilityClass, WINDOW_S};
+use abep_gaspath::stability::{stability_class_events, Controller, StabilityClass, WINDOW_S};
 use abep_icp::evidence::{EvidenceRecord, QuantityType, Registered, UncertaintyRepr};
 use abep_icp::geometry::{Orientation, Surface, SurfaceKind, ThermalNode};
 use abep_icp::v2::case::{GeometryV2, VolumeModeV2};
