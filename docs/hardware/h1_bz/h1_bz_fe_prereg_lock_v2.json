@@ -1,0 +1,15 @@
+{
+ "id": "h1_bz_fe_prereg_lock_v2",
+ "locked": "2026-10-08",
+ "note": "sha256 of the H-1 / MC-1 FE B(z) preregistration v2 (supersedes v1 before any scored result; only the one-solve Newton tolerances changed, reason in the prereg 'supersedes' block) and its B-H input data, committed alone before the verification, convergence and production solves; any change after this lock is a new dated prereg version, never an edit. Code hashes at lock time are informational; every result records the code hashes it ran with.",
+ "base_commit": "f458b23",
+ "supersedes_lock": {"path": "docs/hardware/h1_bz/h1_bz_fe_prereg_lock_v1.json", "sha256": "d90c73c186be5cf814eb861e94f3c7a7455c86b4eb3d67add42ab15f1e86063c"},
+ "files": {
+  "docs/hardware/h1_bz/h1_bz_fe_prereg_v2.json": "57c3bfb3661c36acf5f789564c2723e7879516fec547100cd62b3dde43b0a54d",
+  "docs/hardware/h1_bz/bh_curves_v1.json": "6f940f88bf672e0d4e29b109081a5c6e1506e8f566a9b2e56c54361971f22747"
+ },
+ "code_at_lock": {
+  "docs/hardware/h1_bz/h1_bz_fe_solver.py": "28834aeec0b3c38387925fdb2a7fb7d59383f8082ab5fbd9e9cb1db5e24cf742",
+  "docs/hardware/h1_bz/build_h1_bz_fe.py": "0e2ba771e5f3f0fd1783d4b85e4032c4d9c5bc793d8ceb6285555fafb93df091"
+ }
+}
