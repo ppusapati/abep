@@ -1,0 +1,109 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a6_xe_converged_grid_v1",
+ "addendum": "A6 (XE grid at study-converged numerics; a new campaign)",
+ "amends": "NP-HALL-PARAMETRIC-ENVELOPE v1 (prereg_v1.json 3275f857..., lock 25ecfa88...) by adding a new XE campaign; v1, its case file, launch manifest, driver and frozen XE envelope (runs/xe_v1, raw manifest b9efec88...), addendum A3 (lock b840f1b0...), the A3 result (285e7fe2..., A3_NOT_ADEQUATE) and its consequences for the v1 XE records stay exactly as committed",
+ "status": "PREREGISTERED_NOT_RUN",
+ "status_label": "PARAMETRIC / NOT_VALIDATED",
+ "date": "2026-10-08",
+ "lane": "lane-hall-envelope-runs",
+ "base": "20e32bd (origin/integration/simulation-complete)",
+ "drafted_by": "agent session under coordinator rulings (A9.34 milestone governance: no owner review); not reviewed by the owner; nothing here is an owner decision",
+ "mandate": "coordinator ruling 2026-10-08 after A3_NOT_ADEQUATE: register an XE grid at numerics shown to converge by a registered study (ladder, study, production rule, full grid, non-degenerate functional test, separate ingestion); v1 change_control: a new, dated addendum registered before the runs it governs",
+ "registered_before": "any A6 run. Results seen before registration: the v1 XE grid (all 2268 records), the A3 check (51 records) and the A3 result; the A6 check set below is a fresh seeded set (no A3 check case among the seeded members) plus the A3 failure cases named as mandatory members; no case was chosen by its v1 or A3 outcome except the mandatory A3 failure cases, which are included because they failed",
+ "governing_records": {
+  "v1_prereg": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json", "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d"},
+  "v1_cases": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/cases/h1_parametric_envelope_cases_v1.json", "sha256": "c4a73dbbc1f7cbf25add986211e2e4ad945a91b7328ab0b99663de35e6021b12"},
+  "a3_addendum": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a3_numerics_v1.json", "sha256": "ca1b895efbf5c469fb0fe26951acf695bf4b39685e7cac65fcc708d0a8a7b20f"},
+  "a3_result": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/a3_numerics_result_v1.json", "sha256": "285e7fe2b8cda483409be218a2615a23643d850607b32b766f4b7fbcd77b84bc"},
+  "a2_addendum": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a2_m1_closure_paths.json", "sha256": "0c9a6b7b00fff125c9338b32c6b0426f8331b290e903a0e1ba6e3a2364e21aa4"},
+  "v1_xe_envelope": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/runs/xe_v1/h1_parametric_envelope_v1_XE_local_raw_manifest.json", "sha256": "b9efec88fad40dcb34b3e600502ac5f35d80e214d24e991b98e31d7c2b0d17ea"},
+  "gate_thresholds": {"path": "config/assessment/gate_thresholds_v1.json", "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b"},
+  "engineering_constraints": {"path": "config/constraints/engineering_constraints_v1.json", "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e"},
+  "bridge_lib": {"path": "hallthruster_bridge/bridge_lib.jl", "sha256": "cf26aab8607b640ebb78be9715f2c7c5d957f145ac17f52c1b23db2e980e21ab"}
+ },
+ "what_does_not_change": [
+  "the HallThruster.jl pin (v0.23.1, bfb3019f, Julia 1.11.7), bridge_lib.jl, the built-in Xe chemistry, the run_case path (vacuum mode), the 2268 v1 XE grid points (geometry, B(z) registration, B_peak, V_d, mdot, the nine transport candidates), the v1 run-status rule and the B(z) family (SOURCED_SURROGATE, asymmetric rule)",
+  "the v1 XE records and their A3 label NUMERICS_NOT_CONVERGED; the A3 result; the credible Hall transport set (EMPTY); HallMap admission; layer (b)",
+  "N2_PROXY and AIR (A1) are not part of A6"
+ ],
+ "numerics_ladder": {
+  "bridge_axes": "bridge_lib.jl run_case exposes four numerical fields: cells (EvenGrid), dt_s, duration_s, average_start_s. Under the pinned solver's adaptive stepping (SimParams adaptive = true, CFL 0.799; checked on the installed package, A3 solver_timestepping_basis) the effective step is CFL-limited by the cell size; dt_s is the escape-hatch step only. CFL and num_save are not exposed and are not changed.",
+  "levels": {
+   "L0": "v1 numerics: cells_v1 = ceil(domain_m / 5e-4), dt_s 5e-9, duration_v1 = 2e-3 x max(1, domain_m / 0.1), average from duration / 2",
+   "L1": "cells 2 x cells_v1, dt_s 5e-9 / 2, duration_v1, average from duration_v1 / 2",
+   "L2": "cells 4 x cells_v1, dt_s 5e-9 / 4, duration_v1, average from duration_v1 / 2",
+   "L3": "cells 8 x cells_v1, dt_s 5e-9 / 8, duration_v1, average from duration_v1 / 2 (study only: the finer reference of L2)",
+   "LkD (k = 0, 1, 2)": "level Lk with duration 2 x duration_v1 and average from duration_v1 (the same 50 % discard)"
+  },
+  "applied_uniformly": "every axis change is applied identically to every case; nothing physical changes"
+ },
+ "convergence_study": {
+  "check_set_rule": [
+   "seeded: one case per hardware configuration (geometry x B shape, the 14 v1 configurations in v1 order); B_peak = [BP-LO, BP-HI][pick(SEED|XE|geometry|shape|B_peak, 2)], V_d = [VD-180, VD-265, VD-350][pick(...|V_d, 3)], mdot = [MF-LO, MF-MID, MF-HI][pick(...|mdot, 3)], transport = [sgb-screen-01..09][pick(...|transport, 9)], with pick(text, n) = first 8 bytes of sha256(text) as a big-endian u64, mod n, and ... = SEED|XE|geometry|shape",
+   "mandatory: every A3 check case with at least one failing A3 comparison (8 cases; they include the three A3 status flips and the 209 % thrust case)",
+   "no seeded case coincides with an A3 check case (checked at registration)"
+  ],
+  "seed": "NP-HALL-PARAMETRIC-ENVELOPE/A6/v1",
+  "seeded_keys": [
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B16|BP-HI|VD-350|MF-HI|sgb-screen-09",
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-180|MF-LO|sgb-screen-08",
+   "XE|G-AMINDHMAX-LH12|BZ-P5B16|BP-HI|VD-350|MF-LO|sgb-screen-07",
+   "XE|G-AMINDHMAX-LH12|BZ-P5B30|BP-HI|VD-350|MF-LO|sgb-screen-01",
+   "XE|G-AMAXDHMIN-LH8603|BZ-P5B16|BP-LO|VD-180|MF-HI|sgb-screen-07",
+   "XE|G-AMAXDHMIN-LH8603|BZ-P5B30|BP-LO|VD-350|MF-HI|sgb-screen-09",
+   "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-LO|VD-350|MF-MID|sgb-screen-02",
+   "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-LO|VD-265|MF-HI|sgb-screen-02",
+   "XE|G-AMAXDHMAX-LH8603|BZ-P5B16|BP-HI|VD-265|MF-LO|sgb-screen-08",
+   "XE|G-AMAXDHMAX-LH8603|BZ-P5B30|BP-HI|VD-350|MF-MID|sgb-screen-07",
+   "XE|G-AMAXDHMAX-LH12|BZ-P5B16|BP-HI|VD-265|MF-LO|sgb-screen-09",
+   "XE|G-AMAXDHMAX-LH12|BZ-P5B30|BP-LO|VD-350|MF-LO|sgb-screen-03",
+   "XE|G-RP1|BZ-P5B16|BP-LO|VD-180|MF-HI|sgb-screen-02",
+   "XE|G-RP1|BZ-P5B30|BP-HI|VD-265|MF-HI|sgb-screen-01"
+  ],
+  "mandatory_keys": [
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-LO|VD-180|MF-LO|sgb-screen-09",
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B16|BP-LO|VD-180|MF-HI|sgb-screen-08",
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-LO|VD-350|MF-HI|sgb-screen-06",
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-180|MF-HI|sgb-screen-09",
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-350|MF-HI|sgb-screen-08",
+   "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-LO|VD-350|MF-LO|sgb-screen-02",
+   "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-HI|VD-180|MF-HI|sgb-screen-01",
+   "XE|G-RP1|BZ-P5B30|BP-LO|VD-265|MF-MID|sgb-screen-04"
+  ],
+  "n_cases": 22,
+  "runs": "22 cases x 7 numerics (L0, L1, L2, L3, L0D, L1D, L2D) = 154 runs through the pinned run_case (vacuum), threads / BLAS 1, every run recording the v1 per-record provenance plus the A6 level, the v1 key and the v1 case sha256; Rust launch with sidecars; frozen before scoring; scored once",
+  "comparisons": "for k = 0, 1, 2: G(k) = Lk against L(k+1) (spatial / CFL step), D(k) = Lk against LkD (duration and averaging window)",
+  "criteria": "as A3 for every comparison: C-STATUS (v1 run status identical; a missing run is NUMERICAL_FAILURE), C-QUIET (quiet class Id_rms_rel < 0.5 identical when both runs are numerically valid), C-T and C-ID (when the coarser run is PASS: relative thrust and I_d changes <= 0.02; P_d = I_d V_d inherits C-ID). No margin tier",
+  "level_passes": "Pass(k) iff every check case passes every criterion in G(k) and in D(k)",
+  "diagnostic_observed_order": "report only, per case and observable (thrust_N, discharge_current_A) with PASS at L0, L1, L2 (and L1, L2, L3): observed order p = log2(|f(L1) - f(L0)| / |f(L2) - f(L1)|) (and the next triple), Richardson estimate f(L2) + (f(L2) - f(L1)) / (2^p - 1), and the relative distance of the production-level value from it; undefined (null, with reason) when a difference is zero or the order is not positive. Never used for the production rule"
+ },
+ "production_rule": {
+  "rule": "the production level is the coarsest k in {0, 1, 2} with Pass(k)",
+  "stop": "if no k in {0, 1, 2} passes, the A6 grid is NOT run: XE stays NUMERICS_NOT_CONVERGED (v1 + A3) and the result is reported as a finding (STOP)",
+  "fixed_before_grid": "the production level is fixed from the scored study before any A6 grid run; it is never changed after an A6 grid result is seen"
+ },
+ "grid": {
+  "cases": "the 2268 v1 XE cases (same keys, transport set, geometry, B(z) registration and operating points), each at the production-level numerics; no case dropped, none rerun",
+  "case_file": "cases/h1_parametric_envelope_a6_xe_grid_v1.json, Rust-generated from the frozen v1 case file after the study is scored (only the numerical fields change; key = v1 key + |A6-L<k>; v1_key and v1_case_sha256 carried)",
+  "run": "the same driver path as the study (h1_envelope_a6_driver.jl), Rust launch with sidecars, threads / BLAS 1, resumable shards; frozen (gzip JSONL + manifest + SHA256SUMS) before ingestion",
+  "run_status": "the v1 rule (NUMERICAL_FAILURE > OUT_OF_DOMAIN > NOT_SUSTAINED > PASS); Xe never OUT_OF_DOMAIN",
+  "labels": "every A6 point carries the v1 XE labels with NUMERICAL_ADEQUACY_NOT_VERIFIED_FOR_H1 replaced by NUMERICS_A6_STUDY_CONVERGED_L<k> (a sampled study, not a per-point proof; EC-NUM stays listed citing the A6 study result); the A3 overlay does not apply to A6 records (A3 governs the v1 numerics)"
+ },
+ "functional_test": {
+  "problem": "the v1 XE_FUNC test (PASS and T > 0) counts degenerate discharges: v1 PASS records exist with thrust ~1e-18 N and I_d ~1e-16 A (the bridge sustained flag is relative)",
+  "a6_xe_tests": {
+   "HALL_XE_T12_AT_PBUS": "PASS and thrust_N >= HC-01 (engineering_constraints_v1 thrust_sustained_min_mN x 1e-3, read through abep-config Thresholds by the assessment layer) and P_bus_fav = discharge_power_W + P_nonHall,LB < HC-03",
+   "HALL_XE_T25_CAPABILITY_AT_PBUS": "PASS and thrust_N >= HC-02 (thrust_capability_mN x 1e-3) and P_bus_fav < HC-03"
+  },
+  "basis": "HC-01 and HC-02 are the only registered thrust requirements (RFP 12 / 25 mN); no Xe-specific thrust requirement or relaxation is registered, so none is invented. A discharge meeting HC-01 is non-degenerate by construction. Physics stays raw (the envelope records carry no threshold); the thresholds are applied only by the assessment layer",
+  "hardware_consistency": "as A1 for AIR: XE_CONTINGENCY needs both tests to close on one hardware configuration (geometry, B shape); any B_peak, V_d, mdot and transport may be used per test"
+ },
+ "classification_feed": {
+  "harness": "abep-assess harness v2 (addendum A2). With an A6 XE envelope supplied (separately from the v1 envelope), the XE_CONTINGENCY Hall constraints are HALL_XE_T12_AT_PBUS and HALL_XE_T25_CAPABILITY_AT_PBUS over the A6 points, replacing HALL_XE_FUNCTIONAL_AT_PBUS (the v1 envelope stays reported, labelled A3_NOT_ADEQUATE, and has no classification role while an A6 envelope is supplied)",
+  "constraint_status": "per test as v1: CLOSES_IN_ENVELOPE if some A6 point passes (eligible for SELECT_WITH_EVIDENCE_CONDITIONS with EC-TRANSPORT, EC-BZ, EC-DIV, EC-NUM citing the A6 study, EC-GEOM); NON_CLOSING_IN_ENVELOPE if none passes and every point is evaluated physics (never eligible for PHYSICALLY_NON_CLOSING: SOURCED_SURROGATE B(z)); NOT_DETERMINABLE_IN_ENVELOPE otherwise (NUMERICAL_FAILURE points are unknowns); both tests closing but on no common hardware -> NOT_DETERMINABLE_IN_ENVELOPE with HALL_NO_COMMON_HARDWARE",
+  "c0_c4": "C0..C4 unchanged (v1 classification procedure as run by harness v2): the A6 XE Hall constraints enter the per-state XE_CONTINGENCY evaluation exactly where HALL_XE_FUNCTIONAL_AT_PBUS entered, joint with the non-Hall constraints at one hardware configuration; AIR_PRIMARY is unaffected"
+ },
+ "ingestion": "a separate frozen version: its own raw-manifest schema (np_hall_parametric_envelope_a6_raw_manifest_v1), case file, launch manifest and lock pins; every record checked (case sha256 of the A6 case, HallThruster commit, A6 lock, A6 case-file sha256, v1 key); a complete family or MODEL_ERROR; the v1 envelope is never modified or mixed",
+ "change_control": "any change to the ladder, check set, criteria, production rule, grid, functional test or classification feed after this lock is a new, dated addendum registered before the runs it governs"
+}

@@ -114,6 +114,7 @@ fn point(fam: Family, geom: &str, tr: &str, status: RunStatus, t: f64, p: f64, i
         thrust_n: (status == RunStatus::Pass).then_some(t),
         discharge_power_w: (status == RunStatus::Pass).then_some(p),
         discharge_current_a: (status == RunStatus::Pass).then_some(p / 300.0),
+        ion_current_a: None,
         te_max_ev: None,
     }
 }
@@ -247,6 +248,37 @@ fn unknown_points_never_make_a_non_closure() {
 }
 
 #[test]
+fn a3_overlay_never_makes_a_closure_or_a_non_closure_from_unconverged_numerics() {
+    use env::A3Overlay;
+    let bz = BzFamilyKind::H1Registered;
+    let pts = [
+        point(Family::Xe, "G1", "sgb-a", RunStatus::Pass, 0.010, 1400.0, 0),
+        point(Family::Xe, "G1", "sgb-b", RunStatus::NotSustained, 0.0, 0.0, 1),
+    ];
+    let refs: Vec<&EnvelopePoint> = pts.iter().collect();
+    let run = |a3| evaluate_hall_test_a3(HallTest::XeFunc, Family::Xe, &refs, &lim(), bz, a3).constraint;
+    assert_eq!(run(A3Overlay::NotRun).status, CLOSES_IN_ENVELOPE);
+    assert_eq!(run(A3Overlay::Adequate).status, CLOSES_IN_ENVELOPE);
+    let na = run(A3Overlay::NotAdequate);
+    assert_eq!(na.status, NOT_DETERMINABLE_IN_ENVELOPE);
+    assert!(!na.eligible_close && !na.eligible_non_close);
+    assert!(na.codes.contains(&env::NUMERICS_NOT_CONVERGED.to_string()));
+    assert_eq!(category(env::NUMERICS_NOT_CONVERGED), "MISSING_EVIDENCE");
+    // Margin: 1400 W x 1.05 = 1470 W still passes; x 1.08 = 1512 W is a nominal-only pass -> unknown.
+    assert_eq!(run(A3Overlay::Margin { delta_t: 0.05, delta_i: 0.05 }).status, CLOSES_IN_ENVELOPE);
+    let m = run(A3Overlay::Margin { delta_t: 0.05, delta_i: 0.08 });
+    assert_eq!(m.status, NOT_DETERMINABLE_IN_ENVELOPE);
+    assert!(m.codes.contains(&env::NUMERICS_NOT_CONVERGED.to_string()));
+    // Under NOT_ADEQUATE an all-NOT_SUSTAINED family is not an evaluated non-closure either.
+    let ns = [point(Family::Xe, "G1", "sgb-a", RunStatus::NotSustained, 0.0, 0.0, 0)];
+    let r: Vec<&EnvelopePoint> = ns.iter().collect();
+    let c = evaluate_hall_test_a3(HallTest::XeFunc, Family::Xe, &r, &lim(), bz, A3Overlay::NotAdequate).constraint;
+    assert_eq!(c.status, NOT_DETERMINABLE_IN_ENVELOPE);
+    let c = evaluate_hall_test_a3(HallTest::XeFunc, Family::Xe, &r, &lim(), bz, A3Overlay::NotRun).constraint;
+    assert_eq!(c.status, NON_CLOSING_IN_ENVELOPE);
+}
+
+#[test]
 fn power_test_is_strict_and_uses_the_non_hall_lower_bound() {
     let p = point(Family::Xe, "G1", "sgb-a", RunStatus::Pass, 0.013, 1500.0, 0);
     assert!(!point_passes(HallTest::T12, &p, &lim()), "P_bus < 1500 W is strict");
@@ -289,6 +321,7 @@ fn synthetic_xe_envelope_through_the_production_record_keeps_air_not_evaluated()
                 thrust_n: pass.then_some(0.010),
                 discharge_power_w: pass.then_some(900.0),
                 discharge_current_a: pass.then_some(3.0),
+                ion_current_a: None,
                 te_max_ev: None,
             }
         })
@@ -303,7 +336,16 @@ fn synthetic_xe_envelope_through_the_production_record_keeps_air_not_evaluated()
     };
     let rec = closure_record(&r, Some(&e), "test").unwrap();
     let xe = &at(&rec, &["hall_specific_closure_a", "XE_CONTINGENCY"]).as_list().unwrap()[0];
-    assert_eq!(st(at(xe, &["constraint", "status"])), CLOSES_IN_ENVELOPE);
+    // The committed addendum A3 result governs the XE family (A3_NOT_ADEQUATE: every point NUMERICS_NOT_CONVERGED).
+    let (a3, _) = env::a3_overlay(&r, Family::Xe).unwrap();
+    assert_eq!(st(at(&rec, &["numerics_a3", "XE"])), a3.as_str());
+    if a3 == env::A3Overlay::NotAdequate {
+        assert_eq!(st(at(xe, &["constraint", "status"])), NOT_DETERMINABLE_IN_ENVELOPE);
+        let codes: Vec<&str> = at(xe, &["constraint", "codes"]).as_list().unwrap().iter().map(st).collect();
+        assert!(codes.contains(&env::NUMERICS_NOT_CONVERGED), "{codes:?}");
+    } else {
+        assert_eq!(st(at(xe, &["constraint", "status"])), CLOSES_IN_ENVELOPE);
+    }
     let air = &at(&rec, &["hall_specific_closure_a", "AIR_PRIMARY"]).as_list().unwrap()[0];
     assert_eq!(st(at(air, &["constraint", "status"])), NOT_EVALUATED);
     let air_codes: Vec<&str> = at(air, &["constraint", "codes"]).as_list().unwrap().iter().map(st).collect();

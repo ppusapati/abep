@@ -1,0 +1,2263 @@
+{
+ "schema": "np_hall_parametric_envelope_a3_numerics_result_v1",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "addendum": "A3 numerics adequacy (RG-04)",
+ "layer": "PARAMETRIC / NOT_VALIDATED",
+ "family": "XE",
+ "addendum_sha256": "ca1b895efbf5c469fb0fe26951acf695bf4b39685e7cac65fcc708d0a8a7b20f",
+ "addendum_lock_sha256": "b840f1b080c94be58472ccb07f6cf35cc9ad8822161ff9a1440ecb55c76e04bd",
+ "raw_manifest_sha256": "6ff25d22ebb6f7419827fc5d2ab51472a87e44c2ce2826ceedbb831eeff0d296",
+ "raw_sha256": "338f4a3604070edc963951e5b12dbd8b634ef9acbd7b3c33fc3ebad635583c88",
+ "rust_commit": "e58502a2",
+ "scored_once": true,
+ "tolerance_rel": 0.02,
+ "margin_cap": 0.1,
+ "n_check_cases": 17,
+ "n_comparisons": 34,
+ "n_comparisons_failing": 12,
+ "status_counts": {
+  "A3-R0": {
+   "NUMERICAL_FAILURE": 7,
+   "OUT_OF_DOMAIN": 0,
+   "NOT_SUSTAINED": 0,
+   "PASS": 10
+  },
+  "A3-R1": {
+   "NUMERICAL_FAILURE": 7,
+   "OUT_OF_DOMAIN": 0,
+   "NOT_SUSTAINED": 1,
+   "PASS": 9
+  },
+  "A3-R3": {
+   "NUMERICAL_FAILURE": 8,
+   "OUT_OF_DOMAIN": 0,
+   "NOT_SUSTAINED": 0,
+   "PASS": 9
+  }
+ },
+ "delta_T": {
+  "value": 2.0911355442278325,
+  "at": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-350|MF-HI|sgb-screen-08|A3-R1"
+ },
+ "delta_I": {
+  "value": 0.2866177535443051,
+  "at": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-350|MF-HI|sgb-screen-08|A3-R1"
+ },
+ "outcome": "A3_NOT_ADEQUATE",
+ "consequence": {
+  "label": "every PASS and NOT_SUSTAINED point of the family is NUMERICS_NOT_CONVERGED (its raw values are reported with that label)",
+  "classification": "a NUMERICS_NOT_CONVERGED point is an unknown, like NUMERICAL_FAILURE: it never counts toward feasibility (never CLOSES) and never toward an evaluated non-closure; every Hall test of the family is NOT_DETERMINABLE_IN_ENVELOPE with blocker NUMERICS_NOT_CONVERGED, A9.31 sec. 21 category MISSING_EVIDENCE"
+ },
+ "comparisons": [
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-LO|VD-180|MF-LO|sgb-screen-09",
+   "refinement": "A3-R1",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.0015356609867396142,
+   "thrust_N_rk": 0.0016244727655001319,
+   "discharge_current_A_r0": 0.13512827979427777,
+   "discharge_current_A_rk": 0.14193397392769638,
+   "discharge_power_W_r0": 24.32309036297,
+   "discharge_power_W_rk": 25.54811530698535,
+   "rel_thrust": 0.05783293287216692,
+   "rel_discharge_current": 0.05036469156404379,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": false,
+   "C-ID": false,
+   "passes": false,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 0.09783205207636873,
+     "rk": 0.10279230035468409
+    },
+    "mass_eff": {
+     "r0": 0.35311818920910654,
+     "rk": 0.37102187059870967
+    },
+    "current_eff": {
+     "r0": 0.7239939132305271,
+     "rk": 0.7242261842611992
+    },
+    "voltage_eff": {
+     "r0": 0.5087438360067407,
+     "rk": 0.5145561575820226
+    },
+    "anode_eff": {
+     "r0": 0.12858804789221334,
+     "rk": 0.1369918264626804
+    },
+    "Te_max_eV": {
+     "r0": 11.923270718116761,
+     "rk": 12.089471983704021
+    },
+    "ne_max_m3": {
+     "r0": 4.417368150322264e+16,
+     "rk": 4.666460181597527e+16
+    },
+    "Id_rms_rel": {
+     "r0": 0.1392913664406834,
+     "rk": 0.12611334803786436
+    },
+    "Id_pp_rel": {
+     "r0": 0.5064889576724592,
+     "rk": 0.48251851003654445
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 33059.566787003605,
+     "rk": 33059.566787003605
+    },
+    "wall_s": {
+     "r0": 11.130989074707031,
+     "rk": 27.964473962783813
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-LO|VD-180|MF-LO|sgb-screen-09",
+   "refinement": "A3-R3",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.0015356609867396142,
+   "thrust_N_rk": 0.0015385415145026486,
+   "discharge_current_A_r0": 0.13512827979427777,
+   "discharge_current_A_rk": 0.13528056417780998,
+   "discharge_power_W_r0": 24.32309036297,
+   "discharge_power_W_rk": 24.350501552005795,
+   "rel_thrust": 0.0018757575974826103,
+   "rel_discharge_current": 0.0011269616083624358,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": true,
+   "C-ID": true,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 0.09783205207636873,
+     "rk": 0.09807101772388062
+    },
+    "mass_eff": {
+     "r0": 0.35311818920910654,
+     "rk": 0.35398071958582566
+    },
+    "current_eff": {
+     "r0": 0.7239939132305271,
+     "rk": 0.7249453631415825
+    },
+    "voltage_eff": {
+     "r0": 0.5087438360067407,
+     "rk": 0.5087422146619949
+    },
+    "anode_eff": {
+     "r0": 0.12858804789221334,
+     "rk": 0.12892560613207332
+    },
+    "Te_max_eV": {
+     "r0": 11.923270718116761,
+     "rk": 11.923360119414955
+    },
+    "ne_max_m3": {
+     "r0": 4.417368150322264e+16,
+     "rk": 4.4284982885994904e+16
+    },
+    "Id_rms_rel": {
+     "r0": 0.1392913664406834,
+     "rk": 0.13813401952473925
+    },
+    "Id_pp_rel": {
+     "r0": 0.5064889576724592,
+     "rk": 0.4478378519418644
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 33059.566787003605,
+     "rk": 33059.566787003605
+    },
+    "wall_s": {
+     "r0": 11.130989074707031,
+     "rk": 18.252599954605103
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B16|BP-LO|VD-180|MF-HI|sgb-screen-08",
+   "refinement": "A3-R1",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.04542807694599464,
+   "thrust_N_rk": 0.046414297526585734,
+   "discharge_current_A_r0": 5.112275531634565,
+   "discharge_current_A_rk": 5.241789105527034,
+   "discharge_power_W_r0": 920.2095956942218,
+   "discharge_power_W_rk": 943.5220389948661,
+   "rel_thrust": 0.021709494367624697,
+   "rel_discharge_current": 0.025333840692083952,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": false,
+   "C-ID": false,
+   "passes": false,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 2.2140922214774585,
+     "rk": 2.2645189625243964
+    },
+    "mass_eff": {
+     "r0": 0.941512312147764,
+     "rk": 0.9629555912924306
+    },
+    "current_eff": {
+     "r0": 0.43309328845378947,
+     "rk": 0.43201260427220317
+    },
+    "voltage_eff": {
+     "r0": 1.0457389006058229,
+     "rk": 1.0445429011819425
+    },
+    "anode_eff": {
+     "r0": 0.35041442335996975,
+     "rk": 0.3567562093563721
+    },
+    "Te_max_eV": {
+     "r0": 18.987764885722516,
+     "rk": 19.04272881731756
+    },
+    "ne_max_m3": {
+     "r0": 2.5082801378128273e+19,
+     "rk": 2.511485656511549e+19
+    },
+    "Id_rms_rel": {
+     "r0": 0.011237307747252736,
+     "rk": 0.005688761986176808
+    },
+    "Id_pp_rel": {
+     "r0": 0.046441817232243415,
+     "rk": 0.018275034960891303
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 33859.30556601642,
+     "rk": 33859.30556601642
+    },
+    "wall_s": {
+     "r0": 5.344325065612793,
+     "rk": 21.408874988555908
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B16|BP-LO|VD-180|MF-HI|sgb-screen-08",
+   "refinement": "A3-R3",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.04542807694599464,
+   "thrust_N_rk": 0.0453979860543067,
+   "discharge_current_A_r0": 5.112275531634565,
+   "discharge_current_A_rk": 5.1104803984313865,
+   "discharge_power_W_r0": 920.2095956942218,
+   "discharge_power_W_rk": 919.8864717176496,
+   "rel_thrust": 0.0006623853288730353,
+   "rel_discharge_current": 0.00035114171606567075,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": true,
+   "C-ID": true,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 2.2140922214774585,
+     "rk": 2.214065032351157
+    },
+    "mass_eff": {
+     "r0": 0.941512312147764,
+     "rk": 0.9415007503451794
+    },
+    "current_eff": {
+     "r0": 0.43309328845378947,
+     "rk": 0.43324009872550207
+    },
+    "voltage_eff": {
+     "r0": 1.0457389006058229,
+     "rk": 1.0457582736677933
+    },
+    "anode_eff": {
+     "r0": 0.35041442335996975,
+     "rk": 0.3500732836932796
+    },
+    "Te_max_eV": {
+     "r0": 18.987764885722516,
+     "rk": 18.95900006758528
+    },
+    "ne_max_m3": {
+     "r0": 2.5082801378128273e+19,
+     "rk": 2.505528219366344e+19
+    },
+    "Id_rms_rel": {
+     "r0": 0.011237307747252736,
+     "rk": 0.06298162310636396
+    },
+    "Id_pp_rel": {
+     "r0": 0.046441817232243415,
+     "rk": 0.3184707340589413
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 33859.30556601642,
+     "rk": 33859.30556601642
+    },
+    "wall_s": {
+     "r0": 5.344325065612793,
+     "rk": 10.352178812026978
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-LO|VD-350|MF-LO|sgb-screen-06",
+   "refinement": "A3-R1",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.007234984127259226,
+   "thrust_N_rk": 0.007267152537599947,
+   "discharge_current_A_r0": 0.5793661660932031,
+   "discharge_current_A_rk": 0.582429152868574,
+   "discharge_power_W_r0": 202.7781581326211,
+   "discharge_power_W_rk": 203.8502035040009,
+   "rel_thrust": 0.004446230948803414,
+   "rel_discharge_current": 0.005286789175186531,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": true,
+   "C-ID": true,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 0.2661353735244966,
+     "rk": 0.26679036210482876
+    },
+    "mass_eff": {
+     "r0": 0.9605976690553296,
+     "rk": 0.9629618061303541
+    },
+    "current_eff": {
+     "r0": 0.4593560844588277,
+     "rk": 0.4580649179232112
+    },
+    "voltage_eff": {
+     "r0": 0.7772736393189041,
+     "rk": 0.7807543734907132
+    },
+    "anode_eff": {
+     "r0": 0.34235970657659054,
+     "rk": 0.34359438424994004
+    },
+    "Te_max_eV": {
+     "r0": 23.453370444408353,
+     "rk": 23.49228275990169
+    },
+    "ne_max_m3": {
+     "r0": 2.240011539639536e+17,
+     "rk": 2.3006446393193984e+17
+    },
+    "Id_rms_rel": {
+     "r0": 0.11212177504419318,
+     "rk": 0.10695408872771078
+    },
+    "Id_pp_rel": {
+     "r0": 0.5872989301172101,
+     "rk": 0.6262023015054832
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 5259.476534296029,
+     "rk": 5259.476534296029
+    },
+    "wall_s": {
+     "r0": 6.627794027328491,
+     "rk": 27.88679790496826
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-LO|VD-350|MF-LO|sgb-screen-06",
+   "refinement": "A3-R3",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.007234984127259226,
+   "thrust_N_rk": 0.007258755615036677,
+   "discharge_current_A_r0": 0.5793661660932031,
+   "discharge_current_A_rk": 0.5815063688204227,
+   "discharge_power_W_r0": 202.7781581326211,
+   "discharge_power_W_rk": 203.52722908714796,
+   "rel_thrust": 0.0032856309508528213,
+   "rel_discharge_current": 0.003694041613875156,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": true,
+   "C-ID": true,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 0.2661353735244966,
+     "rk": 0.26700358483457276
+    },
+    "mass_eff": {
+     "r0": 0.9605976690553296,
+     "rk": 0.9637314191828015
+    },
+    "current_eff": {
+     "r0": 0.4593560844588277,
+     "rk": 0.4591584875952187
+    },
+    "voltage_eff": {
+     "r0": 0.7772736393189041,
+     "rk": 0.776963421226053
+    },
+    "anode_eff": {
+     "r0": 0.34235970657659054,
+     "rk": 0.3433448077652644
+    },
+    "Te_max_eV": {
+     "r0": 23.453370444408353,
+     "rk": 23.471088137911096
+    },
+    "ne_max_m3": {
+     "r0": 2.240011539639536e+17,
+     "rk": 2.2711427928976365e+17
+    },
+    "Id_rms_rel": {
+     "r0": 0.11212177504419318,
+     "rk": 0.11241658180062178
+    },
+    "Id_pp_rel": {
+     "r0": 0.5872989301172101,
+     "rk": 0.6459762749931883
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 5259.476534296029,
+     "rk": 5259.476534296029
+    },
+    "wall_s": {
+     "r0": 6.627794027328491,
+     "rk": 13.6494619846344
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-LO|VD-350|MF-HI|sgb-screen-06",
+   "refinement": "A3-R1",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.06478481843870718,
+   "thrust_N_rk": 0.06609317890189458,
+   "discharge_current_A_r0": 5.631689668359287,
+   "discharge_current_A_rk": 5.76659140811321,
+   "discharge_power_W_r0": 1971.0913839257503,
+   "discharge_power_W_rk": 2018.3069928396235,
+   "rel_thrust": 0.02019547935331852,
+   "rel_discharge_current": 0.02395404358159971,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": false,
+   "C-ID": false,
+   "passes": false,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 2.2195656693763763,
+     "rk": 2.2672272854724405
+    },
+    "mass_eff": {
+     "r0": 0.9438398207026196,
+     "rk": 0.9641072684340257
+    },
+    "current_eff": {
+     "r0": 0.39412073464321684,
+     "rk": 0.39316593200666217
+    },
+    "voltage_eff": {
+     "r0": 1.0231021962821671,
+     "rk": 1.0225896960381893
+    },
+    "anode_eff": {
+     "r0": 0.33270533002390357,
+     "rk": 0.33817856940675955
+    },
+    "Te_max_eV": {
+     "r0": 24.414159922545316,
+     "rk": 24.42563926806215
+    },
+    "ne_max_m3": {
+     "r0": 2.429623476257644e+19,
+     "rk": 2.453587785010271e+19
+    },
+    "Id_rms_rel": {
+     "r0": 6.724836420456456e-06,
+     "rk": 6.478422302429981e-06
+    },
+    "Id_pp_rel": {
+     "r0": 4.1282762324754465e-05,
+     "rk": 4.179531896602632e-05
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 751.3537906137184,
+     "rk": 751.3537906137184
+    },
+    "wall_s": {
+     "r0": 6.99432110786438,
+     "rk": 38.266308069229126
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-LO|VD-350|MF-HI|sgb-screen-06",
+   "refinement": "A3-R3",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.06478481843870718,
+   "thrust_N_rk": 0.06478527274899169,
+   "discharge_current_A_r0": 5.631689668359287,
+   "discharge_current_A_rk": 5.6317042771665164,
+   "discharge_power_W_r0": 1971.0913839257503,
+   "discharge_power_W_rk": 1971.0964970082807,
+   "rel_thrust": 7.012604117229698e-06,
+   "rel_discharge_current": 2.594036264422771e-06,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": true,
+   "C-ID": true,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 2.2195656693763763,
+     "rk": 2.2195786386659817
+    },
+    "mass_eff": {
+     "r0": 0.9438398207026196,
+     "rk": 0.9438453357149271
+    },
+    "current_eff": {
+     "r0": 0.39412073464321684,
+     "rk": 0.39412201518910717
+    },
+    "voltage_eff": {
+     "r0": 1.0231021962821671,
+     "rk": 1.0231040911432057
+    },
+    "anode_eff": {
+     "r0": 0.33270533002390357,
+     "rk": 0.3327091332422421
+    },
+    "Te_max_eV": {
+     "r0": 24.414159922545316,
+     "rk": 24.41415401739866
+    },
+    "ne_max_m3": {
+     "r0": 2.429623476257644e+19,
+     "rk": 2.4296298099253928e+19
+    },
+    "Id_rms_rel": {
+     "r0": 6.724836420456456e-06,
+     "rk": 1.6528837076169847e-10
+    },
+    "Id_pp_rel": {
+     "r0": 4.1282762324754465e-05,
+     "rk": 1.96249241925218e-09
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 751.3537906137184,
+     "rk": 9016.24548736462
+    },
+    "wall_s": {
+     "r0": 6.99432110786438,
+     "rk": 17.246872186660767
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-180|MF-LO|sgb-screen-04",
+   "refinement": "A3-R1",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 1.2585370540618896,
+     "rk": 2.081963062286377
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-180|MF-LO|sgb-screen-04",
+   "refinement": "A3-R3",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 1.2585370540618896,
+     "rk": 1.3977320194244385
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-180|MF-HI|sgb-screen-09",
+   "refinement": "A3-R1",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.016617570008303266,
+   "thrust_N_rk": 0.018341775300617237,
+   "discharge_current_A_r0": 2.3488439600611484,
+   "discharge_current_A_rk": 2.4232678296204275,
+   "discharge_power_W_r0": 422.7919128110067,
+   "discharge_power_W_rk": 436.18820933167694,
+   "rel_thrust": 0.10375796770842194,
+   "rel_discharge_current": 0.03168531874605312,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": false,
+   "C-ID": false,
+   "passes": false,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 2.295290391789242,
+     "rk": 2.30030385425237
+    },
+    "mass_eff": {
+     "r0": 0.9760407190184593,
+     "rk": 0.9781726250834997
+    },
+    "current_eff": {
+     "r0": 0.9772000315123053,
+     "rk": 0.9492569604296204
+    },
+    "voltage_eff": {
+     "r0": 0.5471075589263897,
+     "rk": 0.6343423449612678
+    },
+    "anode_eff": {
+     "r0": 0.10205361395487918,
+     "rk": 0.12051159696557395
+    },
+    "Te_max_eV": {
+     "r0": 10.801606909661517,
+     "rk": 10.451696038716715
+    },
+    "ne_max_m3": {
+     "r0": 1.236862886408159e+19,
+     "rk": 1.312409891113029e+19
+    },
+    "Id_rms_rel": {
+     "r0": 0.551253954662096,
+     "rk": 0.5782143959415956
+    },
+    "Id_pp_rel": {
+     "r0": 1.5550616662456747,
+     "rk": 1.5582936118308668
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 12773.014440433213,
+     "rk": 12773.014440433213
+    },
+    "wall_s": {
+     "r0": 5.364964008331299,
+     "rk": 25.611724853515625
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-180|MF-HI|sgb-screen-09",
+   "refinement": "A3-R3",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.016617570008303266,
+   "thrust_N_rk": 0.016976762033740517,
+   "discharge_current_A_r0": 2.3488439600611484,
+   "discharge_current_A_rk": 2.3862846436791374,
+   "discharge_power_W_r0": 422.7919128110067,
+   "discharge_power_W_rk": 429.5312358622447,
+   "rel_thrust": 0.0216151955585428,
+   "rel_discharge_current": 0.01594004721242288,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": false,
+   "C-ID": true,
+   "passes": false,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 2.295290391789242,
+     "rk": 2.334868488831555
+    },
+    "mass_eff": {
+     "r0": 0.9760407190184593,
+     "rk": 0.9928707612792335
+    },
+    "current_eff": {
+     "r0": 0.9772000315123053,
+     "rk": 0.9784534695038267
+    },
+    "voltage_eff": {
+     "r0": 0.5471075589263897,
+     "rk": 0.5565488292379486
+    },
+    "anode_eff": {
+     "r0": 0.10205361395487918,
+     "rk": 0.10484192747781824
+    },
+    "Te_max_eV": {
+     "r0": 10.801606909661517,
+     "rk": 10.782210941711636
+    },
+    "ne_max_m3": {
+     "r0": 1.236862886408159e+19,
+     "rk": 1.2386959594863059e+19
+    },
+    "Id_rms_rel": {
+     "r0": 0.551253954662096,
+     "rk": 0.5460617701610577
+    },
+    "Id_pp_rel": {
+     "r0": 1.5550616662456747,
+     "rk": 1.5297378828721355
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 12773.014440433213,
+     "rk": 12397.337545126353
+    },
+    "wall_s": {
+     "r0": 5.364964008331299,
+     "rk": 12.901426076889038
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B16|BP-HI|VD-350|MF-LO|sgb-screen-08",
+   "refinement": "A3-R1",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 0.6831459999084473,
+     "rk": 1.6104950904846191
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B16|BP-HI|VD-350|MF-LO|sgb-screen-08",
+   "refinement": "A3-R3",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 0.6831459999084473,
+     "rk": 1.2837531566619873
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-350|MF-HI|sgb-screen-08",
+   "refinement": "A3-R1",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.022737815552616503,
+   "thrust_N_rk": 0.07028566985278929,
+   "discharge_current_A_r0": 2.3899979291901494,
+   "discharge_current_A_rk": 3.075013766630171,
+   "discharge_power_W_r0": 836.4992752165523,
+   "discharge_power_W_rk": 1076.25481832056,
+   "rel_thrust": 2.0911355442278325,
+   "rel_discharge_current": 0.2866177535443051,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": false,
+   "C-ID": false,
+   "passes": false,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 2.221766741991763,
+     "rk": 2.3102695248903
+    },
+    "mass_eff": {
+     "r0": 0.9447757966060688,
+     "rk": 0.9824103896686432
+    },
+    "current_eff": {
+     "r0": 0.9296103209363902,
+     "rk": 0.7513037990142286
+    },
+    "voltage_eff": {
+     "r0": 0.3094617280852598,
+     "rk": 1.0191777785816176
+    },
+    "anode_eff": {
+     "r0": 0.09657215781264541,
+     "rk": 0.7171970485292498
+    },
+    "Te_max_eV": {
+     "r0": 11.540088857101884,
+     "rk": 19.3532598602008
+    },
+    "ne_max_m3": {
+     "r0": 3.6374131705845504e+18,
+     "rk": 1.918082583827157e+19
+    },
+    "Id_rms_rel": {
+     "r0": 0.21397189728372953,
+     "rk": 0.025458567558025984
+    },
+    "Id_pp_rel": {
+     "r0": 1.1600105214377765,
+     "rk": 0.1259274203033952
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 19535.19855595668,
+     "rk": 24043.32129963899
+    },
+    "wall_s": {
+     "r0": 6.327991008758545,
+     "rk": 34.78398513793945
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-350|MF-HI|sgb-screen-08",
+   "refinement": "A3-R3",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.022737815552616503,
+   "thrust_N_rk": 0.021561253634775783,
+   "discharge_current_A_r0": 2.3899979291901494,
+   "discharge_current_A_rk": 2.3932007185357276,
+   "discharge_power_W_r0": 836.4992752165523,
+   "discharge_power_W_rk": 837.6202514875047,
+   "rel_thrust": 0.051744720820612405,
+   "rel_discharge_current": 0.0013400803852007628,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": false,
+   "C-ID": true,
+   "passes": false,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 2.221766741991763,
+     "rk": 2.0706839857314048
+    },
+    "mass_eff": {
+     "r0": 0.9447757966060688,
+     "rk": 0.8805299292512637
+    },
+    "current_eff": {
+     "r0": 0.9296103209363902,
+     "rk": 0.8652362376852144
+    },
+    "voltage_eff": {
+     "r0": 0.3094617280852598,
+     "rk": 0.30549821466265037
+    },
+    "anode_eff": {
+     "r0": 0.09657215781264541,
+     "rk": 0.08672032043263936
+    },
+    "Te_max_eV": {
+     "r0": 11.540088857101884,
+     "rk": 11.562925962502185
+    },
+    "ne_max_m3": {
+     "r0": 3.6374131705845504e+18,
+     "rk": 3.625852087661342e+18
+    },
+    "Id_rms_rel": {
+     "r0": 0.21397189728372953,
+     "rk": 0.17543458444438761
+    },
+    "Id_pp_rel": {
+     "r0": 1.1600105214377765,
+     "rk": 1.2043814831094266
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 19535.19855595668,
+     "rk": 20662.229241877256
+    },
+    "wall_s": {
+     "r0": 6.327991008758545,
+     "rk": 14.122350931167603
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-LO|VD-180|MF-LO|sgb-screen-07",
+   "refinement": "A3-R1",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 0.7001690864562988,
+     "rk": 4.8013880252838135
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-LO|VD-180|MF-LO|sgb-screen-07",
+   "refinement": "A3-R3",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 0.7001690864562988,
+     "rk": 1.234919786453247
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-LO|VD-180|MF-HI|sgb-screen-02",
+   "refinement": "A3-R1",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.04709532535232765,
+   "thrust_N_rk": 0.04774787366974046,
+   "discharge_current_A_r0": 3.633309534688235,
+   "discharge_current_A_rk": 3.678740798235302,
+   "discharge_power_W_r0": 653.9957162438823,
+   "discharge_power_W_rk": 662.1733436823544,
+   "rel_thrust": 0.013855904222574024,
+   "rel_discharge_current": 0.012504099392942418,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": true,
+   "C-ID": true,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 2.2738026203090738,
+     "rk": 2.30534079370932
+    },
+    "mass_eff": {
+     "r0": 0.9669033392774752,
+     "rk": 0.9803145144177641
+    },
+    "current_eff": {
+     "r0": 0.6258213341308898,
+     "rk": 0.6266657316044653
+    },
+    "voltage_eff": {
+     "r0": 1.0467809902009761,
+     "rk": 1.0455709850489776
+    },
+    "anode_eff": {
+     "r0": 0.5299083041925676,
+     "rk": 0.5379679518902405
+    },
+    "Te_max_eV": {
+     "r0": 20.88768292229151,
+     "rk": 20.921922499626298
+    },
+    "ne_max_m3": {
+     "r0": 1.2266038527270232e+19,
+     "rk": 1.2162376881325402e+19
+    },
+    "Id_rms_rel": {
+     "r0": 0.001470079126946489,
+     "rk": 0.0015299865728938334
+    },
+    "Id_pp_rel": {
+     "r0": 0.006861325821237372,
+     "rk": 0.007388145145250378
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 366.30976826048703,
+     "rk": 2197.858609562922
+    },
+    "wall_s": {
+     "r0": 20.888227939605713,
+     "rk": 108.95892310142517
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-LO|VD-180|MF-HI|sgb-screen-02",
+   "refinement": "A3-R3",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.04709532535232765,
+   "thrust_N_rk": 0.04706548843245108,
+   "discharge_current_A_r0": 3.633309534688235,
+   "discharge_current_A_rk": 3.6305590734218196,
+   "discharge_power_W_r0": 653.9957162438823,
+   "discharge_power_W_rk": 653.5006332159276,
+   "rel_thrust": 0.0006335431309446182,
+   "rel_discharge_current": 0.000757012646502068,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": true,
+   "C-ID": true,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 2.2738026203090738,
+     "rk": 2.2722898148150343
+    },
+    "mass_eff": {
+     "r0": 0.9669033392774752,
+     "rk": 0.9662600395157467
+    },
+    "current_eff": {
+     "r0": 0.6258213341308898,
+     "rk": 0.6258787610563213
+    },
+    "voltage_eff": {
+     "r0": 1.0467809902009761,
+     "rk": 1.0467792998750072
+    },
+    "anode_eff": {
+     "r0": 0.5299083041925676,
+     "rk": 0.5296380200324486
+    },
+    "Te_max_eV": {
+     "r0": 20.88768292229151,
+     "rk": 20.88676212175528
+    },
+    "ne_max_m3": {
+     "r0": 1.2266038527270232e+19,
+     "rk": 1.22563338934273e+19
+    },
+    "Id_rms_rel": {
+     "r0": 0.001470079126946489,
+     "rk": 1.7343400425646444e-05
+    },
+    "Id_pp_rel": {
+     "r0": 0.006861325821237372,
+     "rk": 0.00016260200216035233
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 366.30976826048703,
+     "rk": 2381.013493693166
+    },
+    "wall_s": {
+     "r0": 20.888227939605713,
+     "rk": 60.848345041275024
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-LO|VD-350|MF-LO|sgb-screen-02",
+   "refinement": "A3-R1",
+   "status_r0": "PASS",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": 1.1414017778595918e-17,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": 9.193062939023859e-16,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": 3.2175720286583507e-13,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": false,
+   "C-QUIET": null,
+   "C-T": false,
+   "C-ID": false,
+   "passes": false,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 1.0186678071216322e-15,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": 3.6768126991306344e-15,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": 1.1080831425590096,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": 0.16620311378888947,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": 5.370039320063653e-16,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": 83.74524404507413,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": 263.9790630507588,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": 0.13513801789947266,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": 0.7048255649414362,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 57510.63361689646,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 16.768165826797485,
+     "rk": 4.602964878082275
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-LO|VD-350|MF-LO|sgb-screen-02",
+   "refinement": "A3-R3",
+   "status_r0": "PASS",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": 1.1414017778595918e-17,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": 9.193062939023859e-16,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": 3.2175720286583507e-13,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": false,
+   "C-QUIET": null,
+   "C-T": false,
+   "C-ID": false,
+   "passes": false,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 1.0186678071216322e-15,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": 3.6768126991306344e-15,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": 1.1080831425590096,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": 0.16620311378888947,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": 5.370039320063653e-16,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": 83.74524404507413,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": 263.9790630507588,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": 0.13513801789947266,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": 0.7048255649414362,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 57510.63361689646,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 16.768165826797485,
+     "rk": 4.033915042877197
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-LO|VD-350|MF-HI|sgb-screen-09",
+   "refinement": "A3-R1",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.06677416451416479,
+   "thrust_N_rk": 0.06768402669200302,
+   "discharge_current_A_r0": 3.5447957297443415,
+   "discharge_current_A_rk": 3.586490379816155,
+   "discharge_power_W_r0": 1240.6785054105196,
+   "discharge_power_W_rk": 1255.2716329356542,
+   "rel_thrust": 0.013625961245014436,
+   "rel_discharge_current": 0.0117622151600878,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": true,
+   "C-ID": true,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 2.2756485676563374,
+     "rk": 2.3064152189371745
+    },
+    "mass_eff": {
+     "r0": 0.9676883030374159,
+     "rk": 0.9807713989913569
+    },
+    "current_eff": {
+     "r0": 0.6419688865458157,
+     "rk": 0.6430841783145679
+    },
+    "voltage_eff": {
+     "r0": 1.0241503920566857,
+     "rk": 1.0235075511129874
+    },
+    "anode_eff": {
+     "r0": 0.5615361155106172,
+     "rk": 0.5702360734427849
+    },
+    "Te_max_eV": {
+     "r0": 23.645228030588466,
+     "rk": 23.63687069945659
+    },
+    "ne_max_m3": {
+     "r0": 1.200060266369984e+19,
+     "rk": 1.189110473848233e+19
+    },
+    "Id_rms_rel": {
+     "r0": 0.0013190611066524484,
+     "rk": 0.0026283608007235657
+    },
+    "Id_pp_rel": {
+     "r0": 0.008366444864696348,
+     "rk": 0.012017632401161342
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 2197.858609562922,
+     "rk": 20879.65679084776
+    },
+    "wall_s": {
+     "r0": 28.93004083633423,
+     "rk": 151.9201111793518
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-LO|VD-350|MF-HI|sgb-screen-09",
+   "refinement": "A3-R3",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.06677416451416479,
+   "thrust_N_rk": 0.06674064007051693,
+   "discharge_current_A_r0": 3.5447957297443415,
+   "discharge_current_A_rk": 3.542700586653775,
+   "discharge_power_W_r0": 1240.6785054105196,
+   "discharge_power_W_rk": 1239.9452053288212,
+   "rel_thrust": 0.0005020571038481511,
+   "rel_discharge_current": 0.0005910476231356194,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": true,
+   "C-ID": true,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 2.2756485676563374,
+     "rk": 2.2744603739389233
+    },
+    "mass_eff": {
+     "r0": 0.9676883030374159,
+     "rk": 0.9671830399759632
+    },
+    "current_eff": {
+     "r0": 0.6419688865458157,
+     "rk": 0.6420131530469652
+    },
+    "voltage_eff": {
+     "r0": 1.0241503920566857,
+     "rk": 1.0241543818041612
+    },
+    "anode_eff": {
+     "r0": 0.5615361155106172,
+     "rk": 0.5613041681548857
+    },
+    "Te_max_eV": {
+     "r0": 23.645228030588466,
+     "rk": 23.644712924160473
+    },
+    "ne_max_m3": {
+     "r0": 1.200060266369984e+19,
+     "rk": 1.1993320232117598e+19
+    },
+    "Id_rms_rel": {
+     "r0": 0.0013190611066524484,
+     "rk": 2.450593550103993e-05
+    },
+    "Id_pp_rel": {
+     "r0": 0.008366444864696348,
+     "rk": 0.00025758353492641656
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 2197.858609562922,
+     "rk": 21245.96655910825
+    },
+    "wall_s": {
+     "r0": 28.93004083633423,
+     "rk": 80.58723402023315
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-HI|VD-180|MF-LO|sgb-screen-08",
+   "refinement": "A3-R1",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 5.903316974639893,
+     "rk": 0.21866488456726074
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-HI|VD-180|MF-LO|sgb-screen-08",
+   "refinement": "A3-R3",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 5.903316974639893,
+     "rk": 0.07282280921936035
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-HI|VD-180|MF-HI|sgb-screen-01",
+   "refinement": "A3-R1",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NOT_SUSTAINED",
+   "thrust_N_r0": null,
+   "thrust_N_rk": -0.0002913862741358445,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": 4.181873287775261,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": 752.737191799547,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": false,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": false,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": 1.0914894701465427
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": 0.46414090829372007
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": 0.2610049121615568
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": 3.925490596777244e-06
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": 1.7624419933624863e-05
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": 14.728703622956711
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": 7.493387887952639e+19
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": 0.2767454890290147
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": 2.1510676986792516
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": 366.5651487909588
+    },
+    "wall_s": {
+     "r0": 4.627347946166992,
+     "rk": 118.75461411476135
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-HI|VD-180|MF-HI|sgb-screen-01",
+   "refinement": "A3-R3",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 4.627347946166992,
+     "rk": 5.75684118270874
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-HI|VD-350|MF-LO|sgb-screen-03",
+   "refinement": "A3-R1",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 0.18508505821228027,
+     "rk": 8.073830127716064
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-HI|VD-350|MF-LO|sgb-screen-03",
+   "refinement": "A3-R3",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 0.18508505821228027,
+     "rk": 0.4212629795074463
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-HI|VD-350|MF-HI|sgb-screen-04",
+   "refinement": "A3-R1",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 5.494801044464111,
+     "rk": 24.977607011795044
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-HI|VD-350|MF-HI|sgb-screen-04",
+   "refinement": "A3-R3",
+   "status_r0": "NUMERICAL_FAILURE",
+   "status_rk": "NUMERICAL_FAILURE",
+   "thrust_N_r0": null,
+   "thrust_N_rk": null,
+   "discharge_current_A_r0": null,
+   "discharge_current_A_rk": null,
+   "discharge_power_W_r0": null,
+   "discharge_power_W_rk": null,
+   "rel_thrust": null,
+   "rel_discharge_current": null,
+   "C-STATUS": true,
+   "C-QUIET": null,
+   "C-T": null,
+   "C-ID": null,
+   "passes": true,
+   "report_only": {
+    "ion_current_A": {
+     "r0": null,
+     "rk": null
+    },
+    "mass_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "current_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "voltage_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "anode_eff": {
+     "r0": null,
+     "rk": null
+    },
+    "Te_max_eV": {
+     "r0": null,
+     "rk": null
+    },
+    "ne_max_m3": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_rms_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_pp_rel": {
+     "r0": null,
+     "rk": null
+    },
+    "Id_f_dominant_Hz": {
+     "r0": null,
+     "rk": null
+    },
+    "wall_s": {
+     "r0": 5.494801044464111,
+     "rk": 5.393509149551392
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-RP1|BZ-P5B30|BP-LO|VD-265|MF-MID|sgb-screen-04",
+   "refinement": "A3-R1",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.021955345981679215,
+   "thrust_N_rk": 0.022702059267159586,
+   "discharge_current_A_r0": 1.7044971384322225,
+   "discharge_current_A_rk": 1.6970690007417084,
+   "discharge_power_W_r0": 451.69174168453895,
+   "discharge_power_W_rk": 449.72328519655275,
+   "rel_thrust": 0.03401054513572555,
+   "rel_discharge_current": 0.00435796430690779,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": false,
+   "C-ID": true,
+   "passes": false,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 0.9121471147708722,
+     "rk": 0.9458926718748532
+    },
+    "mass_eff": {
+     "r0": 0.9644209093774747,
+     "rk": 1.000100374172851
+    },
+    "current_eff": {
+     "r0": 0.5351414761598573,
+     "rk": 0.5573684225340563
+    },
+    "voltage_eff": {
+     "r0": 0.830836365591339,
+     "rk": 0.8405125747738107
+    },
+    "anode_eff": {
+     "r0": 0.4146005535673847,
+     "rk": 0.4452219722954268
+    },
+    "Te_max_eV": {
+     "r0": 24.101698681925054,
+     "rk": 24.17965806586013
+    },
+    "ne_max_m3": {
+     "r0": 1.0294480857862643e+18,
+     "rk": 1.0169464308967127e+18
+    },
+    "Id_rms_rel": {
+     "r0": 0.3657141232163057,
+     "rk": 0.3671855465826734
+    },
+    "Id_pp_rel": {
+     "r0": 1.580967090222513,
+     "rk": 1.691404348823864
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 25944.98878526738,
+     "rk": 23586.353441152165
+    },
+    "wall_s": {
+     "r0": 11.634251832962036,
+     "rk": 35.951223850250244
+    }
+   }
+  },
+  {
+   "v1_key": "XE|G-RP1|BZ-P5B30|BP-LO|VD-265|MF-MID|sgb-screen-04",
+   "refinement": "A3-R3",
+   "status_r0": "PASS",
+   "status_rk": "PASS",
+   "thrust_N_r0": 0.021955345981679215,
+   "thrust_N_rk": 0.023252580616345876,
+   "discharge_current_A_r0": 1.7044971384322225,
+   "discharge_current_A_rk": 1.7381708923797112,
+   "discharge_power_W_r0": 451.69174168453895,
+   "discharge_power_W_rk": 460.61528648062347,
+   "rel_thrust": 0.0590851374307263,
+   "rel_discharge_current": 0.019755828970450178,
+   "C-STATUS": true,
+   "C-QUIET": true,
+   "C-T": false,
+   "C-ID": true,
+   "passes": false,
+   "report_only": {
+    "ion_current_A": {
+     "r0": 0.9121471147708722,
+     "rk": 0.9801761869596014
+    },
+    "mass_eff": {
+     "r0": 0.9644209093774747,
+     "rk": 1.0363486265208242
+    },
+    "current_eff": {
+     "r0": 0.5351414761598573,
+     "rk": 0.5639124387922827
+    },
+    "voltage_eff": {
+     "r0": 0.830836365591339,
+     "rk": 0.8384499116094316
+    },
+    "anode_eff": {
+     "r0": 0.4146005535673847,
+     "rk": 0.45603211516708786
+    },
+    "Te_max_eV": {
+     "r0": 24.101698681925054,
+     "rk": 23.967957589342873
+    },
+    "ne_max_m3": {
+     "r0": 1.0294480857862643e+18,
+     "rk": 1.0470002118792946e+18
+    },
+    "Id_rms_rel": {
+     "r0": 0.3657141232163057,
+     "rk": 0.36494652979640785
+    },
+    "Id_pp_rel": {
+     "r0": 1.580967090222513,
+     "rk": 1.8022446274448862
+    },
+    "Id_f_dominant_Hz": {
+     "r0": 25944.98878526738,
+     "rk": 21227.718097036948
+    },
+    "wall_s": {
+     "r0": 11.634251832962036,
+     "rk": 20.558732986450195
+    }
+   }
+  }
+ ]
+}

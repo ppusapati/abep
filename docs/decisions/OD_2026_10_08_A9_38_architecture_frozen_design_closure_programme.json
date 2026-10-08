@@ -1,0 +1,50 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_08_A9_38_architecture_frozen_design_closure_programme",
+ "decided_by": "owner",
+ "date": "2026-10-08",
+ "decision": "A9_38_ARCHITECTURE_FROZEN_DESIGN_CLOSURE_PROGRAMME",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_08_A9_38_ARCHITECTURE_FROZEN_DESIGN_CLOSURE_PROGRAMME.md",
+  "sha256": "7bc06a0044283ba054b60a55a99bae84b6f7aea2cb5e4283d3a627ff543b9bcf",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "ARCHITECTURE_FROZEN_DESIGN_CLOSURE",
+   "utc": "2026-10-08T13:54:01.208Z",
+   "text_sha256": "29e3b47d663aa7f22a9b7c5c7ff95cc0ae5240a58f443bdec0edf602d335e89c",
+   "chars": 8921
+  }
+ ],
+ "checkpoint_at_decision": "64002ab",
+ "owner_decision_summary": {
+  "architecture": "FROZEN as of 2026-10-08: atmospheric intake -> active compressor / plenum / feed -> Hall thruster -> 13.56 MHz RF/ICP neutralizer -> thrust; atmospheric species primary propellant; Xe contingency / commissioning / emergency only; electromagnetic Hall field; H1 reference geometry; 1,350 W design allocation and < 1,500 W RFP ceiling; <= 34 kg nominal dry; 2 kg reference Xe. The propulsion architecture trade is not reopened; no alternative architectures unless a demonstrated architecture-level impossibility.",
+  "freeze_boundary": "DBF-1 is the controlled baseline; a physical change names the DBF-1 item, the quantitative reason, goes through a formal DCR, preserves immutable history, and preregisters the evaluation method before comparing replacements",
+  "priorities": [
+   "P1 intake / compressor redesign under DCR (whole governed state / scenario set)",
+   "P2 Hall RP-1 numerical convergence, then the Hall envelope for M2",
+   "P3 H1-specific B(z) (FEMM-derived, then measured), surrogate kept separate",
+   "P4 RF/ICP neutralizer closure incl. AIR / Xe rate sets, I_e,cap, neutralization margin; finish the AIR omitted-process audit",
+   "P5 mass closure after redesign (<= 34.0 kg dry, < 40 kg wet at 2 kg Xe, 10 % margin)",
+   "P6 power ledger closure (all TBD terms; nominal, 12 mN, 25 mN, worst state, Xe points)",
+   "P7 thermal closure on the frozen topology (hot / cold cases)",
+   "P8 materials evidence gates for the retained selections",
+   "P9 host-drag interface: allowable C_D*A envelope vs state for the spacecraft team as an ICD constraint"
+  ],
+  "sequence": "critical path: Hall RP-1 convergence + intake / compressor DCR + AIR chemistry / ICP closure -> mass + power + thermal -> M2 rerun on the revised controlled baseline -> M3 final architecture closure decision",
+  "documentation": "for every open item maintain (A) engineering evidence and (B) a submission-safe statement; controlled wording; no unnecessary TBD / TBC",
+  "closure_states": [
+   "CLOSED",
+   "FROZEN FOR EM",
+   "REFERENCE/ICD DEPENDENT",
+   "DCR REQUIRED",
+   "BLOCKED BY SPECIFIC MISSING EVIDENCE",
+   "FUNDAMENTAL NON-CLOSURE"
+  ]
+ },
+ "recorder_notes": [
+  "This decision lifts the CLAUDE.md phase rule 'No RFP document work in this phase unless the owner asks' for the submission-safe statements and documentation readiness it requests; the frozen bid records (technical source 5eee4b8, package 2de86ab) remain immutable evidence."
+ ]
+}

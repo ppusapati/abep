@@ -7,8 +7,10 @@ name = "abep-assess"
 version = "0.1.0"
 dependencies = [
  "abep-atmos",
+ "abep-chem",
  "abep-config",
  "abep-data",
+ "abep-design",
  "abep-gaspath",
  "abep-hall",
  "abep-icp",

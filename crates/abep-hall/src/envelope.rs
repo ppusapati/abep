@@ -317,6 +317,8 @@ pub struct EnvelopePoint {
     pub thrust_n: Option<f64>,
     pub discharge_power_w: Option<f64>,
     pub discharge_current_a: Option<f64>,
+    /// Time-averaged ion (beam) current of a PASS point (raw `ion_current_A`); read by the closure's P-CPL path.
+    pub ion_current_a: Option<f64>,
     pub te_max_ev: Option<f64>,
 }
 
@@ -328,7 +330,8 @@ pub struct RecordPins {
     pub cases_file_sha256: String,
 }
 
-/// Check a complete record list against the frozen case set and pins; any defect refuses the whole envelope.
+/// Check a record list against the frozen case set and pins (each family complete or absent); any defect refuses the
+/// whole envelope.
 pub fn ingest_records(cases: &CaseSet, records: &[Value], pins: &RecordPins) -> AbepResult<Vec<EnvelopePoint>> {
     let by_key = cases.by_key();
     let mut got: BTreeMap<String, EnvelopePoint> = BTreeMap::new();
@@ -356,17 +359,202 @@ pub fn ingest_records(cases: &CaseSet, records: &[Value], pins: &RecordPins) -> 
             thrust_n: pick("thrust_N"),
             discharge_power_w: pick("discharge_power_W"),
             discharge_current_a: pick("discharge_current_A"),
+            ion_current_a: pick("ion_current_A"),
             te_max_ev: pick("Te_max_eV"),
         };
         if got.insert(key.to_string(), point).is_some() {
             return Err(model(format!("duplicate raw record key {key}")));
         }
     }
-    let missing: Vec<String> = cases.keys().into_iter().filter(|k| !got.contains_key(k)).collect();
+    // A family is run completely or not at all (a family-filtered run, launch manifest `--family`): every key of a
+    // family with at least one record is expected; a family without records is absent (its Hall tests are
+    // NOT_EVALUATED, HALL_ENVELOPE_NOT_RUN). A partial family is MODEL_ERROR.
+    let present: BTreeSet<Family> = got.values().map(|p| p.case.family).collect();
+    if present.is_empty() {
+        return Err(model("raw envelope without records"));
+    }
+    let missing: Vec<&str> = cases
+        .cases
+        .iter()
+        .filter(|c| present.contains(&c.family) && !got.contains_key(&c.key))
+        .map(|c| c.key.as_str())
+        .collect();
     if !missing.is_empty() {
         return Err(model(format!("{} expected records missing (first {})", missing.len(), missing[0])));
     }
-    Ok(cases.cases.iter().map(|c| got.remove(&c.key).expect("every key present")).collect())
+    Ok(cases
+        .cases
+        .iter()
+        .filter(|c| present.contains(&c.family))
+        .map(|c| got.remove(&c.key).expect("present"))
+        .collect())
+}
+
+/// Addendum A6 (XE grid at study-converged numerics): a separate frozen version of the XE family.
+pub const A6_LOCK_SHA256: &str = "e0a97161f8599ab0c11770751d95fac9cbd68a50b24de3bc6201d9ab6d2b089a";
+pub const A6_GRID_CASES_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/cases/h1_parametric_envelope_a6_xe_grid_v1.json";
+pub const A6_GRID_LAUNCH_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/launch_manifest_a6_xe_grid_v1.json";
+pub const A6_RAW_SCHEMA: &str = "np_hall_parametric_envelope_a6_raw_manifest_v1";
+
+/// Ingest a frozen A6 XE grid (sha-pinned manifest): every record checked against the A6 grid case file pinned by its
+/// launch manifest, the HallThruster.jl pin, the A6 and v1 locks; all 2268 XE cases required (no partial family). Each
+/// point carries the v1 case identity (the v1 key and axes; the numerics are the A6 production level's). The v1
+/// envelope is never read or modified here.
+pub fn ingest_a6(repo: &Path, manifest: &Path, manifest_sha256: &str) -> AbepResult<Envelope> {
+    let label = manifest.to_string_lossy().to_string();
+    let m = loads_bytes(&read_verified(manifest, manifest_sha256)?, &label)?;
+    if get_str(&m, "schema", &label)? != A6_RAW_SCHEMA
+        || get_str(&m, "addendum_lock_sha256", &label)? != A6_LOCK_SHA256
+        || get_str(&m, "kind", &label)? != "XE_GRID_PRODUCTION_LEVEL"
+    {
+        return Err(schema(&label, "not a frozen A6 XE grid under the A6 lock"));
+    }
+    let lm = load_json(&repo.join(A6_GRID_LAUNCH_REL), A6_GRID_LAUNCH_REL)?;
+    let cases_sha = get_str(&lm, "cases_sha256", A6_GRID_LAUNCH_REL)?.to_string();
+    if get_str(&m, "cases_file_sha256", &label)? != cases_sha {
+        return Err(schema(&label, "frozen from another A6 grid case file"));
+    }
+    let doc = loads_bytes(&read_verified(&repo.join(A6_GRID_CASES_REL), &cases_sha)?, A6_GRID_CASES_REL)?;
+    let v1 = load_case_set(repo)?;
+    let v1_by = v1.by_key();
+    let mut want: BTreeMap<String, (String, &CaseInfo)> = BTreeMap::new();
+    for c in get(&doc, "cases").and_then(Value::as_list).ok_or_else(|| schema(A6_GRID_CASES_REL, "cases"))? {
+        let h = case_hash(c)?;
+        if get_str(c, "case_sha256", A6_GRID_CASES_REL)? != h {
+            return Err(schema(A6_GRID_CASES_REL, "case_sha256 mismatch"));
+        }
+        let v1_key = get_str(c, "v1_key", A6_GRID_CASES_REL)?;
+        let ci = v1_by.get(v1_key).ok_or_else(|| model(format!("A6 case without a v1 case {v1_key}")))?;
+        if ci.family != Family::Xe || get_str(c, "v1_case_sha256", A6_GRID_CASES_REL)? != ci.case_sha256 {
+            return Err(model(format!("A6 case {v1_key} does not derive from the frozen v1 XE case")));
+        }
+        want.insert(get_str(c, "key", A6_GRID_CASES_REL)?.to_string(), (h, ci));
+    }
+    let raw_name = get_str(&m, "raw_file", &label)?;
+    let raw_sha = get_str(&m, "raw_sha256", &label)?.to_string();
+    let gz = read_verified(&manifest.parent().unwrap_or(Path::new(".")).join(raw_name), &raw_sha)?;
+    let mut text = String::new();
+    flate2::read::GzDecoder::new(gz.as_slice())
+        .read_to_string(&mut text)
+        .map_err(|e| schema(raw_name, format!("gzip: {e}")))?;
+    let commit = pinned_commit(&repo.to_string_lossy(), None).map_err(AbepError::from)?;
+    let mut got: BTreeMap<String, EnvelopePoint> = BTreeMap::new();
+    for line in text.lines().filter(|l| !l.trim().is_empty()) {
+        let rec = pyjson::loads(line).map_err(|e| py_err(raw_name, e))?;
+        let key = get_str(&rec, "key", raw_name)?.to_string();
+        let (h, ci) = want.get(&key).ok_or_else(|| model(format!("unexpected A6 record {key}")))?;
+        for (field, w) in [
+            ("case_sha256", h.as_str()),
+            ("hallthruster_commit", commit.as_str()),
+            ("addendum_lock_sha256", A6_LOCK_SHA256),
+            ("prereg_lock_sha256", LOCK_SHA256),
+            ("cases_file_sha256", cases_sha.as_str()),
+            ("family", "XE"),
+        ] {
+            if get(&rec, field).and_then(Value::as_str) != Some(w) {
+                return Err(model(format!("A6 record {key}: {field} != {w}")));
+            }
+        }
+        let status = run_status(Family::Xe, &rec);
+        let pass = status == RunStatus::Pass;
+        let pick = |k: &str| if pass { finite_num(get(&rec, k)) } else { None };
+        let point = EnvelopePoint {
+            case: (*ci).clone(),
+            status,
+            thrust_n: pick("thrust_N"),
+            discharge_power_w: pick("discharge_power_W"),
+            discharge_current_a: pick("discharge_current_A"),
+            ion_current_a: pick("ion_current_A"),
+            te_max_ev: pick("Te_max_eV"),
+        };
+        if got.insert(key.clone(), point).is_some() {
+            return Err(model(format!("duplicate A6 record {key}")));
+        }
+    }
+    if got.len() != want.len() {
+        return Err(model(format!("{} of {} A6 grid records missing", want.len() - got.len(), want.len())));
+    }
+    if finite_num(get(&m, "n_records")) != Some(got.len() as f64) {
+        return Err(schema(&label, "n_records != records"));
+    }
+    let mut points: Vec<EnvelopePoint> = got.into_values().collect();
+    points.sort_by(|a, b| a.case.key.cmp(&b.case.key));
+    Ok(Envelope {
+        manifest_rel: label,
+        manifest_sha256: manifest_sha256.into(),
+        raw_sha256: raw_sha,
+        cases_sha256: cases_sha,
+        bz_family_kind: v1.bz_family_kind,
+        points,
+    })
+}
+
+/// Committed result of addendum A3 (numerics adequacy, RG-04) for the XE family.
+pub const A3_RESULT_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/a3_numerics_result_v1.json";
+pub const A3_RESULT_SCHEMA: &str = "np_hall_parametric_envelope_a3_numerics_result_v1";
+pub const A3_LOCK_SHA256: &str = "b840f1b080c94be58472ccb07f6cf35cc9ad8822161ff9a1440ecb55c76e04bd";
+/// Label / blocker of a point whose numerics the A3 check did not support (never feasible, never a non-closure).
+pub const NUMERICS_NOT_CONVERGED: &str = "NUMERICS_NOT_CONVERGED";
+
+/// The A3 overlay of a family (addendum A3 consequence). Raw records and v1 run statuses are never changed.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum A3Overlay {
+    /// No committed A3 result: the v1 rules apply unchanged.
+    NotRun,
+    /// A3_ADEQUATE: the v1 numerics stand.
+    Adequate,
+    /// A3_ADEQUATE_WITH_NUMERICAL_MARGIN: point tests evaluated at T (1 - delta_t) and P_d (1 + delta_i).
+    Margin { delta_t: f64, delta_i: f64 },
+    /// A3_NOT_ADEQUATE: every PASS and NOT_SUSTAINED point is NUMERICS_NOT_CONVERGED (an unknown).
+    NotAdequate,
+}
+
+impl A3Overlay {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            A3Overlay::NotRun => "A3_NOT_RUN",
+            A3Overlay::Adequate => "A3_ADEQUATE",
+            A3Overlay::Margin { .. } => "A3_ADEQUATE_WITH_NUMERICAL_MARGIN",
+            A3Overlay::NotAdequate => "A3_NOT_ADEQUATE",
+        }
+    }
+
+    /// Is a point of this status evaluated physics under the overlay?
+    pub fn evaluated_physics(self, s: RunStatus) -> bool {
+        s.is_evaluated_physics() && self != A3Overlay::NotAdequate
+    }
+}
+
+/// The committed A3 overlay of `family` and the sha256 of the result it was read from (fail closed: a result file that
+/// exists but does not parse, carries another lock or an unknown outcome is an error).
+pub fn a3_overlay(repo: &Path, family: Family) -> AbepResult<(A3Overlay, Option<String>)> {
+    let p = repo.join(A3_RESULT_REL);
+    if family != Family::Xe || !p.is_file() {
+        return Ok((A3Overlay::NotRun, None));
+    }
+    let bytes = std::fs::read(&p).map_err(|e| AbepError::Io { path: A3_RESULT_REL.into(), message: e.to_string() })?;
+    let sha = sha256_hex(&bytes);
+    let v = loads_bytes(&bytes, A3_RESULT_REL)?;
+    if get_str(&v, "schema", A3_RESULT_REL)? != A3_RESULT_SCHEMA
+        || get_str(&v, "addendum_lock_sha256", A3_RESULT_REL)? != A3_LOCK_SHA256
+        || get_str(&v, "family", A3_RESULT_REL)? != family.as_str()
+    {
+        return Err(schema(A3_RESULT_REL, "not an A3 result of this family under the A3 lock"));
+    }
+    let delta = |k: &str| get(&v, k).and_then(|d| finite_num(get(d, "value")));
+    let o = match get_str(&v, "outcome", A3_RESULT_REL)? {
+        "A3_ADEQUATE" => A3Overlay::Adequate,
+        "A3_ADEQUATE_WITH_NUMERICAL_MARGIN" => A3Overlay::Margin {
+            delta_t: delta("delta_T").ok_or_else(|| schema(A3_RESULT_REL, "delta_T"))?,
+            delta_i: delta("delta_I").ok_or_else(|| schema(A3_RESULT_REL, "delta_I"))?,
+        },
+        "A3_NOT_ADEQUATE" => A3Overlay::NotAdequate,
+        other => return Err(schema(A3_RESULT_REL, format!("unknown A3 outcome {other}"))),
+    };
+    Ok((o, Some(sha)))
 }
 
 /// An ingested, frozen envelope.

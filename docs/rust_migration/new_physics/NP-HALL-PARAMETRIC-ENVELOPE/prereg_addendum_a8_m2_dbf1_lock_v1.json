@@ -1,0 +1,27 @@
+{
+ "id": "np_hall_parametric_envelope_addendum_a8_lock_v1",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "addendum": "A8",
+ "locked": "2026-10-08",
+ "note": "sha256 of addendum A8 (M2 196-state closure of the DBF-1 design point; status PREREGISTERED_BEFORE_M2_EXECUTION), committed alone before any A8 code, any DBF-1 evaluation on the design states and any M2 execution; v1, A1..A6 unchanged; any change after this lock is a new, dated addendum",
+ "base_commit": "8f7e33a",
+ "predecessor_locks": {
+  "prereg_lock_v1.json": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3",
+  "prereg_addendum_a1_air_family_lock.json": "35388e247ffdcc7af2a605e46f29d955ec29875893d3f7342e6411110f3d17a6",
+  "prereg_addendum_a2_lock.json": "774bf7618e0afafa40fe252d782d3112c71f2958ed7fe51b33e9c5d3dba617dd",
+  "prereg_addendum_a3_numerics_lock_v1.json": "b840f1b080c94be58472ccb07f6cf35cc9ad8822161ff9a1440ecb55c76e04bd",
+  "prereg_addendum_a4_lock.json": "5a03333e9a18f9bd85fe7bf0359b81d541bf45a4c7c91f0b4e12076f5cb92dcc",
+  "prereg_addendum_a5_lock.json": "d143fd4c97909f06717e1f993ee800bb3e6a610681acaf5fa30c7c715359b544",
+  "prereg_addendum_a5_1_lock.json": "d56e34f99277aa8dabcbf614d2e7c3d3427be011356a0db4485558ba611bbddd",
+  "prereg_addendum_a6_xe_converged_grid_lock_v1.json": "e0a97161f8599ab0c11770751d95fac9cbd68a50b24de3bc6201d9ab6d2b089a"
+ },
+ "dbf1_lock": {
+  "path": "docs/baseline/DBF-1/dbf1_lock_v1.json",
+  "sha256": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907"
+ },
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/",
+ "files": {
+  "prereg_addendum_a8_m2_dbf1_v1.json": "816495c61e41c87be1ece60c3ce7950b191f4e4a322fd641698a3f39f7da4568",
+  "PREREG_ADDENDUM_A8_M2_DBF1.md": "b7b66c1cbcd49705d42fa925ed31a8a74e932f79191ffd1e15d688a9b71d267d"
+ }
+}

@@ -70,6 +70,33 @@ fn official_flight_ledger_is_partial_boundary_with_every_term_tbd() {
 }
 
 #[test]
+fn ledger_with_loads_replaces_only_the_named_tbd_loads() {
+    use abep_subsystems::power::official::{ledger_with_loads, official_ledger, LoadOverride};
+    let m = mp();
+    let ov = |slot: Slot, p: f64| LoadOverride {
+        slot,
+        p_w: p,
+        evidence_class: "model-derived".into(),
+        source: "SYNTHETIC_TEST_DATA_NOT_EVIDENCE".into(),
+    };
+    // official_ledger with a compressor draw is ledger_with_loads with that one override.
+    let a = official_ledger(&m, "hall_icp_neutralizer", Some(11.0), "src").unwrap();
+    let mut o = ov(Slot::Compressor, 11.0);
+    o.source = "src".into();
+    let b = ledger_with_loads(&m, "hall_icp_neutralizer", &[o], "PARAMETRIC_SENSITIVITY").unwrap();
+    assert_eq!(a, b);
+    let led = ledger_with_loads(&m, "hall_icp_neutralizer", &[ov(Slot::IcpRfSource, 40.0)], "L").unwrap();
+    assert_eq!(led.item(Slot::IcpRfSource).p_w, Some(40.0));
+    // TBD efficiency -> lower bound uses 1 (favorable); the load term leaves the TBD list, its efficiency stays.
+    assert_eq!(led.item(Slot::IcpRfSource).lower_bound_w, Some(40.0));
+    assert!(!led.tbd.iter().any(|t| t.slot == Slot::IcpRfSource && t.what == "load"));
+    assert!(led.tbd.iter().any(|t| t.slot == Slot::IcpRfSource && t.what == "efficiency"));
+    // Fail closed: the reserved port and a slot that is not installed cannot be overridden.
+    assert!(ledger_with_loads(&m, "hall_icp_neutralizer", &[ov(Slot::ReservedDcPort, 1.0)], "L").is_err());
+    assert!(ledger_with_loads(&m, "hall_icp_neutralizer", &[ov(Slot::IcpAssistMagnet, 1.0)], "L").is_err());
+}
+
+#[test]
 fn bus_demand_fails_closed_on_absent_upstream_inputs() {
     let hall = Upstream::Absent {
         status: EvalStatus::NotEvaluated,

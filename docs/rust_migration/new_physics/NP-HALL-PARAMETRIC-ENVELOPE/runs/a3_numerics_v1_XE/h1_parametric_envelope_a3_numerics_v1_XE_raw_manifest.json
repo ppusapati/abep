@@ -1,0 +1,36 @@
+{
+ "schema": "np_hall_parametric_envelope_a3_numerics_raw_manifest_v1",
+ "name": "h1_parametric_envelope_a3_numerics_v1_XE",
+ "layer": "PARAMETRIC / NOT_VALIDATED",
+ "addendum_lock_sha256": "b840f1b080c94be58472ccb07f6cf35cc9ad8822161ff9a1440ecb55c76e04bd",
+ "prereg_lock_sha256": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3",
+ "cases_file_sha256": "1569624f6199e5788843c31eee2b04101dc828c95175d4c34f087bca4698bb2e",
+ "driver_sha256": "bd1248a002f9049cdeefe520c148d5df286ff74e7df88a8e9c0fb4bf966258d6",
+ "n_records": 51,
+ "raw_file": "h1_parametric_envelope_a3_numerics_v1_XE_raw.jsonl.gz",
+ "raw_sha256": "338f4a3604070edc963951e5b12dbd8b634ef9acbd7b3c33fc3ebad635583c88",
+ "shards": [
+  {
+   "file": "a3_s00.jsonl",
+   "sha256": "dd4245f7f121ee20b762dbd48409282f88bf3f3956e9658710638f10bba1b227",
+   "n_records": 17,
+   "sidecar": "a3_s00.jsonl.sidecar.json",
+   "sidecar_sha256": "8abc03ed649a50ec57fa8177e4f8d95c73a11f501390762a9763deb42e94915f"
+  },
+  {
+   "file": "a3_s01.jsonl",
+   "sha256": "7d151c23dafe65c06526209959d52ff8b679c29f5d71b62b43dc10729b9e5a0f",
+   "n_records": 17,
+   "sidecar": "a3_s01.jsonl.sidecar.json",
+   "sidecar_sha256": "beef29837518b501ea3a602266d27ad5983616bf4f57486cbdfd580b38277b0f"
+  },
+  {
+   "file": "a3_s02.jsonl",
+   "sha256": "f6d44ff60cbf342ccbef6ca408ba90739a6cf0ad23735925aa188d74773e297e",
+   "n_records": 17,
+   "sidecar": "a3_s02.jsonl.sidecar.json",
+   "sidecar_sha256": "f921ed8316b0a92aeee6277415e9446306b744fa60f910463db32ec97d2137bf"
+  }
+ ],
+ "frozen_by": "abep-h1-envelope-a3 freeze"
+}

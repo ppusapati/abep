@@ -1,0 +1,18 @@
+{
+ "id": "np_hall_parametric_envelope_addendum_a4_lock",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "addendum": "A4",
+ "locked": "2026-10-08",
+ "note": "sha256 of NP-HALL-PARAMETRIC-ENVELOPE addendum A4 (conservation bounds B-FLOW / B-THRUST / B-DRAG; status PREREGISTERED_BEFORE_EVALUATION), committed alone before any A4 kernel, harness code or evaluation on the 196 design states; v1, A1 and A2 files unchanged; any change after this lock is a new, dated addendum",
+ "base_commit": "ae51650",
+ "predecessor_locks": {
+  "prereg_lock_v1.json": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3",
+  "prereg_addendum_a1_air_family_lock.json": "35388e247ffdcc7af2a605e46f29d955ec29875893d3f7342e6411110f3d17a6",
+  "prereg_addendum_a2_lock.json": "774bf7618e0afafa40fe252d782d3112c71f2958ed7fe51b33e9c5d3dba617dd"
+ },
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/",
+ "files": {
+  "prereg_addendum_a4_conservation_bounds.json": "7cd43c80188450b4563c5807b46b5866a39c19fe9b383dd3444cfe583b7668e1",
+  "PREREG_ADDENDUM_A4_CONSERVATION_BOUNDS.md": "15b853e551a4c5b9b7d0feb0adc606aa55168ac24c03e9e21f04b183ecd0d4e5"
+ }
+}

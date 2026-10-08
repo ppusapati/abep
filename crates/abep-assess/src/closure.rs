@@ -12,7 +12,7 @@ use crate::error::{model_error, AssessError, AssessResult};
 use crate::matrix::{constraint_matrix, RawPhysics};
 use crate::py::{dict, s, strs};
 use crate::thresholds::Thresholds;
-use abep_hall::envelope::{self as env, BzFamilyKind, Envelope, EnvelopePoint, Family, RunStatus};
+use abep_hall::envelope::{self as env, A3Overlay, BzFamilyKind, Envelope, EnvelopePoint, Family, RunStatus};
 use abep_mission::integration::today::{run_admitted, TodayOptions};
 use abep_mission::integration::{MissionRecord, Mode};
 use abep_types::pyjson::{Dict, DumpOptions, Value};
@@ -69,6 +69,9 @@ pub enum HallTest {
     T12,
     T25,
     XeFunc,
+    /// Addendum A6 XE tests (non-degenerate): T >= HC-01 / HC-02 at P_bus,fav < HC-03.
+    XeT12,
+    XeT25,
 }
 
 impl HallTest {
@@ -77,7 +80,14 @@ impl HallTest {
             HallTest::T12 => "HALL_T12_AT_PBUS",
             HallTest::T25 => "HALL_T25_CAPABILITY",
             HallTest::XeFunc => "HALL_XE_FUNCTIONAL_AT_PBUS",
+            HallTest::XeT12 => "HALL_XE_T12_AT_PBUS",
+            HallTest::XeT25 => "HALL_XE_T25_CAPABILITY_AT_PBUS",
         }
+    }
+
+    /// The XE_CONTINGENCY tests when an addendum A6 XE envelope is supplied.
+    pub fn of_xe_a6() -> &'static [HallTest] {
+        &[HallTest::XeT12, HallTest::XeT25]
     }
 
     /// The tests of a required mode.
@@ -107,8 +117,8 @@ pub fn point_passes(test: HallTest, p: &EnvelopePoint, lim: &HallLimits) -> bool
     let power_ok = pd + lim.p_non_hall_lb_w < lim.p_bus_max_w;
     power_ok
         && match test {
-            HallTest::T12 => t >= lim.thrust_min_n,
-            HallTest::T25 => t >= lim.thrust_capability_n,
+            HallTest::T12 | HallTest::XeT12 => t >= lim.thrust_min_n,
+            HallTest::T25 | HallTest::XeT25 => t >= lim.thrust_capability_n,
             HallTest::XeFunc => t > 0.0,
         }
 }
@@ -190,7 +200,7 @@ pub fn hall_not_evaluated(test: HallTest, code: &str, detail: &str) -> HallTestR
     }
 }
 
-/// Evaluate `test` over the envelope points of one family (prereg hall_specific_closure.constraint_status).
+/// Evaluate `test` over the envelope points of one family (prereg hall_specific_closure.constraint_status), v1 rules.
 pub fn evaluate_hall_test(
     test: HallTest,
     family: Family,
@@ -198,22 +208,53 @@ pub fn evaluate_hall_test(
     lim: &HallLimits,
     bz: BzFamilyKind,
 ) -> HallTestResult {
+    evaluate_hall_test_a3(test, family, points, lim, bz, A3Overlay::NotRun)
+}
+
+/// Does PASS point `p` pass `test` at the A3 numerical margin (thrust x (1 - delta_t), P_d x (1 + delta_i))?
+pub fn point_passes_at_margin(test: HallTest, p: &EnvelopePoint, lim: &HallLimits, delta_t: f64, delta_i: f64) -> bool {
+    let mut q = p.clone();
+    q.thrust_n = p.thrust_n.map(|t| t * (1.0 - delta_t));
+    q.discharge_power_w = p.discharge_power_w.map(|w| w * (1.0 + delta_i));
+    point_passes(test, &q, lim)
+}
+
+/// [`evaluate_hall_test`] under the family's addendum A3 overlay: A3_NOT_ADEQUATE makes every PASS and NOT_SUSTAINED
+/// point NUMERICS_NOT_CONVERGED (an unknown: never a closure, never an evaluated non-closure); the margin outcome
+/// counts a point only if it passes at the margin, and a nominal-only pass is NUMERICS_NOT_CONVERGED.
+pub fn evaluate_hall_test_a3(
+    test: HallTest,
+    family: Family,
+    points: &[&EnvelopePoint],
+    lim: &HallLimits,
+    bz: BzFamilyKind,
+    a3: A3Overlay,
+) -> HallTestResult {
     if points.is_empty() {
         return hall_not_evaluated(test, HALL_ENVELOPE_NOT_RUN, "no frozen envelope point of this family");
     }
     let threshold = match test {
-        HallTest::T12 => lim.thrust_min_n,
-        HallTest::T25 => lim.thrust_capability_n,
+        HallTest::T12 | HallTest::XeT12 => lim.thrust_min_n,
+        HallTest::T25 | HallTest::XeT25 => lim.thrust_capability_n,
         HallTest::XeFunc => 0.0,
     };
     let mut closing: BTreeMap<(String, String), BTreeSet<String>> = BTreeMap::new();
     let mut n_closing = 0;
     let mut best: Option<(f64, String)> = None;
     let mut minp: Option<(f64, String)> = None;
+    let mut n_nnc = 0;
     for p in points {
-        if point_passes(test, p, lim) {
+        let nominal = point_passes(test, p, lim);
+        let counts = match a3 {
+            A3Overlay::NotRun | A3Overlay::Adequate => nominal,
+            A3Overlay::Margin { delta_t, delta_i } => nominal && point_passes_at_margin(test, p, lim, delta_t, delta_i),
+            A3Overlay::NotAdequate => false,
+        };
+        if counts {
             n_closing += 1;
             closing.entry(p.case.hardware()).or_default().insert(p.case.transport_id.clone());
+        } else if nominal {
+            n_nnc += 1;
         }
         if let (RunStatus::Pass, Some(t), Some(pd)) = (p.status, p.thrust_n, p.discharge_power_w) {
             let pf = pd + lim.p_non_hall_lb_w;
@@ -228,7 +269,7 @@ pub fn evaluate_hall_test(
     }
     let counts: Vec<(RunStatus, usize)> =
         RunStatus::ALL.iter().map(|s| (*s, points.iter().filter(|p| p.status == *s).count())).collect();
-    let n_unknown = points.iter().filter(|p| !p.status.is_evaluated_physics()).count();
+    let n_unknown = points.iter().filter(|p| !a3.evaluated_physics(p.status)).count();
     let mut c = Constraint {
         id: test.constraint_id().into(),
         hall_specific: true,
@@ -244,7 +285,7 @@ pub fn evaluate_hall_test(
         c.eligible_close = true;
         c.detail = format!("{n_closing} of {} grid points pass ({})", points.len(), env::LAYER_A_LABEL);
         c.evidence_conditions = evidence_conditions_hall(bz);
-    } else if n_unknown == 0 {
+    } else if n_unknown == 0 && n_nnc == 0 {
         c.status = NON_CLOSING_IN_ENVELOPE;
         c.detail = format!("no grid point passes; all {} points are evaluated physics", points.len());
         match bz {
@@ -264,10 +305,19 @@ pub fn evaluate_hall_test(
         if count(RunStatus::NumericalFailure) > 0 {
             c.codes.push(HALL_ENVELOPE_NUMERICAL_FAILURE_POINTS.into());
         }
+        let nnc = match a3 {
+            A3Overlay::NotAdequate => points.iter().filter(|p| p.status.is_evaluated_physics()).count(),
+            _ => n_nnc,
+        };
+        if nnc > 0 {
+            c.codes.push(env::NUMERICS_NOT_CONVERGED.into());
+        }
         c.detail = format!(
-            "no grid point passes; {} OUT_OF_DOMAIN and {} NUMERICAL_FAILURE points are unknowns",
+            "no grid point passes; {} OUT_OF_DOMAIN, {} NUMERICAL_FAILURE and {nnc} {} points are unknowns ({})",
             count(RunStatus::OutOfDomain),
-            count(RunStatus::NumericalFailure)
+            count(RunStatus::NumericalFailure),
+            env::NUMERICS_NOT_CONVERGED,
+            a3.as_str()
         );
     }
     HallTestResult {
@@ -450,7 +500,12 @@ pub fn classify(inp: &ClosureInputs) -> ClosureOutcome {
 
 // ------------------------------------------------------------------------------------------------ production inputs
 
-fn quantity_codes(rec: &MissionRecord, state: &str, mode: Mode, key: &str) -> AssessResult<(bool, Vec<String>)> {
+pub(crate) fn quantity_codes(
+    rec: &MissionRecord,
+    state: &str,
+    mode: Mode,
+    key: &str,
+) -> AssessResult<(bool, Vec<String>)> {
     let f = rec.field(state, mode, key).ok_or_else(|| model_error(format!("mission field {key} absent at {state}")))?;
     let q = f.quantity().ok_or_else(|| model_error(format!("mission field {key} NOT_APPLICABLE at {state}")))?;
     let mut codes: Vec<String> = q.reasons.iter().map(|r| r.code.clone()).collect();
@@ -508,7 +563,7 @@ fn row<'a>(matrix: &'a Value, id: &str) -> AssessResult<&'a Value> {
         .ok_or_else(|| model_error(format!("matrix row {id} absent")))
 }
 
-fn row_status(matrix: &Value, id: &str, field: &str) -> AssessResult<String> {
+pub(crate) fn row_status(matrix: &Value, id: &str, field: &str) -> AssessResult<String> {
     row(matrix, id)?
         .as_dict()
         .and_then(|d| d.get(field))
@@ -548,6 +603,7 @@ pub fn layer_b_status(matrix: &Value, m: Mode, credible_set_empty: bool) -> &'st
 }
 
 /// Everything the record needs, gathered from the admitted components.
+#[derive(Clone)]
 pub struct TodayInputs {
     pub thresholds: Thresholds,
     pub limits: HallLimits,
@@ -659,6 +715,15 @@ pub fn non_hall_constraints(ti: &TodayInputs, m: Mode) -> AssessResult<Vec<Const
 
 /// Hall tests per required mode: AIR is NOT_EVALUATED (no Hall O / O2 chemistry); XE from the envelope.
 pub fn hall_results(env: Option<&Envelope>, lim: &HallLimits) -> BTreeMap<Mode, Vec<HallTestResult>> {
+    hall_results_a3(env, lim, A3Overlay::NotRun)
+}
+
+/// [`hall_results`] with the XE family's addendum A3 overlay.
+pub fn hall_results_a3(
+    env: Option<&Envelope>,
+    lim: &HallLimits,
+    xe_a3: A3Overlay,
+) -> BTreeMap<Mode, Vec<HallTestResult>> {
     let mut out = BTreeMap::new();
     out.insert(
         Mode::AirPrimary,
@@ -684,7 +749,7 @@ pub fn hall_results(env: Option<&Envelope>, lim: &HallLimits) -> BTreeMap<Mode, 
             None => hall_not_evaluated(*t, HALL_ENVELOPE_NOT_RUN, "no frozen HallThruster.jl envelope ingested"),
             Some(e) => {
                 let pts: Vec<&EnvelopePoint> = e.family_points(Family::Xe).collect();
-                evaluate_hall_test(*t, Family::Xe, &pts, lim, e.bz_family_kind)
+                evaluate_hall_test_a3(*t, Family::Xe, &pts, lim, e.bz_family_kind, xe_a3)
             }
         })
         .collect();
@@ -717,7 +782,7 @@ fn constraint_value(c: &Constraint) -> Value {
     ])
 }
 
-fn hall_value(h: &HallTestResult) -> Value {
+pub(crate) fn hall_value(h: &HallTestResult) -> Value {
     let closing: Vec<Value> = h
         .closing
         .iter()
@@ -755,7 +820,7 @@ fn range(points: &[&EnvelopePoint], get: impl Fn(&EnvelopePoint) -> Option<f64>)
     dict(vec![("min", f(mn)), ("max", f(mx))])
 }
 
-fn envelope_summary(e: Option<&Envelope>) -> Value {
+pub(crate) fn envelope_summary(e: Option<&Envelope>) -> Value {
     let Some(e) = e else { return dict(vec![("status", s(NOT_EVALUATED)), ("reason", s(HALL_ENVELOPE_NOT_RUN))]) };
     let mut fams = Dict::new();
     for fam in Family::ALL {
@@ -790,7 +855,7 @@ fn envelope_summary(e: Option<&Envelope>) -> Value {
     ])
 }
 
-fn n2_proxy(e: Option<&Envelope>, lim: &HallLimits) -> Value {
+pub(crate) fn n2_proxy(e: Option<&Envelope>, lim: &HallLimits) -> Value {
     let role = s("NONE: N2_PROXY never enters feasibility or classification (prereg families N2_PROXY)");
     let Some(e) = e else {
         return dict(vec![
@@ -811,7 +876,11 @@ fn n2_proxy(e: Option<&Envelope>, lim: &HallLimits) -> Value {
 /// The closure record of the repository (today: no envelope unless `envelope` is given).
 pub fn closure_record(repo: &Path, envelope: Option<&Envelope>, rust_commit: &str) -> AssessResult<Value> {
     let ti = gather(repo, rust_commit)?;
-    let hall = hall_results(envelope, &ti.limits);
+    let (xe_a3, a3_sha) = match envelope {
+        Some(_) => env::a3_overlay(repo, Family::Xe).map_err(|e| model_error(e.to_string()))?,
+        None => (A3Overlay::NotRun, None),
+    };
+    let hall = hall_results_a3(envelope, &ti.limits, xe_a3);
     let mut non_hall = BTreeMap::new();
     for m in REQUIRED_MODES {
         non_hall.insert(m, non_hall_constraints(&ti, m)?);
@@ -825,7 +894,19 @@ pub fn closure_record(repo: &Path, envelope: Option<&Envelope>, rust_commit: &st
         states: ti.states.clone(),
     };
     let out = classify(&inputs);
-    Ok(record_value(&ti, &inputs, &out, envelope))
+    let mut rec = record_value(&ti, &inputs, &out, envelope);
+    if let Value::Dict(d) = &mut rec {
+        let mut a3 = Dict::new();
+        a3.insert("XE", s(xe_a3.as_str()));
+        a3.insert("result", s(env::A3_RESULT_REL));
+        a3.insert("result_sha256", a3_sha.map_or(Value::Null, |h| s(&h)));
+        a3.insert(
+            "rule",
+            s("NP-HALL-PARAMETRIC-ENVELOPE addendum A3: A3_NOT_ADEQUATE makes every PASS / NOT_SUSTAINED point of the family NUMERICS_NOT_CONVERGED (unknown); margin: tests at T (1 - delta_T), P_d (1 + delta_I)"),
+        );
+        d.insert("numerics_a3", Value::Dict(a3));
+    }
+    Ok(rec)
 }
 
 fn mode_key(m: Mode) -> &'static str {

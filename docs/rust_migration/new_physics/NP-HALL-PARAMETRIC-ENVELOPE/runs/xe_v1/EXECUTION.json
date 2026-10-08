@@ -1,0 +1,31 @@
+{
+ "schema": "np_hall_parametric_envelope_execution_record_v1",
+ "envelope": "h1_parametric_envelope_v1_XE_local",
+ "family": "XE",
+ "layer": "PARAMETRIC / NOT_VALIDATED",
+ "raw_manifest_sha256": "b9efec88fad40dcb34b3e600502ac5f35d80e214d24e991b98e31d7c2b0d17ea",
+ "raw_sha256": "40198e0f06bec8ff0ce6b483458ba8939b1ed4abc70a5ba0a49b0906ee79eedd",
+ "n_records": 2268,
+ "environment": {
+  "host": "vm (this session's container, 4 cores, Linux 6.18)",
+  "julia": "1.11.7 (julialang-s3.julialang.org julia-1.11.7-linux-x86_64.tar.gz, sha256 aa5924114ecb89fd341e59aa898cd1882b3cb622ca4972582c1518eff5f68c05 = the published checksum), installed at /opt/julia-1.11.7",
+  "julia_depot": "/opt/julia-depot (outside the git tree); hallthruster_bridge/ instantiated from the committed Manifest.toml without resolve or update; the bridge checkout stayed unchanged",
+  "hallthruster": "HallThruster.jl v0.23.1 commit bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (check_pin); installed tree hash 7505b3a2a6cfeb6854801de53c6985443aeb8363 = Manifest git-tree-sha1 = tree of the pinned commit in the depot clone",
+  "threads_blas": "JULIA_NUM_THREADS = OPENBLAS_NUM_THREADS = MKL_NUM_THREADS = OMP_NUM_THREADS = 1 (recorded per record and per sidecar); BLAS LBTConfig libopenblas64_",
+  "solver_defaults_seen": "SimParams adaptive = true, CFL 0.799, min_dt 1e-10 s, max_dt 1e-7 s, num_save 1000"
+ },
+ "launch": {
+  "tool": "abep-h1-envelope-cases run-shard (Rust launch: pin, input sha256, julia --version, nine-field sidecar), binary sha256 cac018bd2f75edb81f0b29e8a20ab3a36cf8b20d01dcb5bc1d1990523c8d3076, built at 64a078e",
+  "shards": "the 64 launch-manifest shards, family XE, through a resumable queue of 2 then 3 single-thread workers (one core left for other lanes); no shard failed, no case was rerun or dropped",
+  "utc_first_record": "2026-10-08T05:14:23Z",
+  "utc_last_record": "2026-10-08T07:10:05Z"
+ },
+ "runtime_measured": {
+  "total_cpu_h": 5.22,
+  "per_case_s": {"mean": 8.3, "median": 7.6, "max": 39.9},
+  "success_runs_s": {"n": 1376, "mean": 12.5, "median": 10.9},
+  "failed_runs_s": {"n": 892, "mean": 1.8, "median": 1.2},
+  "note": "the prereg runtime_estimate (~1-2 min per Xe run, 100-150 CPU-h for both families) was far above the measured Xe cost; the 892 solver failures end within seconds"
+ },
+ "freeze": "abep-h1-envelope-cases freeze (gzip mtime 0, records sorted by key); SHA256SUMS covers the raw file, its manifest and the 64 sidecars"
+}

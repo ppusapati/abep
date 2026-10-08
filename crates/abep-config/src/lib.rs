@@ -5,6 +5,7 @@
 //!   scenario only; requirement thresholds are assessment data ([`assessment`]).
 //! * [`builder`]: `abep-config build --check`, the byte-identical reproduction of `config/**` and `MANIFEST.json`
 //!   (port of `scripts/config/build_config.py`).
+//! * [`baseline`]: the frozen design baseline DBF-1 (A9.37), sha256-pinned with its lock (fail closed).
 //! * [`architecture`]: the active-architecture invariant (port of `abep_sim/design/a9_19_architecture.py`; contract
 //!   `C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY` v1): flight hollow cathode NONE, C1 ground test / reference only.
 //!
@@ -13,6 +14,7 @@
 
 pub mod architecture;
 pub mod assessment;
+pub mod baseline;
 pub mod builder;
 mod builder_readme;
 pub mod eval;

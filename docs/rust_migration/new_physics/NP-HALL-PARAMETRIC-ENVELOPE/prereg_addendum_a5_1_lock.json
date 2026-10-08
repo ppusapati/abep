@@ -1,0 +1,16 @@
+{
+ "id": "np_hall_parametric_envelope_addendum_a5_1_lock",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "addendum": "A5.1",
+ "locked": "2026-10-08",
+ "note": "sha256 of NP-HALL-PARAMETRIC-ENVELOPE addendum A5.1 (F7 cross-check tolerance of A5 Q-MDOT-DEL: max(4 ulp, 1e-9 relative) instead of bit for bit, after a 1-ulp refusal in the A5 input gathering and before any A5 evaluation), committed alone; A5 unchanged; any change after this lock is a new, dated addendum",
+ "base_commit": "29fec8e",
+ "predecessor_locks": {
+  "prereg_addendum_a5_lock.json": "d143fd4c97909f06717e1f993ee800bb3e6a610681acaf5fa30c7c715359b544"
+ },
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/",
+ "files": {
+  "prereg_addendum_a5_1_f7_crosscheck.json": "803b9eaaa1107fbabe00a128ac302c3c09ca4731a2d1015a9cbcf5f4e599c0da",
+  "PREREG_ADDENDUM_A5_1_F7_CROSSCHECK.md": "97cb6607541464b6437c71ea9ba87a78091e623aa4a76bbae87b30337e687fd4"
+ }
+}

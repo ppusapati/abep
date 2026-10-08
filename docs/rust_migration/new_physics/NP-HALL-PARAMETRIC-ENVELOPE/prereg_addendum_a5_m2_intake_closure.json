@@ -1,0 +1,179 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-HALL-PARAMETRIC-ENVELOPE/addendum_a5_m2_intake_closure",
+ "addendum": "A5",
+ "amends": "NP-HALL-PARAMETRIC-ENVELOPE v1 (prereg_v1.json 3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d, lock prereg_lock_v1.json 25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3), additively to addendum A2 (prereg_addendum_a2_m1_closure_paths.json 0c9a6b7b00fff125c9338b32c6b0426f8331b290e903a0e1ba6e3a2364e21aa4, lock 774bf7618e0afafa40fe252d782d3112c71f2958ed7fe51b33e9c5d3dba617dd) and addendum A4 (prereg_addendum_a4_conservation_bounds.json 7cd43c80188450b4563c5807b46b5866a39c19fe9b383dd3444cfe583b7668e1, lock 5a03333e9a18f9bd85fe7bf0359b81d541bf45a4c7c91f0b4e12076f5cb92dcc); v1, A1, A2, A4 and every committed record are not edited",
+ "sibling_addenda": {
+  "A1": "AIR family, unchanged",
+  "A2": "M1 closure-harness physics paths, unchanged (P-FLOW / NH-FLOW, GAS_PATH_ROBUST_SET_EMPTY and the joint point conditions stay as registered)",
+  "A3": "reserved for the Hall-run numerics check (not part of A5)",
+  "A4": "conservation bounds, unchanged (CA4, the A_eff,max registration item A4-REG-01 and every A4 code stay as registered); A5 reads the A4 per-state quantities as inputs"
+ },
+ "status": "PREREGISTERED_BEFORE_M2_AND_BEFORE_EVALUATION",
+ "status_label": "ACTUAL_DESIGN_EVALUATION / PARAMETRIC_SENSITIVITY / NOT_A_PERFORMANCE_PREDICTION",
+ "date": "2026-10-08",
+ "lane": "lane-m2-intake-a5",
+ "base_commit": "54b50d6",
+ "drafted_by": "agent session (M2 intake-closure lane) under the coordinator brief for addendum A5; under A9.34 there is no lane-level owner review; nothing here is an owner decision",
+ "mandate": "A9.35 (verbatim, docs/decisions/OD_2026_10_08_A9_35_A4_REG_01_OPEN_INTAKE_CLOSURE_RULE.md): 'A4-REG-01 remains open. Do not invent or freeze a maximum intake area. It does not block M1. Carry the conservation result forward: worst-state 12 mN requires >=0.251 m2 effective collection area and >=0.048 mg/s at the ideal 1.5 kW limit. M2 must evaluate the actual intake geometry, capture efficiency and delivered mass flow. If the current design fails, classify it DESIGN_VARIABLE_LIMIT unless a registered spacecraft-envelope bound proves no permissible intake can close it.' A9.34 (milestone governance; M2 follows M1). v1 change_control: a new, dated addendum registered before the evaluation it governs.",
+ "registered_before": "any A5 evaluation code and any A5 quantity on any design state. No A5 kernel or harness code exists at registration. The only numbers seen are those already committed: conservation_bounds_v1.json (A_req(12 mN) 0.00515..0.2511 m2, A_req(25 mN) 0.0218..1.0634 m2, mdot_req 4.796e-8 / 2.082e-7 kg/s, I-3 F7 frontier statewise-minimum delivered flow 1.296e-8 kg/s and captured 3.084e-8 kg/s), the committed F1 / F7 / F8 / F9 lane documents (F1 envelope-feasible intakes 24 of 144 per scenario, F7 Pareto members 1279, F8 robust set EMPTY) and closure_run_m1_dryrun_v1.json. A5 rules do not depend on them.",
+ "governing_records": {
+  "A9.35_md": {"path": "docs/decisions/OD_2026_10_08_A9_35_A4_REG_01_OPEN_INTAKE_CLOSURE_RULE.md", "sha256": "7175987a80ffc730c0b910091ec02929cb7930b47b7c4436a5edc772da59ade5"},
+  "A9.35_json": {"path": "docs/decisions/OD_2026_10_08_A9_35_a4_reg_01_open_intake_closure_rule.json", "sha256": "7efe01b9c0c6a95b12a0bd833ba5af0ea147f5aa74cd605113d0035242b4ef76"},
+  "A9.34_md": {"path": "docs/decisions/OD_2026_10_08_A9_34_MILESTONE_GOVERNANCE_M1_M2_M3.md", "sha256": "284a8339ac9d821d19f6484c844822662d9f19ec02d2074d641d432785df3de1"},
+  "A9.34_json": {"path": "docs/decisions/OD_2026_10_08_A9_34_milestone_governance_m1_m2_m3.json", "sha256": "f51f3d0179dfe4fa99a4c71afdec48a91dc1930ef93e8ddaf38d3d9ac1d36c89"},
+  "A9.31_verbatim": {"path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md", "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc"},
+  "A9.13_S6_md": {"path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md", "sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf"},
+  "v1_prereg": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json", "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d"},
+  "v1_lock": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_lock_v1.json", "sha256": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3"},
+  "A1": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a1_air_family.json", "sha256": "7d7a7ba91f382775a1eed842af83587b0f1fc5b762f85ef68022ac03d23c7b0d"},
+  "A1_lock": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a1_air_family_lock.json", "sha256": "35388e247ffdcc7af2a605e46f29d955ec29875893d3f7342e6411110f3d17a6"},
+  "A2": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a2_m1_closure_paths.json", "sha256": "0c9a6b7b00fff125c9338b32c6b0426f8331b290e903a0e1ba6e3a2364e21aa4"},
+  "A2_lock": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a2_lock.json", "sha256": "774bf7618e0afafa40fe252d782d3112c71f2958ed7fe51b33e9c5d3dba617dd"},
+  "A4": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a4_conservation_bounds.json", "sha256": "7cd43c80188450b4563c5807b46b5866a39c19fe9b383dd3444cfe583b7668e1"},
+  "A4_lock": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a4_lock.json", "sha256": "5a03333e9a18f9bd85fe7bf0359b81d541bf45a4c7c91f0b4e12076f5cb92dcc"},
+  "A4_record": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/conservation_bounds_v1.json", "sha256": "5146fe583343bf5de090a8baeecb812640754b7e579f0df69c78e54dd642689f"},
+  "M1_dry_run_v1": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/closure_run_m1_dryrun_v1.json", "sha256": "6de6422364e37675902ac8303ef077dc8fc56d56b74fc2e799ccebe5b904ba20"},
+  "CLAUDE.md": {"path": "CLAUDE.md", "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3"}
+ },
+ "pinned_inputs": {
+  "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854",
+  "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/parity_report_v1.json": "887c39ef80063123162160f12681ff5461a7a4a09d1cd181526d8db7c69d84da",
+  "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/reference_outputs/f7_pareto_blocks_v1.json.gz": "de6ee69f21d4e5b4daba6e1b8bed263598b950b19cae9da49d309ec4d7664f00",
+  "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY/parity_report_v1.json": "863dc697e86195ddc07c59c2dbe3dfacfd8ab54adb8f9b57e417485e991aef92",
+  "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY/reference_outputs/f8_study_v1.json.gz": "741703b917d36f9f00172de7a48dca80ff2f58ab7ed41263fb563823a5b3e595",
+  "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_report_v8.json": "3f427a54dd5cecc002539b2537d1052d5e4e33c66bc1ba1219a0558e4abaa8d7",
+  "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json": "c8d4455d364ade56b3431218f03a6cfe57e5df7c64e3491febcb41475d42a11c",
+  "config/constraints/engineering_constraints_v1.json": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+  "config/assessment/gate_thresholds_v1.json": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+  "note": "the F3 / F4 / F5 / F6 / P3 / P4 / mass-power lane deliverables, the design-state set v2 and the envelope atmospheres are read through abep_design::inputs::load_upstream_inputs, which verifies their own pins (abep_design::inputs::PINNED, abep_data FrozenPins, abep_mission::intake_drag); the A2 and A4 harness inputs are read under their own pins"
+ },
+ "principle": [
+  "evaluate the ACTUAL registered intake geometry, its capture efficiency and the delivered mass flow with the admitted chain; never invent a design point, never invent or freeze a maximum intake area (A4-REG-01 stays OPEN)",
+  "the comparison is a NECESSARY condition: every requirement A5 uses is the A4 conservation requirement at its favorable limit (eta = 1 thruster, P_avail = HC-03 - P_nonHall,LB,eligible, energy inflow bound); a design that meets it establishes nothing; a design that misses it cannot meet the RFP thrust requirement at that state under any chemistry or transport",
+  "a failure of the current intake / gas-path design is a DESIGN_VARIABLE_LIMIT (A9.35, A9.31 sec. 21), never PHYSICALLY_NON_CLOSING; the only route by which a registered spacecraft-envelope bound proves that no permissible intake can close is A4 step CA4 on a FROZEN intake_effective_collection_area_max_m2, unchanged",
+  "surface scenarios (alpha x Maxwell / CLL) are TBD evidence and are never chosen (A9.13 S6.16): a failure finding must hold in EVERY admitted scenario; a pass needs every scenario; anything else is SCENARIO_DEPENDENT",
+  "physics / assessment separation (A9.22, A2 R7): capture and delivered flow come from the admitted physics producers as raw values; requirements and comparisons live in abep-assess only",
+  "not a flight mass-flow requirement (A9.13 S6.21): mdot_req is the A4 conservation lower bound, not an AG-12 value; nothing is relaxed, nothing is selected (A9.13 S6.20)"
+ ],
+ "design_identification": {
+  "current_design": {
+   "finding": "NONE_SELECTED: no registered record names a current, selected or frozen intake design",
+   "records": [
+    "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json AFC-UP-IN-01 (intake frontal (ram) area A): PARETO_SET, robust_set_status EMPTY_ROBUST_SET_NOT_EVALUATED, nominal Pareto union {0.25} m2, 'n/a (Pareto set; no member selected)', freeze status OPEN; AFC-UP-IN-04..IN-10 (d, structure, alpha / kernel, pointing, T_wall, drag, mass) OPEN or TBD_AFTER_EVIDENCE",
+    "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY/reference_outputs/f8_study_v1.json.gz carried_robust_set: members [], representative 'REFUSED RepresentativeSelectionRefused: A9.13 S6.20'",
+    "A9.13 S6.20 (F9-OQ-01): carry the robust Pareto set, defer representative selection; downstream studies that need a single point evaluate all remaining Pareto members or label one as an engineering reference",
+    "docs/design_synthesis/f1_intake/F1_INTAKE_SYNTHESIS.md: status INVESTIGATION_HYPOTHESIS, DESIGN_SYNTHESIS_SCREENING_NOT_A_SELECTION",
+    "docs/hardware/h2/h2_7_mechanical_bom/H2_7_MECHANICAL_BOM.md R01 intake: BLOCKED on DI-1.1 / DI-1.2 (intake area sizing rule and geometry); no intake in config/hardware/**"
+   ],
+   "consequence": "A5 evaluates every registered design set below and names none of them current"
+  },
+  "design_sets": {
+   "DS-F1-GRID": {
+    "what": "the F1 intake design grid: frontal area A in F1-P-16 {0.25, 0.5, 0.75, 1.0, 1.25, 1.5} m2 x L/d in {3, 5, 10, 20} x phi in {0.8, 0.9} (F1-P-18); the channel diameter d (F1-P-17) is collapsed because every TPMC output is d-invariant at fixed L/d (finding F1-02): 48 candidates",
+    "scenarios": "the 10 F1 surface scenarios (alpha in {0, 0.2, 0.5, 0.8, 1} x {maxwell, cll}), theta 0",
+    "states": "the 196 required states of the design-state set v2 (the F1 design-case reference h200_f150 is carried by the chain but is not a required state)",
+    "producer": "abep_design::inputs::load_upstream_inputs (the admitted F7 consumer view of the sha-pinned F1 core: IF-A1 unit-area records x A, per-state F1 feasibility with its C-DRAG-RFP / MODEL_ERROR reasons carried unchanged)",
+    "role": "information for the candidates outside DS-F1-ADMISSIBLE (label DESIGN_GRID_INFORMATION)"
+   },
+   "DS-F1-ADMISSIBLE": {
+    "what": "per scenario, the DS-F1-GRID candidates that are FEASIBLE_AT_STATE at every required state (F1 envelope feasibility: hard constraints C-CONV and C-DRAG-RFP), i.e. the intakes the admitted F7 chain can carry as one hardware across all states",
+    "area_limit_rule": "if intake_effective_collection_area_max_m2 is registered with status FROZEN, candidates with A above it are excluded (OUTSIDE_REGISTERED_AREA_LIMIT); PROVISIONAL marks them without excluding; not registered today (A4-REG-01 OPEN), so nothing is excluded on area"
+   },
+   "DS-F7-PARETO": {
+    "what": "every member of the admitted F7 Pareto blocks (f7_pareto_blocks_v1.json.gz): a design vector (intake candidate, filter case, compressor design, plenum volume V, set pressure P_set) in its context (scenario, filter, wall case, P_set) with its context role (ARCHITECTURE_CONTEXT or REFERENCE_BOUND_FC00_NOT_ADMISSIBLE)",
+    "why_sufficient": "mdot_delivered_min_kgps is a maximized F7 objective, so within each context the largest statewise-minimum delivered flow over every feasible vector is attained by a Pareto member (weak dominance); dominated vectors are not registered designs"
+   },
+   "DS-F8": {
+    "what": "the F8 carried robust set (admissible hardware of A2 P-FLOW, carried unchanged; EMPTY today) and, per F7 member, its F8 status: ROBUST_MEMBER, F8_SURVIVOR_NOT_ROBUST (n_scenarios_feasible, infeasible_in and the per-scenario reasons of f8_study.scenario carried unchanged) or NOT_AN_F8_SURVIVOR; the F8 decomposition is carried unchanged"
+   }
+  }
+ },
+ "inputs": {
+  "IN-A4": "per state (harness order) from the A4 outcome of the same harness run: Phi_max(s), q_max(s), Phi_adm(s) = rho V, P_avail(s, AIR) = HC-03 - P_nonHall,LB,eligible(s, AIR), A_req(s, T) and mdot_req(T, P_avail) for T = HC-01 (12 mN) and HC-02 (25 mN); a state whose A4 AIR quantities are not evaluated is NOT_EVALUATED in A5 with the A4 codes",
+  "IN-ENV": "per state: n_O, n_N2, n_O2, admitted V (the A4 IN-ENV inputs, already cross-checked against the mission run hook)",
+  "IN-F1": "DS-F1-GRID records (abep_design::inputs::load_upstream_inputs); the F1 required state ids must equal the harness state ids as a set (every harness state has an F1 record of every candidate and scenario), otherwise MODEL_ERROR; A5 reports in harness order",
+  "IN-F7": "the F7 Pareto members (pinned gz) and, for each, the admitted chain inputs it names (F1 records of its candidate and scenario, filter case, compressor plant, plenum of (V, wall))",
+  "IN-F8": "the F8 study (pinned gz): carried_robust_set, survivors, scenario, and the F8 report decomposition_rust",
+  "IN-AREA-LIMIT": "the A4 IN-AREA-LIMIT exactly as A4 reads it (intake_effective_collection_area_max_m2); A5 never reads an area limit from anywhere else and never supplies one",
+  "IN-HALL": "the Hall envelope points of the AIR family as ingested by A1 / A2 (none today)"
+ },
+ "quantities": {
+  "Q-AEFF": {"symbol": "A_eff(d)", "units": "m^2", "definition": "the A4 effective collection area (B-FLOW area_definition) of design d. No spacecraft surface ahead of or beside the intake is registered (OQ-F78-04 open; H2-7 HI-05 / R01), so it reduces to the aperture's projected area at theta 0: A_eff(d) = A(d) (F1-P-16)", "label": "AREA_EFF_EQUALS_APERTURE_NO_SPACECRAFT_GEOMETRY_REGISTERED"},
+  "Q-MDOT-CAP": {"symbol": "mdot_cap(d, sc, s)", "units": "kg/s", "definition": "sum over O, N2, O2 of the forward-transmitted (captured) flow eta_c,i rho_i V A of the F1 IF-A1 record (direct TPMC, theta 0) of candidate d in scenario sc at state s; the species mass fractions are reported", "producer": "IntakeState.mdot_fwd_kgps (abep_design::inputs)"},
+  "Q-ETA": {"definitions": {
+   "eta_c": "mdot_cap / (A sum_{O,N2,O2} n_i m_i V_adm): capture efficiency on the F1 species basis (the F1 / intake_tpmc definition, mass-weighted), with the admitted free stream",
+   "eta_tot": "mdot_cap / (A Phi_adm): fraction of the total admitted free-stream mass flux (the unspeciated remainder counts as not captured)",
+   "eta_vs_bound": "mdot_cap / (A Phi_max): fraction of the A4 favorable one-sided flux bound"
+  }, "units": "1"},
+  "Q-ACAP": {"symbol": "A_cap,eq(d, sc, s)", "units": "m^2", "definition": "mdot_cap / Phi_max(s): the area an ideal (eta_cap = 1, Phi_max) collector would need to capture the same flow; the currency of the A4 required area"},
+  "Q-MDOT-DEL": {"symbol": "mdot_del(h, s), x_i(h, s)", "units": "kg/s; mole fraction", "definition": "delivered flow and its O / N2 / O2 mole fractions of F7 member h at state s after filter, compressor and plenum (steady), from the admitted chain: abep_gaspath::plenum_feed::intake_side and steady_sweep with abep_design::optimizer::plenum on the member's F1 records, one target P_set; the plenum / feed steady values are the admitted F7 reproduction of the governed Python reference capture (A2 R2; v8 PARITY_FAIL stands; no transient)", "cross_check": "fail closed: every state of the member is in domain (sweep bits 0) and the minimum over the F7 state list equals the member's committed mdot_delivered_min_kgps bit for bit; otherwise MODEL_ERROR"},
+  "Q-MDOT-REQ-IN": {"symbol": "mdot_req,in(d, s, T)", "units": "kg/s", "definition": "A4 K-MDOT-REQ at P_avail(s, AIR) + q_max(s) A(d): the smallest flow that could give T with the electric power plus the A4 bound on the energy the design's own captured gas carries in; it is below the A9.35 carried-forward value mdot_req(T, P_avail) (electric power only), which is reported alongside", "role": "the binding flow requirement of L-CAP and L-DEL (favorable to the design, so a failure is robust)"}
+ },
+ "comparisons": {
+  "L-AREA": {"test": "A_eff(d) >= A_req(s, T)", "basis": "A4 B-THRUST at eta_cap = 1, Phi_max, q_max: necessary for any design of that area", "designs": "DS-F1-ADMISSIBLE"},
+  "L-CAP": {"test": "mdot_cap(d, sc, s) >= mdot_req,in(d, s, T)", "basis": "B-FLOW mdot_jet <= mdot_cap with the design's TPMC capture", "designs": "DS-F1-ADMISSIBLE"},
+  "L-DEL": {"test": "mdot_del(h, s) >= mdot_req,in(h, s, T)", "basis": "B-FLOW mdot_jet <= mdot_del", "designs": "failure: every DS-F7-PARETO member of the scenario, including the REFERENCE_BOUND_FC00_NOT_ADMISSIBLE contexts (favorable: no filter); pass: only an F8 robust member (DS-F8) - with the robust set EMPTY no L-DEL pass is ever claimed (GAS_PATH_ROBUST_SET_EMPTY, carried from A2)"},
+  "L-HALL": {"test": "information only: per state and Hall test, mdot of the smallest-flow AIR envelope point passing the test (at P_nonHall,LB) against the best mdot_cap and mdot_del; and the v1 envelope grid floor (MF-LO)", "rule": "never a verdict; the joint flow condition stays A2 NH-FLOW", "today": "NOT_EVALUATED (no AIR Hall envelope ingested; the AIR codes of the harness)"},
+  "requirements": "T in {HC-01 = 12 mN (sustained), HC-02 = 25 mN (capability)}, both per state as in the v1 / A1 Hall point tests (A4 uses existence for T25 only for its own non-closure claim)"
+ },
+ "margins": {
+  "multipliers": {
+   "k_area(d, s, T)": "A_req(s, T) / A_eff(d)",
+   "k_acap(d, sc, s, T)": "A_req(s, T) / A_cap,eq(d, sc, s)",
+   "k_cap(d, sc, s, T)": "mdot_req,in(d, s, T) / mdot_cap(d, sc, s)",
+   "k_del(h, s, T)": "mdot_req,in(h, s, T) / mdot_del(h, s)",
+   "rule": "the factor by which the design's area or flow must grow to meet the necessary condition (<= 1 passes); a scenario with no design of the set has no multiplier (NO_DESIGN_IN_SCENARIO); a delivered flow <= 0 at a state fails with an unbounded multiplier (reported null, INFINITE)"
+  },
+  "per_state": "per level and T: k_fav(s) = the minimum over scenarios of the best (smallest) design multiplier in that scenario, k_unfav(s) = the maximum over scenarios of that best multiplier, with the design and scenario attaining them",
+  "worst_state": "per level and T: the required state with the largest k_fav(s); reported with A_eff, eta_c, eta_tot, mdot_cap, mdot_del and the requirement there",
+  "per_design": "per design (and scenario): its worst state (largest multiplier), the multiplier there, the number of failing required states, and the values at the worst state",
+  "required_multiplier": "the per-level worst-state k_fav is the margin to closure of the registered design set (how far the best registered design is from the ideal necessary condition)"
+ },
+ "statewise": {
+  "state_verdict": "per (level, T, required AIR state): FAILS_IN_EVERY_SCENARIO iff in every scenario no design of the level's set passes (a scenario without designs fails); PASSES_IN_EVERY_SCENARIO iff in every scenario some admissible design passes (L-AREA / L-CAP only; information, nothing established); for L-DEL a non-failing state is NOT_ESTABLISHED_ROBUST_SET_EMPTY while DS-F8 is empty; otherwise SCENARIO_DEPENDENT (MISSING_EVIDENCE: DI-1.3 surface accommodation); NOT_EVALUATED when the state's A4 AIR inputs are not evaluated",
+  "one_hardware": "per (level, T, scenario): the design set closes the level iff one design passes at every required state (A2: one hardware across all states); aggregated over scenarios: NECESSARY_CONDITION_MET_IN_EVERY_SCENARIO (information) / FAILS_IN_EVERY_SCENARIO / SCENARIO_DEPENDENT; reported, never a cell constraint (the per-state verdict carries the cell effect)"
+ },
+ "classification_effect": {
+  "cell_constraint": "at a required AIR_PRIMARY state s where some level (L-AREA, L-CAP, L-DEL) is FAILS_IN_EVERY_SCENARIO for T12 or T25, the layer (a) cell gains the constraint A5-NH-INTAKE: status NON_CLOSING, eligible_close false, eligible_non_close false, codes A5_<LEVEL>_BELOW_REQUIRED_<T> for every failing (level, T): A5_AREA_BELOW_REQUIRED_T12 / _T25, A5_CAPTURE_BELOW_REQUIRED_T12 / _T25, A5_DELIVERED_BELOW_REQUIRED_T12 / _T25, each of A9.31 sec. 21 category DESIGN_VARIABLE_LIMIT",
+  "cell_status": "a cell that is PHYSICS_NON_CLOSING by an eligible constraint (A4 CA4, an eligible v1 / A2 non-closure) stays so; otherwise it is NOT_DETERMINABLE and the A5 codes join its blocker list (C1 / C4 tallies, dominant-blocker order by category)",
+  "never_eligible": "A5-NH-INTAKE never supports PHYSICALLY_NON_CLOSING (C2 / CA4) and never closes (C3): A9.35 classifies a failing current design DESIGN_VARIABLE_LIMIT. A registered spacecraft-envelope bound proving that no permissible intake can close is exactly A4 CA4 on a FROZEN intake_effective_collection_area_max_m2; none is registered (A4-REG-01 OPEN) and A5 adds no other route",
+  "no_effect": "PASSES_IN_EVERY_SCENARIO, SCENARIO_DEPENDENT, NOT_ESTABLISHED_ROBUST_SET_EMPTY and NOT_EVALUATED add no constraint and no blocker",
+  "procedure": "C0, CA4, C1, C2, C3, C4 unchanged (A2 / A4); A5 enters only through the per-cell constraint list of required AIR cells; XE_CONTINGENCY is NOT_APPLICABLE (stored Xe, no intake)",
+  "a2_a4_unchanged": "A2 NH-FLOW (GAS_PATH_ROBUST_SET_EMPTY), the joint point conditions and every A4 verdict and code are computed exactly as before; the dry-run v1 record is the harness without A5"
+ },
+ "codes": {
+  "A5_AREA_BELOW_REQUIRED_T12": "DESIGN_VARIABLE_LIMIT",
+  "A5_AREA_BELOW_REQUIRED_T25": "DESIGN_VARIABLE_LIMIT",
+  "A5_CAPTURE_BELOW_REQUIRED_T12": "DESIGN_VARIABLE_LIMIT",
+  "A5_CAPTURE_BELOW_REQUIRED_T25": "DESIGN_VARIABLE_LIMIT",
+  "A5_DELIVERED_BELOW_REQUIRED_T12": "DESIGN_VARIABLE_LIMIT",
+  "A5_DELIVERED_BELOW_REQUIRED_T25": "DESIGN_VARIABLE_LIMIT",
+  "A5_SCENARIO_DEPENDENT": "MISSING_EVIDENCE (information; DI-1.3)",
+  "A5_NO_DESIGN_IN_SCENARIO": "INFORMATION",
+  "A5_OUTSIDE_REGISTERED_AREA_LIMIT": "INFORMATION",
+  "A5_NECESSARY_CONDITION_MET_NOTHING_ESTABLISHED": "INFORMATION",
+  "A5_NOT_APPLICABLE_STORED_XE": "INFORMATION",
+  "A4_AREA_LIMIT_NOT_REGISTERED": "MISSING_EVIDENCE (A4; carried: A4-REG-01 OPEN)",
+  "GAS_PATH_ROBUST_SET_EMPTY": "DESIGN_VARIABLE_LIMIT (A2; carried)"
+ },
+ "record": {
+  "harness": "harness v2 gains A5 additively: M1Inputs carries the A5 inputs, M1Outcome the A5 outcome, required AIR cells gain A5-NH-INTAKE by the rule above, and the v2 record gains a summary block intake_closure_a5",
+  "standalone": "abep-assess-closure --harness v2 --intake-closure --out docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/intake_closure_a5_v1.json (schema abep_assess_intake_closure_a5_v1): design identification, design sets, per-state requirements and level verdicts with k_fav / k_unfav and the attaining design, worst states, per-design rows (DS-F1-GRID x scenario; DS-F7-PARETO with its F8 status and worst-state delivered flow and composition), the F8 decomposition carried unchanged, the classification effect; units, provenance and status on every field",
+  "dry_run": "abep-assess-closure --harness v2 --run-label M1_DRY_RUN_NOT_DECISIVE --out closure_run_m1_dryrun_v2.json: a NEW record; closure_run_m1_dryrun_v1.json stays immutable"
+ },
+ "fail_closed": [
+  "any A5, A4, A2, A1 or v1 file whose sha256 differs, or a lock mismatch, refuses the record (MODEL_ERROR, exit 4)",
+  "an F1 state list that differs from the harness state list, a missing F1 record, an F7 member whose chain inputs are absent, an out-of-domain state of an F7 member or a statewise minimum that differs from the committed mdot_delivered_min_kgps refuses the record (MODEL_ERROR)",
+  "a non-finite or non-positive A, mdot_cap, Phi or requirement at an evaluated state refuses the record (MODEL_ERROR); a state whose A4 AIR inputs are not evaluated is NOT_EVALUATED, never a pass and never a failure",
+  "SYNTHETIC test inputs carry SYNTHETIC_TEST_DATA_NOT_EVIDENCE and never appear in a committed record"
+ ],
+ "verification": [
+  "analytic: mdot_req,in at q = 0 equals the A4 mdot_req; the multipliers invert the tests (k <= 1 iff the test passes); A_cap,eq = A when mdot_cap = Phi_max A; eta_c = 1 for a synthetic record capturing the whole O / N2 / O2 flux",
+  "fail-closed: a state without evaluated A4 inputs is NOT_EVALUATED and adds nothing; a tampered pin refuses; an F7 cross-check mismatch refuses",
+  "classification: a synthetic design set that fails in every scenario adds A5-NH-INTAKE with DESIGN_VARIABLE_LIMIT codes and never PHYSICALLY_NON_CLOSING; scenario-dependent and passing sets add nothing; a FROZEN synthetic area limit excludes larger candidates and, below A_req, CA4 still decides first; XE untouched",
+  "determinism: identical inputs give a byte-identical record; the committed records regenerate byte for byte"
+ ],
+ "determinism": "no random input; closed-form comparisons over committed records and the admitted steady chain; BTreeMap order and fixed float formatting",
+ "change_control": "any change after the lock is a new, dated addendum registered before the evaluation it governs; results seen under A5 cannot justify changing it. Registering A_eff,max (A4-REG-01, an owner / requirements item) or new design sets (an F1 / F7 / F8 regeneration) is an input change: the harness consumes it without a code change"
+}

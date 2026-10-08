@@ -5386,3 +5386,223 @@ Lane `lane-hall-chem-air`, base `b730764`.
   - Every other TOML keeps the original check.
 - **Unchanged:** abep-n2n-0.11, the N2 configurations and validity file, the audit snapshots, the P5-N2 records,
   `bridge_lib.jl`, HallMap admission, the credible set (EMPTY), and the HallThruster.jl pin.
+
+## 2026-10-08 — M1 closure integration: NP-HALL-PARAMETRIC-ENVELOPE addendum A2, closure harness v2 consuming every required physics path, M1 readiness, dry run (no Hall run; no admitted / scored result changed)
+
+- **A2** (`c797ee6`, committed alone before any harness v2 code or M2 execution):
+  - Files: `prereg_addendum_a2_m1_closure_paths.json` `0c9a6b7b…`, `PREREG_ADDENDUM_A2.md` `8fe091b4…`, lock
+    `774bf761…`.
+  - Under the coordinator rulings R1..R7 it registers 13 paths, the treatment of each, its status labels and how it
+    feeds C0..C4. C0..C4 and the A9.32 rules are unchanged.
+  - Non-Hall non-closures are never eligible, with two exceptions: the v1 bus lower bound (admitted / verified loads
+    only) and an evaluated CBE mass lower bound.
+- **Code** (`99a1a35`, `cab9030`; additive):
+  - `abep_assess::closure_m1` (gather / evaluate / record), with `abep-assess-closure --harness v2` and `--readiness`.
+    The v1 harness and record are unchanged.
+  - `abep_icp::v2::cpl::HallMemberSource::ParametricEnvelope` (R1).
+  - `abep_hall::envelope::EnvelopePoint::ion_current_a`.
+  - `abep_subsystems::power::official::ledger_with_loads`; `official_ledger` delegates to it, outputs unchanged.
+  - abep-assess gains serde_json (now a normal dependency) and abep-chem (Hall AIR admission state).
+- **A1 naming:** A2 named A1 by `addendum_01_air_family` (`4988bdfd…`). That record was superseded before any AIR run by
+  `prereg_addendum_a1_air_family` (`7d7a7ba9…`, merged here). The harness reads A1 proper and requires its
+  `supersedes` to name the A2 identity. A1's LP-BOUNDED path is information only (AIR_CHEMISTRY_BOUNDED_NOT_COMPLETE).
+- **Readiness:** none of the 13 paths is BLOCKED.
+  - AWAITING_INPUT: P-HALL-XE (HALL_ENVELOPE_NOT_RUN); P-HALL-AIR (AIR set abep-air-0.7 INCOMPLETE_EVIDENCE, no
+    envelope); P-FEED-STABILITY (robust set EMPTY, no registered controller); P-THERMAL (no flight thermal case,
+    NE-01 / NE-02).
+- **Dry run** (`closure_run_m1_dryrun_v1.json`, today's inputs, M1_DRY_RUN_NOT_DECISIVE): NOT_DETERMINABLE (C1).
+  - 0 / 196 states are physics-feasible in layer (a); 0 are evidence-qualified in layer (b). P_nonHall,LB is 0 W.
+  - Binding finding: GAS_PATH_ROBUST_SET_EMPTY (F8, admitted, carried unchanged; DESIGN_VARIABLE_LIMIT). It binds AIR
+    NH-FLOW at all 196 states.
+  - The F7 delivered-flow frontier (statewise minimum, best Pareto member) is 0.01296 mg/s, which is 0.034 × the
+    lowest Hall grid flow (0.377 mg/s).
+- **Consequence of A2 as registered:** SELECT_WITH_EVIDENCE_CONDITIONS cannot be reached until three things exist:
+  - the host-spacecraft drag ICD, with a T − D addendum (NH-TD);
+  - a registered H-1 Xe flow (XE NH-FLOW);
+  - a complete bus ledger.
+
+  C1, C2 and C4 remain reachable. The 12 / 25 mN tests are evaluable on their own.
+- **Tests:** `tests/closure_m1.rs` (23) covers today's run, readiness, determinism, synthetic XE / AIR chains to C0 /
+  C1 / C2 / C3 / C4 and the joint branch, per-path fail-closed checks and pins. There are also a parametric CPL test
+  and a `ledger_with_loads` test.
+
+## 2026-10-08 — Conservation bounds: NP-HALL-PARAMETRIC-ENVELOPE addendum A4 (B-FLOW, B-THRUST, B-DRAG), harness v2 step CA4, record on the 196 states (no admitted / scored result changed)
+
+- **A4** (`419393f`, committed alone before any kernel, harness code or evaluation):
+  - Files: `prereg_addendum_a4_conservation_bounds.json` `7cd43c80…`, `PREREG_ADDENDUM_A4_CONSERVATION_BOUNDS.md`
+    `15b853e5…`, lock `5a03333e…`.
+  - Bounds from conservation plus registered inputs only (no chemistry, no transport, no design grid):
+    ṁ_cap ≤ Φ_max(s) A_eff,max (η = 1); T ≤ √(2ṁP) + P/c with P = HC-03 − P_nonHall,LB,eligible + the captured energy
+    inflow; D ≥ ṁ U (bulk).
+  - The RFP 12 / 25 mN requirement is gross thrust (RVM-02 / RVM-03 text). T − D is HC-08, so B-DRAG is information
+    only.
+  - Eligible non-closure only with a FROZEN registered A_eff,max. For this bound only, A4 supersedes A1 / A2 "never
+    NON_CLOSING". The new step CA4 sits between C0 and C1.
+- **Code** (`63e9f20`, additive):
+  - `abep_mission::conservation_bounds`: kernels.
+  - `abep_assess::closure_m1::{conservation, conservation_record}`.
+  - `M1Inputs.a4` and `M1Outcome.a4`.
+  - `abep-assess-closure --harness v2 --conservation-bounds`.
+  - The v2 record gains the `conservation_bounds_a4` block. The dry-run classification and readiness are unchanged.
+- **Record** `conservation_bounds_v1.json` (+ `.md`): 196 / 196 states EVALUATED.
+  - No intake-area limit is registered anywhere, so AIR B-FLOW / B-THRUST is NOT_EVALUATED; XE has no route;
+    classification unchanged (C1).
+  - Φ_max is 1.90e-7 to 9.24e-6 kg m⁻² s⁻¹ (1.017 to 1.092 × ρV). ṁ_req is 0.048 mg/s (12 mN) and 0.208 mg/s (25 mN)
+    at 1500 W.
+  - A_req(12 mN) is 0.0051 to **0.251 m²**; A_req(25 mN) is **0.022** to 1.063 m². Worst state
+    `ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184`.
+  - Registration item A4-REG-01: a FROZEN `intake_effective_collection_area_max_m2` below 0.251 m² makes AIR
+    PHYSICALLY_NON_CLOSING; below 0.022 m², 25 mN fails everywhere.
+  - Information: the F7 frontier flow gives T_max 6.24 mN delivered and 9.62 mN captured, both < 12 mN (never
+    eligible).
+- **Tests:** `abep-mission/tests/conservation_bounds.rs` (9) and `abep-assess/tests/conservation_bounds_a4.rs` (15),
+  including a byte-identical regeneration of the committed record.
+
+## 2026-10-08 — A9.35 owner decision recorded: A4-REG-01 open, intake closure rule for M2
+
+- **What:** owner ruling recorded verbatim as `docs/decisions/OD_2026_10_08_A9_35_A4_REG_01_OPEN_INTAKE_CLOSURE_RULE.md` (sha256 `7175987a80ffc730c0b910091ec02929cb7930b47b7c4436a5edc772da59ade5`), with companion `docs/decisions/OD_2026_10_08_A9_35_a4_reg_01_open_intake_closure_rule.json`.
+- **A4-REG-01:** stays open; no maximum intake area is invented or frozen; it does not block M1.
+- **Carried forward:** worst-state 12 mN needs ≥ 0.251 m² effective collection area and ≥ 0.048 mg/s at the ideal 1.5 kW limit.
+- **M2:** evaluates the actual intake geometry, capture efficiency and delivered mass flow. A failing current design is classified DESIGN_VARIABLE_LIMIT unless a registered spacecraft-envelope bound proves no permissible intake can close it.
+- **Governance:** continue M1; no owner review until the M1 milestone audit.
+
+## 2026-10-08 — M2 intake closure: NP-HALL-PARAMETRIC-ENVELOPE addendum A5 (+ A5.1), registered intake designs against the A4 required area / flow, dry run v2 (no admitted / scored result changed)
+
+- **A5** (`29fec8e`, committed alone before any A5 code or evaluation): `prereg_addendum_a5_m2_intake_closure.json`
+  `45e6013d…`, `PREREG_ADDENDUM_A5_M2_INTAKE_CLOSURE.md` `27195ed9…`, lock `d143fd4c…`. It encodes A9.35.
+  - No current intake design is registered: AFC-UP-IN-01 is a Pareto set with the robust set EMPTY, the F8
+    representative is REFUSED (A9.13 S6.20) and H2-7 R01 is BLOCKED. A5 therefore evaluates every registered set: the
+    F1 grid (48 d-collapsed candidates × 10 surface scenarios), its F1-admissible subset, the 1279 F7 Pareto members
+    and their F8 status.
+  - It compares, per state, T12 / T25 and scenario, A_eff = A, the TPMC captured flow and the delivered flow with the
+    A4 A_req and ṁ_req,in. These are necessary conditions.
+  - A level that fails in every scenario at a required AIR state adds A5-NH-INTAKE: DESIGN_VARIABLE_LIMIT, never
+    eligible. The only non-closure route stays A4 CA4 on a FROZEN area limit, and A4-REG-01 stays OPEN.
+- **A5.1** (`187a711`, registration correction, committed alone): the first run refused in input gathering because an
+  F7 member's rerun statewise minimum differed by 1 ulp from the committed Python capture. The F7 contract is
+  ULP_BOUNDED (max 24 ulp), not bit for bit, so the cross-check is now max(4 ulp, 1e-9 relative). No A5 quantity had
+  been computed.
+- **Code** (`e8a9dcd`, additive): `abep_assess::closure_m1::{intake, intake_record}`, `M1Inputs.a5` and
+  `M1Outcome.a5`, `abep-assess-closure --harness v2 --intake-closure`, and a new dependency abep-assess → abep-design
+  (reuse only). The A2 synthetic tests and the v1 dry-run check run the harness without A5.
+- **Record** `intake_closure_a5_v1.json`, against A9.35's carry-forward (worst state
+  `ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184`, A_req 0.2511 m², ṁ_req 0.048 / 0.208 mg/s):
+  - The F1-admissible intakes are the 8 A = 0.25 m² candidates in every scenario. C-DRAG-RFP excludes every larger
+    area.
+  - At the worst state, the best captured flow is 0.0418 mg/s (η_tot 0.90, A_cap,eq 0.220 m²). The best delivered flow
+    of an F7 member is 0.01296 mg/s.
+  - Worst-state multipliers (most / least favorable scenario):
+    - area: 1.004 (T12), 4.25 (T25);
+    - capture: 1.14 / 1.35 (T12), 4.94 / 5.85 (T25);
+    - delivered: 3.67 (T12), 15.9 (T25).
+  - One-hardware closure fails in every scenario at every level.
+  - Information: the grid areas of 0.5 m² and above would meet the T12 area and capture conditions at every state,
+    but C-DRAG-RFP excludes them (26.7 mN at ECSS_LT_HIGH 180 km for 0.5 m²).
+  - The F7 cross-check passes: 37 of 1279 minima are not bit-identical, at most 24 ulp.
+- **Dry run v2** `closure_run_m1_dryrun_v2.json` (M1_DRY_RUN_NOT_DECISIVE, v1 immutable): NOT_DETERMINABLE, C1.
+  - 54 required AIR cells carry A5-NH-INTAKE:
+    - A5_AREA_BELOW_REQUIRED_T12 1, _T25 26;
+    - A5_CAPTURE_BELOW_REQUIRED_T12 3, _T25 33;
+    - A5_DELIVERED_BELOW_REQUIRED_T12 11, _T25 54.
+  - Every one is DESIGN_VARIABLE_LIMIT. CA4 did not fire, and the A4 verdicts are unchanged.
+- **Tests:** `abep-assess/tests/intake_closure_a5.rs` (15): analytic, fail-closed, SYNTHETIC classification
+  (DESIGN_VARIABLE_LIMIT, scenario rule, CA4 first), pins, determinism, and byte-identical regeneration of both
+  committed records.
+
+## 2026-10-08 — H1 Hall envelope run (M1): XE grid run and frozen; A3 numerics A3_NOT_ADEQUATE (XE and AIR); A6 convergence study STOP
+
+Lane `lane-hall-envelope-runs` (A9.32 / A9.33 / A9.34). Everything here is PARAMETRIC / NOT_VALIDATED. The credible set
+stays EMPTY and nothing enters layer (b).
+- **Install.** Julia 1.11.7 from julialang-s3 (published checksum verified), at `/opt/julia-1.11.7`, depot
+  `/opt/julia-depot`. `hallthruster_bridge/` was instantiated from the committed Manifest without resolve; the checkout
+  stayed unchanged. HallThruster.jl v0.23.1 `bfb3019f`: check_pin passes, and the installed tree hash `7505b3a2…` equals
+  the Manifest git-tree-sha1 and the pinned commit's tree. Threads / BLAS 1 in every run.
+- **Prereg addendum A3, numerics adequacy (RG-04)** (`ca1b895e…`, lock `b840f1b0…`, committed alone before any refined
+  run or grid case beyond smoke).
+  - Check set: 17 seeded XE cases (16 domain corners on the shortest / longest domain, 1 centre).
+  - Refinements: R1 = 2 × cells (also refines the CFL-limited step; the solver steps adaptively) and R3 = 2 × duration.
+  - Criteria: status and quiet class identical; thrust and I_d within 2 %. A margin tier allows up to 10 %.
+  - AIR is covered by reference; N2_PROXY is not covered.
+- **A3 result, scored once: A3_NOT_ADEQUATE** (`a3_numerics_result_v1.json`).
+  - 12 of 34 comparisons fail. Three status flips, including PASS → NUMERICAL_FAILURE under both refinements.
+  - δ_T = 209 % and δ_I = 28.7 % (R1, `XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-350|MF-HI|sgb-screen-08`).
+  - Registered consequence: every XE PASS / NOT_SUSTAINED point is NUMERICS_NOT_CONVERGED, an unknown that is never
+    feasible and never an evaluated non-closure. v1 records and numerics are unchanged.
+  - The overlay is implemented in `abep_hall::envelope::a3_overlay` and `abep_assess::closure::evaluate_hall_test_a3`
+    (additive; the v1 functions are unchanged).
+- **XE grid** (2268 cases, 64 shards through the Rust launch, 2–3 single-thread workers). Frozen raw `40198e0f…`,
+  manifest `b9efec88…`, under `runs/xe_v1/`. 5.2 CPU-h in total, 8.3 s mean per case.
+  - Statuses: PASS 1287, NOT_SUSTAINED 89, NUMERICAL_FAILURE 892, OUT_OF_DOMAIN 0.
+  - The 17 A3 R0 records equal the grid records.
+  - Closure dry run (labelled, not M2): XE_FUNC is NOT_DETERMINABLE_IN_ENVELOPE (892 NUMERICAL_FAILURE + 1376
+    NUMERICS_NOT_CONVERGED unknowns). Classification NOT_DETERMINABLE (C4).
+- **Ingestion change:** each family is ingested complete or absent, so a family-filtered (`--family XE`) envelope can
+  be ingested. A partial family is still MODEL_ERROR.
+- **AIR (A3 scope by reference, LP-BOUNDED BV-AIR-LL-NOM, information only).** The AIR check (51 runs) was frozen
+  (`d4ae6582…`) and scored once: **A3_NOT_ADEQUATE**.
+  - 14 of 34 comparisons fail, with status and quiet-class flips.
+  - Thrust changes reach 272× under R3, and ~3e14 relative under R1 on a near-zero R0 discharge.
+  - The corner-stage record (CP-YHI-DIS) was committed before any AIR run. By coordinator ruling the corner stage was not
+    run, and AIR work stopped there.
+- **Harness v2 wiring.** Harness v2 applies the committed A3 overlay to XE (`numerics_a3_xe`, recorded only with an
+  envelope).
+- **Prereg addendum A6, XE grid at study-converged numerics** (`004643cc…`, lock `e0a97161…`; coordinator ruling,
+  committed alone before any A6 run).
+  - Ladder: L0 (v1) / L1 / L2 / L3 = 1 / 2 / 4 / 8 × cells, with dt scaled alongside; plus LkD = 2 × duration.
+  - Study set: 22 cases. 14 are seeded, one per hardware configuration. 8 are mandatory: the A3 failure cases.
+  - Production rule: the coarsest k ≤ 2 whose G(k) and D(k) both pass at 2 %. If none passes, STOP.
+  - Non-degenerate XE tests HALL_XE_T12_AT_PBUS / HALL_XE_T25_CAPABILITY_AT_PBUS (HC-01 / HC-02 at P_bus < HC-03, one
+    hardware configuration) replace XE_FUNC in harness v2 when an A6 envelope is supplied. They are implemented with
+    `ingest_a6` and `abep-assess-closure --envelope-xe-a6`.
+- **A6 study, 154 runs, frozen (`07f52f79…`), scored once: STOP_NO_LEVEL_CONVERGED** (`a6_convergence_study_result_v1.json`).
+  - Failures out of 22 cases: G(0) 11, D(0) 7, G(1) 6, D(1) 4, G(2) 6, D(2) 5.
+  - Thrust changes: L2→L3 up to 46 %; the duration doubling at L1 / L2 up to 13–14 %.
+  - Observed order over L1–L3 is mostly 0.6–0.7 or negative.
+  - Consequence: no A6 grid. XE stays NUMERICS_NOT_CONVERGED, which is a finding.
+
+## 2026-10-08 — M1 ARCHITECTURE PHYSICS READY: milestone audit, EXIT
+
+- **Record:** `docs/milestones/M1_architecture_physics_ready/m1_audit_v1.json` + `M1_AUDIT_v1.md`, readiness `m1_readiness_v1.json` (sha256 `c1422e817e9660d073a85bfc9edba82edbf8445f25b9e7898d18bca7617cf855`), audited commit `6971637900fdac0cbf577c89aeac0a031f0c41b0`.
+- **Exit criteria (A9.34):** H1 envelope has run (XE v1 frozen; A3 and A6 show XE NUMERICS_NOT_CONVERGED); Hall AIR chemistry EXPLICITLY_BOUNDED; RF/ICP coupling available in layer (a); harness consumes all 13 paths (none BLOCKED). All met.
+- **Carried findings:** XE numerics not converged; AIR chemistry bounded / information only; AIR intake and delivered flow short → DESIGN_VARIABLE_LIMIT; A4-REG-01 open; credible set EMPTY.
+- **Decision:** M1 EXIT; M2 196-STATE RFP CLOSURE starts immediately.
+
+## 2026-10-08 — A9.36 recorded; M1 audit v2: software paths connected, physics NOT READY (HALL_NUMERICS_NOT_CONVERGED)
+
+- **A9.36:** owner instruction recorded verbatim as `docs/decisions/OD_2026_10_08_A9_36_M1_NOT_READY_HALL_NUMERICS_INVESTIGATION.md`, with companion JSON.
+- **M1 audit v2** (`docs/milestones/M1_architecture_physics_ready/m1_audit_v2.json` + `M1_AUDIT_v2.md`) supersedes v1 (kept unedited, sha256 `a3c497fc74e1d882e2776b2f1bbe3397c6b57e91a4b09cd778f6dcb22e635cd2`).
+  - Part 1, software paths connected: YES (13 paths, none BLOCKED).
+  - Part 2, physics ready for architecture closure: NOT READY FOR DECISIVE M2 HALL CLOSURE; single critical blocker HALL_NUMERICS_NOT_CONVERGED (A3 NOT_ADEQUATE, A6 STOP_NO_LEVEL_CONVERGED).
+  - The CA-HALL-AIR-v1 audit was still running at close (229 / 576).
+- **M2:** the M2 lane started after audit v1 was stopped before any commit; M2 is not started.
+- **Next:** a narrow Hall numerical-method investigation; after a converged subset, rerun the registered envelope under a new addendum and proceed to M2.
+
+## 2026-10-08 — A9.37 owner decision recorded: DBF-1 design baseline freeze before M2
+
+- **What:** owner directive recorded verbatim as `docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md` (sha256 `fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43`), with companion `docs/decisions/OD_2026_10_08_A9_37_dbf_1_design_baseline_freeze.json`.
+- **DBF-1:** freeze one specific current design for hall_icp_neutralizer from repository values only (intake, compressor, H1 RP-1 geometry, magnetic target, ICP geometry, 13.56 MHz RF envelope, 1,350 W design / 1,500 W gate with 300 W common load, 10 % margin, ≤ 34 kg nominal dry, 2 kg reference Xe, thermal topology, primary / backup materials, reference host-drag geometry). Incomplete evidence: freeze the selected assumption with its evidence class and uncertainty. An intake / compressor baseline that does not close is a BASELINE_DEFICIENCY.
+- **Change control:** after DBF-1, any design change needs a formal DCR with its physical / evidence reason before rerun.
+- **Then:** M2 against DBF-1. A9.36 still bars Hall thrust values while A6 is STOP.
+
+## 2026-10-08 — DBF-1 frozen; M2 196-state RFP closure executed against DBF-1 (lane-dbf1-m2)
+
+- **DBF-1** (`docs/baseline/DBF-1/`, committed alone `8f7e33a`, lock `dbf1_lock_v1.json` sha256 `517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907`): 48 items, each with value, sources + sha256, evidence class / type / level, uncertainty, status and rationale; DCR process and an empty DCR register.
+  - Owner-fixed: RP-1 / G-RP1 (70 / 12 / 103.2 mm), 13.56 MHz, 1,350 W / 1,500 W (assessment only) / 300 W, 10 %, ≤ 34 kg, 2 kg Xe.
+  - Selected by registered rules: upstream `A0.25_Ld20_phi0.9|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.02` (SR-INTAKE-01), PI Kp 0.3 / Ti 3 s, BZ-P5B16 surrogate, ICP F6 probe tube (R 0.06 m, L 0.15 m), INCONEL 600 / 601, BN-SiO2 / BN, host drag RC-DIAMANT (REFERENCE_PENDING_CUSTOMER_ICD).
+  - Baseline deficiencies BD-01..06: flow (drag met), 6 of 10 scenarios, compressor 10.9 kg vs AL-02 5.5 kg, mass roll-up, surrogate B(z), ICP inputs.
+  - Not listed in `config/MANIFEST.json` (its sha256 is inside records regenerated byte for byte); pinned by `abep_config::baseline`.
+- **Addendum A8** (`prereg_addendum_a8_m2_dbf1_v1.json`, lock `67e37fad110bc14bc36fbe3ff9c906d91e0e5873abdf614921e1196bda54b59c`, committed alone `fb7ae29`); implementation `6da02da` (`--m2-dbf1`); run manifest `m2_run_manifest_v1.json` (`7c290398…`, committed alone `c8eeaa1`).
+- **M2 record** `docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json` (sha256 `600cf229ecdb5f91f0471f03cfdd6d287486ad21e9d9ebadde3cdafa54a37394`, two runs byte-identical): **NOT_DETERMINABLE at C1**, HALL_NUMERICS_NOT_CONVERGED on all 392 required cells (no Hall value enters, A9.36).
+  - AIR non-Hall: A8-NH-INTAKE-DBF1 NON_CLOSING (never eligible, DESIGN_VARIABLE_LIMIT) at 54 states; delivered flow below the A4 12 mN necessary condition in every scenario at 11 states (worst k_fav 3.70), 25 mN at 54.
+  - Feed loop (governed Python reference, Rust agreement 1960 / 1960): S 1916, R 44 (dead-head in maxwell / cll α 0–0.2 at 18 states), U 0.
+  - T_required = D(state) 1.16–54.5 mN; worst-case scenario per state: 83 states ≤ 12 mN, 73 in 12–25 mN, 40 > 25 mN.
+  - Report `M2_REPORT_v1.{json,md}`; conclusion-category input D. The M3 decision is not written.
+
+## 2026-10-08 — A9.38 owner decision recorded: architecture frozen; design-closure programme
+
+- **What:** owner decision recorded verbatim as `docs/decisions/OD_2026_10_08_A9_38_ARCHITECTURE_FROZEN_DESIGN_CLOSURE_PROGRAMME.md` (sha256 `7bc06a0044283ba054b60a55a99bae84b6f7aea2cb5e4283d3a627ff543b9bcf`), with companion `docs/decisions/OD_2026_10_08_A9_38_architecture_frozen_design_closure_programme.json`.
+- **Architecture frozen (2026-10-08):** intake → active compressor / plenum / feed → Hall → 13.56 MHz RF/ICP neutralizer; air primary, Xe contingency; electromagnetic Hall field; H1 reference geometry; 1,350 W / < 1,500 W; ≤ 34 kg dry; 2 kg Xe. No architecture trade reopened.
+- **DBF-1 is the controlled baseline:** changes go through a formal DCR with a quantitative reason and a preregistered evaluation method.
+- **Priorities P1–P9:** intake / compressor DCR redesign; Hall RP-1 convergence; H1 B(z); RF/ICP closure and the AIR audit; mass; power; thermal; materials; host-drag C_D·A interface constraint.
+- **Sequence:** Hall + intake DCR + ICP / AIR in parallel → mass / power / thermal → M2 rerun → M3.
+- **Documentation:** engineering evidence plus a submission-safe statement for every item, using the six closure states.

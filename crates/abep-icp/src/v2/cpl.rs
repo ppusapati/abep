@@ -20,12 +20,24 @@ pub struct SyntheticAdmittedHallStub {
     pub v_d_v: Option<f64>,
 }
 
+/// One point of the NP-HALL-PARAMETRIC-ENVELOPE grid (layer (a) only, addendum A2 path P-CPL): the solver's
+/// time-averaged I_d, ion (beam) current and V_d. PARAMETRIC / NOT_VALIDATED: not an admitted member, never evidence.
+#[derive(Debug, Clone, PartialEq)]
+pub struct ParametricHallPoint {
+    pub key: String,
+    pub i_d_a: Option<f64>,
+    pub i_beam_a: Option<f64>,
+    pub v_d_v: Option<f64>,
+}
+
 /// Where the Hall member comes from.
 #[derive(Debug, Clone, PartialEq)]
 pub enum HallMemberSource<'a> {
     /// The governed transport ensemble (`hallthruster_bridge/ensemble/transport_ensemble_v0.json`).
     Ensemble,
     SyntheticAdmittedStub(&'a SyntheticAdmittedHallStub),
+    /// A parametric envelope point (addendum A2, R1): echoed as PARAMETRIC_NOT_VALIDATED; the gate stays closed.
+    ParametricEnvelope(&'a ParametricHallPoint),
 }
 
 /// Inputs of CPL-HALL-ON-v1 apart from the Hall member.
@@ -51,11 +63,14 @@ pub const CPL_OUTPUT_KEYS: [(&str, &str); 7] = [
     ("Q_cpl_hallon_circuit_export_W", "W"),
 ];
 
+/// (I_d, I_beam, V_d, echo label) of a supplied Hall point.
+type HallEcho = (Option<f64>, Option<f64>, Option<f64>, &'static str);
+
 pub fn cpl_hall_on(m: &IcpModelV2, source: &HallMemberSource, inp: &CplInputs) -> CplRecord {
     let mut reasons: Vec<Reason> = Vec::new();
     let mut inputs: BTreeMap<String, Quantity> = BTreeMap::new();
     let r = |c: &str, s: IcpStatus, d: &str| Reason::new(c, s, d);
-    let stub = match source {
+    let stub: Option<HallEcho> = match source {
         HallMemberSource::Ensemble => {
             if m.v1.ensemble_member_count == 0 {
                 reasons.push(r(
@@ -74,19 +89,28 @@ pub fn cpl_hall_on(m: &IcpModelV2, source: &HallMemberSource, inp: &CplInputs) -
         }
         HallMemberSource::SyntheticAdmittedStub(s) => {
             reasons.push(r("SYNTHETIC_TEST_ONLY", NE, "synthetic admitted-member stub (FC-20): never evidence"));
-            Some(*s)
+            Some((s.i_d_a, s.i_beam_a, s.v_d_v, "SYNTHETIC_TEST_ONLY"))
+        }
+        HallMemberSource::ParametricEnvelope(p) => {
+            reasons.push(r(
+                "PARAMETRIC_ENVELOPE_POINT_NOT_VALIDATED",
+                NE,
+                "NP-HALL-PARAMETRIC-ENVELOPE grid point (layer (a), addendum A2 P-CPL): not an admitted member; \
+                 CPL-HON-01 stays closed",
+            ));
+            Some((p.i_d_a, p.i_beam_a, p.v_d_v, "PARAMETRIC_NOT_VALIDATED"))
         }
     };
     let echo = |v: Option<f64>, unit: &str, code: &str| match (stub, v) {
-        (Some(_), Some(x)) => {
-            Quantity { value: Some(x), unit: unit.into(), status: NE, reasons: vec!["SYNTHETIC_TEST_ONLY".into()] }
+        (Some((.., label)), Some(x)) => {
+            Quantity { value: Some(x), unit: unit.into(), status: NE, reasons: vec![label.into()] }
         }
         (Some(_), None) => Quantity::withheld(unit, NE, vec![format!("{code}_NOT_ON_MAP_POINT")]),
         (None, _) => Quantity::withheld(unit, NE, vec!["CPL-HON-01_GATE".into()]),
     };
-    inputs.insert("HI-01_I_d_A".into(), echo(stub.and_then(|s| s.i_d_a), "A", "HI-01"));
-    inputs.insert("HI-02_I_beam_A".into(), echo(stub.and_then(|s| s.i_beam_a), "A", "HI-02"));
-    inputs.insert("HI-03_V_d_V".into(), echo(stub.and_then(|s| s.v_d_v), "V", "HI-03"));
+    inputs.insert("HI-01_I_d_A".into(), echo(stub.and_then(|s| s.0), "A", "HI-01"));
+    inputs.insert("HI-02_I_beam_A".into(), echo(stub.and_then(|s| s.1), "A", "HI-02"));
+    inputs.insert("HI-03_V_d_V".into(), echo(stub.and_then(|s| s.2), "V", "HI-03"));
     for (id, what) in [
         ("HI-04_exit_neutral_flux_transfer", "per-species Hall-exit neutral flux and its transfer to the ICP inlet"),
         ("HI-05_beam_cex_ions_at_icp", "beam / CEX ion flux, energy and charge state at ICP surfaces (plume model)"),

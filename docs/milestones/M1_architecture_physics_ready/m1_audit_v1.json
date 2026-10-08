@@ -1,0 +1,211 @@
+{
+ "schema": "milestone_audit_v1",
+ "milestone": "M1_ARCHITECTURE_PHYSICS_READY",
+ "governance": "A9.34 (docs/decisions/OD_2026_10_08_A9_34_*)",
+ "date": "2026-10-08",
+ "audited_commit": "6971637900fdac0cbf577c89aeac0a031f0c41b0",
+ "auditor": "coordinator",
+ "exit_criteria": [
+  {
+   "id": "M1-EX-1",
+   "text": "the H1 Hall envelope has run",
+   "status": "MET",
+   "evidence": [
+    "XE v1 grid run and frozen: 2268 records (PASS 1287, NOT_SUSTAINED 89, NUMERICAL_FAILURE 892), raw manifest b9efec88fad40dcb34b3e600502ac5f35d80e214d24e991b98e31d7c2b0d17ea",
+    "addendum A3 numerics (lock b840f1b0...) scored once: XE A3_NOT_ADEQUATE; AIR A3 check A3_NOT_ADEQUATE",
+    "addendum A6 (lock e0a97161...) XE convergence study (22 cases x 7 levels) scored once: STOP_NO_LEVEL_CONVERGED; no A6 grid"
+   ],
+   "finding": "the envelope has run, but every XE point is NUMERICS_NOT_CONVERGED (unknown); no numerics level up to 4x cells (vs 8x) and doubled duration converges to 2 % (observed order 0.6-0.7 or non-monotone). AIR envelope not run beyond the A3 check: with A3_NOT_ADEQUATE and A1 information-only status it cannot affect classification."
+  },
+  {
+   "id": "M1-EX-2",
+   "text": "Hall AIR chemistry is available or explicitly bounded",
+   "status": "MET (EXPLICITLY_BOUNDED)",
+   "evidence": [
+    "NP-HALL-CHEM-AIR addendum 03 (lock 20485e24...): bounding set BV-AIR-LL, label BOUNDED_ONE_SIDED_LOWER_ELECTRON_IMPACT_LOSS_NOT_COMPLETE; reaction set abep-air-0.7 INCOMPLETE_EVIDENCE",
+    "addendum A1 (lock 35388e24...): AIR results information only, never SELECT and never PHYSICALLY_NON_CLOSING (no direction for ion-creating omitted processes)"
+   ],
+   "finding": "the omitted-process audit CA-HALL-AIR-v1 is still running; it cannot complete the set (tier-1 sources OQ-HA-05 not acquired)"
+  },
+  {
+   "id": "M1-EX-3",
+   "text": "RF/ICP coupling is available",
+   "status": "MET (layer (a), parametric)",
+   "evidence": [
+    "abep-icp model_version 2 (prereg v2 lock a180ceef...), IMPLEMENTED_UNVERIFIED; thermal 2.0.0 VERIFIED; coupling smoke case closes each energy key once",
+    "harness v2 path P-ICP / P-CPL CONSUMED; CPL-HALL-ON-v1 evaluated in layer (a) with parametric Hall points; layer (b) gated"
+   ],
+   "finding": "I_e,cap NOT_EVALUATED today: ICP geometry, RF input, neutral source and rate sets not registered (P-ICP codes)"
+  },
+  {
+   "id": "M1-EX-4",
+   "text": "the 196-state closure harness can consume all required physics paths",
+   "status": "MET",
+   "evidence": [
+    "m1_readiness_v1.json sha256 c1422e817e9660d073a85bfc9edba82edbf8445f25b9e7898d18bca7617cf855: 13 paths, BLOCKED none; AWAITING_INPUT P-FEED-STABILITY, P-HALL-AIR, P-THERMAL",
+    "addendum A2 (lock 774bf761...), A4 conservation bounds (lock 5a03333e...), A5 / A5.1 intake closure (locks d143fd4c..., d56e34f9...)"
+   ]
+  }
+ ],
+ "readiness_paths": [
+  {
+   "id": "P-ENV",
+   "status": "CONSUMED",
+   "producer_status": "ADMITTED",
+   "codes": []
+  },
+  {
+   "id": "P-FLOW",
+   "status": "CONSUMED",
+   "producer_status": "ADMITTED (PARAMETRIC_SENSITIVITY inputs); plenum / feed group PYTHON_REFERENCE",
+   "codes": [
+    "GAS_PATH_ROBUST_SET_EMPTY"
+   ]
+  },
+  {
+   "id": "P-FEED-STABILITY",
+   "status": "AWAITING_INPUT",
+   "producer_status": "PYTHON_REFERENCE authoritative (v8 PARITY_FAIL stands)",
+   "codes": [
+    "FEED_CONTROLLER_NOT_REGISTERED",
+    "GAS_PATH_ROBUST_SET_EMPTY"
+   ]
+  },
+  {
+   "id": "P-ICP",
+   "status": "CONSUMED",
+   "producer_status": "NP-ICP-NEUTRALIZER model_version 2: IMPLEMENTED_UNVERIFIED; ledger RUST_IMPL; NOT_VALIDATED",
+   "codes": [
+    "CHG-04_NO_XE_RATE_SET",
+    "DOM-06_B_ICP_NOT_REGISTERED",
+    "DOM-12_NO_NEGATIVE_ION_BALANCE",
+    "ICP_CAPACITY_NOT_EVALUATED",
+    "IN-05_DELIVERED_COMPOSITION_TBD",
+    "IN-08_RF_INPUT_NOT_REGISTERED",
+    "IN-10_GEOMETRY_NOT_REGISTERED",
+    "IN-11_ELECTRODES_NOT_REGISTERED",
+    "IN-12_NEUTRAL_SOURCE_NOT_REGISTERED",
+    "IN-16_NO_REGISTERED_RATE_SET:AIR",
+    "IN-16_NO_REGISTERED_RATE_SET:XE",
+    "IN-17_NO_EDGE_FACTOR_SOURCE",
+    "NP-ICP-CHEM-AIR:AIR-DIS-02",
+    "NP-ICP-CHEM-AIR:AIR-EL-03",
+    "NP-ICP-CHEM-AIR:AIR-EL-04",
+    "NP-ICP-CHEM-AIR:AIR-EXC-04",
+    "NP-ICP-CHEM-AIR:AIR-EXC-05",
+    "NP-ICP-CHEM-AIR:AIR-EXC-09",
+    "NP-ICP-CHEM-AIR:AIR-ION-02",
+    "NP-ICP-CHEM-AIR:AIR-ION-05",
+    "NP-ICP-CHEM-AIR:AIR-NL-02",
+    "NP-ICP-CHEM-AIR:AIR-WALL-01",
+    "NP-ICP-CHEM-AIR:AIR-WALL-02",
+    "NP-ICP-CHEM-AIR:AIR-WALL-03",
+    "NP-ICP-CHEM-AIR:XE-EL-01",
+    "NP-ICP-CHEM-AIR:XE-EXC-01",
+    "NP-ICP-CHEM-AIR:XE-ION-01",
+    "NP-ICP-CHEM-AIR:XE-WALL-01",
+    "NP_ICP_CHEM_AIR_NOT_ADMITTED",
+    "NP_ICP_CHEM_AIR_XE_NOT_ADMITTED",
+    "SP-04_SPECIES_BOUND_UNRESOLVED:SB-NO"
+   ]
+  },
+  {
+   "id": "P-CPL",
+   "status": "CONSUMED",
+   "producer_status": "NP-ICP-NEUTRALIZER model_version 2: IMPLEMENTED_UNVERIFIED; ledger RUST_IMPL; NOT_VALIDATED",
+   "codes": []
+  },
+  {
+   "id": "P-HALL-XE",
+   "status": "CONSUMED",
+   "producer_status": "PARAMETRIC / NOT_VALIDATED",
+   "codes": []
+  },
+  {
+   "id": "P-HALL-AIR",
+   "status": "AWAITING_INPUT",
+   "producer_status": "A1 on this line",
+   "codes": [
+    "AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED"
+   ]
+  },
+  {
+   "id": "P-PBUS",
+   "status": "CONSUMED",
+   "producer_status": "ADMITTED ledger function; loads from the evaluated paths",
+   "codes": [
+    "BUS_LEDGER_NOT_COMPLETE"
+   ]
+  },
+  {
+   "id": "P-THERMAL",
+   "status": "AWAITING_INPUT",
+   "producer_status": "NP-THERMAL-CATHODELESS 2.0.0: VERIFIED, NOT_VALIDATED, not admitted (ADM-04)",
+   "codes": [
+    "CREDIBLE_HALL_TRANSPORT_SET_EMPTY",
+    "NP_ICP_NOT_ADMITTED",
+    "SPACECRAFT_THERMAL_ICD_ABSENT",
+    "THERMAL_FLIGHT_CASE_NOT_REGISTERED",
+    "THERMAL_LOADS_NOT_EVALUATED"
+   ]
+  },
+  {
+   "id": "P-MASS",
+   "status": "CONSUMED",
+   "producer_status": "ADMITTED",
+   "codes": [
+    "MASS_INCOMPLETE_EVIDENCE",
+    "WET_MASS_OBJECTIVE_NOT_EVALUATED",
+    "XE_LOAD_NOT_FROZEN"
+   ]
+  },
+  {
+   "id": "P-LIFE",
+   "status": "CONSUMED",
+   "producer_status": "ADMITTED kernels",
+   "codes": [
+    "ANODE_MATERIAL_OPEN",
+    "HALL_WALL_LIFE_INPUTS_NOT_TRUSTWORTHY",
+    "LIFE_NOT_EVALUATED"
+   ]
+  },
+  {
+   "id": "P-TD",
+   "status": "CONSUMED",
+   "producer_status": "ADMITTED hook; host-spacecraft drag ICD absent",
+   "codes": [
+    "HOST_SPACECRAFT_DRAG_ICD_ABSENT"
+   ]
+  },
+  {
+   "id": "P-LAYER-B",
+   "status": "CONSUMED",
+   "producer_status": "ADMITTED / ACCEPTED",
+   "codes": [
+    "CREDIBLE_HALL_TRANSPORT_SET_EMPTY"
+   ]
+  }
+ ],
+ "carried_findings": [
+  "XE Hall: NUMERICS_NOT_CONVERGED (A3 + A6 STOP); layer (a) XE Hall tests cannot leave NOT_DETERMINABLE with HallThruster.jl v0.23.1 under the registered transport set at H1",
+  "AIR Hall: chemistry EXPLICITLY_BOUNDED, information only; AIR A3 NOT_ADEQUATE",
+  "AIR delivered flow: every registered intake / gas-path design short at the worst state (area x1.004, captured flow x1.14-1.35, delivered flow x3.67 for 12 mN) -> DESIGN_VARIABLE_LIMIT (A9.35); F8 robust set EMPTY (admitted)",
+  "Conservation (A4): worst-state 12 mN needs >= 0.251 m2 effective collection area and >= 0.048 mg/s at the ideal 1.5 kW; A4-REG-01 OPEN (no area limit registered)",
+  "Intake-face drag filter C-DRAG-RFP excludes grid areas above 0.25 m2 (0.5 m2: 26.7 mN at 180 km)",
+  "Plenum / feed v8 PARITY_FAIL stands; governed Python reference used (A9.34)",
+  "Credible Hall transport set EMPTY; layer (b) NOT_EVALUATED throughout"
+ ],
+ "open_owner_items": [
+  "A4-REG-01 maximum effective intake collection area (A9.35: stays open)",
+  "host-spacecraft drag ICD (T-D, HC-08)",
+  "H-1 B(z) registration (H1F-BZ-01)",
+  "H-1 Xe flow (OQ-HPE-03)",
+  "complete bus ledger (24 TBD terms)",
+  "flight thermal case / spacecraft thermal ICD",
+  "CBE wet mass; Xe load",
+  "ICP geometry / RF input / neutral source registration",
+  "Hall AIR tier-1 sources (OQ-HA-05)"
+ ],
+ "decision": "M1 EXIT. Per A9.34, M2 196-STATE RFP CLOSURE starts immediately on this commit's inputs.",
+ "note": "The classification itself is computed in M2 by the preregistered rule; this audit asserts readiness, not an outcome."
+}

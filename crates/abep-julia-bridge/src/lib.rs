@@ -12,10 +12,14 @@
 //! inlet rule NI-01, and compute the audit verdicts from frozen records.
 //!
 //! [`envelope_cases`] (NP-HALL-PARAMETRIC-ENVELOPE v1, A9.32) generates and dry-runs the H-1 parametric envelope case
-//! file, launches its shards through [`launch::launch`] and freezes their outputs.
+//! file, launches its shards through [`launch::launch`] and freezes their outputs; [`envelope_a3`] is its addendum A3
+//! numerics-adequacy check (RG-04).
 
 pub mod air_audit;
 pub mod air_cases;
+pub mod envelope_a3;
+pub mod envelope_a3_air;
+pub mod envelope_a6;
 pub mod envelope_cases;
 pub mod jobs;
 pub mod launch;

@@ -7,7 +7,9 @@ mod common;
 use abep_icp::case::*;
 use abep_icp::chemistry::ChemistryRegistration;
 use abep_icp::v2::case::*;
-use abep_icp::v2::cpl::{cpl_hall_on, CplInputs, HallMemberSource, SyntheticAdmittedHallStub, CPL_OUTPUT_KEYS};
+use abep_icp::v2::cpl::{
+    cpl_hall_on, CplInputs, HallMemberSource, ParametricHallPoint, SyntheticAdmittedHallStub, CPL_OUTPUT_KEYS,
+};
 use abep_icp::v2::evaluate::THERMAL_KEYS;
 use abep_icp::v2::testkit::*;
 use abep_icp::v2::validation::*;
@@ -230,6 +232,38 @@ fn fc20_cpl_hall_on_is_not_evaluated_and_names_every_missing_input() {
     for c in all_cases() {
         assert_eq!(m.evaluate(&c).cpl_hall_on_v1.status, IcpStatus::NotEvaluated);
     }
+}
+
+#[test]
+fn cpl_hall_on_with_a_parametric_envelope_point_echoes_the_point_and_stays_gated() {
+    // NP-HALL-PARAMETRIC-ENVELOPE addendum A2 P-CPL (R1): a PARAMETRIC / NOT_VALIDATED grid point is echoed with that
+    // label; the gate stays closed and no output is produced (no beam / plume parameter is invented).
+    let m = model_v2();
+    let p = ParametricHallPoint {
+        key: "XE|G|BZ|BP|VD|MF|T".into(),
+        i_d_a: Some(3.0),
+        i_beam_a: Some(2.4),
+        v_d_v: Some(265.0),
+    };
+    let r = cpl_hall_on(m, &HallMemberSource::ParametricEnvelope(&p), &CplInputs::default());
+    // Gated: HI-07 not registered is INCOMPLETE_EVIDENCE (the worst reason), never CONVERGED.
+    assert_eq!(r.status, IcpStatus::IncompleteEvidence);
+    let codes: BTreeSet<&str> = r.reasons.iter().map(|x| x.code.as_str()).collect();
+    for c in
+        ["PARAMETRIC_ENVELOPE_POINT_NOT_VALIDATED", "HI-04_NO_PRODUCER", "VER-24_EXTRACTION_BOUNDARY_LAW_UNVERIFIED"]
+    {
+        assert!(codes.contains(c), "{c} missing");
+    }
+    assert!(!codes.contains("SYNTHETIC_TEST_ONLY"));
+    for (k, v) in [("HI-01_I_d_A", 3.0), ("HI-02_I_beam_A", 2.4), ("HI-03_V_d_V", 265.0)] {
+        assert_eq!(r.inputs[k].value, Some(v));
+        assert_eq!(r.inputs[k].status, IcpStatus::NotEvaluated);
+        assert_eq!(r.inputs[k].reasons, ["PARAMETRIC_NOT_VALIDATED"]);
+    }
+    assert!(r.outputs.values().all(|q| q.value.is_none() && q.status == IcpStatus::NotEvaluated));
+    let p = ParametricHallPoint { i_beam_a: None, ..p };
+    let r = cpl_hall_on(m, &HallMemberSource::ParametricEnvelope(&p), &CplInputs::default());
+    assert_eq!(r.inputs["HI-02_I_beam_A"].reasons, ["HI-02_NOT_ON_MAP_POINT"]);
 }
 
 // --------------------------------------------------------------------------------------------- FC-22 / FC-27
