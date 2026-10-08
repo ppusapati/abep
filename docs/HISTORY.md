@@ -5559,3 +5559,10 @@ stays EMPTY and nothing enters layer (b).
   - Thrust changes: L2→L3 up to 46 %; the duration doubling at L1 / L2 up to 13–14 %.
   - Observed order over L1–L3 is mostly 0.6–0.7 or negative.
   - Consequence: no A6 grid. XE stays NUMERICS_NOT_CONVERGED, which is a finding.
+
+## 2026-10-08 — M1 ARCHITECTURE PHYSICS READY: milestone audit, EXIT
+
+- **Record:** `docs/milestones/M1_architecture_physics_ready/m1_audit_v1.json` + `M1_AUDIT_v1.md`, readiness `m1_readiness_v1.json` (sha256 `c1422e817e9660d073a85bfc9edba82edbf8445f25b9e7898d18bca7617cf855`), audited commit `6971637900fdac0cbf577c89aeac0a031f0c41b0`.
+- **Exit criteria (A9.34):** H1 envelope has run (XE v1 frozen; A3 and A6 show XE NUMERICS_NOT_CONVERGED); Hall AIR chemistry EXPLICITLY_BOUNDED; RF/ICP coupling available in layer (a); harness consumes all 13 paths (none BLOCKED). All met.
+- **Carried findings:** XE numerics not converged; AIR chemistry bounded / information only; AIR intake and delivered flow short → DESIGN_VARIABLE_LIMIT; A4-REG-01 open; credible set EMPTY.
+- **Decision:** M1 EXIT; M2 196-STATE RFP CLOSURE starts immediately.
