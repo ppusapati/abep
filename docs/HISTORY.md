@@ -5425,3 +5425,35 @@ Lane `lane-hall-chem-air`, base `b730764`.
 - **Tests:** `tests/closure_m1.rs` (23) covers today's run, readiness, determinism, synthetic XE / AIR chains to C0 /
   C1 / C2 / C3 / C4 and the joint branch, per-path fail-closed checks and pins. There are also a parametric CPL test
   and a `ledger_with_loads` test.
+
+## 2026-10-08 — Conservation bounds: NP-HALL-PARAMETRIC-ENVELOPE addendum A4 (B-FLOW, B-THRUST, B-DRAG), harness v2 step CA4, record on the 196 states (no admitted / scored result changed)
+
+- **A4** (`419393f`, committed alone before any kernel, harness code or evaluation):
+  - Files: `prereg_addendum_a4_conservation_bounds.json` `7cd43c80…`, `PREREG_ADDENDUM_A4_CONSERVATION_BOUNDS.md`
+    `15b853e5…`, lock `5a03333e…`.
+  - Bounds from conservation plus registered inputs only (no chemistry, no transport, no design grid):
+    ṁ_cap ≤ Φ_max(s) A_eff,max (η = 1); T ≤ √(2ṁP) + P/c with P = HC-03 − P_nonHall,LB,eligible + the captured energy
+    inflow; D ≥ ṁ U (bulk).
+  - The RFP 12 / 25 mN requirement is gross thrust (RVM-02 / RVM-03 text). T − D is HC-08, so B-DRAG is information
+    only.
+  - Eligible non-closure only with a FROZEN registered A_eff,max. For this bound only, A4 supersedes A1 / A2 "never
+    NON_CLOSING". The new step CA4 sits between C0 and C1.
+- **Code** (`63e9f20`, additive):
+  - `abep_mission::conservation_bounds`: kernels.
+  - `abep_assess::closure_m1::{conservation, conservation_record}`.
+  - `M1Inputs.a4` and `M1Outcome.a4`.
+  - `abep-assess-closure --harness v2 --conservation-bounds`.
+  - The v2 record gains the `conservation_bounds_a4` block. The dry-run classification and readiness are unchanged.
+- **Record** `conservation_bounds_v1.json` (+ `.md`): 196 / 196 states EVALUATED.
+  - No intake-area limit is registered anywhere, so AIR B-FLOW / B-THRUST is NOT_EVALUATED; XE has no route;
+    classification unchanged (C1).
+  - Φ_max is 1.90e-7 to 9.24e-6 kg m⁻² s⁻¹ (1.017 to 1.092 × ρV). ṁ_req is 0.048 mg/s (12 mN) and 0.208 mg/s (25 mN)
+    at 1500 W.
+  - A_req(12 mN) is 0.0051 to **0.251 m²**; A_req(25 mN) is **0.022** to 1.063 m². Worst state
+    `ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184`.
+  - Registration item A4-REG-01: a FROZEN `intake_effective_collection_area_max_m2` below 0.251 m² makes AIR
+    PHYSICALLY_NON_CLOSING; below 0.022 m², 25 mN fails everywhere.
+  - Information: the F7 frontier flow gives T_max 6.24 mN delivered and 9.62 mN captured, both < 12 mN (never
+    eligible).
+- **Tests:** `abep-mission/tests/conservation_bounds.rs` (9) and `abep-assess/tests/conservation_bounds_a4.rs` (15),
+  including a byte-identical regeneration of the committed record.

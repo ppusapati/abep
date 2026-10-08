@@ -7,9 +7,10 @@ use abep_assess::closure::{to_json, NOT_DETERMINABLE, PHYSICALLY_NON_CLOSING, PH
 use abep_assess::closure_m1::conservation::*;
 use abep_assess::closure_m1::conservation_record::{bounds_record, record_block};
 use abep_assess::closure_m1::gather::gather_m1;
-use abep_assess::closure_m1::{evaluate, M1Inputs, M1Outcome};
+use abep_assess::closure_m1::{evaluate, M1Inputs, M1Outcome, NP_DIR};
 use abep_mission::integration::Mode;
 use abep_provenance::workspace_repo_root;
+use abep_types::pyjson::Value;
 use abep_types::EvalStatus;
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
@@ -333,4 +334,21 @@ fn record_is_deterministic() {
     let x = to_json(&bounds_record(&syn, &evaluate(&syn).unwrap(), "TEST").unwrap()).unwrap();
     let y = to_json(&bounds_record(&syn, &evaluate(&syn).unwrap(), "TEST").unwrap()).unwrap();
     assert_eq!(x, y);
+}
+
+#[test]
+fn committed_record_is_the_a4_record_of_today() {
+    let rel = format!("{NP_DIR}/conservation_bounds_v1.json");
+    let text = std::fs::read_to_string(repo().join(&rel)).unwrap();
+    let v = abep_types::pyjson::loads(&text).unwrap();
+    let d = v.as_dict().unwrap();
+    assert_eq!(d.get("schema").unwrap().as_str(), Some(RECORD_SCHEMA));
+    assert_eq!(d.get("run_label").unwrap().as_str(), Some("A4_CONSERVATION_BOUNDS_V1"));
+    let commit = d.get("rust_commit").and_then(Value::as_str).unwrap().to_string();
+    let mut inp = base().clone();
+    inp.today.mission.provenance.rust_commit = commit;
+    let out = evaluate(&inp).unwrap();
+    let now = to_json(&bounds_record(&inp, &out, "A4_CONSERVATION_BOUNDS_V1").unwrap()).unwrap();
+    assert_eq!(now, text, "byte-identical regeneration");
+    assert!(!text.contains("SYNTHETIC"));
 }
