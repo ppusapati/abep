@@ -520,6 +520,7 @@ pub fn gather_m1(
         return Err(model_error("AIR points supplied but addendum A1 is not on this line"));
     }
     let today = gather(repo, rust_commit)?;
+    let a4 = Some(super::conservation::gather_a4(repo, &today)?);
     let (air_admitted, air_chem) = air_chemistry(repo)?;
     let air = match air {
         Some(a) if a1 => AirHall::Ingested(a),
@@ -565,5 +566,6 @@ pub fn gather_m1(
         hc06_k,
         hc07_h,
         hc08_n,
+        a4,
     })
 }

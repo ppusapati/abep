@@ -9,8 +9,11 @@
 //! Layer (a) is PARAMETRIC / NOT_VALIDATED; layer (b) is the v1 admitted-only layer, unchanged.
 //!
 //! [`gather`] reads the repository (fail closed: a pin that does not verify refuses the record); [`evaluate`] is pure;
-//! [`record`] renders the deterministic record and the readiness listing.
+//! [`record`] renders the deterministic record and the readiness listing. [`conservation`] adds the addendum A4
+//! conservation bounds (step CA4 between C0 and C1; additive: without an eligible A4 failure nothing changes).
 
+pub mod conservation;
+pub mod conservation_record;
 pub mod gather;
 pub mod record;
 
@@ -98,7 +101,10 @@ pub fn category_a2(code: &str) -> &'static str {
         ENVIRONMENT_NOT_EVALUATED | MATERIALITY_BOUND_REQUIRED_HE | MATERIALITY_BOUND_REQUIRED_AR => {
             "MODEL_DOMAIN_LIMIT"
         }
-        MASS_CBE_LOWER_BOUND_AT_LIMIT => "FUNDAMENTAL_ARCHITECTURE_LIMIT",
+        MASS_CBE_LOWER_BOUND_AT_LIMIT | conservation::A4_CONSERVATION_BOUND_NON_CLOSING => {
+            "FUNDAMENTAL_ARCHITECTURE_LIMIT"
+        }
+        conservation::A4_INPUT_OUT_OF_DOMAIN => "MODEL_DOMAIN_LIMIT",
         other => category(other),
     }
 }
@@ -255,6 +261,8 @@ pub struct M1Inputs {
     pub hc06_k: Option<f64>,
     pub hc07_h: Option<f64>,
     pub hc08_n: Option<f64>,
+    /// Addendum A4 inputs (None: A4 not evaluated).
+    pub a4: Option<conservation::A4Inputs>,
 }
 
 // ------------------------------------------------------------------------------------------------ P-PBUS
@@ -966,8 +974,28 @@ pub fn evaluate(inp: &M1Inputs) -> crate::AssessResult<M1Outcome> {
         }
         states.push((st.clone(), modes));
     }
+    let a4 = match &inp.a4 {
+        Some(a) => Some(conservation::evaluate_a4(a, &ti.limits, &states)?),
+        None => None,
+    };
+    if let Some(o) = &a4 {
+        for (st, ms) in states.iter_mut().filter(|(s, _)| s.required && o.eligible_air_states.contains(&s.state_id)) {
+            let failing: Vec<&str> = o
+                .verdicts
+                .iter()
+                .filter(|v| v.eligible && v.failing_states.contains(&st.state_id))
+                .map(|v| v.id)
+                .collect();
+            if let Some(e) = ms.get_mut(&Mode::AirPrimary) {
+                e.eval.constraints.push(conservation::a4_constraint(&failing));
+                e.eval.status = PHYSICS_NON_CLOSING;
+                e.eval.blockers.clear();
+                e.binding_constraint = Some(conservation::A4_CONSTRAINT_ID.into());
+            }
+        }
+    }
     let outcome = classify_v2(ti.credible_set_empty, inp.xe.is_some(), &states);
-    Ok(M1Outcome { outcome, states, lb_groups })
+    Ok(M1Outcome { outcome, states, lb_groups, a4 })
 }
 
 /// The layer (a) status of a (state, mode) (A2 joint_point_conditions.state_status): the v1 rule, and
@@ -988,9 +1016,12 @@ pub struct M1Outcome {
     pub states: Vec<(StateRef, BTreeMap<Mode, StateModeEval>)>,
     /// Hall test results per mode and distinct P_nonHall,LB (bits).
     pub lb_groups: BTreeMap<Mode, BTreeMap<u64, Vec<HallTestResult>>>,
+    /// Addendum A4 quantities and verdicts.
+    pub a4: Option<conservation::A4Outcome>,
 }
 
-/// The v1 procedure C0..C4 over per-(state, mode) evaluations (A2 classification.procedure).
+/// The v1 procedure C0..C4 over per-(state, mode) evaluations (A2 classification.procedure), with the A4 step CA4
+/// between C0 and C1.
 pub fn classify_v2(
     credible_set_empty: bool,
     envelope_ingested: bool,
@@ -1037,6 +1068,14 @@ pub fn classify_v2(
     if !credible_set_empty {
         out.step = "C0";
         out.blockers = vec![(v1::CREDIBLE_SET_NON_EMPTY.into(), cells)];
+        return out;
+    }
+    // CA4 (addendum A4): an eligible conservation-bound non-closure needs no Hall envelope.
+    let n_a4 = conservation::ca4_cells(states);
+    if n_a4 > 0 {
+        out.classification = PHYSICALLY_NON_CLOSING;
+        out.step = "CA4";
+        out.blockers = vec![(conservation::A4_CONSERVATION_BOUND_NON_CLOSING.into(), n_a4)];
         return out;
     }
     if !envelope_ingested {

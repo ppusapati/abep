@@ -1,16 +1,18 @@
 //! `abep-assess-closure [--repo DIR] [--harness v1|v2] [--readiness] [--envelope MANIFEST --envelope-sha256 HEX]
 //! [--run-label LABEL] [--rust-commit SHA] [--out FILE]`: the decisive 196-state two-layer closure run and the A9.32
 //! classification (NP-HALL-PARAMETRIC-ENVELOPE v1; `--harness v2` is the addendum A2 harness consuming every required
-//! physics path; `--readiness` prints the A2 M1 readiness listing). Without --envelope every layer (a) Hall field is
+//! physics path; `--readiness` prints the A2 M1 readiness listing; `--conservation-bounds` with `--harness v2` writes the
+//! addendum A4 record `conservation_bounds_v1.json`). Without --envelope every layer (a) Hall field is
 //! NOT_EVALUATED (HALL_ENVELOPE_NOT_RUN). Exit 0 when the record is produced (its statuses are in the record, fail
 //! closed), 4 when an input cannot be read or verified, 2 on usage.
 
 use abep_assess::closure::{closure_record, to_json};
+use abep_assess::closure_m1::conservation_record::conservation_bounds_record;
 use abep_assess::closure_m1::record::{closure_record_v2, readiness_record};
 use std::path::PathBuf;
 
-const USAGE: &str = "usage: abep-assess-closure [--repo DIR] [--harness v1|v2] [--readiness] [--envelope MANIFEST \
---envelope-sha256 HEX] [--run-label LABEL] [--rust-commit SHA] [--out FILE]";
+const USAGE: &str = "usage: abep-assess-closure [--repo DIR] [--harness v1|v2] [--readiness] [--conservation-bounds] \
+[--envelope MANIFEST --envelope-sha256 HEX] [--run-label LABEL] [--rust-commit SHA] [--out FILE]";
 
 fn fail(e: impl std::fmt::Display) -> ! {
     eprintln!("{e}");
@@ -26,10 +28,12 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let (mut repo, mut out, mut env, mut env_sha, mut commit) = (None, None, None, None, String::new());
     let (mut harness, mut ready, mut label) = ("v1".to_string(), false, "UNLABELLED".to_string());
+    let mut bounds = false;
     let mut i = 0;
     while i < args.len() {
-        if args[i] == "--readiness" {
-            ready = true;
+        if args[i] == "--readiness" || args[i] == "--conservation-bounds" {
+            ready |= args[i] == "--readiness";
+            bounds |= args[i] == "--conservation-bounds";
             i += 1;
             continue;
         }
@@ -54,7 +58,13 @@ fn main() {
             std::process::exit(2);
         }
     };
-    let rec = if ready {
+    if bounds && (harness != "v2" || ready || envelope.is_some()) {
+        eprintln!("--conservation-bounds needs --harness v2, without --readiness or --envelope (A4 needs no envelope)");
+        std::process::exit(2);
+    }
+    let rec = if bounds {
+        conservation_bounds_record(&repo, &commit, &label)
+    } else if ready {
         readiness_record(&repo, envelope, &commit)
     } else if harness == "v2" {
         closure_record_v2(&repo, envelope, None, &commit, &label)
