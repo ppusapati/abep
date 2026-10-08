@@ -5606,3 +5606,33 @@ stays EMPTY and nothing enters layer (b).
 - **Priorities P1–P9:** intake / compressor DCR redesign; Hall RP-1 convergence; H1 B(z); RF/ICP closure and the AIR audit; mass; power; thermal; materials; host-drag C_D·A interface constraint.
 - **Sequence:** Hall + intake DCR + ICP / AIR in parallel → mass / power / thermal → M2 rerun → M3.
 - **Documentation:** engineering evidence plus a submission-safe statement for every item, using the six closure states.
+
+## 2026-10-08 — P8 materials closure gates v1 (A9.38 Priority 8, lane L-MATERIALS)
+
+- **What:** `docs/closure/materials/materials_gates_v1.{json,md}` (builder `build_materials_gates_v1.py`, `--check` reproduces both; every repository input sha256-pinned, fail closed) and the submission-safe statement `docs/closure/statements/P8_materials.md`.
+- **Scope:** the four retained DBF-1 selections, unchanged:
+  - INCONEL 600 / 601 for the anode and the ICP collector;
+  - BN-SiO2 / BN for the channel wall.
+- **Gates (42):** each of the four materials (on each application) is assessed for:
+  - atomic oxygen, external ram and internal feed-borne;
+  - plasma exposure;
+  - sputtering / erosion;
+  - deposition;
+  - thermal (continuous-use temperature and cycling);
+  - the electrical behaviour of the oxide scale.
+
+  Each gate carries its evidence (class, level, source, domain, uncertainty) and one verdict:
+  - **PASS_BY_ANALYSIS_WITH_ASSUMPTION 8:** external ram AO on aft-facing surfaces (free-molecular wake flux ≤ 3e-6 of ram for normals within 60°) and anode sputtering;
+  - **EM_VERIFICATION_REQUIRED 32**, each with its named coupon / EM test;
+  - **NOT_APPLICABLE 2:** ceramic oxide-scale conduction;
+  - **FAIL 0.**
+
+  No P4 gate cell is changed: they stay INCOMPLETE_EVIDENCE, and the P4 vocabulary never emits PASS.
+- **Design-driving findings:**
+  - **ICP collector sputtering.** The collector collects ~I_d as ions. At the Takahashi analog sheath energies of 140 / 220 eV, the N⁺→Ni prior gives 33–210 mm of recession over 15,000 h. A 0.5–2 mm allowance needs a mean ion energy E* of 26–38 eV, which is an operating-point requirement on P4 / BD-06. A DCR trigger is registered on DBF1-ICP-04, not on the material.
+  - **Anode temperature.** The supplier oxidation-data domains give screening ceilings of 930 °C (IN600) and 1150 °C (IN601) after the 50 K margin. The only repository anode temperature (≥ 1190 °C, inadmissible context) is above both. P7 decides, and DCR triggers are registered.
+  - **Internal O dose.** The internal atomic-O throughput dose at the anode plane is 8e26–3e28 m⁻² at the 12 mN necessary flow, of the order of the external ram bound. The AO coupon fluence is set from it.
+  - **Wall erosion.** The only air-mode analog life indication (PPS1350, 7000–9500 h) is below the 15,000 h firing basis.
+- **External sources:** Special Metals IN600 / IN601 bulletins, read 2026-10-08 (sha256 `89a3ba65…`, `261c20c2…`; not committed).
+- **P8 closure state: FROZEN FOR EM.**
+- No DBF-1 value, frozen record, model or golden changed.
