@@ -202,3 +202,19 @@ fn a_python_rust_class_disagreement_is_refused() {
     assert!(e.to_string().contains("R2"), "{e}");
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+#[test]
+fn committed_m2_record_is_the_a8_record_of_today() {
+    let rel = "docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json";
+    let text = std::fs::read_to_string(repo().join(rel)).unwrap();
+    let v = abep_types::pyjson::loads(&text).unwrap();
+    let commit = v.as_dict().unwrap().get("rust_commit").and_then(Value::as_str).unwrap().to_string();
+    let mut inp = today().0.clone();
+    inp.base.today.mission.provenance.rust_commit = commit;
+    let out = evaluate_dbf1(&inp).unwrap();
+    let now = to_json(&record_dbf1(&inp, &out, "M2_DBF1_V1").unwrap()).unwrap();
+    assert_eq!(now, text, "byte-identical regeneration");
+    let c = v.as_dict().unwrap().get("classification").unwrap().as_dict().unwrap();
+    assert_eq!(c.get("result").and_then(Value::as_str), Some(NOT_DETERMINABLE));
+    assert_eq!(c.get("procedure_step").and_then(Value::as_str), Some("C1"));
+}
