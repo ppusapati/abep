@@ -1,0 +1,13 @@
+{
+ "id": "dcr001_eval_prereg_lock_v1",
+ "dcr": "DCR-DBF1-001",
+ "locked": "2026-10-08",
+ "note": "sha256 of the DCR-001 evaluation preregistration, committed alone before any replacement design is compared; any change is a new dated version",
+ "files_relative_to": "docs/baseline/DCR-001/",
+ "files": {
+  "dcr001_eval_prereg_v1.json": "98f9931cbf537c3acca9753fafc9c9a9f93b22e7beb27dbae950f0c2c9e556f5",
+  "DCR001_EVAL_PREREG.md": "52132eeaf55335b728d2a5c306bbd7d4b7d1f0fc11cdf89d4d4117a81e1870cb"
+ },
+ "dbf1_lock": {"path": "docs/baseline/DBF-1/dbf1_lock_v1.json", "sha256": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907"},
+ "dcr_register": {"path": "docs/baseline/DBF-1/dcr_register_v2.json", "sha256": "21591ef5e99564e0292331f622a6678f918415c02d83706bc3883b0d57cbeabf"}
+}
