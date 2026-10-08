@@ -1,0 +1,11 @@
+{
+ "id": "np_hall_chem_air_addendum_02_lock",
+ "model_id": "NP-HALL-CHEM-AIR",
+ "locked": "2026-10-08",
+ "note": "sha256 of NP-HALL-CHEM-AIR addendum 02 (erratum E-02: the O2 -> O^2+ + O header is 53.89 eV, the bound-table header), committed alone before any audit run; changes are new dated addenda, never edits",
+ "base_commit": "7f6a059",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/",
+ "files": {
+  "addendum_02_erratum_o2_double_ionization_header.json": "5d06b62d873474a67afd4e18e25dd2ff41d91f9e769d2f3064e4e196e55641b5"
+ }
+}
