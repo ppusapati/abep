@@ -11,10 +11,14 @@
 //! [`gather`] reads the repository (fail closed: a pin that does not verify refuses the record); [`evaluate`] is pure;
 //! [`record`] renders the deterministic record and the readiness listing. [`conservation`] adds the addendum A4
 //! conservation bounds (step CA4 between C0 and C1; additive: without an eligible A4 failure nothing changes).
+//! [`intake`] adds the addendum A5 M2 intake closure (A9.35): a registered intake / gas-path design that misses the A4
+//! necessary condition in every surface scenario adds A5-NH-INTAKE (DESIGN_VARIABLE_LIMIT, never eligible).
 
 pub mod conservation;
 pub mod conservation_record;
 pub mod gather;
+pub mod intake;
+pub mod intake_record;
 pub mod record;
 
 use crate::closure::{
@@ -105,6 +109,7 @@ pub fn category_a2(code: &str) -> &'static str {
             "FUNDAMENTAL_ARCHITECTURE_LIMIT"
         }
         conservation::A4_INPUT_OUT_OF_DOMAIN => "MODEL_DOMAIN_LIMIT",
+        c if intake::A5_CELL_CODES.contains(&c) => "DESIGN_VARIABLE_LIMIT",
         other => category(other),
     }
 }
@@ -263,6 +268,8 @@ pub struct M1Inputs {
     pub hc08_n: Option<f64>,
     /// Addendum A4 inputs (None: A4 not evaluated).
     pub a4: Option<conservation::A4Inputs>,
+    /// Addendum A5 inputs (None: A5 not evaluated; the M1 dry run v1 is the harness without A5).
+    pub a5: Option<intake::IntakeInputs>,
 }
 
 // ------------------------------------------------------------------------------------------------ P-PBUS
@@ -994,8 +1001,19 @@ pub fn evaluate(inp: &M1Inputs) -> crate::AssessResult<M1Outcome> {
             }
         }
     }
+    let a5 = match (&inp.a5, &inp.a4, &a4) {
+        (Some(x), Some(ai), Some(ao)) => {
+            let hall = intake::hall_min_mdot(inp, &states);
+            let required: Vec<bool> = states.iter().map(|s| s.0.required).collect();
+            let o = intake::evaluate_a5(x, ai, ao, &ti.limits, &required, &hall)?;
+            intake::apply_cells(&o, &mut states);
+            Some(o)
+        }
+        (Some(_), _, _) => return Err(crate::error::model_error("A5 needs the A4 evaluation of the same run")),
+        _ => None,
+    };
     let outcome = classify_v2(ti.credible_set_empty, inp.xe.is_some(), &states);
-    Ok(M1Outcome { outcome, states, lb_groups, a4 })
+    Ok(M1Outcome { outcome, states, lb_groups, a4, a5 })
 }
 
 /// The layer (a) status of a (state, mode) (A2 joint_point_conditions.state_status): the v1 rule, and
@@ -1018,6 +1036,8 @@ pub struct M1Outcome {
     pub lb_groups: BTreeMap<Mode, BTreeMap<u64, Vec<HallTestResult>>>,
     /// Addendum A4 quantities and verdicts.
     pub a4: Option<conservation::A4Outcome>,
+    /// Addendum A5 quantities and verdicts.
+    pub a5: Option<intake::IntakeOutcome>,
 }
 
 /// The v1 procedure C0..C4 over per-(state, mode) evaluations (A2 classification.procedure), with the A4 step CA4

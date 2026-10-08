@@ -1043,6 +1043,12 @@ pub fn record_v2(inp: &M1Inputs, out: &M1Outcome, run_label: &str) -> Value {
             },
         ),
         ("conservation_bounds_a4", super::conservation_record::record_block(inp, out)),
+        (
+            "intake_closure_a5",
+            super::intake_record::record_block(inp, out).unwrap_or_else(|| {
+                d(vec![("status", s(NOT_EVALUATED)), ("reason", s("A5 not evaluated in this run (harness without A5)"))])
+            }),
+        ),
         ("hall_specific_closure_a", Value::Dict(hall_v)),
         ("constraint_closure_a", Value::Dict(nh_v)),
         ("binding_constraint", Value::Dict(binding)),

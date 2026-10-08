@@ -5465,3 +5465,46 @@ Lane `lane-hall-chem-air`, base `b730764`.
 - **Carried forward:** worst-state 12 mN needs ≥ 0.251 m² effective collection area and ≥ 0.048 mg/s at the ideal 1.5 kW limit.
 - **M2:** evaluates the actual intake geometry, capture efficiency and delivered mass flow. A failing current design is classified DESIGN_VARIABLE_LIMIT unless a registered spacecraft-envelope bound proves no permissible intake can close it.
 - **Governance:** continue M1; no owner review until the M1 milestone audit.
+
+## 2026-10-08 — M2 intake closure: NP-HALL-PARAMETRIC-ENVELOPE addendum A5 (+ A5.1), registered intake designs against the A4 required area / flow, dry run v2 (no admitted / scored result changed)
+
+- **A5** (`29fec8e`, committed alone before any A5 code or evaluation): `prereg_addendum_a5_m2_intake_closure.json`
+  `45e6013d…`, `PREREG_ADDENDUM_A5_M2_INTAKE_CLOSURE.md` `27195ed9…`, lock `d143fd4c…`. It encodes A9.35.
+  - No current intake design is registered: AFC-UP-IN-01 is a Pareto set with the robust set EMPTY, the F8
+    representative is REFUSED (A9.13 S6.20) and H2-7 R01 is BLOCKED. A5 therefore evaluates every registered set: the
+    F1 grid (48 d-collapsed candidates × 10 surface scenarios), its F1-admissible subset, the 1279 F7 Pareto members
+    and their F8 status.
+  - It compares, per state, T12 / T25 and scenario, A_eff = A, the TPMC captured flow and the delivered flow with the
+    A4 A_req and ṁ_req,in. These are necessary conditions.
+  - A level that fails in every scenario at a required AIR state adds A5-NH-INTAKE: DESIGN_VARIABLE_LIMIT, never
+    eligible. The only non-closure route stays A4 CA4 on a FROZEN area limit, and A4-REG-01 stays OPEN.
+- **A5.1** (`187a711`, registration correction, committed alone): the first run refused in input gathering because an
+  F7 member's rerun statewise minimum differed by 1 ulp from the committed Python capture. The F7 contract is
+  ULP_BOUNDED (max 24 ulp), not bit for bit, so the cross-check is now max(4 ulp, 1e-9 relative). No A5 quantity had
+  been computed.
+- **Code** (`e8a9dcd`, additive): `abep_assess::closure_m1::{intake, intake_record}`, `M1Inputs.a5` and
+  `M1Outcome.a5`, `abep-assess-closure --harness v2 --intake-closure`, and a new dependency abep-assess → abep-design
+  (reuse only). The A2 synthetic tests and the v1 dry-run check run the harness without A5.
+- **Record** `intake_closure_a5_v1.json`, against A9.35's carry-forward (worst state
+  `ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184`, A_req 0.2511 m², ṁ_req 0.048 / 0.208 mg/s):
+  - The F1-admissible intakes are the 8 A = 0.25 m² candidates in every scenario. C-DRAG-RFP excludes every larger
+    area.
+  - At the worst state, the best captured flow is 0.0418 mg/s (η_tot 0.90, A_cap,eq 0.220 m²). The best delivered flow
+    of an F7 member is 0.01296 mg/s.
+  - Worst-state multipliers (most / least favorable scenario):
+    - area: 1.004 (T12), 4.25 (T25);
+    - capture: 1.14 / 1.35 (T12), 4.94 / 5.85 (T25);
+    - delivered: 3.67 (T12), 15.9 (T25).
+  - One-hardware closure fails in every scenario at every level.
+  - Information: the grid areas of 0.5 m² and above would meet the T12 area and capture conditions at every state,
+    but C-DRAG-RFP excludes them (26.7 mN at ECSS_LT_HIGH 180 km for 0.5 m²).
+  - The F7 cross-check passes: 37 of 1279 minima are not bit-identical, at most 24 ulp.
+- **Dry run v2** `closure_run_m1_dryrun_v2.json` (M1_DRY_RUN_NOT_DECISIVE, v1 immutable): NOT_DETERMINABLE, C1.
+  - 54 required AIR cells carry A5-NH-INTAKE:
+    - A5_AREA_BELOW_REQUIRED_T12 1, _T25 26;
+    - A5_CAPTURE_BELOW_REQUIRED_T12 3, _T25 33;
+    - A5_DELIVERED_BELOW_REQUIRED_T12 11, _T25 54.
+  - Every one is DESIGN_VARIABLE_LIMIT. CA4 did not fire, and the A4 verdicts are unchanged.
+- **Tests:** `abep-assess/tests/intake_closure_a5.rs` (15): analytic, fail-closed, SYNTHETIC classification
+  (DESIGN_VARIABLE_LIMIT, scenario rule, CA4 first), pins, determinism, and byte-identical regeneration of both
+  committed records.

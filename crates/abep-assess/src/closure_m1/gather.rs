@@ -31,12 +31,12 @@ pub const PLENUM_V8_REL: &str = "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN
 pub const PLENUM_V8_SHA256: &str = "3f427a54dd5cecc002539b2537d1052d5e4e33c66bc1ba1219a0558e4abaa8d7";
 pub const LEDGER_REL: &str = "docs/rust_migration/migration_state_v1.json";
 
-fn json(repo: &Path, rel: &str, sha: &str) -> AssessResult<Value> {
+pub(crate) fn json(repo: &Path, rel: &str, sha: &str) -> AssessResult<Value> {
     let b = read_verified(&repo.join(rel), sha)?;
     Ok(loads(std::str::from_utf8(&b).map_err(|e| model_error(format!("{rel}: {e}")))?)?)
 }
 
-fn gz_json(repo: &Path, rel: &str, sha: &str, json_sha: &str) -> AssessResult<Value> {
+pub(crate) fn gz_json(repo: &Path, rel: &str, sha: &str, json_sha: &str) -> AssessResult<Value> {
     let gz = std::fs::read(repo.join(rel)).map_err(|e| model_error(format!("{rel}: {e}")))?;
     let raw = read_container(&gz, rel, sha, None, json_sha)?;
     Ok(loads(std::str::from_utf8(&raw).map_err(|e| model_error(format!("{rel}: {e}")))?)?)
@@ -521,6 +521,7 @@ pub fn gather_m1(
     }
     let today = gather(repo, rust_commit)?;
     let a4 = Some(super::conservation::gather_a4(repo, &today)?);
+    let a5 = Some(super::intake::gather_a5(repo, &today)?);
     let (air_admitted, air_chem) = air_chemistry(repo)?;
     let air = match air {
         Some(a) if a1 => AirHall::Ingested(a),
@@ -567,5 +568,6 @@ pub fn gather_m1(
         hc07_h,
         hc08_n,
         a4,
+        a5,
     })
 }
