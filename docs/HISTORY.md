@@ -5301,3 +5301,11 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
 - **Hall air chemistry:** a narrow, preregistered, sourced Hall O/O2 chemistry contract for AIR_PRIMARY is authorized (extends A9.30, which limited O/O2 to the ICP). No fabricated coefficients; AIR Hall stays NOT_EVALUATED until admitted.
 - **Plenum / feed:** the v8 scored result (PARITY_FAIL / NOT_ADMITTED) stands; transients stay PYTHON_REFERENCE; no v9 now.
 - **Unchanged:** credible Hall set EMPTY; HallMap admission; HallThruster.jl pin; P5 campaign closed.
+
+## 2026-10-08 — A9.34 owner decision recorded: milestone governance M1 / M2 / M3
+
+- **What:** owner directive recorded verbatim as `docs/decisions/OD_2026_10_08_A9_34_MILESTONE_GOVERNANCE_M1_M2_M3.md` (sha256 `284a8339ac9d821d19f6484c844822662d9f19ec02d2074d641d432785df3de1`), with companion `docs/decisions/OD_2026_10_08_A9_34_milestone_governance_m1_m2_m3.json`.
+- **Audit mode:** milestone-based only. Between milestones, escalate only findings that change the selected architecture, an RFP requirement, or an already admitted / scored result.
+- **M1 ARCHITECTURE PHYSICS READY** (current). Exit when the H1 Hall envelope has run, Hall AIR chemistry is available or explicitly bounded, RF/ICP coupling is available, and the 196-state closure harness consumes all required physics paths; then one milestone audit.
+- **M2 196-STATE RFP CLOSURE** follows immediately; **M3 ARCHITECTURE DECISION** is the programme objective.
+- **Plenum / feed:** v8 PARITY_FAIL stands; the transient path uses the governed Python reference; no v9 unless it blocks the architecture calculation.

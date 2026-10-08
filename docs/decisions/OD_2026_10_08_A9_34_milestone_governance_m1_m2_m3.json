@@ -1,0 +1,33 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_08_A9_34_milestone_governance_m1_m2_m3",
+ "decided_by": "owner",
+ "date": "2026-10-08",
+ "decision": "A9_34_MILESTONE_GOVERNANCE_M1_M2_M3",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_08_A9_34_MILESTONE_GOVERNANCE_M1_M2_M3.md",
+  "sha256": "284a8339ac9d821d19f6484c844822662d9f19ec02d2074d641d432785df3de1",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "MILESTONE_GOVERNANCE",
+   "utc": "2026-10-08T04:41:27.468Z",
+   "text_sha256": "e9789e4ddeb2daa5d684d911041d310fb105e4f8c7711d6c6d30677460297e55",
+   "chars": 851
+  }
+ ],
+ "checkpoint_at_decision": "b730764",
+ "owner_decision_summary": {
+  "audit_mode": "milestone-based auditing only; no owner review after individual lanes, contracts, parity runs or implementation findings unless they change the selected architecture, an RFP requirement, or an already admitted / scored result",
+  "M1": "ARCHITECTURE PHYSICS READY (current). Exit only when: the H1 Hall envelope has run; Hall AIR chemistry is available or explicitly bounded; RF/ICP coupling is available; the 196-state closure harness can consume all required physics paths. Then one milestone audit",
+  "M2": "196-STATE RFP CLOSURE, executed immediately after the M1 audit",
+  "M3": "ARCHITECTURE DECISION, reached as quickly as possible (programme objective)",
+  "plenum_feed": "v8 PARITY_FAIL stands; use the governed Python reference for that transient path; no v9 unless it blocks the architecture calculation"
+ },
+ "recorder_notes": [
+  "Escalation between milestones is limited to findings that change the selected architecture, an RFP requirement, or an already admitted / scored result; all other lane-level calls are made by the coordinator, recorded in HISTORY and reviewed at the milestone audit.",
+  "Standing rules (provenance, preregistration before runs, fail-closed semantics, requirement/physics separation, frozen-record immutability) are unchanged."
+ ]
+}
