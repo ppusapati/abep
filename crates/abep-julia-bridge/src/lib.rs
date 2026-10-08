@@ -8,8 +8,10 @@
 //! real runs are registered platform tests (docs/rust_migration/test_register/platform_tests_v1.json).
 //!
 //! [`envelope_cases`] (NP-HALL-PARAMETRIC-ENVELOPE v1, A9.32) generates and dry-runs the H-1 parametric envelope case
-//! file, launches its shards through [`launch::launch`] and freezes their outputs.
+//! file, launches its shards through [`launch::launch`] and freezes their outputs; [`envelope_a3`] is its addendum A3
+//! numerics-adequacy check (RG-04).
 
+pub mod envelope_a3;
 pub mod envelope_cases;
 pub mod jobs;
 pub mod launch;
