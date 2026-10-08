@@ -7,10 +7,16 @@
 //! settings, record reading (structural gate) and the per-run provenance sidecar. Normal tests never spawn Julia; the
 //! real runs are registered platform tests (docs/rust_migration/test_register/platform_tests_v1.json).
 //!
+//! [`air_cases`] and [`air_audit`] (NP-HALL-CHEM-AIR, A9.33 Q2) generate the AIR HallThruster.jl cases (CA-HALL-AIR-v1
+//! audit state envelope; the AIR family of the parametric envelope) from the frozen v1 rows, the composition hull and the
+//! inlet rule NI-01, and compute the audit verdicts from frozen records.
+//!
 //! [`envelope_cases`] (NP-HALL-PARAMETRIC-ENVELOPE v1, A9.32) generates and dry-runs the H-1 parametric envelope case
 //! file, launches its shards through [`launch::launch`] and freezes their outputs; [`envelope_a3`] is its addendum A3
 //! numerics-adequacy check (RG-04).
 
+pub mod air_audit;
+pub mod air_cases;
 pub mod envelope_a3;
 pub mod envelope_cases;
 pub mod jobs;

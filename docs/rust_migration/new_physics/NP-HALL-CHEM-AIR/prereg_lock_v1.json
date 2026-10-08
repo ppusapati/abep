@@ -1,0 +1,13 @@
+{
+ "id": "np_hall_chem_air_prereg_lock_v1",
+ "model_id": "NP-HALL-CHEM-AIR",
+ "locked": "2026-10-08",
+ "note": "sha256 of the NP-HALL-CHEM-AIR v1 preregistration (A9.33 Q2; status PREREGISTERED_NOT_IMPLEMENTED) and the solver capability audit it rests on, committed alone before any O / O2 Hall table, omitted-process metric or AIR Hall run; any change after this lock is a new, dated version or addendum, never an edit",
+ "base_commit": "14c16d1",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/",
+ "files": {
+  "prereg_v1.json": "306712f78bbbf17e8aa50e804559c36a80680dbebc8ecf0f47f2c244443ea70f",
+  "PREREG.md": "39a3edda6433114810117e4c82a8b95738094e095ea010bad305dd14965ff566",
+  "capability_audit_v1.json": "4be3ba8be204c433a691da1c54bb1fcf172579c0ea913f4224372255eac408cb"
+ }
+}

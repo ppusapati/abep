@@ -1,0 +1,90 @@
+{
+ "schema": "hall_air_xs_v1",
+ "contract": "NP-HALL-CHEM-AIR",
+ "prereg": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_v1.json",
+ "prereg_lock_sha256": "1884e42ff98ee07a634500ce338eef9dc3749bf4e5c053b058aec9b764674518",
+ "process": "HA-O2-DIS-01",
+ "role": "NOMINAL (Cosby-only lower member: dissociation below 13.5 eV MISSING)",
+ "target": "O2",
+ "reaction": "e + O2 -> O + O + e",
+ "table": "hallthruster_bridge/propellants_air/dissociation_O2_song2026.dat",
+ "v0_table": "docs/chemistry/o_o2/v0/tables/dissociation_O2_song2026.dat",
+ "v0_table_sha256": "e908da8e19ea0d5e9364fea28332ef685602048fe3c023eaf41eb048eda5984b",
+ "header_label": "Dissociation energy loss",
+ "threshold_eV": 5.12,
+ "tail": "hold",
+ "eps_max_eV": 300.0,
+ "source_text": "NP-HALL-CHEM-AIR HA-O2-DIS-01 (NOMINAL (Cosby-only lower member: dissociation below 13.5 eV MISSING)). e + O2 -> O + O + e. Cross section: Song, Cho, Karwasz, Kokoouline, Tennyson & Bartschat, J. Phys. Chem. Ref. Data 55, 013102 (2026), doi:10.1063/5.0287254, accepted manuscript (UCL Discovery, sha256 32d163a3...), version of record NOT accessed (NP-HALL-CHEM-AIR status IN_REPO_PENDING_VERSION_OF_RECORD, OQ-HA-01); SONG2026 Table VI; stated uncertainty about +-35 % (SONG2026 Table VI caption). Points = the v0 DRAFT transcription (docs/chemistry/o_o2/v0/build_tables_song2026.py, sha256 c9ff00198737...), extracted unchanged by scripts/chemistry/extract_hall_air_xs.py. Choices: see the v0 manifest. Header 5.12 eV: 5.12 eV D0(O2) (SONG2026 Sec. II.G): minimum fixed sink; the O(1D)+O(3P) channel (5.12 + 1.967 = 7.087 eV, II1990 Table 2.1) bounds the representative loss; owner decision OD-4. Maxwellian-integrated by the admitted Rust port of abep_sim/rate_tables.py (abep_chem::reference; crates/abep-chem/examples/build_hall_air_tables.rs); byte-identical to the v0 table. Energy column = mean electron energy 3/2 Te. Evidence level 4 (docs/EVIDENCE.md); quantity type: measured (evaluated), transcribed.",
+ "provenance": {
+  "citation": "Song, Cho, Karwasz, Kokoouline, Tennyson & Bartschat, J. Phys. Chem. Ref. Data 55, 013102 (2026), doi:10.1063/5.0287254, accepted manuscript (UCL Discovery, sha256 32d163a3...), version of record NOT accessed (NP-HALL-CHEM-AIR status IN_REPO_PENDING_VERSION_OF_RECORD, OQ-HA-01)",
+  "source_location": "SONG2026 Table VI",
+  "transformation_chain": "Cosby 1993 measurement -> SONG2026 Table VI -> transcribed -> Maxwellian integration",
+  "extraction": "v0 builder specs() arrays, unchanged (shortest round-trip floats)",
+  "v0_builder": "docs/chemistry/o_o2/v0/build_tables_song2026.py",
+  "v0_builder_sha256": "c9ff001987371f4ca2ab5e79a0d097c770a846da5ea71dae358832734078d3ac",
+  "extracted_by": "scripts/chemistry/extract_hall_air_xs.py"
+ },
+ "stated_uncertainty": "about +-35 % (SONG2026 Table VI caption)",
+ "evidence_level": 4,
+ "quantity_type": "measured (evaluated), transcribed",
+ "header_basis": "5.12 eV D0(O2) (SONG2026 Sec. II.G): minimum fixed sink; the O(1D)+O(3P) channel (5.12 + 1.967 = 7.087 eV, II1990 Table 2.1) bounds the representative loss; owner decision OD-4",
+ "units": {
+  "E": "eV",
+  "sigma": "m^2"
+ },
+ "n_points": 13,
+ "points": [
+  [
+   13.5,
+   2.2e-21
+  ],
+  [
+   18.5,
+   5.29e-21
+  ],
+  [
+   21.0,
+   5.6499999999999995e-21
+  ],
+  [
+   23.5,
+   5.25e-21
+  ],
+  [
+   28.5,
+   5.869999999999999e-21
+  ],
+  [
+   33.5,
+   6.63e-21
+  ],
+  [
+   38.5,
+   6.0999999999999994e-21
+  ],
+  [
+   48.5,
+   5.34e-21
+  ],
+  [
+   58.5,
+   4.44e-21
+  ],
+  [
+   73.5,
+   3.66e-21
+  ],
+  [
+   98.5,
+   3.31e-21
+  ],
+  [
+   148.5,
+   2.9599999999999996e-21
+  ],
+  [
+   198.5,
+   2.9099999999999995e-21
+  ]
+ ]
+}

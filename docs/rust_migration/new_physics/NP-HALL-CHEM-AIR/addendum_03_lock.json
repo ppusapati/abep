@@ -1,0 +1,11 @@
+{
+ "id": "np_hall_chem_air_addendum_03_lock",
+ "model_id": "NP-HALL-CHEM-AIR",
+ "locked": "2026-10-08",
+ "note": "sha256 of NP-HALL-CHEM-AIR addendum 03 (A9.34 M1: Hall AIR chemistry EXPLICITLY_BOUNDED; bounding variant set BV-AIR-LL with stated direction), committed alone before any AIR run; changes are new dated addenda, never edits",
+ "base_commit": "ad5f1c6",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/",
+ "files": {
+  "addendum_03_bounded_treatment.json": "bcf18240f2c5044041a33abfb6de7df1ba8267e4b2df888bb507b114d6205155"
+ }
+}

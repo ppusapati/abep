@@ -1,0 +1,162 @@
+{
+ "schema": "hall_air_xs_v1",
+ "contract": "NP-HALL-CHEM-AIR",
+ "prereg": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_v1.json",
+ "prereg_lock_sha256": "1884e42ff98ee07a634500ce338eef9dc3749bf4e5c053b058aec9b764674518",
+ "process": "HA-O2-DI-02",
+ "role": "AUDIT BOUND TABLE (not configured: L-06)",
+ "target": "O2",
+ "reaction": "e + O2 -> O^2+ + O + 3e",
+ "table": "hallthruster_bridge/audit_air/bound_tables/dissociative_ionization_O2_to_O_Z2plus_song2026.dat",
+ "v0_table": "docs/chemistry/o_o2/v0/tables/dissociative_ionization_O2_to_O_Z2plus_song2026.dat",
+ "v0_table_sha256": "c9868d1a4d3bfc1c6e0aba9be4e6b963238cdb5cbc0816c4f011c2c4a2c79b5e",
+ "header_label": "Ionization energy",
+ "threshold_eV": 53.89,
+ "tail": "hold",
+ "eps_max_eV": 300.0,
+ "source_text": "NP-HALL-CHEM-AIR HA-O2-DI-02 (AUDIT BOUND TABLE (not configured: L-06)). e + O2 -> O(2+) + O + 3e. Cross section: Song, Cho, Karwasz, Kokoouline, Tennyson & Bartschat, J. Phys. Chem. Ref. Data 55, 013102 (2026), doi:10.1063/5.0287254, accepted manuscript (UCL Discovery, sha256 32d163a3...), version of record NOT accessed (NP-HALL-CHEM-AIR status IN_REPO_PENDING_VERSION_OF_RECORD, OQ-HA-01); SONG2026 Table VII, column O^2+; stated uncertainty 10 % (SONG2026 Table VII caption). Points = the v0 DRAFT transcription (docs/chemistry/o_o2/v0/build_tables_song2026.py, sha256 c9ff00198737...), extracted unchanged by scripts/chemistry/extract_hall_air_xs.py. Choices: see the v0 manifest. Header 53.89 eV: 53.888 eV = 5.12 eV + 48.77 eV (O^2+ above O ground, II1990 Table 2.1, OCR text layer; verify); inferred minimum; PROPOSED. Maxwellian-integrated by the admitted Rust port of abep_sim/rate_tables.py (abep_chem::reference; crates/abep-chem/examples/build_hall_air_tables.rs); byte-identical to the v0 table. Energy column = mean electron energy 3/2 Te. Evidence level 4 (docs/EVIDENCE.md); quantity type: measured (evaluated), transcribed; threshold segment assumed (linear ramp).",
+ "provenance": {
+  "citation": "Song, Cho, Karwasz, Kokoouline, Tennyson & Bartschat, J. Phys. Chem. Ref. Data 55, 013102 (2026), doi:10.1063/5.0287254, accepted manuscript (UCL Discovery, sha256 32d163a3...), version of record NOT accessed (NP-HALL-CHEM-AIR status IN_REPO_PENDING_VERSION_OF_RECORD, OQ-HA-01)",
+  "source_location": "SONG2026 Table VII, column O^2+",
+  "transformation_chain": "Straub et al. 1996 -> Lindsay & Mangan 2003 -> SONG2026 Table VII -> transcribed -> ramp -> Maxwellian integration",
+  "extraction": "v0 builder specs() arrays, unchanged (shortest round-trip floats)",
+  "v0_builder": "docs/chemistry/o_o2/v0/build_tables_song2026.py",
+  "v0_builder_sha256": "c9ff001987371f4ca2ab5e79a0d097c770a846da5ea71dae358832734078d3ac",
+  "extracted_by": "scripts/chemistry/extract_hall_air_xs.py"
+ },
+ "stated_uncertainty": "10 % (SONG2026 Table VII caption)",
+ "evidence_level": 4,
+ "quantity_type": "measured (evaluated), transcribed; threshold segment assumed (linear ramp)",
+ "header_basis": "53.888 eV = 5.12 eV + 48.77 eV (O^2+ above O ground, II1990 Table 2.1, OCR text layer; verify); inferred minimum; PROPOSED",
+ "units": {
+  "E": "eV",
+  "sigma": "m^2"
+ },
+ "n_points": 31,
+ "points": [
+  [
+   53.89,
+   0.0
+  ],
+  [
+   73.0,
+   1.18e-23
+  ],
+  [
+   78.0,
+   1.89e-23
+  ],
+  [
+   83.0,
+   2.4099999999999997e-23
+  ],
+  [
+   88.0,
+   3.52e-23
+  ],
+  [
+   93.0,
+   4.38e-23
+  ],
+  [
+   98.0,
+   6.1e-23
+  ],
+  [
+   108.0,
+   8.08e-23
+  ],
+  [
+   118.0,
+   9.560000000000001e-23
+  ],
+  [
+   138.0,
+   1.37e-22
+  ],
+  [
+   158.0,
+   1.7999999999999997e-22
+  ],
+  [
+   178.0,
+   1.9999999999999999e-22
+  ],
+  [
+   198.0,
+   2.11e-22
+  ],
+  [
+   223.0,
+   2.3e-22
+  ],
+  [
+   248.0,
+   2.2599999999999996e-22
+  ],
+  [
+   273.0,
+   2.13e-22
+  ],
+  [
+   298.0,
+   2.0699999999999998e-22
+  ],
+  [
+   348.0,
+   1.89e-22
+  ],
+  [
+   398.0,
+   1.71e-22
+  ],
+  [
+   448.0,
+   1.5299999999999997e-22
+  ],
+  [
+   498.0,
+   1.3599999999999998e-22
+  ],
+  [
+   548.0,
+   1.23e-22
+  ],
+  [
+   598.0,
+   1.11e-22
+  ],
+  [
+   648.0,
+   1.08e-22
+  ],
+  [
+   698.0,
+   9.869999999999999e-23
+  ],
+  [
+   748.0,
+   9.769999999999999e-23
+  ],
+  [
+   798.0,
+   8.370000000000001e-23
+  ],
+  [
+   848.0,
+   7.99e-23
+  ],
+  [
+   898.0,
+   7.7e-23
+  ],
+  [
+   948.0,
+   7.4e-23
+  ],
+  [
+   998.0,
+   7.43e-23
+  ]
+ ]
+}

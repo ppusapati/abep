@@ -1,0 +1,210 @@
+{
+ "schema": "hall_air_xs_v1",
+ "contract": "NP-HALL-CHEM-AIR",
+ "prereg": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_v1.json",
+ "prereg_lock_sha256": "1884e42ff98ee07a634500ce338eef9dc3749bf4e5c053b058aec9b764674518",
+ "process": "HA-O2-ION-01",
+ "role": "NOMINAL",
+ "target": "O2",
+ "reaction": "e + O2 -> O2+ + 2e",
+ "table": "hallthruster_bridge/propellants_air/ionization_O2_song2026.dat",
+ "v0_table": "docs/chemistry/o_o2/v0/tables/ionization_O2_song2026.dat",
+ "v0_table_sha256": "fa6fca7a8192c0d1ccea8776f78e341a50187c28c632173047b4d8164f1e1d31",
+ "header_label": "Ionization energy",
+ "threshold_eV": 12.2,
+ "tail": "hold",
+ "eps_max_eV": 300.0,
+ "source_text": "NP-HALL-CHEM-AIR HA-O2-ION-01 (NOMINAL). e + O2 -> O2(+) + 2e. Cross section: Song, Cho, Karwasz, Kokoouline, Tennyson & Bartschat, J. Phys. Chem. Ref. Data 55, 013102 (2026), doi:10.1063/5.0287254, accepted manuscript (UCL Discovery, sha256 32d163a3...), version of record NOT accessed (NP-HALL-CHEM-AIR status IN_REPO_PENDING_VERSION_OF_RECORD, OQ-HA-01); SONG2026 Table VII, column O2+; stated uncertainty 5 % (SONG2026 Table VII caption). Points = the v0 DRAFT transcription (docs/chemistry/o_o2/v0/build_tables_song2026.py, sha256 c9ff00198737...), extracted unchanged by scripts/chemistry/extract_hall_air_xs.py. Choices: sigma = 0 below 13.0 eV (first tabulated point), no constructed threshold curve; held tail above 998 eV. Header 12.2 eV: 12.2 eV O2+(X) ionization threshold, SONG2026 Sec. II.H (text layer 'X 2Pi_u'; verify). Maxwellian-integrated by the admitted Rust port of abep_sim/rate_tables.py (abep_chem::reference; crates/abep-chem/examples/build_hall_air_tables.rs); byte-identical to the v0 table. Energy column = mean electron energy 3/2 Te. Evidence level 4 (docs/EVIDENCE.md); quantity type: measured (evaluated), transcribed.",
+ "provenance": {
+  "citation": "Song, Cho, Karwasz, Kokoouline, Tennyson & Bartschat, J. Phys. Chem. Ref. Data 55, 013102 (2026), doi:10.1063/5.0287254, accepted manuscript (UCL Discovery, sha256 32d163a3...), version of record NOT accessed (NP-HALL-CHEM-AIR status IN_REPO_PENDING_VERSION_OF_RECORD, OQ-HA-01)",
+  "source_location": "SONG2026 Table VII, column O2+",
+  "transformation_chain": "Straub et al. 1996 (+ earlier) -> Lindsay & Mangan 2003 evaluation -> SONG2026 Table VII -> transcribed -> Maxwellian integration",
+  "extraction": "v0 builder specs() arrays, unchanged (shortest round-trip floats)",
+  "v0_builder": "docs/chemistry/o_o2/v0/build_tables_song2026.py",
+  "v0_builder_sha256": "c9ff001987371f4ca2ab5e79a0d097c770a846da5ea71dae358832734078d3ac",
+  "extracted_by": "scripts/chemistry/extract_hall_air_xs.py"
+ },
+ "stated_uncertainty": "5 % (SONG2026 Table VII caption)",
+ "evidence_level": 4,
+ "quantity_type": "measured (evaluated), transcribed",
+ "header_basis": "12.2 eV O2+(X) ionization threshold, SONG2026 Sec. II.H (text layer 'X 2Pi_u'; verify)",
+ "units": {
+  "E": "eV",
+  "sigma": "m^2"
+ },
+ "n_points": 43,
+ "points": [
+  [
+   13.0,
+   1.17e-22
+  ],
+  [
+   15.5,
+   7.299999999999999e-22
+  ],
+  [
+   18.0,
+   1.64e-21
+  ],
+  [
+   23.0,
+   3.66e-21
+  ],
+  [
+   28.0,
+   5.629999999999999e-21
+  ],
+  [
+   33.0,
+   7.58e-21
+  ],
+  [
+   38.0,
+   9.29e-21
+  ],
+  [
+   43.0,
+   1.08e-20
+  ],
+  [
+   48.0,
+   1.19e-20
+  ],
+  [
+   53.0,
+   1.29e-20
+  ],
+  [
+   58.0,
+   1.36e-20
+  ],
+  [
+   63.0,
+   1.42e-20
+  ],
+  [
+   68.0,
+   1.4699999999999997e-20
+  ],
+  [
+   73.0,
+   1.4999999999999998e-20
+  ],
+  [
+   78.0,
+   1.51e-20
+  ],
+  [
+   83.0,
+   1.53e-20
+  ],
+  [
+   88.0,
+   1.55e-20
+  ],
+  [
+   93.0,
+   1.56e-20
+  ],
+  [
+   98.0,
+   1.56e-20
+  ],
+  [
+   108.0,
+   1.54e-20
+  ],
+  [
+   118.0,
+   1.53e-20
+  ],
+  [
+   138.0,
+   1.4999999999999998e-20
+  ],
+  [
+   158.0,
+   1.4799999999999998e-20
+  ],
+  [
+   178.0,
+   1.43e-20
+  ],
+  [
+   198.0,
+   1.3899999999999998e-20
+  ],
+  [
+   223.0,
+   1.34e-20
+  ],
+  [
+   248.0,
+   1.31e-20
+  ],
+  [
+   273.0,
+   1.24e-20
+  ],
+  [
+   298.0,
+   1.2e-20
+  ],
+  [
+   348.0,
+   1.1299999999999999e-20
+  ],
+  [
+   398.0,
+   1.05e-20
+  ],
+  [
+   448.0,
+   9.829999999999999e-21
+  ],
+  [
+   498.0,
+   9.23e-21
+  ],
+  [
+   548.0,
+   8.82e-21
+  ],
+  [
+   598.0,
+   8.27e-21
+  ],
+  [
+   648.0,
+   8e-21
+  ],
+  [
+   698.0,
+   7.61e-21
+  ],
+  [
+   748.0,
+   7.2e-21
+  ],
+  [
+   798.0,
+   6.860000000000001e-21
+  ],
+  [
+   848.0,
+   6.71e-21
+  ],
+  [
+   898.0,
+   6.43e-21
+  ],
+  [
+   948.0,
+   6.169999999999999e-21
+  ],
+  [
+   998.0,
+   5.9699999999999994e-21
+  ]
+ ]
+}
