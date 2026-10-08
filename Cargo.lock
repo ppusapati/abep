@@ -10,6 +10,7 @@ dependencies = [
  "abep-chem",
  "abep-config",
  "abep-data",
+ "abep-design",
  "abep-gaspath",
  "abep-hall",
  "abep-icp",

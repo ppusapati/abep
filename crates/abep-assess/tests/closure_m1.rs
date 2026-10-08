@@ -295,6 +295,8 @@ fn with_closing_subsystems(inp: &mut M1Inputs) {
 
 fn synthetic_chain() -> M1Inputs {
     let mut inp = base().clone();
+    // The A2 path tests run the A2 + A4 harness; addendum A5 (intake closure) has its own tests.
+    inp.a5 = None;
     inp.xe = Some(xe_envelope(env::BzFamilyKind::SourcedSurrogate));
     with_air(&mut inp, air(&[("G1", 1e-6, 0.030, 3.0), ("G2", 3e-6, 0.030, 1.0)]));
     with_icp(&mut inp, 5.0);
@@ -759,6 +761,8 @@ fn committed_dry_run_is_the_harness_v2_record_of_today() {
     // Regenerating today with the recorded commit reproduces the classification and the blocking list.
     let mut inp = base().clone();
     inp.today.mission.provenance.rust_commit = commit;
+    // The v1 dry run predates addendum A5: it is the harness without A5 (dry run v2 carries A5).
+    inp.a5 = None;
     let now = record_v2(&inp, &evaluate(&inp).unwrap(), "M1_DRY_RUN_NOT_DECISIVE");
     assert_eq!(at(&now, &["classification"]), at(&v, &["classification"]));
     assert_eq!(at(&now, &["readiness"]), at(&v, &["readiness"]));

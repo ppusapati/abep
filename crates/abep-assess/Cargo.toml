@@ -33,6 +33,8 @@ abep-mission = { path = "../abep-mission" }
 abep-gaspath = { path = "../abep-gaspath" }
 abep-subsystems = { path = "../abep-subsystems" }
 abep-icp = { path = "../abep-icp" }
+# Admitted F7 design chain (F1 consumer view, plenum of (V, wall)) read by the addendum A5 intake closure.
+abep-design = { path = "../abep-design" }
 # IF-ICP-BUS-v2 records are serde_json values (abep_subsystems::power::icp_bus::icp_upstream_loads_v2; closure_m1 P-PBUS).
 serde_json.workspace = true
 

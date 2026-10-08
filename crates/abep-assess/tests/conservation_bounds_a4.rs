@@ -273,9 +273,14 @@ fn misaligned_state_lists_are_refused() {
 fn without_a4_inputs_the_harness_is_unchanged() {
     let mut inp = base().clone();
     inp.a4 = None;
+    // Addendum A5 reads the A4 quantities of the same run: A5 without A4 is refused (MODEL_ERROR).
+    assert_eq!(evaluate(&inp).unwrap_err().status(), EvalStatus::ModelError);
+    inp.a5 = None;
     let o = evaluate(&inp).unwrap();
     assert!(o.a4.is_none());
-    assert_eq!(o.outcome.blockers, base_out().outcome.blockers);
+    let mut a2a4 = base().clone();
+    a2a4.a5 = None;
+    assert_eq!(o.outcome.blockers, evaluate(&a2a4).unwrap().outcome.blockers);
     assert!(bounds_record(&inp, &o, "X").is_err());
 }
 
