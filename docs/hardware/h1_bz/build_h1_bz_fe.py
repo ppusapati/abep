@@ -1,4 +1,4 @@
-"""H-1 / MC-1 FE-derived B(z) (lane L-H1-BZ, A9.38 P3): runs the preregistered evaluation h1_bz_fe_prereg_v2.json (v1 superseded, kept).
+"""H-1 / MC-1 FE-derived B(z) (lane L-H1-BZ, A9.38 P3): runs the preregistered evaluation h1_bz_fe_prereg_v3.json (v1, v2 superseded, kept).
 
 Stages (each writes a raw JSON under the scratch directory given by --work; nothing in the repository is written until
 --emit):
@@ -29,8 +29,8 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, HERE)
 import h1_bz_fe_solver as S  # noqa: E402
 
-PREREG = os.path.join(HERE, "h1_bz_fe_prereg_v2.json")
-LOCK = os.path.join(HERE, "h1_bz_fe_prereg_lock_v2.json")
+PREREG = os.path.join(HERE, "h1_bz_fe_prereg_v3.json")
+LOCK = os.path.join(HERE, "h1_bz_fe_prereg_lock_v3.json")
 BHFILE = os.path.join(HERE, "bh_curves_v1.json")
 OUT_JSON = os.path.join(HERE, "h1_bz_fe_v1.json")
 OUT_MD = os.path.join(HERE, "H1_BZ_FE_v1.md")
@@ -206,12 +206,14 @@ def run_verify(P, work):
         rc = g["d_mean_mm"] / 2 * MM
         br_fe, bz2_fe, _ = S.field_at(sol, np.full(zz.size, rc), zz * MM)
         br_q, bz_q = S.coil_field_quadrature(cr.r0, cr.r1, cr.z0, cr.z1, NI, np.full(zz.size, rc), zz * MM,
-                                             n=V["V1"]["quadrature_n"])
+                                             n=V["V1"]["quadrature_n"],
+                                             panel_max=V["V1"]["quadrature_panel_max_mm"] * MM)
         e_br = float(np.max(np.abs(br_fe - br_q)) / np.max(np.abs(br_q)))
         e_bz = float(np.max(np.abs(bz2_fe - bz_q)) / np.max(np.abs(bz_q)))
         # self-check of the elliptic reference on the axis against the closed form
         _, bz_q0 = S.coil_field_quadrature(cr.r0, cr.r1, cr.z0, cr.z1, NI, np.full(zz.size, 1e-7), zz * MM,
-                                           n=V["V1"]["quadrature_n"])
+                                           n=V["V1"]["quadrature_n"],
+                                             panel_max=V["V1"]["quadrature_panel_max_mm"] * MM)
         e_ref = float(np.max(np.abs(bz_q0 - bz_an)) / np.max(np.abs(bz_an)))
         crit = V["V1"]["criteria"]
         res[key] = {"status": sol.status, "dofs": sol.n_dofs, "seconds": round(time.time() - t, 1),
@@ -256,9 +258,8 @@ def run_verify(P, work):
     for mat in ("hiperco", "iron"):
         for H in v3["H_A_per_m"]:
             core = S.Rect(0.0, v3["core_r_mm"] * MM, 0.0, v3["height_mm"] * MM, mat, "core")
-            t_c = (v3["coil_r_mm"][1] - v3["coil_r_mm"][0]) * MM
             coil = S.Rect(v3["coil_r_mm"][0] * MM, v3["coil_r_mm"][1] * MM, 0.0, v3["height_mm"] * MM, "coil:c", "winding")
-            NI = H * t_c * v3["height_mm"] * MM
+            NI = H * v3["height_mm"] * MM  # H = N I / height inside an infinite solenoid
             hh = v3["h_mm"] * MM
             pb = S.Problem([core, coil], {"c": NI}, v3["outer_r_mm"] * MM, 0.0, v3["height_mm"] * MM, hh,
                            v3["outer_r_mm"] * MM, (0.0, v3["height_mm"] * MM), dirichlet="axis")
@@ -504,7 +505,7 @@ def main():
                   "build_sha256": sha256_file(__file__), "python": platform.python_version(),
                   "numpy": np.__version__, "scipy": scipy.__version__}
     with open(os.path.join(work, f"{stage}.json"), "w") as f:
-        json.dump(r, f, indent=1)
+        json.dump(r, f, indent=1, default=lambda o: o.item() if isinstance(o, np.generic) else str(o))
     print("wrote", os.path.join(work, f"{stage}.json"), r["_meta"]["seconds"], "s")
 
 

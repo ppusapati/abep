@@ -1,13 +1,14 @@
 """Axisymmetric nonlinear magnetostatic FE for the H-1 / MC-1 electromagnet (lane L-H1-BZ, A9.38 P3).
 
 Solver: scikit-fem (pinned version, PyPI), P2 Lagrange triangles on a tensor-product (r, z) grid whose lines contain every
-material boundary, the channel centreline r = d_mean / 2 and the anode / exit planes. Unknown: the azimuthal vector
-potential A_phi (Wb/m). Weak form (per radian; the 2 pi cancels):
+material boundary, the channel centreline r = d_mean / 2 and the anode / exit planes. Unknown: the flux function
+psi = r A_phi (Wb per radian; psi = enclosed flux / 2 pi). Weak form (per radian; the 2 pi cancels):
 
-    int nu [ (dA/dr + A/r)(dv/dr + v/r) + dA/dz dv/dz ] r dr dz = int J_phi v r dr dz
+    int (nu / r) grad psi . grad v dr dz = int J_phi v dr dz
 
-with A = 0 on the axis and on the far boundary (or a natural boundary where a verification case says so). B_r = -dA/dz,
-B_z = dA/dr + A/r. Iron is nonlinear: nu = H(|B|) / |B| from the B-H data (bh_curves_v1.json), piecewise linear in
+with psi = 0 on the axis and on the far boundary (or a natural boundary where a verification case says so).
+B_r = -(1/r) dpsi/dz, B_z = (1/r) dpsi/dr. (prereg v3: the A_phi form of v1/v2 loses B_z accuracy in air next to strongly
+magnetized iron, where A ~ Phi / (2 pi r) and B_z = dA/dr + A/r is a small difference of large terms; psi is smooth there.) Iron is nonlinear: nu = H(|B|) / |B| from the B-H data (bh_curves_v1.json), piecewise linear in
 (H, B), with the saturated slope mu0 beyond the last point. The nonlinear system is solved by damped Newton iteration
 (exact tangent, backtracking line search); convergence is reported, a non-converged solve is MODEL_ERROR (never returned
 as a field).
@@ -28,7 +29,7 @@ from skfem import Basis, BilinearForm, ElementTriP2, LinearForm, MeshTri
 
 MU0 = 4e-7 * math.pi
 NU0 = 1.0 / MU0
-SOLVER_ID = f"scikit-fem {skfem.__version__} (P2 Lagrange, axisymmetric A_phi, damped Newton, SuperLU / LU-preconditioned CG)"
+SOLVER_ID = f"scikit-fem {skfem.__version__} (P2 Lagrange, axisymmetric flux function psi = r A_phi, damped Newton, SuperLU / LU-preconditioned CG)"
 
 
 # ----------------------------------------------------------------------------------------------------------------- B-H
@@ -193,15 +194,15 @@ def _mat_per_element(mesh, rects):
 @BilinearForm
 def _a(u, v, w):
     r = w.x[0]
-    return w["nu"] * ((u.grad[0] + u / r) * (v.grad[0] + v / r) + u.grad[1] * v.grad[1]) * r
+    return w["nu"] * (u.grad[0] * v.grad[0] + u.grad[1] * v.grad[1]) / r
 
 
 @BilinearForm
 def _jac(u, v, w):
     """Newton tangent: nu (curl u . curl v) + 2 dnu/d(B^2) (B . curl u)(B . curl v), curl u = (-du/dz, du/dr + u/r)."""
     r = w.x[0]
-    cur, cuz = -u.grad[1], u.grad[0] + u / r
-    cvr, cvz = -v.grad[1], v.grad[0] + v / r
+    cur, cuz = -u.grad[1] / r, u.grad[0] / r
+    cvr, cvz = -v.grad[1] / r, v.grad[0] / r
     return (w["nu"] * (cur * cvr + cuz * cvz)
             + 2.0 * w["dnu"] * (w["Br"] * cur + w["Bz"] * cuz) * (w["Br"] * cvr + w["Bz"] * cvz)) * r
 
@@ -209,12 +210,12 @@ def _jac(u, v, w):
 @LinearForm
 def _res(v, w):
     r = w.x[0]
-    return (w["nu"] * (w["Br"] * (-v.grad[1]) + w["Bz"] * (v.grad[0] + v / r)) - w["J"] * v) * r
+    return w["nu"] * (w["Br"] * (-v.grad[1]) + w["Bz"] * v.grad[0]) - w["J"] * v
 
 
 @LinearForm
 def _l(v, w):
-    return w["J"] * v * w.x[0]
+    return w["J"] * v
 
 
 def setup(pb: Problem, mesh_cache=None):
@@ -263,7 +264,7 @@ def solve_problem(pb: Problem, bh: dict, *, tol_res=1e-7, tol_step=1e-10, max_it
     def state(A):
         f = basis.interpolate(A)
         r = basis.mapping.F(basis.X)[0]
-        br, bz = -f.grad[1], f.grad[0] + f.value / r
+        br, bz = -f.grad[1] / r, f.grad[0] / r
         bm = np.sqrt(br ** 2 + bz ** 2)
         nu = np.full(bm.shape, NU0)
         dnu = np.zeros(bm.shape)
@@ -324,14 +325,15 @@ def solve_problem(pb: Problem, bh: dict, *, tol_res=1e-7, tol_step=1e-10, max_it
 def _bmag_q(basis, A):
     f = basis.interpolate(A)
     r = basis.mapping.F(basis.X)[0]
-    br = -f.grad[1]
-    bz = f.grad[0] + f.value / r
+    br = -f.grad[1] / r
+    bz = f.grad[0] / r
     return np.sqrt(br ** 2 + bz ** 2)
 
 
 def field_at(sol: Solution, r, z):
     """B_r, B_z, A at points (r, z) (m). Gradient evaluated in the element found by the element finder; on a z-aligned
-    grid line B_r = -dA/dz is the tangential derivative of the continuous A and is single-valued."""
+    grid line B_r = -(1/r) dpsi/dz is the tangential derivative of the continuous psi and is single-valued. Returns
+    (B_r, B_z, A_phi = psi / r) for r > 0 (NaN at r = 0; the on-axis B_z is 2 psi / r^2 at a small r)."""
     basis = sol.basis
     x = np.vstack([np.asarray(r, float).ravel(), np.asarray(z, float).ravel()])
     cells = basis.mesh.element_finder(mapping=basis.mapping)(*x)
@@ -345,10 +347,8 @@ def field_at(sol: Solution, r, z):
         val += coef * phi.value[:, 0]
         gr += coef * phi.grad[0][:, 0]
         gz += coef * phi.grad[1][:, 0]
-    rr = x[0]
-    with np.errstate(divide="ignore", invalid="ignore"):
-        bz = np.where(rr > 0, gr + val / np.where(rr > 0, rr, 1.0), 2.0 * gr)
-    return -gz, bz, val
+    rr = np.where(x[0] > 0, x[0], np.nan)          # r = 0 is not evaluated (NaN, fail loud); use r > 0
+    return -gz / rr, gr / rr, val / rr
 
 
 def iron_bmax(sol: Solution, pb: Problem, bh: dict):
@@ -385,20 +385,28 @@ def loop_field(a, z0, I, r, z):
     return br, bz
 
 
-def coil_field_quadrature(r0, r1, z0, z1, NI, r, z, n=8):
-    """Field of a uniform rectangular-section coil by Gauss-Legendre quadrature of loop_field over the section."""
+def coil_field_quadrature(r0, r1, z0, z1, NI, r, z, n=8, panel_max=None):
+    """Field of a uniform rectangular-section coil by composite Gauss-Legendre quadrature (n x n points per panel) of
+    loop_field over the section; panel_max (m) bounds the panel size in r and z (None: one panel)."""
+    nr = 1 if panel_max is None else max(1, int(math.ceil((r1 - r0) / panel_max - 1e-9)))
+    nz = 1 if panel_max is None else max(1, int(math.ceil((z1 - z0) / panel_max - 1e-9)))
     g, w = np.polynomial.legendre.leggauss(n)
     br = np.zeros_like(np.asarray(r, float))
     bz = np.zeros_like(br)
     J = NI / ((r1 - r0) * (z1 - z0))
-    for gi, wi in zip(g, w):
-        a = 0.5 * (r0 + r1) + 0.5 * (r1 - r0) * gi
-        for gj, wj in zip(g, w):
-            zz = 0.5 * (z0 + z1) + 0.5 * (z1 - z0) * gj
-            dI = J * wi * wj * 0.25 * (r1 - r0) * (z1 - z0)
-            b1, b2 = loop_field(a, zz, dI, r, z)
-            br += b1
-            bz += b2
+    dr, dz = (r1 - r0) / nr, (z1 - z0) / nz
+    for i in range(nr):
+        ra = r0 + i * dr
+        for j in range(nz):
+            za = z0 + j * dz
+            for gi, wi in zip(g, w):
+                a = ra + 0.5 * dr * (1 + gi)
+                for gj, wj in zip(g, w):
+                    zz = za + 0.5 * dz * (1 + gj)
+                    dI = J * wi * wj * 0.25 * dr * dz
+                    b1, b2 = loop_field(a, zz, dI, r, z)
+                    br += b1
+                    bz += b2
     return br, bz
 
 
