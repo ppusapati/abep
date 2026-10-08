@@ -1,0 +1,657 @@
+{
+ "schema": "abep_m2_report_v1",
+ "id": "M2_REPORT_v1",
+ "milestone": "M2_196_STATE_RFP_CLOSURE",
+ "design_baseline": "DBF-1",
+ "date": "2026-10-08",
+ "record": {
+  "path": "docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json",
+  "sha256": "600cf229ecdb5f91f0471f03cfdd6d287486ad21e9d9ebadde3cdafa54a37394"
+ },
+ "run_manifest": {
+  "path": "docs/milestones/M2_196_state_rfp_closure/m2_run_manifest_v1.json",
+  "sha256": "7c29039800f623d59cbeb094dbc25b968e39cc4106d0035b3e6814ac8dee234f"
+ },
+ "dbf1": {
+  "path": "docs/baseline/DBF-1/dbf1_v1.json",
+  "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f"
+ },
+ "classification_verbatim": {
+  "result": "NOT_DETERMINABLE",
+  "procedure_step": "C1",
+  "procedure": "C0, CA4 (A4), C1..C4 verbatim (A9.32); C1 blocker read as HALL_NUMERICS_NOT_CONVERGED (A8)"
+ },
+ "counts": {
+  "AIR_PRIMARY": {
+   "n_required_states": 196,
+   "layer_a_status_counts": {
+    "NOT_DETERMINABLE": 196
+   },
+   "layer_b_status_counts": {
+    "NOT_EVALUATED": 196
+   },
+   "hall_closure_counts": {
+    "NOT_EVALUATED": 196
+   }
+  },
+  "XE_CONTINGENCY": {
+   "n_required_states": 196,
+   "layer_a_status_counts": {
+    "NOT_DETERMINABLE": 196
+   },
+   "layer_b_status_counts": {
+    "NOT_EVALUATED": 196
+   },
+   "hall_closure_counts": {
+    "NOT_EVALUATED": 196
+   }
+  }
+ },
+ "non_hall_closure_counts": {
+  "AIR_PRIMARY": {
+   "NON_CLOSING_NOT_ELIGIBLE": 54,
+   "OPEN": 142
+  },
+  "XE_CONTINGENCY": {
+   "OPEN": 196
+  }
+ },
+ "binding_constraints_ranked": {
+  "AIR_PRIMARY": [
+   {
+    "constraint": "HALL_T12_AT_PBUS",
+    "code": "HALL_NUMERICS_NOT_CONVERGED",
+    "category": "MISSING_EVIDENCE",
+    "blocker_type": "model-numerics",
+    "n_states": 142
+   },
+   {
+    "constraint": "A5-NH-INTAKE",
+    "code": "A5_AREA_BELOW_REQUIRED_T25",
+    "category": "DESIGN_VARIABLE_LIMIT",
+    "blocker_type": "design-variable",
+    "n_states": 25
+   },
+   {
+    "constraint": "A5-NH-INTAKE",
+    "code": "A5_DELIVERED_BELOW_REQUIRED_T25",
+    "category": "DESIGN_VARIABLE_LIMIT",
+    "blocker_type": "design-variable",
+    "n_states": 21
+   },
+   {
+    "constraint": "A5-NH-INTAKE",
+    "code": "A5_CAPTURE_BELOW_REQUIRED_T25",
+    "category": "DESIGN_VARIABLE_LIMIT",
+    "blocker_type": "design-variable",
+    "n_states": 7
+   },
+   {
+    "constraint": "A5-NH-INTAKE",
+    "code": "A5_AREA_BELOW_REQUIRED_T12",
+    "category": "DESIGN_VARIABLE_LIMIT",
+    "blocker_type": "design-variable",
+    "n_states": 1
+   }
+  ],
+  "XE_CONTINGENCY": [
+   {
+    "constraint": "HALL_XE_FUNCTIONAL_AT_PBUS",
+    "code": "HALL_NUMERICS_NOT_CONVERGED",
+    "category": "MISSING_EVIDENCE",
+    "blocker_type": "model-numerics",
+    "n_states": 196
+   }
+  ]
+ },
+ "blockers_by_type": {
+  "design-variable": [
+   {
+    "code": "A5_AREA_BELOW_REQUIRED_T12",
+    "cells": 1,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   },
+   {
+    "code": "A5_AREA_BELOW_REQUIRED_T25",
+    "cells": 26,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   },
+   {
+    "code": "A5_CAPTURE_BELOW_REQUIRED_T12",
+    "cells": 3,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   },
+   {
+    "code": "A5_CAPTURE_BELOW_REQUIRED_T25",
+    "cells": 33,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   },
+   {
+    "code": "A5_DELIVERED_BELOW_REQUIRED_T12",
+    "cells": 11,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   },
+   {
+    "code": "A5_DELIVERED_BELOW_REQUIRED_T25",
+    "cells": 54,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   },
+   {
+    "code": "A8_DBF1_AREA_BELOW_REQUIRED_T12",
+    "cells": 1,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   },
+   {
+    "code": "A8_DBF1_AREA_BELOW_REQUIRED_T25",
+    "cells": 26,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   },
+   {
+    "code": "A8_DBF1_CAPTURE_BELOW_REQUIRED_T12",
+    "cells": 3,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   },
+   {
+    "code": "A8_DBF1_CAPTURE_BELOW_REQUIRED_T25",
+    "cells": 33,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   },
+   {
+    "code": "A8_DBF1_DELIVERED_BELOW_REQUIRED_T12",
+    "cells": 11,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   },
+   {
+    "code": "A8_DBF1_DELIVERED_BELOW_REQUIRED_T25",
+    "cells": 54,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   },
+   {
+    "code": "A8_DBF1_GAS_PATH_OUT_OF_DOMAIN_IN_SCENARIO",
+    "cells": 18,
+    "category": "DESIGN_VARIABLE_LIMIT"
+   }
+  ],
+  "missing-evidence": [
+   {
+    "code": "A8_DBF1_ANODE_MATERIAL_FROZEN_P4_EVIDENCE_INCOMPLETE",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "A8_DBF1_NECESSARY_CONDITION_MET_NOTHING_ESTABLISHED",
+    "cells": 25,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "A8_DBF1_SCENARIO_DEPENDENT",
+    "cells": 117,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "BUS_LEDGER_NOT_COMPLETE",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "CHG-04_NO_XE_RATE_SET",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "CREDIBLE_HALL_TRANSPORT_SET_EMPTY",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "DOM-06_B_ICP_NOT_REGISTERED",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "DOM-12_NO_NEGATIVE_ION_BALANCE",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "HALL_WALL_LIFE_INPUTS_NOT_TRUSTWORTHY",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "HOST_DRAG_REFERENCE_PENDING_CUSTOMER_ICD",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "ICP_CAPACITY_NOT_EVALUATED",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "IN-05_DELIVERED_COMPOSITION_TBD",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "IN-08_RF_INPUT_NOT_REGISTERED",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "IN-11_ELECTRODES_NOT_REGISTERED",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "IN-12_NEUTRAL_SOURCE_NOT_REGISTERED",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "IN-16_NO_REGISTERED_RATE_SET:AIR",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "IN-16_NO_REGISTERED_RATE_SET:XE",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "IN-17_NO_EDGE_FACTOR_SOURCE",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "LIFE_NOT_EVALUATED",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "MASS_INCOMPLETE_EVIDENCE",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NO_HALL_CLOSING_POINT",
+    "cells": 178,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:AIR-DIS-02",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:AIR-EL-03",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:AIR-EL-04",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:AIR-EXC-04",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:AIR-EXC-05",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:AIR-EXC-09",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:AIR-ION-02",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:AIR-ION-05",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:AIR-NL-02",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:AIR-WALL-01",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:AIR-WALL-02",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:AIR-WALL-03",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:XE-EL-01",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:XE-EXC-01",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:XE-ION-01",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP-ICP-CHEM-AIR:XE-WALL-01",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP_ICP_CHEM_AIR_NOT_ADMITTED",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP_ICP_CHEM_AIR_XE_NOT_ADMITTED",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "NP_ICP_NOT_ADMITTED",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "SP-04_SPECIES_BOUND_UNRESOLVED:SB-NO",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "SPACECRAFT_THERMAL_ICD_ABSENT",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "THERMAL_FLIGHT_CASE_NOT_REGISTERED",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "THERMAL_LOADS_NOT_EVALUATED",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "WET_MASS_OBJECTIVE_NOT_EVALUATED",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "XE_FEED_FLOW_NOT_REGISTERED",
+    "cells": 196,
+    "category": "MISSING_EVIDENCE"
+   },
+   {
+    "code": "XE_LOAD_NOT_FROZEN",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   }
+  ],
+  "model-numerics": [
+   {
+    "code": "HALL_NUMERICS_NOT_CONVERGED",
+    "cells": 392,
+    "category": "MISSING_EVIDENCE"
+   }
+  ]
+ },
+ "what_would_move_each_blocker": [
+  {
+   "codes": "HALL_NUMERICS_NOT_CONVERGED",
+   "type": "model-numerics",
+   "evidence": "a converged H-1 Hall subset from the A9.36 numerical-method investigation and a rerun of the registered envelope under its own addendum (A7), consumed on the DBF-1 hardware (G-RP1, BZ-P5B16) without a DCR (A8)"
+  },
+  {
+   "codes": "A8_DBF1_*_BELOW_REQUIRED_* / A5_*_BELOW_REQUIRED_*",
+   "type": "design-variable",
+   "evidence": "a larger effective collection area / higher capture and delivered flow (a DBF-1 DCR with a physical reason: new intake / compressor design, measured accommodation DI-1.3, compressor coefficients T-1 / T-2); a FROZEN A_eff,max (A4-REG-01) would make the A4 bound eligible (CA4) - none is registered (A9.35)"
+  },
+  {
+   "codes": "A8_DBF1_GAS_PATH_OUT_OF_DOMAIN_IN_SCENARIO",
+   "type": "design-variable",
+   "evidence": "dead-head at P_set 0.02 Pa in the low-accommodation scenarios (maxwell / cll alpha 0, 0.2): a DCR on P_set or the compressor, or a preregistered DI-1.3 accommodation measurement narrowing the scenario set"
+  },
+  {
+   "codes": "A8_DBF1_SCENARIO_DEPENDENT / A8_DBF1_NECESSARY_CONDITION_MET_NOTHING_ESTABLISHED",
+   "type": "missing-evidence",
+   "evidence": "DI-1.3 accommodation evidence (scenario dependence) and a Hall closing point (a met necessary condition establishes nothing)"
+  },
+  {
+   "codes": "ICP_CAPACITY_NOT_EVALUATED / IN-* / NP-ICP-CHEM-AIR:* / NP_ICP_* / DOM-* / SP-04 / CHG-04",
+   "type": "missing-evidence",
+   "evidence": "admitted NP-ICP-CHEM-AIR AIR and Xe rate sets, registered RF absorbed power / P2 coupling evidence, electrode potentials and bias range (P1-IT-36 / P1-IT-18), neutral-source pressure, edge-factor source, B_ICP; then a VALIDATED_BENCH I_e,cap (P1 ICP-45) for HC-05"
+  },
+  {
+   "codes": "BUS_LEDGER_NOT_COMPLETE",
+   "type": "missing-evidence",
+   "evidence": "the 23 TBD ledger terms (Hall discharge at a closing point, magnet coils, RF chain, valves, controls, thermal control) from registered loads"
+  },
+  {
+   "codes": "THERMAL_* / SPACECRAFT_THERMAL_ICD_ABSENT",
+   "type": "missing-evidence",
+   "evidence": "the host spacecraft thermal ICD (SCI-A values), a registered flight thermal case and evaluated Hall / ICP heat loads"
+  },
+  {
+   "codes": "MASS_INCOMPLETE_EVIDENCE / WET_MASS_OBJECTIVE_NOT_EVALUATED / XE_LOAD_NOT_FROZEN",
+   "type": "missing-evidence",
+   "evidence": "a current-best-estimate dry mass (mass-closure actions MCA; compressor CBE vs AL-02) and a selected flight Xe load"
+  },
+  {
+   "codes": "LIFE_NOT_EVALUATED / HALL_WALL_LIFE_INPUTS_NOT_TRUSTWORTHY / A8_DBF1_ANODE_MATERIAL_FROZEN_P4_EVIDENCE_INCOMPLETE",
+   "type": "missing-evidence",
+   "evidence": "wall_life_trustworthy Hall runs (ion_wall_losses = true) and P4 Q0 / Q1 coupon evidence for INCONEL 600 / 601"
+  },
+  {
+   "codes": "HOST_DRAG_REFERENCE_PENDING_CUSTOMER_ICD",
+   "type": "missing-evidence",
+   "evidence": "the customer host-spacecraft drag ICD (A9.13 S6.18)"
+  },
+  {
+   "codes": "CREDIBLE_HALL_TRANSPORT_SET_EMPTY",
+   "type": "missing-evidence",
+   "evidence": "an admitted Hall transport member (layer (b))"
+  },
+  {
+   "codes": "XE_FEED_FLOW_NOT_REGISTERED",
+   "type": "missing-evidence",
+   "evidence": "a registered H-1 Xe flow (OQ-HPE-03)"
+  }
+ ],
+ "dbf1_baseline_deficiencies": [
+  {
+   "id": "DBF1-BD-01",
+   "finding": "drag closes (intake-face drag <= 17.59 mN <= 25 mN) but flow does not: the frozen design delivers 1.428e-09 kg/s at its worst state in its worst covered scenario, 33.59 x below the 12 mN necessary flow; A_eff 0.25 m^2 < A_req 0.2511 m^2",
+   "category": "DESIGN_VARIABLE_LIMIT (A9.35: A4-REG-01 open, no registered envelope bound)"
+  },
+  {
+   "id": "DBF1-BD-02",
+   "finding": "the design is an F7 Pareto member in 6 of 10 admitted scenarios; its FC00 twin is infeasible in the other four (compressor characteristic / dead-head); no registered candidate is robust (F8 robust set EMPTY)",
+   "category": "DESIGN_VARIABLE_LIMIT"
+  },
+  {
+   "id": "DBF1-BD-03",
+   "finding": "the F3 model mass of the selected compressor exceeds the AL-02 allocation; the registered candidates within 5.5 kg (T4 compressors) cover 2 scenarios at ~5x lower delivered flow",
+   "category": "DESIGN_VARIABLE_LIMIT"
+  },
+  {
+   "id": "DBF1-BD-04",
+   "finding": "the current provisional planning roll-up (owner MEV lines + evidence floors; not a CBE) is above the 34 kg nominal-dry target and the 40 kg wet limit at 2 kg Xe (MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED); planning values are never eligible for a non-closure (HR-07)",
+   "category": "MISSING_EVIDENCE (no CBE) / DESIGN_VARIABLE_LIMIT (mass-closure actions MCA)"
+  },
+  {
+   "id": "DBF1-BD-05",
+   "finding": "the simulated field is a P5-shape surrogate scaled into the H1F-BZ-03 band: a Hall non-closure under it is never eligible (envelope prereg bz_family classification_effect)",
+   "category": "MISSING_EVIDENCE"
+  },
+  {
+   "id": "DBF1-BD-06",
+   "finding": "with the frozen geometry and RF, I_e,cap stays NOT_EVALUATED: the remaining inputs are operating points or evidence, not design values",
+   "category": "MISSING_EVIDENCE"
+  }
+ ],
+ "m2_confirmation_of_deficiencies": {
+  "DBF1-BD-01": "L-DEL-DBF1|T12 fails in every admitted scenario at 11 states (worst ds2:ECSS_LT_LOW:alt230:lat-80.0000:lst21:lon0:doy184, k_fav 3.696); L-DEL-DBF1|T25 at 54 states; L-AREA-DBF1|T12 at 1",
+  "DBF1-BD-02": "steady point out of domain (dead-head, class R) in some admitted scenario at 18 states",
+  "feed_stability": {
+   "R": 44,
+   "S": 1916
+  }
+ },
+ "sec23_items": {
+  "A_feasible_region": "NOT DETERMINABLE in M2: no Hall thrust value may enter (A9.36)",
+  "B_physically_feasible_states": 0,
+  "C_robust_states": 0,
+  "D_worst_state": {
+   "T_required": {
+    "state_id": "ds2:ECSS_ST_HIGH:alt180:lat-73.0000:lst15:lon240:doy1",
+    "T_required_max_mN": 54.45537872932814
+   },
+   "delivered_flow_T12": {
+    "state_id": "ds2:ECSS_LT_LOW:alt230:lat-80.0000:lst21:lon0:doy184",
+    "k_fav": 3.69574378635125
+   }
+  },
+  "E_min_max": {
+   "thrust": "NOT_EVALUATED (HALL_NUMERICS_NOT_CONVERGED)",
+   "drag_T_required_mN": [
+    1.1578451566619796,
+    54.45537872932814
+   ],
+   "T_minus_D": "NOT_EVALUATED (T_available not evaluated)",
+   "bus_power_nonHall_lower_bound_W": {
+    "AIR_PRIMARY": [
+     9.30487082877053,
+     9.947070060074756
+    ],
+    "XE_CONTINGENCY": [
+     0.0,
+     0.0
+    ],
+    "note": "TBD loads at 0 W; not a P_bus"
+   },
+   "delivered_atmospheric_mass_flow_kg_s": [
+    8.903924824262307e-11,
+    1.348732616719161e-06
+   ],
+   "delivered_flow_held_state_min_range_kg_s": [
+    8.903924824262307e-11,
+    4.64055215719246e-07
+   ],
+   "icp_electron_current_margin": "NOT_EVALUATED (I_e,cap not evaluable; I_d not evaluated)",
+   "wet_mass_kg": {
+    "planning_rollup_at_2kg_Xe": 40.34901052,
+    "status": "planning value, not a CBE"
+   }
+  },
+  "F_constraints_physically_closing": "none is evaluated as closing (every constraint is OPEN, NOT_EVALUATED or NON_CLOSING-not-eligible)",
+  "G_evidence_limited": "Hall thrust / I_d / P_d, ICP I_e,cap, bus ledger, thermal, mass CBE, life, T - D",
+  "H_dominant_blocker": {
+   "code": "HALL_NUMERICS_NOT_CONVERGED",
+   "type": "model-numerics",
+   "category": "MISSING_EVIDENCE"
+  },
+  "H_dominant_design_finding": "DBF-1 delivered flow below the A4 necessary condition (DESIGN_VARIABLE_LIMIT, never eligible)",
+  "I_alternatives": "not part of M2 (M3)"
+ },
+ "t_required_distribution": {
+  "definition": "T_required(state, scenario) = D(state, scenario) = q (C_D A)_RC-DIAMANT + F1 intake-face drag x 0.25 m^2 (T - D >= 0, A9.13 S6.15); REFERENCE_PENDING_CUSTOMER_ICD",
+  "HC01_mN": 12.0,
+  "HC02_mN": 25.0,
+  "range_over_states_and_scenarios_mN": [
+   1.1578451566619796,
+   54.45537872932814
+  ],
+  "D_body_range_mN": [
+   0.7938287001698088,
+   36.86362974724021
+  ],
+  "D_intake_range_mN": [
+   0.36401645649217085,
+   17.591748982087925
+  ],
+  "distribution_unfavourable_scenario (state max)": {
+   "GT_HC02_25mN": 40,
+   "HC01_TO_HC02_12_25mN": 73,
+   "LE_HC01_12mN": 83
+  },
+  "distribution_favourable_scenario (state min)": {
+   "GT_HC02_25mN": 39,
+   "HC01_TO_HC02_12_25mN": 72,
+   "LE_HC01_12mN": 85
+  },
+  "worst_state": {
+   "state_id": "ds2:ECSS_ST_HIGH:alt180:lat-73.0000:lst15:lon240:doy1",
+   "T_required_max_mN": 54.45537872932814
+  },
+  "lowest_state": {
+   "state_id": "ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184",
+   "T_required_min_mN": 1.1578451566619796
+  },
+  "body_sensitivity_range_mN_by_case": {
+   "RC-DICARA-ESA": [
+    1.443324909399652,
+    67.02478135861855
+   ],
+   "RC-DIAMANT": [
+    0.7938287001698088,
+    36.86362974724021
+   ],
+   "RC-SCHONHERR": [
+    0.4762972201018852,
+    22.118177848344125
+   ],
+   "RC-NISHIYAMA": [
+    2.164987364099478,
+    100.53717203792783
+   ],
+   "RC-TISAEV-LOW": [
+    0.23093198550394436,
+    10.723965017378971
+   ],
+   "RC-TISAEV-HIGH": [
+    0.30309823097392696,
+    14.075204085309899
+   ]
+  }
+ },
+ "conclusion_category_input_a9_31_sec_20": {
+  "category_input": "D",
+  "text": "MODEL CANNOT YET DETERMINE ARCHITECTURE FEASIBILITY",
+  "missing_items_first": [
+   {
+    "code": "HALL_NUMERICS_NOT_CONVERGED",
+    "cells": 392
+   }
+  ],
+  "rule": "computed from the A9.32 classification of this record: PHYSICALLY_NON_CLOSING -> C, SELECT_WITH_EVIDENCE_CONDITIONS -> B, NOT_DETERMINABLE -> D; an input to the coordinator's M3 decision, not the decision"
+ },
+ "not": [
+  "not the M3 architecture decision",
+  "not a performance prediction",
+  "no Hall thrust value (A9.36)",
+  "no change to DBF-1, an RFP requirement or an admitted / scored record"
+ ],
+ "generated_by": "docs/milestones/M2_196_state_rfp_closure/build_m2_report.py"
+}
