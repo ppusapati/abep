@@ -1,0 +1,12 @@
+{
+ "id": "np_hall_parametric_envelope_prereg_addendum_a1_lock",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "locked": "2026-10-08",
+ "note": "sha256 of NP-HALL-PARAMETRIC-ENVELOPE prereg addendum A1 (AIR family; A9.33 Q2, A9.34 M1; status PREREGISTERED_NOT_RUN), superseding addendum_01_air_family (a182f71) before any AIR run; committed alone before the regenerated AIR case file and any AIR launch manifest or run; v1 and addendum 01 files unchanged; any change after this lock is a new, dated addendum",
+ "base_commit": "8136cf4",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/",
+ "files": {
+  "prereg_addendum_a1_air_family.json": "7d7a7ba91f382775a1eed842af83587b0f1fc5b762f85ef68022ac03d23c7b0d",
+  "PREREG_ADDENDUM_A1_AIR_FAMILY.md": "d1a3e26b86ddd629aeaa8c3a2f6b0db6ac85a3463c2923f40e29dc5be21a1183"
+ }
+}

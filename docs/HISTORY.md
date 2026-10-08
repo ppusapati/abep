@@ -5309,3 +5309,80 @@ partial admission and the row stays PYTHON_REFERENCE. A partial admission change
 - **M1 ARCHITECTURE PHYSICS READY** (current). Exit when the H1 Hall envelope has run, Hall AIR chemistry is available or explicitly bounded, RF/ICP coupling is available, and the 196-state closure harness consumes all required physics paths; then one milestone audit.
 - **M2 196-STATE RFP CLOSURE** follows immediately; **M3 ARCHITECTURE DECISION** is the programme objective.
 - **Plenum / feed:** v8 PARITY_FAIL stands; the transient path uses the governed Python reference; no v9 unless it blocks the architecture calculation.
+
+## 2026-10-08 — NP-HALL-CHEM-AIR: Hall air-chemistry contract, abep-air-0.7, audit prepared, AIR family preregistered (A9.33 Q2)
+
+Lane `lane-hall-chem-air`, base `b730764`.
+
+- **Capability audit** (`docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/capability_audit_v1.json`). Read from the pinned
+  HallThruster.jl source (`bfb3019f`); no Julia run; nothing patched.
+  - Verdict: **CAPABLE_WITH_LIMITATIONS**. One run carries N2, N, O2 and O, each with its own anode flow, its own
+    electron-impact reactions and its own charge states.
+  - Limitations:
+    - L-01: no heavy-particle or N / O cross chemistry;
+    - L-02: no neutral-surface recombination;
+    - L-03: molecular ions neutralize only to the parent molecule;
+    - L-04: no faithful dissociative recombination or attachment;
+    - L-05: negative ions carry uncited built-in constants of 1e-12 m³/s;
+    - L-06: O²⁺ needs a link that has no source;
+    - L-07: `run_case` feeds N2 only.
+- **Preregistration v1**: `prereg_v1.json` `306712f7…`, lock `1884e42f…`. Committed alone.
+  - Label `abep-air-0.x`. Species follow the NP-ICP-CHEM-AIR materiality rule.
+  - Domain T_e 2–30 eV (45 eV mean energy, the tightest verified table).
+  - Composition: four hull corners of the 196 frozen states (y_O 0.079–0.840).
+  - 33 processes, each with a source and a status.
+  - Audit CA-HALL-AIR-v1 uses the frozen F_P / F_ion / F_S thresholds plus F_e_loss, and the N2 addenda verbatim.
+  - Admission status COMPLETE_FOR_PARAMETRIC_ENVELOPE. It is not a validation claim.
+  - Addenda:
+    - 01 (`8e5617bf…`, lock `bf1f743c…`): erratum 27 → 29 reactions; inlet rule NI-01; audit implementation.
+    - 02 (`5d06b62d…`, lock `7e1e29af…`): the O2 → O²⁺ header is 53.89 eV.
+- **Built** (`hallthruster_bridge/propellants_air/`; one table per commit, abep-air-0.1 … 0.7):
+  - O ionization: BEB nominal and Thompson variant, NIST SRD 107 copies of the v0 tables.
+  - O2 (SONG2026 accepted manuscript; version of record pending): ionization, DI upper / lower, dissociation (Cosby,
+    ≥ 13.5 eV only) and elastic. They are rendered by the admitted Rust integrator, byte-identical to v0.
+  - Validity: 255 eV, and 47 eV for O2 dissociation, recomputed in Rust.
+  - Configurations: `air_nominal.toml` and `air_alt.toml`. The 31 abep-n2n-0.11 tables are referenced in place, with
+    mirrored validity entries.
+  - Loader and guards: `abep_chem::hall_air`. They cover pins, Hall isolation, mirror equality, the HR-04 O-target guard,
+    charge / nuclei balance, and the admission gate.
+- **Status: INCOMPLETE_EVIDENCE.** The open items are:
+  - tier-1 gaps with no reachable source: O momentum transfer, O excitation, O2 a / b / Herzberg excitation, and O2
+    dissociation below 13.5 eV;
+  - the SONG2026 version-of-record check;
+  - SB-NO, SB-He and SB-Ar;
+  - the unbounded omissions.
+- **Audit: PREPARED_NOT_RUN.**
+  - Inputs: 576 Rust-generated cases, snapshots plus MANIFEST, two new bound tables (O2 → O²⁺ and attachment), and wall
+    recombination with γ ∈ [0, 1].
+  - Code: `air_bridge_lib.jl` `run_case_air`, `air_state_envelope.jl`, `run_local_audit.sh`, and the Rust verdict
+    reader `air_audit`.
+  - Expected outcome even after it runs: wall recombination cannot be excluded without a sourced γ, so the set would be
+    NOT_REPRESENTABLE_IN_PINNED_SOLVER. 15 processes are UNBOUNDED_OMISSION.
+- **A9.34 M1 item "Hall AIR chemistry available or explicitly bounded": delivered EXPLICITLY_BOUNDED.**
+  - Registered in NP-HALL-CHEM-AIR addendum 03 (`bcf18240…`, lock `20485e24…`).
+  - Bounding variant set BV-AIR-LL, label `BOUNDED_ONE_SIDED_LOWER_ELECTRON_IMPACT_LOSS_NOT_COMPLETE`. Its members are
+    the sha256-pinned `air_nominal.toml` and `air_alt.toml` at abep-air-0.7.
+  - Stated direction, D-1: at a fixed plasma state, the set's electron inelastic power, O momentum transfer and O2
+    dissociation are lower bounds.
+  - No direction is claimed for ionizing, heavy-particle, wall or attachment omissions, or for any Hall observable.
+  - Never claimed complete. Status stays INCOMPLETE_EVIDENCE.
+- **NP-HALL-PARAMETRIC-ENVELOPE prereg addendum A1, AIR family** (`7d7a7ba9…`, lock `35388e24…`; v1 untouched).
+  - A1 supersedes addendum 01 (`4988bdfd…`, lock `efc96af4…`, a182f71) before any AIR run, by coordinator naming. The
+    addendum 01 files are kept unchanged as history.
+  - 9072 cases: v1 N2_PROXY rows × 4 corners, Rust-generated. Only the header changed; every `case_sha256` is unchanged.
+  - Composition is uncontrolled: a test must close at every corner. AIR non-closure is never eligible for
+    PHYSICALLY_NON_CLOSING.
+  - Launch paths are always requested explicitly (`abep-air-cases launch-manifest --path complete|bounded`):
+    - LP-COMPLETE is refused (INCOMPLETE_EVIDENCE).
+    - LP-BOUNDED is open for BV-AIR-LL-NOM only. `launch_manifest_air_v1.json` is committed with chemistry_mode
+      BOUNDED_VARIANT.
+  - Every record carries the mode and the BV label. Results are information only: the constraint status is
+    NOT_DETERMINABLE with blocker AIR_CHEMISTRY_BOUNDED_NOT_COMPLETE, never SELECT and never PHYSICALLY_NON_CLOSING.
+  - The A9.32 classification stays NOT_DETERMINABLE.
+- **Test maintenance:** `tests/test_o_o2_chemistry_v0.py::test_tables_are_unused_by_solver_configs_and_code`.
+  - Its basename proxy flagged the authorized Hall AIR set, which holds copies of the v0 tables under the same names.
+  - For `propellants_air/` and `audit_air/` the test now asserts the real property instead: no configuration reads a file
+    under `docs/chemistry/o_o2/`.
+  - Every other TOML keeps the original check.
+- **Unchanged:** abep-n2n-0.11, the N2 configurations and validity file, the audit snapshots, the P5-N2 records,
+  `bridge_lib.jl`, HallMap admission, the credible set (EMPTY), and the HallThruster.jl pin.

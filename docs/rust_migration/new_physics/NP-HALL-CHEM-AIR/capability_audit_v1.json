@@ -1,0 +1,148 @@
+{
+ "schema": "abep_solver_capability_audit_v1",
+ "id": "NP-HALL-CHEM-AIR/capability_audit_v1",
+ "contract": "NP-HALL-CHEM-AIR",
+ "date": "2026-10-08",
+ "lane": "lane-hall-chem-air",
+ "base": "b730764 (origin/integration/simulation-complete)",
+ "mandate": "A9.33 Q2 (docs/decisions/OD_2026_10_08_A9_33_hall_run_location_hall_air_chemistry_plenum_v8.json sha256 8799ee1069a0916d611738fff29b8c03af1e25d74fbd602114475d2f7454602b): narrow, preregistered, sourced Hall O / O2 chemistry contract for AIR_PRIMARY; no fabricated coefficients; AIR Hall NOT_EVALUATED until admitted",
+ "question": "Can the pinned HallThruster.jl v0.23.1 simulate a multi-species air feed (N2 + N + O2 + O) in one run: propellant mixtures, per-species reactions, charge states, wall and ingestion handling? If not, stop and report.",
+ "status": "COMMITTED_BEFORE_PREREGISTRATION",
+ "what_this_is_not": [
+  "not a patch, fork or upgrade of HallThruster.jl (pin unchanged: v0.23.1, bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5)",
+  "not a run: no Julia was executed (the Julia hosts answer 403 / connect_rejected in this container)",
+  "not a chemistry decision: process inclusion is decided only by the preregistration and its omitted-process audit"
+ ],
+ "pinned_source_read": {
+  "package": "HallThruster.jl",
+  "version": "0.23.1",
+  "commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "pin_record": "hallthruster_bridge/PINNED.toml (sha256 26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280); hallthruster_bridge/Manifest.toml (sha256 a98c1a6e9cdf491ef602ef7cd1d08371b2bbe3da4e1df74e45a1c9d84f6c5634)",
+  "copy_read": "a clone of the upstream repository checked out at the pinned commit (HEAD bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 'fix wavespeed and discharge current integration bugs', 2026-09-09; clean tree), in the session scratchpad; no Julia depot exists in this container. Not committed (licence MIT; the pin is the reference).",
+  "src_concatenated_sha256": "3f4407db73f740168aeaa19c1ab0ea022c751c8d807d82ede27df4e2fede7f16",
+  "src_concatenated_rule": "sha256 of the concatenation of every src/**/*.jl file in sorted path order",
+  "files_sha256": {
+   "Project.toml": "744740ff432ea947be43773520664636ed46dbb7727d1ddcb78598258d9d26e4",
+   "NEWS.md": "1a6a22edc83f4c88e7a471aec48958dfac171876458cb3038d23cb396f7aa4cd",
+   "docs/src/howto/new_propellant.md": "d84c10f55da24569fb773fa90288e759815769259fc04e96414278ad88660a6c",
+   "src/physics/gas.jl": "cca2231fbd22ee3952ba5d56e6b076b616d4a3ddcc73f6868db54a513e880e3a",
+   "src/physics/elements.jl": "b62ffa61e6b94553031f3d84ea7ec5c7588ca51f48b9c6366ee2e40c4dd9b059",
+   "src/physics/constants.jl": "7ea5723b043a19e7872369523db299366683da4e1ffe1480c9aff4ffb4467e11",
+   "src/physics/fluid.jl": "73bd18524b192e43682b8d96b1a1aa108d4f637d58094a833bf15720ede19bf4",
+   "src/collisions/reactions.jl": "51999e963c4ef66ca913f5a16929b2eb258b7766741aa164ca95894122742166",
+   "src/collisions/electronimpact.jl": "cd53d2c34338925f5f530df70aba00850338a4094c3d50284dbd12d966692a38",
+   "src/collisions/elastic.jl": "33ed9c806860e833722d62920fe836b3ce84114561d7eeadb450ab20788d6f6c",
+   "src/collisions/excitation.jl": "f8ade0141a4c64aa2859ea2a7028ab67b6db5aac2395bed551895d4960e39e0b",
+   "src/simulation/configuration.jl": "99993adce3c4196098beb389177a72a705595b1f70ef0f853079330fd43486f9",
+   "src/simulation/heavy_species_update.jl": "424ce99c680c1e79fdca6f40bd61bd87ed536d8872c772f83e449c17b13f0960",
+   "src/simulation/electron_energy.jl": "36caa2d5453ffb2a7ea12ef410ba38dff684705acdc05a95319486d0248b67bf",
+   "src/simulation/initialization.jl": "35c655c697a850ef922595676b0b17e705ab12508b1a1c9eec05801287320c22",
+   "src/simulation/postprocess.jl": "7e2babfe8cb39c1600db36357bda017f0dee6be9a51f840f955eb08b6e4dbd58",
+   "src/utilities/utility_functions.jl": "5bfc55c6191cb98800aaad344ea507b77027babb74554e261dd9f84c6d383b44"
+  },
+  "bridge_read": {
+   "hallthruster_bridge/bridge_lib.jl": "cf26aab8607b640ebb78be9715f2c7c5d957f145ac17f52c1b23db2e980e21ab",
+   "hallthruster_bridge/propellants/n2_n.toml": "4f10db747cfb11cfefb8080a9cad52e502c2ab11f0e485ac644a532b929607de",
+   "hallthruster_bridge/propellants/rate_validity.toml": "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a"
+  }
+ },
+ "result": {
+  "verdict": "CAPABLE_WITH_LIMITATIONS",
+  "stop": false,
+  "summary": "One HallThruster.jl v0.23.1 run can carry N2, N, O2 and O as separate neutral fluids with their own anode flows, inlet velocities and temperatures, their own electron-impact reactions (ionization, dissociation, dissociative ionization, lumped excitation, elastic momentum transfer), cross-species products (O2 -> O + O, O2 -> O+ + O) and per-species charge states. The production N2/N runs (abep-n2n-0.11) already use two neutral species with cross-species products in one run. What the solver cannot express is listed in limitations L-01..L-07: heavy-particle chemistry (including every N / O cross reaction), neutral-surface recombination, dissociative ion-wall neutralization, a faithful electron-loss reaction (dissociative recombination, attachment), negative ions without uncited built-in constants, multiply charged O without a one-to-one charge-state link, and a multi-species feed through the pinned bridge run_case. These are preregistered as omitted processes or bridge additions; no limitation is patched."
+ },
+ "capabilities": [
+  {
+   "id": "C-01",
+   "topic": "propellant mixtures",
+   "finding": "Config.propellants is a vector of Propellant (v0.19 FluidContainer refactor: 'plasmas containing multiple neutral species are now supported'). Each Propellant carries its own gas, anode flow_rate_kg_s, velocity_m_s, temperature_K, ion_temperature_K, allowed_charges (gas.jl Propellant). Zero-flow species are supported (v0.21.7, #179). Species listed in a propellant_config TOML and not passed as an explicit Propellant are added with flow 0.0 and a velocity scaled by sqrt(M_max / M) from the highest-flow propellant (configuration.jl, 'Add propellants from the file which are not in the config struct'). An explicit Propellant overrides the file's physical properties; default charge / excitation settings are inherited from the file (_merge_propellant_chemistry).",
+   "evidence": ["NEWS.md v0.19.0, v0.21.7, v0.22.0", "src/physics/gas.jl struct Propellant", "src/simulation/configuration.jl lines 259-345, _merge_propellant_chemistry"],
+   "consequence": "an N2 + N + O2 + O feed with four anode flows is expressible in one Config"
+  },
+  {
+   "id": "C-02",
+   "topic": "per-species reactions",
+   "finding": "propellant_config [[reactions]] support type elastic (target_species), excitation (target_species, header energy = lumped loss), electron_impact (equation) and de-excitation (tracked excited states, BETA). An electron_impact equation must have exactly one heavy-species reactant with coefficient 1 (reactions.jl line 254); products may be any configured species of any gas, with integer coefficients; charge balance is checked at parse time (_parse_reaction_equation). Reactions naming an unconfigured excited level are dropped; an unconfigured ground species is an error.",
+   "evidence": ["src/collisions/reactions.jl load_reactions (line 303), _load_electron_impact_reaction (line 244-266), _parse_reaction_equation", "docs/src/howto/new_propellant.md 'Molecular propellants'"],
+   "consequence": "O and O2 ionization, O2 dissociation, O2 dissociative ionization, O / O2 excitation and elastic momentum transfer are expressible exactly as the N2 / N set is"
+  },
+  {
+   "id": "C-03",
+   "topic": "charge states and species energies",
+   "finding": "allowed_charges / max_charge per species. Species energies are derived only from one-to-one electron-impact reactions within one gas (derive_species_energies, reactions.jl line 158): every configured charge state must be reachable from its gas's ground neutral through one-to-one reactions, otherwise the configuration is refused ('Could not derive the energy of species').",
+   "evidence": ["src/collisions/reactions.jl derive_species_energies"],
+   "consequence": "O(2+) can be configured only together with a one-to-one O -> O(2+) or O(+) -> O(2+) table. No such table exists in the repository (Bell et al. 1983 O II and Thompson 1995 double ionization are not in the repository and their hosts are blocked), so O max_charge = 1 in v1; O(2+) production is an omitted process (bounded where a table exists: SONG2026 Table VII sigma(O^2+) from O2). N(2+) is configured as in abep-n2n-0.11 (one-to-one links exist)."
+  },
+  {
+   "id": "C-04",
+   "topic": "rate tables",
+   "finding": "HallThruster.jl reads '<label> (eV): <E>' + column header + (mean energy, k) rows, interpolates linearly onto 0:1:255 eV mean energy and clamps the lookup index to the table ends (the end value is held beyond 255 eV).",
+   "evidence": ["src/collisions/reactions.jl load_rate_coeff_file (line 51-75), rate_coeff"],
+   "consequence": "the same table format, 0-300 eV writer grid and rate_validity.toml semantics as abep-n2n apply; the bridge chemistry_validity guard (f_out = 0) applies per table"
+  },
+  {
+   "id": "C-05",
+   "topic": "wall and anode handling",
+   "finding": "With ion_wall_losses = true, each positive-ion fluid loses density at the Bohm-scaled wall rate and the mass is returned to the ground neutral of the ion's own propellant group (apply_ion_wall_losses!, heavy_species_update.jl line 916-946): O2+ -> O2, O+ -> O, N2+ -> N2, N(2+) -> N; negative ions are excluded. At the anode the positive-ion outflow is returned as the ground neutral of the same propellant group (apply_left_boundary!, line 303-430). Neutrals have no wall interaction: no neutral wall loss and no surface recombination (O + wall -> 1/2 O2, N + wall -> 1/2 N2).",
+   "evidence": ["src/simulation/heavy_species_update.jl apply_ion_wall_losses!, apply_left_boundary!"],
+   "consequence": "dissociative wall neutralization of molecular ions and in-channel neutral-surface recombination are not representable (limitations L-02, L-03); the envelope keeps the registered v1 setting ion_wall_losses = false"
+  },
+  {
+   "id": "C-06",
+   "topic": "ingestion",
+   "finding": "Facility ingestion splits the background density between propellants by their anode number-flow fraction (params_from_config, configuration.jl line 448-460).",
+   "evidence": ["src/simulation/configuration.jl params_from_config"],
+   "consequence": "not exercised: the envelope is vacuum mode (flight); no facility interpretation enters"
+  },
+  {
+   "id": "C-07",
+   "topic": "heavy-particle chemistry",
+   "finding": "No configurable heavy-particle reaction type exists. The only heavy-particle source terms are built in for negative ions: mutual neutralization A- + B+ and neutral-induced detachment A- + M with hard-coded k = 1.0e-12 m^3/s each (_K_MUTUAL_NEUTRALIZATION, _K_NEUTRAL_DETACHMENT, heavy_species_update.jl lines 732, 735; comment 'lit. ~4e-14 to ~1e-12', no citation), applied to every fluid with Z < 0. There is no ion-molecule reaction (O+ + N2 -> NO+ + N, N2+ + O -> NO+ + N, charge transfer N2+ + O -> O+ + N2), no neutral-neutral reaction (N + O2 -> NO + O), no three-body reaction and no ion-neutral charge-exchange or momentum collision.",
+   "evidence": ["src/simulation/heavy_species_update.jl lines 728-865"],
+   "consequence": "every N / O cross reaction and every NO / NO+ formation channel is outside the solver (limitation L-01); configuring O- would import the uncited constants (limitation L-05)"
+  },
+  {
+   "id": "C-08",
+   "topic": "electron-loss reactions",
+   "finding": "An equation such as 'O2(+) + e -> O + O' or 'O2 + e -> O(-) + O' parses (one heavy reactant, charge balanced). But (a) any channel whose product charge differs from the reactant charge is flagged ionizing and adds to nu_iz (_is_ionizing, line 560; nu_iz enters the classical electron collision frequency, collision_frequencies.jl), (b) the electron energy equation has no sink for the thermal energy of the removed electron beyond the fixed header energy (electron_energy.jl line 279; n_e follows from quasineutrality), (c) attachment needs O(-) as a fluid, which triggers C-07.",
+   "evidence": ["src/simulation/heavy_species_update.jl _is_ionizing, apply_reaction_channel!", "src/simulation/electron_energy.jl update_electron_energy!"],
+   "consequence": "dissociative recombination and attachment are not faithfully representable (limitation L-04); both are preregistered as omitted processes bounded by F_e_loss"
+  },
+  {
+   "id": "C-09",
+   "topic": "elastic collisions",
+   "finding": "Elastic tables enter the electron-neutral momentum collision frequency per target species; no elastic recoil energy term 3 m_e / M (T_e - T_g) appears in the electron energy equation.",
+   "evidence": ["src/collisions/elastic.jl", "src/simulation/electron_energy.jl"],
+   "consequence": "a solver model-form property common to every family (Xe, N2_PROXY, AIR); F_P is defined on inelastic power only, as in the N2 precedent"
+  },
+  {
+   "id": "C-10",
+   "topic": "excitation",
+   "finding": "Excitation tables are lumped energy losses at their header energy; tracked excited fluids (v0.23 BETA) need user-supplied de-excitation half-lives and are not used.",
+   "evidence": ["src/collisions/excitation.jl", "NEWS.md 0.23.0"],
+   "consequence": "same treatment as abep-n2n (excited-state populations are not tracked; stepwise ionization and superelastic return are omitted processes)"
+  },
+  {
+   "id": "C-11",
+   "topic": "project bridge",
+   "finding": "hallthruster_bridge/bridge_lib.jl run_case feeds only N2 when a propellant_config is given (kw[:propellants] = [het.Propellant(\"N2\", flow_rate_kg_s=c.mdot_kgps)]); every other configured species then enters with zero anode flow. bridge_lib.jl is pinned by NP-HALL-PARAMETRIC-ENVELOPE v1 (prereg_v1.json pinned_inputs) and is not edited. chemistry_reactions / chemistry_activity / chemistry_validity, reactant_term, reactant_density, measured_bfield and wall_ion_metrics work unchanged for several neutral species and charge states.",
+   "evidence": ["hallthruster_bridge/bridge_lib.jl run_case, chemistry_reactions, chemistry_activity"],
+   "consequence": "a multi-species feed needs an additive run function in a new driver file that reuses the bridge helpers (limitation L-07)"
+  }
+ ],
+ "limitations": [
+  {"id": "L-01", "what": "no heavy-particle reactions (ion-molecule, charge transfer, neutral-neutral, three-body), hence no N / O cross chemistry and no NO / NO+", "handling": "omitted processes in the preregistered audit; with no sourced rate in the repository they are UNBOUNDED_OMISSION; if any is promoted the AIR set is NOT_REPRESENTABLE_IN_PINNED_SOLVER"},
+  {"id": "L-02", "what": "no neutral-surface recombination in the channel (O + wall -> 1/2 O2, N + wall -> 1/2 N2)", "handling": "omitted process bounded with the physical recombination-probability envelope [0, 1]; feed-side recombination is covered separately by the composition envelope (f_O down to 0)"},
+  {"id": "L-03", "what": "molecular-ion wall / anode neutralization returns the parent molecule only (O2+ -> O2, never 2 O)", "handling": "structural; inactive in the envelope wall setting (ion_wall_losses = false), active at the anode; recorded as a model-form limitation"},
+  {"id": "L-04", "what": "electron-loss reactions (dissociative recombination, attachment) not faithfully representable", "handling": "omitted processes bounded by F_e_loss (attachment: SONG2026 Table VIII bound table; dissociative recombination: no source in the repository -> UNBOUNDED_OMISSION)"},
+  {"id": "L-05", "what": "negative ions carry uncited built-in sink constants (1e-12 m^3/s)", "handling": "O- is never configured; if attachment is promoted, AIR is NOT_REPRESENTABLE_IN_PINNED_SOLVER"},
+  {"id": "L-06", "what": "O(2+) needs a one-to-one charge-state link with no repository source", "handling": "O max_charge 1; O(2+) channels are omitted processes (tier 3)"},
+  {"id": "L-07", "what": "bridge run_case feeds N2 only", "handling": "additive AIR driver function (new file) reusing the bridge helpers; bridge_lib.jl unchanged"}
+ ],
+ "options_if_a_limitation_binds": [
+  "O-A: record the AIR Hall chemistry as NOT_REPRESENTABLE_IN_PINNED_SOLVER and keep AIR layer (a) NOT_EVALUATED (default; no owner action needed)",
+  "O-B: a single-species O-only (or O2-only) family as a labelled bounding diagnostic, like N2_PROXY (no classification effect unless the owner rules a bound)",
+  "O-C: an owner-approved HallThruster.jl upgrade or extension: a physics-model change under PINNED.toml upgrade_policy (pin bump on a branch, P5 reruns, HISTORY), never automatic"
+ ],
+ "conclusion": "Not a stop condition. The preregistration proceeds with a multi-species AIR reaction set for the pinned solver and treats L-01..L-06 as omitted processes or structural limitations, and L-07 as an additive driver."
+}
