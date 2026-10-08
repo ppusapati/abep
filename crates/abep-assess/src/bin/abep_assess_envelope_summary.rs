@@ -5,7 +5,7 @@
 use abep_assess::closure::{ledger_bound, HallLimits};
 use abep_assess::envelope_summary::summary;
 use abep_assess::thresholds::Thresholds;
-use abep_types::pyjson::{self, DumpOptions};
+use abep_types::pyjson::{self, Dict, DumpOptions, Value};
 use std::path::PathBuf;
 
 fn fail(e: impl std::fmt::Display) -> ! {
@@ -45,8 +45,24 @@ fn main() {
         p_bus_max_w: lim("HC-03"),
         p_non_hall_lb_w: lb.p_non_hall_lb_w,
     };
-    let mut text =
-        pyjson::dumps(&summary(&e, &limits), &DumpOptions::config_writer()).unwrap_or_else(|e| fail(format!("{e:?}")));
+    let mut rec = summary(&e, &limits);
+    let (a3, a3_sha) =
+        abep_hall::envelope::a3_overlay(&repo, abep_hall::envelope::Family::Xe).unwrap_or_else(|e| fail(e));
+    if let Value::Dict(d) = &mut rec {
+        let mut n = Dict::new();
+        n.insert("XE", Value::str(a3.as_str()));
+        n.insert("result_sha256", a3_sha.map_or(Value::Null, Value::str));
+        n.insert(
+            "note",
+            Value::str(if a3 == abep_hall::envelope::A3Overlay::NotAdequate {
+                "XE point-test counts above are nominal raw counts; under A3_NOT_ADEQUATE every XE PASS / NOT_SUSTAINED point is NUMERICS_NOT_CONVERGED (unknown) for classification"
+            } else {
+                "XE counts follow the A3 outcome named here"
+            }),
+        );
+        d.insert("numerics_a3", Value::Dict(n));
+    }
+    let mut text = pyjson::dumps(&rec, &DumpOptions::config_writer()).unwrap_or_else(|e| fail(format!("{e:?}")));
     text.push('\n');
     match out {
         Some(p) => std::fs::write(p, text).expect("write output"),
