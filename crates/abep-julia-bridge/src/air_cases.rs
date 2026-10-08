@@ -9,6 +9,9 @@
 //! * [`build_audit_doc`]: the 576-case CA-HALL-AIR-v1 blind state envelope (addendum 01), with the snapshot
 //!   [`audit_manifest`] that pins its configurations, rate files, bound tables and case file.
 //! * [`freeze_audit`]: shard outputs -> one sorted gzip JSONL and its sha256 manifest (read by `air_audit`).
+//! * [`build_air_doc`]: the 9072-case AIR family of NP-HALL-PARAMETRIC-ENVELOPE addendum 01 (every v1 N2_PROXY row x the
+//!   four corners); [`air_launch_manifest`] is its launch gate: refused unless the AIR reaction set is admitted
+//!   (COMPLETE_FOR_PARAMETRIC_ENVELOPE).
 
 use crate::envelope_cases::render_case_doc;
 use abep_data::design_states::DesignStateSet;
@@ -479,8 +482,23 @@ pub fn check_audit(repo: &Path) -> AbepResult<usize> {
 
 /// Freeze audit shard outputs: records sorted by key (unique), gzip (mtime 0), manifest with every shard sha256.
 pub fn freeze_audit(repo: &Path, name: &str, shards: &[PathBuf], out_dir: &Path) -> AbepResult<(PathBuf, String)> {
-    let cases_sha = abep_provenance::sha256_file(&repo.join(AUDIT_CASES_REL))?;
-    let manifest_sha = abep_provenance::sha256_file(&repo.join(AUDIT_MANIFEST_REL))?;
+    let header = vec![
+        ("schema", sval(AUDIT_RAW_SCHEMA)),
+        ("cases_file_sha256", sval(&abep_provenance::sha256_file(&repo.join(AUDIT_CASES_REL))?)),
+        ("manifest_sha256", sval(&abep_provenance::sha256_file(&repo.join(AUDIT_MANIFEST_REL))?)),
+    ];
+    freeze_records(name, shards, out_dir, header, "abep-air-cases audit-freeze")
+}
+
+/// Shard outputs -> `<name>_raw.jsonl.gz` (records sorted by key, unique; gzip mtime 0) and `<name>_raw_manifest.json`
+/// (`header` fields, record count, raw sha256, every shard's sha256). Judges nothing. Returns (manifest path, sha256).
+pub fn freeze_records(
+    name: &str,
+    shards: &[PathBuf],
+    out_dir: &Path,
+    header: Vec<(&str, Value)>,
+    frozen_by: &str,
+) -> AbepResult<(PathBuf, String)> {
     let mut by_key: BTreeMap<String, String> = BTreeMap::new();
     let mut rows = Vec::new();
     for p in shards {
@@ -515,21 +533,174 @@ pub fn freeze_audit(repo: &Path, name: &str, shards: &[PathBuf], out_dir: &Path)
         .map_err(|e| AbepError::Io { path: out_dir.to_string_lossy().into(), message: e.to_string() })?;
     let raw = format!("{name}_raw.jsonl.gz");
     std::fs::write(out_dir.join(&raw), &gz).map_err(|e| AbepError::Io { path: raw.clone(), message: e.to_string() })?;
-    let m = dict(vec![
-        ("schema", sval(AUDIT_RAW_SCHEMA)),
-        ("name", sval(name)),
-        ("cases_file_sha256", sval(&cases_sha)),
-        ("manifest_sha256", sval(&manifest_sha)),
-        ("n_records", Value::int(by_key.len() as i64)),
-        ("raw_file", sval(&raw)),
-        ("raw_sha256", sval(&sha256_hex(&gz))),
-        ("shards", Value::List(rows)),
-        ("frozen_by", sval("abep-air-cases audit-freeze")),
-    ]);
-    let mut mt = pyjson::dumps(&m, &DumpOptions::config_writer()).map_err(|e| model(e.to_string()))?;
+    let mut pairs = header;
+    pairs.push(("name", sval(name)));
+    pairs.push(("n_records", Value::int(by_key.len() as i64)));
+    pairs.push(("raw_file", sval(&raw)));
+    pairs.push(("raw_sha256", sval(&sha256_hex(&gz))));
+    pairs.push(("shards", Value::List(rows)));
+    pairs.push(("frozen_by", sval(frozen_by)));
+    let mut mt = pyjson::dumps(&dict(pairs), &DumpOptions::config_writer()).map_err(|e| model(e.to_string()))?;
     mt.push('\n');
     let mp = out_dir.join(format!("{name}_raw_manifest.json"));
     std::fs::write(&mp, &mt)
         .map_err(|e| AbepError::Io { path: mp.to_string_lossy().into(), message: e.to_string() })?;
     Ok((mp, sha256_hex(mt.as_bytes())))
+}
+
+// ------------------------------------------------------------------------------------------ AIR family (addendum 01)
+
+pub const ENV_ADDENDUM_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/addendum_01_air_family.json";
+pub const ENV_ADDENDUM_SHA256: &str = "4988bdfd4aad30a171c4dae9ffa8d3436ee94c1aaaedcb56a3c06ffe1533dd90";
+pub const ENV_ADDENDUM_LOCK_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/addendum_01_lock.json";
+pub const ENV_ADDENDUM_LOCK_SHA256: &str = "efc96af4259c74c0c632ee515c00f29f6aff70df14775e62a5d72afa619927d5";
+pub const AIR_CASES_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/cases/h1_parametric_envelope_air_cases_v1.json";
+pub const AIR_CASES_SCHEMA: &str = "np_hall_parametric_envelope_air_cases_v1";
+pub const AIR_DRIVER_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/driver/h1_envelope_air_driver.jl";
+pub const AIR_LAUNCH_MANIFEST_REL: &str =
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/launch_manifest_air_v1.json";
+pub const AIR_LAUNCH_SCHEMA: &str = "np_hall_parametric_envelope_air_launch_manifest_v1";
+pub const AIR_RAW_SCHEMA: &str = "np_hall_parametric_envelope_air_raw_manifest_v1";
+pub const AIR_CONFIG: &str = "propellants_air/air_nominal.toml";
+pub const AIR_RATE_DIR: &str = "propellants_air";
+pub const AIR_BRIDGE_LIB_REL: &str = "hallthruster_bridge/air_bridge_lib.jl";
+/// Labels of every AIR case (addendum 01 case_grid.labels).
+pub const AIR_LABELS: [&str; 8] = [
+    "PARAMETRIC / NOT_VALIDATED",
+    "SOURCED_SURROGATE_P5_SHAPE_NOT_H1_BZ",
+    "TRANSPORT_EXTRAPOLATED",
+    "NUMERICAL_ADEQUACY_NOT_VERIFIED_FOR_H1",
+    "ANALYSIS_POINT_NOT_DESIGN_SELECTION",
+    COMPOSITION_LABEL,
+    INLET_LABEL,
+    "CHEMISTRY_NOMINAL_ONLY",
+];
+
+/// The AIR family case document (addendum 01): every v1 N2_PROXY row x the four composition corners.
+pub fn build_air_doc(repo: &Path) -> AbepResult<Value> {
+    load_json(repo, ENV_ADDENDUM_REL, ENV_ADDENDUM_SHA256)?;
+    read_verified(&repo.join(ENV_ADDENDUM_LOCK_REL), ENV_ADDENDUM_LOCK_SHA256)?;
+    load_json(repo, CHEM_ADDENDUM01_REL, CHEM_ADDENDUM01_SHA256)?;
+    let pts = composition_points(repo)?;
+    let rows = v1_n2_rows(repo)?;
+    if rows.len() != 2268 {
+        return Err(model(format!("v1 holds {} N2_PROXY rows, 2268 registered", rows.len())));
+    }
+    let mut cases = Vec::with_capacity(rows.len() * pts.len());
+    for row in &rows {
+        for comp in &pts {
+            cases.push(air_case(row, "AIR", comp, None, AIR_CONFIG, AIR_RATE_DIR)?);
+        }
+    }
+    Ok(dict(vec![
+        ("schema", sval(AIR_CASES_SCHEMA)),
+        ("model_id", sval("NP-HALL-PARAMETRIC-ENVELOPE")),
+        ("addendum", sval("addendum_01_air_family")),
+        ("layer", sval("PARAMETRIC / NOT_VALIDATED")),
+        (
+            "status",
+            sval("PREREGISTERED_NOT_RUN: no AIR launch manifest until the AIR reaction set is COMPLETE_FOR_PARAMETRIC_ENVELOPE"),
+        ),
+        ("addendum_sha256", sval(ENV_ADDENDUM_SHA256)),
+        ("addendum_lock_sha256", sval(ENV_ADDENDUM_LOCK_SHA256)),
+        ("v1_cases_sha256", sval(V1_CASES_SHA256)),
+        ("chem_prereg_sha256", sval(CHEM_PREREG_SHA256)),
+        ("design_state_set_sha256", sval(abep_data::design_states::DESIGN_STATE_SET_SHA256)),
+        ("labels", Value::List(AIR_LABELS.iter().map(|l| sval(l)).collect())),
+        ("composition_points", composition_value(&pts)),
+        ("inlet", inlet_value()?),
+        ("mode", sval("vacuum")),
+        ("generated_by", sval("abep-air-cases generate (crates/abep-julia-bridge/src/air_cases.rs)")),
+        ("n_cases", Value::int(cases.len() as i64)),
+        ("cases", Value::List(cases)),
+    ]))
+}
+
+/// The AIR case file text.
+pub fn generate_air(repo: &Path) -> AbepResult<String> {
+    render_case_doc(&build_air_doc(repo)?)
+}
+
+/// Write the AIR case file.
+pub fn write_air(repo: &Path) -> AbepResult<()> {
+    let text = generate_air(repo)?;
+    std::fs::write(repo.join(AIR_CASES_REL), text)
+        .map_err(|e| AbepError::Io { path: AIR_CASES_REL.into(), message: e.to_string() })
+}
+
+/// Regenerate in memory; require byte equality with the committed AIR case file. Returns the case count.
+pub fn check_air(repo: &Path) -> AbepResult<usize> {
+    let text = generate_air(repo)?;
+    let have = std::fs::read(repo.join(AIR_CASES_REL))
+        .map_err(|e| AbepError::Io { path: AIR_CASES_REL.into(), message: e.to_string() })?;
+    if have != text.as_bytes() {
+        return Err(model(format!("{AIR_CASES_REL} differs from its deterministic regeneration")));
+    }
+    let doc = pyjson::loads(&text).map_err(|e| model(e.to_string()))?;
+    Ok(ptr(&doc, "/cases", "AIR cases")?.as_list().map(|l| l.len()).unwrap_or(0))
+}
+
+/// The AIR launch manifest (addendum 01 launch_gate). Refused unless the AIR reaction set is admitted
+/// (COMPLETE_FOR_PARAMETRIC_ENVELOPE): INCOMPLETE_EVIDENCE or MODEL_ERROR naming every open item otherwise.
+pub fn air_launch_manifest(repo: &Path) -> AbepResult<Value> {
+    let set = abep_chem::hall_air::AirSet::load(repo)?;
+    set.admission()?;
+    check_air(repo)?;
+    let nominal =
+        set.nominal_config.clone().ok_or_else(|| model("admitted AIR set without a nominal configuration"))?;
+    if format!("{AIR_RATE_DIR}/{nominal}") != AIR_CONFIG {
+        return Err(model(format!("the AIR family runs {AIR_CONFIG}, the set's nominal is {nominal}")));
+    }
+    let cfg = set.configs.get(&nominal).ok_or_else(|| model("nominal configuration not loaded"))?;
+    let mut rates = Dict::new();
+    for r in &cfg.reactions {
+        rates.insert(r.file.as_str(), sval(&set.tables[&r.file].sha256));
+    }
+    let sha = |rel: &str| abep_provenance::sha256_file(&repo.join(rel));
+    let validity = set.files.get("rate_validity.toml").ok_or_else(|| model("rate_validity.toml not pinned"))?;
+    Ok(dict(vec![
+        ("schema", sval(AIR_LAUNCH_SCHEMA)),
+        ("model_id", sval("NP-HALL-PARAMETRIC-ENVELOPE")),
+        ("addendum_lock_sha256", sval(ENV_ADDENDUM_LOCK_SHA256)),
+        ("cases", sval(AIR_CASES_REL)),
+        ("cases_sha256", sval(&sha(AIR_CASES_REL)?)),
+        ("driver", sval(AIR_DRIVER_REL)),
+        ("driver_sha256", sval(&sha(AIR_DRIVER_REL)?)),
+        ("air_bridge_lib_sha256", sval(&sha(AIR_BRIDGE_LIB_REL)?)),
+        ("bridge_lib_sha256", sval(&sha(crate::envelope_cases::BRIDGE_LIB_REL)?)),
+        ("air_label", sval(&set.label)),
+        ("air_pinned_sha256", sval(abep_chem::hall_air::AIR_PINNED_SHA256)),
+        ("air_config", sval(AIR_CONFIG)),
+        ("air_config_sha256", sval(&cfg.sha256)),
+        ("rate_validity_sha256", sval(validity)),
+        ("rate_files", Value::Dict(rates)),
+        ("thread_env", dict(crate::envelope_cases::THREAD_PIN.iter().map(|(k, v)| (*k, sval(v))).collect())),
+        ("mode", sval("vacuum")),
+    ]))
+}
+
+/// Write the AIR launch manifest (only through the gate).
+pub fn write_air_launch_manifest(repo: &Path) -> AbepResult<()> {
+    let lm = air_launch_manifest(repo)?;
+    let mut t = pyjson::dumps(&lm, &DumpOptions::config_writer()).map_err(|e| model(e.to_string()))?;
+    t.push('\n');
+    std::fs::write(repo.join(AIR_LAUNCH_MANIFEST_REL), t)
+        .map_err(|e| AbepError::Io { path: AIR_LAUNCH_MANIFEST_REL.into(), message: e.to_string() })
+}
+
+/// Freeze AIR shard outputs (needs the AIR launch manifest, i.e. an open launch gate).
+pub fn freeze_air(repo: &Path, name: &str, shards: &[PathBuf], out_dir: &Path) -> AbepResult<(PathBuf, String)> {
+    let lm = abep_provenance::sha256_file(&repo.join(AIR_LAUNCH_MANIFEST_REL)).map_err(|e| {
+        AbepError::IncompleteEvidence { message: format!("no AIR launch manifest (launch gate closed): {e}") }
+    })?;
+    let header = vec![
+        ("schema", sval(AIR_RAW_SCHEMA)),
+        ("cases_file_sha256", sval(&abep_provenance::sha256_file(&repo.join(AIR_CASES_REL))?)),
+        ("launch_manifest_sha256", sval(&lm)),
+    ];
+    freeze_records(name, shards, out_dir, header, "abep-air-cases freeze")
 }

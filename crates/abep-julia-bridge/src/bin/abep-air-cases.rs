@@ -4,6 +4,10 @@
 //!   audit-check                                          regenerate in memory: byte-equal to the committed files
 //!   audit-freeze --name NAME --out DIR FILE...           freeze audit shard outputs (sorted gzip JSONL + sha manifest)
 //!   audit-verdicts --manifest M --manifest-sha256 H --out F   verdicts from a frozen record file only
+//!   generate                                             write the AIR family case file (NP-HALL-PARAMETRIC-ENVELOPE add. 01)
+//!   check                                                regenerate in memory: byte-equal to the committed AIR case file
+//!   launch-manifest                                      write the AIR launch manifest; refused unless the AIR set is admitted
+//!   freeze --name NAME --out DIR FILE...                 freeze AIR shard outputs (needs the AIR launch manifest)
 
 use abep_julia_bridge::{air_audit, air_cases};
 use abep_provenance::find_repo_root;
@@ -17,7 +21,7 @@ fn opt(args: &[String], name: &str) -> Option<String> {
 
 fn usage() -> ExitCode {
     eprintln!(
-        "usage: abep-air-cases audit-generate|audit-check|audit-freeze --name NAME --out DIR FILE...|audit-verdicts --manifest M --manifest-sha256 H --out F [--root PATH]"
+        "usage: abep-air-cases audit-generate|audit-check|audit-freeze --name NAME --out DIR FILE...|audit-verdicts --manifest M --manifest-sha256 H --out F|generate|check|launch-manifest|freeze --name NAME --out DIR FILE... [--root PATH]"
     );
     ExitCode::from(2)
 }
@@ -57,6 +61,20 @@ fn main() -> ExitCode {
         },
     };
     let result: Result<String, abep_types::AbepError> = match cmd.as_str() {
+        "generate" => air_cases::write_air(&root).map(|()| "AIR case file written".into()),
+        "check" => air_cases::check_air(&root).map(|n| format!("OK: {n} AIR cases reproduce byte for byte")),
+        "launch-manifest" => {
+            air_cases::write_air_launch_manifest(&root).map(|()| "AIR launch manifest written (gate open)".into())
+        }
+        "freeze" => {
+            let (Some(name), Some(out)) = (opt(&args, "--name"), opt(&args, "--out")) else { return usage() };
+            let files = positional(&args);
+            if files.is_empty() {
+                return usage();
+            }
+            air_cases::freeze_air(&root, &name, &files, &PathBuf::from(out))
+                .map(|(p, sha)| format!("frozen: {} sha256 {sha}", p.display()))
+        }
         "audit-generate" => air_cases::write_audit(&root).map(|()| "audit case file and MANIFEST written".into()),
         "audit-check" => air_cases::check_audit(&root).map(|n| format!("OK: {n} audit cases reproduce byte for byte")),
         "audit-freeze" => {
