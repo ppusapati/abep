@@ -694,6 +694,15 @@ fn sec23(inp: &M1Inputs, out: &M1Outcome) -> Value {
 
 /// The harness v2 record of evaluated inputs.
 pub fn record_v2(inp: &M1Inputs, out: &M1Outcome, run_label: &str) -> Value {
+    let mut rec = record_v2_base(inp, out, run_label);
+    // NP-HALL-PARAMETRIC-ENVELOPE addendum A3: with an XE envelope, the overlay applied to its Hall tests.
+    if let (Some(_), Value::Dict(d)) = (&inp.xe, &mut rec) {
+        d.insert("numerics_a3_xe", s(inp.xe_a3.as_str()));
+    }
+    rec
+}
+
+fn record_v2_base(inp: &M1Inputs, out: &M1Outcome, run_label: &str) -> Value {
     let ti = &inp.today;
     let req: Vec<&(StateRef, BTreeMap<Mode, StateModeEval>)> = out.states.iter().filter(|x| x.0.required).collect();
     let count = |m: Mode, stt: &str| req.iter().filter(|(_, ms)| ms[&m].eval.status == stt).count() as i64;
@@ -1028,7 +1037,6 @@ pub fn record_v2(inp: &M1Inputs, out: &M1Outcome, run_label: &str) -> Value {
             ]),
         ),
         ("envelope_xe", envelope_summary(inp.xe.as_ref())),
-        ("numerics_a3_xe", s(inp.xe_a3.as_str())),
         (
             "envelope_air",
             match &inp.air {

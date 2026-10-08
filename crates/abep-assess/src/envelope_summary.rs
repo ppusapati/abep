@@ -168,6 +168,7 @@ mod tests {
             thrust_n: pass.then_some(t),
             discharge_power_w: pass.then_some(pd),
             discharge_current_a: pass.then_some(pd / 300.0),
+            ion_current_a: None,
             te_max_ev: None,
         }
     }
