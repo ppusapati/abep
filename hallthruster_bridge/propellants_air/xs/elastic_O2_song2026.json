@@ -1,0 +1,234 @@
+{
+ "schema": "hall_air_xs_v1",
+ "contract": "NP-HALL-CHEM-AIR",
+ "prereg": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_v1.json",
+ "prereg_lock_sha256": "1884e42ff98ee07a634500ce338eef9dc3749bf4e5c053b058aec9b764674518",
+ "process": "HA-O2-EL-01",
+ "role": "NOMINAL",
+ "target": "O2",
+ "reaction": "e + O2 -> e + O2 (momentum transfer)",
+ "table": "hallthruster_bridge/propellants_air/elastic_O2_song2026.dat",
+ "v0_table": "docs/chemistry/o_o2/v0/tables/elastic_O2_song2026.dat",
+ "v0_table_sha256": "b66353da4be23ff8534dadf1d69036b89c224cd4b96942e91568b6b19b81df64",
+ "header_label": "Momentum transfer, no inelastic energy loss",
+ "threshold_eV": 0.0,
+ "tail": "hold",
+ "eps_max_eV": 300.0,
+ "source_text": "NP-HALL-CHEM-AIR HA-O2-EL-01 (NOMINAL). e + O2 elastic momentum transfer. Cross section: Song, Cho, Karwasz, Kokoouline, Tennyson & Bartschat, J. Phys. Chem. Ref. Data 55, 013102 (2026), doi:10.1063/5.0287254, accepted manuscript (UCL Discovery, sha256 32d163a3...), version of record NOT accessed (NP-HALL-CHEM-AIR status IN_REPO_PENDING_VERSION_OF_RECORD, OQ-HA-01); SONG2026 Table V; stated uncertainty about 20 % for 1-10 eV, 10-15 % for 10-1000 eV, none below 1 eV (SONG2026 Table V caption). Points = the v0 DRAFT transcription (docs/chemistry/o_o2/v0/build_tables_song2026.py, sha256 c9ff00198737...), extracted unchanged by scripts/chemistry/extract_hall_air_xs.py. Choices: see the v0 manifest. Header 0.0 eV: 0 eV: momentum transfer carries no inelastic loss (same convention as elastic_N2_song2023.dat). Maxwellian-integrated by the admitted Rust port of abep_sim/rate_tables.py (abep_chem::reference; crates/abep-chem/examples/build_hall_air_tables.rs); byte-identical to the v0 table. Energy column = mean electron energy 3/2 Te. Evidence level 4 (docs/EVIDENCE.md); quantity type: measured (evaluated: beam DCS-derived above 1 eV) / inferred (swarm unfolding below 0.8 eV), transcribed.",
+ "provenance": {
+  "citation": "Song, Cho, Karwasz, Kokoouline, Tennyson & Bartschat, J. Phys. Chem. Ref. Data 55, 013102 (2026), doi:10.1063/5.0287254, accepted manuscript (UCL Discovery, sha256 32d163a3...), version of record NOT accessed (NP-HALL-CHEM-AIR status IN_REPO_PENDING_VERSION_OF_RECORD, OQ-HA-01)",
+  "source_location": "SONG2026 Table V",
+  "transformation_chain": "beam DCS (Sullivan et al.) + Jeon 2003 swarm -> SONG2026 Table V -> transcribed -> Maxwellian integration",
+  "extraction": "v0 builder specs() arrays, unchanged (shortest round-trip floats)",
+  "v0_builder": "docs/chemistry/o_o2/v0/build_tables_song2026.py",
+  "v0_builder_sha256": "c9ff001987371f4ca2ab5e79a0d097c770a846da5ea71dae358832734078d3ac",
+  "extracted_by": "scripts/chemistry/extract_hall_air_xs.py"
+ },
+ "stated_uncertainty": "about 20 % for 1-10 eV, 10-15 % for 10-1000 eV, none below 1 eV (SONG2026 Table V caption)",
+ "evidence_level": 4,
+ "quantity_type": "measured (evaluated: beam DCS-derived above 1 eV) / inferred (swarm unfolding below 0.8 eV), transcribed",
+ "header_basis": "0 eV: momentum transfer carries no inelastic loss (same convention as elastic_N2_song2023.dat)",
+ "units": {
+  "E": "eV",
+  "sigma": "m^2"
+ },
+ "n_points": 49,
+ "points": [
+  [
+   0.001,
+   3.4999999999999996e-21
+  ],
+  [
+   0.002,
+   3.4999999999999996e-21
+  ],
+  [
+   0.003,
+   4e-21
+  ],
+  [
+   0.005,
+   5e-21
+  ],
+  [
+   0.007,
+   5.8999999999999995e-21
+  ],
+  [
+   0.01,
+   6.999999999999999e-21
+  ],
+  [
+   0.012,
+   7.7e-21
+  ],
+  [
+   0.015,
+   8.7e-21
+  ],
+  [
+   0.02,
+   1.01e-20
+  ],
+  [
+   0.025,
+   1.1499999999999998e-20
+  ],
+  [
+   0.03,
+   1.2699999999999999e-20
+  ],
+  [
+   0.04,
+   1.4899999999999998e-20
+  ],
+  [
+   0.05,
+   1.7e-20
+  ],
+  [
+   0.06,
+   1.8799999999999998e-20
+  ],
+  [
+   0.09,
+   2.5e-20
+  ],
+  [
+   0.1,
+   2.68e-20
+  ],
+  [
+   0.12,
+   2.9999999999999997e-20
+  ],
+  [
+   0.15,
+   3.3599999999999996e-20
+  ],
+  [
+   0.2,
+   3.8999999999999995e-20
+  ],
+  [
+   0.25,
+   4.4e-20
+  ],
+  [
+   0.3,
+   4.9e-20
+  ],
+  [
+   0.33,
+   5.15e-20
+  ],
+  [
+   0.37,
+   5.46e-20
+  ],
+  [
+   0.4,
+   5.62e-20
+  ],
+  [
+   0.5,
+   6.059999999999999e-20
+  ],
+  [
+   0.54,
+   6.179999999999999e-20
+  ],
+  [
+   0.57,
+   6.26e-20
+  ],
+  [
+   0.6,
+   6.34e-20
+  ],
+  [
+   0.71,
+   6.559999999999999e-20
+  ],
+  [
+   0.8,
+   6.679999999999999e-20
+  ],
+  [
+   1.0,
+   6.7e-20
+  ],
+  [
+   2.0,
+   6.499999999999999e-20
+  ],
+  [
+   3.0,
+   6.099999999999999e-20
+  ],
+  [
+   4.0,
+   5.999999999999999e-20
+  ],
+  [
+   5.0,
+   5.7e-20
+  ],
+  [
+   7.0,
+   6.22e-20
+  ],
+  [
+   10.0,
+   6.719999999999999e-20
+  ],
+  [
+   20.0,
+   7.009999999999999e-20
+  ],
+  [
+   30.0,
+   5.999999999999999e-20
+  ],
+  [
+   40.0,
+   4.4999999999999995e-20
+  ],
+  [
+   50.0,
+   3.5e-20
+  ],
+  [
+   70.0,
+   2.5e-20
+  ],
+  [
+   100.0,
+   1.4999999999999998e-20
+  ],
+  [
+   150.0,
+   9.5e-21
+  ],
+  [
+   200.0,
+   6.2e-21
+  ],
+  [
+   300.0,
+   4.5e-21
+  ],
+  [
+   400.0,
+   3.6999999999999995e-21
+  ],
+  [
+   500.0,
+   2.5999999999999998e-21
+  ],
+  [
+   1000.0,
+   1e-21
+  ]
+ ]
+}

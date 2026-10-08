@@ -204,3 +204,8 @@ rate_coeff_file = "dissociative_ionization_O2_upper_song2026.dat"   # HA-O2-DI-0
 type = "electron_impact"
 equation = "O2 + e -> O + O + e"
 rate_coeff_file = "dissociation_O2_song2026.dat"   # HA-O2-DIS-01: SONG2026 Table VI (Cosby), >= 13.5 eV only
+
+[[reactions]]
+type = "elastic"
+target_species = "O2"
+rate_coeff_file = "elastic_O2_song2026.dat"   # HA-O2-EL-01: SONG2026 Table V MTCS
