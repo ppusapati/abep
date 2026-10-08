@@ -5636,3 +5636,21 @@ stays EMPTY and nothing enters layer (b).
 - **External sources:** Special Metals IN600 / IN601 bulletins, read 2026-10-08 (sha256 `89a3ba65…`, `261c20c2…`; not committed).
 - **P8 closure state: FROZEN FOR EM.**
 - No DBF-1 value, frozen record, model or golden changed.
+
+## 2026-10-08 — P7 thermal closure v1 (A9.38 Priority 7, lane L-THERMAL)
+
+- **Preregistration first:** `docs/closure/thermal/thermal_cases_prereg_v1.json` + `thermal_load_inputs_v1.json` + lock, committed alone (e5e6e06, prereg sha256 `5666c528…`). It fixes the DBF1-TH-01 node set exactly (R_ICP absent), optics, view factors, conductances, limits (incl. the P8 DA-06 screening ceilings and DCR triggers), the 50 K / 1.2 rule, the R_HALL lever grid, allowables, sensitivities, boundary units and the closure-state rule.
+- **Harness:** `abep-assess::thermal_closure` + binary `abep-assess-thermal-closure` (additive). It runs the admitted NP-THERMAL-CATHODELESS 2.0.0 through `run_case_v2`, case class PARAMETRIC (FLIGHT_CONDITIONAL stays NOT_EVALUATED). The orbit environment (Earth view-factor quadrature; cylindrical shadow checked against the admitted `eclipse_fraction` kernel) covers β* full-sun and β = 0 at 180 km (hot) and β = 0 at 230 km (cold). Test `tests/thermal_closure_p7.rs`.
+- **Record:** `thermal_closure_v1.{json,md}` (Rust commit ef88081, sha256 `1be3d3f3…`). At the selected R_HALL of 0.02 m² / 2 W/K, every H-1 node passes the rule:
+  - inner coil 475 °C vs 488 °C;
+  - walls 487 / 465 °C vs 850 °C;
+  - anode 561 °C (below the P8 930 / 1150 °C ceilings; no materials trigger fires);
+  - collector 510 °C;
+  - vessel 366 °C vs 440 °C.
+- **Failing node:** N_MATCH at 184 °C vs 60 °C. It fails at every lever point and at P_fwd = 0 (conduction from the ICP bracket).
+- **Interface and allowables:**
+  - heat into the spacecraft 97 W vs the 50 W allocation (0.15 m² / 10 W/K meets it);
+  - inner-coil allowable P_d 1114 W;
+  - boundary units: PPU 257 W (0.71 m²), RF generator 400 W (1.10 m²), compressor 15.7 W (flagged for DCR-001).
+- **P7 closure state: DCR REQUIRED** (N_MATCH; draft `dcr_request_P7_match_v1.json` on DBF1-RF-03, with R-1 isolation (no DCR) and R-2 relocation as the routes to preregister). Statement `docs/closure/statements/P7_thermal.md`.
+- Reruns on load inputs v2 (L-POWER-ICD, DCR-001) need no method change. No DBF-1 value, frozen record, model or golden changed.
