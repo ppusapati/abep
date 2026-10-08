@@ -198,4 +198,4 @@ rate_coeff_file = "ionization_O2_song2026.dat"   # HA-O2-ION-01: SONG2026 Table 
 [[reactions]]
 type = "electron_impact"
 equation = "O2 + e -> O(+) + O + 2e"
-rate_coeff_file = "dissociative_ionization_O2_upper_song2026.dat"   # HA-O2-DI-01 upper: SONG2026 Table VII sigma(O+ (+O2^2+))
+rate_coeff_file = "dissociative_ionization_O2_lower_song2026.dat"   # HA-O2-DI-01 lower: SONG2026 Table VII sigma(O+) / 1.1
