@@ -97,8 +97,18 @@ def test_tables_are_unused_by_solver_configs_and_code():
     names = [os.path.basename(r["file"]) for r in _records()]
     scan = glob.glob(os.path.join(ROOT, "hallthruster_bridge", "**", "*.toml"), recursive=True) + \
         glob.glob(os.path.join(ROOT, "abep_sim", "*.py"))
+    # NP-HALL-CHEM-AIR (A9.33 Q2) authorized the Hall AIR set: hallthruster_bridge/propellants_air/ holds its own
+    # sha256-pinned tables, byte-identical rebuilds or copies of v0 tables under the same file names (AIR_PINNED.toml records
+    # each v0 origin), and hallthruster_bridge/audit_air/ holds snapshots of its configurations. The v0 files themselves stay
+    # unused: no configuration there may read a file under docs/chemistry/o_o2/.
+    hall_air = tuple(os.path.join(ROOT, "hallthruster_bridge", d) + os.sep for d in ("propellants_air", "audit_air"))
     for p in scan:
         text = open(p, encoding="utf-8", errors="ignore").read()
+        if p.startswith(hall_air):
+            import tomllib
+            for r in tomllib.loads(text).get("reactions", []):
+                assert "o_o2" not in r.get("rate_coeff_file", ""), (p, r)
+            continue
         assert "o_o2/v0" not in text, p
         for n in names:
             assert n not in text, (p, n)
