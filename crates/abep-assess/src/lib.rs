@@ -20,6 +20,7 @@
 //! exit item ([`closure_m1`]).
 
 pub mod closure;
+pub mod closure_icp;
 pub mod closure_m1;
 pub mod envelope_summary;
 pub mod error;
