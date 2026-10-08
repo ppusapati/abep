@@ -20,6 +20,10 @@ name = "abep-assess-closure"
 path = "src/bin/abep_assess_closure.rs"
 
 [[bin]]
+name = "abep-assess-thermal-closure"
+path = "src/bin/abep_assess_thermal_closure.rs"
+
+[[bin]]
 name = "abep-assess-envelope-summary"
 path = "src/bin/abep_assess_envelope_summary.rs"
 
