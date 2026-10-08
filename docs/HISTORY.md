@@ -5457,3 +5457,11 @@ Lane `lane-hall-chem-air`, base `b730764`.
     eligible).
 - **Tests:** `abep-mission/tests/conservation_bounds.rs` (9) and `abep-assess/tests/conservation_bounds_a4.rs` (15),
   including a byte-identical regeneration of the committed record.
+
+## 2026-10-08 — A9.35 owner decision recorded: A4-REG-01 open, intake closure rule for M2
+
+- **What:** owner ruling recorded verbatim as `docs/decisions/OD_2026_10_08_A9_35_A4_REG_01_OPEN_INTAKE_CLOSURE_RULE.md` (sha256 `7175987a80ffc730c0b910091ec02929cb7930b47b7c4436a5edc772da59ade5`), with companion `docs/decisions/OD_2026_10_08_A9_35_a4_reg_01_open_intake_closure_rule.json`.
+- **A4-REG-01:** stays open; no maximum intake area is invented or frozen; it does not block M1.
+- **Carried forward:** worst-state 12 mN needs ≥ 0.251 m² effective collection area and ≥ 0.048 mg/s at the ideal 1.5 kW limit.
+- **M2:** evaluates the actual intake geometry, capture efficiency and delivered mass flow. A failing current design is classified DESIGN_VARIABLE_LIMIT unless a registered spacecraft-envelope bound proves no permissible intake can close it.
+- **Governance:** continue M1; no owner review until the M1 milestone audit.
