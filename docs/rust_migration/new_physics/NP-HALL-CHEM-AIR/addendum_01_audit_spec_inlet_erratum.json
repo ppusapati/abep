@@ -1,0 +1,77 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-HALL-CHEM-AIR/addendum_01_audit_spec_inlet_erratum",
+ "amends": "NP-HALL-CHEM-AIR v1 (prereg_v1.json 306712f78bbbf17e8aa50e804559c36a80680dbebc8ecf0f47f2c244443ea70f, lock prereg_lock_v1.json 1884e42ff98ee07a634500ce338eef9dc3749bf4e5c053b058aec9b764674518)",
+ "date": "2026-10-08",
+ "lane": "lane-hall-chem-air",
+ "drafted_by": "agent session; not reviewed by the owner; nothing here is an owner decision",
+ "registered_before": "the CA-HALL-AIR-v1 audit case file, the audit snapshot configurations, any audit run and any AIR Hall case. No Hall run of any O-bearing feed exists; no audit metric has been computed. The O / O2 tables of abep-air-0.1..0.7 were built under the v1 rules before this addendum; nothing in it was chosen after seeing a rate, a Hall result or a metric.",
+ "changes_no_rule": "this addendum corrects a count, fixes the implementation of rules v1 already states (metric formulas, bound members, eligibility, the exact state list) and registers the neutral-inlet rule both the audit and the AIR family need; no threshold, tier, domain, composition rule, status or admission criterion changes",
+ "erratum": [
+  {
+   "id": "E-01",
+   "where": "prereg_v1.json processes[HA-N2N-01].reaction ('the 27 reactions of ... n2_n.toml') and PREREG.md sec. 6 ('the 27 abep-n2n-0.11 nominal reactions')",
+   "correct": "29 reactions: the enumeration in the same field (N2 elastic, N2 ionization, N2 DI upper, N2 -> N^2+ + N, N2 dissociation, 8 N2 electronic, 10 N2 vibrational, 2 N2 rotational, N elastic, N ionization, N+ -> N^2+, N -> N^2+) is authoritative and sums to 29; with the N2 DI lower and N elastic Wang variants the set references 31 abep-n2n-0.11 tables (AIR_PINNED.toml [reuse])",
+   "effect": "none on any rule; the AIR_PINNED.toml history line of abep-air-0.1 records the same correction for abep-air-0.0"
+  }
+ ],
+ "neutral_inlet_rule": {
+  "id": "NI-01",
+  "rule": "each AIR case passes one HallThruster.jl Propellant per configured neutral (N2, N, O2, O): anode flow = delivered mass flow x the composition point's mass fraction (0 allowed); temperature_K = 500; velocity_m_s = 150 x sqrt(M_N2 / M_s)",
+  "masses": "the solver's own (HallThruster.jl v0.23.1 src/physics/elements.jl, used by Propellant(gas::String)): N 14.007, O 15.999; M_N2 = 28.014, M_O2 = 31.998",
+  "basis": "150 m/s and 500 K are the HallThruster.jl defaults (src/physics/constants.jl) that every v1 N2_PROXY case uses for N2 (bridge_lib.jl run_case builds Propellant(\"N2\", flow) without velocity or temperature); the other species get the equal-temperature effusive scaling sqrt(M_N2 / M_s), the same mass scaling HallThruster.jl applies to propellant-file species it adds itself (configuration.jl). The delivered feed temperature is not registered (feed_state_closure_v2 is PROPOSED).",
+  "label": "NEUTRAL_INLET_EQUAL_T_SCALED_FROM_V1_DEFAULT",
+  "values_m_s": {"N2": "150", "O2": "150 sqrt(28.014 / 31.998)", "N": "150 sqrt(28.014 / 14.007) = 150 sqrt(2)", "O": "150 sqrt(28.014 / 15.999)"}
+ },
+ "audit_implementation": {
+  "id": "CA-HALL-AIR-v1 implementation",
+  "status": "PREPARED_NOT_RUN",
+  "case_set": {
+   "path": "hallthruster_bridge/audit_air/air_state_envelope_cases_v1.json",
+   "generator": "Rust (abep-julia-bridge, abep-air-cases audit); byte-reproducible; derived from the frozen NP-HALL-PARAMETRIC-ENVELOPE v1 case file (its N2_PROXY rows, sha256 pinned by launch_manifest_v1.json) and the frozen design-state set (composition corners, recomputed and required to equal prereg_v1.json composition.hall_composition_points exactly)",
+   "selection": "geometry G-RP1, bz_shape BZ-P5B16, B_peak BP-LO / BP-HI, V_d VD-180 / VD-350, mdot MF-LO / MF-HI, transport sgb-screen-01..09 (v1 rows, numerics and B registration unchanged) x composition CP-YLO-REC / CP-YLO-DIS / CP-YHI-REC / CP-YHI-DIS x chemistry AIR-NOM / AIR-ALT",
+   "n_cases": 576,
+   "chemistry": "snapshot configurations hallthruster_bridge/audit_air/configs/air_nom_abep-air-0.7.toml and air_alt_abep-air-0.7.toml (byte copies of air_nominal.toml / air_alt.toml at abep-air-0.7), sha256-pinned with every rate file in hallthruster_bridge/audit_air/configs/MANIFEST.json; rate_dir propellants_air",
+   "no_measured_target": "no case carries a measured target; the script writes no thrust, current or efficiency"
+  },
+  "run": "julia --project=hallthruster_bridge hallthruster_bridge/audit_air/air_state_envelope.jl <out.jsonl> <shard> <nshards> (local script hallthruster_bridge/audit_air/run_local_audit.sh); the run function is hallthruster_bridge/air_bridge_lib.jl run_case_air (NI-01; vacuum; bridge helpers unchanged); every saved frame of the averaging window enters",
+  "rates": "R_r = sum over frames f and cells i of n_e n_target k_r(3/2 T_e) dz_i (bridge_lib.jl rate_at / reactant_density / cell widths, unchanged); for every metric also the per-frame value, whose maximum over frames is the per-frame form",
+  "denominators": {
+   "R_ion": "sum of R_j over included ionizing electron-impact channels (product charge differs from reactant charge), one per event (N2 closure convention, n2_closure_verdicts_v1)",
+   "R_e": "sum of nu_e,j R_j over included ionizing channels, nu_e = electrons on the right side minus one (electron production)",
+   "P_inel": "sum of R_j E_j over included electron_impact and excitation channels (E_j = table header energy); elastic channels excluded (frozen F_P definition: inelastic power)",
+   "D_s": "sum of R_j over included electron-impact channels whose heavy reactant is species s (destruction of s)",
+   "S_s": "sum of R_j over included channels producing species s, with its coefficient (production of s; used where s has no included destruction channel: the steady-state proxy of the N2 closure)"
+  },
+  "processes": [
+   {"id": "HA-O2-DI-02", "table": "hallthruster_bridge/audit_air/bound_tables/dissociative_ionization_O2_to_O_Z2plus_song2026.dat", "reactant": "O2",
+    "metrics": {"F_ion": "R / (R_ion + R)", "F_P": "R E / (P_inel + R E), E = 53.888 eV", "F_S(O2 destruction)": "R / (D_O2 + R)"},
+    "members": "lower / upper = (1 -+ 0.10) x nominal (SONG2026 Table VII caption: 10 %)", "representable": false},
+   {"id": "HA-O2-ATT-01", "table": "hallthruster_bridge/audit_air/bound_tables/attachment_O2_song2026.dat", "reactant": "O2",
+    "metrics": {"F_e_loss": "R / R_e", "F_S(O2 destruction)": "R / (D_O2 + R)"},
+    "members": "lower / upper = (1 -+ 0.20) x nominal (SONG2026 Table VIII: 'no more than 20 %')", "representable": false},
+   {"id": "HA-WALL-02", "table": "none (physical bound)", "reactant": "O",
+    "metrics": {"F_S(O destruction)": "W_O / (D_O + W_O)"},
+    "rate": "W_O = gamma sum over frames and channel cells (z <= L_m) of n_O (vbar_O / 4) (2 / (r_out - r_in)) dz, vbar_O = sqrt(8 k_B 500 K / (pi m_O)) (NI-01 inlet temperature; the in-channel neutral temperature is not computed by the solver), m_O from the solver masses",
+    "members": "lower gamma = 0, upper gamma = 1 (UE-02 physical bound)", "representable": false},
+   {"id": "HA-WALL-03", "table": "none (physical bound)", "reactant": "N",
+    "metrics": {"F_S(N destruction)": "W_N / (D_N + W_N)"}, "rate": "as HA-WALL-02 for N",
+    "members": "lower gamma = 0, upper gamma = 1", "representable": false},
+   {"id": "HA-N2N-R1", "table": "hallthruster_bridge/audit/bound_tables/ionization_N_Z2plus_to_N_Z3plus_bell1983.dat", "reactant": "N(2+)",
+    "metrics": {"F_ion": "R / (R_ion + R)", "F_P": "R E / (P_inel + R E), E = table header", "F_S(N^2+ destruction)": "R / S_N2+ (no included N^2+ destruction channel)"},
+    "members": "lower / upper = (1 -+ 0.10) x nominal (Bell et al. 1983: +-10 %)", "representable": false},
+   {"id": "HA-N2N-R2", "table": "nominal hallthruster_bridge/audit/bound_tables/ionization_N2_to_N2_Z2plus_nominal.dat; upper hallthruster_bridge/audit/bound_tables/ionization_N2_to_N2_Z2plus_upper.dat", "reactant": "N2",
+    "metrics": {"F_ion": "R / (R_ion + R)", "F_P": "R E / (P_inel + R E)"},
+    "members": "lower = nominal table (no published lower band), upper = upper table", "representable": false},
+   {"id": "HA-N2N-R3", "table": "hallthruster_bridge/audit/bound_tables/ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat", "reactant": "N2(+)",
+    "metrics": {"F_ion": "R / (R_ion + R)", "F_S(N2+ destruction)": "R / S_N2+ (no included N2+ destruction channel)"},
+    "members": "lower / upper = 0.86 / 1.11 x nominal (Tabata 2006 fit / data range, the N2 closure convention)", "representable": false}
+  ],
+  "no_bound_today": ["HA-O-EXC-02", "HA-O-ION-02", "HA-O-ION-03", "HA-O2-ION-02", "HA-O2-ROT-01", "HA-O2-EXC-03", "HA-O2-VIB-01", "HA-O2P-DIS-01", "HA-N2P-DIS-01", "HA-DR-01", "HA-REC-02", "HA-IM-01", "HA-HN-01", "HA-MS-01", "HA-SUP-01"],
+  "no_bound_verdict": "UNBOUNDED_OMISSION (prereg unbounded_rule; blocks completeness unless sourced or disposed, OQ-HA-06)",
+  "eligibility": "a run counts toward the bounds only if converged, finite (I_d samples, thrust, mean I_d), sustained (bridge flag) and in domain (DOM-AIR-01: no unresolved table and every per-table f_out <= 1e-12; DOM-AIR-02: activity share above 45 eV mean energy <= 1e-12 for every reaction); other runs are recorded with their reason and excluded; a composition corner without an eligible run makes every verdict NOT_EVALUABLE",
+  "bounds": "for each process and metric (window-integrated and per-frame-maximum forms): L = minimum over eligible runs of the lower member, U = maximum over eligible runs of the upper member, nominal range = [min, max] of the nominal member; nuisance = operating point, composition corner, transport candidate, chemistry configuration",
+  "verdict": "ambiguity rule verbatim (n2_completeness_audit_v1_addendum1): U < T -> EXCLUDE; L > T -> PROMOTE; otherwise UNCERTAINTY VARIANT; a process takes the most severe verdict over its metrics and forms (PROMOTE > UNCERTAINTY VARIANT > EXCLUDE); a non-representable process with PROMOTE or UNCERTAINTY VARIANT sets NOT_REPRESENTABLE_IN_PINNED_SOLVER; every verdict is PROVISIONAL while AIR_PINNED.toml lists a tier-1 gap",
+  "output": "hallthruster_bridge/audit_air/ca_hall_air_v1_verdicts.json, written by the Rust reader (abep-julia-bridge air_audit) from a frozen, sha-pinned raw record file; never from an unfrozen file"
+ }
+}

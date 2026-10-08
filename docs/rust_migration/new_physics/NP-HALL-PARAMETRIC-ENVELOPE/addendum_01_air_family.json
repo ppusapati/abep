@@ -1,0 +1,106 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-HALL-PARAMETRIC-ENVELOPE/addendum_01_air_family",
+ "amends": "NP-HALL-PARAMETRIC-ENVELOPE v1 (prereg_v1.json 3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d, lock prereg_lock_v1.json 25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3); v1 and its case file, launch manifest and driver are not edited",
+ "status": "PREREGISTERED_NOT_RUN",
+ "status_label": "PARAMETRIC / NOT_VALIDATED",
+ "date": "2026-10-08",
+ "lane": "lane-hall-chem-air",
+ "drafted_by": "agent session; not reviewed by the owner; nothing here is an owner decision",
+ "mandate": "A9.33 Q2 (Hall O / O2 chemistry contract; AIR Hall NOT_EVALUATED until admitted) on A9.32 (two-layer closure classification); v1 change_control: a new, dated addendum registered before the runs it governs",
+ "registered_before": "the AIR case file and any AIR HallThruster.jl run. No Hall run of any H-1 case and no Hall run of any O-bearing feed exists. The AIR reaction set is INCOMPLETE_EVIDENCE (hallthruster_bridge/propellants_air/AIR_PINNED.toml abep-air-0.7), so no AIR run may start under this addendum today.",
+ "governing_records": {
+  "A9.33_json": {"path": "docs/decisions/OD_2026_10_08_A9_33_hall_run_location_hall_air_chemistry_plenum_v8.json", "sha256": "8799ee1069a0916d611738fff29b8c03af1e25d74fbd602114475d2f7454602b"},
+  "A9.32_json": {"path": "docs/decisions/OD_2026_10_07_A9_32_hall_thrust_critical_path_parametric_envelope.json", "sha256": "b3deaf25c9db25ed7fe349d28b8c4b7585d434c9e90f952d9757ee725473ddde"},
+  "v1_prereg": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json", "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d"},
+  "v1_cases": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/cases/h1_parametric_envelope_cases_v1.json", "sha256": "c4a73dbbc1f7cbf25add986211e2e4ad945a91b7328ab0b99663de35e6021b12"},
+  "chem_prereg": {"path": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_v1.json", "sha256": "306712f78bbbf17e8aa50e804559c36a80680dbebc8ecf0f47f2c244443ea70f"},
+  "chem_lock": {"path": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_lock_v1.json", "sha256": "1884e42ff98ee07a634500ce338eef9dc3749bf4e5c053b058aec9b764674518"},
+  "chem_addendum_01_lock": {"path": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/addendum_01_lock.json", "sha256": "bf1f743cd1c9efc1ed6a3b9c6c8c6183553887d9bee7b8934547f4821dddca42"},
+  "chem_addendum_02_lock": {"path": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/addendum_02_lock.json", "sha256": "7e1e29af9aae1492883756d223d37bcfa47b1da65dd32ff0cb1b81c40e904921"}
+ },
+ "what_changes": [
+  "adds a third family AIR (supply mode AIR_PRIMARY) to the envelope; XE and N2_PROXY, their 4536 cases, the v1 driver and launch manifest stay exactly as committed",
+  "replaces, for AIR_PRIMARY layer (a), the v1 reason AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED by an evaluation rule that applies only once the AIR reaction set is COMPLETE_FOR_PARAMETRIC_ENVELOPE; until then AIR layer (a) stays NOT_EVALUATED with that same reason",
+  "N2_PROXY keeps no classification role (v1 families[1]); it is neither a bound nor a proxy for AIR"
+ ],
+ "what_does_not_change": [
+  "credible Hall transport set EMPTY; HallMap admission and the hall_ensemble logic; layer (b) Hall NOT_EVALUATED",
+  "the HallThruster.jl pin (v0.23.1, bfb3019f), bridge_lib.jl, abep-n2n-0.11, the P5-N2 records",
+  "the v1 run-status rule for XE and N2_PROXY, the v1 B(z) family (SOURCED_SURROGATE, asymmetric rule), numerics, transport set and non-Hall inputs"
+ ],
+ "family": {
+  "id": "AIR",
+  "supply_mode": "AIR_PRIMARY",
+  "chemistry": "the Hall AIR reaction set of NP-HALL-CHEM-AIR (label and status in hallthruster_bridge/propellants_air/AIR_PINNED.toml), configuration propellants_air/air_nominal.toml (nominal members), rate_dir propellants_air; one chemistry configuration, so no chemistry robustness is claimed (label CHEMISTRY_NOMINAL_ONLY; evidence condition EC-CHEM)",
+  "run_function": "hallthruster_bridge/air_bridge_lib.jl run_case_air (NI-01 per-species Propellants; vacuum; bridge helpers unchanged)",
+  "composition": "the four CE-AIR hull corners CP-YLO-REC, CP-YLO-DIS, CP-YHI-REC, CP-YHI-DIS (NP-HALL-CHEM-AIR prereg composition.hall_composition_points), recomputed by the Rust generator from the frozen design-state set and required to equal the preregistered values exactly; label COMPOSITION_HULL_CORNERS_NOT_INTERIOR_BOUNDS",
+  "inlet": "NI-01 (NP-HALL-CHEM-AIR addendum 01): 500 K, velocity 150 x sqrt(M_N2 / M_s), solver masses; label NEUTRAL_INLET_EQUAL_T_SCALED_FROM_V1_DEFAULT"
+ },
+ "case_grid": {
+  "rule": "every v1 N2_PROXY row (file order; geometry, B(z) registration, B_peak, V_d, delivered mass flow, transport candidate and numerics copied unchanged from the frozen v1 case file) x the four composition corners (corner order above); the delivered mass flow is split by the corner's mass fractions (NI-01)",
+  "key": "AIR|<geometry>|<bz_shape>|<B_peak>|<V_d>|<mdot>|<composition>|<transport>",
+  "n_cases": 9072,
+  "file": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/cases/h1_parametric_envelope_air_cases_v1.json",
+  "generator": "Rust (crates/abep-julia-bridge/src/air_cases.rs; abep-air-cases generate / check), byte-reproducible, case_sha256 = the v1 canonical case hash",
+  "labels": ["PARAMETRIC / NOT_VALIDATED", "SOURCED_SURROGATE_P5_SHAPE_NOT_H1_BZ", "TRANSPORT_EXTRAPOLATED", "NUMERICAL_ADEQUACY_NOT_VERIFIED_FOR_H1", "ANALYSIS_POINT_NOT_DESIGN_SELECTION", "COMPOSITION_HULL_CORNERS_NOT_INTERIOR_BOUNDS", "NEUTRAL_INLET_EQUAL_T_SCALED_FROM_V1_DEFAULT", "CHEMISTRY_NOMINAL_ONLY"]
+ },
+ "launch_gate": {
+  "rule": "the AIR launch manifest is generated only when abep_chem::hall_air::AirSet::admission() is Ok (AIR_PINNED.toml status COMPLETE_FOR_PARAMETRIC_ENVELOPE, no tier-1 gap, no blocking item); generation refuses with INCOMPLETE_EVIDENCE (or MODEL_ERROR for NOT_REPRESENTABLE_IN_PINNED_SOLVER) otherwise",
+  "pins_at_launch": "case file sha256, driver sha256, air_bridge_lib.jl and bridge_lib.jl sha256, AIR_PINNED.toml sha256 and label, air_nominal.toml sha256, propellants_air/rate_validity.toml sha256 and every configured rate file's sha256",
+  "chemistry_changes": "a chemistry change after launch is a new label and a new launch manifest; records of two labels are never mixed in one envelope",
+  "today": "REFUSED: the AIR reaction set is INCOMPLETE_EVIDENCE; no AIR launch manifest exists"
+ },
+ "run_status_rule": {
+  "basis": "v1 run_status_rule, with the AIR chemistry checks of NP-HALL-CHEM-AIR (DOM-AIR-01, DOM-AIR-02)",
+  "statuses": {
+   "NUMERICAL_FAILURE": "as v1",
+   "OUT_OF_DOMAIN": "chemistry_unresolved_rate_files non-empty, any chemistry_per_reaction extrapolated_fraction null or > 1e-12 (DOM-AIR-01), or audit_domain_fraction_max null or > 1e-12 (DOM-AIR-02); evaluated independently of sustainment",
+   "NOT_SUSTAINED": "as v1",
+   "PASS": "none of the above"
+  },
+  "precedence": ["NUMERICAL_FAILURE", "OUT_OF_DOMAIN", "NOT_SUSTAINED", "PASS"],
+  "counts_toward_feasibility": "PASS only",
+  "record_rejection": "as v1, plus: a record whose air_label, air_pinned_sha256 or air_config_sha256 differs from the AIR launch manifest makes the AIR ingestion MODEL_ERROR"
+ },
+ "record_fields_added": ["composition_id", "feed_used", "air_label", "air_pinned_sha256", "air_config_sha256", "audit_domain_fraction_max", "audit_domain_limiting_rate_file", "air_in_domain", "ion_exit_flux_fraction_by_gas"],
+ "hall_specific_closure_air": {
+  "point_tests": "T12 and T25 exactly as v1 (thrust_N >= HC-01 / HC-02 and P_bus_fav < HC-03; PASS only)",
+  "composition_rule": "the composition is not a controllable variable: a test closes on a hardware configuration (geometry, bz_shape) only if, for EVERY composition corner, some PASS point of that hardware (any B_peak, V_d, mdot, transport candidate) passes it; T12 and T25 must both close on the same hardware (v1 hardware_consistency)",
+  "constraint_status": {
+   "CLOSES_IN_ENVELOPE": "the composition rule holds for T12 and T25 on one hardware configuration",
+   "NOT_DETERMINABLE_IN_ENVELOPE": "otherwise, with blockers: HALL_NON_CLOSING_UNDER_AIR_ENVELOPE (no closure among evaluated physics), the OUT_OF_DOMAIN / NUMERICAL_FAILURE counts, H1_BZ_NOT_REGISTERED, AIR_COMPOSITION_NOT_REGISTERED, AIR_CHEMISTRY_NOMINAL_ONLY",
+   "NOT_EVALUATED": "no AIR envelope ingested, or the AIR reaction set not admitted (AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED)"
+  },
+  "non_closure": "never eligible for PHYSICALLY_NON_CLOSING in this addendum: the B(z) family is a surrogate (v1 bz_family), the composition corners do not bound interior compositions, and only the nominal chemistry members run; a demonstrated AIR non-closure is recorded as HALL_NON_CLOSING_UNDER_AIR_ENVELOPE (A9.31 sec. 21 category DESIGN_VARIABLE_LIMIT / MODEL_DOMAIN_LIMIT) and the classification stays NOT_DETERMINABLE",
+  "margins_and_robustness": "as v1 per composition corner; ROBUST_UNDER_TRANSPORT_SET only if all nine candidates close at every corner"
+ },
+ "state_applicability": {
+  "rule": "AIR Hall results are state-independent vacuum runs; a required state inherits the AIR Hall constraint status unless it is under an unresolved species bound of NP-HALL-CHEM-AIR",
+  "SB-He": "states with free-stream x_He > 0.01 (14 ECSS_LT_LOW states): AIR Hall NOT_EVALUATED (MATERIALITY_BOUND_REQUIRED_HE) until SB-He is resolved",
+  "SB-Ar": "states with free-stream x_Ar > 0.01 (6 ECSS_ST_HIGH states): AIR Hall NOT_EVALUATED (MATERIALITY_BOUND_REQUIRED_AR) until SB-Ar is resolved",
+  "SB-NO": "must be resolved for admission (AD-HA-05); no state-resolved treatment"
+ },
+ "classification_effect": {
+  "procedure": "v1 classification_rule C0..C4 unchanged in structure; AIR_PRIMARY layer (a) Hall constraints HALL_T12_AT_PBUS and HALL_T25_CAPABILITY are evaluated by hall_specific_closure_air instead of NOT_EVALUATED once an AIR envelope of an admitted label is ingested",
+  "C2": "cannot be reached through the AIR family (non_closure rule); it can still be reached through an eligible evaluated non-Hall non-closure as in v1",
+  "C3_additional_evidence_conditions": [
+   "EC-COMP: the delivered composition is registered for each required state, lies inside the CE-AIR hull (including any species-selective collection, ICD G-02) and the Hall closes at it",
+   "EC-CHEM: the closure holds under the registered chemistry variants (AIR-ALT members and every uncertainty variant of the admitted set), and the SONG2026 version-of-record status of the admission",
+   "EC-INLET: the registered delivered feed temperature and velocity replace NI-01 and the closure holds"
+  ],
+  "today": "AIR layer (a) NOT_EVALUATED (AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED): the AIR reaction set is INCOMPLETE_EVIDENCE; the A9.32 classification stays NOT_DETERMINABLE",
+  "layer_b": "unchanged: NOT_EVALUATED (credible set EMPTY)"
+ },
+ "execution": {
+  "order": "only after the launch gate opens; family AIR runs as its own shard set and frozen raw file (never mixed with XE / N2_PROXY records); threads / BLAS pinned to 1; per-record provenance as v1 plus the AIR pins",
+  "driver": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/driver/h1_envelope_air_driver.jl (refuses to run without an AIR launch manifest whose pins match)",
+  "runtime_estimate": "9072 runs; four neutral and five ion species with 34 reactions per run (air_nominal.toml at abep-air-0.7) against two neutrals, three ions and 29 reactions for N2_PROXY: assumed no cheaper than the v1 N2_PROXY estimate (~2 min mean), i.e. of order 300 CPU-h or more; an estimate, not a measurement (owner question OQ-HPE-AIR-01)",
+  "ingestion": "the Rust ingestion of AIR records and their classification in abep-assess are implemented together with the launch gate's first opening (not needed while no AIR run can exist); they follow this addendum literally"
+ },
+ "open_owner_questions": [
+  {"id": "OQ-HPE-AIR-01", "question": "AIR envelope cost (~9072 runs, extrapolated >= 300 CPU-h): accept the full grid once the chemistry is admitted, stage it by composition corner, or register a reduced grid in a new addendum? A reduced grid can only miss closures (non-closure is never eligible here)."},
+  {"id": "OQ-HPE-AIR-02", "question": "Composition as an uncontrolled variable (closure must hold at every corner): accept (drafted), or rule that the dissociation degree is a gas-path design choice (existence over f_O), which would need a new addendum and a registered gas-path design basis?"}
+ ],
+ "change_control": "any change after this lock is a new, dated addendum registered before the runs it governs; results seen under this addendum cannot justify changing it"
+}

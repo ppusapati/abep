@@ -1,0 +1,112 @@
+# Reaction-set label of the Hall AIR_PRIMARY chemistry (NP-HALL-CHEM-AIR v1, A9.33 Q2). Separate from abep-n2n-* (propellants/,
+# PINNED.toml) and abep-icp-air-* (data/chemistry/icp/): one label never names two chemistry definitions (HR-02). [files] pins
+# every file of this directory, [reuse] the abep-n2n-0.11 tables referenced in place (../propellants/<file>), [tables] the set's
+# own tables (target gas, preregistration process, role, origin). Any change is a new label with a history line, one table per
+# commit, and a new sha256 of this file in abep_chem::hall_air::AIR_PINNED_SHA256. Status vocabulary: INCOMPLETE_EVIDENCE |
+# NOT_REPRESENTABLE_IN_PINNED_SOLVER | COMPLETE_FOR_PARAMETRIC_ENVELOPE (not a validation claim).
+
+[contract]
+id = "NP-HALL-CHEM-AIR"
+version = "1"
+prereg = "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_v1.json"
+lock = "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_lock_v1.json"
+lock_sha256 = "1884e42ff98ee07a634500ce338eef9dc3749bf4e5c053b058aec9b764674518"
+consumer = "NP-HALL-PARAMETRIC-ENVELOPE AIR family (addendum); bridge_lib.jl chemistry_validity through rate_dir = propellants_air"
+loader = "abep_chem::hall_air::AirSet::load"
+
+[reaction_set]
+label = "abep-air-0.7"
+status = "INCOMPLETE_EVIDENCE"
+nominal_config = "air_nominal.toml"
+configs = ["air_nominal.toml", "air_alt.toml"]
+tier1_gaps = [
+  "HA-O-EL-01",
+  "HA-O-EXC-01",
+  "HA-O2-DIS-01 below 13.5 eV (Herzberg / Schumann-Runge dissociation; no reachable source)",
+  "HA-O2-EXC-01",
+  "HA-O2-EXC-02",
+]
+blocking = [
+  "SONG2026 tables not checked against the version of record (AD-HA-02, OQ-HA-01)",
+  "SB-NO unresolved: blocks every AIR state (AD-HA-05, OQ-HA-03)",
+  "SB-He / SB-Ar unresolved: 14 + 6 states INCOMPLETE_EVIDENCE (AD-HA-05, OQ-HA-03)",
+  "CA-HALL-AIR-v1 PREPARED_NOT_RUN: no final tier-2 / tier-3 verdict (AD-HA-04)",
+  "no repository source for HA-IM-01, HA-HN-01, HA-DR-01, HA-MS-01, HA-O2P-DIS-01, HA-O2-VIB-01, HA-O2-EXC-03: no evaluable bound today (UNBOUNDED_OMISSION unless sourced or disposed, OQ-HA-06)",
+]
+history = [
+  "abep-air-0.0 (2026-10-08): skeleton under NP-HALL-CHEM-AIR v1 (lock 1884e42f): the 29 abep-n2n-0.11 tables (n2_n.toml nominal + N2 DI lower + N elastic Wang) referenced in place with mirrored validity entries; no O / O2 table; no configuration",
+  "abep-air-0.1 (2026-10-08): + O ionization HA-O-ION-01 nominal ionization_O_beb_kd2002.dat (Kim & Desclaux 2002 BEB via NIST SRD 107; byte-identical copy of the v0 table, validity 255 eV); new configuration air_nominal.toml = the 29 n2_n.toml reactions referenced in place + O (max_charge 1); correction to the 0.0 line: [reuse] holds 31 tables (n2_n.toml's 29 + N2 DI lower + N elastic Wang), not 29",
+  "abep-air-0.2 (2026-10-08): + O ionization variant ionization_O_thompson1995.dat (Thompson et al. 1995 via NIST SRD 107; byte-identical copy of the v0 table, validity 255 eV); new configuration air_alt.toml (AIR-ALT: Thompson O ionization, N2 DI lower, N elastic Wang); rest as 0.1",
+  "abep-air-0.3 (2026-10-08): + O2 ionization HA-O2-ION-01 ionization_O2_song2026.dat (SONG2026 Table VII sigma(O2+), rendered in Rust from xs/, byte-identical to the v0 table, validity 255 eV; IN_REPO_PENDING_VERSION_OF_RECORD); O2 (max_charge 1) added to both configurations; rest as 0.2",
+  "abep-air-0.4 (2026-10-08): + O2 dissociative ionization HA-O2-DI-01 upper dissociative_ionization_O2_upper_song2026.dat (SONG2026 Table VII sigma(O+ (+O2^2+)), ramp from 18.738 eV, rendered in Rust, byte-identical to v0, validity 255 eV) in both configurations; rest as 0.3",
+  "abep-air-0.5 (2026-10-08): + O2 dissociative ionization HA-O2-DI-01 lower dissociative_ionization_O2_lower_song2026.dat (column / 1.1, SONG2026 statement; rendered in Rust, byte-identical to v0, validity 255 eV) in air_alt.toml; rest as 0.4",
+  "abep-air-0.6 (2026-10-08): + O2 dissociation HA-O2-DIS-01 dissociation_O2_song2026.dat (SONG2026 Table VI, Cosby 1993, >= 13.5 eV only, header 5.12 eV; rendered in Rust, byte-identical to v0, validity 47 eV) in both configurations; dissociation below 13.5 eV stays a tier-1 gap (INCOMPLETE_EVIDENCE); rest as 0.5",
+  "abep-air-0.7 (2026-10-08): + O2 elastic momentum transfer HA-O2-EL-01 elastic_O2_song2026.dat (SONG2026 Table V; out-of-order '0.008 eV' row omitted; rendered in Rust, byte-identical to v0, validity 255 eV) in both configurations; rest as 0.6. Status stays INCOMPLETE_EVIDENCE: tier-1 gaps HA-O-EL-01, HA-O-EXC-01, HA-O2-EXC-01, HA-O2-EXC-02 and HA-O2-DIS-01 below 13.5 eV have no reachable source",
+]
+
+[files]
+"PROVENANCE.md" = "f2807d6a1609bdf89f198c047dbe893ae8920474e17361890172a64bf40a14a5"
+"air_alt.toml" = "1fd54d1c67c44c2f883a0358a7cfae1acab0a00710b68405fd916d008e9f79bf"
+"air_nominal.toml" = "17c790d0bec8c6db1e961b26bbc9779d633bcc015d19b199c162771f00214fbe"
+"dissociation_O2_song2026.dat" = "e908da8e19ea0d5e9364fea28332ef685602048fe3c023eaf41eb048eda5984b"
+"dissociation_O2_song2026.dat.source" = "084d463121f347842f3373a990126e64048dbe29712849f4e57132734ea4ff57"
+"dissociative_ionization_O2_lower_song2026.dat" = "7559f280516ffdde81854f62fee442693dfadc92987bacf0bb07ba9d896e83f0"
+"dissociative_ionization_O2_lower_song2026.dat.source" = "45dd86d6ba8109ad4955d1ee7755f8c6df5b6e719eebd46c0017def442defafd"
+"dissociative_ionization_O2_upper_song2026.dat" = "1657e407cef90ba8a951ef7a862a93788afe20906057a924ab5c5470db749c04"
+"dissociative_ionization_O2_upper_song2026.dat.source" = "0ddf95d33786dec5e78e6991f60dfed16f12fe04dfbd5618d72d2cb08db83d07"
+"elastic_O2_song2026.dat" = "b66353da4be23ff8534dadf1d69036b89c224cd4b96942e91568b6b19b81df64"
+"elastic_O2_song2026.dat.source" = "19b723efacbee7a30e7a6148e5afff80548c43bf44c3720307fcf786a5d7bbf9"
+"ionization_O2_song2026.dat" = "fa6fca7a8192c0d1ccea8776f78e341a50187c28c632173047b4d8164f1e1d31"
+"ionization_O2_song2026.dat.source" = "8622c87cdc4c0f7b4ff572ccc656a66f286a057d5d99589e169ba5c56da25ab8"
+"ionization_O_beb_kd2002.dat" = "1e3a377ede12d2fb20a9f4384c001b04e0d4ec260c4723cea5e1e261103e134e"
+"ionization_O_beb_kd2002.dat.source" = "bc40a68e5740e1a997901d687df13668e31eaca2128e1da361afbe7991bc884f"
+"ionization_O_thompson1995.dat" = "a1fe0dcdf786ee84a5de58ac996bac8130318298103575b383450fcd1e40e6b4"
+"ionization_O_thompson1995.dat.source" = "7d9ec542dea2a454b7703bcafcae0b288df9e5a652c7e6f331d4a6f84f9fd2bd"
+"rate_validity.toml" = "819df6b3597abef04246c5bfa4a3e94bcaa394c5f03fbcf71c29190167222d2f"
+"xs/dissociation_O2_song2026.json" = "5dd96bfaf3d16c338fcb8ed55b1e91886f317e5fb38e2a6e6869e40faa44a378"
+"xs/dissociative_ionization_O2_lower_song2026.json" = "19207c2529ffcd2562d370356b6f84cac0eee2c4109c378797dfa15ec72bd6f3"
+"xs/dissociative_ionization_O2_upper_song2026.json" = "74a7a1b6d679f85c6b36532dbd35f56662cf3370ac7c86677ec938cc9f65f7d9"
+"xs/elastic_O2_song2026.json" = "dda2b373328a482888fb3bb7049f3ea609013cd9efdc3efb7415e461c71d7089"
+"xs/ionization_O2_song2026.json" = "cc73ac2437ccdfbed109e9e88b0a855dde63e973b72653bc46f1d6281bd31f70"
+
+[reuse]
+"../propellants/elastic_N2_song2023.dat" = { sha256 = "d70d9252e961ec6bfe16a0a480020dfdcf3a3aa1032cf2d23b7b3a51a455c47d", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/ionization_N2_song2023.dat" = { sha256 = "ef922b52eaa0a27efb330b8f7140f534d923c3b759d4df29ffd13ebb832067a8", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/dissociative_ionization_N2_upper.dat" = { sha256 = "473a1ed2fbdb8d74da3a21bd013c033de4f618dcb7a0830086343efef13f2e6c", target = "N2", process = "HA-N2N-01", role = "NOMINAL (N2 DI upper)" }
+"../propellants/dissociative_ionization_N2_lower.dat" = { sha256 = "8c0a7e5e2139dfddd69c9783d7c2016d070b65a2117645fb3995efce046d7ed2", target = "N2", process = "HA-N2N-01", role = "VARIANT (N2 DI lower)" }
+"../propellants/dissociative_ionization_N2_to_N_Z2plus.dat" = { sha256 = "ce68675e69dd3d2e572a0e4c525d712b66ac2329a678d5580a92eaf884b3d94e", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/dissociation_N2.dat" = { sha256 = "fb78ba1d30ec0d88a13e992df7749591f65af5770e973e3696a7a932705eb7fc", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_A3Sigma_u.dat" = { sha256 = "1de3f096d8d649fcb9fc77a5046625135ee646984b3ad5841d0f6229a750e169", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_B3Pi_g.dat" = { sha256 = "bb354c8b80562a1896cde8d408706865a61a8fc4d8a0a08c9a9cec23c50fcbb1", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_W3Delta_u.dat" = { sha256 = "7608747ff9606f2da2add27b1be3e83fa68547cf128319a266013d997ff89f9e", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_Bprime3Sigma_u.dat" = { sha256 = "0cfb818937e548921784fa5952185020a5b1ad09d046edc47f5e557ba349fe22", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_a1Pi_g.dat" = { sha256 = "218ca2f91f7cf60526a28a940885421f30a2d9559094f3ccee06256ed0d29903", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_aprime1Sigma_u.dat" = { sha256 = "8a3bbaa8d6904ffc4060a8cc8f9d92b125298bdb3d1dc5f250146d2fb1d01361", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_w1Delta_u.dat" = { sha256 = "ed070fa87591b84b51d6d7d14b3ce63afc59386a8d87a743dd5e6ed97f7fa9bf", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_C3Pi_u.dat" = { sha256 = "85545796dd44642dad62479b343c514ae3efc1e7a2f6c7bc9fc994ea9458dcb3", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_1.dat" = { sha256 = "d284b6047ddba521bf2ca6abad1994baaabdb6b9debf67aa085723331433e152", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_2.dat" = { sha256 = "b5e911ef0ea89ba3b92fd6b3ad4ffb445de90616e9ee5d2262a06af2b42739f8", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_3.dat" = { sha256 = "00f2a35a4355c83711f27ee0a29d32e8b0bf21bf4e152fb088fa1725a584e82b", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_4.dat" = { sha256 = "5b83ed3ed871ed8039ce503e0ec8e867b402d511d5ccee965ec261fe49aa2bfd", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_5.dat" = { sha256 = "696be5f39b2cd645ac3803f31cb92e1c4080a71ee72a313089e27b69ec902f22", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_6.dat" = { sha256 = "883f8986a0574fd24c34bc9a2766b321c457befa62916aada02f0b0fc1b0b8ee", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_7.dat" = { sha256 = "1fa14674da496716f222c3a40780df80078ca4b0921fc8804198b0af00086d12", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_8.dat" = { sha256 = "2d3b6daf646b0355f2be2563e949e23af127fec493b04a7704b58bb873bb3929", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_9.dat" = { sha256 = "05ce506e85cd26f02976fe8242ae159505b08d9bb3a57b8515ce033e3a1fae90", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_10.dat" = { sha256 = "95c17bb7f4dd923e48a81438d2bf56a28044fe8095c62d1bc5bd4beba3244dbc", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_rot_j0_to_j2.dat" = { sha256 = "a697d52ca71da5deb9f953a1190b4e582afc8dc03c1109c612b86c01d5b1ba05", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_rot_j0_to_j4.dat" = { sha256 = "d6341cbea08a2c7e8ca0fe9f54b2a2ead06db942875043231c27845e1e3296dc", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/elastic_N_ragimkhanov2026.dat" = { sha256 = "421945464418c0b4929e948abfa917de25df8edc919c3c1fee37fbd63cf4cf80", target = "N", process = "HA-N2N-01", role = "NOMINAL (N elastic OPM)" }
+"../propellants/elastic_N_wang2014_bsr.dat" = { sha256 = "f4edd85b629eebbe0aa030d225159f6edda2ef90796be85798758b27dd1cf112", target = "N", process = "HA-N2N-01", role = "VARIANT (N elastic Wang BSR)" }
+"../propellants/ionization_N.dat" = { sha256 = "ff4b4c8172ce45c6f11d09a41a3a663d64c5a586288286b692346ae89c0f61a7", target = "N", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/ionization_N_Z1plus_to_N_Z2plus.dat" = { sha256 = "12e9c03ac8f5e37b39bcba8e81e1c8d65e57dcb8672dcab04d35e028c8c32523", target = "N", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/ionization_N_to_N_Z2plus_hms2017.dat" = { sha256 = "a7a6f8fd84f2a3b316002e2aba22d605f152166a5364358b5317d163054133c1", target = "N", process = "HA-N2N-01", role = "NOMINAL" }
+
+[tables]
+"ionization_O_beb_kd2002.dat" = { target = "O", process = "HA-O-ION-01", role = "NOMINAL (BEB member of the unweighted BEB / Thompson pair)", kind = "COPY_OF_V0", v0 = "docs/chemistry/o_o2/v0/tables/ionization_O_beb_kd2002.dat", v0_sha256 = "1e3a377ede12d2fb20a9f4384c001b04e0d4ec260c4723cea5e1e261103e134e" }
+"ionization_O_thompson1995.dat" = { target = "O", process = "HA-O-ION-01", role = "VARIANT (Thompson member of the unweighted BEB / Thompson pair)", kind = "COPY_OF_V0", v0 = "docs/chemistry/o_o2/v0/tables/ionization_O_thompson1995.dat", v0_sha256 = "a1fe0dcdf786ee84a5de58ac996bac8130318298103575b383450fcd1e40e6b4" }
+"ionization_O2_song2026.dat" = { target = "O2", process = "HA-O2-ION-01", role = "NOMINAL", kind = "XS", xs = "xs/ionization_O2_song2026.json" }
+"dissociative_ionization_O2_upper_song2026.dat" = { target = "O2", process = "HA-O2-DI-01", role = "NOMINAL (upper member of the O+ / O2^2+ pair)", kind = "XS", xs = "xs/dissociative_ionization_O2_upper_song2026.json" }
+"dissociative_ionization_O2_lower_song2026.dat" = { target = "O2", process = "HA-O2-DI-01", role = "VARIANT (lower member of the O+ / O2^2+ pair)", kind = "XS", xs = "xs/dissociative_ionization_O2_lower_song2026.json" }
+"dissociation_O2_song2026.dat" = { target = "O2", process = "HA-O2-DIS-01", role = "NOMINAL (Cosby-only lower member: dissociation below 13.5 eV MISSING)", kind = "XS", xs = "xs/dissociation_O2_song2026.json" }
+"elastic_O2_song2026.dat" = { target = "O2", process = "HA-O2-EL-01", role = "NOMINAL", kind = "XS", xs = "xs/elastic_O2_song2026.json" }

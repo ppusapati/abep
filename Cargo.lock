@@ -153,6 +153,8 @@ dependencies = [
 name = "abep-julia-bridge"
 version = "0.1.0"
 dependencies = [
+ "abep-chem",
+ "abep-data",
  "abep-hall",
  "abep-provenance",
  "abep-types",
