@@ -1,0 +1,19 @@
+{
+ "schema": "abep_icp_closure_registration_lock_v1",
+ "id": "ICP-CLOSURE-REG-v1",
+ "registered": "2026-10-08",
+ "base_commit": "42bb83a",
+ "rule": "Committed alone, before any evaluation of the P4 closure record. A changed file is a v2 registration.",
+ "files": {
+  "icp_closure_registration_v1.json": "41ce4d17a58e0ba6896fd4cfb815856f69c06271ae50b0d602575d5606802d51",
+  "ICP_CLOSURE_REGISTRATION_v1.md": "6b31e8a47f1cc1098d41419cc96970c18c11b61dfd8f29a5133f9155d0e9733d"
+ },
+ "dbf1_lock": {
+  "path": "docs/baseline/DBF-1/dbf1_lock_v1.json",
+  "sha256": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907"
+ },
+ "np_icp_prereg_lock_v2": {
+  "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_lock_v2.json",
+  "sha256": "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287"
+ }
+}
