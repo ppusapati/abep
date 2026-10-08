@@ -745,3 +745,21 @@ fn p_air_bounded_launch_path_is_information_only() {
     }
     assert!(substituted(&inp, &o).classification != SELECT_WITH_EVIDENCE_CONDITIONS);
 }
+#[test]
+fn committed_dry_run_is_the_harness_v2_record_of_today() {
+    let rel = format!("{NP_DIR}/closure_run_m1_dryrun_v1.json");
+    let text = std::fs::read_to_string(repo().join(&rel)).unwrap();
+    let v = abep_types::pyjson::loads(&text).unwrap();
+    assert_eq!(st(at(&v, &["schema"])), SCHEMA);
+    assert_eq!(st(at(&v, &["run_label"])), "M1_DRY_RUN_NOT_DECISIVE");
+    assert_eq!(st(at(&v, &["addendum_a2", "sha256"])), A2_SHA256);
+    assert_eq!(st(at(&v, &["classification", "result"])), NOT_DETERMINABLE);
+    assert_eq!(st(at(&v, &["classification", "procedure_step"])), "C1");
+    let commit = st(at(&v, &["rust_commit"])).to_string();
+    // Regenerating today with the recorded commit reproduces the classification and the blocking list.
+    let mut inp = base().clone();
+    inp.today.mission.provenance.rust_commit = commit;
+    let now = record_v2(&inp, &evaluate(&inp).unwrap(), "M1_DRY_RUN_NOT_DECISIVE");
+    assert_eq!(at(&now, &["classification"]), at(&v, &["classification"]));
+    assert_eq!(at(&now, &["readiness"]), at(&v, &["readiness"]));
+}
