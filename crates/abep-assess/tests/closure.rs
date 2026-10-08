@@ -114,6 +114,7 @@ fn point(fam: Family, geom: &str, tr: &str, status: RunStatus, t: f64, p: f64, i
         thrust_n: (status == RunStatus::Pass).then_some(t),
         discharge_power_w: (status == RunStatus::Pass).then_some(p),
         discharge_current_a: (status == RunStatus::Pass).then_some(p / 300.0),
+        ion_current_a: None,
         te_max_ev: None,
     }
 }
@@ -289,6 +290,7 @@ fn synthetic_xe_envelope_through_the_production_record_keeps_air_not_evaluated()
                 thrust_n: pass.then_some(0.010),
                 discharge_power_w: pass.then_some(900.0),
                 discharge_current_a: pass.then_some(3.0),
+                ion_current_a: None,
                 te_max_ev: None,
             }
         })

@@ -450,7 +450,12 @@ pub fn classify(inp: &ClosureInputs) -> ClosureOutcome {
 
 // ------------------------------------------------------------------------------------------------ production inputs
 
-fn quantity_codes(rec: &MissionRecord, state: &str, mode: Mode, key: &str) -> AssessResult<(bool, Vec<String>)> {
+pub(crate) fn quantity_codes(
+    rec: &MissionRecord,
+    state: &str,
+    mode: Mode,
+    key: &str,
+) -> AssessResult<(bool, Vec<String>)> {
     let f = rec.field(state, mode, key).ok_or_else(|| model_error(format!("mission field {key} absent at {state}")))?;
     let q = f.quantity().ok_or_else(|| model_error(format!("mission field {key} NOT_APPLICABLE at {state}")))?;
     let mut codes: Vec<String> = q.reasons.iter().map(|r| r.code.clone()).collect();
@@ -508,7 +513,7 @@ fn row<'a>(matrix: &'a Value, id: &str) -> AssessResult<&'a Value> {
         .ok_or_else(|| model_error(format!("matrix row {id} absent")))
 }
 
-fn row_status(matrix: &Value, id: &str, field: &str) -> AssessResult<String> {
+pub(crate) fn row_status(matrix: &Value, id: &str, field: &str) -> AssessResult<String> {
     row(matrix, id)?
         .as_dict()
         .and_then(|d| d.get(field))
@@ -548,6 +553,7 @@ pub fn layer_b_status(matrix: &Value, m: Mode, credible_set_empty: bool) -> &'st
 }
 
 /// Everything the record needs, gathered from the admitted components.
+#[derive(Clone)]
 pub struct TodayInputs {
     pub thresholds: Thresholds,
     pub limits: HallLimits,
@@ -717,7 +723,7 @@ fn constraint_value(c: &Constraint) -> Value {
     ])
 }
 
-fn hall_value(h: &HallTestResult) -> Value {
+pub(crate) fn hall_value(h: &HallTestResult) -> Value {
     let closing: Vec<Value> = h
         .closing
         .iter()
@@ -755,7 +761,7 @@ fn range(points: &[&EnvelopePoint], get: impl Fn(&EnvelopePoint) -> Option<f64>)
     dict(vec![("min", f(mn)), ("max", f(mx))])
 }
 
-fn envelope_summary(e: Option<&Envelope>) -> Value {
+pub(crate) fn envelope_summary(e: Option<&Envelope>) -> Value {
     let Some(e) = e else { return dict(vec![("status", s(NOT_EVALUATED)), ("reason", s(HALL_ENVELOPE_NOT_RUN))]) };
     let mut fams = Dict::new();
     for fam in Family::ALL {
@@ -790,7 +796,7 @@ fn envelope_summary(e: Option<&Envelope>) -> Value {
     ])
 }
 
-fn n2_proxy(e: Option<&Envelope>, lim: &HallLimits) -> Value {
+pub(crate) fn n2_proxy(e: Option<&Envelope>, lim: &HallLimits) -> Value {
     let role = s("NONE: N2_PROXY never enters feasibility or classification (prereg families N2_PROXY)");
     let Some(e) = e else {
         return dict(vec![
