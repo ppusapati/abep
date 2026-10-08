@@ -1,0 +1,39 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-HALL-CHEM-AIR/addendum_03_bounded_treatment",
+ "amends": "NP-HALL-CHEM-AIR v1 (lock 1884e42ff98ee07a634500ce338eef9dc3749bf4e5c053b058aec9b764674518), addenda 01 (lock bf1f743c...) and 02 (lock 7e1e29af...)",
+ "date": "2026-10-08",
+ "lane": "lane-hall-chem-air",
+ "drafted_by": "agent session; coordinator-directed under A9.34 (M1 exit item 'Hall AIR chemistry available or explicitly bounded'); not reviewed by the owner",
+ "governing_records": {
+  "A9.34_json": {"path": "docs/decisions/OD_2026_10_08_A9_34_milestone_governance_m1_m2_m3.json", "sha256": "f51f3d0179dfe4fa99a4c71afdec48a91dc1930ef93e8ddaf38d3d9ac1d36c89"},
+  "A9.33_json": {"path": "docs/decisions/OD_2026_10_08_A9_33_hall_run_location_hall_air_chemistry_plenum_v8.json", "sha256": "8799ee1069a0916d611738fff29b8c03af1e25d74fbd602114475d2f7454602b"}
+ },
+ "registered_before": "any AIR Hall run, any CA-HALL-AIR-v1 audit run and any run of the bounding variant set; no Hall result of an O-bearing feed exists",
+ "m1_delivery": {
+  "item": "A9.34 M1: Hall AIR chemistry available or explicitly bounded",
+  "delivered": "EXPLICITLY_BOUNDED",
+  "not_available_because": "an honest sourced O / O2 set cannot be completed in this programme state: the tier-1 processes HA-O-EL-01 (O momentum transfer), HA-O-EXC-01 (O electronic excitation), HA-O2-EXC-01 / -02 (O2 a, b, Herzberg excitation) and HA-O2-DIS-01 below 13.5 eV have no source in the repository and every open route is paywalled or blocked by the network policy (prereg sources_not_reachable); the set stays INCOMPLETE_EVIDENCE and is never claimed complete"
+ },
+ "what_does_not_change": [
+  "the v1 set status vocabulary, tiers, domain, composition rule and admission rule AD-HA-01..07: AIR_PINNED.toml status stays INCOMPLETE_EVIDENCE and COMPLETE_FOR_PARAMETRIC_ENVELOPE is reachable only under v1",
+  "no table, configuration or validity entry changes; the bounding variant set is a registration of existing, sha256-pinned configurations",
+  "the CA-HALL-AIR-v1 audit (addendum 01) and its snapshots"
+ ],
+ "bounding_variant_set": {
+  "id": "BV-AIR-LL",
+  "label": "BOUNDED_ONE_SIDED_LOWER_ELECTRON_IMPACT_LOSS_NOT_COMPLETE",
+  "members": [
+   {"id": "BV-AIR-LL-NOM", "config": "hallthruster_bridge/propellants_air/air_nominal.toml", "sha256": "17c790d0bec8c6db1e961b26bbc9779d633bcc015d19b199c162771f00214fbe", "role": "nominal members of every sourced pair"},
+   {"id": "BV-AIR-LL-ALT", "config": "hallthruster_bridge/propellants_air/air_alt.toml", "sha256": "1fd54d1c67c44c2f883a0358a7cfae1acab0a00710b68405fd916d008e9f79bf", "role": "alternative members (O ionization Thompson, O2 DI lower, N2 DI lower, N elastic Wang); unweighted with the nominal"}
+  ],
+  "reaction_set": {"label": "abep-air-0.7", "air_pinned_sha256": "50f4de32ad2b89a8db7d1edcfaf0f47c6e8bff048328438ed3f996e6c5d07b54", "rate_validity_sha256": "819df6b3597abef04246c5bfa4a3e94bcaa394c5f03fbcf71c29190167222d2f"},
+  "stated_direction": {
+   "D-1 (holds)": "every missing tier-1 process and every missing electron-impact excitation of a configured neutral (HA-O-EL-01, HA-O-EXC-01, HA-O-EXC-02, HA-O2-EXC-01, -02, -03, HA-O2-VIB-01, HA-O2-ROT-01, HA-O2-DIS-01 below 13.5 eV) is an electron-impact channel with a non-negative rate and a non-negative energy loss or momentum transfer. At any given plasma state (n_e, T_e and neutral densities) the set's electron inelastic power, its electron-neutral momentum-transfer frequency of O, and its O2 dissociation rate are therefore LOWER BOUNDS of those of a complete electron-impact set. Each configured process keeps its own unweighted source pair.",
+   "D-2 (no direction claimed)": "no direction is claimed for omitted processes that create ions or change the ion mix or the neutral composition: stepwise ionization from metastables (HA-MS-01, which would add ionization), multiply charged O (HA-O-ION-02/03, HA-O2-DI-02), heavy-particle and N / O cross chemistry (HA-IM-01, HA-HN-01; L-01), channel-wall recombination (HA-WALL-02/03; L-02), attachment and recombination (HA-O2-ATT-01, HA-DR-01, HA-REC-02; L-04 / L-05).",
+   "D-3 (no direction claimed)": "no direction is claimed for any Hall observable (thrust, discharge current or power, ionization fraction, efficiencies): HallThruster.jl is nonlinear in the electron energy budget and the anomalous transport, and no monotonicity in the omitted losses has been shown. D-1 is a statement about the chemistry inputs at a fixed state, not about the solution."
+  },
+  "use": "a labelled one-sided bounding variant for the AIR family of NP-HALL-PARAMETRIC-ENVELOPE (prereg addendum A1 bounded launch path); every record and every derived quantity carries the label; results are information, never a closure (SELECT_WITH_EVIDENCE_CONDITIONS) and never a non-closure (PHYSICALLY_NON_CLOSING) on their own (classification effect fixed in addendum A1)",
+  "upgrade_path": "the v1 admission path: acquisition of the tier-1 sources (OQ-HA-05), the SONG2026 version-of-record check, species bounds, the audit verdicts; BV-AIR-LL is then superseded, never relabelled"
+ }
+}
