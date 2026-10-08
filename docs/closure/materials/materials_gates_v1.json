@@ -1,0 +1,2151 @@
+{
+ "schema": "abep_closure_materials_gates_v1",
+ "id": "materials_gates_v1",
+ "item": "P8 Materials (A9.38 Priority 8)",
+ "lane": "L-MATERIALS",
+ "date": "2026-10-08",
+ "base_commit": "42bb83a",
+ "generated_by": "docs/closure/materials/build_materials_gates_v1.py",
+ "governing": {
+  "A938": {
+   "path": "docs/decisions/OD_2026_10_08_A9_38_architecture_frozen_design_closure_programme.json",
+   "sha256": "2a66ce271f1b697d0373a66c3da0d459e157437209f2a13e983f7f8f02edc91d"
+  },
+  "A931": {
+   "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+   "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc"
+  },
+  "A912": {
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d"
+  },
+  "DBF1": {
+   "path": "docs/baseline/DBF-1/dbf1_v1.json",
+   "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f"
+  },
+  "DBF1_LOCK": {
+   "path": "docs/baseline/DBF-1/dbf1_lock_v1.json",
+   "sha256": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907"
+  },
+  "BOARD": {
+   "path": "docs/closure/closure_board_v1.json",
+   "sha256": "56bd9f12c4f613a131b4f12300770db509f88e964b7f8e5a6b04de9bb5e5be4b"
+  },
+  "P4": {
+   "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+   "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
+  },
+  "EVID": {
+   "path": "docs/EVIDENCE.md",
+   "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61"
+  }
+ },
+ "inputs": {
+  "A938": {
+   "path": "docs/decisions/OD_2026_10_08_A9_38_architecture_frozen_design_closure_programme.json",
+   "sha256": "2a66ce271f1b697d0373a66c3da0d459e157437209f2a13e983f7f8f02edc91d"
+  },
+  "A931": {
+   "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+   "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc"
+  },
+  "A912": {
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d"
+  },
+  "DBF1": {
+   "path": "docs/baseline/DBF-1/dbf1_v1.json",
+   "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f"
+  },
+  "DBF1_LOCK": {
+   "path": "docs/baseline/DBF-1/dbf1_lock_v1.json",
+   "sha256": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907"
+  },
+  "BOARD": {
+   "path": "docs/closure/closure_board_v1.json",
+   "sha256": "56bd9f12c4f613a131b4f12300770db509f88e964b7f8e5a6b04de9bb5e5be4b"
+  },
+  "P4": {
+   "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+   "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
+  },
+  "SPUT": {
+   "path": "docs/evidence/sputter_yields_v1/sputter_yields_v1.json",
+   "sha256": "7bcf2b0761f41504601381c8f95db19b9c62f9b891c527edca667f788c0a3dfd"
+  },
+  "SPUT_IN": {
+   "path": "docs/evidence/sputter_yields_v1/sputter_yield_inputs_v1.json",
+   "sha256": "c28fef6a4d8dc478ba551e8ca842b69943edcf9ab96151edb2c21a348aa3af8e"
+  },
+  "SPUT_PY": {
+   "path": "docs/evidence/sputter_yields_v1/build_sputter_yields_v1.py",
+   "sha256": "c7e75fa8b4a36d2bbb59aaf9629673a5a2f70fc76d1b44f06de09733104d5fe4"
+  },
+  "WALL": {
+   "path": "docs/evidence/wall_life/sputter_yield_db_v1.json",
+   "sha256": "315fbd44da2ee16246edb95830be09e0f05b9237cd5ca0a4c86a02a7e25bfffa"
+  },
+  "WALL_MD": {
+   "path": "docs/evidence/wall_life/WALL_LIFE_EVIDENCE.md",
+   "sha256": "761e767017586e844fc797a10bcbe62673ff8955e2a1deef31b47a1d5af235a4"
+  },
+  "AOL": {
+   "path": "docs/experiments/lifetime_ao/ao_lifetime_register_v5.json",
+   "sha256": "fea8aa05bd561d5ea559b934803d472f1fb1ed1013bfa925a5afb6c68a33e637"
+  },
+  "ICPEV": {
+   "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+   "sha256": "092e4ca8e1827dd2e9558058a204f46510f2633316ce188e7126b697ec6d0b53"
+  },
+  "R8": {
+   "path": "docs/procurement/web_track_v1/threads/R8_anode_oxygen.json",
+   "sha256": "31131ed6409a4d0a4c8b5935387d9c399767fb5507d25f21c0afa753f3d9e39c"
+  },
+  "R3": {
+   "path": "docs/procurement/web_track_v1/threads/R3_materials.json",
+   "sha256": "29633b98e060c98bfdc3cb7ea474fb3c7f190fd22e2a14bc0cf1e70c893bae7d"
+  },
+  "LIMITS": {
+   "path": "schemas/thermal_life/limits_v1.json",
+   "sha256": "0df363f76dcb6efcef41bc0a07e1775b6255c2c9d84b185228862958ef827dbb"
+  },
+  "MISSION": {
+   "path": "docs/rust_migration/new_physics/NP-MISSION-INTEGRATION/verification_report_v1.json",
+   "sha256": "f6cbe1b83adefdd297db5dcdb8ca598ac6c8a08d3a37a41fe96475401fda909b"
+  },
+  "SCEN": {
+   "path": "config/mission/mission_scenario_v2.json",
+   "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49"
+  },
+  "EVID": {
+   "path": "docs/EVIDENCE.md",
+   "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61"
+  }
+ },
+ "external_sources": {
+  "SMC_IN600": {
+   "citation": "Special Metals Corporation, 'INCONEL alloy 600' technical bulletin, Publication SMC-027 (Sept 2008)",
+   "url": "https://www.specialmetals.com/documents/technical-bulletins/inconel/inconel-alloy-600.pdf",
+   "accessed_on": "2026-10-08",
+   "http_status": 200,
+   "bytes": 161154,
+   "sha256": "89a3ba65b26b817dfc8a92875a4848af73ccecc31b98c0ca15140cea7fe8fde8",
+   "access": "open manufacturer PDF via the session proxy (no login, no bypass); the same URL is the R8 / P4 source SMC_IN600",
+   "evidence_level": 5,
+   "note": "'typical but ... not suitable for specification purposes' (p. 1); annealed material"
+  },
+  "SMC_IN601": {
+   "citation": "Special Metals Corporation, 'INCONEL alloy 601' technical bulletin",
+   "url": "https://www.specialmetals.com/documents/technical-bulletins/inconel/inconel-alloy-601.pdf",
+   "accessed_on": "2026-10-08",
+   "http_status": 200,
+   "bytes": 287477,
+   "sha256": "261c20c247910b729bb4a0030106ed007f055a5bb42e30c4572c767dbab24152",
+   "access": "open manufacturer PDF via the session proxy (no login, no bypass); the same URL is the R8 / P4 source SMC_IN601",
+   "evidence_level": 5,
+   "note": "data for annealed material (p. 1)"
+  }
+ },
+ "what_this_is_not": [
+  "a change of any DBF-1 value or selection (DBF1-MAT-01..04 unchanged; no DCR raised)",
+  "a P4 gate cell: every p4_anode_materials_v1 gate cell stays INCOMPLETE_EVIDENCE and its vocabulary never emits PASS; the verdicts here are closure-programme verdicts over the same evidence",
+  "a T_validated,continuous, a life prediction, a CR-04 recession or an acceptance threshold (LOCK-2)",
+  "qualification evidence: no in-house measurement on Vyovrinda hardware exists for any retained material"
+ ],
+ "verdict_vocabulary": {
+  "PASS_BY_EVIDENCE": "closed by evidence applicable to the service domain",
+  "PASS_BY_ANALYSIS_WITH_ASSUMPTION": "closed by analysis on stated, verifiable assumptions",
+  "EM_VERIFICATION_REQUIRED": "open; the specific engineering-model / coupon test that closes it is named",
+  "FAIL": "evidence shows the frozen item cannot meet the gate: a DCR",
+  "NOT_APPLICABLE": "the mechanism does not apply to the material's function (reason stated)"
+ },
+ "evidence_class_vocabulary": [
+  "measured",
+  "literature",
+  "digitized",
+  "inferred",
+  "assumption"
+ ],
+ "selections_retained": [
+  {
+   "id": "DBF1-MAT-01",
+   "name": "H-1 anode / gas distributor material (primary)",
+   "value": "INCONEL alloy 600 (chromia-forming Ni alloy)",
+   "status": "FROZEN_ASSUMPTION"
+  },
+  {
+   "id": "DBF1-MAT-02",
+   "name": "H-1 anode / gas distributor material (backup)",
+   "value": "INCONEL alloy 601 (alumina-forming Ni-Cr-Al alloy)",
+   "status": "FROZEN_ASSUMPTION"
+  },
+  {
+   "id": "DBF1-MAT-03",
+   "name": "ICP ion-collecting electrode material (primary / backup)",
+   "value": {
+    "primary": "INCONEL alloy 600 (chromia-forming Ni alloy)",
+    "backup": "INCONEL alloy 601 (alumina-forming Ni-Cr-Al alloy)"
+   },
+   "status": "FROZEN_ASSUMPTION"
+  },
+  {
+   "id": "DBF1-MAT-04",
+   "name": "H-1 channel wall ceramic (primary / backup)",
+   "value": {
+    "primary": "BN-SiO2 (borosil class)",
+    "backup": "BN"
+   },
+   "status": "FROZEN_ASSUMPTION"
+  }
+ ],
+ "exposure_basis": {
+  "mission_hours": 26280,
+  "firing_hours": 15000,
+  "ao_fluence_bound_m2": [
+   2.3783459854421198e+26,
+   1.4933243533537626e+28
+  ],
+  "sources": [
+   "config/mission/mission_scenario_v2.json",
+   "docs/rust_migration/new_physics/NP-MISSION-INTEGRATION/verification_report_v1.json"
+  ]
+ },
+ "evidence": [
+  {
+   "id": "EV-01",
+   "class": "literature",
+   "evidence_level": 5,
+   "quantity_type": "measured (typical)",
+   "statement": "INCONEL 600: Ni 72.0 min, Cr 14.0-17.0, Fe 6.00-10.00 %; density 8.47 Mg/m3; melting 1354-1413 degC; resistivity 1.03 / 1.12 / 1.13 uOhm m at 20 / 500 / 800 degC; k 14.9-27.5 W/m K; mean CTE 13.3 (100 degC) to 16.1 (800 degC) um/m K; Curie temperature -124 degC, permeability 1.010 at 15.9 kA/m (non-magnetic in service)",
+   "source": "external (not committed): SMC_IN600 (sha256 89a3ba65b26b...)",
+   "locator": "p. 1 Tables 1-2; p. 2 Table 3",
+   "applicability_domain": "annealed bulk; no plasma, no O, no electrical loading",
+   "uncertainty": "typical values, no stated uncertainty",
+   "qualification_role": "design property (bulk); not qualification evidence"
+  },
+  {
+   "id": "EV-02",
+   "class": "literature",
+   "evidence_level": 5,
+   "quantity_type": "measured (typical, figure not digitized)",
+   "statement": "INCONEL 600 resists oxidation and scaling in cyclic air exposure at 980 degC (15 min / 5 min cycles, Fig. 11, vs Types 304 / 309); 'standard material for nitriding containers because of its resistance to nitrogen at high temperatures'; creep: 0.01 %/1000 h at 1.1 MPa (1093 degC) and 2.3 MPa (982 degC); no embrittlement after long high-temperature exposure",
+   "source": "external (not committed): SMC_IN600",
+   "locator": "p. 11 'High-Temperature Applications', Fig. 11; p. 8 Table 20, text",
+   "applicability_domain": "furnace air / nitriding atmospheres; thermal species only; unbiased",
+   "uncertainty": "figure not digitized; typical",
+   "qualification_role": "supplier screening evidence (never T_validated: P4 never_validation)"
+  },
+  {
+   "id": "EV-03",
+   "class": "literature",
+   "evidence_level": 5,
+   "quantity_type": "measured (typical)",
+   "statement": "INCONEL 601: Ni 58.0-63.0, Cr 21.0-25.0, Al 1.0-1.7 %, Fe remainder; density 8.11 Mg/m3; melting 1360-1411 degC; resistivity 1.180-1.262 uOhm m (20-1000 degC); k 11.2-27.8 W/m K (calculated from resistivity); mean CTE 13.75-17.82 um/m K (100-1000 degC); Curie < -196 degC",
+   "source": "external (not committed): SMC_IN601 (sha256 261c20c24791...)",
+   "locator": "p. 1 Tables 1-2; p. 2 Table 3",
+   "applicability_domain": "annealed bulk; no plasma",
+   "uncertainty": "typical values",
+   "qualification_role": "design property (bulk); not qualification evidence"
+  },
+  {
+   "id": "EV-04",
+   "class": "literature",
+   "evidence_level": 5,
+   "quantity_type": "measured (typical, figures not digitized)",
+   "statement": "INCONEL 601: 'resistance to oxidation at temperatures up to 2200 F (1200 C)', 'unique resistance to oxide spalling under cyclic thermal conditions'; cyclic oxidation 1095 degC (15 / 5 min, Fig. 9), 50 h cycles at 1150 / 1205 degC (Figs. 10-11); 'a slight amount of internal oxidation occurs and provides a higher chromium content in the surface oxide'",
+   "source": "external (not committed): SMC_IN601",
+   "locator": "p. 8 'Corrosion Resistance'; p. 9 'Oxidation', Figs. 9-13",
+   "applicability_domain": "furnace air; thermal species only; unbiased",
+   "uncertainty": "figures not digitized; the scale composition statement is qualitative",
+   "qualification_role": "supplier screening evidence; bears on the alumina-scale hypothesis (scale reported chromium-rich)"
+  },
+  {
+   "id": "EV-05",
+   "class": "literature",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "statement": "PPS1350 on N2/O2 + 10 % Xe mass flow, 305 V, 2.75 mg/s: steady for 'about 314 hours' at 3.8-4 A; then 'severe oxidation of the anode produced anomalous discharge behavior and a spontaneous flame-out' and a refurbishment (cleaning); 'in the subsequent 75 hrs of firing several flame-outs occurred likely linked to the oxidation of the anode surface and the test was prematurely stopped'. The authors suggest oxidation-resistant anode materials.",
+   "source": "ANDREUSSI2022 (via docs/experiments/lifetime_ao/ao_lifetime_register_v5.json AOL-M01)",
+   "locator": "Page 24 of 57 (citing ref. [97], CIFALI2012)",
+   "applicability_domain": "PPS1350 (flight-type SPT, not H-1), 10 % Xe in the anode flow, facility-fed, Xe start; second-hand (primary CIFALI2012 not accessed); anode material not stated in the accessed text",
+   "uncertainty": "second-hand review of CIFALI2012 (primary not accessed); anode material not stated",
+   "qualification_role": "analog failure mode (oxidation -> resistance -> flame-out); not transferred as a verdict"
+  },
+  {
+   "id": "EV-06",
+   "class": "literature",
+   "evidence_level": 3,
+   "quantity_type": "measured",
+   "statement": "After a 10 h N2/O2 firing of the PPS1350-TSD the anode 'seems rusty', explained by reaction with oxygen; 'with respect to a future endurance test the anode oxidation with the consequent increase in electrical resistance is the main concern'.",
+   "source": "CIFALI2011 (via docs/experiments/lifetime_ao/ao_lifetime_register_v5.json AOL-M01)",
+   "locator": "p. 5",
+   "applicability_domain": "PPS1350-TSD, 305 V, 2.75 mg/s 1.27N2 + O2, Xe start and Xe cathode, facility-fed, 10 h; visual inspection only (qualitative)",
+   "uncertainty": "visual only, 10 h",
+   "qualification_role": "analog failure mode"
+  },
+  {
+   "id": "EV-07",
+   "class": "literature",
+   "evidence_level": 3,
+   "quantity_type": "measured (qualitative)",
+   "statement": "'anode plates made out of tungsten quickly (20-30 min) develop an oxidation layer which is non-conductive'; 'imposes severe constraints' on endurance tests",
+   "source": "TEJEDA2024 (via docs/procurement/web_track_v1/threads/R8_anode_oxygen.json)",
+   "locator": "Sec. 3.5 'Oxidation of the hardware', p.550 (reporting TEJEDA2023 [21])",
+   "applicability_domain": "Strong negative evidence for bare W as O-plasma anode",
+   "uncertainty": "qualitative",
+   "qualification_role": "negative control: an insulating anode scale ends conduction in minutes"
+  },
+  {
+   "id": "EV-08",
+   "class": "literature",
+   "evidence_level": 3,
+   "quantity_type": "measured (qualitative)",
+   "statement": "'exhibit a prolonged resistance to oxidation, thereby preserving their electrical conductivity for longer periods of time, particularly during low-power testing. However ... when subjected to higher power levels the issue of surface oxidation becomes more pronounced.'",
+   "source": "TEJEDA2024 (via docs/procurement/web_track_v1/threads/R8_anode_oxygen.json)",
+   "locator": "Sec. 3.5 p.550; Sec. 1 p.543; Table 1 (anode material: stainless steel)",
+   "applicability_domain": "stainless anode, O2 Hall thruster, lab hours",
+   "uncertainty": "qualitative; grade from a snippet (verify)",
+   "qualification_role": "analog: chromia-forming steel keeps conduction longer"
+  },
+  {
+   "id": "EV-09",
+   "class": "literature",
+   "evidence_level": 4,
+   "quantity_type": "inferred (authors' suggestion)",
+   "statement": "'build-up of an insulating oxide on the surface of the anode which will quickly reduce the current and extinguish the discharge'; remedies suggested: oxidation-resistant alloy 'Inconel x750' or 'Hastealloy', or 'an anode coated with a conducting layer of IrO2 (or perhaps ruthenium oxide rhenium oxide)', or an iridium anode ('prohibitively expensive')",
+   "source": "GABRIEL1993 (via docs/procurement/web_track_v1/threads/R8_anode_oxygen.json)",
+   "locator": "p.5 right column (citing Guarnieri et al. 1988)",
+   "applicability_domain": "O2 ion sources / MPD (another device class)",
+   "uncertainty": "suggestion, no test",
+   "qualification_role": "supports the chromia-forming Ni-alloy family as an O2 anode candidate"
+  },
+  {
+   "id": "EV-10",
+   "class": "literature",
+   "evidence_level": 2,
+   "quantity_type": "measured (flight compilation) + authors' statement",
+   "statement": "'erosion yield is not a meaningful number for ... most metals ... where the majority of the oxidation products are non-volatile' (ram AO, LEO flight data compilation)",
+   "source": "BANKS2004 NASA/TM-2004-213400 (via docs/procurement/web_track_v1/threads/R8_anode_oxygen.json)",
+   "locator": "Table 1 and text following Fig. 7",
+   "applicability_domain": "ram AO ~4.5 eV, LEO exterior, ambient temperature",
+   "uncertainty": "qualitative statement",
+   "qualification_role": "basis for treating Ni-Cr(-Al) alloys as non-receding under AO (oxide growth, not mass loss)"
+  },
+  {
+   "id": "EV-11",
+   "class": "literature",
+   "evidence_level": 3,
+   "quantity_type": "measured (qualitative) + inferred (authors' estimates)",
+   "statement": "the stainless-steel electrode is sputtered; metallic films found after the experiment on part of the glass tube (at the electrode slit) and on the insulators at the HET front; ion energy at the electrode V_ICP - V_K ~ 140 (ICP ions); V_A - V_K ~ 220 (HET ions lost to the electrode); poor RF power transfer efficiency (~10 %) caused by eddy-current heating of the ion-collecting electrode; proper electrode design required (p. 8); enhanced cathodic sheath voltage at large V_D: significant energy loss to ions accelerated by the cathodic sheath; sputtering of the electrode and metallic coating of glass and HET insulators (p. 6, p. 9)",
+   "source": "Takahashi et al. 2024 (via docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json TK-70, TK-71, LIM-02, LIM-03)",
+   "locator": "p. 6, Fig. 5; p. 8; p. 9",
+   "applicability_domain": "Ar, stainless electrode, 200 W RF, coupled HET, short tests",
+   "uncertainty": "qualitative; analog only (P4 IT-19)",
+   "qualification_role": "analog mechanism evidence: collector sputtering and metallic films on the glass tube and HET insulators"
+  },
+  {
+   "id": "EV-12",
+   "class": "digitized",
+   "evidence_level": 3,
+   "quantity_type": "digitized",
+   "statement": "ion-collector potential V_K = -2.7 / -10.6 / -21.8 / -24.6 / -42.9 / -69.7 / -93.8 V at V_D = 140-260 V (Takahashi Fig. 4a): the cathodic sheath grows with discharge demand",
+   "source": "Takahashi et al. 2024 (via docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json digitized_fig4)",
+   "locator": "Fig. 4a (PDF p. 7)",
+   "applicability_domain": "Ar, analog",
+   "uncertainty": "+/- 0.8 V reading",
+   "qualification_role": "analog trend only"
+  },
+  {
+   "id": "EV-13",
+   "class": "literature",
+   "evidence_level": 5,
+   "quantity_type": "model-derived (elemental fits to measured data)",
+   "statement": "NIFS-DATA-23 caption fits N+ -> Ni (Eth 21.89 eV; data from ~50 eV) and O+ -> Ni (Eth 38.73 eV; data from ~100 eV); generic Table-1 N+ / O+ -> Cr (Eth 15.55 / 15.69 eV) and -> Al (14.92 / 15.88 eV), level 6",
+   "source": "docs/evidence/sputter_yields_v1/sputter_yields_v1.json records YT-FIT-NIFS-F102 / F103, YT-GEN-N-Cr, YT-GEN-O-Cr, YT-GEN-N-Al, YT-GEN-O-Al",
+   "locator": "NIFS-DATA-23 Figs. 102-103 (pp. 42, 44); Table 1 (p. 14)",
+   "applicability_domain": "elemental targets, normal incidence, low fluence",
+   "uncertainty": "large near threshold; no alloy or molecular-ion value exists",
+   "qualification_role": "prior bound / test-matrix selection only"
+  },
+  {
+   "id": "EV-14",
+   "class": "literature",
+   "evidence_level": 3,
+   "quantity_type": "measured",
+   "statement": "Xe+ on BN grades measured (Rubin 2009 HBC / HBR / HP, Tartz 2009, Britton 2002); grade + laboratory spread up to ~12x; threshold not identified (18-57 eV); no N+ / N2+ / O+ / O2+ yield on BN, BN-SiO2 or SiC located",
+   "source": "docs/evidence/wall_life/sputter_yield_db_v1.json entries Y-XE-BN-*; docs/evidence/wall_life/WALL_LIFE_EVIDENCE.md sections 2-6",
+   "locator": "sections 2-5",
+   "applicability_domain": "Xe+ 60-1000 eV; room to ~520 degC",
+   "uncertainty": "~30 % per source; ~12x between labs",
+   "qualification_role": "Xe+ prior for XE_CONTINGENCY only; N / O lookups are OUT_OF_DOMAIN -> NOT_DEMONSTRATED"
+  },
+  {
+   "id": "EV-15",
+   "class": "literature",
+   "evidence_level": 5,
+   "quantity_type": "inferred (authors' wear estimate)",
+   "statement": "PPS1350 on N2/O2 + 10 % Xe: 'the ceramic erosion was still compatible with a 7000-9500 hrs lifetime' (authors' estimate; method not given in the review).",
+   "source": "ANDREUSSI2022 (via docs/experiments/lifetime_ao/ao_lifetime_register_v5.json AOL-M02)",
+   "locator": "Page 24 of 57",
+   "applicability_domain": "PPS1350, 10 % Xe, second-hand; wear-model extrapolation of unknown method",
+   "uncertainty": "method not given in the review; second-hand",
+   "qualification_role": "analog life indication below the 15,000 h firing basis"
+  },
+  {
+   "id": "EV-16",
+   "class": "literature",
+   "evidence_level": 3,
+   "quantity_type": "measured (qualitative)",
+   "statement": "After the 10 h N2/O2 PPS1350-TSD test, 'the signs of operation with oxygen are also visible on the ceramics'.",
+   "source": "CIFALI2011 (via docs/experiments/lifetime_ao/ao_lifetime_register_v5.json AOL-M03)",
+   "locator": "p. 5",
+   "applicability_domain": "visual only, 10 h",
+   "uncertainty": "visual only",
+   "qualification_role": "analog: O-bearing operation alters the ceramic surface"
+  },
+  {
+   "id": "EV-17",
+   "class": "literature",
+   "evidence_level": 4,
+   "quantity_type": "model-derived (TRIM.SP proxies)",
+   "statement": "O on elemental B 0.0375 atoms/ion vs O on B2O3 0.752 atoms/ion at 150 eV: ~20x proxy spread for an oxidizing BN wall; reactive chemistry outside every yield entry",
+   "source": "docs/evidence/wall_life/WALL_LIFE_EVIDENCE.md section 5 (Eckstein IPP 9/132 pp. 40, 278)",
+   "locator": "section 5",
+   "applicability_domain": "proxy targets, low fluence, flat surfaces",
+   "uncertainty": "~20x between proxies",
+   "qualification_role": "bounds nothing; motivates H1 / H4 tests"
+  },
+  {
+   "id": "EV-18",
+   "class": "literature",
+   "evidence_level": 5,
+   "quantity_type": "assumed (manufacturer recommendation)",
+   "statement": "BN wall grades, oxidizing use limits: HeBoSint hBN PL grades ~900 degC, BN-SiO2 CL-S 200 ~900 degC (inert 1500 degC); Combat M26 (60 % hBN / 40 % SiO2) 'max temperature air 1000+', AX05 hBN 850 degC (distributor sheets); M26 CTE 3 / 0.4 um/m K, k 11 / 29 W/m K (column conflict with M flagged in R3)",
+   "source": "schemas/thermal_life/limits_v1.json bn_hebosint_*; docs/procurement/web_track_v1/threads/R3_materials.json PC-BN-MM26 / PC-BN-AX05",
+   "locator": "datasheet rows",
+   "applicability_domain": "gas atmosphere / vacuum; plasma and AO not covered",
+   "uncertainty": "approximate ('~'), typical",
+   "qualification_role": "necessary screening ceilings only"
+  },
+  {
+   "id": "EV-19",
+   "class": "inferred",
+   "evidence_level": 6,
+   "quantity_type": "model-derived",
+   "statement": "ram-face AO fluence bound [2.378e+26, 1.493e+28] m^-2 over the 26,280 h horizon (PARAMETRIC_BOUND; fluence NOT_EVALUATED without a schedule); T 469.6-1824.3 K; v_orb 7770.8-7800.4 m/s",
+   "source": "docs/rust_migration/new_physics/NP-MISSION-INTEGRATION/verification_report_v1.json (SC-WP-09 mission integration record)",
+   "locator": "today_run.ao_fluence_bound; environment_envelopes_air_primary",
+   "applicability_domain": "196 frozen states, ram-normal surfaces",
+   "uncertainty": "bound, not an evidence-qualified fluence",
+   "qualification_role": "environment input"
+  },
+  {
+   "id": "EV-20",
+   "class": "assumption",
+   "evidence_level": 7,
+   "quantity_type": "assumed",
+   "statement": "anode temperature: the only repository value is an uncoupled H2 A9 sensitivity on the ECHT-analog geometry (>= 1190 degC), CONTEXT_NOT_ADMISSIBLE; no DBF-1 thermal case exists (P7 / L-THERMAL open)",
+   "source": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json items IT-10; docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json key_findings K6",
+   "locator": "IT-10",
+   "applicability_domain": "uncoupled, other geometry",
+   "uncertainty": "not admissible",
+   "qualification_role": "context only; never T_operating"
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "A-ATT-01",
+   "class": "assumption",
+   "evidence_level": 7,
+   "statement": "the H-1 / ICP exit openings face the wake: the outward normal of every retained-material surface exposed to the free stream is within 60 deg of the anti-velocity direction (drag-compensating thrust is along-track by mission function)",
+   "verification": "spacecraft attitude / layout ICD (P9 / host ICD); analysis at PDR"
+  },
+  {
+   "id": "A-LAY-01",
+   "class": "assumption",
+   "evidence_level": 7,
+   "statement": "no ram-facing spacecraft surface reflects or re-emits ram AO into the H-1 channel or the ICP bore at a rate comparable with the feed-borne dose (DA-02)",
+   "verification": "host layout ICD; free-molecular view-factor analysis at PDR (AO register flag RAM_NORMAL_UPPER_BOUND)"
+  },
+  {
+   "id": "A-AN-01",
+   "class": "assumption",
+   "evidence_level": 7,
+   "statement": "the anode collecting area is the channel annulus (H1F-AN-03 anode geometry TBD); ion impact energy at the anode stays below the lowest constituent sputter threshold prior (~15.5 eV, N+ -> Cr generic) because the anode is the most positive electrode and ions reach it only from the near-anode potential excess of a few T_e",
+   "verification": "anode metrology on the replaceable serialized EM anode (AOL-RC-01, AOL-PM-03 / -04); near-anode potential from the converged RP-1 Hall solution (P2) when admitted"
+  },
+  {
+   "id": "A-ICP-01",
+   "class": "assumption",
+   "evidence_level": 6,
+   "statement": "the ion current collected by the ICP collector equals the Hall discharge current (current continuity of the floating ICP body with a separately biased, metered ion collector: DBF1-ICP-01 / -04; Takahashi topology)",
+   "verification": "collector current metering on the EM ICP (DBF1-ICP-04 'separately biased and metered')"
+  },
+  {
+   "id": "A-CYC-01",
+   "class": "assumption",
+   "evidence_level": 7,
+   "statement": "at most one full-amplitude thermal cycle per orbit over the 26,280 h mission (eclipse and / or firing on-off); the mission schedule is not registered (OQ-MI-01)",
+   "verification": "mission operations concept / schedule registration (SCH-05)"
+  }
+ ],
+ "analyses": [
+  {
+   "id": "DA-01",
+   "title": "external ram AO reaching aft-facing (wake-side) surfaces",
+   "method": "free-molecular one-sided flux of a drifting Maxwellian onto a plate whose normal points into the wake (n c/(2 sqrt(pi)) [exp(-s^2) - sqrt(pi) s erfc(s)], s = V cos(theta)/c, c = sqrt(2 k T / m_O)), divided by the ram-normal flux n V of the mission AO bound; theta = angle between the surface's outward normal and the anti-velocity direction",
+   "inputs": {
+    "T_max_K": 1824.27,
+    "T_max_state": "ds2:ECSS_ST_HIGH:alt230:lat-87.0000:lst0:lon180:doy184",
+    "v_orbital_min_m_s": 7770.77,
+    "v_corotation_bound_m_s": 481.4,
+    "v_relative_min_m_s": 7289.42,
+    "ao_fluence_bound_m2": [
+     2.378e+26,
+     1.493e+28
+    ],
+    "ao_fluence_bound_label": "PARAMETRIC_BOUND",
+    "ao_fluence_basis": "PB-AO: [min_s, max_s] ao_flux_m2_s x (H_M x 3600 s/h); bounds the fluence of every schedule whose segments use states of the frozen set; the states carry no time weights (A9.14 S9.7)",
+    "source": "docs/rust_migration/new_physics/NP-MISSION-INTEGRATION/verification_report_v1.json today_run (environment_envelopes_air_primary, ao_fluence_bound)"
+   },
+   "conservatism": "highest exospheric temperature of the 196 states with the lowest orbital speed, reduced by the full equatorial co-rotation speed: the smallest speed ratio, hence the largest wake-side flux",
+   "rows": [
+    {
+     "theta_deg": 0,
+     "speed_ratio_s": 5.294,
+     "wake_to_ram_flux_ratio": 6.1e-16,
+     "fluence_upper_m2": 9110000000000.0
+    },
+    {
+     "theta_deg": 15,
+     "speed_ratio_s": 5.113,
+     "wake_to_ram_flux_ratio": 4.26e-15,
+     "fluence_upper_m2": 63600000000000.0
+    },
+    {
+     "theta_deg": 30,
+     "speed_ratio_s": 4.585,
+     "wake_to_ram_flux_ratio": 8.84e-13,
+     "fluence_upper_m2": 1.32e+16
+    },
+    {
+     "theta_deg": 45,
+     "speed_ratio_s": 3.743,
+     "wake_to_ram_flux_ratio": 1.42e-09,
+     "fluence_upper_m2": 2.12e+19
+    },
+    {
+     "theta_deg": 60,
+     "speed_ratio_s": 2.647,
+     "wake_to_ram_flux_ratio": 2.89e-06,
+     "fluence_upper_m2": 4.32e+22
+    },
+    {
+     "theta_deg": 75,
+     "speed_ratio_s": 1.37,
+     "wake_to_ram_flux_ratio": 0.00134,
+     "fluence_upper_m2": 2e+25
+    },
+    {
+     "theta_deg": 90,
+     "speed_ratio_s": 3.241e-16,
+     "wake_to_ram_flux_ratio": 0.0533,
+     "fluence_upper_m2": 7.96e+26
+    }
+   ],
+   "class": "inferred",
+   "quantity_type": "model-derived",
+   "evidence_level": 4,
+   "uncertainty": "kinetic-theory result exact for a free-molecular drifting Maxwellian; neglects reflection of ram AO from spacecraft surfaces into the aft openings (assumption A-LAY-01) and thermospheric winds beyond co-rotation (< 0.1 of V in magnitude; would change s by < 10 %)"
+  },
+  {
+   "id": "DA-02",
+   "title": "internal (feed-borne) atomic-O throughput at the anode plane and through the ICP bore",
+   "method": "atomic-O throughput = x_O * mdot / m_mean over the firing-life basis, divided by the channel annulus area (anode plane) or the ICP bore cross-section; mdot = the ideal conservation-bound necessary flow T^2 / (2 P) at P = 1,500 W (the relation of DBF1-BD-01: 12 mN -> 4.80e-8 kg/s)",
+   "inputs": {
+    "A_channel_m2": 0.002639,
+    "A_icp_bore_m2": 0.01131,
+    "x_O_flow_range": [
+     0.03678,
+     0.8583
+    ],
+    "x_O_flow_basis": "DBF1-IN-08 xO_flow_min / max over the covered surface scenarios (mole fraction of atomic O in the delivered flow, abep-gaspath transient x_s_flow_mole[O])",
+    "firing_life_h": 15000,
+    "sources": [
+     "docs/baseline/DBF-1/dbf1_v1.json DBF1-H1-04, DBF1-ICP-02, DBF1-IN-08",
+     "config/mission/mission_scenario_v2.json firing_hours"
+    ]
+   },
+   "rows": [
+    {
+     "thrust_point": "12 mN",
+     "mdot_necessary_kg_s": 4.8e-08,
+     "x_O_flow": 0.03678,
+     "O_atoms_per_s": 3.856e+16,
+     "O_atoms_over_firing_life": 2.082e+24,
+     "dose_per_anode_plane_m2": 7.89e+26,
+     "dose_per_icp_bore_m2": 1.84e+26
+    },
+    {
+     "thrust_point": "12 mN",
+     "mdot_necessary_kg_s": 4.8e-08,
+     "x_O_flow": 0.8583,
+     "O_atoms_per_s": 1.402e+18,
+     "O_atoms_over_firing_life": 7.568e+25,
+     "dose_per_anode_plane_m2": 2.87e+28,
+     "dose_per_icp_bore_m2": 6.69e+27
+    },
+    {
+     "thrust_point": "25 mN",
+     "mdot_necessary_kg_s": 2.083e-07,
+     "x_O_flow": 0.03678,
+     "O_atoms_per_s": 1.674e+17,
+     "O_atoms_over_firing_life": 9.038e+24,
+     "dose_per_anode_plane_m2": 3.42e+27,
+     "dose_per_icp_bore_m2": 7.99e+26
+    },
+    {
+     "thrust_point": "25 mN",
+     "mdot_necessary_kg_s": 2.083e-07,
+     "x_O_flow": 0.8583,
+     "O_atoms_per_s": 6.083e+18,
+     "O_atoms_over_firing_life": 3.285e+26,
+     "dose_per_anode_plane_m2": 1.24e+29,
+     "dose_per_icp_bore_m2": 2.9e+28
+    }
+   ],
+   "comparison_with_external_bound_m2": [
+    2.378e+26,
+    1.493e+28
+   ],
+   "reading": "a throughput dose counts each delivered O atom once; wall impingement inside the channel is larger (multiple collisions) and the discharge adds O from O2 dissociation. Because the delivered flow at a sustained thrust point is at least the conservation-bound flow, the rows are LOWER bounds of the atomic-O throughput at 12 / 25 mN for the stated x_O. The internal dose at the anode plane is of the same order as, or above, the external ram-face bound: the internal exposure, not the external fluence, governs the AO coupon fluence of the anode and collector",
+   "class": "inferred",
+   "quantity_type": "model-derived",
+   "evidence_level": 6,
+   "uncertainty": "x_O spans 0.04-0.86 across scenarios / states (factor ~20); delivered flow above the necessary flow raises the dose proportionally; O recombination in the compressor is inside x_O as modelled"
+  },
+  {
+   "id": "DA-03",
+   "title": "ICP collector sputtering: prior-bound sensitivity and the ion-energy ceiling it implies",
+   "use_restriction": "elemental Ni priors (NIFS-DATA-23 caption fits, sputter register YT-FIT-NIFS-F102 / F103) used ONLY as prior bounds / test-matrix selection (A9.12 P4-OQ-04, S5.13); never an alloy value, never a CR-04 recession, never a life input. N2+ / O2+ have no prior number (register NO_MOLECULAR_NUMBERS) and are not evaluated. The fit data start at ~50 eV (N+) / ~100 eV (O+): values below are formula extrapolation toward threshold",
+   "method": "ion current to the collector = Hall discharge current (current continuity of the floating ICP source with a separately biased ion collector, DBF1-ICP-01 / -04, Takahashi topology; assumption A-ICP-01); flux = I / (e A_coll) with A_coll = 2 pi r_aperture L_coll (axial slit not subtracted: flux is a lower bound); recession = flux * Y * Omega * t_fire with Omega = M_Ni / (rho_alloy N_A)",
+   "inputs": {
+    "A_coll_m2": 0.0377,
+    "r_aperture_m": 0.06,
+    "L_coll_m": 0.1,
+    "I_d_range_A": [
+     1.857,
+     7.5
+    ],
+    "I_d_basis": "P_d / V_d over DBF1-H1-06 [650, 1350] W and DBF1-H1-05 [180, 350] V",
+    "rho_kg_m3": {
+     "CAND-02A": 8470.0,
+     "CAND-03A": 8110.0
+    },
+    "Omega_m3": {
+     "CAND-02A": 1.151e-29,
+     "CAND-03A": 1.202e-29
+    },
+    "Eth_eV_prior": {
+     "N+ -> Ni (F102)": 21.89,
+     "O+ -> Ni (F103)": 38.73
+    },
+    "analog_sheath_energies": {
+     "TK-70": "V_ICP - V_K ~ 140 (ICP ions); V_A - V_K ~ 220 (HET ions lost to the electrode)",
+     "TK-71": "the stainless-steel electrode is sputtered; metallic films found after the experiment on part of the glass tube (at the electrode slit) and on the insulators at the HET front",
+     "source": "Takahashi et al., J. Electr. Propuls. 3:18 (2024), p. 6 (icp_neutralizer_evidence_v1 TK-70, TK-71); Ar, analog only (P4 IT-19: analog values never set the coupon bias)"
+    },
+    "firing_life_h": 15000
+   },
+   "register_reproduction": [
+    {
+     "record": "YT-FIT-NIFS-F102",
+     "E_eV": 50,
+     "Y_eval": 0.02756,
+     "Y_register": [
+      0.02756,
+      0.02762
+     ],
+     "within": true
+    },
+    {
+     "record": "YT-FIT-NIFS-F102",
+     "E_eV": 100,
+     "Y_eval": 0.111,
+     "Y_register": [
+      0.111,
+      0.1113
+     ],
+     "within": true
+    },
+    {
+     "record": "YT-FIT-NIFS-F102",
+     "E_eV": 200,
+     "Y_eval": 0.2495,
+     "Y_register": [
+      0.2495,
+      0.2504
+     ],
+     "within": true
+    },
+    {
+     "record": "YT-FIT-NIFS-F102",
+     "E_eV": 300,
+     "Y_eval": 0.3519,
+     "Y_register": [
+      0.3519,
+      0.3533
+     ],
+     "within": true
+    },
+    {
+     "record": "YT-FIT-NIFS-F102",
+     "E_eV": 500,
+     "Y_eval": 0.4974,
+     "Y_register": [
+      0.4974,
+      0.4997
+     ],
+     "within": true
+    },
+    {
+     "record": "YT-FIT-NIFS-F102",
+     "E_eV": 1000,
+     "Y_eval": 0.7114,
+     "Y_register": [
+      0.7114,
+      0.7154
+     ],
+     "within": true
+    },
+    {
+     "record": "YT-FIT-NIFS-F103",
+     "E_eV": 50,
+     "Y_eval": 0.001257,
+     "Y_register": [
+      0.001257,
+      0.001265
+     ],
+     "within": true
+    },
+    {
+     "record": "YT-FIT-NIFS-F103",
+     "E_eV": 100,
+     "Y_eval": 0.02887,
+     "Y_register": [
+      0.02887,
+      0.02908
+     ],
+     "within": true
+    },
+    {
+     "record": "YT-FIT-NIFS-F103",
+     "E_eV": 200,
+     "Y_eval": 0.09853,
+     "Y_register": [
+      0.09853,
+      0.09944
+     ],
+     "within": true
+    },
+    {
+     "record": "YT-FIT-NIFS-F103",
+     "E_eV": 300,
+     "Y_eval": 0.1572,
+     "Y_register": [
+      0.1572,
+      0.1588
+     ],
+     "within": true
+    },
+    {
+     "record": "YT-FIT-NIFS-F103",
+     "E_eV": 500,
+     "Y_eval": 0.2461,
+     "Y_register": [
+      0.2461,
+      0.2491
+     ],
+     "within": true
+    },
+    {
+     "record": "YT-FIT-NIFS-F103",
+     "E_eV": 1000,
+     "Y_eval": 0.3845,
+     "Y_register": [
+      0.3845,
+      0.3903
+     ],
+     "within": true
+    }
+   ],
+   "rows": [
+    {
+     "E_eV": 20,
+     "Y_Nplus_Ni": 0.0,
+     "Y_Oplus_Ni": 0.0,
+     "recession_mm_15000h_Nplus_Imin": 0.0,
+     "sputtered_mass_kg_15000h_Nplus_Imin": 0.0,
+     "recession_mm_15000h_Nplus_Imax": 0.0,
+     "sputtered_mass_kg_15000h_Nplus_Imax": 0.0
+    },
+    {
+     "E_eV": 25,
+     "Y_Nplus_Ni": 0.000328,
+     "Y_Oplus_Ni": 0.0,
+     "recession_mm_15000h_Nplus_Imin": 0.0626,
+     "sputtered_mass_kg_15000h_Nplus_Imin": 0.02,
+     "recession_mm_15000h_Nplus_Imax": 0.253,
+     "sputtered_mass_kg_15000h_Nplus_Imax": 0.0807
+    },
+    {
+     "E_eV": 30,
+     "Y_Nplus_Ni": 0.00274,
+     "Y_Oplus_Ni": 0.0,
+     "recession_mm_15000h_Nplus_Imin": 0.523,
+     "sputtered_mass_kg_15000h_Nplus_Imin": 0.167,
+     "recession_mm_15000h_Nplus_Imax": 2.11,
+     "sputtered_mass_kg_15000h_Nplus_Imax": 0.674
+    },
+    {
+     "E_eV": 40,
+     "Y_Nplus_Ni": 0.0131,
+     "Y_Oplus_Ni": 7.52e-06,
+     "recession_mm_15000h_Nplus_Imin": 2.5,
+     "sputtered_mass_kg_15000h_Nplus_Imin": 0.799,
+     "recession_mm_15000h_Nplus_Imax": 10.1,
+     "sputtered_mass_kg_15000h_Nplus_Imax": 3.23
+    },
+    {
+     "E_eV": 50,
+     "Y_Nplus_Ni": 0.0276,
+     "Y_Oplus_Ni": 0.00126,
+     "recession_mm_15000h_Nplus_Imin": 5.27,
+     "sputtered_mass_kg_15000h_Nplus_Imin": 1.68,
+     "recession_mm_15000h_Nplus_Imax": 21.3,
+     "sputtered_mass_kg_15000h_Nplus_Imax": 6.79
+    },
+    {
+     "E_eV": 75,
+     "Y_Nplus_Ni": 0.0693,
+     "Y_Oplus_Ni": 0.0124,
+     "recession_mm_15000h_Nplus_Imin": 13.2,
+     "sputtered_mass_kg_15000h_Nplus_Imin": 4.23,
+     "recession_mm_15000h_Nplus_Imax": 53.5,
+     "sputtered_mass_kg_15000h_Nplus_Imax": 17.1
+    },
+    {
+     "E_eV": 100,
+     "Y_Nplus_Ni": 0.111,
+     "Y_Oplus_Ni": 0.0289,
+     "recession_mm_15000h_Nplus_Imin": 21.2,
+     "sputtered_mass_kg_15000h_Nplus_Imin": 6.77,
+     "recession_mm_15000h_Nplus_Imax": 85.6,
+     "sputtered_mass_kg_15000h_Nplus_Imax": 27.3
+    },
+    {
+     "E_eV": 140,
+     "Y_Nplus_Ni": 0.172,
+     "Y_Oplus_Ni": 0.0575,
+     "recession_mm_15000h_Nplus_Imin": 32.8,
+     "sputtered_mass_kg_15000h_Nplus_Imin": 10.5,
+     "recession_mm_15000h_Nplus_Imax": 133.0,
+     "sputtered_mass_kg_15000h_Nplus_Imax": 42.3
+    },
+    {
+     "E_eV": 220,
+     "Y_Nplus_Ni": 0.272,
+     "Y_Oplus_Ni": 0.111,
+     "recession_mm_15000h_Nplus_Imin": 52.0,
+     "sputtered_mass_kg_15000h_Nplus_Imin": 16.6,
+     "recession_mm_15000h_Nplus_Imax": 210.0,
+     "sputtered_mass_kg_15000h_Nplus_Imax": 67.1
+    }
+   ],
+   "ion_energy_ceiling": [
+    {
+     "allowance_mm": 0.5,
+     "current": "Imin",
+     "I_A": 1.857,
+     "Y_allow": 0.00262,
+     "E_star_eV_Nplus_Ni_prior": 29.8
+    },
+    {
+     "allowance_mm": 0.5,
+     "current": "Imax",
+     "I_A": 7.5,
+     "Y_allow": 0.000648,
+     "E_star_eV_Nplus_Ni_prior": 26.1
+    },
+    {
+     "allowance_mm": 1.0,
+     "current": "Imin",
+     "I_A": 1.857,
+     "Y_allow": 0.00523,
+     "E_star_eV_Nplus_Ni_prior": 33.0
+    },
+    {
+     "allowance_mm": 1.0,
+     "current": "Imax",
+     "I_A": 7.5,
+     "Y_allow": 0.0013,
+     "E_star_eV_Nplus_Ni_prior": 27.6
+    },
+    {
+     "allowance_mm": 2.0,
+     "current": "Imin",
+     "I_A": 1.857,
+     "Y_allow": 0.0105,
+     "E_star_eV_Nplus_Ni_prior": 37.9
+    },
+    {
+     "allowance_mm": 2.0,
+     "current": "Imax",
+     "I_A": 7.5,
+     "Y_allow": 0.00259,
+     "E_star_eV_Nplus_Ni_prior": 29.8
+    }
+   ],
+   "floating_sheath_floor": {
+    "relation": "E_i >= T_e [0.5 ln(m_i / (2 pi m_e)) + 0.5] for an electrode at or below floating potential (planar collisionless sheath + Bohm presheath; textbook relation, evidence level 4)",
+    "T_e_basis": "T_e of the ICP plasma is NOT_EVALUATED (NP-ICP AIR / Xe cases INCOMPLETE_EVIDENCE); 3 and 5 eV are illustration points, assumption class",
+    "rows": [
+     {
+      "ion": "N+",
+      "E_floor_over_Te": 4.655,
+      "E_floor_eV_Te3": 14.0,
+      "E_floor_eV_Te5": 23.3
+     },
+     {
+      "ion": "N2+",
+      "E_floor_over_Te": 5.002,
+      "E_floor_eV_Te3": 15.0,
+      "E_floor_eV_Te5": 25.0
+     },
+     {
+      "ion": "O+",
+      "E_floor_over_Te": 4.721,
+      "E_floor_eV_Te3": 14.2,
+      "E_floor_eV_Te5": 23.6
+     },
+     {
+      "ion": "O2+",
+      "E_floor_over_Te": 5.068,
+      "E_floor_eV_Te3": 15.2,
+      "E_floor_eV_Te5": 25.3
+     },
+     {
+      "ion": "Xe+",
+      "E_floor_over_Te": 5.774,
+      "E_floor_eV_Te3": 17.3,
+      "E_floor_eV_Te5": 28.9
+     }
+    ]
+   },
+   "reading": "at the analog cathodic-sheath energies (~140 eV ICP ions, ~220 eV Hall ions, TK-70) the N+ -> Ni prior implies 33-210 mm of collector recession and 10-67 kg of sputtered metal over the 15,000 h basis: neither retained alloy can be operated at analog sheath energies for the firing life. The allowable mean impact energy for a 0.5-2 mm recession allowance is E* = 26-38 eV, i.e. 4-16 eV above the N+ -> Ni prior threshold (21.9 eV), comparable with the floating-sheath floor (~4.7-5.8 T_e). The collector ion energy is therefore an operating-point requirement owned by the ICP closure (P4 / BD-06); swapping primary and backup does not change it (same Ni-base prior), and a refractory electrode would trade it against the insulating-oxide failure of bare W (TEJEDA2024)",
+   "class": "inferred",
+   "quantity_type": "model-derived",
+   "evidence_level": 6,
+   "uncertainty": "elemental-prior yields near threshold (factor >= 2-10 unquantified; CHK-GENERIC-VS-FIT spread 1.24-52.7); alloy surface state (oxide / nitride) not represented; Cr / Fe constituents have lower generic thresholds (N+ -> Cr 15.6 eV, level 6); molecular ions and Xe+ not evaluated"
+  },
+  {
+   "id": "DA-04",
+   "title": "electrode current density and the oxide-scale area-specific resistance it tolerates",
+   "method": "j = I_d / A (anode: channel annulus as the collecting area, assumption A-AN-01 since H1F-AN-03 anode geometry is TBD; collector: C-type electrode area); ASR_max = dV_allow / j, tabulated per volt of allowed scale drop (dV_allow is an IT-20 / LOCK-2 slot, not set here)",
+   "rows": [
+    {
+     "electrode": "anode",
+     "current": "Imin",
+     "I_A": 1.857,
+     "A_m2": 0.002639,
+     "j_A_m2": 703.7,
+     "ASR_max_ohm_m2_per_V": 0.00142,
+     "ASR_max_ohm_cm2_per_V": 14.2
+    },
+    {
+     "electrode": "anode",
+     "current": "Imax",
+     "I_A": 7.5,
+     "A_m2": 0.002639,
+     "j_A_m2": 2842.0,
+     "ASR_max_ohm_m2_per_V": 0.000352,
+     "ASR_max_ohm_cm2_per_V": 3.52
+    },
+    {
+     "electrode": "collector",
+     "current": "Imin",
+     "I_A": 1.857,
+     "A_m2": 0.0377,
+     "j_A_m2": 49.26,
+     "ASR_max_ohm_m2_per_V": 0.0203,
+     "ASR_max_ohm_cm2_per_V": 203.0
+    },
+    {
+     "electrode": "collector",
+     "current": "Imax",
+     "I_A": 7.5,
+     "A_m2": 0.0377,
+     "j_A_m2": 198.9,
+     "ASR_max_ohm_m2_per_V": 0.00503,
+     "ASR_max_ohm_cm2_per_V": 50.3
+    }
+   ],
+   "reading": "the anode at the highest-current corner needs a scale ASR below ~3.5 ohm cm^2 per volt of allowed drop; the collector, ~25x lower current density, tolerates ~50 ohm cm^2 per volt. A continuous insulating scale fails either electrode (the bare-W WET-HET anode lost conduction in 20-30 min, TEJEDA2024); a thin semiconducting chromia-rich scale is the hypothesis the coupon test must confirm",
+   "class": "inferred",
+   "quantity_type": "model-derived",
+   "evidence_level": 6,
+   "uncertainty": "collecting area and current distribution of the H-1 anode not frozen; scale resistivity of either alloy in the service condition not sourced (WANG1995 not accessed)"
+  },
+  {
+   "id": "DA-05",
+   "title": "thermal-cycle count bound and Inconel / BN-SiO2 expansion mismatch",
+   "cycle_count": {
+    "method": "orbital period 2 pi sqrt(a^3 / mu) over the 26,280 h mission basis; at most one full-amplitude thermal cycle per orbit (eclipse or firing on / off) is the selected engineering assumption A-CYC-01 (the mission schedule is not registered: MISSION_SCHEDULE_NOT_REGISTERED, OQ-MI-01)",
+    "rows": [
+     {
+      "alt_km": 180.0,
+      "period_min": 87.947,
+      "orbits_over_mission": 17928
+     },
+     {
+      "alt_km": 230.0,
+      "period_min": 88.956,
+      "orbits_over_mission": 17725
+     }
+    ],
+    "N_cycles_bound": 17928,
+    "manufacturer_cyclic_oxidation_coverage": {
+     "IN600": "Fig. 11 (p. 11): cyclic oxidation in air at 980 degC, 15 min heat / 5 min cool, time axis to 1,000 h",
+     "IN601": "Fig. 9 (p. 9): cyclic oxidation in air at 1095 degC, 15 min heat / 5 min cool, time axis to 1,000 h; Figs. 10-11: ten 50 h periods at 1150 / 1205 degC",
+     "cycles_at_full_axis": 3000,
+     "coverage_ratio": 0.167,
+     "note": "curve extents not digitized: the axis length bounds the demonstrated cycle count from above"
+    }
+   },
+   "cte_mismatch": {
+    "alpha_inconel_um_m_K": {
+     "IN600_20_500C": 14.9,
+     "IN600_20_800C": 16.1,
+     "IN601_27_500C": 15.19,
+     "IN601_27_800C": 16.67
+    },
+    "alpha_bn_sio2_um_m_K": {
+     "M26_par_25_400C": 3.0,
+     "M26_perp_25_400C": 0.4
+    },
+    "sources": "SMC_IN600 Table 3 (p. 2, mean 21 degC -> T); SMC_IN601 Table 3 (p. 2, mean 27 degC -> T); R3 PC-BN-MM26 (Precision Ceramics M26, 25-400 degC, distributor typical)",
+    "delta_alpha_range_um_m_K": [
+     11.9,
+     16.27
+    ],
+    "r_out_mm": 41.0,
+    "radial_differential_mm_per_100K": [
+     0.0488,
+     0.0667
+    ],
+    "reading": "an Inconel anode / distributor inside a BN-SiO2 channel grows ~0.05-0.07 mm radially per 100 K more than the ceramic at the outer wall radius; the anode-to-channel interface needs a clearance or compliant mount sized from the P7 anode temperature (design rule, TP-07)"
+   },
+   "class": "inferred",
+   "quantity_type": "model-derived",
+   "evidence_level": 6,
+   "uncertainty": "cycle count is an upper bound under A-CYC-01; CTE values are manufacturer typical"
+  },
+  {
+   "id": "DA-06",
+   "title": "necessary temperature screening ceilings (supplier basis minus the 50 K margin rule)",
+   "rule": "NECESSARY CEILING ONLY (the H1F-MA-03 / -04 'Curie - 50 K' precedent): a supplier rating is never T_validated,continuous (P4 staged_validation never_validation: SUPPLIER_CONTINUOUS_RATING, GENERIC_AIR_USE_TEMPERATURE); exceeding the ceiling places the part outside even the supplier's own oxidation-data domain",
+   "margin_K": 50.0,
+   "rows": [
+    {
+     "material": "INCONEL alloy 600",
+     "basis": "highest manufacturer oxidation-data temperature: cyclic oxidation in air at 980 degC (SMC_IN600 Fig. 11, p. 11); application statement 'cryogenic to above 2000 F (1095 C)' (p. 1) is context",
+     "T_basis_C": 980.0,
+     "screening_ceiling_C": 930.0
+    },
+    {
+     "material": "INCONEL alloy 601",
+     "basis": "'resistance to oxidation at temperatures up to 2200 F (1200 C)' (SMC_IN601 p. 8); oxidation data to 1205 degC (Figs. 10-11, p. 9)",
+     "T_basis_C": 1200.0,
+     "screening_ceiling_C": 1150.0
+    },
+    {
+     "material": "BN-SiO2 (HeBoSint CL-S 200)",
+     "basis": "datasheet row 'Use Temperature max. at C', column CL-S 200 (hBN+SiO2, binder none) (~900 degC oxidizing)",
+     "T_basis_C": 900.0,
+     "screening_ceiling_C": 850.0
+    },
+    {
+     "material": "BN-SiO2 (Combat M26 via Precision Ceramics)",
+     "basis": "R3 PC-BN-MM26 'max temperature air 1000+' (distributor sheet; manufacturer sheet blocked)",
+     "T_basis_C": 1000.0,
+     "screening_ceiling_C": 950.0
+    },
+    {
+     "material": "BN (hBN, HeBoSint PL 100)",
+     "basis": "datasheet row 'Use Temperature max. at C', column PL 100 (composition hBN, binder none) (~900 degC oxidizing)",
+     "T_basis_C": 900.0,
+     "screening_ceiling_C": 850.0
+    },
+    {
+     "material": "BN (hBN, Combat AX05 via Precision Ceramics)",
+     "basis": "R3 PC-BN-AX05 'max temperature air 850'",
+     "T_basis_C": 850.0,
+     "screening_ceiling_C": 800.0
+    }
+   ],
+   "anode_context": {
+    "value_C": 1190,
+    "status": "CONTEXT_NOT_ADMISSIBLE",
+    "basis": "searched/bounded worst case over the lever sets evaluated (lowest, LV-ALL); UNCOUPLED, ICP_COUPLED_THERMAL = UNRESOLVED; never a T_operating for a gate",
+    "source": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json key_findings (K6)"
+   },
+   "reading": "the only H-1 anode temperature in the repository (>= 1190 degC, uncoupled, ECHT-analog geometry, CONTEXT_NOT_ADMISSIBLE) is above the 930 degC (600) and 1150 degC (601) ceilings; it is not a DBF-1 result and triggers nothing by itself, but it makes the P7 anode temperature the deciding input of the anode material gate (see the DCR triggers)",
+   "class": "literature",
+   "quantity_type": "assumed (manufacturer recommendation) minus owner margin",
+   "evidence_level": 5
+  }
+ ],
+ "gates": [
+  {
+   "id": "IN600-AN-AO-EXT",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-ANODE (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-01"
+   ],
+   "gate": "atomic oxygen, external ram (SC-WP-09 bound)",
+   "verdict": "PASS_BY_ANALYSIS_WITH_ASSUMPTION",
+   "evidence": [
+    "EV-10",
+    "EV-19"
+   ],
+   "analyses": [
+    "DA-01",
+    "DA-02"
+   ],
+   "assumptions": [
+    "A-ATT-01",
+    "A-LAY-01"
+   ],
+   "basis": "the anode / gas distributor sits inside an aft-facing opening; for any surface normal within 60 deg of anti-velocity the wake-side free-molecular flux is <= 3e-6 of the ram flux (DA-01), i.e. <= ~4e22 m^-2 against the [2.4e26, 1.5e28] m^-2 ram bound and against an internal feed-borne dose >= 8e26 m^-2 (DA-02); a Ni-Cr(-Al) alloy forms non-volatile oxides, for which an AO erosion yield is 'not a meaningful number' (BANKS2004): external ram AO adds no recession mechanism beyond the internal O exposure gate",
+   "em_test": null,
+   "dcr_trigger": null,
+   "input_dependency": null
+  },
+  {
+   "id": "IN600-AN-AO-INT",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-ANODE (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-01"
+   ],
+   "gate": "atomic oxygen, internal (feed-borne / discharge O)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-05",
+    "EV-06",
+    "EV-10",
+    "EV-01",
+    "EV-02"
+   ],
+   "analyses": [
+    "DA-02"
+   ],
+   "assumptions": [],
+   "basis": "no atomic-O exposure of either alloy exists in any accessed source; the internal throughput dose at the 12 mN necessary flow is 8e26-3e28 m^-2 at the anode plane (25 mN: up to ~1.3e29), the same order as or above the external bound; failure mode in every O-plasma report is loss of conduction, not mass loss",
+   "em_test": "TP-03 (Q2): dedicated atomic-O source with Kapton-H fluence witness (DEGROH2006 method), coupons at the P7 operating temperature, fluence >= the DA-02 dose of the electrode (anode plane >= 3e28 m^-2 at 12 mN, scaled to the delivered flow), 4-wire resistance before / during / after and recession; N2 + O2 surrogate results labelled NO_ATOMIC_O, never AO-life proof (row 132)",
+   "dcr_trigger": null,
+   "input_dependency": "P7 electrode temperature; P1 delivered flow (DCR-001)"
+  },
+  {
+   "id": "IN600-AN-PLASMA",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-ANODE (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-01"
+   ],
+   "gate": "plasma exposure (O / O2 / N2 discharge at the anode, electron-collecting)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-05",
+    "EV-06",
+    "EV-07",
+    "EV-08",
+    "EV-09",
+    "EV-01",
+    "EV-02"
+   ],
+   "analyses": [],
+   "assumptions": [],
+   "basis": "the analog SPT anode on N2 / O2 (+10 % Xe) reached first oxidation flame-out after ~314 h (material not stated); stainless keeps conduction longer than W; the chromia-forming Ni-alloy family is a literature suggestion with no plasma test; IN600 resists nitrogen at temperature (nitriding containers) - no evidence transfers to the 15,000 h firing basis",
+   "em_test": "Q1 TP-01 / TP-02: electron-collecting biased AND floating coupons (row 106) in N2, then N2 + O2 up to the delivered O fraction, plus atomic O, at P7 temperature steps, in-situ 4-wire resistance and thermocouple; then Q4 (stage 2): replaceable serialized EM anode (AOL-RC-01) with in-situ resistance lead (AOL-RC-02), flame-out log (AOL-CX-06) and post-test SEM / XPS (AOL-PM-04); endurance segment and acceptance pre-registered (AOL-LF-02, LOCK-2)",
+   "dcr_trigger": null,
+   "input_dependency": "LOCK-2 acceptance thresholds (A9.12 P4-OQ-03)"
+  },
+  {
+   "id": "IN600-AN-SPUTTER",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-ANODE (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-01"
+   ],
+   "gate": "sputtering / erosion (anode)",
+   "verdict": "PASS_BY_ANALYSIS_WITH_ASSUMPTION",
+   "evidence": [
+    "EV-05",
+    "EV-13"
+   ],
+   "analyses": [],
+   "assumptions": [
+    "A-AN-01"
+   ],
+   "basis": "the anode collects electrons; ions reach it only with the near-anode potential excess of a few T_e, below the N+ -> Ni prior threshold (21.9 eV) and the lowest constituent prior (N+ -> Cr generic 15.5 eV); no accessed source identifies ion bombardment as an anode driver and the one analog anode failure was oxidation (AOL-M01). Confirmation by EM anode metrology (AOL-RC-01 / AOL-PM-03) is part of the plasma-exposure test",
+   "em_test": null,
+   "dcr_trigger": null,
+   "input_dependency": null
+  },
+  {
+   "id": "IN600-AN-DEPOSITION",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-ANODE (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-01"
+   ],
+   "gate": "deposition (wall erosion products B / Si / O compounds on the anode)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-16",
+    "EV-17"
+   ],
+   "analyses": [],
+   "assumptions": [],
+   "basis": "insulating wall erosion products (B2O3 / SiO2 / BN) redeposited on the anode would act like an insulating scale (DA-04 demand); no accessed source quantifies redeposition on a Hall anode (hypothesis, verify)",
+   "em_test": "AOL-WC-02 anode-material witness at the distributor (or the replaceable anode AOL-RC-01) with SEM / EDS / XPS for B, Si, O; resistance trend on AOL-RC-02",
+   "dcr_trigger": null,
+   "input_dependency": null
+  },
+  {
+   "id": "IN600-AN-THERMAL",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-ANODE (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-01"
+   ],
+   "gate": "thermal: continuous-use temperature and thermal cycling",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-01",
+    "EV-02",
+    "EV-18",
+    "EV-20"
+   ],
+   "analyses": [
+    "DA-05",
+    "DA-06"
+   ],
+   "assumptions": [
+    "A-CYC-01"
+   ],
+   "basis": "no DBF-1 thermal case exists (P7 open); the supplier oxidation-data domain gives a necessary screening ceiling of 930 degC after the 50 K margin (DA-06). Cycles: <= 17,928 orbits over the mission (A-CYC-01) against <= 3,000 cycles covered by the supplier cyclic tests (coverage <= 0.17); Inconel / BN-SiO2 radial mismatch ~0.05-0.07 mm per 100 K at the outer wall radius (DA-05)",
+   "em_test": "TP-07 (Q3): joint / mount thermal cycling to >= 1.5 x the registered cycle count between the P7 cold and hot temperatures with the anode-channel (or collector-body) interface; TP-06 k(T) and joint conductance on the procured lot; stage-2 T_validated,continuous from the Q4 integrated replaceable part (A9.12 P4-OQ-01)",
+   "dcr_trigger": "if the P7 hot-case anode / gas distributor temperature exceeds the 930 degC screening ceiling, IN600 is outside its supplier oxidation-data domain and the backup IN601 (ceiling 1150 degC) governs: DCR swapping primary and backup in DBF1-MAT-01 (with DBF1-MAT-02); above 1150 degC both retained alloys are outside: DCR on the anode heat path (A9H-ANODE-02) or the material (no refractory metal selected for melting point alone, A9.2)",
+   "input_dependency": "P7 hot / cold case temperature of H1_ANODE"
+  },
+  {
+   "id": "IN600-AN-OXIDE-ELEC",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-ANODE (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-01"
+   ],
+   "gate": "electrical behaviour of the oxide scale",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-07",
+    "EV-08",
+    "EV-04",
+    "EV-02"
+   ],
+   "analyses": [
+    "DA-04"
+   ],
+   "assumptions": [
+    "A-AN-01"
+   ],
+   "basis": "IN600 forms a chromia-rich scale (semiconducting per R8 'verify'; WANG1995 not accessed); the anode / gas distributor tolerates a scale ASR of ~3.5-14 ohm cm^2 per volt of allowed drop (DA-04); no scale resistance in the service condition is sourced",
+   "em_test": "TP-02: 4-wire area-specific resistance of the scale under the electrode's bias polarity (anode electron-collecting; collector negative ion-collecting with floating control) versus exposure time and temperature, oxide thickness / phase by SEM cross-section and XPS; in-situ AOL-RC-02 resistance on the EM; acceptance (dV_allow, IT-20) frozen at LOCK-2",
+   "dcr_trigger": null,
+   "input_dependency": "IT-20 allowable electrode-path resistance (LOCK-1); LOCK-2 thresholds"
+  },
+  {
+   "id": "IN600-CO-AO-EXT",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-COLLECTOR (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "atomic oxygen, external ram (SC-WP-09 bound)",
+   "verdict": "PASS_BY_ANALYSIS_WITH_ASSUMPTION",
+   "evidence": [
+    "EV-10",
+    "EV-19"
+   ],
+   "analyses": [
+    "DA-01",
+    "DA-02"
+   ],
+   "assumptions": [
+    "A-ATT-01",
+    "A-LAY-01"
+   ],
+   "basis": "the ICP ion collector sits inside an aft-facing opening; for any surface normal within 60 deg of anti-velocity the wake-side free-molecular flux is <= 3e-6 of the ram flux (DA-01), i.e. <= ~4e22 m^-2 against the [2.4e26, 1.5e28] m^-2 ram bound and against an internal feed-borne dose >= 8e26 m^-2 (DA-02); a Ni-Cr(-Al) alloy forms non-volatile oxides, for which an AO erosion yield is 'not a meaningful number' (BANKS2004): external ram AO adds no recession mechanism beyond the internal O exposure gate",
+   "em_test": null,
+   "dcr_trigger": null,
+   "input_dependency": null
+  },
+  {
+   "id": "IN600-CO-AO-INT",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-COLLECTOR (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "atomic oxygen, internal (feed-borne / discharge O)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-05",
+    "EV-06",
+    "EV-10",
+    "EV-01",
+    "EV-02"
+   ],
+   "analyses": [
+    "DA-02"
+   ],
+   "assumptions": [],
+   "basis": "no atomic-O exposure of either alloy exists in any accessed source; the internal throughput dose at the 12 mN necessary flow is 8e26-3e28 m^-2 at the anode plane (25 mN: up to ~1.3e29), the same order as or above the external bound; failure mode in every O-plasma report is loss of conduction, not mass loss",
+   "em_test": "TP-03 (Q2): dedicated atomic-O source with Kapton-H fluence witness (DEGROH2006 method), coupons at the P7 operating temperature, fluence >= the DA-02 dose of the electrode (anode plane >= 3e28 m^-2 at 12 mN, scaled to the delivered flow), 4-wire resistance before / during / after and recession; N2 + O2 surrogate results labelled NO_ATOMIC_O, never AO-life proof (row 132)",
+   "dcr_trigger": null,
+   "input_dependency": "P7 electrode temperature; P1 delivered flow (DCR-001)"
+  },
+  {
+   "id": "IN600-CO-PLASMA",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-COLLECTOR (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "plasma exposure (ICP plasma of reused Hall exhaust, ion-collecting, RF field)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-11",
+    "EV-09",
+    "EV-01",
+    "EV-02"
+   ],
+   "analyses": [],
+   "assumptions": [],
+   "basis": "no plasma exposure of either alloy exists; the analog electrode was stainless steel on Ar; the electrode absorbed most of the RF power by eddy currents (LIM-02) - both alloys are non-magnetic in service (Curie -124 / < -196 degC), so no ferromagnetic loss is added",
+   "em_test": "TP-01 / TP-02 per A9.12 P4-OQ-05: NEGATIVE-biased ion-collecting coupons AND floating matched controls, bias magnitude from the measured P1 collector envelope (never the analog), Ar engineering then N2 then O2-bearing; Q4 in-ICP replaceable collector with current metering",
+   "dcr_trigger": null,
+   "input_dependency": "P1 collector operating envelope (IT-19); P4 ICP closure (BD-06)"
+  },
+  {
+   "id": "IN600-CO-SPUTTER",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-COLLECTOR (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "sputtering / erosion (collector, cathodic sheath)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-11",
+    "EV-12",
+    "EV-13",
+    "EV-01",
+    "EV-02"
+   ],
+   "analyses": [
+    "DA-03"
+   ],
+   "assumptions": [
+    "A-ICP-01"
+   ],
+   "basis": "DESIGN-DRIVING: the collector collects the full discharge current as ions (1.9-7.5 A over 0.0377 m^2). At the analog sheath energies (~140 / 220 eV) the N+ -> Ni prior gives 33-210 mm of recession over 15,000 h - untenable for either retained alloy. A 0.5-2 mm allowance requires a mean N+ impact energy below E* = 26-38 eV, i.e. 4-16 eV above the 21.9 eV prior threshold (DA-03), close to the floating-sheath floor (~4.7-5.8 T_e, 14-29 eV at T_e 3-5 eV). This is an operating-point requirement on the ICP (P4 / BD-06): collector sheath energy minimized (Takahashi: 'has to be minimized'); swapping the retained alloys does not remove it",
+   "em_test": "TP-04 (A9.12 P4-OQ-04 BOTH): ion-beam yields of the procured IN600 / IN601 lot for N+, N2+, O+, O2+ (and Xe+ for XE_CONTINGENCY) at 15-60 eV in 5 eV steps plus 100 / 140 / 220 eV (energies selected from DA-03; test-matrix use of the priors), normal and 45 / 70 deg; then the EM ICP with RFEA / sheath-potential measurement at the collector and a serialized replaceable collector with profilometry (AOL-RC-03 method)",
+   "dcr_trigger": "if the P4 ICP closure finds that I_e >= I_d (with the neutralization margin) needs a mean collector ion energy above E*(allowance) of the measured yield, raise a DCR against DBF1-ICP-04 (collector area / topology / replaceability), not against the material",
+   "input_dependency": "P4 ICP closure: collector bias / sheath energy and I_e,cap (BD-06)"
+  },
+  {
+   "id": "IN600-CO-DEPOSITION",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-COLLECTOR (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "deposition (collector sputter products on the ICP glass bore and H-1 exit insulators)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-11"
+   ],
+   "analyses": [
+    "DA-03"
+   ],
+   "assumptions": [
+    "A-ICP-01"
+   ],
+   "basis": "the analog produced metallic films on the glass tube at the electrode slit and on the HET front insulators (TK-71). Ni / Cr / Fe films on the borosilicate bore (DBF1-ICP-07) shield the RF field and add eddy loss; films on the H-1 exit insulators and the collector isolation (350 V class, DBF1-ICP-06) create leakage paths. Deposition rate scales with the collector sputter rate (DA-03)",
+   "em_test": "witness coupons on the ICP bore at the slit and on the H-1 exit insulators (TK-71 h4 measurement, AOL-WC-01 holder) with film thickness / sheet resistance after each block; RF coupling (R_ant method) and isolation resistance trend (AOL-PM-06); line-of-sight shield between collector and slit evaluated on the EM",
+   "dcr_trigger": null,
+   "input_dependency": "P4 collector sheath energy"
+  },
+  {
+   "id": "IN600-CO-THERMAL",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-COLLECTOR (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "thermal: continuous-use temperature and thermal cycling",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-01",
+    "EV-02",
+    "EV-18",
+    "EV-20"
+   ],
+   "analyses": [
+    "DA-05",
+    "DA-06"
+   ],
+   "assumptions": [
+    "A-CYC-01"
+   ],
+   "basis": "no DBF-1 thermal case exists (P7 open); the supplier oxidation-data domain gives a necessary screening ceiling of 930 degC after the 50 K margin (DA-06). Cycles: <= 17,928 orbits over the mission (A-CYC-01) against <= 3,000 cycles covered by the supplier cyclic tests (coverage <= 0.17); Inconel / BN-SiO2 radial mismatch ~0.05-0.07 mm per 100 K at the outer wall radius (DA-05)",
+   "em_test": "TP-07 (Q3): joint / mount thermal cycling to >= 1.5 x the registered cycle count between the P7 cold and hot temperatures with the anode-channel (or collector-body) interface; TP-06 k(T) and joint conductance on the procured lot; stage-2 T_validated,continuous from the Q4 integrated replaceable part (A9.12 P4-OQ-01)",
+   "dcr_trigger": "if the P7 hot-case ICP ion collector temperature exceeds the 930 degC screening ceiling, IN600 is outside its supplier oxidation-data domain and the backup IN601 (ceiling 1150 degC) governs: DCR swapping primary and backup in DBF1-MAT-03; above 1150 degC both retained alloys are outside: DCR on the collector thermal path or the material (no refractory metal selected for melting point alone, A9.2)",
+   "input_dependency": "P7 hot / cold case temperature of N_COLLECTOR"
+  },
+  {
+   "id": "IN600-CO-OXIDE-ELEC",
+   "material": "INCONEL alloy 600 (CAND-02A)",
+   "application": "APP-COLLECTOR (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "electrical behaviour of the oxide scale",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-07",
+    "EV-08",
+    "EV-04",
+    "EV-02"
+   ],
+   "analyses": [
+    "DA-04"
+   ],
+   "assumptions": [
+    "A-ICP-01"
+   ],
+   "basis": "IN600 forms a chromia-rich scale (semiconducting per R8 'verify'; WANG1995 not accessed); the ICP ion collector tolerates a scale ASR of ~50-200 ohm cm^2 per volt of allowed drop (DA-04); no scale resistance in the service condition is sourced",
+   "em_test": "TP-02: 4-wire area-specific resistance of the scale under the electrode's bias polarity (anode electron-collecting; collector negative ion-collecting with floating control) versus exposure time and temperature, oxide thickness / phase by SEM cross-section and XPS; in-situ AOL-RC-02 resistance on the EM; acceptance (dV_allow, IT-20) frozen at LOCK-2",
+   "dcr_trigger": null,
+   "input_dependency": "IT-20 allowable electrode-path resistance (LOCK-1); LOCK-2 thresholds"
+  },
+  {
+   "id": "IN601-AN-AO-EXT",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-ANODE (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-02"
+   ],
+   "gate": "atomic oxygen, external ram (SC-WP-09 bound)",
+   "verdict": "PASS_BY_ANALYSIS_WITH_ASSUMPTION",
+   "evidence": [
+    "EV-10",
+    "EV-19"
+   ],
+   "analyses": [
+    "DA-01",
+    "DA-02"
+   ],
+   "assumptions": [
+    "A-ATT-01",
+    "A-LAY-01"
+   ],
+   "basis": "the anode / gas distributor sits inside an aft-facing opening; for any surface normal within 60 deg of anti-velocity the wake-side free-molecular flux is <= 3e-6 of the ram flux (DA-01), i.e. <= ~4e22 m^-2 against the [2.4e26, 1.5e28] m^-2 ram bound and against an internal feed-borne dose >= 8e26 m^-2 (DA-02); a Ni-Cr(-Al) alloy forms non-volatile oxides, for which an AO erosion yield is 'not a meaningful number' (BANKS2004): external ram AO adds no recession mechanism beyond the internal O exposure gate",
+   "em_test": null,
+   "dcr_trigger": null,
+   "input_dependency": null
+  },
+  {
+   "id": "IN601-AN-AO-INT",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-ANODE (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-02"
+   ],
+   "gate": "atomic oxygen, internal (feed-borne / discharge O)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-05",
+    "EV-06",
+    "EV-10",
+    "EV-03",
+    "EV-04"
+   ],
+   "analyses": [
+    "DA-02"
+   ],
+   "assumptions": [],
+   "basis": "no atomic-O exposure of either alloy exists in any accessed source; the internal throughput dose at the 12 mN necessary flow is 8e26-3e28 m^-2 at the anode plane (25 mN: up to ~1.3e29), the same order as or above the external bound; failure mode in every O-plasma report is loss of conduction, not mass loss",
+   "em_test": "TP-03 (Q2): dedicated atomic-O source with Kapton-H fluence witness (DEGROH2006 method), coupons at the P7 operating temperature, fluence >= the DA-02 dose of the electrode (anode plane >= 3e28 m^-2 at 12 mN, scaled to the delivered flow), 4-wire resistance before / during / after and recession; N2 + O2 surrogate results labelled NO_ATOMIC_O, never AO-life proof (row 132)",
+   "dcr_trigger": null,
+   "input_dependency": "P7 electrode temperature; P1 delivered flow (DCR-001)"
+  },
+  {
+   "id": "IN601-AN-PLASMA",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-ANODE (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-02"
+   ],
+   "gate": "plasma exposure (O / O2 / N2 discharge at the anode, electron-collecting)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-05",
+    "EV-06",
+    "EV-07",
+    "EV-08",
+    "EV-09",
+    "EV-03",
+    "EV-04"
+   ],
+   "analyses": [],
+   "assumptions": [],
+   "basis": "the analog SPT anode on N2 / O2 (+10 % Xe) reached first oxidation flame-out after ~314 h (material not stated); stainless keeps conduction longer than W; the chromia-forming Ni-alloy family is a literature suggestion with no plasma test; IN600 resists nitrogen at temperature (nitriding containers) - no evidence transfers to the 15,000 h firing basis",
+   "em_test": "Q1 TP-01 / TP-02: electron-collecting biased AND floating coupons (row 106) in N2, then N2 + O2 up to the delivered O fraction, plus atomic O, at P7 temperature steps, in-situ 4-wire resistance and thermocouple; then Q4 (stage 2): replaceable serialized EM anode (AOL-RC-01) with in-situ resistance lead (AOL-RC-02), flame-out log (AOL-CX-06) and post-test SEM / XPS (AOL-PM-04); endurance segment and acceptance pre-registered (AOL-LF-02, LOCK-2)",
+   "dcr_trigger": null,
+   "input_dependency": "LOCK-2 acceptance thresholds (A9.12 P4-OQ-03)"
+  },
+  {
+   "id": "IN601-AN-SPUTTER",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-ANODE (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-02"
+   ],
+   "gate": "sputtering / erosion (anode)",
+   "verdict": "PASS_BY_ANALYSIS_WITH_ASSUMPTION",
+   "evidence": [
+    "EV-05",
+    "EV-13"
+   ],
+   "analyses": [],
+   "assumptions": [
+    "A-AN-01"
+   ],
+   "basis": "the anode collects electrons; ions reach it only with the near-anode potential excess of a few T_e, below the N+ -> Ni prior threshold (21.9 eV) and the lowest constituent prior (N+ -> Cr generic 15.5 eV); no accessed source identifies ion bombardment as an anode driver and the one analog anode failure was oxidation (AOL-M01). Confirmation by EM anode metrology (AOL-RC-01 / AOL-PM-03) is part of the plasma-exposure test",
+   "em_test": null,
+   "dcr_trigger": null,
+   "input_dependency": null
+  },
+  {
+   "id": "IN601-AN-DEPOSITION",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-ANODE (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-02"
+   ],
+   "gate": "deposition (wall erosion products B / Si / O compounds on the anode)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-16",
+    "EV-17"
+   ],
+   "analyses": [],
+   "assumptions": [],
+   "basis": "insulating wall erosion products (B2O3 / SiO2 / BN) redeposited on the anode would act like an insulating scale (DA-04 demand); no accessed source quantifies redeposition on a Hall anode (hypothesis, verify)",
+   "em_test": "AOL-WC-02 anode-material witness at the distributor (or the replaceable anode AOL-RC-01) with SEM / EDS / XPS for B, Si, O; resistance trend on AOL-RC-02",
+   "dcr_trigger": null,
+   "input_dependency": null
+  },
+  {
+   "id": "IN601-AN-THERMAL",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-ANODE (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-02"
+   ],
+   "gate": "thermal: continuous-use temperature and thermal cycling",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-03",
+    "EV-04",
+    "EV-18",
+    "EV-20"
+   ],
+   "analyses": [
+    "DA-05",
+    "DA-06"
+   ],
+   "assumptions": [
+    "A-CYC-01"
+   ],
+   "basis": "no DBF-1 thermal case exists (P7 open); the supplier oxidation-data domain gives a necessary screening ceiling of 1150 degC after the 50 K margin (DA-06). Cycles: <= 17,928 orbits over the mission (A-CYC-01) against <= 3,000 cycles covered by the supplier cyclic tests (coverage <= 0.17); Inconel / BN-SiO2 radial mismatch ~0.05-0.07 mm per 100 K at the outer wall radius (DA-05)",
+   "em_test": "TP-07 (Q3): joint / mount thermal cycling to >= 1.5 x the registered cycle count between the P7 cold and hot temperatures with the anode-channel (or collector-body) interface; TP-06 k(T) and joint conductance on the procured lot; stage-2 T_validated,continuous from the Q4 integrated replaceable part (A9.12 P4-OQ-01)",
+   "dcr_trigger": "if the P7 hot-case anode / gas distributor temperature exceeds the 1150 degC screening ceiling, both retained alloys are outside their supplier oxidation-data domains: DCR on DBF1-MAT-02 and the anode heat path (A9H-ANODE-02)",
+   "input_dependency": "P7 hot / cold case temperature of H1_ANODE"
+  },
+  {
+   "id": "IN601-AN-OXIDE-ELEC",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-ANODE (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-02"
+   ],
+   "gate": "electrical behaviour of the oxide scale",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-07",
+    "EV-08",
+    "EV-04"
+   ],
+   "analyses": [
+    "DA-04"
+   ],
+   "assumptions": [
+    "A-AN-01"
+   ],
+   "basis": "IN601 is the hypothesis-control for an insulating alumina scale; its supplier reports the surface oxide chromium-rich with slight internal oxidation (EV-04), so the insulating-scale outcome is open; the anode / gas distributor tolerates a scale ASR of ~3.5-14 ohm cm^2 per volt of allowed drop (DA-04); no scale resistance in the service condition is sourced",
+   "em_test": "TP-02: 4-wire area-specific resistance of the scale under the electrode's bias polarity (anode electron-collecting; collector negative ion-collecting with floating control) versus exposure time and temperature, oxide thickness / phase by SEM cross-section and XPS; in-situ AOL-RC-02 resistance on the EM; acceptance (dV_allow, IT-20) frozen at LOCK-2",
+   "dcr_trigger": null,
+   "input_dependency": "IT-20 allowable electrode-path resistance (LOCK-1); LOCK-2 thresholds"
+  },
+  {
+   "id": "IN601-CO-AO-EXT",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-COLLECTOR (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "atomic oxygen, external ram (SC-WP-09 bound)",
+   "verdict": "PASS_BY_ANALYSIS_WITH_ASSUMPTION",
+   "evidence": [
+    "EV-10",
+    "EV-19"
+   ],
+   "analyses": [
+    "DA-01",
+    "DA-02"
+   ],
+   "assumptions": [
+    "A-ATT-01",
+    "A-LAY-01"
+   ],
+   "basis": "the ICP ion collector sits inside an aft-facing opening; for any surface normal within 60 deg of anti-velocity the wake-side free-molecular flux is <= 3e-6 of the ram flux (DA-01), i.e. <= ~4e22 m^-2 against the [2.4e26, 1.5e28] m^-2 ram bound and against an internal feed-borne dose >= 8e26 m^-2 (DA-02); a Ni-Cr(-Al) alloy forms non-volatile oxides, for which an AO erosion yield is 'not a meaningful number' (BANKS2004): external ram AO adds no recession mechanism beyond the internal O exposure gate",
+   "em_test": null,
+   "dcr_trigger": null,
+   "input_dependency": null
+  },
+  {
+   "id": "IN601-CO-AO-INT",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-COLLECTOR (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "atomic oxygen, internal (feed-borne / discharge O)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-05",
+    "EV-06",
+    "EV-10",
+    "EV-03",
+    "EV-04"
+   ],
+   "analyses": [
+    "DA-02"
+   ],
+   "assumptions": [],
+   "basis": "no atomic-O exposure of either alloy exists in any accessed source; the internal throughput dose at the 12 mN necessary flow is 8e26-3e28 m^-2 at the anode plane (25 mN: up to ~1.3e29), the same order as or above the external bound; failure mode in every O-plasma report is loss of conduction, not mass loss",
+   "em_test": "TP-03 (Q2): dedicated atomic-O source with Kapton-H fluence witness (DEGROH2006 method), coupons at the P7 operating temperature, fluence >= the DA-02 dose of the electrode (anode plane >= 3e28 m^-2 at 12 mN, scaled to the delivered flow), 4-wire resistance before / during / after and recession; N2 + O2 surrogate results labelled NO_ATOMIC_O, never AO-life proof (row 132)",
+   "dcr_trigger": null,
+   "input_dependency": "P7 electrode temperature; P1 delivered flow (DCR-001)"
+  },
+  {
+   "id": "IN601-CO-PLASMA",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-COLLECTOR (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "plasma exposure (ICP plasma of reused Hall exhaust, ion-collecting, RF field)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-11",
+    "EV-09",
+    "EV-03",
+    "EV-04"
+   ],
+   "analyses": [],
+   "assumptions": [],
+   "basis": "no plasma exposure of either alloy exists; the analog electrode was stainless steel on Ar; the electrode absorbed most of the RF power by eddy currents (LIM-02) - both alloys are non-magnetic in service (Curie -124 / < -196 degC), so no ferromagnetic loss is added",
+   "em_test": "TP-01 / TP-02 per A9.12 P4-OQ-05: NEGATIVE-biased ion-collecting coupons AND floating matched controls, bias magnitude from the measured P1 collector envelope (never the analog), Ar engineering then N2 then O2-bearing; Q4 in-ICP replaceable collector with current metering",
+   "dcr_trigger": null,
+   "input_dependency": "P1 collector operating envelope (IT-19); P4 ICP closure (BD-06)"
+  },
+  {
+   "id": "IN601-CO-SPUTTER",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-COLLECTOR (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "sputtering / erosion (collector, cathodic sheath)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-11",
+    "EV-12",
+    "EV-13",
+    "EV-03",
+    "EV-04"
+   ],
+   "analyses": [
+    "DA-03"
+   ],
+   "assumptions": [
+    "A-ICP-01"
+   ],
+   "basis": "DESIGN-DRIVING: the collector collects the full discharge current as ions (1.9-7.5 A over 0.0377 m^2). At the analog sheath energies (~140 / 220 eV) the N+ -> Ni prior gives 33-210 mm of recession over 15,000 h - untenable for either retained alloy. A 0.5-2 mm allowance requires a mean N+ impact energy below E* = 26-38 eV, i.e. 4-16 eV above the 21.9 eV prior threshold (DA-03), close to the floating-sheath floor (~4.7-5.8 T_e, 14-29 eV at T_e 3-5 eV). This is an operating-point requirement on the ICP (P4 / BD-06): collector sheath energy minimized (Takahashi: 'has to be minimized'); swapping the retained alloys does not remove it",
+   "em_test": "TP-04 (A9.12 P4-OQ-04 BOTH): ion-beam yields of the procured IN600 / IN601 lot for N+, N2+, O+, O2+ (and Xe+ for XE_CONTINGENCY) at 15-60 eV in 5 eV steps plus 100 / 140 / 220 eV (energies selected from DA-03; test-matrix use of the priors), normal and 45 / 70 deg; then the EM ICP with RFEA / sheath-potential measurement at the collector and a serialized replaceable collector with profilometry (AOL-RC-03 method)",
+   "dcr_trigger": "if the P4 ICP closure finds that I_e >= I_d (with the neutralization margin) needs a mean collector ion energy above E*(allowance) of the measured yield, raise a DCR against DBF1-ICP-04 (collector area / topology / replaceability), not against the material",
+   "input_dependency": "P4 ICP closure: collector bias / sheath energy and I_e,cap (BD-06)"
+  },
+  {
+   "id": "IN601-CO-DEPOSITION",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-COLLECTOR (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "deposition (collector sputter products on the ICP glass bore and H-1 exit insulators)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-11"
+   ],
+   "analyses": [
+    "DA-03"
+   ],
+   "assumptions": [
+    "A-ICP-01"
+   ],
+   "basis": "the analog produced metallic films on the glass tube at the electrode slit and on the HET front insulators (TK-71). Ni / Cr / Fe films on the borosilicate bore (DBF1-ICP-07) shield the RF field and add eddy loss; films on the H-1 exit insulators and the collector isolation (350 V class, DBF1-ICP-06) create leakage paths. Deposition rate scales with the collector sputter rate (DA-03)",
+   "em_test": "witness coupons on the ICP bore at the slit and on the H-1 exit insulators (TK-71 h4 measurement, AOL-WC-01 holder) with film thickness / sheet resistance after each block; RF coupling (R_ant method) and isolation resistance trend (AOL-PM-06); line-of-sight shield between collector and slit evaluated on the EM",
+   "dcr_trigger": null,
+   "input_dependency": "P4 collector sheath energy"
+  },
+  {
+   "id": "IN601-CO-THERMAL",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-COLLECTOR (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "thermal: continuous-use temperature and thermal cycling",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-03",
+    "EV-04",
+    "EV-18",
+    "EV-20"
+   ],
+   "analyses": [
+    "DA-05",
+    "DA-06"
+   ],
+   "assumptions": [
+    "A-CYC-01"
+   ],
+   "basis": "no DBF-1 thermal case exists (P7 open); the supplier oxidation-data domain gives a necessary screening ceiling of 1150 degC after the 50 K margin (DA-06). Cycles: <= 17,928 orbits over the mission (A-CYC-01) against <= 3,000 cycles covered by the supplier cyclic tests (coverage <= 0.17); Inconel / BN-SiO2 radial mismatch ~0.05-0.07 mm per 100 K at the outer wall radius (DA-05)",
+   "em_test": "TP-07 (Q3): joint / mount thermal cycling to >= 1.5 x the registered cycle count between the P7 cold and hot temperatures with the anode-channel (or collector-body) interface; TP-06 k(T) and joint conductance on the procured lot; stage-2 T_validated,continuous from the Q4 integrated replaceable part (A9.12 P4-OQ-01)",
+   "dcr_trigger": "if the P7 hot-case ICP ion collector temperature exceeds the 1150 degC screening ceiling, both retained alloys are outside their supplier oxidation-data domains: DCR on DBF1-MAT-03 and the collector thermal path",
+   "input_dependency": "P7 hot / cold case temperature of N_COLLECTOR"
+  },
+  {
+   "id": "IN601-CO-OXIDE-ELEC",
+   "material": "INCONEL alloy 601 (CAND-03A)",
+   "application": "APP-COLLECTOR (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-03",
+    "DBF1-ICP-04"
+   ],
+   "gate": "electrical behaviour of the oxide scale",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-07",
+    "EV-08",
+    "EV-04"
+   ],
+   "analyses": [
+    "DA-04"
+   ],
+   "assumptions": [
+    "A-ICP-01"
+   ],
+   "basis": "IN601 is the hypothesis-control for an insulating alumina scale; its supplier reports the surface oxide chromium-rich with slight internal oxidation (EV-04), so the insulating-scale outcome is open; the ICP ion collector tolerates a scale ASR of ~50-200 ohm cm^2 per volt of allowed drop (DA-04); no scale resistance in the service condition is sourced",
+   "em_test": "TP-02: 4-wire area-specific resistance of the scale under the electrode's bias polarity (anode electron-collecting; collector negative ion-collecting with floating control) versus exposure time and temperature, oxide thickness / phase by SEM cross-section and XPS; in-situ AOL-RC-02 resistance on the EM; acceptance (dV_allow, IT-20) frozen at LOCK-2",
+   "dcr_trigger": null,
+   "input_dependency": "IT-20 allowable electrode-path resistance (LOCK-1); LOCK-2 thresholds"
+  },
+  {
+   "id": "BNSIO2-WALL-AO-EXT",
+   "material": "BN-SiO2 (borosil class)",
+   "application": "channel wall (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-04"
+   ],
+   "gate": "atomic oxygen, external ram (SC-WP-09 bound)",
+   "verdict": "PASS_BY_ANALYSIS_WITH_ASSUMPTION",
+   "evidence": [
+    "EV-19"
+   ],
+   "analyses": [
+    "DA-01",
+    "DA-02"
+   ],
+   "assumptions": [
+    "A-ATT-01",
+    "A-LAY-01"
+   ],
+   "basis": "the channel walls and exit chamfers face the wake; the wake-side ram AO is <= 3e-6 of the ram flux for normals within 60 deg of anti-velocity (DA-01) and negligible against the internal O dose (DA-02); the ceramic's O compatibility is carried entirely by the internal plasma / chemical-erosion gate",
+   "em_test": null,
+   "dcr_trigger": null,
+   "input_dependency": null
+  },
+  {
+   "id": "BNSIO2-WALL-AO-INT",
+   "material": "BN-SiO2 (borosil class)",
+   "application": "channel wall (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-04"
+   ],
+   "gate": "atomic oxygen, internal (thermal O + O ions; B -> B2O3 chemistry)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-16",
+    "EV-17",
+    "EV-18"
+   ],
+   "analyses": [
+    "DA-02"
+   ],
+   "assumptions": [],
+   "basis": "O oxidizes B to B2O3 (and Si, already SiO2 in BN-SiO2); proxy yields differ ~20x (O on B vs B2O3); only a qualitative 10 h observation exists",
+   "em_test": "H4 / AOL-EX-02: combined ion + atomic-O + N2 coupon exposure of the wall grade at 30-600 degC (extended to the P7 wall temperature) with XPS / SEM for B2O3 formation and recession; dedicated AO source with fluence witness (row 132)",
+   "dcr_trigger": null,
+   "input_dependency": "P7 wall temperature; wall grade specification"
+  },
+  {
+   "id": "BNSIO2-WALL-PLASMA",
+   "material": "BN-SiO2 (borosil class)",
+   "application": "channel wall (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-04"
+   ],
+   "gate": "plasma exposure (N / O ion bombardment, SEE change)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-14",
+    "EV-16",
+    "EV-17"
+   ],
+   "analyses": [],
+   "assumptions": [],
+   "basis": "oxidation / nitridation changes the wall surface state and SEE (sheath potential, hence impact energy); no N / O data on BN or BN-SiO2",
+   "em_test": "H9 / AOL-PM-07: SEE yield of wall coupons before and after N / O exposure; H5 long-fluence coupons (yield vs fluence, roughness)",
+   "dcr_trigger": null,
+   "input_dependency": "wall grade specification (lot shared with the coupons, HW-H1-14)"
+  },
+  {
+   "id": "BNSIO2-WALL-SPUTTER",
+   "material": "BN-SiO2 (borosil class)",
+   "application": "channel wall (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-04"
+   ],
+   "gate": "sputtering / erosion (channel wall)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-14",
+    "EV-15",
+    "EV-17"
+   ],
+   "analyses": [],
+   "assumptions": [],
+   "basis": "no N+ / N2+ / O+ / O2+ yield on BN or BN-SiO2 exists (every N / O lookup OUT_OF_DOMAIN -> NOT_DEMONSTRATED); the only air-mode analog life indication (PPS1350, N2 / O2 + 10 % Xe, 'compatible with a 7000-9500 hrs lifetime', second-hand) is BELOW the 15,000 h firing basis; Xe+ yields exist for BN grades with a ~12x lab / grade spread (XE_CONTINGENCY); wall flux comes only from an admitted Hall member (credible set empty; P2 open). The wall erosion life is the principal open life item of the channel",
+   "em_test": "H1 ion-beam coupons of the procured wall grade (N+, N2+, O+, O2+ at 20-300 eV, 0-85 deg; weight loss and QCM), H3 molecular vs atomic, H8 Xe+ on the same coupons; H6 EM wear segment on N2, N2 / O2 and Xe with the H-1 channel and B(z) (replaceable exit rings with fiducials, AOL-RC-03; profiles each stage, AOL-PM-03); H7 near-wall diagnostics; endurance acceptance pre-registered (AOL-LF-02)",
+   "dcr_trigger": "if the H6 erosion rate extrapolated under the pre-registered method gives a wall life < 15,000 h at the reference operating point, raise a DCR on the wall erosion allowance (wall thickness outside the frozen channel surfaces; not yet a DBF-1 value) or the B(z) target (DBF1-BZ-01); the H1 reference channel geometry DBF1-H1-01..03 is architecture-frozen (A9.38) and is not a lever; the wall grade within DBF1-MAT-04 is the last lever",
+   "input_dependency": "P2 admitted Hall envelope (wall flux / energy); P3 H1 B(z)"
+  },
+  {
+   "id": "BNSIO2-WALL-DEPOSITION",
+   "material": "BN-SiO2 (borosil class)",
+   "application": "channel wall (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-04",
+    "DBF1-ICP-04"
+   ],
+   "gate": "deposition (metallic collector sputter films on the exit insulators)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-11"
+   ],
+   "analyses": [
+    "DA-03"
+   ],
+   "assumptions": [
+    "A-ICP-01"
+   ],
+   "basis": "the analog deposited metallic films on the HET front insulators (TK-71); conductive films on BN-SiO2 exit surfaces change wall conduction / SEE near the exit and the anode-to-ground isolation",
+   "em_test": "AOL-WC-01 near-exit witness coupons of the wall grade with sheet resistance and EDS after each block; exit-ring inspection (AOL-RC-03)",
+   "dcr_trigger": null,
+   "input_dependency": "P4 collector sheath energy"
+  },
+  {
+   "id": "BNSIO2-WALL-THERMAL",
+   "material": "BN-SiO2 (borosil class)",
+   "application": "channel wall (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-04"
+   ],
+   "gate": "thermal: continuous-use temperature and thermal cycling",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-18",
+    "EV-20"
+   ],
+   "analyses": [
+    "DA-05",
+    "DA-06"
+   ],
+   "assumptions": [
+    "A-CYC-01"
+   ],
+   "basis": "no DBF-1 wall temperature exists (P7); supplier oxidizing-atmosphere guides give necessary screening ceilings of 850-950 degC (CL-S 200 / M26) after the 50 K margin; grade within the BN-SiO2 class not specified; up to 17,928 cycles (A-CYC-01); the ceramic's CTE (0.4-3 um/m K) is ~5-40x below the Inconel anode's (DA-05)",
+   "em_test": "TP-07-equivalent wall-ring thermal cycling to >= 1.5 x the registered cycle count between the P7 cold / hot wall temperatures with the mount; flexural strength retained after cycling; wall thermocouples on the EM (AOL-CX-07)",
+   "dcr_trigger": "if the P7 hot-case inner-wall temperature exceeds the selected grade's screening ceiling (supplier oxidizing limit - 50 K, DA-06), the grade within DBF1-MAT-04 or the thermal path changes by DCR",
+   "input_dependency": "P7 H1_WALL_IN / H1_WALL_OUT hot / cold temperatures"
+  },
+  {
+   "id": "BNSIO2-WALL-OXIDE-ELEC",
+   "material": "BN-SiO2 (borosil class)",
+   "application": "channel wall (primary)",
+   "dbf1_items": [
+    "DBF1-MAT-04"
+   ],
+   "gate": "electrical behaviour of the oxide scale",
+   "verdict": "NOT_APPLICABLE",
+   "evidence": [],
+   "analyses": [],
+   "assumptions": [],
+   "basis": "the wall is an insulator by function and carries no electrode current; surface conduction from deposits is covered by the deposition gate and SEE change by the plasma-exposure gate",
+   "em_test": null,
+   "dcr_trigger": null,
+   "input_dependency": null
+  },
+  {
+   "id": "BN-WALL-AO-EXT",
+   "material": "BN (hBN)",
+   "application": "channel wall (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-04"
+   ],
+   "gate": "atomic oxygen, external ram (SC-WP-09 bound)",
+   "verdict": "PASS_BY_ANALYSIS_WITH_ASSUMPTION",
+   "evidence": [
+    "EV-19"
+   ],
+   "analyses": [
+    "DA-01",
+    "DA-02"
+   ],
+   "assumptions": [
+    "A-ATT-01",
+    "A-LAY-01"
+   ],
+   "basis": "the channel walls and exit chamfers face the wake; the wake-side ram AO is <= 3e-6 of the ram flux for normals within 60 deg of anti-velocity (DA-01) and negligible against the internal O dose (DA-02); the ceramic's O compatibility is carried entirely by the internal plasma / chemical-erosion gate",
+   "em_test": null,
+   "dcr_trigger": null,
+   "input_dependency": null
+  },
+  {
+   "id": "BN-WALL-AO-INT",
+   "material": "BN (hBN)",
+   "application": "channel wall (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-04"
+   ],
+   "gate": "atomic oxygen, internal (thermal O + O ions; B -> B2O3 chemistry)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-16",
+    "EV-17",
+    "EV-18"
+   ],
+   "analyses": [
+    "DA-02"
+   ],
+   "assumptions": [],
+   "basis": "O oxidizes B to B2O3 (and Si, already SiO2 in BN-SiO2); proxy yields differ ~20x (O on B vs B2O3); only a qualitative 10 h observation exists",
+   "em_test": "H4 / AOL-EX-02: combined ion + atomic-O + N2 coupon exposure of the wall grade at 30-600 degC (extended to the P7 wall temperature) with XPS / SEM for B2O3 formation and recession; dedicated AO source with fluence witness (row 132)",
+   "dcr_trigger": null,
+   "input_dependency": "P7 wall temperature; wall grade specification"
+  },
+  {
+   "id": "BN-WALL-PLASMA",
+   "material": "BN (hBN)",
+   "application": "channel wall (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-04"
+   ],
+   "gate": "plasma exposure (N / O ion bombardment, SEE change)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-14",
+    "EV-16",
+    "EV-17"
+   ],
+   "analyses": [],
+   "assumptions": [],
+   "basis": "oxidation / nitridation changes the wall surface state and SEE (sheath potential, hence impact energy); no N / O data on BN or BN-SiO2",
+   "em_test": "H9 / AOL-PM-07: SEE yield of wall coupons before and after N / O exposure; H5 long-fluence coupons (yield vs fluence, roughness)",
+   "dcr_trigger": null,
+   "input_dependency": "wall grade specification (lot shared with the coupons, HW-H1-14)"
+  },
+  {
+   "id": "BN-WALL-SPUTTER",
+   "material": "BN (hBN)",
+   "application": "channel wall (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-04"
+   ],
+   "gate": "sputtering / erosion (channel wall)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-14",
+    "EV-15",
+    "EV-17"
+   ],
+   "analyses": [],
+   "assumptions": [],
+   "basis": "no N+ / N2+ / O+ / O2+ yield on BN or BN-SiO2 exists (every N / O lookup OUT_OF_DOMAIN -> NOT_DEMONSTRATED); the only air-mode analog life indication (PPS1350, N2 / O2 + 10 % Xe, 'compatible with a 7000-9500 hrs lifetime', second-hand) is BELOW the 15,000 h firing basis; Xe+ yields exist for BN grades with a ~12x lab / grade spread (XE_CONTINGENCY); wall flux comes only from an admitted Hall member (credible set empty; P2 open). The wall erosion life is the principal open life item of the channel",
+   "em_test": "H1 ion-beam coupons of the procured wall grade (N+, N2+, O+, O2+ at 20-300 eV, 0-85 deg; weight loss and QCM), H3 molecular vs atomic, H8 Xe+ on the same coupons; H6 EM wear segment on N2, N2 / O2 and Xe with the H-1 channel and B(z) (replaceable exit rings with fiducials, AOL-RC-03; profiles each stage, AOL-PM-03); H7 near-wall diagnostics; endurance acceptance pre-registered (AOL-LF-02)",
+   "dcr_trigger": "if the H6 erosion rate extrapolated under the pre-registered method gives a wall life < 15,000 h at the reference operating point, raise a DCR on the wall erosion allowance (wall thickness outside the frozen channel surfaces; not yet a DBF-1 value) or the B(z) target (DBF1-BZ-01); the H1 reference channel geometry DBF1-H1-01..03 is architecture-frozen (A9.38) and is not a lever; the wall grade within DBF1-MAT-04 is the last lever",
+   "input_dependency": "P2 admitted Hall envelope (wall flux / energy); P3 H1 B(z)"
+  },
+  {
+   "id": "BN-WALL-DEPOSITION",
+   "material": "BN (hBN)",
+   "application": "channel wall (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-04",
+    "DBF1-ICP-04"
+   ],
+   "gate": "deposition (metallic collector sputter films on the exit insulators)",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-11"
+   ],
+   "analyses": [
+    "DA-03"
+   ],
+   "assumptions": [
+    "A-ICP-01"
+   ],
+   "basis": "the analog deposited metallic films on the HET front insulators (TK-71); conductive films on BN-SiO2 exit surfaces change wall conduction / SEE near the exit and the anode-to-ground isolation",
+   "em_test": "AOL-WC-01 near-exit witness coupons of the wall grade with sheet resistance and EDS after each block; exit-ring inspection (AOL-RC-03)",
+   "dcr_trigger": null,
+   "input_dependency": "P4 collector sheath energy"
+  },
+  {
+   "id": "BN-WALL-THERMAL",
+   "material": "BN (hBN)",
+   "application": "channel wall (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-04"
+   ],
+   "gate": "thermal: continuous-use temperature and thermal cycling",
+   "verdict": "EM_VERIFICATION_REQUIRED",
+   "evidence": [
+    "EV-18",
+    "EV-20"
+   ],
+   "analyses": [
+    "DA-05",
+    "DA-06"
+   ],
+   "assumptions": [
+    "A-CYC-01"
+   ],
+   "basis": "no DBF-1 wall temperature exists (P7); supplier oxidizing-atmosphere guides give necessary screening ceilings of 800-850 degC (AX05 / PL grades) after the 50 K margin; grade not specified (binder-free hBN or borate-bonded); up to 17,928 cycles (A-CYC-01); the ceramic's CTE (0.4-3 um/m K) is ~5-40x below the Inconel anode's (DA-05)",
+   "em_test": "TP-07-equivalent wall-ring thermal cycling to >= 1.5 x the registered cycle count between the P7 cold / hot wall temperatures with the mount; flexural strength retained after cycling; wall thermocouples on the EM (AOL-CX-07)",
+   "dcr_trigger": "if the P7 hot-case inner-wall temperature exceeds the selected grade's screening ceiling (supplier oxidizing limit - 50 K, DA-06), the grade within DBF1-MAT-04 or the thermal path changes by DCR",
+   "input_dependency": "P7 H1_WALL_IN / H1_WALL_OUT hot / cold temperatures"
+  },
+  {
+   "id": "BN-WALL-OXIDE-ELEC",
+   "material": "BN (hBN)",
+   "application": "channel wall (backup)",
+   "dbf1_items": [
+    "DBF1-MAT-04"
+   ],
+   "gate": "electrical behaviour of the oxide scale",
+   "verdict": "NOT_APPLICABLE",
+   "evidence": [],
+   "analyses": [],
+   "assumptions": [],
+   "basis": "the wall is an insulator by function and carries no electrode current; surface conduction from deposits is covered by the deposition gate and SEE change by the plasma-exposure gate",
+   "em_test": null,
+   "dcr_trigger": null,
+   "input_dependency": null
+  }
+ ],
+ "verdict_counts": {
+  "EM_VERIFICATION_REQUIRED": 32,
+  "NOT_APPLICABLE": 2,
+  "PASS_BY_ANALYSIS_WITH_ASSUMPTION": 8
+ },
+ "fail_count": 0,
+ "design_driving_findings": [
+  "ICP collector sputtering (DA-03): at analog cathodic-sheath energies the collector would lose tens of mm over the firing basis; the mean collector ion energy must stay below E* = 26-38 eV (0.5-2 mm allowance), 4-16 eV above the N+ -> Ni prior threshold. Owner of the requirement: P4 ICP closure (BD-06); the same for both retained alloys.",
+  "Anode temperature (DA-06): the supplier oxidation-data domain caps IN600 at 930 degC and IN601 at 1150 degC after the 50 K margin; the only repository anode temperature (>= 1190 degC, inadmissible context) is above both. P7 decides; DCR triggers registered.",
+  "Channel wall erosion (EV-15): the only air-mode analog life indication (7000-9500 h) is below the 15,000 h firing basis; no N / O yield on BN or BN-SiO2 exists. EM wear segment H6 is the closing test.",
+  "Internal O exposure (DA-02) of the anode is of the same order as or above the external ram-face bound; coupon AO fluence must be set from the internal dose."
+ ],
+ "closure_state": {
+  "item": "P8 Materials",
+  "state": "FROZEN FOR EM",
+  "meaning": "The DBF-1 material selections stay frozen (FROZEN_ASSUMPTION); every gate has a verdict; no gate FAILs on evidence; the open gates close only by the named coupon / engineering-model tests (qualification evidence cannot come from literature for these service conditions)",
+  "conditions": [
+   "P7 hot-case anode / collector / wall temperatures within the DA-06 screening ceilings (else the registered DCR triggers apply)",
+   "P4 ICP closure holds the collector ion energy within the DA-03 ceiling at I_e >= I_d (else DCR on DBF1-ICP-04, not on the material)"
+  ],
+  "not_closed_because": "no measured property of any retained material exists in the service condition (O / N plasma, electrical loading, atomic O, service temperature); this is evidence-not-yet-available, not an architecture limit (A9.31 Q7)",
+  "statement": "docs/closure/statements/P8_materials.md"
+ }
+}
