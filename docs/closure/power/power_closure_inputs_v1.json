@@ -1,0 +1,1318 @@
+{
+ "schema": "abep_power_closure_inputs_v1",
+ "id": "power_closure_inputs_v1",
+ "item": "A9.38 P6 power closure",
+ "date": "2026-10-08",
+ "boundary": "bus_power_boundary_a9_v2",
+ "configuration": "hall_icp_neutralizer",
+ "rules": [
+  "every installed slot carries a load and an efficiency with an evidence class; no TBD (A9.38 P6)",
+  "slot efficiency = product of the converter term and the harness term (LEDGERS A1 / A2: converter and harness loss inside the component efficiency, never added on top); evidence class of the product = the weakest component class",
+  "Hall discharge power is DESIGN_ALLOCATION_NOT_PREDICTED until the converged Hall envelope (P2) supplies it; the ledger then reports the discharge ceiling P_d,max that fits 1,350 W and 1,500 W",
+  "thermal_control = the row-114 50 W controls / thermal allowance minus the housekeeping bus draw (owner-allocation residual) until the P7 flight thermal case supplies heater power",
+  "corners: conservative = loads at their high bound and efficiencies at their low bound, favourable = the reverse; operating variables (P_d, P_fwd) are not corner variables (RF trade line instead)",
+  "valves: AIR_PRIMARY energises the atmospheric metering + isolation valve (2 coils), the Xe path is de-energised closed; XE_CONTINGENCY energises the Xe PFCV + two series isolation valves (row 90, 3 coils) and de-energises the atmospheric path and the compressor"
+ ],
+ "worst_state": "ds2:ECSS_ST_HIGH:alt180:lat-73.0000:lst15:lon240:doy1",
+ "compressor_statistics_W": {
+  "median_state_max": 9.76238717571,
+  "global_max": 11.1251000485,
+  "global_min": 9.30487082877,
+  "worst_state_max": 11.1251000485
+ },
+ "magnet_scale_factor_B": 1.06315493975,
+ "rf_trade_line_P_fwd_W": [
+  0.0,
+  100.0,
+  200.0,
+  300.0,
+  400.0,
+  500.0
+ ],
+ "terms": [
+  {
+   "id": "PD-LOW",
+   "quantity": "Hall discharge load-plane power at the 12 mN point (V_d x I_d)",
+   "kind": "operating",
+   "value": 650.0,
+   "units": "W",
+   "low": 650.0,
+   "high": 650.0,
+   "evidence_class": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "closure_class": "DESIGN_ALLOCATION_NOT_PREDICTED",
+   "sources": [
+    {
+     "path": "docs/baseline/DBF-1/dbf1_v1.json",
+     "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+     "pointer": "/items (DBF1-H1-06)"
+    }
+   ],
+   "rationale": "lower end of the DBF-1 discharge-power band; Hall discharge power at a thrust point comes from the converged Hall envelope (P2, HALL_NUMERICS_NOT_CONVERGED); until then the registered allocation is used and labelled",
+   "flags": [
+    "DESIGN_ALLOCATION_NOT_PREDICTED"
+   ]
+  },
+  {
+   "id": "PD-HIGH",
+   "quantity": "Hall discharge load-plane power at the 25 mN point (band upper end)",
+   "kind": "operating",
+   "value": 1350.0,
+   "units": "W",
+   "low": 1350.0,
+   "high": 1350.0,
+   "evidence_class": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "closure_class": "DESIGN_ALLOCATION_NOT_PREDICTED",
+   "sources": [
+    {
+     "path": "docs/baseline/DBF-1/dbf1_v1.json",
+     "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+     "pointer": "/items (DBF1-H1-06)"
+    }
+   ],
+   "rationale": "upper end of the DBF-1 discharge-power band (H2-1 sizing band; its upper end was set equal to the A5 bus allocation, H2_1 sec. 2); evaluated as registered, the ledger shows what fits",
+   "flags": [
+    "DESIGN_ALLOCATION_NOT_PREDICTED"
+   ]
+  },
+  {
+   "id": "RF-PFWD",
+   "quantity": "ICP RF forward power at the generator / 50-ohm reference plane (reference value)",
+   "kind": "operating",
+   "value": 200.0,
+   "units": "W",
+   "low": 0.0,
+   "high": 500.0,
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "sources": [
+    {
+     "path": "docs/baseline/DBF-1/dbf1_v1.json",
+     "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+     "pointer": "/items (DBF1-RF-02)"
+    },
+    {
+     "path": "docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md",
+     "sha256": "d346bcc5a5edc4a4dfa289010c8e48371477a0f3548a5e9dcf8886b6f55dbe77",
+     "pointer": "annex TAK-04 (Takahashi 2024 p. 3: 13.56 MHz, generator 200 W, no reflection detected)"
+    }
+   ],
+   "rationale": "reference forward power inside the frozen 0-500 W envelope (DBF1-RF-02), at the only published operating point of the topology precedent (TAK-04, context only, never scaled to H-1); the electron-current requirement (ICP-45 / I_e,cap, P4) sets the real value; no fixed Hall / ICP split (A9.1 OQ-A902-03): the ledger reports the Hall discharge ceiling as a function of P_fwd",
+   "flags": [
+    "OPERATING_VARIABLE",
+    "UPDATE_FROM_P4_ICP45"
+   ]
+  },
+  {
+   "id": "MAG-IN-REF",
+   "quantity": "inner coil terminal power at the B band upper end (268.6 G), hot",
+   "kind": "load",
+   "value": 6.34597183535,
+   "units": "W",
+   "low": 0.3652,
+   "high": 27.84,
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+     "pointer": "/coil_design/cases/1/coils/inner/chosen/P_kulgrid_538C_W"
+    },
+    {
+     "path": "docs/baseline/DBF-1/dbf1_v1.json",
+     "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+     "pointer": "/items (DBF1-BZ-02)"
+    }
+   ],
+   "rationale": "H2-1 RP-1 lumped coil design at f_NI 2 sized for 260.5 G, Kulgrid conductor at its 537.8 degC class temperature (hot bound), scaled by (268.6 / 260.5)^2 = 1.063155 to the DBF-1 peak-band upper end (P ~ NI^2 ~ B^2, linear circuit); low = RP-1 f_NI 1 copper 20 degC, high = MC-1 capability case (403 G, worst-case assumptions)",
+   "flags": [
+    "FEMM_PENDING_P3"
+   ]
+  },
+  {
+   "id": "MAG-OUT-REF",
+   "quantity": "outer coil terminal power at the B band upper end (268.6 G), hot",
+   "kind": "load",
+   "value": 16.0430080408,
+   "units": "W",
+   "low": 0.9236,
+   "high": 58.4,
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+     "pointer": "/coil_design/cases/1/coils/outer/chosen/P_kulgrid_538C_W"
+    }
+   ],
+   "rationale": "as MAG-IN-REF for the outer coil",
+   "flags": [
+    "FEMM_PENDING_P3"
+   ]
+  },
+  {
+   "id": "MAG-IN-CAP",
+   "quantity": "inner coil terminal power at the MC-1 capability (403 G), worst-case assumptions",
+   "kind": "load",
+   "value": 27.84,
+   "units": "W",
+   "low": 0.3652,
+   "high": 27.84,
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+     "pointer": "/coil_design/cases/2/coils/inner/chosen/P_kulgrid_538C_W"
+    },
+    {
+     "path": "docs/baseline/DBF-1/dbf1_v1.json",
+     "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+     "pointer": "/items (DBF1-BZ-05)"
+    }
+   ],
+   "rationale": "H2-1 RP-1 worst-case-assumptions coil case at the 403 G MC-1 capability, Kulgrid hot: the bounding magnet load used at the worst admitted state",
+   "flags": [
+    "FEMM_PENDING_P3"
+   ]
+  },
+  {
+   "id": "MAG-OUT-CAP",
+   "quantity": "outer coil terminal power at the MC-1 capability (403 G), worst-case assumptions",
+   "kind": "load",
+   "value": 58.4,
+   "units": "W",
+   "low": 0.9236,
+   "high": 58.4,
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+     "pointer": "/coil_design/cases/2/coils/outer/chosen/P_kulgrid_538C_W"
+    }
+   ],
+   "rationale": "as MAG-IN-CAP for the outer coil",
+   "flags": [
+    "FEMM_PENDING_P3"
+   ]
+  },
+  {
+   "id": "MAG-TRIM",
+   "quantity": "trim coil terminal power",
+   "kind": "load",
+   "value": 0.0,
+   "units": "W",
+   "low": 0.0,
+   "high": 0.0,
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+     "pointer": "/magnetic_topology_preliminary_choice"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/power/configurations/hall_icp_neutralizer/slots/3"
+    }
+   ],
+   "rationale": "baseline topology T2 (single inner + single outer coil); the trim coil is a provision with an unsized NI (H2-1: requires FEMM) and is booked unpowered (0 W explicit, the slot rule); a FEMM-sized trim current enters by revision",
+   "flags": [
+    "FEMM_PENDING_P3"
+   ]
+  },
+  {
+   "id": "RF-MATCH-ACT",
+   "quantity": "adjustable local match: tuning actuators and controller DC input",
+   "kind": "load",
+   "value": 5.0,
+   "units": "W",
+   "low": 0.0,
+   "high": 10.0,
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "sources": [
+    {
+     "path": "docs/baseline/DBF-1/dbf1_v1.json",
+     "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+     "pointer": "/items (DBF1-RF-03)"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/power/configurations/hall_icp_neutralizer/slots/5"
+    }
+   ],
+   "rationale": "two motorised variable capacitors (TAK-04 practice: two variable capacitors) plus their controller, steady average; no sourced value in the repository (verify at the P2 matching design); 0 W only for a fixed passive match",
+   "flags": [
+    "VERIFY",
+    "UPDATE_FROM_P2_IMPEDANCE_MAP"
+   ]
+  },
+  {
+   "id": "ICP-BIAS",
+   "quantity": "collector / bias supply output (V_bias x I_bias)",
+   "kind": "load",
+   "value": 10.0,
+   "units": "W",
+   "low": 0.0,
+   "high": 20.0,
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "sources": [
+    {
+     "path": "docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md",
+     "sha256": "d346bcc5a5edc4a4dfa289010c8e48371477a0f3548a5e9dcf8886b6f55dbe77",
+     "pointer": "ICP-22 (V_d = V_anode - V_electron-source-reference); annex TAK-10 (V_K = -100 V)"
+    },
+    {
+     "path": "docs/baseline/DBF-1/dbf1_v1.json",
+     "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+     "pointer": "/items (DBF1-ICP-04)"
+    }
+   ],
+   "rationale": "V_bias,max 100 V (the only published collector potential, TAK-10) x I_bias,max 0.1 A: the Hall discharge current closes through the discharge supply between anode and collector (ICP-22), so its power is inside V_d x I_d; the bias supply carries the collector-reference control current only (assumed); if the validated P1 circuit routes part of I_d through it, P_bias = V_bias x I_route enters by revision",
+   "flags": [
+    "VERIFY",
+    "UPDATE_FROM_P1_IT_18"
+   ]
+  },
+  {
+   "id": "VALVE-COIL",
+   "quantity": "proportional / isolation valve coil power per energised valve (hot)",
+   "kind": "load",
+   "value": 1.96309639118,
+   "units": "W",
+   "low": 0.4078125,
+   "high": 1.96309639118,
+   "evidence_class": "inferred",
+   "evidence_level": "3",
+   "closure_class": "SOURCED_ANALOG",
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+     "sha256": "d56f700198a64a919d736c8659b6e0aaaa01cd56521885772d2f5a40de374501",
+     "pointer": "/components/flow_control/entries/0 (FC-MOOG-SPEC: 74.5 +/- 2 ohm at 21 degC, 140 mA max sustained, 75 mA min opening, T_op -34..100 degC)"
+    }
+   ],
+   "rationale": "Moog PFCV 51E339 coil I^2 R at 140 mA, R = 76.5 ohm (tolerance high) raised to 100 degC with the NBS annealed-copper coefficient 0.00393 /K (coil material not stated by Moog: verify) = 1.9631 W; low = 75 mA at 72.5 ohm cold. The atmospheric metering valve and the isolation valves are taken as PFCV-class coils (no repository data for them)",
+   "flags": [
+    "VERIFY_COIL_MATERIAL"
+   ]
+  },
+  {
+   "id": "HK-LOAD",
+   "quantity": "propulsion controller, PPU control, FDIR, sensors, TM/TC interface and quiescent draw",
+   "kind": "load",
+   "value": 30.0,
+   "units": "W",
+   "low": 12.0,
+   "high": 30.0,
+   "evidence_class": "assumed",
+   "evidence_level": "5",
+   "closure_class": "SOURCED_ANALOG",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+     "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+     "pointer": "/external_values/S-OSUGA05/rows/auxiliary (30 W: -15 V 0.5 A + 15 V 1.5 A, 'supplies internal signal circuit')"
+    },
+    {
+     "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+     "sha256": "d56f700198a64a919d736c8659b6e0aaaa01cd56521885772d2f5a40de374501",
+     "pointer": "/components/housekeeping/entries/0 (repository ppu.py controller 8 W + sensors 4 W, unsourced)"
+    }
+   ],
+   "rationale": "the auxiliary (internal signal circuit) supply rating of a flight-class Hall PPU (Osuga 2005 Table 1) taken as the controls / FDIR / telemetry load incl. idle-supply quiescent draw (conservative: a rating, not a measured consumption); low = repository code values 12 W",
+   "flags": [
+    "RATING_USED_AS_LOAD"
+   ]
+  },
+  {
+   "id": "CP-NOM",
+   "quantity": "compressor motor-drive electrical input, nominal (median over required states of the per-state maximum over admitted in-domain surface scenarios)",
+   "kind": "load",
+   "value": 9.76238717571,
+   "units": "W",
+   "low": 9.76238717571,
+   "high": 9.76238717571,
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "sources": [
+    {
+     "path": "docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json",
+     "sha256": "600cf229ecdb5f91f0471f03cfdd6d287486ad21e9d9ebadde3cdafa54a37394",
+     "pointer": "/states/*/air_dbf1/scenarios/*/P_compressor_el_W"
+    }
+   ],
+   "rationale": "DBF-1 compressor T6-A1-U2-D0-Ti6Al4V-H0.5 through the F3/F4 DragCompressor model (P_el = (P_gas + P_bear) / eta_motor + P_ctrl) with code-default coefficients (PARAMETRIC_SENSITIVITY, T-1 / T-2 open); no sourced bound exists, so the ledger reports the compressor headroom instead",
+   "flags": [
+    "UPDATE_FROM_DCR_001",
+    "CODE_DEFAULT_COEFFICIENTS"
+   ]
+  },
+  {
+   "id": "CP-WORST",
+   "quantity": "compressor motor-drive electrical input, maximum over every required state and admitted in-domain surface scenario (at the worst admitted state)",
+   "kind": "load",
+   "value": 11.1251000485,
+   "units": "W",
+   "low": 11.1251000485,
+   "high": 11.1251000485,
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "sources": [
+    {
+     "path": "docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json",
+     "sha256": "600cf229ecdb5f91f0471f03cfdd6d287486ad21e9d9ebadde3cdafa54a37394",
+     "pointer": "/states (ds2:ECSS_ST_HIGH:alt180:lat-73.0000:lst15:lon240:doy1) scenario cll_a0.5"
+    },
+    {
+     "path": "docs/baseline/DBF-1/dbf1_v1.json",
+     "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+     "pointer": "/items (DBF1-IN-08)"
+    }
+   ],
+   "rationale": "as CP-NOM; the global maximum 11.125100 W is reached at ds2:ECSS_ST_HIGH:alt180:lat-73.0000:lst15:lon240:doy1 (also the maximum-T_required state)",
+   "flags": [
+    "UPDATE_FROM_DCR_001",
+    "CODE_DEFAULT_COEFFICIENTS"
+   ]
+  },
+  {
+   "id": "ETA-FE",
+   "quantity": "front end: spacecraft DC bus -> regulated 100 V internal propulsion bus",
+   "kind": "efficiency",
+   "value": 0.95,
+   "units": "-",
+   "low": 0.92,
+   "high": 0.97,
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+     "pointer": "/answers (row 111)"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/power/internal_bus_V"
+    }
+   ],
+   "rationale": "row 111: regulated 100 V internal bus, spacecraft-input front end configurable until the spacecraft bus is specified; one regulated DC-DC stage; no repository source (verify): bracketed by the single-stage analogs (Osuga 2005 100 V-bus anode supply >= 0.92 spec; Rhodes 2024 measured 0.88-0.91). If the spacecraft supplies a regulated 100 V bus the stage is direct (1.0)",
+   "flags": [
+    "VERIFY",
+    "SPACECRAFT_ICD_DEPENDENT"
+   ]
+  },
+  {
+   "id": "ETA-HD",
+   "quantity": "Hall discharge supply (100 V internal bus -> V_d at the anode terminals)",
+   "kind": "efficiency",
+   "value": 0.9,
+   "units": "-",
+   "low": 0.86,
+   "high": 0.92,
+   "evidence_class": "digitized",
+   "evidence_level": "3",
+   "closure_class": "SOURCED_ANALOG",
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+     "sha256": "d56f700198a64a919d736c8659b6e0aaaa01cd56521885772d2f5a40de374501",
+     "pointer": "/components/hall_discharge/entries/1 (HD-RH24-250V-28Vin)"
+    },
+    {
+     "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+     "sha256": "d56f700198a64a919d736c8659b6e0aaaa01cd56521885772d2f5a40de374501",
+     "pointer": "/components/hall_discharge/entries/4 (HD-RH24-400V-28Vin)"
+    },
+    {
+     "path": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+     "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+     "pointer": "/converter_efficiency_parameters/0 (H24-05 0.8583-0.915)"
+    },
+    {
+     "path": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+     "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+     "pointer": "/converter_efficiency_parameters/1 (H24-06 Osuga 2005 100 V bus 0.92 spec)"
+    }
+   ],
+   "rationale": "NASA SSEP sub-kW LCC breadboard measured 0.8805-0.9063 at 600-1000 W out (28 V in, 250 / 400 V out); a 100 V-input stage has a smaller step-up ratio (inferred: not worse); the 100 V-bus flight specification analog is 0.92; low = the H24-05 lower end",
+   "flags": [
+    "UPDATE_FROM_ROW_113_BREADBOARD"
+   ]
+  },
+  {
+   "id": "ETA-MAG",
+   "quantity": "per-coil magnet supply (current-controlled, isolated)",
+   "kind": "efficiency",
+   "value": 0.6,
+   "units": "-",
+   "low": 0.6,
+   "high": 0.85,
+   "evidence_class": "assumed",
+   "evidence_level": "5",
+   "closure_class": "SOURCED_ANALOG",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+     "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+     "pointer": "/converter_efficiency_parameters/4 (H24-09 Osuga 2005 Table 1 magnet 0.60)"
+    }
+   ],
+   "rationale": "minimum-efficiency specification of a flight Hall PPU magnet supply (Osuga 2005 Table 1, 5 W class, two-stage isolation + buck); applied as the conservative value",
+   "flags": []
+  },
+  {
+   "id": "ETA-RFGEN",
+   "quantity": "13.56 MHz RF generator DC input -> forward RF power",
+   "kind": "efficiency",
+   "value": 0.7,
+   "units": "-",
+   "low": 0.6,
+   "high": 0.92,
+   "evidence_class": "inferred",
+   "evidence_level": "6",
+   "closure_class": "SOURCED_ANALOG",
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+     "sha256": "d56f700198a64a919d736c8659b6e0aaaa01cd56521885772d2f5a40de374501",
+     "pointer": "/components/rf_source/entries/0 (RF-NEWORBIT25 0.92, 1-5 MHz, measured nominal)"
+    },
+    {
+     "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+     "sha256": "d56f700198a64a919d736c8659b6e0aaaa01cd56521885772d2f5a40de374501",
+     "pointer": "/components/rf_source/entries/1 (RF-VOLKMAR18 0.60-0.70 DC -> RF at the coil incl. cables, inferred)"
+    },
+    {
+     "path": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+     "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+     "pointer": "/converter_efficiency_parameters/9 (H24-14 0.60-0.92)"
+    }
+   ],
+   "rationale": "the two repository analogs span 0.60-0.92 at 1-5 MHz; 13.56 MHz is above both (switching losses grow with frequency, inferred), so the reference is the upper end of the conservative analog (Volkmar 0.70); a measured FLIGHT_REPRESENTATIVE_DC_RF_SOURCE (A9.3 OQ-RFQ-06) replaces it",
+   "flags": [
+    "UPDATE_FROM_RFQ_06"
+   ]
+  },
+  {
+   "id": "ETA-BIAS",
+   "quantity": "collector / bias supply",
+   "kind": "efficiency",
+   "value": 0.8,
+   "units": "-",
+   "low": 0.8,
+   "high": 0.9,
+   "evidence_class": "measured",
+   "evidence_level": "3",
+   "closure_class": "SOURCED_ANALOG",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+     "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+     "pointer": "/converter_efficiency_parameters/2 (H24-07 Osuga 2005 keeper conditioner > 0.80 measured)"
+    }
+   ],
+   "rationale": "a 25 W-class floating current-regulated conditioner of a flight Hall PPU (lower bound 'more than 80 %'), the closest analog of a floating ~10 W bias supply",
+   "flags": []
+  },
+  {
+   "id": "ETA-DRV",
+   "quantity": "valve-driver / actuator-driver supply",
+   "kind": "efficiency",
+   "value": 0.8,
+   "units": "-",
+   "low": 0.8,
+   "high": 0.9,
+   "evidence_class": "assumed",
+   "evidence_level": "5",
+   "closure_class": "SOURCED_ANALOG",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+     "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+     "pointer": "/converter_efficiency_parameters/5 (H24-10 Osuga 2005 mass-flow PC 0.80)"
+    }
+   ],
+   "rationale": "minimum-efficiency specification of a flight Hall PPU mass-flow (valve) conditioner; also used for the match actuators",
+   "flags": []
+  },
+  {
+   "id": "ETA-HK",
+   "quantity": "auxiliary / housekeeping supply",
+   "kind": "efficiency",
+   "value": 0.7,
+   "units": "-",
+   "low": 0.7,
+   "high": 0.85,
+   "evidence_class": "assumed",
+   "evidence_level": "5",
+   "closure_class": "SOURCED_ANALOG",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+     "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+     "pointer": "/converter_efficiency_parameters/6 (H24-11 Osuga 2005 auxiliary 0.70)"
+    }
+   ],
+   "rationale": "minimum-efficiency specification of a flight Hall PPU auxiliary supply",
+   "flags": []
+  },
+  {
+   "id": "ETA-TH",
+   "quantity": "heater switch (resistive heaters switched from the internal bus)",
+   "kind": "efficiency",
+   "value": 0.98,
+   "units": "-",
+   "low": 0.95,
+   "high": 0.99,
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+     "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+     "pointer": "/converter_efficiency_parameters/8 (H24-13 TBD)"
+    }
+   ],
+   "rationale": "solid-state switch conduction loss only (no conversion stage); no repository source (verify)",
+   "flags": [
+    "VERIFY"
+   ]
+  },
+  {
+   "id": "ETA-CPD",
+   "quantity": "compressor drive supply path (drive fed from the internal bus)",
+   "kind": "efficiency",
+   "value": 1.0,
+   "units": "-",
+   "low": 1.0,
+   "high": 1.0,
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "sources": [
+    {
+     "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+     "sha256": "d56f700198a64a919d736c8659b6e0aaaa01cd56521885772d2f5a40de374501",
+     "pointer": "/components/compressor/entries/0 (CP-REPO-MODEL: P_el includes eta_motor and P_ctrl)"
+    }
+   ],
+   "rationale": "the compressor load is the motor-drive electrical input of the F3 model, whose eta_motor already carries the drive conversion; only the harness applies (no double counting, LEDGERS A1)",
+   "flags": [
+    "UPDATE_FROM_DCR_001"
+   ]
+  },
+  {
+   "id": "ETA-H-HV",
+   "quantity": "harness, 100 V-class power lines (discharge, RF generator, bias, compressor drive)",
+   "kind": "efficiency",
+   "value": 0.995,
+   "units": "-",
+   "low": 0.99,
+   "high": 0.999,
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "sources": [
+    {
+     "path": "docs/ledgers/LEDGERS.md",
+     "sha256": "aa6d0c964e1c25fc20f7ac513b2f97e0cc6cad38fd5546f220e5d9e72d23c631",
+     "pointer": "sec. 3.4 A2 (harness loss inside the component efficiency); G15"
+    }
+   ],
+   "rationale": "0.5 % I^2 R allowance for 100 V-class lines at a few amperes; harness lengths and gauges are not designed (LEDGERS G15, verify at harness design)",
+   "flags": [
+    "VERIFY"
+   ]
+  },
+  {
+   "id": "ETA-H-LV",
+   "quantity": "harness, low-voltage lines (magnets, valves, actuators, housekeeping, heaters)",
+   "kind": "efficiency",
+   "value": 0.98,
+   "units": "-",
+   "low": 0.97,
+   "high": 0.995,
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "sources": [
+    {
+     "path": "docs/ledgers/LEDGERS.md",
+     "sha256": "aa6d0c964e1c25fc20f7ac513b2f97e0cc6cad38fd5546f220e5d9e72d23c631",
+     "pointer": "sec. 3.4 A2; G15"
+    }
+   ],
+   "rationale": "2 % I^2 R allowance for low-voltage, ampere-class lines (coil leads at 1.5-5 A, 4-12 V); verify at harness design",
+   "flags": [
+    "VERIFY"
+   ]
+  },
+  {
+   "id": "ETA-RES",
+   "quantity": "reserved DC port (unused, 0 W)",
+   "kind": "efficiency",
+   "value": 1.0,
+   "units": "-",
+   "low": 1.0,
+   "high": 1.0,
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "sources": [
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/power/configurations/hall_icp_neutralizer/slots/12"
+    }
+   ],
+   "rationale": "declared unused (0 W explicit, row 110); a 0 W slot draws exactly 0 W whatever its efficiency",
+   "flags": []
+  }
+ ],
+ "slot_efficiencies": {
+  "hall_discharge": [
+   "ETA-HD",
+   "ETA-H-HV"
+  ],
+  "hall_magnet_inner": [
+   "ETA-MAG",
+   "ETA-H-LV"
+  ],
+  "hall_magnet_outer": [
+   "ETA-MAG",
+   "ETA-H-LV"
+  ],
+  "hall_magnet_trim": [
+   "ETA-MAG",
+   "ETA-H-LV"
+  ],
+  "icp_rf_source": [
+   "ETA-H-HV"
+  ],
+  "icp_matching_network": [
+   "ETA-DRV",
+   "ETA-H-LV"
+  ],
+  "icp_collector_bias": [
+   "ETA-BIAS",
+   "ETA-H-HV"
+  ],
+  "flow_control_atmospheric": [
+   "ETA-DRV",
+   "ETA-H-LV"
+  ],
+  "flow_control_xe": [
+   "ETA-DRV",
+   "ETA-H-LV"
+  ],
+  "compressor": [
+   "ETA-CPD",
+   "ETA-H-HV"
+  ],
+  "thermal_control": [
+   "ETA-TH",
+   "ETA-H-LV"
+  ],
+  "housekeeping_controls": [
+   "ETA-HK",
+   "ETA-H-LV"
+  ],
+  "reserved_dc_port": [
+   "ETA-RES"
+  ]
+ },
+ "points": [
+  {
+   "id": "P-NOM",
+   "name": "nominal reference operating point (AIR_PRIMARY; discharge at the design allocation)",
+   "mode": "AIR_PRIMARY",
+   "state": "envelope (compressor at the median state)",
+   "thrust_label": "reference",
+   "hall_discharge": {
+    "rule": "close_design_allocation"
+   },
+   "loads": {
+    "hall_magnet_inner": {
+     "num": [
+      [
+       "MAG-IN-REF",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "hall_magnet_outer": {
+     "num": [
+      [
+       "MAG-OUT-REF",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "hall_magnet_trim": {
+     "num": [
+      [
+       "MAG-TRIM",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "icp_rf_source": {
+     "num": [
+      [
+       "RF-PFWD",
+       1
+      ]
+     ],
+     "div": [
+      "ETA-RFGEN"
+     ]
+    },
+    "icp_matching_network": {
+     "num": [
+      [
+       "RF-MATCH-ACT",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "icp_collector_bias": {
+     "num": [
+      [
+       "ICP-BIAS",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "flow_control_atmospheric": {
+     "num": [
+      [
+       "VALVE-COIL",
+       2
+      ]
+     ],
+     "div": []
+    },
+    "flow_control_xe": {
+     "num": [],
+     "div": []
+    },
+    "thermal_control": {
+     "rule": "controls_thermal_residual"
+    },
+    "housekeeping_controls": {
+     "num": [
+      [
+       "HK-LOAD",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "compressor": {
+     "num": [
+      [
+       "CP-NOM",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "reserved_dc_port": {
+     "num": [],
+     "div": []
+    }
+   }
+  },
+  {
+   "id": "P-12",
+   "name": "12 mN point (AIR_PRIMARY; discharge at the DBF-1 band lower end)",
+   "mode": "AIR_PRIMARY",
+   "state": "envelope (compressor at the median state)",
+   "thrust_label": "12 mN",
+   "hall_discharge": {
+    "rule": "fixed",
+    "load": {
+     "num": [
+      [
+       "PD-LOW",
+       1
+      ]
+     ],
+     "div": []
+    }
+   },
+   "loads": {
+    "hall_magnet_inner": {
+     "num": [
+      [
+       "MAG-IN-REF",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "hall_magnet_outer": {
+     "num": [
+      [
+       "MAG-OUT-REF",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "hall_magnet_trim": {
+     "num": [
+      [
+       "MAG-TRIM",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "icp_rf_source": {
+     "num": [
+      [
+       "RF-PFWD",
+       1
+      ]
+     ],
+     "div": [
+      "ETA-RFGEN"
+     ]
+    },
+    "icp_matching_network": {
+     "num": [
+      [
+       "RF-MATCH-ACT",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "icp_collector_bias": {
+     "num": [
+      [
+       "ICP-BIAS",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "flow_control_atmospheric": {
+     "num": [
+      [
+       "VALVE-COIL",
+       2
+      ]
+     ],
+     "div": []
+    },
+    "flow_control_xe": {
+     "num": [],
+     "div": []
+    },
+    "thermal_control": {
+     "rule": "controls_thermal_residual"
+    },
+    "housekeeping_controls": {
+     "num": [
+      [
+       "HK-LOAD",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "compressor": {
+     "num": [
+      [
+       "CP-NOM",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "reserved_dc_port": {
+     "num": [],
+     "div": []
+    }
+   }
+  },
+  {
+   "id": "P-25",
+   "name": "25 mN point (AIR_PRIMARY; discharge at the DBF-1 band upper end)",
+   "mode": "AIR_PRIMARY",
+   "state": "envelope (compressor at its maximum)",
+   "thrust_label": "25 mN",
+   "hall_discharge": {
+    "rule": "fixed",
+    "load": {
+     "num": [
+      [
+       "PD-HIGH",
+       1
+      ]
+     ],
+     "div": []
+    }
+   },
+   "loads": {
+    "hall_magnet_inner": {
+     "num": [
+      [
+       "MAG-IN-REF",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "hall_magnet_outer": {
+     "num": [
+      [
+       "MAG-OUT-REF",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "hall_magnet_trim": {
+     "num": [
+      [
+       "MAG-TRIM",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "icp_rf_source": {
+     "num": [
+      [
+       "RF-PFWD",
+       1
+      ]
+     ],
+     "div": [
+      "ETA-RFGEN"
+     ]
+    },
+    "icp_matching_network": {
+     "num": [
+      [
+       "RF-MATCH-ACT",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "icp_collector_bias": {
+     "num": [
+      [
+       "ICP-BIAS",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "flow_control_atmospheric": {
+     "num": [
+      [
+       "VALVE-COIL",
+       2
+      ]
+     ],
+     "div": []
+    },
+    "flow_control_xe": {
+     "num": [],
+     "div": []
+    },
+    "thermal_control": {
+     "rule": "controls_thermal_residual"
+    },
+    "housekeeping_controls": {
+     "num": [
+      [
+       "HK-LOAD",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "compressor": {
+     "num": [
+      [
+       "CP-WORST",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "reserved_dc_port": {
+     "num": [],
+     "div": []
+    }
+   }
+  },
+  {
+   "id": "P-WORST",
+   "name": "worst admitted atmospheric state (AIR_PRIMARY; T_required 54.5 mN > 25 mN: propulsion at its 25 mN capability; magnets at the MC-1 capability)",
+   "mode": "AIR_PRIMARY",
+   "state": "ds2:ECSS_ST_HIGH:alt180:lat-73.0000:lst15:lon240:doy1",
+   "thrust_label": "25 mN capability",
+   "hall_discharge": {
+    "rule": "fixed",
+    "load": {
+     "num": [
+      [
+       "PD-HIGH",
+       1
+      ]
+     ],
+     "div": []
+    }
+   },
+   "loads": {
+    "hall_magnet_inner": {
+     "num": [
+      [
+       "MAG-IN-CAP",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "hall_magnet_outer": {
+     "num": [
+      [
+       "MAG-OUT-CAP",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "hall_magnet_trim": {
+     "num": [
+      [
+       "MAG-TRIM",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "icp_rf_source": {
+     "num": [
+      [
+       "RF-PFWD",
+       1
+      ]
+     ],
+     "div": [
+      "ETA-RFGEN"
+     ]
+    },
+    "icp_matching_network": {
+     "num": [
+      [
+       "RF-MATCH-ACT",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "icp_collector_bias": {
+     "num": [
+      [
+       "ICP-BIAS",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "flow_control_atmospheric": {
+     "num": [
+      [
+       "VALVE-COIL",
+       2
+      ]
+     ],
+     "div": []
+    },
+    "flow_control_xe": {
+     "num": [],
+     "div": []
+    },
+    "thermal_control": {
+     "rule": "controls_thermal_residual"
+    },
+    "housekeeping_controls": {
+     "num": [
+      [
+       "HK-LOAD",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "compressor": {
+     "num": [
+      [
+       "CP-WORST",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "reserved_dc_port": {
+     "num": [],
+     "div": []
+    }
+   }
+  },
+  {
+   "id": "P-XE",
+   "name": "Xe contingency point (XE_CONTINGENCY; compressor and atmospheric path off; discharge at the DBF-1 band lower end)",
+   "mode": "XE_CONTINGENCY",
+   "state": "any (no atmospheric dependence)",
+   "thrust_label": "Xe contingency",
+   "hall_discharge": {
+    "rule": "fixed",
+    "load": {
+     "num": [
+      [
+       "PD-LOW",
+       1
+      ]
+     ],
+     "div": []
+    }
+   },
+   "loads": {
+    "hall_magnet_inner": {
+     "num": [
+      [
+       "MAG-IN-REF",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "hall_magnet_outer": {
+     "num": [
+      [
+       "MAG-OUT-REF",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "hall_magnet_trim": {
+     "num": [
+      [
+       "MAG-TRIM",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "icp_rf_source": {
+     "num": [
+      [
+       "RF-PFWD",
+       1
+      ]
+     ],
+     "div": [
+      "ETA-RFGEN"
+     ]
+    },
+    "icp_matching_network": {
+     "num": [
+      [
+       "RF-MATCH-ACT",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "icp_collector_bias": {
+     "num": [
+      [
+       "ICP-BIAS",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "flow_control_atmospheric": {
+     "num": [],
+     "div": []
+    },
+    "flow_control_xe": {
+     "num": [
+      [
+       "VALVE-COIL",
+       3
+      ]
+     ],
+     "div": []
+    },
+    "thermal_control": {
+     "rule": "controls_thermal_residual"
+    },
+    "housekeeping_controls": {
+     "num": [
+      [
+       "HK-LOAD",
+       1
+      ]
+     ],
+     "div": []
+    },
+    "compressor": {
+     "num": [],
+     "div": []
+    },
+    "reserved_dc_port": {
+     "num": [],
+     "div": []
+    }
+   }
+  }
+ ],
+ "generated_by": "docs/closure/power/build_power_closure_docs.py inputs",
+ "governing_decision": {
+  "path": "docs/decisions/OD_2026_10_08_A9_38_ARCHITECTURE_FROZEN_DESIGN_CLOSURE_PROGRAMME.md",
+  "sha256": "7bc06a0044283ba054b60a55a99bae84b6f7aea2cb5e4283d3a627ff543b9bcf"
+ }
+}

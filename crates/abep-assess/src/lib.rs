@@ -30,6 +30,7 @@ pub mod neutralization;
 pub mod owner_state;
 pub mod pareto;
 pub mod parity;
+pub mod power_closure;
 pub mod power_gate;
 pub mod propellant;
 pub mod py;

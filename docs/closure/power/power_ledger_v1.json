@@ -1,0 +1,2698 @@
+{
+ "schema": "abep_power_closure_ledger_v1",
+ "id": "power_ledger_v1",
+ "item": "A9.38 P6 power closure",
+ "date": "2026-10-08",
+ "boundary": "bus_power_boundary_a9_v2",
+ "configuration": "hall_icp_neutralizer",
+ "inputs": {
+  "path": "docs/closure/power/power_closure_inputs_v1.json",
+  "sha256": "a588c0dbfb2a5560c5aef98e49b679a0fdbf27c1766493374ad52657e942f147"
+ },
+ "thresholds": {
+  "HC-01_N": 0.012,
+  "HC-02_N": 0.025,
+  "HC-03_W": 1500.0,
+  "HC-03_comparator": "<",
+  "source": "abep-config (config/constraints/engineering_constraints_v1.json); assessment only",
+  "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+ },
+ "owner_allocations": {
+  "design_allocation_W": 1350.0,
+  "common_allocation_W": 300.0,
+  "controls_thermal_allowance_W": 50.0
+ },
+ "official_ledger_tbd": {
+  "official": 24,
+  "with_compressor": 24,
+  "closure": 0
+ },
+ "points": [
+  {
+   "id": "P-NOM",
+   "name": "nominal reference operating point (AIR_PRIMARY; discharge at the design allocation)",
+   "mode": "AIR_PRIMARY",
+   "state": "envelope (compressor at the median state)",
+   "thrust_label": "reference",
+   "P_d_W": 784.4703214286892,
+   "P_d_basis": "closes the 1,350 W design allocation: DESIGN_ALLOCATION_NOT_PREDICTED",
+   "P_bus_non_discharge_W": 427.88025339717365,
+   "P_bus_W": 1349.9999999999998,
+   "P_bus_by_group_W": {
+    "hall": 962.2002691165211,
+    "icp": 322.2004220889625,
+    "common": 65.59930879451613,
+    "reserved": 0.0
+   },
+   "margin_to_design_allocation_W": 2.2737367544323206e-13,
+   "margin_to_rfp_W": 150.00000000000023,
+   "P_bus_below_HC03": true,
+   "P_d_max_W": {
+    "design_allocation_1350": 784.4703214286894,
+    "rfp_1500_supremum": 912.0790714286894
+   },
+   "discharge_chain_eta": 0.850725,
+   "losses_W": {
+    "conversion": 119.75190382732217,
+    "harness": 7.866929195482602,
+    "front_end": 67.50000000000004,
+    "rf_generator": 85.71428571428572,
+    "note": "conversion + harness + front end are inside P_bus - sum(loads); the RF generator loss is inside the icp_rf_source load (generator DC input)"
+   },
+   "thermal_residual_bus_W": 3.9665490256252767,
+   "corners": {
+    "conservative": {
+     "P_bus_non_discharge_W": 634.7159543235385,
+     "P_bus_W": 1349.9999999999998,
+     "P_d_max_W": {
+      "design_allocation_1350": 560.2734095698241,
+      "rfp_1500_supremum": 677.7666095698241
+     },
+     "flags": []
+    },
+    "favourable": {
+     "P_bus_non_discharge_W": 286.9234342094692,
+     "P_bus_W": 1350.0,
+     "P_d_max_W": {
+      "design_allocation_1350": 947.7408377841582,
+      "rfp_1500_supremum": 1081.4669777841582
+     },
+     "flags": []
+    }
+   },
+   "allocation_checks": {
+    "kind": "OWNER_ALLOCATION_CHECK (not a gate, not a prediction)",
+    "design_allocation": {
+     "limit_W": 1350.0,
+     "row": 109,
+     "verdict": "WITHIN_ALLOCATION"
+    },
+    "a5_lower_allocation": {
+     "limit_W": 1300.0,
+     "context_only": true,
+     "verdict": "EXCEEDS_ALLOCATION"
+    },
+    "common_allocation": {
+     "limit_W": 300.0,
+     "row": 114,
+     "P_bus_W": 65.59930879451613,
+     "P_bus_lower_bound_W": 65.59930879451613,
+     "verdict": "WITHIN_ALLOCATION"
+    },
+    "controls_thermal_allowance": {
+     "allowance_W": 50.0,
+     "row": 114,
+     "P_bus_W": 50.0,
+     "P_bus_lower_bound_W": 50.0,
+     "verdict": "WITHIN_ALLOWANCE"
+    }
+   },
+   "icp_power_allocation_check": {
+    "kind": "OWNER_ALLOCATION_CHECK (A9.1 OQ-A902-03; not a gate, not a prediction)",
+    "relation": "P_ICP,available = 1350 - P_common - P_Hall - P_other,active",
+    "design_allocation_W": 1350.0,
+    "P_common_W": 65.59930879451613,
+    "P_Hall_W": 962.2002691165211,
+    "P_other_active_W": 0.0,
+    "P_ICP_available_W": 322.2004220889627,
+    "P_ICP_available_upper_bound_W": 322.2004220889627,
+    "P_ICP_W": 322.2004220889625,
+    "P_ICP_lower_bound_W": 322.2004220889625,
+    "verdict": "WITHIN_AVAILABLE",
+    "label": "A9.38_P6_CLOSURE_V1 P-NOM reference"
+   },
+   "flags": [],
+   "slot_terms": {
+    "hall_discharge": "closes 1,350 W; eta ETA-HD x ETA-H-HV",
+    "hall_magnet_inner": "MAG-IN-REF; eta ETA-MAG x ETA-H-LV",
+    "hall_magnet_outer": "MAG-OUT-REF; eta ETA-MAG x ETA-H-LV",
+    "hall_magnet_trim": "MAG-TRIM; eta ETA-MAG x ETA-H-LV",
+    "icp_rf_source": "RF-PFWD / ETA-RFGEN; eta ETA-H-HV",
+    "icp_matching_network": "RF-MATCH-ACT; eta ETA-DRV x ETA-H-LV",
+    "icp_collector_bias": "ICP-BIAS; eta ETA-BIAS x ETA-H-HV",
+    "flow_control_atmospheric": "VALVE-COIL; eta ETA-DRV x ETA-H-LV",
+    "flow_control_xe": "0 W; eta ETA-DRV x ETA-H-LV",
+    "compressor": "CP-NOM; eta ETA-CPD x ETA-H-HV",
+    "thermal_control": "50 W allowance residual; eta ETA-TH x ETA-H-LV",
+    "housekeeping_controls": "HK-LOAD; eta ETA-HK x ETA-H-LV",
+    "reserved_dc_port": "0 W; eta ETA-RES"
+   },
+   "ledger": {
+    "boundary_version": "bus_power_boundary_a9_v2",
+    "configuration": "hall_icp_neutralizer",
+    "variant": [],
+    "label": "A9.38_P6_CLOSURE_V1 P-NOM reference",
+    "power_basis": "steady_state",
+    "gate_measurement": null,
+    "gate_measurement_conformant": false,
+    "status": "COMPLETE",
+    "P_bus_W": 1349.9999999999998,
+    "P_bus_lower_bound_W": 1349.9999999999998,
+    "residual_W": 0.0,
+    "tbd": [],
+    "load_evidence_classes": [
+     "assumed",
+     "inferred",
+     "model-derived",
+     "owner-allocation"
+    ],
+    "booked_tbd_slots": [],
+    "measured_only": false,
+    "front_end": {
+     "efficiency": 0.95,
+     "evidence_class": "assumed",
+     "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-FE",
+     "internal_bus_V": 100.0
+    },
+    "items": [
+     {
+      "slot": "hall_discharge",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 784.4703214286892,
+      "efficiency": 0.8955,
+      "path": "internal_bus",
+      "P_bus_W": 922.1197466028261,
+      "P_loss_W": 137.64942517413692,
+      "lower_bound_W": 922.1197466028261,
+      "evidence_class": "owner-allocation",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: hall discharge closes the 1350 W design allocation (DESIGN_ALLOCATION_NOT_PREDICTED)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-HD x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_inner",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 6.34597183535,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 11.36049379761905,
+      "P_loss_W": 5.01452196226905,
+      "lower_bound_W": 11.36049379761905,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: MAG-IN-REF",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_outer",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 16.0430080408,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 28.720028716075905,
+      "P_loss_W": 12.677020675275905,
+      "lower_bound_W": 28.720028716075905,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: MAG-OUT-REF",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_trim",
+      "group": "hall",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: MAG-TRIM",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_rf_source",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 285.7142857142857,
+      "efficiency": 0.995,
+      "path": "internal_bus",
+      "P_bus_W": 302.2631956776363,
+      "P_loss_W": 16.54890996335058,
+      "lower_bound_W": 302.2631956776363,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: (RF-PFWD) / ETA-RFGEN",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_matching_network",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 5.0,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 6.713211600429645,
+      "P_loss_W": 1.713211600429645,
+      "lower_bound_W": 6.713211600429645,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: RF-MATCH-ACT",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_collector_bias",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 10.0,
+      "efficiency": 0.796,
+      "path": "internal_bus",
+      "P_bus_W": 13.224014810896588,
+      "P_loss_W": 3.2240148108965876,
+      "lower_bound_W": 13.224014810896588,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ICP-BIAS",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-BIAS x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_assist_magnet",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "active_cooling",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "flow_control_atmospheric",
+      "group": "common",
+      "state": "ON",
+      "P_W": 3.92619278236,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 5.271472586412459,
+      "P_loss_W": 1.3452798040524594,
+      "lower_bound_W": 5.271472586412459,
+      "evidence_class": "inferred",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: 2 x VALVE-COIL",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "flow_control_xe",
+      "group": "common",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: 0 W (off)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "flow_control_icp_feed",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "compressor",
+      "group": "common",
+      "state": "ON",
+      "P_W": 9.76238717571,
+      "efficiency": 0.995,
+      "path": "internal_bus",
+      "P_bus_W": 10.327836208103676,
+      "P_loss_W": 0.5654490323936763,
+      "lower_bound_W": 10.327836208103676,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: CP-NOM",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-CPD x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "thermal_control",
+      "group": "common",
+      "state": "ON",
+      "P_W": 3.6189999999999896,
+      "efficiency": 0.9603999999999999,
+      "path": "internal_bus",
+      "P_bus_W": 3.9665490256252767,
+      "P_loss_W": 0.3475490256252871,
+      "lower_bound_W": 3.9665490256252767,
+      "evidence_class": "owner-allocation",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: row-114 controls / thermal allowance 50 W minus the housekeeping bus draw, at the thermal_control load plane (OWNER_ALLOCATION_RESIDUAL)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-TH x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "housekeeping_controls",
+      "group": "common",
+      "state": "ON",
+      "P_W": 30.0,
+      "efficiency": 0.6859999999999999,
+      "path": "internal_bus",
+      "P_bus_W": 46.03345097437472,
+      "P_loss_W": 16.033450974374723,
+      "lower_bound_W": 46.03345097437472,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: HK-LOAD",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-HK x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "reserved_dc_port",
+      "group": "reserved",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: 0 W (off)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-NOM [reference]: ETA-RES",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     }
+    ]
+   }
+  },
+  {
+   "id": "P-12",
+   "name": "12 mN point (AIR_PRIMARY; discharge at the DBF-1 band lower end)",
+   "mode": "AIR_PRIMARY",
+   "state": "envelope (compressor at the median state)",
+   "thrust_label": "12 mN",
+   "P_d_W": 650.0,
+   "P_d_basis": "PD-LOW: DESIGN_ALLOCATION_NOT_PREDICTED",
+   "P_bus_non_discharge_W": 427.88025339717365,
+   "P_bus_W": 1191.9344424711987,
+   "P_bus_by_group_W": {
+    "hall": 804.1347115877202,
+    "icp": 322.2004220889625,
+    "common": 65.59930879451613,
+    "reserved": 0.0
+   },
+   "margin_to_design_allocation_W": 158.06555752880126,
+   "margin_to_rfp_W": 308.06555752880126,
+   "P_bus_below_HC03": true,
+   "P_d_max_W": {
+    "design_allocation_1350": 784.4703214286894,
+    "rfp_1500_supremum": 912.0790714286894
+   },
+   "discharge_chain_eta": 0.850725,
+   "losses_W": {
+    "conversion": 104.81075700191218,
+    "harness": 7.116117797220785,
+    "front_end": 59.59672212355999,
+    "rf_generator": 85.71428571428572,
+    "note": "conversion + harness + front end are inside P_bus - sum(loads); the RF generator loss is inside the icp_rf_source load (generator DC input)"
+   },
+   "thermal_residual_bus_W": 3.9665490256252767,
+   "corners": {
+    "conservative": {
+     "P_bus_non_discharge_W": 634.7159543235385,
+     "P_bus_W": 1464.5512128746716,
+     "P_d_max_W": {
+      "design_allocation_1350": 560.2734095698241,
+      "rfp_1500_supremum": 677.7666095698241
+     },
+     "flags": []
+    },
+    "favourable": {
+     "P_bus_non_discharge_W": 286.9234342094692,
+     "P_bus_W": 1016.0254631770293,
+     "P_d_max_W": {
+      "design_allocation_1350": 947.7408377841582,
+      "rfp_1500_supremum": 1081.4669777841582
+     },
+     "flags": []
+    }
+   },
+   "allocation_checks": {
+    "kind": "OWNER_ALLOCATION_CHECK (not a gate, not a prediction)",
+    "design_allocation": {
+     "limit_W": 1350.0,
+     "row": 109,
+     "verdict": "WITHIN_ALLOCATION"
+    },
+    "a5_lower_allocation": {
+     "limit_W": 1300.0,
+     "context_only": true,
+     "verdict": "WITHIN_ALLOCATION"
+    },
+    "common_allocation": {
+     "limit_W": 300.0,
+     "row": 114,
+     "P_bus_W": 65.59930879451613,
+     "P_bus_lower_bound_W": 65.59930879451613,
+     "verdict": "WITHIN_ALLOCATION"
+    },
+    "controls_thermal_allowance": {
+     "allowance_W": 50.0,
+     "row": 114,
+     "P_bus_W": 50.0,
+     "P_bus_lower_bound_W": 50.0,
+     "verdict": "WITHIN_ALLOWANCE"
+    }
+   },
+   "icp_power_allocation_check": {
+    "kind": "OWNER_ALLOCATION_CHECK (A9.1 OQ-A902-03; not a gate, not a prediction)",
+    "relation": "P_ICP,available = 1350 - P_common - P_Hall - P_other,active",
+    "design_allocation_W": 1350.0,
+    "P_common_W": 65.59930879451613,
+    "P_Hall_W": 804.1347115877202,
+    "P_other_active_W": 0.0,
+    "P_ICP_available_W": 480.2659796177636,
+    "P_ICP_available_upper_bound_W": 480.2659796177636,
+    "P_ICP_W": 322.2004220889625,
+    "P_ICP_lower_bound_W": 322.2004220889625,
+    "verdict": "WITHIN_AVAILABLE",
+    "label": "A9.38_P6_CLOSURE_V1 P-12 reference"
+   },
+   "flags": [],
+   "slot_terms": {
+    "hall_discharge": "PD-LOW; eta ETA-HD x ETA-H-HV",
+    "hall_magnet_inner": "MAG-IN-REF; eta ETA-MAG x ETA-H-LV",
+    "hall_magnet_outer": "MAG-OUT-REF; eta ETA-MAG x ETA-H-LV",
+    "hall_magnet_trim": "MAG-TRIM; eta ETA-MAG x ETA-H-LV",
+    "icp_rf_source": "RF-PFWD / ETA-RFGEN; eta ETA-H-HV",
+    "icp_matching_network": "RF-MATCH-ACT; eta ETA-DRV x ETA-H-LV",
+    "icp_collector_bias": "ICP-BIAS; eta ETA-BIAS x ETA-H-HV",
+    "flow_control_atmospheric": "VALVE-COIL; eta ETA-DRV x ETA-H-LV",
+    "flow_control_xe": "0 W; eta ETA-DRV x ETA-H-LV",
+    "compressor": "CP-NOM; eta ETA-CPD x ETA-H-HV",
+    "thermal_control": "50 W allowance residual; eta ETA-TH x ETA-H-LV",
+    "housekeeping_controls": "HK-LOAD; eta ETA-HK x ETA-H-LV",
+    "reserved_dc_port": "0 W; eta ETA-RES"
+   },
+   "ledger": {
+    "boundary_version": "bus_power_boundary_a9_v2",
+    "configuration": "hall_icp_neutralizer",
+    "variant": [],
+    "label": "A9.38_P6_CLOSURE_V1 P-12 reference",
+    "power_basis": "steady_state",
+    "gate_measurement": null,
+    "gate_measurement_conformant": false,
+    "status": "COMPLETE",
+    "P_bus_W": 1191.9344424711987,
+    "P_bus_lower_bound_W": 1191.9344424711987,
+    "residual_W": 0.0,
+    "tbd": [],
+    "load_evidence_classes": [
+     "assumed",
+     "inferred",
+     "model-derived",
+     "owner-allocation"
+    ],
+    "booked_tbd_slots": [],
+    "measured_only": false,
+    "front_end": {
+     "efficiency": 0.95,
+     "evidence_class": "assumed",
+     "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-FE",
+     "internal_bus_V": 100.0
+    },
+    "items": [
+     {
+      "slot": "hall_discharge",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 650.0,
+      "efficiency": 0.8955,
+      "path": "internal_bus",
+      "P_bus_W": 764.0541890740252,
+      "P_loss_W": 114.0541890740252,
+      "lower_bound_W": 764.0541890740252,
+      "evidence_class": "owner-allocation",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: hall discharge PD-LOW (DESIGN_ALLOCATION_NOT_PREDICTED)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-HD x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_inner",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 6.34597183535,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 11.36049379761905,
+      "P_loss_W": 5.01452196226905,
+      "lower_bound_W": 11.36049379761905,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: MAG-IN-REF",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_outer",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 16.0430080408,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 28.720028716075905,
+      "P_loss_W": 12.677020675275905,
+      "lower_bound_W": 28.720028716075905,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: MAG-OUT-REF",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_trim",
+      "group": "hall",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: MAG-TRIM",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_rf_source",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 285.7142857142857,
+      "efficiency": 0.995,
+      "path": "internal_bus",
+      "P_bus_W": 302.2631956776363,
+      "P_loss_W": 16.54890996335058,
+      "lower_bound_W": 302.2631956776363,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: (RF-PFWD) / ETA-RFGEN",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_matching_network",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 5.0,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 6.713211600429645,
+      "P_loss_W": 1.713211600429645,
+      "lower_bound_W": 6.713211600429645,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: RF-MATCH-ACT",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_collector_bias",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 10.0,
+      "efficiency": 0.796,
+      "path": "internal_bus",
+      "P_bus_W": 13.224014810896588,
+      "P_loss_W": 3.2240148108965876,
+      "lower_bound_W": 13.224014810896588,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ICP-BIAS",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-BIAS x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_assist_magnet",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "active_cooling",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "flow_control_atmospheric",
+      "group": "common",
+      "state": "ON",
+      "P_W": 3.92619278236,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 5.271472586412459,
+      "P_loss_W": 1.3452798040524594,
+      "lower_bound_W": 5.271472586412459,
+      "evidence_class": "inferred",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: 2 x VALVE-COIL",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "flow_control_xe",
+      "group": "common",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: 0 W (off)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "flow_control_icp_feed",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "compressor",
+      "group": "common",
+      "state": "ON",
+      "P_W": 9.76238717571,
+      "efficiency": 0.995,
+      "path": "internal_bus",
+      "P_bus_W": 10.327836208103676,
+      "P_loss_W": 0.5654490323936763,
+      "lower_bound_W": 10.327836208103676,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: CP-NOM",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-CPD x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "thermal_control",
+      "group": "common",
+      "state": "ON",
+      "P_W": 3.6189999999999896,
+      "efficiency": 0.9603999999999999,
+      "path": "internal_bus",
+      "P_bus_W": 3.9665490256252767,
+      "P_loss_W": 0.3475490256252871,
+      "lower_bound_W": 3.9665490256252767,
+      "evidence_class": "owner-allocation",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: row-114 controls / thermal allowance 50 W minus the housekeeping bus draw, at the thermal_control load plane (OWNER_ALLOCATION_RESIDUAL)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-TH x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "housekeeping_controls",
+      "group": "common",
+      "state": "ON",
+      "P_W": 30.0,
+      "efficiency": 0.6859999999999999,
+      "path": "internal_bus",
+      "P_bus_W": 46.03345097437472,
+      "P_loss_W": 16.033450974374723,
+      "lower_bound_W": 46.03345097437472,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: HK-LOAD",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-HK x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "reserved_dc_port",
+      "group": "reserved",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: 0 W (off)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-12 [reference]: ETA-RES",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     }
+    ]
+   }
+  },
+  {
+   "id": "P-25",
+   "name": "25 mN point (AIR_PRIMARY; discharge at the DBF-1 band upper end)",
+   "mode": "AIR_PRIMARY",
+   "state": "envelope (compressor at its maximum)",
+   "thrust_label": "25 mN",
+   "P_d_W": 1350.0,
+   "P_d_basis": "PD-HIGH: DESIGN_ALLOCATION_NOT_PREDICTED",
+   "P_bus_non_discharge_W": 429.3218962141956,
+   "P_bus_W": 2016.2036735217866,
+   "P_bus_by_group_W": {
+    "hall": 1626.9622998212858,
+    "icp": 322.2004220889625,
+    "common": 67.04095161153809,
+    "reserved": 0.0
+   },
+   "margin_to_design_allocation_W": -666.2036735217866,
+   "margin_to_rfp_W": -516.2036735217866,
+   "P_bus_below_HC03": false,
+   "P_d_max_W": {
+    "design_allocation_1350": 783.2438798431784,
+    "rfp_1500_supremum": 910.8526298431785
+   },
+   "discharge_chain_eta": 0.850725,
+   "losses_W": {
+    "conversion": 182.58853477969,
+    "harness": 11.031396644711059,
+    "front_end": 100.81018367608941,
+    "rf_generator": 85.71428571428572,
+    "note": "conversion + harness + front end are inside P_bus - sum(loads); the RF generator loss is inside the icp_rf_source load (generator DC input)"
+   },
+   "thermal_residual_bus_W": 3.9665490256252767,
+   "corners": {
+    "conservative": {
+     "P_bus_non_discharge_W": 636.2121256814546,
+     "P_bus_W": 2359.7161242107313,
+     "P_d_max_W": {
+      "design_allocation_1350": 559.1014764992248,
+      "rfp_1500_supremum": 676.5946764992248
+     },
+     "flags": []
+    },
+    "favourable": {
+     "P_bus_non_discharge_W": 288.3296991061081,
+     "P_bus_W": 1802.6185285002714,
+     "P_d_max_W": {
+      "design_allocation_1350": 946.4871419411913,
+      "rfp_1500_supremum": 1080.2132819411913
+     },
+     "flags": []
+    }
+   },
+   "allocation_checks": {
+    "kind": "OWNER_ALLOCATION_CHECK (not a gate, not a prediction)",
+    "design_allocation": {
+     "limit_W": 1350.0,
+     "row": 109,
+     "verdict": "EXCEEDS_ALLOCATION"
+    },
+    "a5_lower_allocation": {
+     "limit_W": 1300.0,
+     "context_only": true,
+     "verdict": "EXCEEDS_ALLOCATION"
+    },
+    "common_allocation": {
+     "limit_W": 300.0,
+     "row": 114,
+     "P_bus_W": 67.04095161153809,
+     "P_bus_lower_bound_W": 67.04095161153809,
+     "verdict": "WITHIN_ALLOCATION"
+    },
+    "controls_thermal_allowance": {
+     "allowance_W": 50.0,
+     "row": 114,
+     "P_bus_W": 50.0,
+     "P_bus_lower_bound_W": 50.0,
+     "verdict": "WITHIN_ALLOWANCE"
+    }
+   },
+   "icp_power_allocation_check": {
+    "kind": "OWNER_ALLOCATION_CHECK (A9.1 OQ-A902-03; not a gate, not a prediction)",
+    "relation": "P_ICP,available = 1350 - P_common - P_Hall - P_other,active",
+    "design_allocation_W": 1350.0,
+    "P_common_W": 67.04095161153809,
+    "P_Hall_W": 1626.9622998212858,
+    "P_other_active_W": 0.0,
+    "P_ICP_available_W": -344.00325143282384,
+    "P_ICP_available_upper_bound_W": -344.00325143282384,
+    "P_ICP_W": 322.2004220889625,
+    "P_ICP_lower_bound_W": 322.2004220889625,
+    "verdict": "EXCEEDS_AVAILABLE",
+    "label": "A9.38_P6_CLOSURE_V1 P-25 reference"
+   },
+   "flags": [],
+   "slot_terms": {
+    "hall_discharge": "PD-HIGH; eta ETA-HD x ETA-H-HV",
+    "hall_magnet_inner": "MAG-IN-REF; eta ETA-MAG x ETA-H-LV",
+    "hall_magnet_outer": "MAG-OUT-REF; eta ETA-MAG x ETA-H-LV",
+    "hall_magnet_trim": "MAG-TRIM; eta ETA-MAG x ETA-H-LV",
+    "icp_rf_source": "RF-PFWD / ETA-RFGEN; eta ETA-H-HV",
+    "icp_matching_network": "RF-MATCH-ACT; eta ETA-DRV x ETA-H-LV",
+    "icp_collector_bias": "ICP-BIAS; eta ETA-BIAS x ETA-H-HV",
+    "flow_control_atmospheric": "VALVE-COIL; eta ETA-DRV x ETA-H-LV",
+    "flow_control_xe": "0 W; eta ETA-DRV x ETA-H-LV",
+    "compressor": "CP-WORST; eta ETA-CPD x ETA-H-HV",
+    "thermal_control": "50 W allowance residual; eta ETA-TH x ETA-H-LV",
+    "housekeeping_controls": "HK-LOAD; eta ETA-HK x ETA-H-LV",
+    "reserved_dc_port": "0 W; eta ETA-RES"
+   },
+   "ledger": {
+    "boundary_version": "bus_power_boundary_a9_v2",
+    "configuration": "hall_icp_neutralizer",
+    "variant": [],
+    "label": "A9.38_P6_CLOSURE_V1 P-25 reference",
+    "power_basis": "steady_state",
+    "gate_measurement": null,
+    "gate_measurement_conformant": false,
+    "status": "COMPLETE",
+    "P_bus_W": 2016.2036735217866,
+    "P_bus_lower_bound_W": 2016.2036735217864,
+    "residual_W": 2.2737367544323206e-13,
+    "tbd": [],
+    "load_evidence_classes": [
+     "assumed",
+     "inferred",
+     "model-derived",
+     "owner-allocation"
+    ],
+    "booked_tbd_slots": [],
+    "measured_only": false,
+    "front_end": {
+     "efficiency": 0.95,
+     "evidence_class": "assumed",
+     "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-FE",
+     "internal_bus_V": 100.0
+    },
+    "items": [
+     {
+      "slot": "hall_discharge",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 1350.0,
+      "efficiency": 0.8955,
+      "path": "internal_bus",
+      "P_bus_W": 1586.881777307591,
+      "P_loss_W": 236.88177730759094,
+      "lower_bound_W": 1586.881777307591,
+      "evidence_class": "owner-allocation",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: hall discharge PD-HIGH (DESIGN_ALLOCATION_NOT_PREDICTED)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-HD x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_inner",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 6.34597183535,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 11.36049379761905,
+      "P_loss_W": 5.01452196226905,
+      "lower_bound_W": 11.36049379761905,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: MAG-IN-REF",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_outer",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 16.0430080408,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 28.720028716075905,
+      "P_loss_W": 12.677020675275905,
+      "lower_bound_W": 28.720028716075905,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: MAG-OUT-REF",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_trim",
+      "group": "hall",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: MAG-TRIM",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_rf_source",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 285.7142857142857,
+      "efficiency": 0.995,
+      "path": "internal_bus",
+      "P_bus_W": 302.2631956776363,
+      "P_loss_W": 16.54890996335058,
+      "lower_bound_W": 302.2631956776363,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: (RF-PFWD) / ETA-RFGEN",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_matching_network",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 5.0,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 6.713211600429645,
+      "P_loss_W": 1.713211600429645,
+      "lower_bound_W": 6.713211600429645,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: RF-MATCH-ACT",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_collector_bias",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 10.0,
+      "efficiency": 0.796,
+      "path": "internal_bus",
+      "P_bus_W": 13.224014810896588,
+      "P_loss_W": 3.2240148108965876,
+      "lower_bound_W": 13.224014810896588,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ICP-BIAS",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-BIAS x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_assist_magnet",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "active_cooling",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "flow_control_atmospheric",
+      "group": "common",
+      "state": "ON",
+      "P_W": 3.92619278236,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 5.271472586412459,
+      "P_loss_W": 1.3452798040524594,
+      "lower_bound_W": 5.271472586412459,
+      "evidence_class": "inferred",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: 2 x VALVE-COIL",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "flow_control_xe",
+      "group": "common",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: 0 W (off)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "flow_control_icp_feed",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "compressor",
+      "group": "common",
+      "state": "ON",
+      "P_W": 11.1251000485,
+      "efficiency": 0.995,
+      "path": "internal_bus",
+      "P_bus_W": 11.769479025125628,
+      "P_loss_W": 0.644378976625628,
+      "lower_bound_W": 11.769479025125628,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: CP-WORST",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-CPD x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "thermal_control",
+      "group": "common",
+      "state": "ON",
+      "P_W": 3.6189999999999896,
+      "efficiency": 0.9603999999999999,
+      "path": "internal_bus",
+      "P_bus_W": 3.9665490256252767,
+      "P_loss_W": 0.3475490256252871,
+      "lower_bound_W": 3.9665490256252767,
+      "evidence_class": "owner-allocation",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: row-114 controls / thermal allowance 50 W minus the housekeeping bus draw, at the thermal_control load plane (OWNER_ALLOCATION_RESIDUAL)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-TH x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "housekeeping_controls",
+      "group": "common",
+      "state": "ON",
+      "P_W": 30.0,
+      "efficiency": 0.6859999999999999,
+      "path": "internal_bus",
+      "P_bus_W": 46.03345097437472,
+      "P_loss_W": 16.033450974374723,
+      "lower_bound_W": 46.03345097437472,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: HK-LOAD",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-HK x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "reserved_dc_port",
+      "group": "reserved",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: 0 W (off)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-25 [reference]: ETA-RES",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     }
+    ]
+   }
+  },
+  {
+   "id": "P-WORST",
+   "name": "worst admitted atmospheric state (AIR_PRIMARY; T_required 54.5 mN > 25 mN: propulsion at its 25 mN capability; magnets at the MC-1 capability)",
+   "mode": "AIR_PRIMARY",
+   "state": "ds2:ECSS_ST_HIGH:alt180:lat-73.0000:lst15:lon240:doy1",
+   "thrust_label": "25 mN capability",
+   "P_d_W": 1350.0,
+   "P_d_basis": "PD-HIGH: DESIGN_ALLOCATION_NOT_PREDICTED",
+   "P_bus_non_discharge_W": 543.6273386127814,
+   "P_bus_W": 2130.5091159203726,
+   "P_bus_by_group_W": {
+    "hall": 1741.2677422198715,
+    "icp": 322.2004220889625,
+    "common": 67.04095161153809,
+    "reserved": 0.0
+   },
+   "margin_to_design_allocation_W": -780.5091159203726,
+   "margin_to_rfp_W": -630.5091159203726,
+   "P_bus_below_HC03": false,
+   "P_d_max_W": {
+    "design_allocation_1350": 686.0013823586415,
+    "rfp_1500_supremum": 813.6101323586415
+   },
+   "discharge_chain_eta": 0.850725,
+   "losses_W": {
+    "conversion": 225.15588152892335,
+    "harness": 13.203200050284192,
+    "front_end": 106.5254557960187,
+    "rf_generator": 85.71428571428572,
+    "note": "conversion + harness + front end are inside P_bus - sum(loads); the RF generator loss is inside the icp_rf_source load (generator DC input)"
+   },
+   "thermal_residual_bus_W": 3.9665490256252767,
+   "corners": {
+    "conservative": {
+     "P_bus_non_discharge_W": 636.2121256814546,
+     "P_bus_W": 2359.7161242107313,
+     "P_d_max_W": {
+      "design_allocation_1350": 559.1014764992248,
+      "rfp_1500_supremum": 676.5946764992248
+     },
+     "flags": []
+    },
+    "favourable": {
+     "P_bus_non_discharge_W": 288.3296991061081,
+     "P_bus_W": 1802.6185285002714,
+     "P_d_max_W": {
+      "design_allocation_1350": 946.4871419411913,
+      "rfp_1500_supremum": 1080.2132819411913
+     },
+     "flags": []
+    }
+   },
+   "allocation_checks": {
+    "kind": "OWNER_ALLOCATION_CHECK (not a gate, not a prediction)",
+    "design_allocation": {
+     "limit_W": 1350.0,
+     "row": 109,
+     "verdict": "EXCEEDS_ALLOCATION"
+    },
+    "a5_lower_allocation": {
+     "limit_W": 1300.0,
+     "context_only": true,
+     "verdict": "EXCEEDS_ALLOCATION"
+    },
+    "common_allocation": {
+     "limit_W": 300.0,
+     "row": 114,
+     "P_bus_W": 67.04095161153809,
+     "P_bus_lower_bound_W": 67.04095161153809,
+     "verdict": "WITHIN_ALLOCATION"
+    },
+    "controls_thermal_allowance": {
+     "allowance_W": 50.0,
+     "row": 114,
+     "P_bus_W": 50.0,
+     "P_bus_lower_bound_W": 50.0,
+     "verdict": "WITHIN_ALLOWANCE"
+    }
+   },
+   "icp_power_allocation_check": {
+    "kind": "OWNER_ALLOCATION_CHECK (A9.1 OQ-A902-03; not a gate, not a prediction)",
+    "relation": "P_ICP,available = 1350 - P_common - P_Hall - P_other,active",
+    "design_allocation_W": 1350.0,
+    "P_common_W": 67.04095161153809,
+    "P_Hall_W": 1741.2677422198717,
+    "P_other_active_W": 0.0,
+    "P_ICP_available_W": -458.30869383140976,
+    "P_ICP_available_upper_bound_W": -458.30869383140976,
+    "P_ICP_W": 322.2004220889625,
+    "P_ICP_lower_bound_W": 322.2004220889625,
+    "verdict": "EXCEEDS_AVAILABLE",
+    "label": "A9.38_P6_CLOSURE_V1 P-WORST reference"
+   },
+   "flags": [],
+   "slot_terms": {
+    "hall_discharge": "PD-HIGH; eta ETA-HD x ETA-H-HV",
+    "hall_magnet_inner": "MAG-IN-CAP; eta ETA-MAG x ETA-H-LV",
+    "hall_magnet_outer": "MAG-OUT-CAP; eta ETA-MAG x ETA-H-LV",
+    "hall_magnet_trim": "MAG-TRIM; eta ETA-MAG x ETA-H-LV",
+    "icp_rf_source": "RF-PFWD / ETA-RFGEN; eta ETA-H-HV",
+    "icp_matching_network": "RF-MATCH-ACT; eta ETA-DRV x ETA-H-LV",
+    "icp_collector_bias": "ICP-BIAS; eta ETA-BIAS x ETA-H-HV",
+    "flow_control_atmospheric": "VALVE-COIL; eta ETA-DRV x ETA-H-LV",
+    "flow_control_xe": "0 W; eta ETA-DRV x ETA-H-LV",
+    "compressor": "CP-WORST; eta ETA-CPD x ETA-H-HV",
+    "thermal_control": "50 W allowance residual; eta ETA-TH x ETA-H-LV",
+    "housekeeping_controls": "HK-LOAD; eta ETA-HK x ETA-H-LV",
+    "reserved_dc_port": "0 W; eta ETA-RES"
+   },
+   "ledger": {
+    "boundary_version": "bus_power_boundary_a9_v2",
+    "configuration": "hall_icp_neutralizer",
+    "variant": [],
+    "label": "A9.38_P6_CLOSURE_V1 P-WORST reference",
+    "power_basis": "steady_state",
+    "gate_measurement": null,
+    "gate_measurement_conformant": false,
+    "status": "COMPLETE",
+    "P_bus_W": 2130.5091159203726,
+    "P_bus_lower_bound_W": 2130.509115920372,
+    "residual_W": 4.547473508864641e-13,
+    "tbd": [],
+    "load_evidence_classes": [
+     "assumed",
+     "inferred",
+     "model-derived",
+     "owner-allocation"
+    ],
+    "booked_tbd_slots": [],
+    "measured_only": false,
+    "front_end": {
+     "efficiency": 0.95,
+     "evidence_class": "assumed",
+     "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-FE",
+     "internal_bus_V": 100.0
+    },
+    "items": [
+     {
+      "slot": "hall_discharge",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 1350.0,
+      "efficiency": 0.8955,
+      "path": "internal_bus",
+      "P_bus_W": 1586.881777307591,
+      "P_loss_W": 236.88177730759094,
+      "lower_bound_W": 1586.881777307591,
+      "evidence_class": "owner-allocation",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: hall discharge PD-HIGH (DESIGN_ALLOCATION_NOT_PREDICTED)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-HD x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_inner",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 27.84,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 49.83888292158969,
+      "P_loss_W": 21.998882921589693,
+      "lower_bound_W": 49.83888292158969,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: MAG-IN-CAP",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_outer",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 58.4,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 104.54708199069101,
+      "P_loss_W": 46.147081990691014,
+      "lower_bound_W": 104.54708199069101,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: MAG-OUT-CAP",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_trim",
+      "group": "hall",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: MAG-TRIM",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_rf_source",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 285.7142857142857,
+      "efficiency": 0.995,
+      "path": "internal_bus",
+      "P_bus_W": 302.2631956776363,
+      "P_loss_W": 16.54890996335058,
+      "lower_bound_W": 302.2631956776363,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: (RF-PFWD) / ETA-RFGEN",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_matching_network",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 5.0,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 6.713211600429645,
+      "P_loss_W": 1.713211600429645,
+      "lower_bound_W": 6.713211600429645,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: RF-MATCH-ACT",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_collector_bias",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 10.0,
+      "efficiency": 0.796,
+      "path": "internal_bus",
+      "P_bus_W": 13.224014810896588,
+      "P_loss_W": 3.2240148108965876,
+      "lower_bound_W": 13.224014810896588,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ICP-BIAS",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-BIAS x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_assist_magnet",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "active_cooling",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "flow_control_atmospheric",
+      "group": "common",
+      "state": "ON",
+      "P_W": 3.92619278236,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 5.271472586412459,
+      "P_loss_W": 1.3452798040524594,
+      "lower_bound_W": 5.271472586412459,
+      "evidence_class": "inferred",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: 2 x VALVE-COIL",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "flow_control_xe",
+      "group": "common",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: 0 W (off)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "flow_control_icp_feed",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "compressor",
+      "group": "common",
+      "state": "ON",
+      "P_W": 11.1251000485,
+      "efficiency": 0.995,
+      "path": "internal_bus",
+      "P_bus_W": 11.769479025125628,
+      "P_loss_W": 0.644378976625628,
+      "lower_bound_W": 11.769479025125628,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: CP-WORST",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-CPD x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "thermal_control",
+      "group": "common",
+      "state": "ON",
+      "P_W": 3.6189999999999896,
+      "efficiency": 0.9603999999999999,
+      "path": "internal_bus",
+      "P_bus_W": 3.9665490256252767,
+      "P_loss_W": 0.3475490256252871,
+      "lower_bound_W": 3.9665490256252767,
+      "evidence_class": "owner-allocation",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: row-114 controls / thermal allowance 50 W minus the housekeeping bus draw, at the thermal_control load plane (OWNER_ALLOCATION_RESIDUAL)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-TH x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "housekeeping_controls",
+      "group": "common",
+      "state": "ON",
+      "P_W": 30.0,
+      "efficiency": 0.6859999999999999,
+      "path": "internal_bus",
+      "P_bus_W": 46.03345097437472,
+      "P_loss_W": 16.033450974374723,
+      "lower_bound_W": 46.03345097437472,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: HK-LOAD",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-HK x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "reserved_dc_port",
+      "group": "reserved",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: 0 W (off)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-WORST [reference]: ETA-RES",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     }
+    ]
+   }
+  },
+  {
+   "id": "P-XE",
+   "name": "Xe contingency point (XE_CONTINGENCY; compressor and atmospheric path off; discharge at the DBF-1 band lower end)",
+   "mode": "XE_CONTINGENCY",
+   "state": "any (no atmospheric dependence)",
+   "thrust_label": "Xe contingency",
+   "P_d_W": 650.0,
+   "P_d_basis": "PD-LOW: DESIGN_ALLOCATION_NOT_PREDICTED",
+   "P_bus_non_discharge_W": 420.1881534822762,
+   "P_bus_W": 1184.2423425563013,
+   "P_bus_by_group_W": {
+    "hall": 804.1347115877202,
+    "icp": 322.2004220889625,
+    "common": 57.90720887961869,
+    "reserved": 0.0
+   },
+   "margin_to_design_allocation_W": 165.7576574436987,
+   "margin_to_rfp_W": 315.7576574436987,
+   "P_bus_below_HC03": true,
+   "P_d_max_W": {
+    "design_allocation_1350": 791.0141831287905,
+    "rfp_1500_supremum": 918.6229331287905
+   },
+   "discharge_chain_eta": 0.850725,
+   "losses_W": {
+    "conversion": 105.30153109970718,
+    "harness": 7.11713956480321,
+    "front_end": 59.21211712781513,
+    "rf_generator": 85.71428571428572,
+    "note": "conversion + harness + front end are inside P_bus - sum(loads); the RF generator loss is inside the icp_rf_source load (generator DC input)"
+   },
+   "thermal_residual_bus_W": 3.9665490256252767,
+   "corners": {
+    "conservative": {
+     "P_bus_non_discharge_W": 626.747221979532,
+     "P_bus_W": 1456.5824805306652,
+     "P_d_max_W": {
+      "design_allocation_1350": 566.5152219900963,
+      "rfp_1500_supremum": 684.0084219900963
+     },
+     "flags": []
+    },
+    "favourable": {
+     "P_bus_non_discharge_W": 277.31852975071166,
+     "P_bus_W": 1006.4205587182718,
+     "P_d_max_W": {
+      "design_allocation_1350": 956.3036831064145,
+      "rfp_1500_supremum": 1090.0298231064144
+     },
+     "flags": []
+    }
+   },
+   "allocation_checks": {
+    "kind": "OWNER_ALLOCATION_CHECK (not a gate, not a prediction)",
+    "design_allocation": {
+     "limit_W": 1350.0,
+     "row": 109,
+     "verdict": "WITHIN_ALLOCATION"
+    },
+    "a5_lower_allocation": {
+     "limit_W": 1300.0,
+     "context_only": true,
+     "verdict": "WITHIN_ALLOCATION"
+    },
+    "common_allocation": {
+     "limit_W": 300.0,
+     "row": 114,
+     "P_bus_W": 57.90720887961869,
+     "P_bus_lower_bound_W": 57.90720887961869,
+     "verdict": "WITHIN_ALLOCATION"
+    },
+    "controls_thermal_allowance": {
+     "allowance_W": 50.0,
+     "row": 114,
+     "P_bus_W": 50.0,
+     "P_bus_lower_bound_W": 50.0,
+     "verdict": "WITHIN_ALLOWANCE"
+    }
+   },
+   "icp_power_allocation_check": {
+    "kind": "OWNER_ALLOCATION_CHECK (A9.1 OQ-A902-03; not a gate, not a prediction)",
+    "relation": "P_ICP,available = 1350 - P_common - P_Hall - P_other,active",
+    "design_allocation_W": 1350.0,
+    "P_common_W": 57.90720887961869,
+    "P_Hall_W": 804.1347115877202,
+    "P_other_active_W": 0.0,
+    "P_ICP_available_W": 487.95807953266103,
+    "P_ICP_available_upper_bound_W": 487.95807953266103,
+    "P_ICP_W": 322.2004220889625,
+    "P_ICP_lower_bound_W": 322.2004220889625,
+    "verdict": "WITHIN_AVAILABLE",
+    "label": "A9.38_P6_CLOSURE_V1 P-XE reference"
+   },
+   "flags": [],
+   "slot_terms": {
+    "hall_discharge": "PD-LOW; eta ETA-HD x ETA-H-HV",
+    "hall_magnet_inner": "MAG-IN-REF; eta ETA-MAG x ETA-H-LV",
+    "hall_magnet_outer": "MAG-OUT-REF; eta ETA-MAG x ETA-H-LV",
+    "hall_magnet_trim": "MAG-TRIM; eta ETA-MAG x ETA-H-LV",
+    "icp_rf_source": "RF-PFWD / ETA-RFGEN; eta ETA-H-HV",
+    "icp_matching_network": "RF-MATCH-ACT; eta ETA-DRV x ETA-H-LV",
+    "icp_collector_bias": "ICP-BIAS; eta ETA-BIAS x ETA-H-HV",
+    "flow_control_atmospheric": "0 W; eta ETA-DRV x ETA-H-LV",
+    "flow_control_xe": "VALVE-COIL; eta ETA-DRV x ETA-H-LV",
+    "compressor": "0 W; eta ETA-CPD x ETA-H-HV",
+    "thermal_control": "50 W allowance residual; eta ETA-TH x ETA-H-LV",
+    "housekeeping_controls": "HK-LOAD; eta ETA-HK x ETA-H-LV",
+    "reserved_dc_port": "0 W; eta ETA-RES"
+   },
+   "ledger": {
+    "boundary_version": "bus_power_boundary_a9_v2",
+    "configuration": "hall_icp_neutralizer",
+    "variant": [],
+    "label": "A9.38_P6_CLOSURE_V1 P-XE reference",
+    "power_basis": "steady_state",
+    "gate_measurement": null,
+    "gate_measurement_conformant": false,
+    "status": "COMPLETE",
+    "P_bus_W": 1184.2423425563013,
+    "P_bus_lower_bound_W": 1184.2423425563013,
+    "residual_W": 0.0,
+    "tbd": [],
+    "load_evidence_classes": [
+     "assumed",
+     "inferred",
+     "model-derived",
+     "owner-allocation"
+    ],
+    "booked_tbd_slots": [],
+    "measured_only": false,
+    "front_end": {
+     "efficiency": 0.95,
+     "evidence_class": "assumed",
+     "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-FE",
+     "internal_bus_V": 100.0
+    },
+    "items": [
+     {
+      "slot": "hall_discharge",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 650.0,
+      "efficiency": 0.8955,
+      "path": "internal_bus",
+      "P_bus_W": 764.0541890740252,
+      "P_loss_W": 114.0541890740252,
+      "lower_bound_W": 764.0541890740252,
+      "evidence_class": "owner-allocation",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: hall discharge PD-LOW (DESIGN_ALLOCATION_NOT_PREDICTED)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-HD x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_inner",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 6.34597183535,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 11.36049379761905,
+      "P_loss_W": 5.01452196226905,
+      "lower_bound_W": 11.36049379761905,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: MAG-IN-REF",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_outer",
+      "group": "hall",
+      "state": "ON",
+      "P_W": 16.0430080408,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 28.720028716075905,
+      "P_loss_W": 12.677020675275905,
+      "lower_bound_W": 28.720028716075905,
+      "evidence_class": "model-derived",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: MAG-OUT-REF",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "hall_magnet_trim",
+      "group": "hall",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 0.588,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: MAG-TRIM",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-MAG x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_rf_source",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 285.7142857142857,
+      "efficiency": 0.995,
+      "path": "internal_bus",
+      "P_bus_W": 302.2631956776363,
+      "P_loss_W": 16.54890996335058,
+      "lower_bound_W": 302.2631956776363,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: (RF-PFWD) / ETA-RFGEN",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_matching_network",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 5.0,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 6.713211600429645,
+      "P_loss_W": 1.713211600429645,
+      "lower_bound_W": 6.713211600429645,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: RF-MATCH-ACT",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_collector_bias",
+      "group": "icp",
+      "state": "ON",
+      "P_W": 10.0,
+      "efficiency": 0.796,
+      "path": "internal_bus",
+      "P_bus_W": 13.224014810896588,
+      "P_loss_W": 3.2240148108965876,
+      "lower_bound_W": 13.224014810896588,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ICP-BIAS",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-BIAS x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "icp_assist_magnet",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "active_cooling",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "flow_control_atmospheric",
+      "group": "common",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: 0 W (off)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "flow_control_xe",
+      "group": "common",
+      "state": "ON",
+      "P_W": 5.88928917354,
+      "efficiency": 0.784,
+      "path": "internal_bus",
+      "P_bus_W": 7.90720887961869,
+      "P_loss_W": 2.0179197060786898,
+      "lower_bound_W": 7.90720887961869,
+      "evidence_class": "inferred",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: 3 x VALVE-COIL",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-DRV x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "flow_control_icp_feed",
+      "group": "variant",
+      "state": "NOT_INSTALLED",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": null,
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "evidence_class": null,
+      "source": null
+     },
+     {
+      "slot": "compressor",
+      "group": "common",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 0.995,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: 0 W (off)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-CPD x ETA-H-HV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "thermal_control",
+      "group": "common",
+      "state": "ON",
+      "P_W": 3.6189999999999896,
+      "efficiency": 0.9603999999999999,
+      "path": "internal_bus",
+      "P_bus_W": 3.9665490256252767,
+      "P_loss_W": 0.3475490256252871,
+      "lower_bound_W": 3.9665490256252767,
+      "evidence_class": "owner-allocation",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: row-114 controls / thermal allowance 50 W minus the housekeeping bus draw, at the thermal_control load plane (OWNER_ALLOCATION_RESIDUAL)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-TH x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "housekeeping_controls",
+      "group": "common",
+      "state": "ON",
+      "P_W": 30.0,
+      "efficiency": 0.6859999999999999,
+      "path": "internal_bus",
+      "P_bus_W": 46.03345097437472,
+      "P_loss_W": 16.033450974374723,
+      "lower_bound_W": 46.03345097437472,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: HK-LOAD",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-HK x ETA-H-LV",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     },
+     {
+      "slot": "reserved_dc_port",
+      "group": "reserved",
+      "state": "OFF",
+      "P_W": 0.0,
+      "efficiency": 1.0,
+      "path": "internal_bus",
+      "P_bus_W": 0.0,
+      "P_loss_W": 0.0,
+      "lower_bound_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: 0 W (off)",
+      "efficiency_evidence_class": "assumed",
+      "efficiency_source": "docs/closure/power/power_closure_inputs_v1.json (a588c0dbfb2a) P-XE [reference]: ETA-RES",
+      "booked_conservative": false,
+      "booked_tbd_requires": null
+     }
+    ]
+   }
+  }
+ ],
+ "rf_trade_line": [
+  {
+   "P_fwd_W": 0.0,
+   "P_bus_icp_W": 19.937226411326233,
+   "P_d_max_W": {
+    "design_allocation_1350": 1041.6131785715465,
+    "rfp_1500_supremum": 1169.2219285715466
+   }
+  },
+  {
+   "P_fwd_W": 100.0,
+   "P_bus_icp_W": 171.0688242501444,
+   "P_d_max_W": {
+    "design_allocation_1350": 913.041750000118,
+    "rfp_1500_supremum": 1040.650500000118
+   }
+  },
+  {
+   "P_fwd_W": 200.0,
+   "P_bus_icp_W": 322.2004220889625,
+   "P_d_max_W": {
+    "design_allocation_1350": 784.4703214286894,
+    "rfp_1500_supremum": 912.0790714286894
+   }
+  },
+  {
+   "P_fwd_W": 300.0,
+   "P_bus_icp_W": 473.3320199277807,
+   "P_d_max_W": {
+    "design_allocation_1350": 655.8988928572609,
+    "rfp_1500_supremum": 783.5076428572609
+   }
+  },
+  {
+   "P_fwd_W": 400.0,
+   "P_bus_icp_W": 624.4636177665989,
+   "P_d_max_W": {
+    "design_allocation_1350": 527.3274642858323,
+    "rfp_1500_supremum": 654.9362142858323
+   }
+  },
+  {
+   "P_fwd_W": 500.0,
+   "P_bus_icp_W": 775.5952156054171,
+   "P_d_max_W": {
+    "design_allocation_1350": 398.7560357144036,
+    "rfp_1500_supremum": 526.3647857144036
+   }
+  }
+ ],
+ "compressor_headroom": {
+  "inside_common_300W_W": 231.32964053769362,
+  "compressor_bus_per_W_input": 1.057921184871727,
+  "dPd_max_per_W_compressor": 0.8999999999999999,
+  "basis": "P-NOM: 300 W common allocation minus the other common-group bus draws, at the compressor load plane; every extra watt lowers the discharge ceiling by dPd_max_per_W_compressor"
+ },
+ "derived_hall_requirement": {
+  "text": "Until the Hall envelope converges (P2), the discharge power is an allocation. With every other bus term closed, the bus closes at the 12 mN point if H-1 delivers 12 mN at P_d <= 784 W (1,350 W design allocation; T/P_d >= 15.3 mN/kW) and the 25 mN capability if it delivers 25 mN at P_d < 911 W (HC-03; T/P_d >= 27.4 mN/kW). The registered DBF-1 band upper end (1,350 W discharge) does not fit the bus with the ICP, magnet and common loads: it is a sizing band, and the flight operating ceiling is P_d,max. These are requirements on the Hall envelope, not predictions.",
+  "rows": [
+   {
+    "point": "P-12",
+    "thrust_mN": 12.0,
+    "limit": "design allocation 1,350 W",
+    "P_d_max_W": 784.4703214286894,
+    "T_over_P_d_mN_per_kW": 15.296945814527968,
+    "P_d_max_conservative_W": 560.2734095698241,
+    "T_over_P_d_conservative_mN_per_kW": 21.418114433118564
+   },
+   {
+    "point": "P-12",
+    "thrust_mN": 12.0,
+    "limit": "HC-03 1,500 W",
+    "P_d_max_W": 912.0790714286894,
+    "T_over_P_d_mN_per_kW": 13.156754031427434,
+    "P_d_max_conservative_W": 677.7666095698241,
+    "T_over_P_d_conservative_mN_per_kW": 17.705209773636316
+   },
+   {
+    "point": "P-25",
+    "thrust_mN": 25.0,
+    "limit": "design allocation 1,350 W",
+    "P_d_max_W": 783.2438798431784,
+    "T_over_P_d_mN_per_kW": 31.918538584694097,
+    "P_d_max_conservative_W": 559.1014764992248,
+    "T_over_P_d_conservative_mN_per_kW": 44.714602001296385
+   },
+   {
+    "point": "P-25",
+    "thrust_mN": 25.0,
+    "limit": "HC-03 1,500 W",
+    "P_d_max_W": 910.8526298431785,
+    "T_over_P_d_mN_per_kW": 27.446811021783237,
+    "P_d_max_conservative_W": 676.5946764992248,
+    "T_over_P_d_conservative_mN_per_kW": 36.94974386933215
+   },
+   {
+    "point": "P-WORST",
+    "thrust_mN": 25.0,
+    "limit": "HC-03 1,500 W",
+    "P_d_max_W": 813.6101323586415,
+    "T_over_P_d_mN_per_kW": 30.72724761615915,
+    "P_d_max_conservative_W": 676.5946764992248,
+    "T_over_P_d_conservative_mN_per_kW": 36.94974386933215
+   }
+  ]
+ },
+ "closed_official_tbd_terms": {
+  "rows": [
+   {
+    "slot": "hall_discharge",
+    "what": "load",
+    "closure_class": "DESIGN_ALLOCATION_NOT_PREDICTED",
+    "evidence_class": "owner-allocation"
+   },
+   {
+    "slot": "hall_discharge",
+    "what": "efficiency",
+    "closure_class": "SOURCED_ANALOG",
+    "evidence_class": "digitized"
+   },
+   {
+    "slot": "hall_magnet_inner",
+    "what": "load",
+    "closure_class": "MODEL_DERIVED",
+    "evidence_class": "model-derived"
+   },
+   {
+    "slot": "hall_magnet_inner",
+    "what": "efficiency",
+    "closure_class": "SOURCED_ANALOG",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "hall_magnet_outer",
+    "what": "load",
+    "closure_class": "MODEL_DERIVED",
+    "evidence_class": "model-derived"
+   },
+   {
+    "slot": "hall_magnet_outer",
+    "what": "efficiency",
+    "closure_class": "SOURCED_ANALOG",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "hall_magnet_trim",
+    "what": "load",
+    "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "hall_magnet_trim",
+    "what": "efficiency",
+    "closure_class": "SOURCED_ANALOG",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "icp_rf_source",
+    "what": "load",
+    "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "icp_rf_source",
+    "what": "efficiency",
+    "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "icp_matching_network",
+    "what": "load",
+    "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "icp_matching_network",
+    "what": "efficiency",
+    "closure_class": "SOURCED_ANALOG",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "icp_collector_bias",
+    "what": "load",
+    "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "icp_collector_bias",
+    "what": "efficiency",
+    "closure_class": "SOURCED_ANALOG",
+    "evidence_class": "measured"
+   },
+   {
+    "slot": "flow_control_atmospheric",
+    "what": "load",
+    "closure_class": "SOURCED_ANALOG",
+    "evidence_class": "inferred"
+   },
+   {
+    "slot": "flow_control_atmospheric",
+    "what": "efficiency",
+    "closure_class": "SOURCED_ANALOG",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "flow_control_xe",
+    "what": "load",
+    "closure_class": "SOURCED_ANALOG",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "flow_control_xe",
+    "what": "efficiency",
+    "closure_class": "SOURCED_ANALOG",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "compressor",
+    "what": "load",
+    "closure_class": "MODEL_DERIVED",
+    "evidence_class": "model-derived"
+   },
+   {
+    "slot": "compressor",
+    "what": "efficiency",
+    "closure_class": "MODEL_DERIVED",
+    "evidence_class": "model-derived"
+   },
+   {
+    "slot": "thermal_control",
+    "what": "load",
+    "closure_class": "OWNER_ALLOCATION_RESIDUAL",
+    "evidence_class": "owner-allocation"
+   },
+   {
+    "slot": "thermal_control",
+    "what": "efficiency",
+    "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "housekeeping_controls",
+    "what": "load",
+    "closure_class": "SOURCED_ANALOG",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "housekeeping_controls",
+    "what": "efficiency",
+    "closure_class": "SOURCED_ANALOG",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "all internal_bus slots",
+    "what": "ETA-FE (front end: spacecraft DC bus -> regulated 100 V internal propulsion bus)",
+    "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "all internal_bus slots",
+    "what": "ETA-H-HV (harness, 100 V-class power lines (discharge, RF generator, bias, compressor drive))",
+    "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+    "evidence_class": "assumed"
+   },
+   {
+    "slot": "all internal_bus slots",
+    "what": "ETA-H-LV (harness, low-voltage lines (magnets, valves, actuators, housekeeping, heaters))",
+    "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+    "evidence_class": "assumed"
+   }
+  ],
+  "by_closure_class": {
+   "SOURCED_ANALOG": 12,
+   "MODEL_DERIVED": 4,
+   "FROZEN_ENGINEERING_ASSUMPTION": 9,
+   "OWNER_ALLOCATION_RESIDUAL": 1,
+   "DESIGN_ALLOCATION_NOT_PREDICTED": 1
+  },
+  "by_evidence_class": {
+   "measured": 1,
+   "digitized": 1,
+   "inferred": 1,
+   "model-derived": 4,
+   "owner-allocation": 2,
+   "assumed": 18
+  }
+ },
+ "terms": [
+  {
+   "id": "PD-LOW",
+   "quantity": "Hall discharge load-plane power at the 12 mN point (V_d x I_d)",
+   "value": 650.0,
+   "low": 650.0,
+   "high": 650.0,
+   "units": "W",
+   "evidence_class": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "closure_class": "DESIGN_ALLOCATION_NOT_PREDICTED",
+   "flags": [
+    "DESIGN_ALLOCATION_NOT_PREDICTED"
+   ]
+  },
+  {
+   "id": "PD-HIGH",
+   "quantity": "Hall discharge load-plane power at the 25 mN point (band upper end)",
+   "value": 1350.0,
+   "low": 1350.0,
+   "high": 1350.0,
+   "units": "W",
+   "evidence_class": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "closure_class": "DESIGN_ALLOCATION_NOT_PREDICTED",
+   "flags": [
+    "DESIGN_ALLOCATION_NOT_PREDICTED"
+   ]
+  },
+  {
+   "id": "RF-PFWD",
+   "quantity": "ICP RF forward power at the generator / 50-ohm reference plane (reference value)",
+   "value": 200.0,
+   "low": 0.0,
+   "high": 500.0,
+   "units": "W",
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "flags": [
+    "OPERATING_VARIABLE",
+    "UPDATE_FROM_P4_ICP45"
+   ]
+  },
+  {
+   "id": "MAG-IN-REF",
+   "quantity": "inner coil terminal power at the B band upper end (268.6 G), hot",
+   "value": 6.34597183535,
+   "low": 0.3652,
+   "high": 27.84,
+   "units": "W",
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "flags": [
+    "FEMM_PENDING_P3"
+   ]
+  },
+  {
+   "id": "MAG-OUT-REF",
+   "quantity": "outer coil terminal power at the B band upper end (268.6 G), hot",
+   "value": 16.0430080408,
+   "low": 0.9236,
+   "high": 58.4,
+   "units": "W",
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "flags": [
+    "FEMM_PENDING_P3"
+   ]
+  },
+  {
+   "id": "MAG-IN-CAP",
+   "quantity": "inner coil terminal power at the MC-1 capability (403 G), worst-case assumptions",
+   "value": 27.84,
+   "low": 0.3652,
+   "high": 27.84,
+   "units": "W",
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "flags": [
+    "FEMM_PENDING_P3"
+   ]
+  },
+  {
+   "id": "MAG-OUT-CAP",
+   "quantity": "outer coil terminal power at the MC-1 capability (403 G), worst-case assumptions",
+   "value": 58.4,
+   "low": 0.9236,
+   "high": 58.4,
+   "units": "W",
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "flags": [
+    "FEMM_PENDING_P3"
+   ]
+  },
+  {
+   "id": "MAG-TRIM",
+   "quantity": "trim coil terminal power",
+   "value": 0.0,
+   "low": 0.0,
+   "high": 0.0,
+   "units": "W",
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "flags": [
+    "FEMM_PENDING_P3"
+   ]
+  },
+  {
+   "id": "RF-MATCH-ACT",
+   "quantity": "adjustable local match: tuning actuators and controller DC input",
+   "value": 5.0,
+   "low": 0.0,
+   "high": 10.0,
+   "units": "W",
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "flags": [
+    "VERIFY",
+    "UPDATE_FROM_P2_IMPEDANCE_MAP"
+   ]
+  },
+  {
+   "id": "ICP-BIAS",
+   "quantity": "collector / bias supply output (V_bias x I_bias)",
+   "value": 10.0,
+   "low": 0.0,
+   "high": 20.0,
+   "units": "W",
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "flags": [
+    "VERIFY",
+    "UPDATE_FROM_P1_IT_18"
+   ]
+  },
+  {
+   "id": "VALVE-COIL",
+   "quantity": "proportional / isolation valve coil power per energised valve (hot)",
+   "value": 1.96309639118,
+   "low": 0.4078125,
+   "high": 1.96309639118,
+   "units": "W",
+   "evidence_class": "inferred",
+   "evidence_level": "3",
+   "closure_class": "SOURCED_ANALOG",
+   "flags": [
+    "VERIFY_COIL_MATERIAL"
+   ]
+  },
+  {
+   "id": "HK-LOAD",
+   "quantity": "propulsion controller, PPU control, FDIR, sensors, TM/TC interface and quiescent draw",
+   "value": 30.0,
+   "low": 12.0,
+   "high": 30.0,
+   "units": "W",
+   "evidence_class": "assumed",
+   "evidence_level": "5",
+   "closure_class": "SOURCED_ANALOG",
+   "flags": [
+    "RATING_USED_AS_LOAD"
+   ]
+  },
+  {
+   "id": "CP-NOM",
+   "quantity": "compressor motor-drive electrical input, nominal (median over required states of the per-state maximum over admitted in-domain surface scenarios)",
+   "value": 9.76238717571,
+   "low": 9.76238717571,
+   "high": 9.76238717571,
+   "units": "W",
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "flags": [
+    "UPDATE_FROM_DCR_001",
+    "CODE_DEFAULT_COEFFICIENTS"
+   ]
+  },
+  {
+   "id": "CP-WORST",
+   "quantity": "compressor motor-drive electrical input, maximum over every required state and admitted in-domain surface scenario (at the worst admitted state)",
+   "value": 11.1251000485,
+   "low": 11.1251000485,
+   "high": 11.1251000485,
+   "units": "W",
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "flags": [
+    "UPDATE_FROM_DCR_001",
+    "CODE_DEFAULT_COEFFICIENTS"
+   ]
+  },
+  {
+   "id": "ETA-FE",
+   "quantity": "front end: spacecraft DC bus -> regulated 100 V internal propulsion bus",
+   "value": 0.95,
+   "low": 0.92,
+   "high": 0.97,
+   "units": "-",
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "flags": [
+    "VERIFY",
+    "SPACECRAFT_ICD_DEPENDENT"
+   ]
+  },
+  {
+   "id": "ETA-HD",
+   "quantity": "Hall discharge supply (100 V internal bus -> V_d at the anode terminals)",
+   "value": 0.9,
+   "low": 0.86,
+   "high": 0.92,
+   "units": "-",
+   "evidence_class": "digitized",
+   "evidence_level": "3",
+   "closure_class": "SOURCED_ANALOG",
+   "flags": [
+    "UPDATE_FROM_ROW_113_BREADBOARD"
+   ]
+  },
+  {
+   "id": "ETA-MAG",
+   "quantity": "per-coil magnet supply (current-controlled, isolated)",
+   "value": 0.6,
+   "low": 0.6,
+   "high": 0.85,
+   "units": "-",
+   "evidence_class": "assumed",
+   "evidence_level": "5",
+   "closure_class": "SOURCED_ANALOG",
+   "flags": []
+  },
+  {
+   "id": "ETA-RFGEN",
+   "quantity": "13.56 MHz RF generator DC input -> forward RF power",
+   "value": 0.7,
+   "low": 0.6,
+   "high": 0.92,
+   "units": "-",
+   "evidence_class": "inferred",
+   "evidence_level": "6",
+   "closure_class": "SOURCED_ANALOG",
+   "flags": [
+    "UPDATE_FROM_RFQ_06"
+   ]
+  },
+  {
+   "id": "ETA-BIAS",
+   "quantity": "collector / bias supply",
+   "value": 0.8,
+   "low": 0.8,
+   "high": 0.9,
+   "units": "-",
+   "evidence_class": "measured",
+   "evidence_level": "3",
+   "closure_class": "SOURCED_ANALOG",
+   "flags": []
+  },
+  {
+   "id": "ETA-DRV",
+   "quantity": "valve-driver / actuator-driver supply",
+   "value": 0.8,
+   "low": 0.8,
+   "high": 0.9,
+   "units": "-",
+   "evidence_class": "assumed",
+   "evidence_level": "5",
+   "closure_class": "SOURCED_ANALOG",
+   "flags": []
+  },
+  {
+   "id": "ETA-HK",
+   "quantity": "auxiliary / housekeeping supply",
+   "value": 0.7,
+   "low": 0.7,
+   "high": 0.85,
+   "units": "-",
+   "evidence_class": "assumed",
+   "evidence_level": "5",
+   "closure_class": "SOURCED_ANALOG",
+   "flags": []
+  },
+  {
+   "id": "ETA-TH",
+   "quantity": "heater switch (resistive heaters switched from the internal bus)",
+   "value": 0.98,
+   "low": 0.95,
+   "high": 0.99,
+   "units": "-",
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "flags": [
+    "VERIFY"
+   ]
+  },
+  {
+   "id": "ETA-CPD",
+   "quantity": "compressor drive supply path (drive fed from the internal bus)",
+   "value": 1.0,
+   "low": 1.0,
+   "high": 1.0,
+   "units": "-",
+   "evidence_class": "model-derived",
+   "evidence_level": "6",
+   "closure_class": "MODEL_DERIVED",
+   "flags": [
+    "UPDATE_FROM_DCR_001"
+   ]
+  },
+  {
+   "id": "ETA-H-HV",
+   "quantity": "harness, 100 V-class power lines (discharge, RF generator, bias, compressor drive)",
+   "value": 0.995,
+   "low": 0.99,
+   "high": 0.999,
+   "units": "-",
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "flags": [
+    "VERIFY"
+   ]
+  },
+  {
+   "id": "ETA-H-LV",
+   "quantity": "harness, low-voltage lines (magnets, valves, actuators, housekeeping, heaters)",
+   "value": 0.98,
+   "low": 0.97,
+   "high": 0.995,
+   "units": "-",
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "flags": [
+    "VERIFY"
+   ]
+  },
+  {
+   "id": "ETA-RES",
+   "quantity": "reserved DC port (unused, 0 W)",
+   "value": 1.0,
+   "low": 1.0,
+   "high": 1.0,
+   "units": "-",
+   "evidence_class": "assumed",
+   "evidence_level": "7",
+   "closure_class": "FROZEN_ENGINEERING_ASSUMPTION",
+   "flags": []
+  }
+ ],
+ "summary": {
+  "ledger_terms_closed": 27,
+  "tbd_remaining": 0,
+  "ledger_terms_by_closure_class": {
+   "SOURCED_ANALOG": 12,
+   "MODEL_DERIVED": 4,
+   "FROZEN_ENGINEERING_ASSUMPTION": 9,
+   "OWNER_ALLOCATION_RESIDUAL": 1,
+   "DESIGN_ALLOCATION_NOT_PREDICTED": 1
+  },
+  "ledger_terms_by_evidence_class": {
+   "measured": 1,
+   "digitized": 1,
+   "inferred": 1,
+   "model-derived": 4,
+   "owner-allocation": 2,
+   "assumed": 18
+  },
+  "register_terms_by_closure_class": {
+   "SOURCED_ANALOG": 8,
+   "MODEL_DERIVED": 7,
+   "FROZEN_ENGINEERING_ASSUMPTION": 9,
+   "DESIGN_ALLOCATION_NOT_PREDICTED": 2
+  }
+ },
+ "not": [
+  "not a Hall performance prediction: the discharge power is DESIGN_ALLOCATION_NOT_PREDICTED at every point (HALL_NUMERICS_NOT_CONVERGED)",
+  "not a gate verdict: HC-03 margins are differences on a design ledger, not a P_bus,1ms,max measurement (A9.1 OQ-A902-01)",
+  "not a change to the official A9-02 ledger, the admitted power functions or DBF-1",
+  "not measured: every term is a sourced analog, a model output, an allocation or a frozen engineering assumption with bounds"
+ ],
+ "generated_by": "abep-assess-power-closure (abep_assess::power_closure, abep_subsystems::power::closure_v1)"
+}
