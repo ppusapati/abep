@@ -1,0 +1,152 @@
+{
+ "schema": "abep_closure_state_v1",
+ "item": "P6",
+ "title": "Power closure (A9.38 Priority 6)",
+ "date": "2026-10-08",
+ "lane": "L-POWER-ICD",
+ "closure_state": "BLOCKED BY SPECIFIC MISSING EVIDENCE",
+ "blocker": {
+  "code": "HALL_NUMERICS_NOT_CONVERGED",
+  "what": "Hall discharge power P_d at the 12 mN and 25 mN points (converged RP-1 Hall envelope, P2)",
+  "until_then": "P_d is DESIGN_ALLOCATION_NOT_PREDICTED (DBF-1 band ends 650 / 1,350 W, or the value closing the 1,350 W design allocation)"
+ },
+ "closed": {
+  "terms_closed": 27,
+  "tbd_remaining": 0,
+  "by_closure_class": {
+   "SOURCED_ANALOG": 12,
+   "MODEL_DERIVED": 4,
+   "FROZEN_ENGINEERING_ASSUMPTION": 9,
+   "OWNER_ALLOCATION_RESIDUAL": 1,
+   "DESIGN_ALLOCATION_NOT_PREDICTED": 1
+  },
+  "by_evidence_class": {
+   "measured": 1,
+   "digitized": 1,
+   "inferred": 1,
+   "model-derived": 4,
+   "owner-allocation": 2,
+   "assumed": 18
+  },
+  "register_terms_by_closure_class": {
+   "SOURCED_ANALOG": 8,
+   "MODEL_DERIVED": 7,
+   "FROZEN_ENGINEERING_ASSUMPTION": 9,
+   "DESIGN_ALLOCATION_NOT_PREDICTED": 2
+  }
+ },
+ "points": {
+  "P-NOM": {
+   "mode": "AIR_PRIMARY",
+   "P_d_W": 784.4703214286892,
+   "P_bus_W": 1349.9999999999998,
+   "margin_to_1350_W": 2.2737367544323206e-13,
+   "margin_to_1500_W": 150.00000000000023,
+   "P_d_max_1350_W": 784.4703214286894,
+   "P_d_max_1500_W": 912.0790714286894,
+   "P_d_max_1500_conservative_W": 677.7666095698241
+  },
+  "P-12": {
+   "mode": "AIR_PRIMARY",
+   "P_d_W": 650.0,
+   "P_bus_W": 1191.9344424711987,
+   "margin_to_1350_W": 158.06555752880126,
+   "margin_to_1500_W": 308.06555752880126,
+   "P_d_max_1350_W": 784.4703214286894,
+   "P_d_max_1500_W": 912.0790714286894,
+   "P_d_max_1500_conservative_W": 677.7666095698241
+  },
+  "P-25": {
+   "mode": "AIR_PRIMARY",
+   "P_d_W": 1350.0,
+   "P_bus_W": 2016.2036735217866,
+   "margin_to_1350_W": -666.2036735217866,
+   "margin_to_1500_W": -516.2036735217866,
+   "P_d_max_1350_W": 783.2438798431784,
+   "P_d_max_1500_W": 910.8526298431785,
+   "P_d_max_1500_conservative_W": 676.5946764992248
+  },
+  "P-WORST": {
+   "mode": "AIR_PRIMARY",
+   "P_d_W": 1350.0,
+   "P_bus_W": 2130.5091159203726,
+   "margin_to_1350_W": -780.5091159203726,
+   "margin_to_1500_W": -630.5091159203726,
+   "P_d_max_1350_W": 686.0013823586415,
+   "P_d_max_1500_W": 813.6101323586415,
+   "P_d_max_1500_conservative_W": 676.5946764992248
+  },
+  "P-XE": {
+   "mode": "XE_CONTINGENCY",
+   "P_d_W": 650.0,
+   "P_bus_W": 1184.2423425563013,
+   "margin_to_1350_W": 165.7576574436987,
+   "margin_to_1500_W": 315.7576574436987,
+   "P_d_max_1350_W": 791.0141831287905,
+   "P_d_max_1500_W": 918.6229331287905,
+   "P_d_max_1500_conservative_W": 684.0084219900963
+  }
+ },
+ "derived_hall_requirement": "Until the Hall envelope converges (P2), the discharge power is an allocation. With every other bus term closed, the bus closes at the 12 mN point if H-1 delivers 12 mN at P_d <= 784 W (1,350 W design allocation; T/P_d >= 15.3 mN/kW) and the 25 mN capability if it delivers 25 mN at P_d < 911 W (HC-03; T/P_d >= 27.4 mN/kW). The registered DBF-1 band upper end (1,350 W discharge) does not fit the bus with the ICP, magnet and common loads: it is a sizing band, and the flight operating ceiling is P_d,max. These are requirements on the Hall envelope, not predictions.",
+ "pending_updates": [
+  "compressor P_el from DCR-001 (P1; CP-NOM / CP-WORST use code-default coefficients)",
+  "RF forward power and collector bias from P4 (ICP-45 / I_e,cap, P1-IT-18)",
+  "match actuators from the P2 impedance map",
+  "magnet loads from the P3 FEMM B(z)",
+  "front end from the spacecraft bus ICD (row 111)",
+  "heater power from the P7 flight thermal case (thermal_control = the 50 W allowance residual, ~4 W)",
+  "measured supply efficiencies (row 113 breadboard discharge supply, RFQ-06 RF source)"
+ ],
+ "not_dcr": "no DBF-1 value changes: the P_d band upper end is a sizing band; the flight discharge ceiling P_d,max is reported, not imposed (changing a design value would need a DCR)",
+ "evidence": [
+  {
+   "path": "docs/closure/power/power_ledger_v1.json",
+   "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+  },
+  {
+   "path": "docs/closure/power/power_ledger_v1.md",
+   "sha256": "b902693f883bc20500bf2b4fa50599e996569cde184160bbbfe8e757041b29d8"
+  },
+  {
+   "path": "docs/closure/power/power_closure_inputs_v1.json",
+   "sha256": "a588c0dbfb2a5560c5aef98e49b679a0fdbf27c1766493374ad52657e942f147"
+  },
+  {
+   "path": "docs/closure/power/build_power_closure_docs.py",
+   "sha256": "f6e9de2e84a9105bb48f171780baa73c702e0076833304a0d81a501d824270f3"
+  },
+  {
+   "path": "crates/abep-subsystems/src/power/closure_v1.rs",
+   "sha256": "d0e8fca4fe89f19244928a105805ff4e6c670359c944b768cdfd5f5261e211a3"
+  },
+  {
+   "path": "crates/abep-assess/src/power_closure.rs",
+   "sha256": "84fe0e5f1aaa7441579c77de3550d165a1fc0ea5cbd3e481e0a7021e171d09a8"
+  },
+  {
+   "path": "crates/abep-assess/tests/power_closure_v1.rs",
+   "sha256": "efcf053206c09827ac9cfdea38328eca1a9bf2523ed120861fc3bf5db0830b04"
+  },
+  {
+   "path": "docs/baseline/DBF-1/dbf1_v1.json",
+   "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f"
+  },
+  {
+   "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+   "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
+  },
+  {
+   "path": "docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json",
+   "sha256": "600cf229ecdb5f91f0471f03cfdd6d287486ad21e9d9ebadde3cdafa54a37394"
+  }
+ ],
+ "statement": {
+  "path": "docs/closure/statements/P6_power.md",
+  "sha256": "d78c1eb70fe9a28139ba996a6b9c2a45bf7531b75d970c2b25c68febf5a31810"
+ },
+ "regenerate": [
+  "python3 docs/closure/power/build_power_closure_docs.py inputs",
+  "cargo run -p abep-assess --bin abep-assess-power-closure",
+  "python3 docs/closure/power/build_power_closure_docs.py md"
+ ]
+}

@@ -15,9 +15,12 @@
 //!   C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP).
 //! * [`system_ledger`] (CONS-L1, CLAUDE.md rule 4), [`icp_bus`] (IF-ICP-BUS-v1 consumer) and [`demand`] (typed
 //!   upstream inputs to bus demand): Rust-only items registered in the bus-boundary contract.
+//! * [`closure_v1`]: the A9.38 P6 design-closure ledger (every slot load and efficiency registered with evidence
+//!   class and bounds in `docs/closure/power/power_closure_inputs_v1.json`; additive, admitted functions unchanged).
 //! * [`eval`]: the JSON call interface used by the parity harnesses (`examples/power_eval.rs`).
 
 pub mod allocation;
+pub mod closure_v1;
 pub mod cplx;
 pub mod demand;
 pub mod eval;
