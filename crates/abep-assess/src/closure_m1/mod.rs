@@ -262,6 +262,9 @@ pub struct M1Inputs {
     /// (HALL_XE_T12_AT_PBUS, HALL_XE_T25_CAPABILITY_AT_PBUS on one hardware configuration); the v1 envelope is then
     /// reported only.
     pub xe_a6: Option<Envelope>,
+    /// Addendum A7 XE envelope (frozen grid stages at the A7 method; Stage 1 = G-RP1, A9.37). When present it carries
+    /// the same XE_CONTINGENCY Hall tests as A6, over the supplied stages only, and takes precedence over A6.
+    pub xe_a7: Option<XeA7>,
     pub air: AirHall,
     pub a1_on_line: bool,
     /// The Hall AIR reaction set (NP-HALL-CHEM-AIR) label and admission state, as read.
@@ -361,6 +364,29 @@ pub struct Pt<'a> {
     pub corner: Option<&'a str>,
 }
 
+/// An ingested A7 XE envelope: the stages supplied and their points (status already mapped by the A7 rule).
+#[derive(Debug, Clone, PartialEq)]
+pub struct XeA7 {
+    pub envelope: Envelope,
+    pub stages: Vec<String>,
+    /// A7 run-status counts over the supplied stages, in precedence order.
+    pub a7_status_counts: Vec<(String, usize)>,
+    /// The overlay of the committed A7 demonstration outcome: Adequate (converged subset demonstrated) or the
+    /// numerical-margin tier (a point counts only if it also passes at T (1 - delta_T), P_d (1 + delta_I)).
+    pub overlay: A3Overlay,
+}
+
+impl M1Inputs {
+    /// The XE envelope carrying the A6-style XE Hall tests (A7 before A6), and its EC-NUM text.
+    pub fn xe_numerics_envelope(&self) -> Option<(&Envelope, &'static str, A3Overlay)> {
+        match (&self.xe_a7, &self.xe_a6) {
+            (Some(a), _) => Some((&a.envelope, EC_NUM_A7, a.overlay)),
+            (None, Some(e)) => Some((e, EC_NUM_A6, A3Overlay::NotRun)),
+            _ => None,
+        }
+    }
+}
+
 /// The Hall points of a mode at a state (AIR: empty when the state is under an A1 species bound).
 pub fn mode_points<'a>(inp: &'a M1Inputs, m: Mode) -> Vec<Pt<'a>> {
     match m {
@@ -371,8 +397,8 @@ pub fn mode_points<'a>(inp: &'a M1Inputs, m: Mode) -> Vec<Pt<'a>> {
             AirHall::NotAvailable(_) => vec![],
         },
         _ => inp
-            .xe_a6
-            .as_ref()
+            .xe_numerics_envelope()
+            .map(|(e, _, _)| e)
             .or(inp.xe.as_ref())
             .map(|e| e.family_points(Family::Xe).map(|p| Pt { p, corner: None }).collect())
             .unwrap_or_default(),
@@ -381,7 +407,7 @@ pub fn mode_points<'a>(inp: &'a M1Inputs, m: Mode) -> Vec<Pt<'a>> {
 
 /// The Hall tests of a mode for these inputs (A6 replaces the XE functional test when an A6 envelope is supplied).
 pub fn tests_of(inp: &M1Inputs, m: Mode) -> &'static [HallTest] {
-    match (m, &inp.xe_a6) {
+    match (m, inp.xe_numerics_envelope()) {
         (Mode::XeContingency, Some(_)) => HallTest::of_xe_a6(),
         _ => HallTest::of_mode(m),
     }
@@ -391,15 +417,21 @@ pub fn tests_of(inp: &M1Inputs, m: Mode) -> &'static [HallTest] {
 pub const EC_NUM_A6: &str =
     "EC-NUM: numerical adequacy shown on the addendum A6 convergence-study set only (22 cases; sampled, not per point)";
 
-/// The A6 XE Hall tests: both must close on one hardware configuration (as A1 for AIR).
-fn xe_a6_tests(e: &Envelope, lim: &HallLimits) -> Vec<HallTestResult> {
+/// EC-NUM of a closure on the A7 XE envelope.
+pub const EC_NUM_A7: &str = "EC-NUM: numerical method of addendum A7 (time-mean observables with batch-means standard \
+     errors; convergence demonstrated on the registered A7 demonstration set only: sampled, not per point)";
+
+/// The A6 XE Hall tests (also on an A7 envelope): both must close on one hardware configuration (as A1 for AIR).
+fn xe_a6_tests(e: &Envelope, lim: &HallLimits, ec_num: &str, overlay: A3Overlay) -> Vec<HallTestResult> {
     let pts: Vec<&EnvelopePoint> = e.family_points(Family::Xe).collect();
-    let mut rs: Vec<HallTestResult> =
-        HallTest::of_xe_a6().iter().map(|t| evaluate_hall_test(*t, Family::Xe, &pts, lim, e.bz_family_kind)).collect();
+    let mut rs: Vec<HallTestResult> = HallTest::of_xe_a6()
+        .iter()
+        .map(|t| evaluate_hall_test_a3(*t, Family::Xe, &pts, lim, e.bz_family_kind, overlay))
+        .collect();
     for r in &mut rs {
         for ec in &mut r.constraint.evidence_conditions {
             if ec.starts_with("EC-NUM") {
-                *ec = EC_NUM_A6.into();
+                *ec = ec_num.into();
             }
         }
     }
@@ -531,8 +563,8 @@ pub fn air_evidence_conditions() -> Vec<String> {
 
 /// The Hall tests of a mode at one P_nonHall,LB (state-independent apart from the bound and the AIR exclusions).
 pub fn hall_tests(inp: &M1Inputs, m: Mode, lim: &HallLimits) -> Vec<HallTestResult> {
-    if let (Mode::XeContingency, Some(e)) = (m, &inp.xe_a6) {
-        return xe_a6_tests(e, lim);
+    if let (Mode::XeContingency, Some((e, ec_num, overlay))) = (m, inp.xe_numerics_envelope()) {
+        return xe_a6_tests(e, lim, ec_num, overlay);
     }
     let tests = HallTest::of_mode(m);
     match m {
@@ -1068,7 +1100,7 @@ pub fn evaluate(inp: &M1Inputs) -> crate::AssessResult<M1Outcome> {
         (Some(_), _, _) => return Err(crate::error::model_error("A5 needs the A4 evaluation of the same run")),
         _ => None,
     };
-    let outcome = classify_v2(ti.credible_set_empty, inp.xe.is_some() || inp.xe_a6.is_some(), &states);
+    let outcome = classify_v2(ti.credible_set_empty, inp.xe.is_some() || inp.xe_numerics_envelope().is_some(), &states);
     Ok(M1Outcome { outcome, states, lb_groups, a4, a5 })
 }
 

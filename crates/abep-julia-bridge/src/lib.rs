@@ -20,6 +20,7 @@ pub mod air_cases;
 pub mod envelope_a3;
 pub mod envelope_a3_air;
 pub mod envelope_a6;
+pub mod envelope_a7;
 pub mod envelope_cases;
 pub mod jobs;
 pub mod launch;

@@ -1,0 +1,26 @@
+{
+ "schema": "np_hall_parametric_envelope_a7_launch_manifest_v1",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "layer": "PARAMETRIC / NOT_VALIDATED",
+ "addendum_sha256": "58b0c20c977907c0aa23b420f28ff569081a40415907584df1bc3c52bb1adaa4",
+ "addendum_lock_sha256": "26fc6d53548a63ac792b013673d047753b79f3280cf1f6240232c13142e79299",
+ "prereg_lock_sha256": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3",
+ "cases": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/cases/h1_parametric_envelope_a7_demo_rest_cases_v1.json",
+ "cases_sha256": "5231c8219b24ed6eb075f10970d9f5bcd667f88e35627f18fde6cf7f16d2778a",
+ "driver": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/driver/h1_envelope_a7_driver.jl",
+ "driver_sha256": "c8d72a98c1b76c9761835816d3b3d56912e3435c624a6eaa298ca14ef2bc0b29",
+ "bridge_lib": "hallthruster_bridge/bridge_lib.jl",
+ "bridge_lib_sha256": "cf26aab8607b640ebb78be9715f2c7c5d957f145ac17f52c1b23db2e980e21ab",
+ "a7_bridge": "hallthruster_bridge/a7_numerics.jl",
+ "a7_bridge_sha256": "758e06e7363590c53ee3ccc64429205b947da615c94c0b7e4bfa28beae17eb15",
+ "n_cases": 62,
+ "n_shards": 3,
+ "shard_rule": "case index i (0-based, file order) belongs to shard i mod n_shards",
+ "thread_env": {
+  "JULIA_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1"
+ },
+ "mode": "vacuum"
+}
