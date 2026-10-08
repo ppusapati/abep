@@ -1,0 +1,11 @@
+{
+ "id": "np_hall_chem_air_addendum_01_lock",
+ "model_id": "NP-HALL-CHEM-AIR",
+ "locked": "2026-10-08",
+ "note": "sha256 of NP-HALL-CHEM-AIR addendum 01 (erratum E-01, neutral-inlet rule NI-01, CA-HALL-AIR-v1 implementation specification), committed alone before the audit case file, the audit snapshots, any audit run and any AIR Hall case; changes are new dated addenda, never edits",
+ "base_commit": "fd6664e",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/",
+ "files": {
+  "addendum_01_audit_spec_inlet_erratum.json": "8e5617bf86c21e7f8418ba744b875e1750e02ba0035419e2614f2151b0f9dcf3"
+ }
+}
