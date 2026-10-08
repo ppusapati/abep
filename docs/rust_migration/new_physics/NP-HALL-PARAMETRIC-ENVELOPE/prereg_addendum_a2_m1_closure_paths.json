@@ -1,0 +1,235 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-HALL-PARAMETRIC-ENVELOPE/addendum_a2_m1_closure_paths",
+ "addendum": "A2",
+ "amends": "NP-HALL-PARAMETRIC-ENVELOPE v1 (prereg_v1.json 3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d, lock prereg_lock_v1.json 25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3); v1, its case file, launch manifest, driver and closure_run_today_v1.json are not edited",
+ "sibling_addenda": {
+  "A1": "AIR family: addendum_01_air_family.json (lane-hall-chem-air; lock addendum_01_lock.json efc96af4259c74c0c632ee515c00f29f6aff70df14775e62a5d72afa619927d5; addendum json 4988bdfd4aad30a171c4dae9ffa8d3436ee94c1aaaedcb56a3c06ffe1533dd90). A2 consumes the AIR family by A1's rules and never restates or changes them.",
+  "A3": "reserved for the Hall-run numerics check (not part of A2)"
+ },
+ "status": "PREREGISTERED_BEFORE_M2",
+ "status_label": "PARAMETRIC / NOT_VALIDATED",
+ "date": "2026-10-08",
+ "lane": "lane-m1-closure",
+ "drafted_by": "agent session under the coordinator rulings R1..R7 of the M1 closure-integration lane brief; not reviewed by the owner; nothing here is an owner decision",
+ "mandate": "A9.34 (M1 exit item: the 196-state closure harness consumes all required physics paths; RF/ICP coupling available; M2 follows), A9.32 (two-layer closure classification), A9.31 secs. 7-10 and 15-23, A9.30 (bus_power_boundary_a9_v2, O / O2), A9.33 (plenum / feed v8 stands); v1 change_control: a new, dated addendum registered before the runs it governs",
+ "registered_before": "any M2 execution (the decisive 196-state run on a frozen Hall envelope). No HallThruster.jl run of any H-1 case exists. The M1 dry run (closure_run_m1_dryrun_v1.json, today's inputs, no envelope) is produced after this lock under it and is not the decisive run.",
+ "governing_records": {
+  "A9.34_md": {"path": "docs/decisions/OD_2026_10_08_A9_34_MILESTONE_GOVERNANCE_M1_M2_M3.md", "sha256": "284a8339ac9d821d19f6484c844822662d9f19ec02d2074d641d432785df3de1"},
+  "A9.33_json": {"path": "docs/decisions/OD_2026_10_08_A9_33_hall_run_location_hall_air_chemistry_plenum_v8.json", "sha256": "8799ee1069a0916d611738fff29b8c03af1e25d74fbd602114475d2f7454602b"},
+  "A9.32_json": {"path": "docs/decisions/OD_2026_10_07_A9_32_hall_thrust_critical_path_parametric_envelope.json", "sha256": "b3deaf25c9db25ed7fe349d28b8c4b7585d434c9e90f952d9757ee725473ddde"},
+  "A9.31_verbatim": {"path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md", "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc"},
+  "A9.30_verbatim": {"path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md", "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f"},
+  "v1_prereg": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json", "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d"},
+  "CLAUDE.md": {"path": "CLAUDE.md", "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3"}
+ },
+ "pinned_inputs": {
+  "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/parity_report_v1.json": "887c39ef80063123162160f12681ff5461a7a4a09d1cd181526d8db7c69d84da",
+  "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/reference_outputs/f7_pareto_blocks_v1.json.gz": "de6ee69f21d4e5b4daba6e1b8bed263598b950b19cae9da49d309ec4d7664f00",
+  "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY/parity_report_v1.json": "863dc697e86195ddc07c59c2dbe3dfacfd8ab54adb8f9b57e417485e991aef92",
+  "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY/reference_outputs/f8_study_v1.json.gz": "741703b917d36f9f00172de7a48dca80ff2f58ab7ed41263fb563823a5b3e595",
+  "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_report_v8.json": "3f427a54dd5cecc002539b2537d1052d5e4e33c66bc1ba1219a0558e4abaa8d7",
+  "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_lock_v2.json": "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287",
+  "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_lock_v2.json": "727689fee6bd003295c53abfbc4185c93fab80620329c75062a956dbbb9742de",
+  "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+  "config/assessment/gate_thresholds_v1.json": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+  "config/constraints/engineering_constraints_v1.json": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e"
+ },
+ "what_changes": [
+  "harness v2 (record schema abep_assess_hall_parametric_closure_v2): the non-Hall inputs of v1 sec. non_hall_inputs are produced by the evaluated physics paths of sec. paths instead of being carried as open conditions only; v1 refused any EVALUATED non-Hall input (NON_HALL_EVALUABLE_NEEDS_HARNESS_V2), v2 evaluates it under the rules below",
+  "non-Hall constraints are evaluated per (state, mode) (v1: identical for every state)",
+  "v1 state_evaluation.non_hall_at_closing_points is made operational: a non-Hall input that is evaluable is evaluated at each Hall closing point (joint point conditions, sec. joint_point_conditions)",
+  "P_nonHall,LB of the v1 Hall point tests is the per-(state, mode) lower bound of the assembled layer (a) ledger of path P-PBUS (same definition family as v1: TBD load -> 0 W, TBD efficiency -> 1); with today's inputs it equals the v1 value (0 W)",
+  "A9.31 sec. 23 items E (ranges) and the binding-constraint decomposition carry the evaluated paths",
+  "an M1 readiness listing (sec. readiness) names every required path and whether the harness consumes it"
+ ],
+ "what_does_not_change": [
+  "the v1 case grid, run-status rule, favorable-but-defensible Hall envelope, point-test thresholds (HC-01, HC-02, HC-03 from the frozen configuration), B(z) family and its asymmetric rule, numerics and transport set",
+  "the A1 AIR rules (composition corners on one hardware, AIR non-closure never eligible, SB-He / SB-Ar states NOT_EVALUATED, EC-COMP / EC-CHEM / EC-INLET)",
+  "the classification procedure C0..C4, its vocabulary and the A9.32 rules: PHYSICALLY_NON_CLOSING only from an eligible non-closure demonstrated by evaluated physics under the favorable envelope; SELECT_WITH_EVIDENCE_CONDITIONS only when every required state of both modes is physics-feasible on one hardware with the credible set EMPTY; NOT_DETERMINABLE with the blocking list otherwise",
+  "layer (b): admitted components only (HallGate credible set EMPTY -> every Hall quantity NOT_EVALUATED; NP-ICP not admitted -> NOT_EVALUATED; HC-05 by abep_assess::neutralization::hc05; official flight ledger; RFP constraint matrix); no layer (a) value enters layer (b)",
+  "credible Hall transport set EMPTY, HallMap admission, hall_ensemble logic, the HallThruster.jl pin, P5-N2 v1 INCONCLUSIVE, every admitted / scored record (F7, F8 robust set EMPTY, plenum / feed v8 PARITY_FAIL), the 1.5 kW limit as assessment only"
+ ],
+ "separation_rules": [
+  "R7: physics never reads thresholds; every comparison with HC-01..HC-11 happens in abep-assess; no physics crate gains a dependency on abep-assess (crate-graph tests stay green)",
+  "every layer (a) field carries layer = PARAMETRIC / NOT_VALIDATED, its producer, the producer's status, its provenance (file and sha256 or crate and contract) and the constraint it feeds (binding attribution)",
+  "no beam, plume, coupling, heat-partition, compressor, flow or efficiency value is invented: anything a producer does not provide stays NOT_EVALUATED with its reason"
+ ],
+ "paths": [
+  {
+   "id": "P-ENV",
+   "quantity": "environment per design state (atmosphere / species, density, orbital velocity, required flag)",
+   "producer": "abep_mission::integration::today::run_admitted (environment layer abep_atmos::execution; ADMITTED)",
+   "layer_a": "state set and required flags as the mission record gives them; a required state whose environment is not EVALUATED makes every constraint of that state OPEN (ENVIRONMENT_NOT_EVALUATED)",
+   "feeds": "state set of the classification; free-stream composition reported per state"
+  },
+  {
+   "id": "P-HALL-XE",
+   "quantity": "XE family Hall envelope points (thrust, P_d, I_d, ion current, mdot, V_d) and tests XE_FUNC",
+   "producer": "abep_hall::envelope::ingest of the frozen, sha-pinned raw envelope (v1)",
+   "layer_a": "v1 rules unchanged; the point test uses P_nonHall,LB(s, XE) of P-PBUS",
+   "today": "NOT_EVALUATED (HALL_ENVELOPE_NOT_RUN)"
+  },
+  {
+   "id": "P-HALL-AIR",
+   "quantity": "AIR family Hall envelope points per composition corner and tests T12 / T25",
+   "producer": "A1 AIR family; its raw-record ingestion is A1 execution.ingestion (implemented with the AIR launch gate's first opening); A2 consumes the ingested points",
+   "layer_a": "A1 hall_specific_closure_air (composition rule, one hardware), A1 state_applicability (SB-He / SB-Ar states NOT_EVALUATED); the point test uses P_nonHall,LB(s, AIR)",
+   "today": "NOT_EVALUATED (AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED; the A1 addendum is not on this line, the AIR reaction set is INCOMPLETE_EVIDENCE, no AIR envelope exists)"
+  },
+  {
+   "id": "P-FLOW",
+   "constraint": "NH-FLOW (layer (a) analogue of HC-11 feed-state sufficiency; Q1)",
+   "producer": "the admitted F7 / F8 chain over the registered upstream design space and the frozen design-state set: intake TPMC -> filter -> compressor -> plenum / feed steady (PARITY-C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-V1 and PARITY-C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY-V1, both PARITY_PASS / ADMITTED; captured reference outputs sha-pinned above). The plenum / feed steady values inside them are the governed Python reference capture (python commit ba8adc3) reproduced bit for bit by Rust under the admitted F7 contract; the plenum / feed contract group stays PYTHON_REFERENCE (v8 PARITY_FAIL stands, R2).",
+   "hardware_rule": "one hardware across all states: a flight upstream hardware is one F7 design vector (intake candidate, filter, compressor, plenum volume, set pressure); its delivered flow at a state is the F7 chain value at that state, and its statewise quantifier is mdot_delivered_min_kgps (minimum over the states)",
+   "admissible_hardware": "the F8 robust set, carried unchanged: feasible in EVERY admitted surface scenario (A9.13 S6.16: a favourable surface model is never selected)",
+   "AIR_PRIMARY": {
+    "robust_set_empty": "NH-FLOW OPEN at every required state with GAS_PATH_ROBUST_SET_EMPTY (category DESIGN_VARIABLE_LIMIT: F8 runs on PARAMETRIC_SENSITIVITY code-default compressor coefficients over the inherited compressor subset with a TBD surface-scenario set; the A9.13 S6.13 flow-gap levers are open); reported as a binding finding with the F8 decomposition (survivors, tiers, infeasibility reasons) exactly as admitted",
+    "robust_set_non_empty": "per-state delivered flow mdot_del(h, s) and mole fractions x_s(h, s) of each robust member h by the F7 chain at state s (plenum / feed through the governed Python reference, or Rust with a run-time cross-check against it on every input of the run; any mismatch -> MODEL_ERROR); the feed loop of h at s is classified by the contract-v8 stability class under a registered controller: UNSTABLE_EQUILIBRIUM is a finding at that state (FEED_LOOP_UNSTABLE_EQUILIBRIUM, DESIGN_VARIABLE_LIMIT) and never a held number; without a registered controller the state is OPEN (FEED_CONTROLLER_NOT_REGISTERED); until the per-state values exist the state is OPEN (GASPATH_PER_STATE_VALUES_NOT_SUPPLIED)",
+    "closes": "eligible (EC-FLOW) at state s iff some robust member h with a stable feed loop at s delivers mdot_del(h, s) >= mdot of a Hall closing point of every AIR test (joint point condition)",
+    "non_closing": "never eligible in A2 (the upstream design grid is not demonstrated bounding; the compressor coefficients are PARAMETRIC_SENSITIVITY): recorded as GAS_PATH_FLOW_BELOW_HALL_CLOSING_MDOT (DESIGN_VARIABLE_LIMIT)",
+    "raw_report": "the F7 delivered-flow frontier (maximum of mdot_delivered_min_kgps over the Pareto members, per filter / wall context and overall) with its member, xO range, compressor power, intake-face drag and captured-flow minimum; the Hall envelope grid floor (v1 MF-LO 0.377 mg/s) and the ratio; labels PARAMETRIC_SENSITIVITY and REFERENCE_BOUND_FC00_NOT_ADMISSIBLE where the context carries it"
+   },
+   "XE_CONTINGENCY": "NH-FLOW OPEN with XE_FEED_FLOW_NOT_REGISTERED (no H-1 Xe flow registered: xe_accounting XV2-17 / XV2-18 TBD, OQ-HPE-03; MISSING_EVIDENCE); never eligible in either direction"
+  },
+  {
+   "id": "P-FEED-STABILITY",
+   "quantity": "feed-loop stability class (contract v8 typed status) of the admissible upstream hardware at each state",
+   "producer": "abep_gaspath::transient stability_class_events / Assessed (UNSTABLE_EQUILIBRIUM typed status) under the R2 cross-check rule",
+   "layer_a": "part of P-FLOW: evaluated only for robust members under a registered controller",
+   "today": "NOT_EVALUATED (GAS_PATH_ROBUST_SET_EMPTY, FEED_CONTROLLER_NOT_REGISTERED)"
+  },
+  {
+   "id": "P-ICP",
+   "constraint": "NH-ICP (Q3, layer (a))",
+   "producer": "NP-ICP-NEUTRALIZER model_version 2 (abep_icp::v2, lock a180ceef...; IMPLEMENTED_UNVERIFIED; ledger RUST_IMPL; NOT_VALIDATED) evaluated per mode on the registered-today v2 case (only what the repository registers: supply mode, G-REUSE, 13.56 MHz, chemistry registration; no invented geometry, RF input, neutral source or background)",
+   "consumed_outputs": "IF-ICP-HALL-v1 I_e,cap per ED-08 solve member and its envelope; IF-ICP-BUS-v2 load-plane keys BK-01..BK-05; IF-ICP-FEED-v1 dedicated flow (G-REUSE)",
+   "favorable": "I_e,cap,fav = the maximum over the CONVERGED solve members (envelope maximum); state-independent while the case carries no registered flight exposure model (DOM-17)",
+   "closes": "eligible (EC-ICP) at (s, m) iff I_e,cap,fav >= I_d of a Hall closing point of every test of m (joint point condition; the layer (a) point margin M_n = I_e,cap,fav / I_d - 1 >= 0)",
+   "non_closing": "never eligible in A2 (no registered upper bound on I_e,cap; the producer is unverified): ICP_CAPACITY_BELOW_HALL_I_D (DESIGN_VARIABLE_LIMIT)",
+   "open": "I_e,cap,fav not available: ICP_CAPACITY_NOT_EVALUATED plus the producer's reason codes (MISSING_EVIDENCE)",
+   "labels": ["PARAMETRIC / NOT_VALIDATED", "NP_ICP_V2_IMPLEMENTED_UNVERIFIED"],
+   "layer_b": "HC-05 by abep_assess::neutralization::hc05 with capacity basis MODEL: NOT_EVALUATED outside a VALIDATED_BENCH cell (A9.31 sec. 10); NP_ICP_NOT_ADMITTED"
+  },
+  {
+   "id": "P-CPL",
+   "quantity": "CPL-HALL-ON-v1 record and the neutralization quantities I_d, I_e,cap, M_n (A9.31 sec. 18 Q3)",
+   "producer": "abep_icp::v2::cpl::cpl_hall_on with the Hall member source = the PARAMETRIC envelope point (I_d = discharge_current_A, I_beam = ion_current_A, V_d) of each Hall closing point used (R1); every other CPL input as registered (HI-04..HI-06 have no producer, HI-07 / HI-08 not registered, VER-24 open), so every CPL output stays NOT_EVALUATED; abep_assess::neutralization::neutralization_quantities for M_n (MODEL_QUANTITY_NOT_A_GATE) and hc05 (NOT_EVALUATED)",
+   "role": "reported per mode with its status and labels (PARAMETRIC / NOT_VALIDATED, NP-ICP v2 IMPLEMENTED_UNVERIFIED); CPL outputs never close a constraint in A2",
+   "today": "no envelope point: CPL evaluated with the governed ensemble source (credible set EMPTY) -> NOT_EVALUATED"
+  },
+  {
+   "id": "P-PBUS",
+   "constraint": "NH-PBUS (Q5)",
+   "producer": "abep_subsystems::power::ledger::ledger on bus_power_boundary_a9_v2 (ADMITTED) in a layer (a) ledger labelled PARAMETRIC / NOT_VALIDATED (never the official ledger), one per (state, mode, Hall point)",
+   "loads": {
+    "hall_discharge": "P_d of the Hall point (envelope discharge_power_W)",
+    "icp_rf_source, icp_matching_network, icp_collector_bias, icp_assist_magnet, flow_control_icp_feed": "the IF-ICP-BUS-v2 load-plane values of the solve member giving I_e,cap,fav when CONVERGED (abep_subsystems::power::icp_bus::icp_upstream_loads_v2, not the flight-ledger mode, evidence class model-derived); otherwise TBD",
+    "compressor": "P_compressor_el(h, s) of the robust upstream hardware closing P-FLOW at s when evaluated; otherwise TBD",
+    "hall magnets, flow controls, thermal control, housekeeping, active cooling": "TBD (no registered H-1 coil design, valve or controls load)",
+    "reserved_dc_port": "0 W assumed, as the official ledger",
+    "efficiencies, front end": "the registered mass/power v5 values (TBD today)"
+   },
+   "favorable": "P_nonHall,LB(s, m) = the sum of the non-Hall items' lower_bound_W of that ledger (TBD load -> 0 W, TBD efficiency -> 1); every TBD term is listed with its slot, kind and requirement; layer (a) only",
+   "closes": "eligible (EC-PBUS) iff the ledger at a joint closing point has no TBD term (status COMPLETE) and its P_bus < HC-03",
+   "non_closing": "eligible iff the lower bound of the loads whose producers are ADMITTED or VERIFIED alone is >= HC-03 (an evaluated physical lower bound, v1 PBUS_NON_HALL_LOWER_BOUND_AT_LIMIT); loads of unverified producers never support a non-closure",
+   "open": "BUS_LEDGER_NOT_COMPLETE with the TBD list",
+   "limit": "HC-03 (1500 W) read through abep-config by abep-assess only",
+   "layer_b": "the official flight ledger, unchanged"
+  },
+  {
+   "id": "P-THERMAL",
+   "constraint": "NH-THERMAL (Q7)",
+   "producer": "NP-THERMAL-CATHODELESS 2.0.0 (abep_subsystems::thermal, governed context v2 lock 727689fe...; VERIFIED, NOT_VALIDATED, not admitted (ADM-04)); flight Hall heat needs IF-HALL-THERMAL-v1 from an admitted member (NE-01), ICP heat an admitted NP-ICP v2 or measured data (NE-02); the envelope raw records carry no per-surface Hall heat partition, so no layer (a) Hall heat exists and none is invented",
+   "closes": "eligible (EC-THERMAL) iff a thermal 2.0.0 flight output of the state is CONVERGED and its thermal margin (minimum over the heated nodes of registered validated limit - T_max) >= HC-06, every heated node having a registered validated limit",
+   "non_closing": "never eligible in A2 (no validated hardware-bound limits; anode material OPEN)",
+   "open": "THERMAL_LOADS_NOT_EVALUATED with THERMAL_FLIGHT_CASE_NOT_REGISTERED and the governance codes (NE-01 / NE-02)"
+  },
+  {
+   "id": "P-MASS",
+   "constraint": "NH-MASS (Q6)",
+   "producer": "mass v5 wet-mass objective (abep_subsystems::mass::wet_mass, ADMITTED) and the RFP matrix row RFP-WET-MASS-LT-40KG",
+   "closes": "eligible (EC-MASS) iff the objective returns an EVALUATED current-best-estimate wet mass (dry CBE plus a frozen Xe load) < HC-04",
+   "non_closing": "eligible iff an EVALUATED current-best-estimate lower bound >= HC-04; planning allocations never (v1 HR-07)",
+   "open": "MASS_INCOMPLETE_EVIDENCE (+ the objective status and XE_LOAD_NOT_FROZEN); the planning-value assessment is reported as information only",
+   "state_dependence": "none"
+  },
+  {
+   "id": "P-LIFE",
+   "constraint": "NH-LIFE (Q7)",
+   "producer": "abep_subsystems::life (ADMITTED kernels): Hall-map wall-flux gate (credible set EMPTY), P4 material status; layer (a): the envelope runs with ion_wall_losses = false (v1 numerical_settings), so wall_life_trustworthy is false",
+   "closes": "eligible (EC-LIFE) iff an evaluated firing life >= the HC-07 basis",
+   "non_closing": "never eligible in A2",
+   "open": "LIFE_NOT_EVALUATED with HALL_WALL_LIFE_INPUTS_NOT_TRUSTWORTHY and ANODE_MATERIAL_OPEN"
+  },
+  {
+   "id": "P-TD",
+   "constraint": "NH-TD (AIR_PRIMARY; HC-08)",
+   "producer": "mission run hook drag_body_N (HOST_SPACECRAFT_DRAG_ICD_ABSENT); F1 intake-face drag of the F7 frontier member reported raw (PARAMETRIC_SENSITIVITY)",
+   "rule": "R5: HC-08 is T_available(s) - D_spacecraft(s) >= 0 at every required state and needs the host-spacecraft drag ICD: OPEN (MISSING_EVIDENCE) at every state until it exists; never eligible either way in A2. The RFP thrust requirements T12 (HC-01) and T25 (HC-02) are evaluable on their own by the Hall point tests (thrust and bus power only); the record reports this separately. NH-TD stays a required AIR constraint (v1), so an AIR state is PHYSICS_FEASIBLE only with the ICD"
+  },
+  {
+   "id": "P-LAYER-B",
+   "quantity": "layer (b): HallGate, the mission run hook, the RFP constraint matrix, the official ledger, the mass record, HC-05",
+   "rule": "unchanged from v1"
+  }
+ ],
+ "joint_point_conditions": {
+  "rule": "for each (state s, mode m) and each Hall test t of m: J_t(s, m) = the envelope points p of the mode's family that pass t with P_nonHall,LB(s, m), and, for every non-Hall input evaluated at points, satisfy it (P-ICP: I_d(p) <= I_e,cap,fav; P-FLOW: mdot(p) <= mdot_del(h, s) for the same robust upstream member h); AIR additionally per composition corner (A1)",
+  "state_status": "PHYSICS_FEASIBLE iff every required constraint of (s, m) closes eligibly AND some hardware configuration (geometry, bz_shape) has a non-empty J_t(s, m) for every test t of m (AIR: at every composition corner); if every constraint closes but no hardware has all J_t non-empty: NOT_DETERMINABLE with JOINT_CLOSING_POINT_ABSENT (DESIGN_VARIABLE_LIMIT)",
+  "no_closing_point": "a non-Hall input that is evaluated at points (P-ICP, P-FLOW) while the mode's Hall test has no closing point is OPEN with NO_HALL_CLOSING_POINT (the Hall constraint carries the Hall reason)",
+  "architecture_hardware": "C3 needs one hardware configuration in the joint hardware set of every required state of both modes (v1 hardware_consistency); otherwise HALL_NO_COMMON_HARDWARE (v1 code)"
+ },
+ "classification": {
+  "procedure": "v1 classification_rule C0..C4 verbatim, applied to the per-(state, mode) constraint lists of A2",
+  "C3_evidence_conditions_added": [
+   "EC-FLOW: delivered flow from the F7 / F8 chain under PARAMETRIC_SENSITIVITY inputs (code-default compressor coefficients, TBD surface-scenario set); compressor T-1 / T-2 data, DI-1.3 accommodation evidence and an admitted plenum / feed transient (v8 PARITY_FAIL) remain",
+   "EC-ICP: I_e,cap from NP-ICP v2 (IMPLEMENTED_UNVERIFIED, NOT_VALIDATED); HC-05 (M_n,LB > 0 with a VALIDATED_BENCH I_e,cap) and CPL-HALL-ON-v1 not evaluated",
+   "EC-PBUS: bus power from a layer (a) ledger at model-derived loads and registered efficiencies; start-up / simultaneous peaks (P_bus,1ms,max) not evaluated",
+   "EC-THERMAL: thermal 2.0.0 NOT_VALIDATED; validated limits",
+   "EC-MASS: current-best-estimate mass, not a measurement",
+   "EC-LIFE: evaluated life is model-derived",
+   "EC-TD: the host-spacecraft drag ICD"
+  ],
+  "category_of_new_codes": {
+   "GAS_PATH_ROBUST_SET_EMPTY": "DESIGN_VARIABLE_LIMIT",
+   "GAS_PATH_FLOW_BELOW_HALL_CLOSING_MDOT": "DESIGN_VARIABLE_LIMIT",
+   "FEED_LOOP_UNSTABLE_EQUILIBRIUM": "DESIGN_VARIABLE_LIMIT",
+   "ICP_CAPACITY_BELOW_HALL_I_D": "DESIGN_VARIABLE_LIMIT",
+   "JOINT_CLOSING_POINT_ABSENT": "DESIGN_VARIABLE_LIMIT",
+   "FEED_CONTROLLER_NOT_REGISTERED": "MISSING_EVIDENCE",
+   "GASPATH_PER_STATE_VALUES_NOT_SUPPLIED": "MISSING_EVIDENCE",
+   "XE_FEED_FLOW_NOT_REGISTERED": "MISSING_EVIDENCE",
+   "ICP_CAPACITY_NOT_EVALUATED": "MISSING_EVIDENCE",
+   "THERMAL_FLIGHT_CASE_NOT_REGISTERED": "MISSING_EVIDENCE",
+   "HALL_WALL_LIFE_INPUTS_NOT_TRUSTWORTHY": "MISSING_EVIDENCE",
+   "ANODE_MATERIAL_OPEN": "MISSING_EVIDENCE",
+   "NO_HALL_CLOSING_POINT": "MISSING_EVIDENCE",
+   "ENVIRONMENT_NOT_EVALUATED": "MODEL_DOMAIN_LIMIT",
+   "every other open code": "as v1 (MISSING_EVIDENCE unless v1 or A1 names another category)"
+  },
+  "today_expected": "no envelope: C1, NOT_DETERMINABLE with HALL_ENVELOPE_NOT_RUN first, the AIR chemistry blocker, GAS_PATH_ROBUST_SET_EMPTY and every open non-Hall code; layer (b) NOT_EVALUATED"
+ },
+ "readiness": {
+  "statuses": {
+   "CONSUMED": "the harness reads the path's producer today and its output (a value or a fail-closed status with reasons) enters every (state, mode) it applies to",
+   "AWAITING_INPUT": "the consumer is implemented and exercised by synthetic test-only inputs, but the producer's input does not exist yet (named codes); it is consumed without a code change when the input appears",
+   "BLOCKED": "the harness cannot consume the path (no producer interface, or a governance rule forbids it), with the reason"
+  },
+  "required_paths": ["P-ENV", "P-FLOW", "P-FEED-STABILITY", "P-ICP", "P-CPL", "P-HALL-XE", "P-HALL-AIR", "P-PBUS", "P-THERMAL", "P-MASS", "P-LIFE", "P-TD", "P-LAYER-B"],
+  "m1_exit_item": "the 196-state closure harness can consume all required physics paths iff no required path is BLOCKED; AWAITING_INPUT paths name the input M2 waits for"
+ },
+ "fail_closed": [
+  "any pinned input or A2 / v1 / A1 file whose sha256 differs refuses the record (MODEL_ERROR, exit 4); no partial record",
+  "a producer MODEL_ERROR refuses the record; NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN propagate as OPEN with their codes, never as a closure",
+  "a refused IF-ICP-BUS-v2 record (retired key, wrong plane, non-finite or negative power) refuses the record",
+  "SYNTHETIC test inputs carry SYNTHETIC_TEST_DATA_NOT_EVIDENCE and never appear in a committed record"
+ ],
+ "determinism": "no random input; identical inputs give a byte-identical record (BTreeMap order, fixed float formatting)",
+ "execution": {
+  "dry_run": "abep-assess-closure --harness v2 --out docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/closure_run_m1_dryrun_v1.json (today's inputs, no envelope; label M1_DRY_RUN_NOT_DECISIVE)",
+  "m2": "abep-assess-closure --harness v2 --envelope <frozen raw manifest> --envelope-sha256 <hex> [AIR points through the A1 ingestion] --out closure_run_m2_v1.json, after the XE envelope is frozen; the record states which families were ingested",
+  "readiness": "abep-assess-closure --readiness"
+ },
+ "change_control": "any change after this lock is a new, dated addendum registered before the runs it governs; results seen under A2 (including the dry run) cannot justify changing it"
+}

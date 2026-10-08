@@ -26,13 +26,16 @@ abep-config.workspace = true
 abep-data.workspace = true
 abep-hall.workspace = true
 abep-atmos.workspace = true
+# Hall AIR reaction-set admission state (NP-HALL-CHEM-AIR, abep_chem::hall_air) read by the closure's P-HALL-AIR path.
+abep-chem.workspace = true
 # Admitted physics crates consumed (never duplicated): only this crate and abep-cli use them as plain path dependencies.
 abep-mission = { path = "../abep-mission" }
 abep-gaspath = { path = "../abep-gaspath" }
 abep-subsystems = { path = "../abep-subsystems" }
 abep-icp = { path = "../abep-icp" }
+# IF-ICP-BUS-v2 records are serde_json values (abep_subsystems::power::icp_bus::icp_upstream_loads_v2; closure_m1 P-PBUS).
+serde_json.workspace = true
 
 [dev-dependencies]
-# crate-graph test (cargo metadata JSON) and the CI replay of the gzip-captured reference outputs.
-serde_json.workspace = true
+# CI replay of the gzip-captured reference outputs (serde_json is a normal dependency above).
 flate2.workspace = true

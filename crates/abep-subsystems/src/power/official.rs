@@ -89,11 +89,48 @@ pub fn official_ledger(
     compressor_p_w: Option<f64>,
     compressor_source: &str,
 ) -> PowerResult<Ledger> {
+    let over: Vec<LoadOverride> = compressor_p_w
+        .map(|p| LoadOverride {
+            slot: Slot::Compressor,
+            p_w: p,
+            evidence_class: "model-derived".into(),
+            source: if compressor_source.is_empty() { DEFAULT_COMPRESSOR_SOURCE } else { compressor_source }.into(),
+        })
+        .into_iter()
+        .collect();
+    ledger_with_loads(mp, config, &over, if compressor_p_w.is_none() { LABEL_OFFICIAL } else { LABEL_PARAMETRIC })
+}
+
+/// A known load-plane value that replaces a slot's TBD load of the mass/power v5 record.
+#[derive(Debug, Clone, PartialEq)]
+pub struct LoadOverride {
+    pub slot: Slot,
+    pub p_w: f64,
+    pub evidence_class: String,
+    pub source: String,
+}
+
+/// The A9-02 steady ledger of `config` with the v5 TBD texts, where the listed slots carry known loads instead of TBD
+/// (additive; [`official_ledger`] is this with at most the compressor). Every other load, every efficiency and the
+/// front end stay as the record states them; the reserved port stays 0 W `assumed` and cannot be overridden.
+pub fn ledger_with_loads(
+    mp: &MassPowerA9V5,
+    config: &str,
+    overrides: &[LoadOverride],
+    label: &str,
+) -> PowerResult<Ledger> {
+    if let Some(o) = overrides.iter().find(|o| o.slot == Slot::ReservedDcPort) {
+        return Err(PowerError::new("BoundaryA9Error", format!("{} cannot be overridden", o.slot.name())));
+    }
     let texts = mp.slot_texts(config)?;
     let cfg = Value::str(config);
+    let installed = installed_slots(&cfg, &Value::List(vec![]))?;
+    if let Some(o) = overrides.iter().find(|o| !installed.contains(&o.slot)) {
+        return Err(PowerError::new("BoundaryA9Error", format!("{} is not an installed slot", o.slot.name())));
+    }
     let mut loads_d = Dict::new();
     let mut effs = Dict::new();
-    for s in installed_slots(&cfg, &Value::List(vec![]))? {
+    for s in installed {
         let rec = &texts
             .iter()
             .find(|(n, _)| n == s.name())
@@ -110,11 +147,10 @@ pub fn official_ledger(
                     text(rec, "status")?
                 )),
             );
-        } else if let (Slot::Compressor, Some(p)) = (s, compressor_p_w) {
-            load.insert("P_W", Value::Float(p));
-            load.insert("evidence_class", Value::str("model-derived"));
-            let src = if compressor_source.is_empty() { DEFAULT_COMPRESSOR_SOURCE } else { compressor_source };
-            load.insert("source", Value::str(src));
+        } else if let Some(o) = overrides.iter().find(|o| o.slot == s) {
+            load.insert("P_W", Value::Float(o.p_w));
+            load.insert("evidence_class", Value::str(o.evidence_class.clone()));
+            load.insert("source", Value::str(o.source.clone()));
         } else {
             load.insert("P_W", Value::str(TBD));
             load.insert("tbd_requires", Value::str(text(rec, "status")?));
@@ -135,7 +171,7 @@ pub fn official_ledger(
     fe.insert("tbd_requires", Value::str(FRONT_END_TBD));
     let mut args = LedgerArgs::new(Value::Dict(loads_d), Value::Dict(effs), Value::Dict(fe));
     args.config = cfg;
-    args.label = Value::str(if compressor_p_w.is_none() { LABEL_OFFICIAL } else { LABEL_PARAMETRIC });
+    args.label = Value::str(label);
     ledger(&args)
 }
 

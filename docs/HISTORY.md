@@ -5386,3 +5386,42 @@ Lane `lane-hall-chem-air`, base `b730764`.
   - Every other TOML keeps the original check.
 - **Unchanged:** abep-n2n-0.11, the N2 configurations and validity file, the audit snapshots, the P5-N2 records,
   `bridge_lib.jl`, HallMap admission, the credible set (EMPTY), and the HallThruster.jl pin.
+
+## 2026-10-08 — M1 closure integration: NP-HALL-PARAMETRIC-ENVELOPE addendum A2, closure harness v2 consuming every required physics path, M1 readiness, dry run (no Hall run; no admitted / scored result changed)
+
+- **A2** (`c797ee6`, committed alone before any harness v2 code or M2 execution):
+  - Files: `prereg_addendum_a2_m1_closure_paths.json` `0c9a6b7b…`, `PREREG_ADDENDUM_A2.md` `8fe091b4…`, lock
+    `774bf761…`.
+  - Under the coordinator rulings R1..R7 it registers 13 paths, the treatment of each, its status labels and how it
+    feeds C0..C4. C0..C4 and the A9.32 rules are unchanged.
+  - Non-Hall non-closures are never eligible, with two exceptions: the v1 bus lower bound (admitted / verified loads
+    only) and an evaluated CBE mass lower bound.
+- **Code** (`99a1a35`, `cab9030`; additive):
+  - `abep_assess::closure_m1` (gather / evaluate / record), with `abep-assess-closure --harness v2` and `--readiness`.
+    The v1 harness and record are unchanged.
+  - `abep_icp::v2::cpl::HallMemberSource::ParametricEnvelope` (R1).
+  - `abep_hall::envelope::EnvelopePoint::ion_current_a`.
+  - `abep_subsystems::power::official::ledger_with_loads`; `official_ledger` delegates to it, outputs unchanged.
+  - abep-assess gains serde_json (now a normal dependency) and abep-chem (Hall AIR admission state).
+- **A1 naming:** A2 named A1 by `addendum_01_air_family` (`4988bdfd…`). That record was superseded before any AIR run by
+  `prereg_addendum_a1_air_family` (`7d7a7ba9…`, merged here). The harness reads A1 proper and requires its
+  `supersedes` to name the A2 identity. A1's LP-BOUNDED path is information only (AIR_CHEMISTRY_BOUNDED_NOT_COMPLETE).
+- **Readiness:** none of the 13 paths is BLOCKED.
+  - AWAITING_INPUT: P-HALL-XE (HALL_ENVELOPE_NOT_RUN); P-HALL-AIR (AIR set abep-air-0.7 INCOMPLETE_EVIDENCE, no
+    envelope); P-FEED-STABILITY (robust set EMPTY, no registered controller); P-THERMAL (no flight thermal case,
+    NE-01 / NE-02).
+- **Dry run** (`closure_run_m1_dryrun_v1.json`, today's inputs, M1_DRY_RUN_NOT_DECISIVE): NOT_DETERMINABLE (C1).
+  - 0 / 196 states are physics-feasible in layer (a); 0 are evidence-qualified in layer (b). P_nonHall,LB is 0 W.
+  - Binding finding: GAS_PATH_ROBUST_SET_EMPTY (F8, admitted, carried unchanged; DESIGN_VARIABLE_LIMIT). It binds AIR
+    NH-FLOW at all 196 states.
+  - The F7 delivered-flow frontier (statewise minimum, best Pareto member) is 0.01296 mg/s, which is 0.034 × the
+    lowest Hall grid flow (0.377 mg/s).
+- **Consequence of A2 as registered:** SELECT_WITH_EVIDENCE_CONDITIONS cannot be reached until three things exist:
+  - the host-spacecraft drag ICD, with a T − D addendum (NH-TD);
+  - a registered H-1 Xe flow (XE NH-FLOW);
+  - a complete bus ledger.
+
+  C1, C2 and C4 remain reachable. The 12 / 25 mN tests are evaluable on their own.
+- **Tests:** `tests/closure_m1.rs` (23) covers today's run, readiness, determinism, synthetic XE / AIR chains to C0 /
+  C1 / C2 / C3 / C4 and the joint branch, per-path fail-closed checks and pins. There are also a parametric CPL test
+  and a `ledger_with_loads` test.

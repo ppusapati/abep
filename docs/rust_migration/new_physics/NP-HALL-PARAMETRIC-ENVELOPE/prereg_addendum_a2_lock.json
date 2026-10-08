@@ -1,0 +1,14 @@
+{
+ "id": "np_hall_parametric_envelope_addendum_a2_lock",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "addendum": "A2",
+ "locked": "2026-10-08",
+ "note": "sha256 of NP-HALL-PARAMETRIC-ENVELOPE addendum A2 (M1 closure-harness physics paths; status PREREGISTERED_BEFORE_M2), committed alone before the harness v2 code, the M1 dry run and any M2 execution; v1 and A1 files unchanged; any change after this lock is a new, dated addendum",
+ "base_commit": "64a078e",
+ "predecessor_lock": {"file": "prereg_lock_v1.json", "sha256": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3"},
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/",
+ "files": {
+  "prereg_addendum_a2_m1_closure_paths.json": "0c9a6b7b00fff125c9338b32c6b0426f8331b290e903a0e1ba6e3a2364e21aa4",
+  "PREREG_ADDENDUM_A2.md": "8fe091b4dbb08715d18db28b03e3315d3cfa9ee443ff3af9aa4794ca21ffa8ac"
+ }
+}
