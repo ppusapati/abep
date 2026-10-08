@@ -1,0 +1,8 @@
+{
+ "schema": "abep_dcr_register_v1",
+ "id": "dcr_register_v1",
+ "baseline": "DBF-1",
+ "process": "docs/baseline/DBF-1/DCR_PROCESS.md",
+ "dcrs": [],
+ "rule": "append-only by new register versions (dcr_register_v2.json, ...); this v1 file is the empty register at the freeze and is pinned by the DBF-1 lock"
+}
