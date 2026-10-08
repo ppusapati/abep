@@ -1,0 +1,17 @@
+{
+ "schema": "abep_icp_closure_registration_lock_v1",
+ "id": "ICP-CLOSURE-REG-v1-A1",
+ "registered": "2026-10-08",
+ "rule": "Committed alone, before any evaluation of the A1 collector-window record. A changed file is a v2 of the addendum.",
+ "files": {
+  "icp_closure_registration_a1_v1.json": "73d177fc5aa8dfcf85d51a284ea2d7cb381055072c02304f155179a54796983c"
+ },
+ "parent_lock": {
+  "path": "docs/closure/icp/icp_closure_registration_lock_v1.json",
+  "sha256": "5a03e399a980d975651ccd7392077b4fbc56fe825e53f002bba6371d22a156f4"
+ },
+ "p8_record": {
+  "path": "docs/closure/materials/materials_gates_v1.json",
+  "sha256": "f3b6e04507429db87b3f94a3a355bb6e87cb78d97ca9bd1f902a766ea667fee1"
+ }
+}
