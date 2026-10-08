@@ -1,0 +1,98 @@
+{
+ "schema": "closure_board_v1",
+ "date": "2026-10-08",
+ "governance": "A9.38",
+ "baseline": "DBF-1 (lock 517e0cf6...)",
+ "rows": [
+  {
+   "id": "P1",
+   "Item": "Intake / compressor",
+   "Current state": "DCR REQUIRED",
+   "Owner lane": "L-INTAKE-DCR001",
+   "Exact blocker": "BD-01: worst-state delivered flow 1.43e-9 kg/s vs 4.80e-8 kg/s (x33.6) for 12 mN; BD-02 6/10 scenarios; BD-03 compressor 10.9 vs 5.5 kg; F8 robust set EMPTY; compressor coefficients uncited",
+   "Action underway": "DCR-001 opened; preregistered redesign evaluation over the full 196-state x 10-scenario set (aperture, capture, compression ratio, topology, mass, plenum, controller, dead-head, flow, drag, power)",
+   "Closure criterion": "one design delivers >= the necessary flow at every required state in every admitted scenario, within drag, power and mass allocations; or a quantified FUNDAMENTAL NON-CLOSURE",
+   "Documentation impact": "intake / compressor section of the proposal; mass + power + thermal depend on it"
+  },
+  {
+   "id": "P2",
+   "Item": "Hall RP-1 numerical convergence",
+   "Current state": "BLOCKED BY SPECIFIC MISSING EVIDENCE",
+   "Owner lane": "L-HALL-NUMERICS (running)",
+   "Exact blocker": "HALL_NUMERICS_NOT_CONVERGED: A3 NOT_ADEQUATE, A6 STOP_NO_LEVEL_CONVERGED",
+   "Action underway": "diagnosis H-OSC/H-STEP/H-SCHEME/H-FAIL/H-TRANSPORT/H-BENCH; A7 method; RP-1 first (Stage 1)",
+   "Closure criterion": "registered A7 demonstration passes on RP-1 and the RP-1 envelope is frozen; or a rigorous failure report naming the cause class",
+   "Documentation impact": "Hall performance section; M2 / M3 depend on it"
+  },
+  {
+   "id": "P3",
+   "Item": "H1 magnetic field B(z)",
+   "Current state": "BLOCKED BY SPECIFIC MISSING EVIDENCE",
+   "Owner lane": "L-H1-BZ",
+   "Exact blocker": "BD-05: only P5-shape surrogate; no H1 FEMM / measured B(z) (H1F-BZ-01)",
+   "Action underway": "axisymmetric magnetostatic FE of the frozen electromagnet (FEMM preferred), verified on analytic benchmarks; surrogate kept separate",
+   "Closure criterion": "H1-specific B(z) registered with evidence class FE-DERIVED and uncertainty; Hall runs can cite it",
+   "Documentation impact": "Hall magnetic-circuit section; Hall envelope evidence class"
+  },
+  {
+   "id": "P4",
+   "Item": "RF/ICP neutralizer closure (+ AIR audit)",
+   "Current state": "BLOCKED BY SPECIFIC MISSING EVIDENCE",
+   "Owner lane": "L-ICP-CLOSURE; L-HALL-CHEM-AIR (audit running, 274/576)",
+   "Exact blocker": "BD-06: absorbed RF / coupling basis, electrode bias, edge factor, AIR / Xe rate sets not registered; I_e,cap NOT_EVALUATED; NP-ICP v2 IMPLEMENTED_UNVERIFIED (source reads blocked)",
+   "Action underway": "register inputs from repo evidence; rate-set admission; I_e,cap and neutralization margin vs Hall beam current; finish AIR audit and state materiality",
+   "Closure criterion": "I_e,cap evaluated on DBF-1 ICP with margin vs beam current; AIR audit verdicts with materiality statement",
+   "Documentation impact": "neutralizer section; HC-05 / GNG-ICP-01"
+  },
+  {
+   "id": "P5",
+   "Item": "Mass closure",
+   "Current state": "DCR REQUIRED (via P1)",
+   "Owner lane": "L-MASS (after P1)",
+   "Exact blocker": "BD-04: planning roll-up 34.86 kg dry vs 34 kg; 40.35 kg wet at 2 kg Xe; BD-03 compressor",
+   "Action underway": "rebuild roll-up after DCR-001 separating measured / vendor / estimate / floor / allocation / margin",
+   "Closure criterion": "CBE roll-up <= 34.0 kg dry and < 40 kg wet at 2 kg Xe with 10 % margin, by evidence class",
+   "Documentation impact": "mass budget section"
+  },
+  {
+   "id": "P6",
+   "Item": "Power closure",
+   "Current state": "BLOCKED BY SPECIFIC MISSING EVIDENCE",
+   "Owner lane": "L-POWER-ICD",
+   "Exact blocker": "bus ledger PARTIAL: 23-24 TBD terms; compressor power depends on P1; Hall power depends on P2",
+   "Action underway": "close every TBD term with sourced values or frozen engineering assumptions; points nominal / 12 mN / 25 mN / worst state / Xe",
+   "Closure criterion": "complete bus_power_boundary_a9_v2 ledger at all points within 1,350 W design allocation and < 1,500 W ceiling",
+   "Documentation impact": "power budget section"
+  },
+  {
+   "id": "P7",
+   "Item": "Thermal closure",
+   "Current state": "FROZEN FOR EM (topology) / analysis open",
+   "Owner lane": "L-THERMAL",
+   "Exact blocker": "no flight thermal case; spacecraft thermal ICD absent (SCI-A reference); loads depend on P1 / P6",
+   "Action underway": "frozen-topology hot / cold orbital cases with Earth IR / albedo; channel, anode, magnets, ICP, RF electronics, compressor, PPU, radiator",
+   "Closure criterion": "all nodes within limits with the 50 K / 1.2 margin rule in hot and cold cases",
+   "Documentation impact": "thermal design section"
+  },
+  {
+   "id": "P8",
+   "Item": "Materials",
+   "Current state": "FROZEN FOR EM (selections) / gates open",
+   "Owner lane": "L-MATERIALS",
+   "Exact blocker": "every P4 materials gate INCOMPLETE_EVIDENCE (AO, plasma exposure, sputtering / erosion, deposition, thermal cycling, oxide electrical)",
+   "Action underway": "complete the gate evidence for Inconel 600 / 601 and BN-SiO2 / BN from sourced data; separate qualification evidence from assumptions",
+   "Closure criterion": "each gate PASS by cited evidence or an explicit EM verification requirement",
+   "Documentation impact": "materials / life section"
+  },
+  {
+   "id": "P9",
+   "Item": "Host-spacecraft drag interface",
+   "Current state": "REFERENCE/ICD DEPENDENT",
+   "Owner lane": "L-POWER-ICD",
+   "Exact blocker": "RC-DIAMANT reference gives T_required up to 54.5 mN (40 states > 25 mN); host ICD absent",
+   "Action underway": "derive the allowable host C_D*A envelope vs state that keeps T_required within 12-25 mN, as an ICD constraint",
+   "Closure criterion": "allowable C_D*A table per state / altitude registered as an interface requirement",
+   "Documentation impact": "ICD / interface-requirements section"
+  }
+ ]
+}
