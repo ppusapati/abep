@@ -5637,6 +5637,27 @@ stays EMPTY and nothing enters layer (b).
 - **P8 closure state: FROZEN FOR EM.**
 - No DBF-1 value, frozen record, model or golden changed.
 
+## 2026-10-08 — A9.38 P6 power ledger closed except the Hall discharge term; P9 host C_D·A interface constraint registered (lane-power-icd)
+
+- **P9** (`docs/closure/icd/host_drag_cda_envelope_v1.{json,md}`, builder `build_host_drag_cda_envelope.py`, read from the M2 record `600cf229…`): IR-HOST-DRAG-01 is (C_D·A)_host,max(s) = (T − D_intake(s)) / q(s), evaluated in the unfavourable admitted surface scenario (S6.16). T is 25 mN (capability, statewise limit) or 12 mN (sustained design target).
+  - At 25 mN the governing value is 0.221 m² (alt 180 km, ST_HIGH). Worst / typical by altitude: 180 km 0.22 / 0.93, 195 km 0.57 / 1.67, 215 km 1.20 / 3.33, 230 km 1.80 / 5.10 m².
+  - No state is infeasible at 25 mN.
+  - At 12 mN, 13 states (alt 180 km, LT_HIGH / ST_HIGH; 11 in every scenario) have no positive host C_D·A: the DBF-1 intake face alone exceeds 12 mN there. This is carried to DCR-001.
+  - RC-DIAMANT gives 40 states above 25 mN (consistent with M2). DCR-001 updates the envelope by an M2 rerun and `--record`.
+  - Closure state **REFERENCE/ICD DEPENDENT** (closure criterion met). Statement: `docs/closure/statements/P9_host_drag_interface.md`.
+- **P6 code** (additive): `abep_subsystems::power::closure_v1` builds the ledger from the sha256-pinned term register `power_closure_inputs_v1.json` (`a588c0db…`). `abep_assess::power_closure` and the bin `abep-assess-power-closure` add the HC-03 quantities from config. Admitted ledger, allocation and official-ledger functions are unchanged; the official A9-02 ledger still lists its 24 TBD terms.
+- **P6 record** (`docs/closure/power/power_ledger_v1.{json,md}`): 27 terms closed (24 official TBD entries, plus the front end and the two harness terms), 0 TBD.
+  - Sources: Osuga 2005 / Rhodes 2024 / NewOrbit / Volkmar / Moog PFCV analogs, H2-1 coil sizing, the M2 compressor model, and frozen engineering assumptions with bounds.
+  - Hall discharge power is **DESIGN_ALLOCATION_NOT_PREDICTED**.
+  - P-NOM: P_d 784 W closes 1,350 W (margin 150 W to 1,500 W).
+  - P-12: P_d 650 W gives 1,192 W (margins 158 / 308 W).
+  - P-25 (P_d 1,350 W band end): 2,016 W.
+  - P-WORST (MC-1 capability magnets): 2,130 W.
+  - P-XE (650 W): 1,184 W.
+  - Discharge ceiling P_d,max: 784 W at 1,350 W and 911 W at 1,500 W (conservative corner 676 W). The derived Hall requirement is T/P_d ≥ 27.4 mN/kW at 25 mN and ≥ 15.3 mN/kW at 12 mN.
+  - RF trade line: each 100 W of forward power costs about 129 W of discharge ceiling. Compressor headroom inside the 300 W common allocation is 231 W.
+  - Closure state **BLOCKED BY SPECIFIC MISSING EVIDENCE** (HALL_NUMERICS_NOT_CONVERGED: P_d at 12 / 25 mN). Statement: `docs/closure/statements/P6_power.md`.
+
 ## 2026-10-08 — P7 thermal closure v1 (A9.38 Priority 7, lane L-THERMAL)
 
 - **Preregistration first:** `docs/closure/thermal/thermal_cases_prereg_v1.json` + `thermal_load_inputs_v1.json` + lock, committed alone (e5e6e06, prereg sha256 `5666c528…`). It fixes the DBF1-TH-01 node set exactly (R_ICP absent), optics, view factors, conductances, limits (incl. the P8 DA-06 screening ceilings and DCR triggers), the 50 K / 1.2 rule, the R_HALL lever grid, allowables, sensitivities, boundary units and the closure-state rule.
