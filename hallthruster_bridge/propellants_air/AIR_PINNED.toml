@@ -1,0 +1,81 @@
+# Reaction-set label of the Hall AIR_PRIMARY chemistry (NP-HALL-CHEM-AIR v1, A9.33 Q2). Separate from abep-n2n-* (propellants/,
+# PINNED.toml) and abep-icp-air-* (data/chemistry/icp/): one label never names two chemistry definitions (HR-02). [files] pins
+# every file of this directory, [reuse] the abep-n2n-0.11 tables referenced in place (../propellants/<file>), [tables] the set's
+# own tables (target gas, preregistration process, role, origin). Any change is a new label with a history line, one table per
+# commit, and a new sha256 of this file in abep_chem::hall_air::AIR_PINNED_SHA256. Status vocabulary: INCOMPLETE_EVIDENCE |
+# NOT_REPRESENTABLE_IN_PINNED_SOLVER | COMPLETE_FOR_PARAMETRIC_ENVELOPE (not a validation claim).
+
+[contract]
+id = "NP-HALL-CHEM-AIR"
+version = "1"
+prereg = "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_v1.json"
+lock = "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_lock_v1.json"
+lock_sha256 = "1884e42ff98ee07a634500ce338eef9dc3749bf4e5c053b058aec9b764674518"
+consumer = "NP-HALL-PARAMETRIC-ENVELOPE AIR family (addendum); bridge_lib.jl chemistry_validity through rate_dir = propellants_air"
+loader = "abep_chem::hall_air::AirSet::load"
+
+[reaction_set]
+label = "abep-air-0.0"
+status = "INCOMPLETE_EVIDENCE"
+nominal_config = ""
+configs = []
+tier1_gaps = [
+  "HA-O-ION-01",
+  "HA-O-EL-01",
+  "HA-O-EXC-01",
+  "HA-O2-ION-01",
+  "HA-O2-DI-01",
+  "HA-O2-DIS-01",
+  "HA-O2-EL-01",
+  "HA-O2-EXC-01",
+  "HA-O2-EXC-02",
+]
+blocking = [
+  "SONG2026 tables not checked against the version of record (AD-HA-02, OQ-HA-01)",
+  "SB-NO unresolved: blocks every AIR state (AD-HA-05, OQ-HA-03)",
+  "SB-He / SB-Ar unresolved: 14 + 6 states INCOMPLETE_EVIDENCE (AD-HA-05, OQ-HA-03)",
+  "CA-HALL-AIR-v1 PREPARED_NOT_RUN: no final tier-2 / tier-3 verdict (AD-HA-04)",
+  "no repository source for HA-IM-01, HA-HN-01, HA-DR-01, HA-MS-01, HA-O2P-DIS-01, HA-O2-VIB-01, HA-O2-EXC-03: no evaluable bound today (UNBOUNDED_OMISSION unless sourced or disposed, OQ-HA-06)",
+]
+history = [
+  "abep-air-0.0 (2026-10-08): skeleton under NP-HALL-CHEM-AIR v1 (lock 1884e42f): the 29 abep-n2n-0.11 tables (n2_n.toml nominal + N2 DI lower + N elastic Wang) referenced in place with mirrored validity entries; no O / O2 table; no configuration",
+]
+
+[files]
+"PROVENANCE.md" = "ca25218f2b23462f188a39c60d9df8ba0fc3f6094d771dc0490a3de96417cd9f"
+"rate_validity.toml" = "d993714ed65e2307dd559d4740ba2cd59892fa3cfbe8cefa105a3c1eaaed8608"
+
+[reuse]
+"../propellants/elastic_N2_song2023.dat" = { sha256 = "d70d9252e961ec6bfe16a0a480020dfdcf3a3aa1032cf2d23b7b3a51a455c47d", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/ionization_N2_song2023.dat" = { sha256 = "ef922b52eaa0a27efb330b8f7140f534d923c3b759d4df29ffd13ebb832067a8", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/dissociative_ionization_N2_upper.dat" = { sha256 = "473a1ed2fbdb8d74da3a21bd013c033de4f618dcb7a0830086343efef13f2e6c", target = "N2", process = "HA-N2N-01", role = "NOMINAL (N2 DI upper)" }
+"../propellants/dissociative_ionization_N2_lower.dat" = { sha256 = "8c0a7e5e2139dfddd69c9783d7c2016d070b65a2117645fb3995efce046d7ed2", target = "N2", process = "HA-N2N-01", role = "VARIANT (N2 DI lower)" }
+"../propellants/dissociative_ionization_N2_to_N_Z2plus.dat" = { sha256 = "ce68675e69dd3d2e572a0e4c525d712b66ac2329a678d5580a92eaf884b3d94e", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/dissociation_N2.dat" = { sha256 = "fb78ba1d30ec0d88a13e992df7749591f65af5770e973e3696a7a932705eb7fc", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_A3Sigma_u.dat" = { sha256 = "1de3f096d8d649fcb9fc77a5046625135ee646984b3ad5841d0f6229a750e169", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_B3Pi_g.dat" = { sha256 = "bb354c8b80562a1896cde8d408706865a61a8fc4d8a0a08c9a9cec23c50fcbb1", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_W3Delta_u.dat" = { sha256 = "7608747ff9606f2da2add27b1be3e83fa68547cf128319a266013d997ff89f9e", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_Bprime3Sigma_u.dat" = { sha256 = "0cfb818937e548921784fa5952185020a5b1ad09d046edc47f5e557ba349fe22", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_a1Pi_g.dat" = { sha256 = "218ca2f91f7cf60526a28a940885421f30a2d9559094f3ccee06256ed0d29903", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_aprime1Sigma_u.dat" = { sha256 = "8a3bbaa8d6904ffc4060a8cc8f9d92b125298bdb3d1dc5f250146d2fb1d01361", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_w1Delta_u.dat" = { sha256 = "ed070fa87591b84b51d6d7d14b3ce63afc59386a8d87a743dd5e6ed97f7fa9bf", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_C3Pi_u.dat" = { sha256 = "85545796dd44642dad62479b343c514ae3efc1e7a2f6c7bc9fc994ea9458dcb3", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_1.dat" = { sha256 = "d284b6047ddba521bf2ca6abad1994baaabdb6b9debf67aa085723331433e152", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_2.dat" = { sha256 = "b5e911ef0ea89ba3b92fd6b3ad4ffb445de90616e9ee5d2262a06af2b42739f8", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_3.dat" = { sha256 = "00f2a35a4355c83711f27ee0a29d32e8b0bf21bf4e152fb088fa1725a584e82b", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_4.dat" = { sha256 = "5b83ed3ed871ed8039ce503e0ec8e867b402d511d5ccee965ec261fe49aa2bfd", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_5.dat" = { sha256 = "696be5f39b2cd645ac3803f31cb92e1c4080a71ee72a313089e27b69ec902f22", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_6.dat" = { sha256 = "883f8986a0574fd24c34bc9a2766b321c457befa62916aada02f0b0fc1b0b8ee", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_7.dat" = { sha256 = "1fa14674da496716f222c3a40780df80078ca4b0921fc8804198b0af00086d12", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_8.dat" = { sha256 = "2d3b6daf646b0355f2be2563e949e23af127fec493b04a7704b58bb873bb3929", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_9.dat" = { sha256 = "05ce506e85cd26f02976fe8242ae159505b08d9bb3a57b8515ce033e3a1fae90", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_vib_0_to_10.dat" = { sha256 = "95c17bb7f4dd923e48a81438d2bf56a28044fe8095c62d1bc5bd4beba3244dbc", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_rot_j0_to_j2.dat" = { sha256 = "a697d52ca71da5deb9f953a1190b4e582afc8dc03c1109c612b86c01d5b1ba05", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/excitation_N2_rot_j0_to_j4.dat" = { sha256 = "d6341cbea08a2c7e8ca0fe9f54b2a2ead06db942875043231c27845e1e3296dc", target = "N2", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/elastic_N_ragimkhanov2026.dat" = { sha256 = "421945464418c0b4929e948abfa917de25df8edc919c3c1fee37fbd63cf4cf80", target = "N", process = "HA-N2N-01", role = "NOMINAL (N elastic OPM)" }
+"../propellants/elastic_N_wang2014_bsr.dat" = { sha256 = "f4edd85b629eebbe0aa030d225159f6edda2ef90796be85798758b27dd1cf112", target = "N", process = "HA-N2N-01", role = "VARIANT (N elastic Wang BSR)" }
+"../propellants/ionization_N.dat" = { sha256 = "ff4b4c8172ce45c6f11d09a41a3a663d64c5a586288286b692346ae89c0f61a7", target = "N", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/ionization_N_Z1plus_to_N_Z2plus.dat" = { sha256 = "12e9c03ac8f5e37b39bcba8e81e1c8d65e57dcb8672dcab04d35e028c8c32523", target = "N", process = "HA-N2N-01", role = "NOMINAL" }
+"../propellants/ionization_N_to_N_Z2plus_hms2017.dat" = { sha256 = "a7a6f8fd84f2a3b316002e2aba22d605f152166a5364358b5317d163054133c1", target = "N", process = "HA-N2N-01", role = "NOMINAL" }
+
+[tables]

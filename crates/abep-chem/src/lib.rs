@@ -13,6 +13,8 @@
 //!   the verified limit or a non-positive / non-finite T_e OUT_OF_DOMAIN, an invalid representation MODEL_ERROR.
 //! * [`validity`]: the `rate_validity.toml` reader; [`dat`]: the HallThruster.jl rate-table reader. Both verify sha256
 //!   pins on load.
+//! * [`hall_air`]: the Hall AIR_PRIMARY reaction set `abep-air-0.x` (NP-HALL-CHEM-AIR, A9.33 Q2;
+//!   `hallthruster_bridge/propellants_air/`): loader, fail-closed guards, admission gate, table builder.
 //! * [`registry`]: the IF-CHEM-REG-v1 registry of the active RF/ICP neutralizer chemistry (`data/chemistry/icp/`,
 //!   NP-ICP-CHEM-AIR v1 build plan BP-S1): species, processes with their contract statuses, channels with their
 //!   registered representations and validity entries; rates through [`checked`] only.
@@ -21,6 +23,7 @@
 
 pub mod checked;
 pub mod dat;
+pub mod hall_air;
 pub mod numpy;
 pub mod reference;
 pub mod registry;

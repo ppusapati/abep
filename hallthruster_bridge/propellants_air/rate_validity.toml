@@ -1,0 +1,163 @@
+# Validity domain of each rate table of the Hall AIR reaction set (NP-HALL-CHEM-AIR, hallthruster_bridge/propellants_air/),
+# read by bridge_lib.jl chemistry_validity through each AIR case's rate_dir. Same convention as
+# hallthruster_bridge/propellants/rate_validity.toml: status = "verified" with max_mean_energy_eV = the highest mean electron
+# energy (3/2 T_e, eV) at which the Maxwellian rate share resting beyond the last cited cross-section point is < 1 %, capped at
+# 255 eV; status = "unresolved" = domain not audited (any run using the file is not chemistry_trustworthy). A file named by an
+# AIR configuration without an entry is an error, never a default (HR-05). The audited chemistry domain (45 eV mean energy,
+# DOM-AIR-02) is a separate check. Entries keyed ../propellants/<file> mirror the abep-n2n-0.11 entries byte for byte in
+# meaning (status, limit, basis); abep_chem::hall_air refuses a mirror that differs.
+
+["../propellants/elastic_N2_song2023.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "JPCRD 2023 Table 5 MTCS spans 0.001 eV-10 keV; held-tail share 0.000000 % at 255 eV mean energy (scripts/build_n2_elastic_song2023_table.py)"
+
+["../propellants/ionization_N2_song2023.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "JPCRD 2023 Table 10 sigma(N2+) spans 16-1000 eV; held-tail share 0.96 % at 255 eV mean energy, 0.22 % at 200 eV (scripts/build_n2_ionization_song2023_table.py)"
+
+["../propellants/dissociative_ionization_N2_upper.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "JPCRD 2023 Table 10 sigma(N+ + N2++) spans 30-1000 eV (ramp from 24.284 eV); held-tail share < 1 % at 255 eV mean energy (scripts/build_n2_dissociative_ionization_table.py)"
+
+["../propellants/dissociative_ionization_N2_lower.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "as the upper variant, minus 0.01 x sigma_total (JPCRD Sec. 2.8 N2++ statement); held-tail share < 1 % at 255 eV mean energy"
+
+["../propellants/dissociative_ionization_N2_to_N_Z2plus.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "JPCRD 2023 Table 10 sigma(N++) spans 70-1000 eV (ramp from 53.885 eV); held-tail share 0.946 % at 255 eV mean energy (scripts/build_n2_to_n_z2plus_table.py)"
+
+["../propellants/dissociation_N2.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "JPCRD 2023 Table 9 ends at 200 eV; held tail carries 0.95 % of the rate at 45 eV mean energy (T_e = 30 eV), 3.8 % at 60 eV (scripts/build_n2_dissociation_table.py)"
+
+["../propellants/excitation_N2_A3Sigma_u.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["../propellants/excitation_N2_B3Pi_g.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["../propellants/excitation_N2_W3Delta_u.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["../propellants/excitation_N2_Bprime3Sigma_u.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["../propellants/excitation_N2_a1Pi_g.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-200 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["../propellants/excitation_N2_aprime1Sigma_u.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["../propellants/excitation_N2_w1Delta_u.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["../propellants/excitation_N2_C3Pi_u.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["../propellants/excitation_N2_vib_0_to_1.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["../propellants/excitation_N2_vib_0_to_2.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["../propellants/excitation_N2_vib_0_to_3.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["../propellants/excitation_N2_vib_0_to_4.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["../propellants/excitation_N2_vib_0_to_5.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["../propellants/excitation_N2_vib_0_to_6.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["../propellants/excitation_N2_vib_0_to_7.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["../propellants/excitation_N2_vib_0_to_8.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["../propellants/excitation_N2_vib_0_to_9.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["../propellants/excitation_N2_vib_0_to_10.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["../propellants/excitation_N2_rot_j0_to_j2.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "JPCRD 2023 Table 6 (0.01-10 eV), held at the 10 eV value above (declared model), capped at the preregistered T_e <= 30 eV; gross j = 0 loss, no superelastic return"
+
+["../propellants/excitation_N2_rot_j0_to_j4.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "JPCRD 2023 Table 6 (0.01-10 eV), held at the 10 eV value above (declared model), capped at the preregistered T_e <= 30 eV; gross j = 0 loss, no superelastic return"
+
+["../propellants/elastic_N_ragimkhanov2026.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "Ragimkhanov et al. EPJD 2026 Fig. 1b OPM MTCS, vector-extracted, 1 eV - 1 MeV; held-tail share 0.0000 % at 255 eV mean energy (scripts/build_n_elastic_tables.py)"
+
+["../propellants/elastic_N_wang2014_bsr.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "Wang et al. 2014 BSR MTCS as re-plotted in Ragimkhanov Fig. 1b (0.95-128 eV), OPM above 128 eV; held-tail share 0.0000 % at 255 eV mean energy"
+
+["../propellants/ionization_N.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "NIST SRD 107 Kim & Desclaux N(4S) tabulation spans 15-5000 eV (audited 2026-09-26); held-tail share 0.0000 % up to 300 eV mean energy"
+
+["../propellants/ionization_N_Z1plus_to_N_Z2plus.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "Bell et al. JPCRD 1983 Eq. (1) N II (+-10 %), analytic Bethe form evaluated 29.60 eV-10 keV; held-tail share 0.0000 % at 255 eV mean energy (scripts/build_n_z1plus_to_z2plus_table.py)"
+
+["../propellants/ionization_N_to_N_Z2plus_hms2017.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "HMS 2017 semi-empirical Eqs. (2)+(3), evaluated 44.14 eV-10 keV (source-model applicability; no neutral-N measurement exists; HMS state ~30 % for double ionization) (scripts/build_multiply_charged_tables.py)"
