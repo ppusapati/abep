@@ -18,7 +18,12 @@
 //! credible set is EMPTY, so every statewise T - D is NOT_EVALUATED. The reference spacecraft drag stays
 //! REFERENCE/PARAMETRIC with freeze_status NOT_EVALUATED (S6.18: no host-spacecraft drag ICD). Refusals mirror the
 //! reference exception class in the message (`ValueError: ...`), status OUT_OF_DOMAIN.
+//!
+//! [`conservation_bounds`] (NP-HALL-PARAMETRIC-ENVELOPE addendum A4, new physics) holds the conservation-bound
+//! kernels: free-stream speed and flux bounds, the jet thrust upper bound T_max(mdot, P) and its inverses. An upper
+//! bound is not a thrust value; it never enters the statewise T - D record.
 
+pub mod conservation_bounds;
 pub mod intake_drag;
 pub mod integration;
 pub mod objective;

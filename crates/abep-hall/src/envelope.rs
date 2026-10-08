@@ -317,6 +317,8 @@ pub struct EnvelopePoint {
     pub thrust_n: Option<f64>,
     pub discharge_power_w: Option<f64>,
     pub discharge_current_a: Option<f64>,
+    /// Time-averaged ion (beam) current of a PASS point (raw `ion_current_A`); read by the closure's P-CPL path.
+    pub ion_current_a: Option<f64>,
     pub te_max_ev: Option<f64>,
 }
 
@@ -357,6 +359,7 @@ pub fn ingest_records(cases: &CaseSet, records: &[Value], pins: &RecordPins) -> 
             thrust_n: pick("thrust_N"),
             discharge_power_w: pick("discharge_power_W"),
             discharge_current_a: pick("discharge_current_A"),
+            ion_current_a: pick("ion_current_A"),
             te_max_ev: pick("Te_max_eV"),
         };
         if got.insert(key.to_string(), point).is_some() {

@@ -1,0 +1,19 @@
+{
+ "id": "np_hall_parametric_envelope_addendum_a5_lock",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "addendum": "A5",
+ "locked": "2026-10-08",
+ "note": "sha256 of NP-HALL-PARAMETRIC-ENVELOPE addendum A5 (M2 intake closure under A9.35: the registered intake designs, their capture efficiency and delivered flow against the A4 required area / flow; a failing current design is DESIGN_VARIABLE_LIMIT; status PREREGISTERED_BEFORE_M2_AND_BEFORE_EVALUATION), committed alone before any A5 harness code, any A5 evaluation on the 196 design states and any M2 execution; v1, A1, A2 and A4 files unchanged; any change after this lock is a new, dated addendum",
+ "base_commit": "54b50d6",
+ "predecessor_locks": {
+  "prereg_lock_v1.json": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3",
+  "prereg_addendum_a1_air_family_lock.json": "35388e247ffdcc7af2a605e46f29d955ec29875893d3f7342e6411110f3d17a6",
+  "prereg_addendum_a2_lock.json": "774bf7618e0afafa40fe252d782d3112c71f2958ed7fe51b33e9c5d3dba617dd",
+  "prereg_addendum_a4_lock.json": "5a03333e9a18f9bd85fe7bf0359b81d541bf45a4c7c91f0b4e12076f5cb92dcc"
+ },
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/",
+ "files": {
+  "prereg_addendum_a5_m2_intake_closure.json": "45e6013d30c57d80ed0f39af2428e53ada24b6c36ca8020d7f58392f5d3b57ed",
+  "PREREG_ADDENDUM_A5_M2_INTAKE_CLOSURE.md": "27195ed9ec526cc152fc6ef45288595b485436deefbb72dfde75827765f3e547"
+ }
+}
