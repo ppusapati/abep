@@ -32,6 +32,11 @@ status = "verified"
 max_mean_energy_eV = 255.0
 basis = "SONG2026 (accepted manuscript; version of record not accessed, OQ-HA-01) Table VII sigma(O+ (+O2^2+)) / 1.1 spans 23-998 eV (ramp from 18.738 eV), held above; held-tail share 0.92 % at 255 eV (v0 manifest); source-support limit 255 eV mean energy = highest mean energy with held-tail rate share < 1 % (recomputed from xs/ by abep_chem::hall_air::support_limit)"
 
+["dissociation_O2_song2026.dat"]
+status = "verified"
+max_mean_energy_eV = 47.0
+basis = "SONG2026 (accepted manuscript; version of record not accessed, OQ-HA-01) Table VI (Cosby 1993) spans 13.5-198.5 eV, held above; held-tail share 0.70 % at 45 eV, 16 % at 100 eV (v0 manifest); source-support limit 47 eV mean energy = highest mean energy with held-tail rate share < 1 % (recomputed from xs/ by abep_chem::hall_air::support_limit)"
+
 ["../propellants/elastic_N2_song2023.dat"]
 status = "verified"
 max_mean_energy_eV = 255.0

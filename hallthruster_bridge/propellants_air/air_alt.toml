@@ -199,3 +199,8 @@ rate_coeff_file = "ionization_O2_song2026.dat"   # HA-O2-ION-01: SONG2026 Table 
 type = "electron_impact"
 equation = "O2 + e -> O(+) + O + 2e"
 rate_coeff_file = "dissociative_ionization_O2_lower_song2026.dat"   # HA-O2-DI-01 lower: SONG2026 Table VII sigma(O+) / 1.1
+
+[[reactions]]
+type = "electron_impact"
+equation = "O2 + e -> O + O + e"
+rate_coeff_file = "dissociation_O2_song2026.dat"   # HA-O2-DIS-01: SONG2026 Table VI (Cosby), >= 13.5 eV only

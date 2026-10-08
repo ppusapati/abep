@@ -15,14 +15,14 @@ consumer = "NP-HALL-PARAMETRIC-ENVELOPE AIR family (addendum); bridge_lib.jl che
 loader = "abep_chem::hall_air::AirSet::load"
 
 [reaction_set]
-label = "abep-air-0.5"
+label = "abep-air-0.6"
 status = "INCOMPLETE_EVIDENCE"
 nominal_config = "air_nominal.toml"
 configs = ["air_nominal.toml", "air_alt.toml"]
 tier1_gaps = [
   "HA-O-EL-01",
   "HA-O-EXC-01",
-  "HA-O2-DIS-01",
+  "HA-O2-DIS-01 below 13.5 eV (Herzberg / Schumann-Runge dissociation; no reachable source)",
   "HA-O2-EL-01",
   "HA-O2-EXC-01",
   "HA-O2-EXC-02",
@@ -41,12 +41,15 @@ history = [
   "abep-air-0.3 (2026-10-08): + O2 ionization HA-O2-ION-01 ionization_O2_song2026.dat (SONG2026 Table VII sigma(O2+), rendered in Rust from xs/, byte-identical to the v0 table, validity 255 eV; IN_REPO_PENDING_VERSION_OF_RECORD); O2 (max_charge 1) added to both configurations; rest as 0.2",
   "abep-air-0.4 (2026-10-08): + O2 dissociative ionization HA-O2-DI-01 upper dissociative_ionization_O2_upper_song2026.dat (SONG2026 Table VII sigma(O+ (+O2^2+)), ramp from 18.738 eV, rendered in Rust, byte-identical to v0, validity 255 eV) in both configurations; rest as 0.3",
   "abep-air-0.5 (2026-10-08): + O2 dissociative ionization HA-O2-DI-01 lower dissociative_ionization_O2_lower_song2026.dat (column / 1.1, SONG2026 statement; rendered in Rust, byte-identical to v0, validity 255 eV) in air_alt.toml; rest as 0.4",
+  "abep-air-0.6 (2026-10-08): + O2 dissociation HA-O2-DIS-01 dissociation_O2_song2026.dat (SONG2026 Table VI, Cosby 1993, >= 13.5 eV only, header 5.12 eV; rendered in Rust, byte-identical to v0, validity 47 eV) in both configurations; dissociation below 13.5 eV stays a tier-1 gap (INCOMPLETE_EVIDENCE); rest as 0.5",
 ]
 
 [files]
-"PROVENANCE.md" = "c7a6f006fdad5ff8988055f536668f7dd6c3b1000f850715d3514c818be14f39"
-"air_alt.toml" = "7e72d2379a8681710cfd7ec644a24c5c9836a381cb8faca58efa3803a64a58c5"
-"air_nominal.toml" = "4525972899b3d0248ca0eee69cf17c4b6c74b688706f5da1aa64e3ce630ac014"
+"PROVENANCE.md" = "e3a8d8e7386d180bae022da019f58ab70e68d1821674100f7fc918db9472b4a0"
+"air_alt.toml" = "21495b1990bb4442bba7ca6475c0f814ec2076f361363ac17e2366bdb7899aa6"
+"air_nominal.toml" = "30da4f3d693f5d681b792a94fd49b0a75e43f650089a5e70090924244ca69ccd"
+"dissociation_O2_song2026.dat" = "e908da8e19ea0d5e9364fea28332ef685602048fe3c023eaf41eb048eda5984b"
+"dissociation_O2_song2026.dat.source" = "084d463121f347842f3373a990126e64048dbe29712849f4e57132734ea4ff57"
 "dissociative_ionization_O2_lower_song2026.dat" = "7559f280516ffdde81854f62fee442693dfadc92987bacf0bb07ba9d896e83f0"
 "dissociative_ionization_O2_lower_song2026.dat.source" = "45dd86d6ba8109ad4955d1ee7755f8c6df5b6e719eebd46c0017def442defafd"
 "dissociative_ionization_O2_upper_song2026.dat" = "1657e407cef90ba8a951ef7a862a93788afe20906057a924ab5c5470db749c04"
@@ -57,7 +60,8 @@ history = [
 "ionization_O_beb_kd2002.dat.source" = "bc40a68e5740e1a997901d687df13668e31eaca2128e1da361afbe7991bc884f"
 "ionization_O_thompson1995.dat" = "a1fe0dcdf786ee84a5de58ac996bac8130318298103575b383450fcd1e40e6b4"
 "ionization_O_thompson1995.dat.source" = "7d9ec542dea2a454b7703bcafcae0b288df9e5a652c7e6f331d4a6f84f9fd2bd"
-"rate_validity.toml" = "6066ae2516d073b76201981fc51c6d83659b1bad0c55eed20046a2d3d0f3d7f1"
+"rate_validity.toml" = "3e53abeb040f01fbaefeae0dcbca5ef37956e70f0afb92ae1a8957e94143a871"
+"xs/dissociation_O2_song2026.json" = "5dd96bfaf3d16c338fcb8ed55b1e91886f317e5fb38e2a6e6869e40faa44a378"
 "xs/dissociative_ionization_O2_lower_song2026.json" = "19207c2529ffcd2562d370356b6f84cac0eee2c4109c378797dfa15ec72bd6f3"
 "xs/dissociative_ionization_O2_upper_song2026.json" = "74a7a1b6d679f85c6b36532dbd35f56662cf3370ac7c86677ec938cc9f65f7d9"
 "xs/ionization_O2_song2026.json" = "cc73ac2437ccdfbed109e9e88b0a855dde63e973b72653bc46f1d6281bd31f70"
@@ -101,3 +105,4 @@ history = [
 "ionization_O2_song2026.dat" = { target = "O2", process = "HA-O2-ION-01", role = "NOMINAL", kind = "XS", xs = "xs/ionization_O2_song2026.json" }
 "dissociative_ionization_O2_upper_song2026.dat" = { target = "O2", process = "HA-O2-DI-01", role = "NOMINAL (upper member of the O+ / O2^2+ pair)", kind = "XS", xs = "xs/dissociative_ionization_O2_upper_song2026.json" }
 "dissociative_ionization_O2_lower_song2026.dat" = { target = "O2", process = "HA-O2-DI-01", role = "VARIANT (lower member of the O+ / O2^2+ pair)", kind = "XS", xs = "xs/dissociative_ionization_O2_lower_song2026.json" }
+"dissociation_O2_song2026.dat" = { target = "O2", process = "HA-O2-DIS-01", role = "NOMINAL (Cosby-only lower member: dissociation below 13.5 eV MISSING)", kind = "XS", xs = "xs/dissociation_O2_song2026.json" }
