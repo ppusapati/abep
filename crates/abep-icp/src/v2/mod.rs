@@ -100,7 +100,12 @@ impl IcpModelV2 {
     }
 
     pub fn load(root: &Path) -> AbepResult<Self> {
-        let v1 = IcpModel::load(root)?;
+        Self::load_with(root, &abep_chem::registry::RegistrySource::live())
+    }
+
+    /// As [`IcpModelV2::load`] with the chemistry registry read from `registry` (live or a pinned snapshot).
+    pub fn load_with(root: &Path, registry: &abep_chem::registry::RegistrySource) -> AbepResult<Self> {
+        let v1 = IcpModel::load_with(root, registry)?;
         let lock_rel = format!("{PREREG_DIR}/prereg_lock_v2.json");
         let lock_bytes = read_verified(&root.join(&lock_rel), PREREG_LOCK_V2_SHA256)?;
         let lock: Value = serde_json::from_slice(&lock_bytes).map_err(|e| schema(&lock_rel, e.to_string()))?;

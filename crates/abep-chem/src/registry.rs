@@ -28,6 +28,36 @@ use std::path::Path;
 use std::sync::Arc;
 
 pub const REGISTRY_DIR: &str = "data/chemistry/icp";
+
+/// Where a registry is read from: a directory relative to the repository root and the consumer's pin of its
+/// `ICP_CHEM_PINNED.toml`.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RegistrySource {
+    pub dir: String,
+    pub pinned_sha256: String,
+}
+
+impl RegistrySource {
+    /// The live registry at [`REGISTRY_DIR`] with the crate's pin [`ICP_CHEM_PINNED_SHA256`].
+    pub fn live() -> Self {
+        Self::snapshot(REGISTRY_DIR, ICP_CHEM_PINNED_SHA256)
+    }
+
+    /// A registry directory with its own `ICP_CHEM_PINNED.toml` pin.
+    pub fn snapshot(dir: &str, pinned_sha256: &str) -> Self {
+        RegistrySource { dir: dir.to_string(), pinned_sha256: pinned_sha256.to_string() }
+    }
+
+    /// The labels abep-icp-air-0.0 / abep-icp-xe-0.0 as a byte-identical snapshot ([`SNAPSHOT_0_0_DIR`]).
+    pub fn snapshot_0_0() -> Self {
+        Self::snapshot(SNAPSHOT_0_0_DIR, SNAPSHOT_0_0_PINNED_SHA256)
+    }
+}
+
+/// The BP-S1 registry (labels abep-icp-air-0.0 / abep-icp-xe-0.0) frozen as a byte-identical snapshot. The frozen M1 /
+/// M2 harness records, the A4 / A5 records and the P4 ICP closure v1 record regenerate from it.
+pub const SNAPSHOT_0_0_DIR: &str = "data/chemistry/icp_snapshots/abep-icp-air-0.0_xe-0.0";
+pub const SNAPSHOT_0_0_PINNED_SHA256: &str = "074daff90b00dd1dd6ca776c845c7897bbd84b4217ec014e70fb374a16f16eb2";
 pub const PINNED_FILE: &str = "ICP_CHEM_PINNED.toml";
 /// sha256 of `data/chemistry/icp/ICP_CHEM_PINNED.toml` this build is registered against (labels abep-icp-air-0.0 /
 /// abep-icp-xe-0.0). Every registry change (one table per commit) updates it.
@@ -565,6 +595,8 @@ fn conservation_violations(c: &Channel, species: &[Species], eps: &BTreeMap<Stri
 /// Load-time context shared by both modes.
 struct Ctx<'a> {
     root: &'a Path,
+    /// Registry directory relative to `root` (the live [`REGISTRY_DIR`] or a pinned snapshot).
+    dir: String,
     files: Vec<(String, String, String)>,
 }
 
@@ -579,8 +611,15 @@ impl Ctx<'_> {
 impl IcpChemRegistry {
     /// Load and verify the registry under `root`; `pinned_sha256` is the consumer's pin of `ICP_CHEM_PINNED.toml`.
     pub fn load(root: &Path, pinned_sha256: &str) -> AbepResult<Self> {
-        let mut cx = Ctx { root, files: Vec::new() };
-        let pinned_rel = format!("{REGISTRY_DIR}/{PINNED_FILE}");
+        Self::load_from(root, &RegistrySource::snapshot(REGISTRY_DIR, pinned_sha256))
+    }
+
+    /// Load and verify a registry from `source`: the live directory or a pinned snapshot of an earlier label (frozen
+    /// records regenerate from the registry they were run on). Every rule of [`IcpChemRegistry::load`] applies.
+    pub fn load_from(root: &Path, source: &RegistrySource) -> AbepResult<Self> {
+        let pinned_sha256 = source.pinned_sha256.as_str();
+        let mut cx = Ctx { root, dir: source.dir.clone(), files: Vec::new() };
+        let pinned_rel = format!("{}/{PINNED_FILE}", cx.dir);
         let pinned = toml_of(&pinned_rel, cx.read(&pinned_rel, pinned_sha256, "consumer anchor")?)?;
         let po = Obj::new(&pinned, &pinned_rel, "ICP_CHEM_PINNED", &["contract", "files", "air", "xe"])?;
         let contract = po.table("contract", &["id", "lock", "lock_sha256", "interface"])?;
@@ -605,7 +644,7 @@ impl IcpChemRegistry {
         };
 
         // Reuse pins: the contract's, verbatim, every file verified (FC-CHEM-04).
-        let rp_rel = format!("{REGISTRY_DIR}/reuse_pins.json");
+        let rp_rel = format!("{}/reuse_pins.json", cx.dir);
         let rp = json_of(&rp_rel, &cx.read(&rp_rel, &pin("reuse_pins.json")?, &pinned_rel)?)?;
         let mut table_pins: BTreeMap<String, String> = BTreeMap::new();
         let strip = |v: &Value, keys: &[&str]| -> Vec<Value> {
@@ -649,7 +688,7 @@ impl IcpChemRegistry {
         }
 
         // Validity table: mirrored entries must equal their Hall source (FC-CHEM-01 semantics on use).
-        let rv_rel = format!("{REGISTRY_DIR}/rate_validity_icp.toml");
+        let rv_rel = format!("{}/rate_validity_icp.toml", cx.dir);
         let rv_bytes = cx.read(&rv_rel, &pin("rate_validity_icp.toml")?, &pinned_rel)?;
         let rv_text = text(&rv_rel, rv_bytes)?;
         let validity = RateValidityTable::parse(&rv_text, &rv_rel)?;
@@ -720,7 +759,7 @@ fn load_mode(
     table_pins: &BTreeMap<String, String>,
     validity: &RateValidityTable,
 ) -> AbepResult<ModeRegistry> {
-    let rel = format!("{REGISTRY_DIR}/{name}");
+    let rel = format!("{}/{name}", cx.dir);
     let t = toml_of(&rel, cx.read(&rel, sha, pinned_rel)?)?;
     let o = Obj::new(&t, &rel, "registry", REQUIRED_TOP)?;
     if o.s("schema")? != "IF-CHEM-REG-v1"
@@ -886,7 +925,7 @@ fn load_mode(
                 }
                 let file = c.s("representation")?;
                 let sha = c.s("representation_sha256")?;
-                let path = format!("{REGISTRY_DIR}/{file}");
+                let path = format!("{}/{file}", cx.dir);
                 let xs = load_xs(&path, &cx.read(&path, &sha, &rel)?, &table, &table_sha256, threshold_ev)?;
                 Representation::CrossSection { file, sha256: sha, xs: Arc::new(xs) }
             }
