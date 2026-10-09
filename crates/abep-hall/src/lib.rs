@@ -12,6 +12,7 @@
 
 pub mod ensemble;
 pub mod envelope;
+pub mod envelope_a7;
 mod error;
 pub mod hall_map;
 pub mod py;

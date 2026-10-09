@@ -1,0 +1,12 @@
+{
+ "id": "np_hall_parametric_envelope_prereg_addendum_a7_hall_numerical_method_lock_v1",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "locked": "2026-10-08",
+ "note": "sha256 of NP-HALL-PARAMETRIC-ENVELOPE addendum A7 (Hall numerical method; status PREREGISTERED_NOT_RUN), committed alone before any A7 case file or run; v1, A3, A6 and their records unchanged; any change after this lock is a new, dated addendum",
+ "base_commit": "87625c9",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/",
+ "files": {
+  "prereg_addendum_a7_hall_numerical_method_v1.json": "58b0c20c977907c0aa23b420f28ff569081a40415907584df1bc3c52bb1adaa4",
+  "PREREG_ADDENDUM_A7_HALL_NUMERICAL_METHOD.md": "ee92d5a41f2c35009d2e5f03bc3bc6a5d2998d14cbbf5e2ff46a7f5650fb681f"
+ }
+}

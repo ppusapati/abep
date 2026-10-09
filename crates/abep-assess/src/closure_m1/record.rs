@@ -707,6 +707,29 @@ pub fn record_v2(inp: &M1Inputs, out: &M1Outcome, run_label: &str) -> Value {
             s("A6 (HALL_XE_T12_AT_PBUS, HALL_XE_T25_CAPABILITY_AT_PBUS on one hardware configuration); the v1 XE envelope is reported only"),
         );
     }
+    // NP-HALL-PARAMETRIC-ENVELOPE addendum A7: the XE_CONTINGENCY Hall tests run on the A7 grid stages supplied.
+    if let (Some(a), Value::Dict(d)) = (&inp.xe_a7, &mut rec) {
+        d.insert("envelope_xe_a7", envelope_summary(Some(&a.envelope)));
+        d.insert("envelope_xe_a7_stages", Value::List(a.stages.iter().map(|x| s(x)).collect()));
+        let mut counts = Dict::new();
+        for (k, n) in &a.a7_status_counts {
+            counts.insert(k.clone(), Value::int(*n as i64));
+        }
+        d.insert("envelope_xe_a7_status_counts", Value::Dict(counts));
+        let scope = if a.stages.len() == 1 && a.stages[0] == "STAGE_1_G_RP1" {
+            ": G-RP1 hardware (A9.37 DBF-1 geometry); other geometries not evaluated in this run"
+        } else {
+            ""
+        };
+        d.insert(
+            "xe_hall_source",
+            s(&format!(
+                "A7 ({}; HALL_XE_T12_AT_PBUS, HALL_XE_T25_CAPABILITY_AT_PBUS on one hardware configuration over the \
+                 supplied stages only{scope}); the v1 and A6 XE envelopes are reported only",
+                a.stages.join(" + ")
+            )),
+        );
+    }
     rec
 }
 
@@ -1128,6 +1151,20 @@ pub fn closure_record_v2_a6(
 ) -> AssessResult<Value> {
     let mut inp = gather_m1(repo, envelope, air, rust_commit)?;
     inp.xe_a6 = xe_a6;
+    let out = evaluate(&inp)?;
+    Ok(record_v2(&inp, &out, run_label))
+}
+
+/// Harness v2 record with an A7 XE envelope (addendum A7; replaces the A6 envelope as the XE Hall source).
+pub fn closure_record_v2_a7(
+    repo: &Path,
+    envelope: Option<Envelope>,
+    xe_a7: XeA7,
+    rust_commit: &str,
+    run_label: &str,
+) -> AssessResult<Value> {
+    let mut inp = gather_m1(repo, envelope, None, rust_commit)?;
+    inp.xe_a7 = Some(xe_a7);
     let out = evaluate(&inp)?;
     Ok(record_v2(&inp, &out, run_label))
 }

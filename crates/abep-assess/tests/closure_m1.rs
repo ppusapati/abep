@@ -813,3 +813,56 @@ fn a6_xe_envelope_carries_the_non_degenerate_xe_tests() {
     let rec = record_v2(&inp, &out, "TEST");
     assert!(st(at(&rec, &["xe_hall_source"])).starts_with("A6"));
 }
+
+/// Addendum A7: an A7 XE envelope (here a synthetic Stage 1: G-RP1 points only) carries the A6 XE tests, takes
+/// precedence over an A6 envelope, cites EC-NUM A7, and the record states the Stage 1 scope.
+#[test]
+fn a7_xe_envelope_stage1_carries_the_xe_tests_with_ec_num_a7() {
+    let cs = env::load_case_set(&repo()).unwrap();
+    let points = |t: f64, pd: f64, geom: Option<&str>| -> Vec<EnvelopePoint> {
+        cs.cases
+            .iter()
+            .filter(|c| c.family == Family::Xe && geom.is_none_or(|g| c.geometry_id == g))
+            .map(|c| EnvelopePoint {
+                case: c.clone(),
+                status: RunStatus::Pass,
+                thrust_n: Some(t),
+                discharge_power_w: Some(pd),
+                discharge_current_a: Some(pd / c.vd_v),
+                ion_current_a: None,
+                te_max_ev: None,
+            })
+            .collect()
+    };
+    let envelope = |points: Vec<EnvelopePoint>| Envelope {
+        manifest_rel: "SYNTHETIC_TEST_DATA_NOT_EVIDENCE".into(),
+        manifest_sha256: "SYNTHETIC".into(),
+        raw_sha256: "SYNTHETIC".into(),
+        cases_sha256: "SYNTHETIC".into(),
+        bz_family_kind: cs.bz_family_kind,
+        points,
+    };
+    let lim = base().today.limits;
+    let mut inp = base().clone();
+    // An A6 envelope that would not close, and an A7 Stage 1 that closes: A7 is the XE Hall source.
+    inp.xe_a6 = Some(envelope(points(1e-18, 1e-13, None)));
+    inp.xe_a7 = Some(XeA7 {
+        envelope: envelope(points(0.030, 900.0, Some("G-RP1"))),
+        stages: vec!["STAGE_1_G_RP1".into()],
+        a7_status_counts: vec![("PASS".into(), 324)],
+        overlay: env::A3Overlay::Adequate,
+    });
+    let h = hall_tests(&inp, Mode::XeContingency, &lim);
+    let ids: Vec<&str> = h.iter().map(|r| r.constraint.id.as_str()).collect();
+    assert_eq!(ids, ["HALL_XE_T12_AT_PBUS", "HALL_XE_T25_CAPABILITY_AT_PBUS"]);
+    assert!(h.iter().all(|r| r.constraint.status == CLOSES_IN_ENVELOPE && r.n_points == 324));
+    assert!(h[0].constraint.evidence_conditions.iter().any(|e| e == EC_NUM_A7));
+    let rec = record_v2(&inp, &evaluate(&inp).unwrap(), "TEST");
+    let src = st(at(&rec, &["xe_hall_source"]));
+    assert!(src.starts_with("A7") && src.contains("G-RP1 hardware"), "{src}");
+    // A degenerate A7 envelope never closes, whatever the A6 envelope says.
+    inp.xe_a6 = Some(envelope(points(0.030, 900.0, None)));
+    inp.xe_a7.as_mut().unwrap().envelope = envelope(points(1e-18, 1e-13, Some("G-RP1")));
+    let h = hall_tests(&inp, Mode::XeContingency, &lim);
+    assert!(h.iter().all(|r| r.constraint.status != CLOSES_IN_ENVELOPE));
+}
