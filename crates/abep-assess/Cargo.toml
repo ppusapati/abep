@@ -32,6 +32,10 @@ name = "abep-assess-thermal-closure"
 path = "src/bin/abep_assess_thermal_closure.rs"
 
 [[bin]]
+name = "abep-assess-dcr003"
+path = "src/bin/abep_assess_dcr003.rs"
+
+[[bin]]
 name = "abep-assess-envelope-summary"
 path = "src/bin/abep_assess_envelope_summary.rs"
 
