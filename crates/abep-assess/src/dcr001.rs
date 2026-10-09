@@ -256,16 +256,16 @@ pub struct Inputs {
     pub provenance: Vec<(String, String)>,
 }
 
-fn de(e: abep_design::err::DesignError) -> crate::error::AssessError {
+pub(crate) fn de(e: abep_design::err::DesignError) -> crate::error::AssessError {
     model_error(format!("DCR-001 design chain: {e}"))
 }
 
-fn jread(repo: &Path, rel: &str, sha: &str) -> AssessResult<Value> {
+pub(crate) fn jread(repo: &Path, rel: &str, sha: &str) -> AssessResult<Value> {
     let b = read_verified(&repo.join(rel), sha)?;
     serde_json::from_slice(&b).map_err(|e| model_error(format!("{rel}: {e}")))
 }
 
-fn f(v: &Value, what: &str) -> AssessResult<f64> {
+pub(crate) fn f(v: &Value, what: &str) -> AssessResult<f64> {
     v.as_f64().ok_or_else(|| model_error(format!("{what}: number expected")))
 }
 
@@ -627,8 +627,8 @@ impl Eval {
     fn non_flow_alive(&self, inp: &Inputs) -> bool {
         self.n_dom_fail == 0
             && self.dead_margin_min > 0.0
-            && !(self.p_el_max > inp.p_comp_limit_w)
-            && !(self.m_max > inp.m_comp_limit_kg)
+            && self.p_el_max.partial_cmp(&inp.p_comp_limit_w) != Some(std::cmp::Ordering::Greater)
+            && self.m_max.partial_cmp(&inp.m_comp_limit_kg) != Some(std::cmp::Ordering::Greater)
     }
 }
 
@@ -745,7 +745,7 @@ pub fn par_map<T: Send, F: Fn(usize) -> AssessResult<T> + Sync>(
                 if i >= n {
                     break;
                 }
-                if n >= 1000 && i % (n / 20) == 0 {
+                if n >= 1000 && i.is_multiple_of(n / 20) {
                     eprintln!("DCR-001 progress {i} / {n}");
                 }
                 let r = f(i);
@@ -1441,11 +1441,10 @@ pub fn diagnose(inp: &Inputs, threads: usize) -> AssessResult<Value> {
             fl.domain as u8, fl.flow_t12 as u8, fl.flow_t25 as u8, fl.power as u8, fl.mass as u8
         );
         *pat.entry(k).or_default() += 1;
-        if fl.domain && fl.flow_t12 && fl.flow_t25 && fl.power && best.as_ref().map_or(true, |b| d.nominal.m_max < b.0)
-        {
+        if fl.domain && fl.flow_t12 && fl.flow_t25 && fl.power && best.as_ref().is_none_or(|b| d.nominal.m_max < b.0) {
             best = Some((d.nominal.m_max, design_summary(&space, d)));
         }
-        if fl.mass && fl.power && best_r12_mass.as_ref().map_or(true, |b| d.nominal.r12 > b.0) {
+        if fl.mass && fl.power && best_r12_mass.as_ref().is_none_or(|b| d.nominal.r12 > b.0) {
             best_r12_mass = Some((d.nominal.r12, design_summary(&space, d)));
         }
     }
@@ -1646,11 +1645,11 @@ pub fn p6_p9_information(inp: &Inputs, spec: &Value) -> AssessResult<Value> {
     let n_sel_over12_every = d_sel.iter().filter(|d| d.0 > inp.t12_n).count();
     // Host C_D A left under the 25 mN statewise limit at the 180 km states.
     let (mut cda_min, mut cda_at, mut all_hold) = (f64::INFINITY, 0usize, true);
-    for i in 0..inp.state_ids.len() {
+    for (i, ds) in d_sel.iter().enumerate() {
         if alt(i) != 180.0 {
             continue;
         }
-        let left = (inp.t25_n - d_sel[i].1) / inp.q_pa[i];
+        let left = (inp.t25_n - ds.1) / inp.q_pa[i];
         if left < cda_min {
             (cda_min, cda_at) = (left, i);
         }
