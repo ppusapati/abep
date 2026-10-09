@@ -214,6 +214,20 @@ fn committed_m2_record_is_the_a8_record_of_today() {
     let out = evaluate_dbf1(&inp).unwrap();
     let now = to_json(&record_dbf1(&inp, &out, "M2_DBF1_V1").unwrap()).unwrap();
     assert_eq!(now, text, "byte-identical regeneration");
+    // The ICP registry the record was run on: the pin beside the record names the snapshot the gather path reads.
+    let pin: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(repo().join("docs/milestones/M2_196_state_rfp_closure/m2_icp_registry_snapshot_v1.json"))
+            .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(pin["record"]["sha256"].as_str(), Some(abep_provenance::sha256_hex(text.as_bytes()).as_str()));
+    let snap = abep_chem::registry::RegistrySource::snapshot_0_0();
+    assert_eq!(pin["icp_registry"]["snapshot_dir"].as_str(), Some(snap.dir.as_str()));
+    assert_eq!(pin["icp_registry"]["icp_chem_pinned_sha256"].as_str(), Some(snap.pinned_sha256.as_str()));
+    let toml = std::fs::read(repo().join(&snap.dir).join("ICP_CHEM_PINNED.toml")).unwrap();
+    assert_eq!(abep_provenance::sha256_hex(&toml), snap.pinned_sha256);
+    let model = today().0.base.icp.model.as_ref().unwrap();
+    assert_eq!(model.v1.chem_registry.pinned_sha256, snap.pinned_sha256);
     let c = v.as_dict().unwrap().get("classification").unwrap().as_dict().unwrap();
     assert_eq!(c.get("result").and_then(Value::as_str), Some(NOT_DETERMINABLE));
     assert_eq!(c.get("procedure_step").and_then(Value::as_str), Some("C1"));

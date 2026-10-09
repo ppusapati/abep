@@ -1,0 +1,36 @@
+{
+  "eps_max_eV": 300.0,
+  "header_label": "Ionization energy",
+  "interpolation": "linear in sigma(E) between points; sigma = 0 below the first point; above the last point the declared tail (hold / zero) (NP-ICP-CHEM-AIR IX-02..IX-04; abep_chem::reference::maxwellian_rate)",
+  "kind": "CROSS_SECTION",
+  "provenance": {
+    "builder_script": "scripts/build_multiply_charged_tables.py",
+    "builder_script_sha256": "a53218cd9f1a789daecaa5aa4469575ea9ec06f447b860f6c986904835aff88f",
+    "captured_from": "docs/rust_migration/contracts/C-ABEP_SIM_RATE_TABLES_PY/reference_outputs/inputs.json.gz",
+    "captured_id": "TAB-37",
+    "captured_sha256": "a2c811bf556eb9d152ae8b1868ca355ce0cc2acb6eb790b5fccdacca25991431",
+    "chain": "the points the builder script passes to rate_tables.write_hallthruster_table; the Python reference (contract INV-02) and the admitted Rust port (crates/abep-chem/tests/reference_replay.rs) render the frozen table from them byte for byte",
+    "citation": "the table's .source file and hallthruster_bridge/propellants/PROVENANCE.md",
+    "construction": "build_multiply_charged_tables.tables()[9]",
+    "contract": "PARITY-C-ABEP_SIM_RATE_TABLES_PY-V1",
+    "contract_sha256": "504be4d2386d27efa35d88d11b44e9b483cd2b39fa65d544d75da4dadada3372",
+    "extracted_by": "crates/abep-chem/examples/build_icp_xs.rs"
+  },
+  "schema": "icp_chem_xs_v1",
+  "table": "hallthruster_bridge/propellants/ionization_N2_to_N2_Z2plus_upper.dat",
+  "table_sha256": "048b979c879d3f08ef6f323e40a4da8d7df75e8bfee600bbf3f2fff498ff94fe",
+  "table_source": "hallthruster_bridge/propellants/ionization_N2_to_N2_Z2plus_upper.dat.source",
+  "table_source_sha256": "ecd2356a7ec230570b56ff1a36ecb547588a4bc10f051fa588a797a1e6d6410a",
+  "tail": "hold",
+  "threshold_eV": 42.9,
+  "units": {
+    "E": "eV",
+    "sigma": "m^2"
+  },
+  "n_points": 3,
+  "points": [
+    [42.9, 0.0],
+    [42.900000000000006, 1.4e-21],
+    [10000.0, 1.4e-21]
+  ]
+}
