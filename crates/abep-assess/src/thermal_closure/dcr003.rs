@@ -556,6 +556,9 @@ pub fn evaluate_r1(ctx: &mut Context, base: &Base, dcr: &Dcr) -> Result<Value, C
     let h_non = worst.get(COLD_NONOP).and_then(|w| w.1);
     let h_op_bus = h_op.map(|h| h * heater_factor);
     let excess = h_op_bus.map(|b| (b - slot).max(0.0));
+    let chain = num(p_nom(&dcr.ledger)?, "discharge_chain_eta")?;
+    let lead_cons_bus = dbus * p_anchor * lead(0.5) / (1.0 - lead(0.5));
+    let total_cons = excess.map(|e| e + lead_cons_bus);
     let q_sc = q_sc_max(&runs);
     let standoff_kg = 4.0 * 0.030 * 22.0e-6 * 4430.0;
     let admissible = r1a && r1b && r1c;
@@ -583,6 +586,10 @@ pub fn evaluate_r1(ctx: &mut Context, base: &Base, dcr: &Dcr) -> Result<Value, C
             "lead_loss_conservative_R_A_0_5_Ohm": lead_pen(lead(0.5)),
             "operating_heater_W": h_op, "operating_heater_bus_W": h_op_bus, "heater_bus_factor": heater_factor,
             "P6_thermal_control_slot_bus_W": slot, "operating_heater_excess_over_slot_bus_W": excess,
+            "operating_heater_excess_dP_d_max_W": excess.map(|e| -e * chain),
+            "total_conservative_dP_bus_W": total_cons,
+            "total_conservative_dP_d_max_at_1350W_W": total_cons.map(|t| -t * chain),
+            "P_NOM_margin_to_1500W_W": num(p_nom(&dcr.ledger)?, "margin_to_rfp_W")?,
             "non_operating_survival_heater_W": h_non,
             "note": "the lead loss is the RF-chain penalty of R-1 against the P6 ledger (v2 had no lead); dP at the anchor for the same delivered power; the non-operating heater is a survival load outside the firing bus allocation (REFERENCE_PENDING_ICD)",
         },
@@ -783,7 +790,8 @@ heater {} W.\n\n",
     m.push_str(&format!(
         "### Power penalty against P6\n\n- lead loss, R_A 1 Ohm: dP_fwd {} W, dP_bus {} W, dP_d,max {} W\n- lead loss, R_A \
 0.5 Ohm: dP_fwd {} W, dP_bus {} W, dP_d,max {} W\n- operating heater {} W (bus {} W) against the P6 thermal_control slot \
-{} W: excess {} W\n- non-operating survival heater {} W\n\nAL-QMATCH (TC3, HOT corner): Q_match_frac <= {}. T_SC \
+{} W: excess {} W (dP_d,max {} W)\n- total, conservative lead + heater excess: dP_bus {} W, dP_d,max {} W, against the P-NOM \
+margin to 1,500 W of {} W\n- non-operating survival heater {} W\n\nAL-QMATCH (TC3, HOT corner): Q_match_frac <= {}. T_SC \
 sensitivity changes a verdict: {}. Q into the spacecraft (max hot) {} W (v2 {} W).\n\n",
         f1(&pp["lead_loss_reference_R_A_1_Ohm"]["dP_fwd_W"]),
         f1(&pp["lead_loss_reference_R_A_1_Ohm"]["dP_bus_W"]),
@@ -795,6 +803,10 @@ sensitivity changes a verdict: {}. Q into the spacecraft (max hot) {} W (v2 {} W
         f1(&pp["operating_heater_bus_W"]),
         f1(&pp["P6_thermal_control_slot_bus_W"]),
         f1(&pp["operating_heater_excess_over_slot_bus_W"]),
+        f1(&pp["operating_heater_excess_dP_d_max_W"]),
+        f1(&pp["total_conservative_dP_bus_W"]),
+        f1(&pp["total_conservative_dP_d_max_at_1350W_W"]),
+        f1(&pp["P_NOM_margin_to_1500W_W"]),
         f1(&pp["non_operating_survival_heater_W"]),
         f3(&r1["AL_QMATCH"]["Q_match_frac_allowable"]),
         r1["T_SC_sensitivity"]["changes_a_verdict"],
