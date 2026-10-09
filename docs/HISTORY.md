@@ -5657,3 +5657,22 @@ stays EMPTY and nothing enters layer (b).
   - Discharge ceiling P_d,max: 784 W at 1,350 W and 911 W at 1,500 W (conservative corner 676 W). The derived Hall requirement is T/P_d ≥ 27.4 mN/kW at 25 mN and ≥ 15.3 mN/kW at 12 mN.
   - RF trade line: each 100 W of forward power costs about 129 W of discharge ceiling. Compressor headroom inside the 300 W common allocation is 231 W.
   - Closure state **BLOCKED BY SPECIFIC MISSING EVIDENCE** (HALL_NUMERICS_NOT_CONVERGED: P_d at 12 / 25 mN). Statement: `docs/closure/statements/P6_power.md`.
+
+## 2026-10-08 — A9.38 P4 RF/ICP neutralizer closure v1 + collector-window addendum A1 (lane-icp-closure)
+
+- **Registrations, each committed alone before evaluation.**
+  - `docs/closure/icp/icp_closure_registration_v1.json` (`41ce4d17…`, lock `5a03e399…`). It registers on the DBF-1 ICP: CM-ABS P_abs grid; coupling basis η_p (TK-26 anchor 0.1); a CFG-CAP-OFF electron-collector analysis surface; electrodes with a 25–350 V bias grid; B_ICP,max = 0; H-LIEB σ_i (Xe⁺ GK2008; N₂⁺ / N⁺ Phelps 1991, NIST reprint); a parametric p_ICP grid and CG-AIR corner compositions; the bounds method; the literal closure-state rule.
+  - Addendum A1 (`73d177fc…`, lock `76880994…`) answers the P8 collector-sputtering input.
+- **VER-25 cleared** (`verification_addendum_ver25_v1.json`). NIST CODATA 2022 ε₀ is the v2-only constant `EPS0_CODATA2022`; the v1 constant keeps its bytes. `verification_addendum_a938_source_reads_v1.json` records VER-01 / -02 / -09 / -22 as read but not cleared.
+- **Hosts.** The proxy now connects everywhere (NIST, arXiv, HAL, OSTI, NTRS, doi.org). AIP / APS / ACS answer 403 and iopscience full texts are paywalled; these are licence barriers, not network barriers.
+- **Record** `docs/closure/icp/icp_closure_v1.{json,md}` (`3ddf5503…`; `abep_assess::closure_icp`, bin `abep-assess-icp-closure`, NP-ICP v2 unchanged, 900 points).
+  - Closed against the frozen M2 P-ICP-DBF1 codes: IN-08, IN-11 / IN-26 / EQ-11, IN-12 (parametric), DOM-06 (CFG-CAP-OFF), and IN-17 (Xe).
+  - I_e,cap is INCOMPLETE_EVIDENCE in every mode. Xe is blocked by chemistry only; AIR by chemistry, IN-05, IN-17 (O⁺ / O₂⁺), NEG-CRIT and SB-NO.
+  - Required current (CONSERVATION_BOUND): ≥ 0.788 / 1.641 A for AIR and ≥ 0.389 / 0.810 A for Xe at 12 / 25 mN. Conservation P_abs,min ≤ 20 W, so there is no non-closure inside the 500 W envelope.
+  - Xe analog risk: η_p 0.18–0.73 is needed against the 0.1 anchor.
+  - HC-05 and GNG-ICP-01 are NOT_EVALUATED.
+- **A1 record** `icp_collector_window_a1_v1.json` (`c414954b…`).
+  - The allowed collector sheath drop is about 24–37 V (N⁺ → Ni prior). The window is open at T_e ≤ 5 eV. Model reachability is NOT_EVALUATED.
+  - The DBF1-ICP-04 DCR is not triggered (parametric T_e). P8's E* is favourable because its ion flux should be I_d / f.
+- **Closure state P4:** **BLOCKED BY SPECIFIC MISSING EVIDENCE**. Statement: `docs/closure/statements/P4_rf_icp_neutralizer.md`.
+- **ICP chemistry registry not changed.** A table build changes the codes that the frozen M2 record regenerates byte for byte, so it waits for a coordinator decision (snapshot pin or M2 v2).

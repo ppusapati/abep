@@ -1,0 +1,800 @@
+{
+ "schema": "abep_icp_closure_registration_v1",
+ "id": "ICP-CLOSURE-REG-v1",
+ "title": "P4 RF/ICP neutralizer closure: input registration and evaluation method, registered before any evaluation",
+ "item": "A9.38 Priority 4 (RF/ICP neutralizer closure); closure board item P4; DBF1-BD-06",
+ "lane": "L-ICP-CLOSURE",
+ "registered": "2026-10-08",
+ "base_commit": "42bb83a (origin/integration/simulation-complete)",
+ "status": "REGISTERED_BEFORE_EVALUATION",
+ "change_rule": "Frozen by icp_closure_registration_lock_v1.json at commit. A changed input, grid, method, bound, label or closure-state rule is a v2 of this record, registered before its evaluation; v1 stays immutable history.",
+ "governing_records": [
+  {
+   "path": "docs/decisions/OD_2026_10_08_A9_38_architecture_frozen_design_closure_programme.json",
+   "sha256": "2a66ce271f1b697d0373a66c3da0d459e157437209f2a13e983f7f8f02edc91d",
+   "role": "A9.38 Priority 4 scope (verbatim companion .md 7bc06a00)"
+  },
+  {
+   "path": "docs/baseline/DBF-1/dbf1_v1.json",
+   "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+   "role": "DBF1-RF-01..04, DBF1-ICP-01..07, DBF1-H1-05/06, DBF1-PWR-01..04, DBF1-MAT-03, DBF1-BD-06"
+  },
+  {
+   "path": "docs/baseline/DBF-1/dbf1_lock_v1.json",
+   "sha256": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907",
+   "role": "DBF-1 controlled baseline lock"
+  },
+  {
+   "path": "docs/baseline/DBF-1/dbf1_config_v1.json",
+   "sha256": "5bd76159fb9761b5c47619fb42217f05c24841d7009067ac71dcedf731759864",
+   "role": "DBF-1 ICP geometry as consumed by abep_config::baseline::load_dbf1"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v2.json",
+   "sha256": "3f0df5b85286bfc82ce99ec9bfafb81ec785021b1668d5bc95fe0d29679631e9",
+   "role": "NP-ICP v2 model, inputs IN-01..IN-27, DOM-*, AS-01..05, CPL-HALL-ON-v1"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_lock_v2.json",
+   "sha256": "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287",
+   "role": "NP-ICP v2 lock (verified by IcpModelV2::load)"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_report_model_v2_v2.json",
+   "sha256": "8b64139c24525da68ddb5055b2f77424dea9ae359a660a84729557ebee1d0f67",
+   "role": "IMPLEMENTED_UNVERIFIED; open VER items"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json",
+   "sha256": "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef",
+   "role": "chemistry contract (AD-AIR-*, AD-XE-*, CA-ICP-v1)"
+  },
+  {
+   "path": "data/chemistry/icp/ICP_CHEM_PINNED.toml",
+   "sha256": "074daff90b00dd1dd6ca776c845c7897bbd84b4217ec014e70fb374a16f16eb2",
+   "role": "ICP registry labels abep-icp-air-0.0 / abep-icp-xe-0.0 (read, not changed)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+   "role": "Takahashi anchor TK-21/22/26/27/34/40/56; P1-IT-17/18/36"
+  },
+  {
+   "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+   "sha256": "cdd4b04d79fbee4e22d76d2734bb170ce5e8a8eab54b47e93c0b6e15dd8a0a87",
+   "role": "P2 framework: the measured coupling evidence route (CM-CAL)"
+  },
+  {
+   "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/conservation_bounds_v1.json",
+   "sha256": "5146fe583343bf5de090a8baeecb812640754b7e579f0df69c78e54dd642689f",
+   "role": "A4 flows mdot_req(12 / 25 mN) (information for the pressure bound)"
+  },
+  {
+   "path": "config/assessment/gate_thresholds_v1.json",
+   "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+   "role": "HC-05 rule (M_n,LB > 0, M_n = I_e,cap / I_d,max,H1 - 1)"
+  },
+  {
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4",
+   "role": "GNG-ICP-01 (criteria PENDING_OWNER_ACCEPTANCE)"
+  },
+  {
+   "path": "docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json",
+   "sha256": "600cf229ecdb5f91f0471f03cfdd6d287486ad21e9d9ebadde3cdafa54a37394",
+   "role": "P-ICP-DBF1 codes of today (frozen; never edited)"
+  },
+  {
+   "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+   "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+   "role": "frozen 196 design states (CG-AIR corner compositions RI-06)"
+  },
+  {
+   "path": "docs/architecture_comparison/scaling/scaling_similarity.json",
+   "sha256": "a604d93f576c4106a819b5679f0562060f0f7d9dc8f7078924d29bfd025644fe",
+   "role": "registered GK2008 document identity (sources.GK2008 sha256 a373c8a2)"
+  }
+ ],
+ "rules": [
+  "NP-ICP v2 is used as implemented: abep_icp::v2::IcpModelV2::evaluate on cases built from this record. No model change, no new model version, no edited frozen record.",
+  "Physics / assessment separation (AS-01..AS-05): the model emits raw I_e,cap only; every bound, ratio, M_n and closure state is formed in abep-assess (module closure_icp), never in abep-icp.",
+  "Fail closed: an unregistered input stays unregistered and the model names it; nothing is defaulted; a withheld output is reported with its reason codes, never replaced by a bound or an analog.",
+  "The ICP chemistry registry (data/chemistry/icp/) is read, not changed, in this lane (see not_changed.registry).",
+  "The conservation bounds (M-B) are NECESSARY-CONDITION bounds: labels CONSERVATION_BOUND / NOT_A_PERFORMANCE_PREDICTION. The published analog (M-C) is ANALOG_ESTIMATE_NOT_A_MODEL_RESULT; it is a risk indicator and never changes a closure state, never triggers a DCR and never enters a gate.",
+  "M_n is reported in the governed HC-05 form only through abep_assess::neutralization (hc05 / neutralization_quantities). The brief's I_e,cap / I_beam form is reported as the necessary condition I_e,cap >= I_beam,LB, labelled, never as an acceptance criterion.",
+  "No number in this record is fitted to a result; every value is a DBF-1 item, a registered repository record, a recorded lawful source read (source_reads) or a declared engineering assumption with evidence class and uncertainty."
+ ],
+ "source_reads": [
+  {
+   "id": "SR-01",
+   "what": "CODATA 2022 vacuum electric permittivity",
+   "url": "https://physics.nist.gov/cgi-bin/cuu/Value?ep0",
+   "accessed_utc": "2026-10-08T14:21:57Z",
+   "document_sha256": "d5f84475858c17bd437940c51f2e0934baf3da7bc462f0e29ab7db7e59fd9721",
+   "sha256_note": "HTML page as served (contains per-request script tokens: a re-fetch gives other bytes)",
+   "read": "'vacuum electric permittivity', numerical value 8.854 187 8188 x 10^-12 F m^-1, standard uncertainty 0.000 000 0014 x 10^-12 F m^-1, 'Source: 2022 CODATA recommended values'",
+   "used_for": "NP-ICP VER-25 (verification addendum, separate commit)"
+  },
+  {
+   "id": "SR-02",
+   "what": "NIST Atomic Spectra Database, ground-state ionization energies",
+   "url": "https://physics.nist.gov/cgi-bin/ASD/ie.pl?spectra=Xe+I%3B+O+I%3B+N+I%3B+He+I%3B+Ar+I&units=1&format=2&order=0&at_num_out=on&sp_name_out=on&ion_charge_out=on&el_name_out=on&seq_out=on&shells_out=on&level_out=on&ion_conf_out=on&e_out=0&unc_out=on&biblio=on",
+   "accessed_utc": "2026-10-08T14:16Z",
+   "document_sha256": "803aa946346c0615c8cef35673960d7cf6887041a20cbf397f4e4c2f4c4c08aa",
+   "read": "CSV: Xe I 12.1298437 (0.0000015) eV; O I 13.618055 (0.000007) eV; N I 14.53413 (0.00004) eV; He I 24.587389011 eV; Ar I 15.7596119 eV",
+   "used_for": "M-B3 E_iz,min (Xe, O, N)"
+  },
+  {
+   "id": "SR-03",
+   "what": "NIST Chemistry WebBook gas-phase ion energetics, IE (evaluated)",
+   "url": [
+    "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7782447&Mask=20",
+    "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7727379&Mask=20",
+    "https://webbook.nist.gov/cgi/cbook.cgi?ID=C10102439&Mask=20"
+   ],
+   "accessed_utc": "2026-10-08T14:16Z",
+   "document_sha256": {
+    "O2": "9c5c23f67ed5e50c4ad35e0d726493bc2f1bc4a7d6b68da0ddb09004cccf3af2",
+    "N2": "4d67ad773e6bdfdf7d390831b5c9c1c59bb4fd21a0a2300e0cffb4292d5fb01a",
+    "NO": "5fd83ec71ed3ef3dd757013e32f1f415aeae3d42116231a987b2f52e01f1fac0"
+   },
+   "sha256_note": "HTML pages as served (per-request tokens)",
+   "read": "IE (evaluated): O2 12.0697 +/- 0.0002 eV; N2 15.581 +/- 0.008 eV; NO 9.2642 +/- 0.00002 eV (evaluator L = S. G. Lias)",
+   "used_for": "M-B3 E_iz,min (O2, N2, NO)"
+  },
+  {
+   "id": "SR-04",
+   "what": "NIST Atomic Weights and Isotopic Compositions",
+   "url": [
+    "https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl?ele=Xe&ascii=ascii",
+    "https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl?ele=O&ascii=ascii",
+    "https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl?ele=N&ascii=ascii"
+   ],
+   "accessed_utc": "2026-10-08T14:16Z",
+   "document_sha256": {
+    "Xe": "f341af78c9f8869988396ffda58b0a06afad328ae74561863b06a1efc7fa4809",
+    "O": "f52edca3abb0dfa979ab495f7fedd1962b1f2cbc953578d59fb288749382b4e7",
+    "N": "5f07e7254cf7a3561a60de271abd75360bbcc653972b33e004787a52702201b4"
+   },
+   "sha256_note": "HTML pages as served (per-request tokens)",
+   "read": "standard atomic weights: Xe 131.293(6); O [15.99903, 15.99977]; N [14.00643, 14.00728]",
+   "used_for": "M-B1 heaviest-ion masses (upper ends: O2 2 x 15.99977 u, Xe 131.293 + 0.006 u)"
+  },
+  {
+   "id": "SR-05",
+   "what": "D. M. Goebel, I. Katz, Fundamentals of Electric Propulsion: Ion and Hall Thrusters, JPL (2008), JPL DESCANSO open copy",
+   "url": "https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel__cmprsd_opt.pdf",
+   "accessed_utc": "2026-10-08T14:05Z",
+   "document_sha256": "a373c8a26137b7c7cd989880c303c4f6c1f84f20a11a02770047f6ba4c249e4e",
+   "sha256_note": "byte-identical to the registered GK2008 document (scaling_similarity.json sources.GK2008)",
+   "read": "p. 57: 'the charge exchange cross section for xenon is about 10^-18 m^2 [7]' (ch. 3 ref. 7 = J. S. Miller et al.); p. 58 Eq. (3.6-13) Maxwellian-averaged e-Xe scattering cross-section fit; p. 97: average excitation potential of xenon 10 V used in the ideal-generator example; pp. 154-157 (sec. 4.5): rf ion thruster example, discharge loss 'about 450 eV/ion' with no confinement and '230 eV/ion if 10 G is induced', 'in good agreement with the data about this size of rf thruster found in the literature'; pp. 471-474 Appendix D Table D-1 (Rapp & Englander-Golden ionization, Stephan & Maerk ionization, Hayashi total excitation, to 100 eV); pp. 475-476 Appendix E (Maxwellian rates and fits)",
+   "evidence_level": 5,
+   "used_for": "RI-05 sigma_i(Xe+); M-C analog W/A (Xe); chemistry acquisition map (XE-ION-01, XE-EXC-01, XE-EL-01)"
+  },
+  {
+   "id": "SR-06",
+   "what": "M. A. Lieberman, short course 'Principles of plasma discharges and materials processing' (2015), REF-LIEB15 (already registered in NP-ICP prereg v1 references)",
+   "url": "https://people.eecs.berkeley.edu/~lieber/Day1View150315crop.pdf",
+   "accessed_utc": "2026-10-08T14:08Z",
+   "document_sha256": "498b6c11edd7291320c41fcf329ddf4347a3852a0a3b8c02ddac4607ecb3c9f4",
+   "read": "slide 39: K_iz E_c = K_iz E_iz + K_ex E_ex + K_el (2m/M)(3T_e/2), E_e = 2T_e, E_i ~ V_s, E_T = E_c + E_e + E_i; slide 41: presheath T_e/2, Gamma_wall = n_s u_B; slides 43-44: h_l = 0.86 (3 + l/2 lambda_i)^-1/2, h_R = 0.8 (4 + R/lambda_i)^-1/2, 'Applies for pressures < 100 mTorr in argon'; slide 46: particle balance K_iz/u_B = 1/(n_g d_eff); slide 49: Child law J_i = e n_s u_B = (4/9) eps0 (2e/M)^1/2 V_s^3/2 / s^2; slides 50-51: power balance P_abs = (h_l n0 2 pi R^2 + h_R n0 2 pi R l) u_B e E_T, 'Particle balance => electron temperature Te (independent of plasma density)'",
+   "used_for": "RI-05 H-LIEB edge factor form; VER-01 / VER-02 / VER-22 source-read records (addendum, separate commit)"
+  },
+  {
+   "id": "SR-07",
+   "what": "A. V. Phelps, 'Cross Sections and Swarm Coefficients for Nitrogen Ions and Neutrals in N2 and Argon Ions and Neutrals in Ar for Energies from 0.1 eV to 10 keV', J. Phys. Chem. Ref. Data 20, 557-573 (1991), doi 10.1063/1.555889, NIST-hosted reprint",
+   "url": "https://srd.nist.gov/jpcrdreprint/1.555889.pdf",
+   "accessed_utc": "2026-10-08T14:13Z",
+   "document_sha256": "2ad461a1792b7624bf8ca3532548879ddd912126b4c0a16701d975845bbaef62",
+   "read": "Table 3 (N2+ + N2), column Q_m (momentum transfer, 1e-20 m^2): 101 at 0.750 eV, 96.5 at 1 eV, 75.5 at 10 eV (lab ion energy); Table 1 (N+ + N2), column Q_m: 41.5 at 0.750 eV, 35.5 at 1 eV, 11.7 at 10 eV; Fig. 3 and text p. 562: Q_m chosen to approach the Langevin cross section at low energy and twice Q_CT at high energy",
+   "evidence_level": 4,
+   "used_for": "RI-05 sigma_i(N2+), sigma_i(N+) (VER-09 candidate source now read)"
+  },
+  {
+   "id": "SR-08",
+   "what": "NIST Standard Reference Database 107 (Electron-Impact Cross Sections for Ionization and Excitation): atom index and molecule table",
+   "url": [
+    "https://physics.nist.gov/PhysRefData/Ionization/atom_index.html",
+    "https://physics.nist.gov/PhysRefData/Ionization/molTable.html",
+    "https://physics.nist.gov/cgi-bin/Ionization/table.pl?ionization=NO",
+    "https://physics.nist.gov/cgi-bin/Ionization/atom.php?element=He"
+   ],
+   "accessed_utc": "2026-10-08T14:00Z-14:22Z",
+   "document_sha256": {
+    "NO": "0e4e808f7430fd2811c6732ccfff360cc0bf072b120eea3890f30c48941d99cb",
+    "He": "5bc08890c5cc07df62b4d082e80a3eb2e402f47ccbdf776c9fdb07e55f42d474"
+   },
+   "read": "atoms with BEB data: H, He, Li, B, C, N, O, Al, Ga, In (no Xe, no Ar); molecules include NO (BEB orbital constants, 2pi B = 9.26 eV) and N2, O2",
+   "used_for": "chemistry acquisition map: SB-NO and SB-He ionization routes reachable; XE-ION-01 not in SRD 107"
+  }
+ ],
+ "host_reachability_2026_10_08": {
+  "probe": "HTTPS through the session agent proxy, 2026-10-08 14:00-14:20 UTC (curl; proxy status endpoint)",
+  "finding": "The proxy now establishes CONNECT to every probed host. Its recorded connect_rejected failures (arxiv.org, pubs.aip.org, iopscience.iop.org, doi.org, zenodo.org, ntrs.nasa.gov, www.osti.gov, link.springer.com, journals.aps.org, europepmc.org, core.ac.uk, nvlpubs.nist.gov, www.nist.gov, hal.science, api.semanticscholar.org) date from 03:34 UTC and no longer occur. The A9.38 note that physics.nist.gov and publisher hosts are blocked by the network policy is superseded for the network layer.",
+  "reachable_with_content": [
+   "physics.nist.gov (CODATA, ASD, SRD 107, atomic weights)",
+   "webbook.nist.gov",
+   "srd.nist.gov (JPCRD reprints)",
+   "www.nist.gov",
+   "descanso.jpl.nasa.gov (GK2008)",
+   "people.eecs.berkeley.edu (REF-LIEB15)",
+   "arxiv.org / export.arxiv.org",
+   "api.archives-ouvertes.fr / hal.science (metadata)",
+   "api.crossref.org",
+   "zenodo.org",
+   "www.osti.gov",
+   "ntrs.nasa.gov",
+   "core.ac.uk"
+  ],
+  "publisher_refusal_not_network": [
+   {
+    "host": "pubs.aip.org",
+    "response": "HTTP 403 from the publisher (CONNECT established)",
+    "blocks": "AIP version of record: SONG2026 (JPCRD 55, 013102) and supplement; Rapp & Englander-Golden 1965 and Rapp & Briglia 1965 (J. Chem. Phys.); Baalrud et al. 2007 (Phys. Plasmas 14, 042109; VER-06); Chabert et al. 2012 (Phys. Plasmas 19, 073512; VER-07; HAL record hal-01549430 has no full text); Miller et al. 2002 (J. Appl. Phys. 91, 984; VER-09 Xe); Cosby 1993; Peverall 2001"
+   },
+   {
+    "host": "journals.aps.org",
+    "response": "HTTP 403 from the publisher",
+    "blocks": "Rejoub, Lindsay & Stebbings 2002 (PRA 65, 042713; XE-ION-01 primary); Syage 1992 (PRA 46, 5666; XE-ION-02); Tayal & Zatsarinny 2016 (PRA 94, 042707; AIR-EL-04, AIR-EXC-09 BSR); Baalrud, Hegna & Callen 2009 (PRL; VER-21; no arXiv copy found); Straub et al. 1996"
+   },
+   {
+    "host": "iopscience.iop.org",
+    "response": "HTTP 200 landing page; full text behind subscription (paywall, not bypassed)",
+    "blocks": "Hayashi 1983 (J. Phys. D 16, 581; XE-EXC-01 primary); Williams & Allen 1989; Thompson 1995; Cherkani-Hassani 2006; Tian & Vidal 1998"
+   },
+   {
+    "host": "www.sciencedirect.com",
+    "response": "HTTP 403 from the publisher",
+    "blocks": "Florescu-Mitchell & Mitchell 2006 (Phys. Rep.; AIR-REC)"
+   },
+   {
+    "host": "pubs.acs.org",
+    "response": "HTTP 403 from the publisher",
+    "blocks": "Huang, Zhang & Cheng 2022 (J. Phys. Chem. A; AIR-EXC-04/05)"
+   },
+   {
+    "host": "onlinelibrary.wiley.com / europepmc.org / api.semanticscholar.org / www.mdpi.com",
+    "response": "HTTP 103 / 403 from the server",
+    "blocks": "no item of this lane depends on them"
+   }
+  ],
+  "rule": "Publisher refusals and paywalls are licence barriers: never bypassed (NP-ICP-CHEM-AIR EXC-04; A9.31 OQ-NPICP-10). Acquisition goes through the owner-approved fo_closed_access_acquisition route."
+ },
+ "inputs": [
+  {
+   "id": "RI-01",
+   "prereg_input": "IN-08 (CM-ABS) and the RF -> plasma coupling basis",
+   "name": "absorbed RF power P_abs and power-transfer efficiency eta_p",
+   "value": {
+    "coupling_mode": "CM-ABS (PARAMETRIC_ABSORBED_POWER)",
+    "P_abs_grid_W": [
+     10.0,
+     20.0,
+     50.0,
+     100.0,
+     200.0,
+     500.0
+    ],
+    "eta_p_definition": "eta_p = P_abs / P_net, P_net = P_fwd - P_refl at RP-CPL (A9.2: P_fwd is never P_plasma)",
+    "eta_p_reference": 0.1,
+    "eta_p_physical_upper_bound": 1.0,
+    "P_fwd_envelope_W": [
+     0.0,
+     500.0
+    ],
+    "P_refl_reference_W": 0.0,
+    "P_net_max_W": 500.0,
+    "P_abs_reference_W": 50.0
+   },
+   "units": "W; -",
+   "evidence": {
+    "source": "DBF1-RF-02 (P_fwd 0-500 W, docs/baseline/DBF-1/dbf1_v1.json (lock 517e0cf6)); NP-ICP prereg v2 CM-ABS (PARAMETRIC_ABSORBED_POWER)",
+    "evidence_level": "7",
+    "quantity_type": "ASSUMED",
+    "transformation_chain": "P_abs is a parametric design variable: grid nodes 10 / 20 (anchor-like), 50 (eta_p,ref x P_net,max) and 100 / 200 / 500 W (up to eta_p = 1 at P_net,max)",
+    "uncertainty": {
+     "kind": "SCENARIO_SET",
+     "label": "P_abs grid 10 / 20 / 50 / 100 / 200 / 500 W (unweighted)"
+    },
+    "applicability_domain": "DBF-1 ICP (open-tube coaxial, R 0.06 m, L 0.15 m), CFG-CAP-OFF, CM-ABS; hall_icp_neutralizer A9.37 / A9.38",
+    "validation_status": "NOT_VALIDATED"
+   },
+   "eta_p_evidence": {
+    "source": "Takahashi et al., J. Electr. Propuls. 3:18 (2024) anchor TK-26 eta_p = R_p / (R_p + R_ant) ~ 0.1 (p. 7-8, Eq. (1); authors' inferred value), TK-27 P_abs ~ 20 W at TK-21 P_fwd 200 W, TK-22 P_refl 0 W (p1_icp_bench_v1.json anchor_check)",
+    "evidence_level": "3",
+    "quantity_type": "INFERRED",
+    "transformation_chain": "eta_p,ref = the TK-26 published-analog value; P_abs,ref = eta_p,ref x P_net,max = 0.1 x 500 W = 50 W",
+    "uncertainty": {
+     "kind": "SCENARIO_SET",
+     "label": "eta_p in {0.1 (TK-26 anchor, reference), 1.0 (physical upper bound)}; no lower bound is sourced"
+    },
+    "applicability_domain": "13.56 MHz inductive coupling; the anchor is an Ar bench with a 65 mm Pyrex tube; transfer to the DBF-1 120 mm bore and N2 / air / Xe is an assumption",
+    "validation_status": "NOT_VALIDATED"
+   },
+   "closes": [
+    "IN-08_RF_INPUT_NOT_REGISTERED (CM-ABS)"
+   ],
+   "not_closed": "CM-CAL (measured R_p, R_ant, H-mode map: P2 impedance map, TBD_AFTER_IMPEDANCE_MAP) and CM-PRED (VER-03..VER-05, VER-13) stay NOT_EVALUATED: the coupling efficiency at the DBF-1 ICP is not measured. eta_p,ref = 0.1 is the design reference value, not a prediction; the P2 map supersedes it."
+  },
+  {
+   "id": "RI-02",
+   "prereg_input": "IN-10 (CFG-CAP-OFF analysis surfaces)",
+   "name": "electron-collector analysis surface of the DBF-1 ICP",
+   "value": {
+    "geometry_id": "DBF1-ICP-02-CAPOFF-EC",
+    "base": "DBF1-ICP-02 / -03 / -04 / -07 (A8 P-ICP-DBF1 surfaces)",
+    "change_vs_A8": "the downstream open end (pi R^2, EXPORT) is represented by an ELECTRON_COLLECTOR of the same area pi R^2 at the downstream aperture (EXPORT)",
+    "surfaces": [
+     {
+      "id": "vessel",
+      "kind": "DIELECTRIC_FLOATING",
+      "area": "2 pi R (L - L_c)",
+      "node": "N_VESSEL",
+      "material": "DBF1-ICP-07"
+     },
+     {
+      "id": "collector",
+      "kind": "ION_COLLECTOR_BIASED",
+      "area": "2 pi R L_c",
+      "node": "N_COLLECTOR",
+      "material": "DBF1-MAT-03 primary"
+     },
+     {
+      "id": "up",
+      "kind": "OPEN_UPSTREAM",
+      "area": "pi R^2",
+      "node": "RX_H1_FACE",
+      "material": "OPEN"
+     },
+     {
+      "id": "ec",
+      "kind": "ELECTRON_COLLECTOR",
+      "area": "pi R^2",
+      "node": "EXPORT",
+      "material": "EC_ANALYSIS_ELECTRODE_MATERIAL_NOT_SELECTED"
+     }
+    ],
+    "R_m": "DBF1-ICP-02 r_aperture 0.06",
+    "L_m": "DBF1-ICP-02 L_module 0.15",
+    "L_c_m": "DBF1-ICP-04 0.10",
+    "volume_mode": "ASSUMED_GEOMETRIC_TUBE (DBF1-ICP-03)"
+   },
+   "units": "m, m^2",
+   "evidence": {
+    "source": "DBF1-ICP-02/03/04/07, DBF1-MAT-03 (docs/baseline/DBF-1/dbf1_v1.json (lock 517e0cf6)); P1-IT-36 (A9.4 P1Q-10: ICP45_CAPACITY records use a dedicated, isolated, instrumented electron-collecting electrode, option (A)); NP-ICP prereg v2 IN-10 (electron collector -> EXPORT)",
+    "evidence_level": "7",
+    "quantity_type": "ASSUMED",
+    "transformation_chain": "the CFG-CAP-OFF electron sink of the capacity definition is placed at the frozen downstream extraction plane with the aperture area; every other surface is the A8 DBF-1 surface",
+    "uncertainty": {
+     "kind": "CATEGORICAL"
+    },
+    "applicability_domain": "DBF-1 ICP (open-tube coaxial, R 0.06 m, L 0.15 m), CFG-CAP-OFF, CM-ABS; hall_icp_neutralizer A9.37 / A9.38",
+    "validation_status": "NOT_VALIDATED"
+   },
+   "closes": [
+    "(adds the electron sink needed for I_e,cap; with no ELECTRON_COLLECTOR the model's I_e,cap is 0 by definition)"
+   ],
+   "dcr": "none: an analysis representation of the CFG-CAP-OFF capacity measurement (P1-S4, Hall discharge OFF). No DBF-1 flight item changes; the flight electron sink is the Hall plume through CPL-HALL-ON-v1."
+  },
+  {
+   "id": "RI-03",
+   "prereg_input": "IN-11, IN-26, EQ-11 bias range",
+   "name": "electrode reference, potentials, supplies and bias range",
+   "value": {
+    "reference": "ION_COLLECTOR (the DBF1-ICP-04 C-type ion-collecting electrode; V_collector = 0 V by definition)",
+    "potentials_V": {
+     "collector": 0.0,
+     "ec": "V_bias (grid)"
+    },
+    "V_bias_grid_V": [
+     25.0,
+     50.0,
+     100.0,
+     200.0,
+     350.0
+    ],
+    "collector_bias_sweep_V": [
+     25.0,
+     50.0,
+     100.0,
+     200.0,
+     350.0
+    ],
+    "polarity": "electron collector positive w.r.t. the ion collector (electrons sunk at the most positive electrode; TK-13 / TK-40 physics recorded in P1-IT-36)",
+    "supplies": {
+     "collector": "ICP_COLLECTOR_BIAS",
+     "ec": "ICP_COLLECTOR_BIAS"
+    },
+    "V_bias_max_V": 350.0
+   },
+   "units": "V",
+   "evidence": {
+    "source": "DBF1-ICP-04 (separately biased, metered collector, body floating), DBF1-ICP-06 (350 V isolation class, design withstand >= 525 V, P1-IT-43), P1-IT-17 (reference fixed with the extraction topology), P1-IT-18 (bias V / I range TBD), P1-IT-36 (docs/baseline/DBF-1/dbf1_v1.json (lock 517e0cf6); p1_icp_bench_v1.json)",
+    "evidence_level": "7",
+    "quantity_type": "ASSUMED",
+    "transformation_chain": "reference = ion collector (P1-IT-17 leaves the reference to the topology registration); bias range 0 to the DBF1-ICP-06 isolation class; grid nodes chosen log-spaced up to 350 V",
+    "uncertainty": {
+     "kind": "SCENARIO_SET",
+     "label": "V_bias grid 25 / 50 / 100 / 200 / 350 V (unweighted)"
+    },
+    "applicability_domain": "DBF-1 ICP (open-tube coaxial, R 0.06 m, L 0.15 m), CFG-CAP-OFF, CM-ABS; hall_icp_neutralizer A9.37 / A9.38",
+    "validation_status": "NOT_VALIDATED"
+   },
+   "closes": [
+    "IN-11_ELECTRODES_NOT_REGISTERED",
+    "IN-26 supply identity",
+    "EQ-11_BIAS_RANGE_NOT_REGISTERED"
+   ]
+  },
+  {
+   "id": "RI-04",
+   "prereg_input": "IN-15 / DOM-06",
+   "name": "B_ICP,max in CFG-CAP-OFF",
+   "value": {
+    "B_ICP_max_T": 0.0,
+    "configuration": "CFG-CAP-OFF (Hall discharge OFF, Hall coils de-energized, no ICP assist magnet: BK-04 NOT_INSTALLED)"
+   },
+   "units": "T",
+   "evidence": {
+    "source": "DBF1-ICP-01 (unmagnetized ICP), bus_power_boundary_a9_v2 icp_assist_magnet VARIANT_ONLY / NOT_INSTALLED (NP-ICP prereg v2 BK-04)",
+    "evidence_level": "7",
+    "quantity_type": "ASSUMED",
+    "transformation_chain": "unmagnetized first build with the Hall coils de-energized in the capacity configuration -> registered 0 (DOM-06 in domain); the geomagnetic and remanent fields are not included (idealization; a measured bench B_ICP,max supersedes)",
+    "uncertainty": {
+     "kind": "CATEGORICAL"
+    },
+    "applicability_domain": "CFG-CAP-OFF only; CFG-FLIGHT-HALL-ON needs B_ICP,max from the H-1 magnetic circuit at the ICP (L-H1-BZ / P3; not registered)",
+    "validation_status": "NOT_VALIDATED"
+   },
+   "closes": [
+    "DOM-06_B_ICP_NOT_REGISTERED (CFG-CAP-OFF)"
+   ]
+  },
+  {
+   "id": "RI-05",
+   "prereg_input": "IN-17 (H-LIEB)",
+   "name": "edge-factor model and ion-neutral cross sections",
+   "value": {
+    "h_model": "H-LIEB (h_l = 0.86 (3 + L/2 lambda_i)^-1/2, h_R = 0.8 (4 + R/lambda_i)^-1/2, lambda_i = 1/(n_g sigma_i))",
+    "sigma_i_m2": {
+     "Xe^+": 1e-18,
+     "N2^+": 9.65e-19,
+     "N^+": 3.55e-19
+    },
+    "not_registered": {
+     "O^+": "no source read",
+     "O2^+": "no source read",
+     "NO^+": "no source read",
+     "N^2+": "no source read",
+     "O^2+": "no source read",
+     "N2^2+": "no source read"
+    },
+    "use_by_mode": {
+     "XE_CONTINGENCY": "H-LIEB {Xe^+}",
+     "EM-N2": "H-LIEB {N2^+, N^+} (N^2+ unregistered: the model names it)",
+     "AIR_PRIMARY": "NOT REGISTERED (the dominant O^+ / O2^+ have no read source; IN-17 stays open)"
+    }
+   },
+   "units": "m^2",
+   "per_value_evidence": {
+    "Xe^+": {
+     "source": "SR-05 GK2008 p. 57 ('about 10^-18 m^2', ch. 3 ref. 7 J. S. Miller et al.)",
+     "evidence_level": "5",
+     "quantity_type": "INFERRED",
+     "transformation_chain": "order-of-magnitude statement of a textbook compilation taken as sigma_i (resonant charge exchange dominates the ion-neutral cross section)",
+     "uncertainty": {
+      "kind": "SCENARIO_SET",
+      "label": "order of magnitude as stated ('about'); source uncertainty not stated"
+     },
+     "applicability_domain": "Xe+ / Xe at thruster ion energies; H-LIEB argon statement extrapolated (flag H_LIEB_ARGON_STATEMENT_EXTRAPOLATED)",
+     "validation_status": "NOT_VALIDATED"
+    },
+    "N2^+": {
+     "source": "SR-07 Phelps 1991 Table 3, Q_m at lab ion energy 1 eV",
+     "evidence_level": "4",
+     "quantity_type": "MEASURED",
+     "transformation_chain": "evaluated compilation value transcribed at 1 eV; the interval covers Q_m over 0.75-10 eV (101 to 75.5 x 1e-20 m^2)",
+     "uncertainty": {
+      "kind": "INTERVAL",
+      "half_width": 1.275e-19
+     },
+     "applicability_domain": "N2+ in N2, lab energy 0.1 eV - 10 keV; use in O-bearing gas is an extrapolation",
+     "validation_status": "NOT_VALIDATED"
+    },
+    "N^+": {
+     "source": "SR-07 Phelps 1991 Table 1, Q_m at lab ion energy 1 eV",
+     "evidence_level": "4",
+     "quantity_type": "MEASURED",
+     "transformation_chain": "evaluated compilation value transcribed at 1 eV; the interval covers Q_m over 0.75-10 eV (41.5 to 11.7 x 1e-20 m^2)",
+     "uncertainty": {
+      "kind": "INTERVAL",
+      "half_width": 1.49e-19
+     },
+     "applicability_domain": "N+ in N2, lab energy 0.1 eV - 10 keV; use in O-bearing gas is an extrapolation",
+     "validation_status": "NOT_VALIDATED"
+    }
+   },
+   "form_source": "SR-06 REF-LIEB15 slides 43-44 (argon, < 100 mTorr); DOM-05 holds at every grid pressure (<= 0.1 Pa << 13.33 Pa)",
+   "closes": [
+    "IN-17_NO_EDGE_FACTOR_SOURCE (XE_CONTINGENCY; EM-N2 partially)"
+   ],
+   "not_closed": "AIR_PRIMARY: IN-17 stays INCOMPLETE_EVIDENCE (O^+, O2^+ ion-neutral cross sections not read)"
+  },
+  {
+   "id": "RI-06",
+   "prereg_input": "IN-12 (REGISTERED_PRESSURE), IN-05 composition, IN-14 T_g",
+   "name": "neutral source (G-REUSE) and delivered composition",
+   "value": {
+    "mode": "REGISTERED_PRESSURE (parametric)",
+    "why_not_flow_balance": "flight FLOW_BALANCE needs an admitted upstream conductance / feed model (DOM-14) and the Hall-exhaust neutral transfer HI-04 has no producer (CPL-HON-02); DCR-001 (P1) has not registered a delivered state",
+    "p_ICP_grid_Pa": [
+     0.001,
+     0.003,
+     0.01,
+     0.03,
+     0.1
+    ],
+    "T_g_K": 300.0,
+    "composition_members": {
+     "XE_CONTINGENCY": [
+      {
+       "id": "XE",
+       "x": {
+        "Xe": 1.0
+       }
+      }
+     ],
+     "EM-N2": [
+      {
+       "id": "N2",
+       "x": {
+        "N2": 1.0
+       }
+      }
+     ],
+     "AIR_PRIMARY": [
+      {
+       "id": "CG-AIR-MOL-CHIMIN",
+       "x": {
+        "N2": 0.9205741391773137,
+        "O2": 0.07942586082268627
+       }
+      },
+      {
+       "id": "CG-AIR-ATOM-CHIMIN",
+       "x": {
+        "N": 0.9205741391773137,
+        "O": 0.07942586082268627
+       }
+      },
+      {
+       "id": "CG-AIR-MOL-CHIMAX",
+       "x": {
+        "N2": 0.16007549051441164,
+        "O2": 0.8399245094855884
+       }
+      },
+      {
+       "id": "CG-AIR-ATOM-CHIMAX",
+       "x": {
+        "N": 0.16007549051441164,
+        "O": 0.8399245094855884
+       }
+      }
+     ]
+    },
+    "chi_O_definition": "O-nuclei fraction chi_O = (n_O + 2 n_O2) / (n_O + 2 n_O2 + n_N + 2 n_N2) of the free stream",
+    "chi_O_min": {
+     "value": 0.07942586082268627,
+     "state": "ds2:ECSS_ST_HIGH:alt180:lat+71.0000:lst0:lon0:doy184"
+    },
+    "chi_O_max": {
+     "value": 0.8399245094855884,
+     "state": "ds2:ECSS_LT_LOW:alt230:lat-81.0000:lst21:lon0:doy138"
+    },
+    "pressure_bound_information": "G-REUSE isotropic bound n <= 4 Gamma_feed / (vbar (A_up + A_down)) at T_g (all Hall feed entering the ICP; tau = 1 apertures): evaluated in the record (M-B5) at the registered flows; the grid extends a decade above to cover Hall utilization < 1, directed-flux and temperature effects; the Takahashi facility pressure 0.028 Pa (TK-34) lies inside the grid"
+   },
+   "units": "Pa, K, -",
+   "evidence": {
+    "source": "NP-ICP-CHEM-AIR CG-AIR (corner vertices f_O, f_N in {0, 1} at the extreme free-stream O-nuclei fractions) from the frozen design-state file (60073e21, 196 required states, computed by a standard-library read of n_O, n_O2, n_N, n_N2); DBF1-ICP-05 G-REUSE; A4 conservation_bounds_v1 (mdot_req); TK-34",
+    "evidence_level": "7",
+    "quantity_type": "ASSUMED",
+    "transformation_chain": "parametric pressure grid (design variable) because no admitted G-REUSE transfer exists; composition = CG-AIR corner vertices (He, Ar omitted: SB-He / SB-Ar unresolved), pure Xe, pure N2; T_g = 300 K wall-temperature assumption (MF-01: T_g is an input)",
+    "uncertainty": {
+     "kind": "SCENARIO_SET",
+     "label": "p_ICP grid x composition vertices (unweighted); T_g 300 K assumed"
+    },
+    "applicability_domain": "DBF-1 ICP (open-tube coaxial, R 0.06 m, L 0.15 m), CFG-CAP-OFF, CM-ABS; hall_icp_neutralizer A9.37 / A9.38",
+    "validation_status": "NOT_VALIDATED"
+   },
+   "closes": [
+    "IN-12_NEUTRAL_SOURCE_NOT_REGISTERED (parametric REGISTERED_PRESSURE)"
+   ],
+   "not_closed": "the delivered composition (IN-05_DELIVERED_COMPOSITION_TBD stays in AIR_PRIMARY by the model's rule) and the flight G-REUSE inflow (DOM-14, HI-04)"
+  },
+  {
+   "id": "RI-07",
+   "prereg_input": "IN-16 chemistry registration per mode",
+   "name": "chemistry as registered today (read, not changed)",
+   "value": {
+    "AIR_PRIMARY": "NOT_REGISTERED (abep-icp-air-0.0 NOT_ADMITTED)",
+    "XE_CONTINGENCY": "NOT_REGISTERED (abep-icp-xe-0.0 NOT_ADMITTED; no Xe channel)",
+    "EM-N2": "REGISTERED_SET n2_n.toml (registry scenario EM-N2-NOMINAL; CA-ICP-v1 NOT_RUN)"
+   },
+   "units": "-",
+   "evidence": {
+    "source": "data/chemistry/icp/ICP_CHEM_PINNED.toml (074daff9); NP-ICP-CHEM-AIR prereg v1 sec. 11",
+    "evidence_level": "DEFINITION",
+    "quantity_type": "DEFINITION",
+    "transformation_chain": "registry state echoed",
+    "uncertainty": {
+     "kind": "CATEGORICAL"
+    },
+    "applicability_domain": "today's registry",
+    "validation_status": "NOT_VALIDATED"
+   },
+   "closes": [],
+   "not_closed": "AIR / Xe admission (see chemistry_acquisition in the closure record)"
+  },
+  {
+   "id": "RI-08",
+   "prereg_input": "IN-01..IN-03, IN-07",
+   "name": "supply mode, gas mode, configuration, coupling mode, f_RF",
+   "value": {
+    "modes": [
+     "AIR_PRIMARY",
+     "XE_CONTINGENCY",
+     "EM-N2"
+    ],
+    "gas_mode": "G-REUSE",
+    "configuration": "CFG-CAP-OFF",
+    "coupling_mode": "CM-ABS",
+    "f_RF_Hz": 13560000.0
+   },
+   "units": "-, Hz",
+   "evidence": {
+    "source": "A9.19 / config/architecture/hall_icp_neutralizer_v1.json; A9.1 HIQ-06; DBF1-RF-01; A9 evidence modes (EM-N2 bench mode)",
+    "evidence_level": "OWNER_DECISION",
+    "quantity_type": "OWNER_DECISION",
+    "transformation_chain": "echoed",
+    "uncertainty": {
+     "kind": "CATEGORICAL"
+    },
+    "applicability_domain": "hall_icp_neutralizer",
+    "validation_status": "NOT_VALIDATED"
+   },
+   "closes": [],
+   "note": "EM-N2 is a bench evidence mode reported as a reference: never AIR, never flight, never an N2 surrogate for atomic O (A9.30)."
+  }
+ ],
+ "not_registered": [
+  {
+   "input": "IN-19 bus registration (eta_RF, P_match,DC, match_colocated)",
+   "why": "owned by L-POWER-ICD (P6); bus keys stay NOT_EVALUATED (NE-09); not needed for I_e,cap in CM-ABS"
+  },
+  {
+   "input": "IN-25 D0 per molecule",
+   "why": "partition keys only (FC-29); I_e,cap unaffected"
+  },
+  {
+   "input": "IN-18 wall coefficients",
+   "why": "no sourced value: the model's vertex set {0, 1} applies (BOUNDED_BY_PHYSICAL_LIMITS)"
+  },
+  {
+   "input": "IN-20 I_d,max,H1",
+   "why": "HALL_NUMERICS_NOT_CONVERGED (A9.36); credible Hall set EMPTY"
+  },
+  {
+   "input": "CPL-HALL-ON-v1 inputs HI-04..HI-08",
+   "why": "no producer (prereg v2 sec. 6); CFG-FLIGHT-HALL-ON stays NOT_EVALUATED"
+  },
+  {
+   "input": "TK-06 coil split, thermal boundary",
+   "why": "thermal / power lanes"
+  }
+ ],
+ "methods": {
+  "M-A": {
+   "name": "NP-ICP v2 evaluation",
+   "rule": "For each mode in {AIR_PRIMARY, XE_CONTINGENCY, EM-N2}, each composition member, each P_abs, each p_ICP and each V_bias of the grid: build the case from RI-01..RI-08 and the DBF-1 config, call IcpModelV2::evaluate (abep_icp::constants::NUMERICS). Record per mode: status counts, the union of reason codes with counts, flags, verify items on path, I_e_cap_A per point (value or withheld status) and the envelope (min / max over CONVERGED points; withheld when none).",
+   "case_ids": "DBF1_ICP_CLOSURE_V1_<mode>_<member>_P<P_abs>_p<p>_V<V_bias>"
+  },
+  "M-B": {
+   "name": "necessary-condition bounds (assessment)",
+   "labels": [
+    "CONSERVATION_BOUND",
+    "NOT_A_PERFORMANCE_PREDICTION"
+   ],
+   "items": {
+    "B1": "I_beam,LB(T) = T sqrt(e / (2 m_i,max V_d,max)): singly charged ions, all accelerated through at most V_d,max (plume potential >= cathode-common reference), no divergence, neutral-gas thrust neglected; heaviest ion of the mode (AIR: O2+, 2 x 15.99977 u; XE: Xe+, 131.299 u; electron mass neglected, which lowers the bound); multiply charged ions and divergence only raise I_beam per thrust",
+    "B2": "I_e,req,LB(T) = I_beam,LB(T): CPL-HON-03 (cathode-common topology: I_e,emit = I_d) and I_d >= I_beam",
+    "B3": "I_e,cap <= I_e,cap,UB(P_abs) = e P_abs / E_iz,min for the NP-ICP v2 model class: I_e,cap <= I_production (the model's PRODUCTION limit) and every ionization event costs at least the lowest ionization energy present from P_abs (Maxwellian, no secondary emission, no photo-ionization in the model). E_iz,min: AIR 9.2642 eV (NO present; SB-NO unresolved) and 12.0697 eV (O2; no NO); XE 12.1298437 eV",
+    "B4": "P_abs,min,cons(T) = I_e,req,LB(T) E_iz,min / e; eta_p,min,cons = P_abs,min,cons / P_net,max (500 W)",
+    "B5": "G-REUSE isotropic pressure information p <= 4 (mdot / m) k T_g / (vbar (2 pi R^2)), vbar = (8 k T_g / (pi m))^1/2, at mdot in {1.43e-9 (DBF1-BD-01 worst delivered), 4.796e-8 (A4 12 mN), 2.082e-7 (A4 25 mN)} kg/s for O (15.99977 u), N2 (2 x 14.00728 u) and Xe (131.299 u) [information for the RI-06 grid only]"
+   },
+   "constants": {
+    "T_points_N": [
+     0.012,
+     0.025
+    ],
+    "V_d_max_V": 350.0,
+    "V_d_source": "DBF1-H1-05 discharge-voltage operating band [180, 350] V",
+    "m_heaviest_u": {
+     "AIR_PRIMARY": 31.99954,
+     "XE_CONTINGENCY": 131.299
+    },
+    "E_iz_min_eV": {
+     "AIR_PRIMARY_with_NO": 9.2642,
+     "AIR_PRIMARY_without_NO": 12.0697,
+     "XE_CONTINGENCY": 12.1298437
+    },
+    "P_net_max_W": 500.0,
+    "eta_p_ref": 0.1,
+    "constants_source": "abep_icp::constants E_CHARGE, AMU, K_B"
+   }
+  },
+  "M-C": {
+   "name": "published-analog absorbed power per extracted ampere (Xe only)",
+   "labels": [
+    "ANALOG_ESTIMATE_NOT_A_MODEL_RESULT",
+    "RISK_INDICATOR"
+   ],
+   "rule": "P_abs,analog(T) = I_e,req,LB(T) x epsilon_ext with epsilon_ext in {230, 450} eV per extracted ion (SR-05 GK2008 sec. 4.5, 20-cm rf ion thruster, absorbed-power basis: 450 eV/ion unconfined, 230 eV/ion with 10 G induced AC field, 'in good agreement with the data about this size of rf thruster'); eta_p,req,analog = P_abs,analog / P_net,max; shortfall factor = eta_p,req,analog / eta_p,ref. Not DBF-1-specific (different geometry, pressure and extraction); AIR: no registered analog -> NOT_EVALUATED."
+  },
+  "M-D": {
+   "name": "neutralization margin status",
+   "rule": "HC-05 through abep_assess::neutralization::hc05 (capacity basis MODEL, I_e,cap from M-A at the reference member, I_d,max,H1 unregistered, no VALIDATED_BENCH cell, no margin rule) and neutralization_quantities; the I_e,cap / I_beam form of the A9.38 brief is reported as the necessary condition I_e,cap >= I_beam,LB with label NECESSARY_CONDITION_NOT_A_GATE. GNG-ICP-01 echoed from rvm_a9_v1 (criteria PENDING_OWNER_ACCEPTANCE)."
+  }
+ },
+ "reference_point": {
+  "id": "REF-ICP-1",
+  "f_RF_Hz": 13560000.0,
+  "P_fwd_W": 500.0,
+  "P_refl_W": 0.0,
+  "eta_p": 0.1,
+  "P_abs_W": 50.0,
+  "p_ICP_Pa": 0.01,
+  "V_bias_V": 100.0,
+  "T_g_K": 300.0,
+  "members": {
+   "XE_CONTINGENCY": "XE",
+   "EM-N2": "N2",
+   "AIR_PRIMARY": "CG-AIR-ATOM-CHIMAX"
+  }
+ },
+ "closure_state_rule": [
+  {
+   "order": 1,
+   "state": "DCR REQUIRED",
+   "condition": "for a flight mode and T in {12, 25} mN: I_e,cap,UB(P_abs = P_net,max = 500 W, eta_p = 1) < I_e,req,LB (B3 < B2): the frozen DBF1-RF-02 envelope cannot supply the necessary current even by conservation"
+  },
+  {
+   "order": 2,
+   "state": "CLOSED",
+   "condition": "I_e,cap CONVERGED, model VERIFIED, point inside a VALIDATED_BENCH cell (or measured), I_d,max,H1 registered and HC-05 MET at the RFP thrust points"
+  },
+  {
+   "order": 3,
+   "state": "FROZEN FOR EM",
+   "condition": "every NP-ICP input registered, I_e,cap CONVERGED in both flight modes at the reference point with I_e,cap >= I_e,req,LB at 12 and 25 mN; only verification / validation / HC-05 evidence pending"
+  },
+  {
+   "order": 4,
+   "state": "BLOCKED BY SPECIFIC MISSING EVIDENCE",
+   "condition": "otherwise; the residual reason codes per mode are the named blockers"
+  },
+  {
+   "order": 0,
+   "note": "M-C never changes the state. FUNDAMENTAL NON-CLOSURE needs a conservation impossibility for the frozen architecture at any RF power, which B3 cannot show for P_abs > 0 (I_e,cap,UB grows with P_abs); it is not reachable by this method."
+  }
+ ],
+ "not_changed": {
+  "registry": "data/chemistry/icp/* are read, not changed. A table build changes the registry's tier-1 gap list, which the frozen M2 record regenerates byte for byte (crates/abep-assess/tests/m2_dbf1.rs committed_m2_record_is_the_a8_record_of_today reads the live registry through P-ICP-DBF1): changing it alters the regenerated frozen M2 record. Building tables therefore waits for the coordinator's M2-rerun decision (snapshot pin or M2 v2).",
+  "frozen": "DBF-1, the M2 record, NP-ICP prereg v1 / v2, NP-ICP-CHEM-AIR prereg, hallthruster_bridge/ (incl. propellants_air: owned by the Hall AIR lane)."
+ },
+ "outputs": [
+  "docs/closure/icp/icp_closure_v1.json",
+  "docs/closure/icp/icp_closure_v1.md",
+  "docs/closure/statements/P4_rf_icp_neutralizer.md"
+ ]
+}
