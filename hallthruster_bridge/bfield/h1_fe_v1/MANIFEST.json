@@ -1,0 +1,77 @@
+{
+ "schema": "abep_bfield_manifest_v1",
+ "id": "h1_fe_v1",
+ "evidence_class": "FE-DERIVED (scikit-fem 10.0.2); not measured; not FEMM",
+ "field_outcome": "FE_DERIVED_VERIFIED",
+ "record": "docs/hardware/h1_bz/h1_bz_fe_v1.json",
+ "prereg": {
+  "path": "docs/hardware/h1_bz/h1_bz_fe_prereg_v4.json",
+  "sha256": "98fab01d030918e9385fce417a085e580e7c355973e9adf4bcab0e05b5434e9e"
+ },
+ "citation": {
+  "how": "a later Hall run cites a file of hallthruster_bridge/bfield/h1_fe_v1/ with B_profile = {file: 'bfield/h1_fe_v1/<file>', align: 'anode', z_ref_in_file_mm: 0.0, scale_to: 'max'} and B_ref_T = B_peak_G x 1e-4 (the file z is already the H-1 z; no rigid shift)",
+  "requires": [
+   "DCR-002 approved (DBF1-BZ-04 change) and the new DBF baseline locked",
+   "a new NP-HALL-PARAMETRIC-ENVELOPE preregistration addendum declaring bz_family kind H1_REGISTERED (FE-DERIVED), registered before the runs it governs; the v1 prereg and earlier addenda are not edited",
+   "the MANIFEST sha256 of the cited file"
+  ],
+  "never": "surrogate (BZ-P5B16 / P5B30) and FE-derived results are never pooled or relabelled; records computed under the surrogate stay surrogate records"
+ },
+ "files": {
+  "h1_fe_v1_Br_centerline_nominal_BP-LO.csv": {
+   "sha256": "1d3930d78921986f9acb6132de09f08bbe435b3df3b7216cd17dc2ddc8f996cc",
+   "variant": "NOM",
+   "level": "BP-LO",
+   "NI_total_A": 153.68879629516994,
+   "B_peak_G": 69.91038556485663,
+   "z_peak_mm": 98.69778413329131,
+   "mesh_level": "L3",
+   "role": "nominal"
+  },
+  "h1_fe_v1_Br_centerline_nominal_BP-HI.csv": {
+   "sha256": "ab86134579ce64d1802d85230376be17b613e1e48e8b2306d3ff94ab67690e62",
+   "variant": "NOM",
+   "level": "BP-HI",
+   "NI_total_A": 587.0966999118853,
+   "B_peak_G": 268.60732227849013,
+   "z_peak_mm": 98.6978535448519,
+   "mesh_level": "L3",
+   "role": "nominal"
+  },
+  "h1_fe_v1_Br_centerline_nominal_CAP-403.csv": {
+   "sha256": "c0fe301e53726f5884a070c7cbda0f0735bd6937c07f6ded45863d32530f66fd",
+   "variant": "NOM",
+   "level": "CAP-403",
+   "NI_total_A": 880.4215317155102,
+   "B_peak_G": 403.0193356009225,
+   "z_peak_mm": 98.69787367638824,
+   "mesh_level": "L3",
+   "role": "nominal"
+  },
+  "h1_fe_v1_Br_centerline_envelope_minFWHM_CORNER-B_BP-HI.csv": {
+   "sha256": "c6bcf7beabfb80ee3a9867c0e5fab37c778282551ed19bad0f94097f676b2b84",
+   "variant": "CORNER-B",
+   "level": "BP-HI",
+   "NI_total_A": 497.5063173744757,
+   "B_peak_G": 268.6010602540919,
+   "z_peak_mm": 98.17305789876502,
+   "mesh_level": "L2",
+   "role": "uncertainty-envelope shape (prereg rule: min / max FWHM at BP-HI)"
+  },
+  "h1_fe_v1_Br_centerline_envelope_maxFWHM_CORNER-A_BP-HI.csv": {
+   "sha256": "8fb762c381446fe2b9f614bdcac403a9b18e76dfd92401a64edb0786e1ef8702",
+   "variant": "CORNER-A",
+   "level": "BP-HI",
+   "NI_total_A": 783.4224530728288,
+   "B_peak_G": 268.599990876889,
+   "z_peak_mm": 99.2186549491548,
+   "mesh_level": "L2",
+   "role": "uncertainty-envelope shape (prereg rule: min / max FWHM at BP-HI)"
+  }
+ },
+ "use_status": "NOT_FOR_HALL_RUNS_UNTIL_DCR_002_APPROVED_AND_ENVELOPE_ADDENDUM_REGISTERED",
+ "p5_files_untouched": [
+  "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+  "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_3p0kW.csv"
+ ]
+}

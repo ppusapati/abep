@@ -1,0 +1,157 @@
+{
+ "schema": "abep_dcr_request_v1",
+ "id": "DCR-DBF1-002",
+ "alias": "DCR-002 (A9.38 closure board P3)",
+ "status": "REQUESTED_PENDING_OWNER_APPROVAL",
+ "date": "2026-10-08",
+ "requested_by": "lane L-H1-BZ (A9.38 P3)",
+ "approved_by": null,
+ "approval_record": null,
+ "process": "docs/baseline/DBF-1/DCR_PROCESS.md (a DCR is approved and committed before any rerun that uses the changed value; this file is the request; the register entry is made in a new register version by the register owner)",
+ "register_note": "dcr_register_v1.json is the empty register at the freeze and is never edited; this request is to be entered in dcr_register_v2.json (or the next version) together with any concurrent DCR (e.g. DCR-DBF1-001, P1 intake)",
+ "baseline": {
+  "DBF-1": {
+   "path": "docs/baseline/DBF-1/dbf1_v1.json",
+   "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f"
+  },
+  "lock": {
+   "path": "docs/baseline/DBF-1/dbf1_lock_v1.json",
+   "sha256": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907"
+  }
+ },
+ "items": [
+  {
+   "id": "DBF1-BZ-04",
+   "old_value": "BZ-P5B16",
+   "old_evidence_class": "digitized literature shape (surrogate); label SOURCED_SURROGATE_P5_SHAPE_NOT_H1_BZ",
+   "new_value": {
+    "id": "BZ-H1FE-V1",
+    "label": "H1_FE_DERIVED_NOT_MEASURED",
+    "per_level_files": {
+     "BP-LO": {
+      "file": "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-LO.csv",
+      "sha256": "1d3930d78921986f9acb6132de09f08bbe435b3df3b7216cd17dc2ddc8f996cc",
+      "NI_total_A": 153.689
+     },
+     "BP-HI": {
+      "file": "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-HI.csv",
+      "sha256": "ab86134579ce64d1802d85230376be17b613e1e48e8b2306d3ff94ab67690e62",
+      "NI_total_A": 587.097
+     },
+     "CAP-403": {
+      "file": "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_CAP-403.csv",
+      "sha256": "c0fe301e53726f5884a070c7cbda0f0735bd6937c07f6ded45863d32530f66fd",
+      "NI_total_A": 880.422
+     }
+    },
+    "registration": "B_profile = {file, align: 'anode', z_ref_in_file_mm: 0.0, scale_to: 'max'}, B_ref_T = B_peak_G x 1e-4 (no rigid shift: the file z is the H-1 z)",
+    "evidence_class": "FE-DERIVED (scikit-fem 10.0.2 axisymmetric nonlinear magnetostatics, FEMM-class per A9.14 F5-OQ-01); NOT measured; NOT FEMM",
+    "uncertainty": {
+     "z_peak_minus_L_mm": {
+      "min": -5.49602,
+      "max": -2.56578,
+      "nominal": -4.50215,
+      "argmin": "WP10",
+      "argmax": "WP5",
+      "numerical_widening": 0.449399
+     },
+     "B_anode_over_B_peak": {
+      "min": -0.0043152,
+      "max": -0.000651573,
+      "nominal": -0.000720131,
+      "argmin": "CORNER-A",
+      "argmax": "CORNER-B",
+      "numerical_widening": 4.48946e-07
+     },
+     "FWHM_mm": {
+      "min": 31.9613,
+      "max": 54.7404,
+      "nominal": 36.792,
+      "argmin": "CORNER-B",
+      "argmax": "CORNER-A",
+      "numerical_widening": 0.0409739
+     },
+     "NI_A": {
+      "min": 496.59,
+      "max": 784.339,
+      "nominal": 587.097,
+      "argmin": "CORNER-B",
+      "argmax": "CORNER-A",
+      "numerical_widening": 0.916097
+     }
+    }
+   }
+  }
+ ],
+ "unchanged_items": [
+  "DBF1-BZ-01 (shape target)",
+  "DBF1-BZ-02 (band 69.93-268.6 G)",
+  "DBF1-BZ-03 (BP-LO / BP-HI levels)",
+  "DBF1-BZ-05 (capability 403 G)",
+  "DBF1-H1-01..06"
+ ],
+ "physical_or_evidence_reason": {
+  "deficiency": "DBF1-BD-05 (closure condition: an H-1 B(z) from FEMM of MC-1 or a measured map, H1F-BZ-01)",
+  "quantitative": [
+   "the DBF1-BZ-04 surrogate is a P5 shape: its anode-to-peak ratio 0.201, gradient and high-field width are P5 properties (DBF1-BZ-04 uncertainty); under the envelope prereg bz_family classification_effect a Hall non-closure under it is never eligible (NOT_DETERMINABLE, blocker H1_BZ_NOT_REGISTERED)",
+   "the FE-derived H-1 field of the registered MC-1 circuit (outcome FE_DERIVED_VERIFIED) differs from it: at BP-HI the FE anode-to-peak ratio is -0.000720131 (surrogate 0.201035), FWHM 36.792 mm (surrogate 43.8337 mm), peak at z - L = -4.50215 mm (surrogate 0 by registration); max normalised profile difference over z = 0 .. L + 66 mm 0.381644 (MATERIALLY_DIFFERENT)"
+  ],
+  "evidence": {
+   "record": {
+    "path": "docs/hardware/h1_bz/h1_bz_fe_v1.json",
+    "sha256": "4da00b551e6d0776cd31d6ccdfba383fd7bfb9ffc9def21bcf8a59b92a4cfd42"
+   },
+   "prereg": {
+    "path": "docs/hardware/h1_bz/h1_bz_fe_prereg_v4.json",
+    "sha256": "98fab01d030918e9385fce417a085e580e7c355973e9adf4bcab0e05b5434e9e"
+   },
+   "lock": {
+    "path": "docs/hardware/h1_bz/h1_bz_fe_prereg_lock_v4.json",
+    "sha256": "08516fdcf2590f3f29e658db6c4bd7a882f16bd9dc6f0bcc9d6491e2beb3eef4"
+   }
+  },
+  "never_the_reason": "Hall / M2 performance: no Hall simulation was run with the FE field and none is used; the proposal follows from the evidence class (prereg v4 dcr_002_evaluation.method), whether the FE shape is favourable or not"
+ },
+ "evaluation_method": {
+  "preregistered_in": {
+   "path": "docs/hardware/h1_bz/h1_bz_fe_prereg_v4.json",
+   "sha256": "98fab01d030918e9385fce417a085e580e7c355973e9adf4bcab0e05b5434e9e",
+   "pointer": "/dcr_002_evaluation"
+  },
+  "committed_alone_before_comparison": true,
+  "rule": "propose iff the field outcome is FE_DERIVED_VERIFIED"
+ },
+ "results_seen_before_request": [
+  {
+   "record": {
+    "path": "docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json",
+    "sha256": "600cf229ecdb5f91f0471f03cfdd6d287486ad21e9d9ebadde3cdafa54a37394"
+   },
+   "what": "M2 closure record v1 summary: NOT_DETERMINABLE at C1, HALL_NUMERICS_NOT_CONVERGED on all required cells (no Hall value entered)"
+  },
+  {
+   "record": "docs/baseline/DBF-1/DBF1_v1.md",
+   "what": "DBF-1 items and BD-01..06"
+  },
+  {
+   "record": "docs/closure/CLOSURE_BOARD_v1.md",
+   "what": "P1-P9 board"
+  },
+  {
+   "record": "docs/hardware/h1_bz/h1_bz_fe_v1.json",
+   "what": "this lane's FE record (all numbers)"
+  }
+ ],
+ "impact": {
+  "DBF-1": "DBF1-BZ-04 value and evidence class change; DBF1-BD-05 closes on approval (a measured map stays an EM verification item); a new baseline version (DBF-1.1) with its own files and lock is created by the baseline owner on approval",
+  "NP-HALL-PARAMETRIC-ENVELOPE": "a new prereg addendum declaring bz_family kind H1_REGISTERED (FE-DERIVED) with the files above is required before any Hall run uses them; the v1 prereg and addenda A1-A8 are not edited",
+  "M2": "every M2 record computed under BZ-P5B16 stays history (surrogate records are never relabelled); the M2 rerun after P2 / P1 cites the new baseline lock",
+  "h1_freeze_candidate": "H1F-BZ-01 / BZ-02 / BZ-05 evidence is supplied by this record; the freeze-candidate record itself is immutable history",
+  "hardware": "no hardware value changes (the FE used the registered MC-1 circuit); measured B(z) remains an EM verification item"
+ },
+ "new_baseline": {
+  "version": "DBF-1.1 (proposed)",
+  "files": "to be generated by the baseline owner on approval",
+  "lock": null
+ }
+}
