@@ -5,6 +5,10 @@
 //! (a code pin), and not through `config/MANIFEST.json`: that manifest's sha256 is inside committed records that tests
 //! regenerate byte for byte. Every refusal is fail closed (`ConfigurationError`, MODEL_ERROR); a changed file is a
 //! DCR with a new baseline version and new pins, never an edit.
+//!
+//! DBF-1.1 (`docs/baseline/DBF-1.1/`, approved DCR-DBF1-002) is the first successor: DBF-1 with DBF1-BZ-04 = BZ-H1FE-V1
+//! (the FE-derived H-1 B(z) profiles, each sha256-pinned). [`load_dbf1_1`] is additive; [`load_dbf1`] and DBF-1 are
+//! unchanged history.
 
 use crate::{ConfigError, ConfigResult};
 use abep_types::pyjson::{self, Value};
@@ -179,6 +183,10 @@ pub fn parse(raw: Value) -> ConfigResult<Dbf1Config> {
     if st(&raw, &["schema"])? != "abep_dbf1_config_v1" || st(&raw, &["baseline"])? != "DBF-1" {
         return Err(bad("schema / baseline id differ"));
     }
+    parse_body(raw)
+}
+
+fn parse_body(raw: Value) -> ConfigResult<Dbf1Config> {
     let up = at(&raw, &["upstream"])?;
     let c = at(up, &["controller"])?;
     let upstream = Dbf1Upstream {
@@ -262,4 +270,116 @@ pub fn parse(raw: Value) -> ConfigResult<Dbf1Config> {
         baseline_deficiencies: strs(&raw, &["baseline_deficiencies"])?,
         raw,
     })
+}
+
+// ------------------------------------------------------------------------------------------------------------- DBF-1.1
+
+pub const DBF1_1_DIR: &str = "docs/baseline/DBF-1.1";
+pub const DBF1_1_CONFIG_REL: &str = "docs/baseline/DBF-1.1/dbf1_1_config_v1.json";
+pub const DBF1_1_CONFIG_SHA256: &str = "f16e07ba5b0c80e724dd53bb8d8a9b02298d8fb20ddac85a4f49ee799949d092";
+pub const DBF1_1_LOCK_REL: &str = "docs/baseline/DBF-1.1/dbf1_1_lock_v1.json";
+pub const DBF1_1_LOCK_SHA256: &str = "257e141ca252c3015b5bbd2fc953a1de688bc1606be36ebdf9fff8889307cfb8";
+pub const DBF1_1_RECORD_REL: &str = "docs/baseline/DBF-1.1/dbf1_1_v1.json";
+pub const DBF1_1_RECORD_SHA256: &str = "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b";
+/// The approval of the DCR that created DBF-1.1 (lineage pin).
+pub const DCR_DBF1_002_APPROVAL_SHA256: &str = "1718ac8061720959ea52e66e18723c23c3ece8d8c44fcfa41249d4f852c9bb55";
+
+/// One DBF-1.1 B(z) profile file (HallThruster.jl centreline B_r(z), FE-derived), verified against its pinned sha256.
+#[derive(Debug, Clone, PartialEq)]
+pub struct BzProfile {
+    /// "nominal" or "envelope".
+    pub role: String,
+    /// BP-LO / BP-HI (nominal) or CORNER-A / CORNER-B (shape-uncertainty envelope).
+    pub id: String,
+    pub file: String,
+    pub sha256: String,
+    pub ni_total_a: f64,
+}
+
+/// The machine-readable DBF-1.1 subset: every DBF-1 field (same structure) plus the pinned B(z) profiles.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Dbf11Config {
+    pub base: Dbf1Config,
+    pub bz_profiles: Vec<BzProfile>,
+    pub closed_deficiencies: Vec<String>,
+    pub parent_lock_sha256: String,
+    pub dcr_approval_sha256: String,
+}
+
+fn bad11(e: ConfigError) -> ConfigError {
+    ConfigError::configuration(e.message.replace(DBF1_CONFIG_REL, DBF1_1_CONFIG_REL))
+}
+
+/// Verify the DBF-1.1 lock (pinned): config and record sha256, and the lineage to the DBF-1 lock and the DCR approval.
+pub fn verify_lock_dbf1_1(repo: &Path) -> ConfigResult<()> {
+    let lock = pyjson::loads(&pyjson::read_text_utf8(&read_pinned(repo, DBF1_1_LOCK_REL, DBF1_1_LOCK_SHA256)?)?)?;
+    for (path, want) in [
+        (&["files", "dbf1_1_config_v1.json"][..], DBF1_1_CONFIG_SHA256),
+        (&["files", "dbf1_1_v1.json"][..], DBF1_1_RECORD_SHA256),
+        (&["lineage", "parent_lock_sha256"][..], DBF1_LOCK_SHA256),
+        (&["lineage", "dcr_approval_sha256"][..], DCR_DBF1_002_APPROVAL_SHA256),
+    ] {
+        if at(&lock, path).map_err(bad11)?.as_str() != Some(want) {
+            return Err(ConfigError::configuration(format!("{DBF1_1_LOCK_REL}: {} != {want}", path.join("."))));
+        }
+    }
+    read_pinned(repo, DBF1_1_RECORD_REL, DBF1_1_RECORD_SHA256)?;
+    Ok(())
+}
+
+/// `load_dbf1_1(repo)`: the verified DBF-1.1 configuration (lock, record, config and every B(z) profile file pinned;
+/// fail closed).
+pub fn load_dbf1_1(repo: &Path) -> ConfigResult<Dbf11Config> {
+    verify_lock_dbf1_1(repo)?;
+    let raw = pyjson::loads(&pyjson::read_text_utf8(&read_pinned(repo, DBF1_1_CONFIG_REL, DBF1_1_CONFIG_SHA256)?)?)?;
+    let c = parse_dbf1_1(raw)?;
+    for p in &c.bz_profiles {
+        read_pinned(repo, &p.file, &p.sha256)?;
+    }
+    Ok(c)
+}
+
+/// Parse a DBF-1.1 config document (no pin check; [`load_dbf1_1`] is the production entry).
+pub fn parse_dbf1_1(raw: Value) -> ConfigResult<Dbf11Config> {
+    let head = (|| -> ConfigResult<()> {
+        if st(&raw, &["schema"])? != "abep_dbf1_config_v1" || st(&raw, &["baseline"])? != "DBF-1.1" {
+            return Err(bad("schema / baseline id differ"));
+        }
+        if st(&raw, &["h1", "bz_shape_id"])? != "BZ-H1FE-V1" {
+            return Err(bad("h1.bz_shape_id is not BZ-H1FE-V1"));
+        }
+        Ok(())
+    })();
+    head.map_err(bad11)?;
+    let mut bz_profiles = vec![];
+    let groups =
+        at(&raw, &["h1", "bz_profiles"]).map_err(bad11)?.as_dict().ok_or_else(|| bad11(bad("h1.bz_profiles")))?;
+    for (role, d) in groups.iter() {
+        let d = d.as_dict().ok_or_else(|| bad11(bad("h1.bz_profiles entry")))?;
+        for (id, p) in d.iter() {
+            bz_profiles.push(BzProfile {
+                role: role.clone(),
+                id: id.clone(),
+                file: st(p, &["file"]).map_err(bad11)?,
+                sha256: st(p, &["sha256"]).map_err(bad11)?,
+                ni_total_a: num(p, &["NI_total_A"]).map_err(bad11)?,
+            });
+        }
+    }
+    let has = |r: &str, i: &str| bz_profiles.iter().any(|p| p.role == r && p.id == i);
+    if !(has("nominal", "BP-LO")
+        && has("nominal", "BP-HI")
+        && has("envelope", "CORNER-A")
+        && has("envelope", "CORNER-B"))
+    {
+        return Err(bad11(bad("h1.bz_profiles must name nominal BP-LO / BP-HI and envelope CORNER-A / CORNER-B")));
+    }
+    let closed_deficiencies = strs(&raw, &["closed_deficiencies"]).map_err(bad11)?;
+    let parent_lock_sha256 = st(&raw, &["lineage", "parent_lock_sha256"]).map_err(bad11)?;
+    let dcr_approval_sha256 = st(&raw, &["lineage", "dcr_approval_sha256"]).map_err(bad11)?;
+    if parent_lock_sha256 != DBF1_LOCK_SHA256 || dcr_approval_sha256 != DCR_DBF1_002_APPROVAL_SHA256 {
+        return Err(bad11(bad("lineage does not name the DBF-1 lock / DCR-DBF1-002 approval")));
+    }
+    let base = parse_body(raw).map_err(bad11)?;
+    Ok(Dbf11Config { base, bz_profiles, closed_deficiencies, parent_lock_sha256, dcr_approval_sha256 })
 }

@@ -1,0 +1,38 @@
+{
+ "id": "dbf1_1_lock_v1",
+ "baseline": "DBF-1.1",
+ "locked": "2026-10-09",
+ "note": "sha256 of the DBF-1.1 files (successor of DBF-1 by the approved DCR-DBF1-002); any change after this lock is a DCR with a new baseline version, never an edit",
+ "files_relative_to": "docs/baseline/DBF-1.1/",
+ "files": {
+  "DBF1_1_v1.md": "7fbc285891e0745dae420a4418403ae96b77b65ff15df8821c77a0f5dd89e498",
+  "build_dbf1_1.py": "6e3ff47cbb88f30dfa3ace92d8e86ce2fbfe04cbaf3f916a0ff276d9815a106b",
+  "dbf1_1_config_v1.json": "f16e07ba5b0c80e724dd53bb8d8a9b02298d8fb20ddac85a4f49ee799949d092",
+  "dbf1_1_v1.json": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b"
+ },
+ "lineage": {
+  "parent_lock": "docs/baseline/DBF-1/dbf1_lock_v1.json",
+  "parent_lock_sha256": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907",
+  "dcr": "DCR-DBF1-002",
+  "dcr_approval": "docs/baseline/DCR-002/dcr002_approval_v1.json",
+  "dcr_approval_sha256": "1718ac8061720959ea52e66e18723c23c3ece8d8c44fcfa41249d4f852c9bb55"
+ },
+ "pinned_sources": {
+  "hallthruster_bridge/bfield/h1_fe_v1/MANIFEST.json": "c797e679613e20948f0f24174db0c95bf0645592e6969363cc661bf1ab2be946",
+  "docs/baseline/DBF-1/dbf1_v1.json": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+  "docs/baseline/DBF-1/dbf1_config_v1.json": "5bd76159fb9761b5c47619fb42217f05c24841d7009067ac71dcedf731759864",
+  "docs/baseline/DBF-1/dbf1_lock_v1.json": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907",
+  "docs/baseline/DCR-002/dcr002_approval_v1.json": "1718ac8061720959ea52e66e18723c23c3ece8d8c44fcfa41249d4f852c9bb55",
+  "docs/baseline/DBF-1/DCR_PROCESS.md": "14f05a7b64968acf9b2a3bc53e5ff33bc83b4304ad284d58f35f27fcc5a04a91",
+  "docs/baseline/DBF-1/dcr_register_v3.json": "db4f3fee53047e43319e3c382479fedff4dcc06700b973e78ecdf5445db0313b",
+  "docs/baseline/DCR-002/dcr002_request_v1.json": "ab55635ac29e2900e4baa459bfbaae9e4334412066bebc1cc03f77f765fcfca9",
+  "docs/hardware/h1_bz/h1_bz_fe_prereg_v4.json": "98fab01d030918e9385fce417a085e580e7c355973e9adf4bcab0e05b5434e9e",
+  "docs/hardware/h1_bz/h1_bz_fe_v1.json": "4da00b551e6d0776cd31d6ccdfba383fd7bfb9ffc9def21bcf8a59b92a4cfd42"
+ },
+ "pinned_profiles": {
+  "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-LO.csv": "1d3930d78921986f9acb6132de09f08bbe435b3df3b7216cd17dc2ddc8f996cc",
+  "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-HI.csv": "ab86134579ce64d1802d85230376be17b613e1e48e8b2306d3ff94ab67690e62",
+  "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_envelope_maxFWHM_CORNER-A_BP-HI.csv": "8fb762c381446fe2b9f614bdcac403a9b18e76dfd92401a64edb0786e1ef8702",
+  "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_envelope_minFWHM_CORNER-B_BP-HI.csv": "c6bcf7beabfb80ee3a9867c0e5fab37c778282551ed19bad0f94097f676b2b84"
+ }
+}
