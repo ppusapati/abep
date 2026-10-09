@@ -1,0 +1,140 @@
+{
+ "schema": "abep_icp_closure_registration_addendum_v1",
+ "id": "ICP-CLOSURE-REG-v1-A1",
+ "title": "Addendum A1: collector sheath-energy window and the reachability of the required collector current (P8 input)",
+ "parent": {
+  "path": "docs/closure/icp/icp_closure_registration_v1.json",
+  "sha256": "41ce4d17a58e0ba6896fd4cfb815856f69c06271ae50b0d602575d5606802d51",
+  "lock_sha256": "5a03e399a980d975651ccd7392077b4fbc56fe825e53f002bba6371d22a156f4"
+ },
+ "registered": "2026-10-08",
+ "status": "REGISTERED_BEFORE_EVALUATION",
+ "trigger": "coordinator input of 2026-10-08 from P8 materials: docs/closure/materials/materials_gates_v1.json (sha256 f3b6e04507429db87b3f94a3a355bb6e87cb78d97ca9bd1f902a766ea667fee1) gates IN600-CO-SPUTTER / IN601-CO-SPUTTER, analysis DA-03, assumption A-ICP-01: collector sputtering is design-driving; E* = 26-38 eV for a 0.5-2 mm recession allowance; the P4 closure must state the collector bias range that satisfies E* and whether the required current is reachable there; if not, DCR on DBF1-ICP-04",
+ "change_rule": "Frozen by icp_closure_registration_a1_lock_v1.json at commit; parent v1 unchanged. A changed input, grid or rule is a v2 of this addendum.",
+ "inputs": {
+  "P8_record": {
+   "path": "docs/closure/materials/materials_gates_v1.json",
+   "sha256": "f3b6e04507429db87b3f94a3a355bb6e87cb78d97ca9bd1f902a766ea667fee1",
+   "used": [
+    "DA-03.inputs.A_coll_m2",
+    "DA-03.inputs.I_d_range_A",
+    "DA-03.ion_energy_ceiling (E*_N+->Ni prior per allowance and current)",
+    "DA-03.floating_sheath_floor.relation",
+    "A-ICP-01 (collector net ion current = Hall discharge current, level 6)"
+   ],
+   "evidence_note": "E* comes from elemental Ni priors (NIFS-DATA-23 fits, level 6, extrapolated toward threshold; P8 use_restriction: prior bound only). This addendum uses them only as the P8 ceiling, never as a yield."
+  },
+  "required_collector_current_A": {
+   "basis": "A-ICP-01: I_c,net = I_d over DBF1-H1-05 / -06 (P_d / V_d), P8 DA-03 I_d_range",
+   "values": [
+    1.857,
+    7.5
+   ],
+   "information": "the parent's B1 lower bound I_beam,LB (0.79 / 1.64 A AIR, 0.39 / 0.81 A Xe) is below this range; I_d >= I_beam"
+  },
+  "E_star_eV": {
+   "source": "P8 DA-03 ion_energy_ceiling, N+ -> Ni prior",
+   "rows": [
+    {
+     "allowance_mm": 0.5,
+     "I_A": 1.857,
+     "E_star": 29.8
+    },
+    {
+     "allowance_mm": 0.5,
+     "I_A": 7.5,
+     "E_star": 26.1
+    },
+    {
+     "allowance_mm": 1.0,
+     "I_A": 1.857,
+     "E_star": 33.0
+    },
+    {
+     "allowance_mm": 1.0,
+     "I_A": 7.5,
+     "E_star": 27.6
+    },
+    {
+     "allowance_mm": 2.0,
+     "I_A": 1.857,
+     "E_star": 37.9
+    },
+    {
+     "allowance_mm": 2.0,
+     "I_A": 7.5,
+     "E_star": 29.8
+    }
+   ]
+  },
+  "A_coll_m2": {
+   "value": 0.0376991,
+   "source": "2 pi R L_c with DBF1-ICP-02 R 0.06 m and DBF1-ICP-04 L_c 0.10 m (the builder computes it from the DBF-1 config; P8 uses 0.0377)"
+  },
+  "T_e_grid_eV": {
+   "values": [
+    2.0,
+    3.0,
+    4.0,
+    5.0,
+    6.0
+   ],
+   "basis": "parametric axis: the ICP T_e is a model output withheld today (NP-ICP v2 INCOMPLETE_EVIDENCE); 2 eV is the D-CHEM lower end, 3 / 5 eV the P8 illustration points; assumption class"
+  },
+  "ions": {
+   "N+": 14.00643,
+   "N2+": 28.01286,
+   "O+": 15.99903,
+   "O2+": 31.99806,
+   "Xe+": 131.287,
+   "basis": "lower ends of the NIST standard-atomic-weight intervals (SR-04; Xe 131.293 - 0.006): the lightest mass gives the lowest (favourable) sheath floor",
+   "E_star_applies_to": [
+    "N+"
+   ],
+   "E_star_note": "P8 gives E* only for N+ -> Ni (the AIR governing case: the O+ -> Ni prior threshold is 38.7 eV); N2+ / O2+ / Xe+ have no prior (P8 register NO_MOLECULAR_NUMBERS; Xe+ not evaluated): their window is NOT_EVALUATED, the floor is reported"
+  },
+  "E_iz_min_eV": {
+   "AIR_with_NO": 9.2642,
+   "XE": 12.1298437,
+   "source": "parent SR-02 / SR-03 (favourable: lowest ionization energy present)"
+  },
+  "P_abs_envelope_W": {
+   "value": 500.0,
+   "source": "parent RI-01 (P_net,max, eta_p = 1)"
+  },
+  "analog_epsilon_ext_eV_Xe": {
+   "values": [
+    230.0,
+    450.0
+   ],
+   "source": "parent SR-05 / M-C (Xe only; ANALOG_ESTIMATE_NOT_A_MODEL_RESULT)"
+  }
+ },
+ "method": {
+  "M-E1_sheath_relations": "REF-LIEB15 slides 41 and 48 (parent SR-06): ions enter the sheath with T_e/2 and cross the collector sheath drop dPhi = phi_p - V_c; Gamma_i = n_s u_B, Gamma_e = (1/4) n_s vbar_e exp(-dPhi/T_e). Floating drop V_fl = (T_e/2) ln(M / (2 pi m_e)). Mean ion impact energy E_i = T_e/2 + e dPhi = E_floor + T_e (-ln(1 - f)), with E_floor = T_e (1/2 + (1/2) ln(M / (2 pi m_e))) (P8 DA-03 relation) and f = I_c,net / I_is,c = 1 - exp(-(dPhi - V_fl)/T_e) the net-to-saturation current fraction of the collector (f > 0 needs dPhi > V_fl). Same relations as the NP-ICP v2 surface model (SG-01); collisionless planar sheath, Maxwellian electrons, no secondary emission (VER-12 open)",
+  "M-E2_window": "Allowed sheath drop: V_fl < dPhi <= dPhi_max = E*/e - T_e/2. f_max = 1 - exp(-(E* - E_floor)/T_e) when E* > E_floor, else no window (WINDOW_CLOSED).",
+  "M-E3_reachability_necessary_conditions": "At the allowed bias the collector must carry I_c,net = I_d with f <= f_max, so its ion saturation current must satisfy I_is,c >= I_d / f_max: required edge ion density n_s,req = I_d / (e u_B A_coll f_max) with u_B = (e T_e / M)^1/2; ion flux to the collector Gamma_i A_coll = I_d / (e f_max) (>= I_d / e); conservation P_abs >= (I_d / f_max) E_iz,min (each collected ion was created by at least one ionization); and, Xe only, the published-analog P_abs ~ (I_d / f_max) epsilon_ext (risk indicator). A row is NOT_EXCLUDED_BY_CONSERVATION when P_abs,min <= the 500 W envelope; otherwise EXCLUDED_BY_CONSERVATION.",
+  "M-E4_flux_consistency_note": "P8 DA-03 computes the recession with an ion flux equal to I_d. At a collector biased near floating the ion flux is I_d / f > I_d, so the P8 E* is a favourable (upper) ceiling; the self-consistent ceiling is lower. Reported as feedback to P8, not re-evaluated here (no yield function is registered in this lane).",
+  "M-E5_bias_mapping_CFG_CAP_OFF": "In the parent CFG-CAP-OFF geometry (reference = ion collector, electron collector at +V_bias), an electron collector at or near the plasma potential (electron-saturation regime; VER-06 open) gives dPhi ~ V_bias within a few T_e. The parent bias grid nodes are classified against dPhi_max (information; the exact phi_p is a withheld model output).",
+  "labels": [
+   "NECESSARY_CONDITION",
+   "NOT_A_PERFORMANCE_PREDICTION",
+   "T_E_PARAMETRIC"
+  ]
+ },
+ "dcr_rule": [
+  {
+   "state": "DCR_TRIGGERED (DBF1-ICP-04)",
+   "condition": "for N+ and every T_e of the grid at or below the operating T_e: WINDOW_CLOSED, or EXCLUDED_BY_CONSERVATION at every allowance; demonstrated only when the operating T_e is a CONVERGED model output or an EM measurement (RFEA / Langmuir) - a parametric T_e never triggers a DCR"
+  },
+  {
+   "state": "DCR_NOT_TRIGGERED_PENDING_EVIDENCE",
+   "condition": "otherwise: the window exists over part of the T_e grid; reachability at the allowed bias stays a model / EM question (I_e,cap and T_e withheld)"
+  }
+ ],
+ "outputs": [
+  "docs/closure/icp/icp_collector_window_a1_v1.json (abep_assess::closure_icp::build_a1)",
+  "section 7 of docs/closure/icp/icp_closure_v1.md",
+  "docs/closure/statements/P4_rf_icp_neutralizer.md"
+ ]
+}

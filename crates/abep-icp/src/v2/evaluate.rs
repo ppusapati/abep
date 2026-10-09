@@ -1616,7 +1616,6 @@ impl EvalV2<'_> {
             return d;
         };
         let lam = diagnostics::debye_length(e.kin.t_e, e.kin.n_e);
-        self.verify.insert("VER-25".into());
         d.insert("lambda_D_over_min_R_L".into(), Quantity::value(lam / p.radius_m.min(p.length_m), "-"));
         d.insert("lambda_D_over_R".into(), Quantity::value(lam / p.radius_m, "-"));
         for s in p.surfaces.iter().filter(|s| !s.kind.is_open()) {

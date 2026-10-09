@@ -5658,6 +5658,60 @@ stays EMPTY and nothing enters layer (b).
   - RF trade line: each 100 W of forward power costs about 129 W of discharge ceiling. Compressor headroom inside the 300 W common allocation is 231 W.
   - Closure state **BLOCKED BY SPECIFIC MISSING EVIDENCE** (HALL_NUMERICS_NOT_CONVERGED: P_d at 12 / 25 mN). Statement: `docs/closure/statements/P6_power.md`.
 
+## 2026-10-08 — A9.38 P4 RF/ICP neutralizer closure v1 + collector-window addendum A1 (lane-icp-closure)
+
+- **Registrations, each committed alone before evaluation.**
+  - `docs/closure/icp/icp_closure_registration_v1.json` (`41ce4d17…`, lock `5a03e399…`). It registers on the DBF-1 ICP: CM-ABS P_abs grid; coupling basis η_p (TK-26 anchor 0.1); a CFG-CAP-OFF electron-collector analysis surface; electrodes with a 25–350 V bias grid; B_ICP,max = 0; H-LIEB σ_i (Xe⁺ GK2008; N₂⁺ / N⁺ Phelps 1991, NIST reprint); a parametric p_ICP grid and CG-AIR corner compositions; the bounds method; the literal closure-state rule.
+  - Addendum A1 (`73d177fc…`, lock `76880994…`) answers the P8 collector-sputtering input.
+- **VER-25 cleared** (`verification_addendum_ver25_v1.json`). NIST CODATA 2022 ε₀ is the v2-only constant `EPS0_CODATA2022`; the v1 constant keeps its bytes. `verification_addendum_a938_source_reads_v1.json` records VER-01 / -02 / -09 / -22 as read but not cleared.
+- **Hosts.** The proxy now connects everywhere (NIST, arXiv, HAL, OSTI, NTRS, doi.org). AIP / APS / ACS answer 403 and iopscience full texts are paywalled; these are licence barriers, not network barriers.
+- **Record** `docs/closure/icp/icp_closure_v1.{json,md}` (`3ddf5503…`; `abep_assess::closure_icp`, bin `abep-assess-icp-closure`, NP-ICP v2 unchanged, 900 points).
+  - Closed against the frozen M2 P-ICP-DBF1 codes: IN-08, IN-11 / IN-26 / EQ-11, IN-12 (parametric), DOM-06 (CFG-CAP-OFF), and IN-17 (Xe).
+  - I_e,cap is INCOMPLETE_EVIDENCE in every mode. Xe is blocked by chemistry only; AIR by chemistry, IN-05, IN-17 (O⁺ / O₂⁺), NEG-CRIT and SB-NO.
+  - Required current (CONSERVATION_BOUND): ≥ 0.788 / 1.641 A for AIR and ≥ 0.389 / 0.810 A for Xe at 12 / 25 mN. Conservation P_abs,min ≤ 20 W, so there is no non-closure inside the 500 W envelope.
+  - Xe analog risk: η_p 0.18–0.73 is needed against the 0.1 anchor.
+  - HC-05 and GNG-ICP-01 are NOT_EVALUATED.
+- **A1 record** `icp_collector_window_a1_v1.json` (`c414954b…`).
+  - The allowed collector sheath drop is about 24–37 V (N⁺ → Ni prior). The window is open at T_e ≤ 5 eV. Model reachability is NOT_EVALUATED.
+  - The DBF1-ICP-04 DCR is not triggered (parametric T_e). P8's E* is favourable because its ion flux should be I_d / f.
+- **Closure state P4:** **BLOCKED BY SPECIFIC MISSING EVIDENCE**. Statement: `docs/closure/statements/P4_rf_icp_neutralizer.md`.
+- **ICP chemistry registry not changed.** A table build changes the codes that the frozen M2 record regenerates byte for byte, so it waits for a coordinator decision (snapshot pin or M2 v2).
+
+## 2026-10-08 — P7 thermal closure v1 (A9.38 Priority 7, lane L-THERMAL)
+
+- **Preregistration first:** `docs/closure/thermal/thermal_cases_prereg_v1.json` + `thermal_load_inputs_v1.json` + lock, committed alone (e5e6e06, prereg sha256 `5666c528…`). It fixes the DBF1-TH-01 node set exactly (R_ICP absent), optics, view factors, conductances, limits (incl. the P8 DA-06 screening ceilings and DCR triggers), the 50 K / 1.2 rule, the R_HALL lever grid, allowables, sensitivities, boundary units and the closure-state rule.
+- **Harness:** `abep-assess::thermal_closure` + binary `abep-assess-thermal-closure` (additive). It runs the admitted NP-THERMAL-CATHODELESS 2.0.0 through `run_case_v2`, case class PARAMETRIC (FLIGHT_CONDITIONAL stays NOT_EVALUATED). The orbit environment (Earth view-factor quadrature; cylindrical shadow checked against the admitted `eclipse_fraction` kernel) covers β* full-sun and β = 0 at 180 km (hot) and β = 0 at 230 km (cold). Test `tests/thermal_closure_p7.rs`.
+- **Record:** `thermal_closure_v1.{json,md}` (Rust commit ef88081, sha256 `1be3d3f3…`). At the selected R_HALL of 0.02 m² / 2 W/K, every H-1 node passes the rule:
+  - inner coil 475 °C vs 488 °C;
+  - walls 487 / 465 °C vs 850 °C;
+  - anode 561 °C (below the P8 930 / 1150 °C ceilings; no materials trigger fires);
+  - collector 510 °C;
+  - vessel 366 °C vs 440 °C.
+- **Failing node:** N_MATCH at 184 °C vs 60 °C. It fails at every lever point and at P_fwd = 0 (conduction from the ICP bracket).
+- **Interface and allowables:**
+  - heat into the spacecraft 97 W vs the 50 W allocation (0.15 m² / 10 W/K meets it);
+  - inner-coil allowable P_d 1114 W;
+  - boundary units: PPU 257 W (0.71 m²), RF generator 400 W (1.10 m²), compressor 15.7 W (flagged for DCR-001).
+- **P7 closure state: DCR REQUIRED** (N_MATCH; draft `dcr_request_P7_match_v1.json` on DBF1-RF-03, with R-1 isolation (no DCR) and R-2 relocation as the routes to preregister). Statement `docs/closure/statements/P7_thermal.md`.
+- Reruns on load inputs v2 (L-POWER-ICD, DCR-001) need no method change. No DBF-1 value, frozen record, model or golden changed.
+- **Rerun on load inputs v2** (P6 power ledger v1 `23e33669…`, which landed during the lane: discharge ceiling 912 W at the 1,500 W gate, conservative supply efficiencies). Same preregistration and harness; record `thermal_closure_v2.{json,md}` (Rust fb29e96, sha256 `06b26333…`) now governs:
+  - inner coil 446 °C (margin 42 K);
+  - anode 512 °C;
+  - walls 454 / 434 °C;
+  - N_MATCH unchanged (184 °C);
+  - heat into the spacecraft 90 W (0.15 m² / 5 W/K meets 50 W);
+  - PPU 225 W (0.62 m²).
+
+  The state stays **DCR REQUIRED** (N_MATCH).
+
+## 2026-10-09 — DCR register v2 (coordinator-maintained): DCR-DBF1-001 / 002 / 003 opened
+
+- `docs/baseline/DBF-1/dcr_register_v2.json` supersedes the empty v1 (unedited). The coordinator is the single writer; lanes submit request drafts.
+- **DCR-DBF1-001** intake / compressor (P1; BD-01/02/03), OPEN_EVALUATION.
+- **DCR-DBF1-002** H1 B(z) replaces the P5-shape surrogate (P3; BD-05), OPEN_EVALUATION.
+- **DCR-DBF1-003** co-located RF match fails thermally (P7; 184 °C vs 60 °C at any RF power): routes R-1 (isolation + own radiator, no DCR) and R-2 (relocate to generator side), to be preregistered and compared.
+- No approval is granted yet; every replacement is selected only by a preregistered evaluation.
+
 ## 2026-10-09 — A9.38 P3: H-1 / MC-1 FE-derived B(z) registered; DCR-DBF1-002 requested (lane L-H1-BZ)
 
 - **Solver:** FEMM unavailable (no wine / pyfemm), so the field is **FE-DERIVED**: scikit-fem 10.0.2 (PyPI), axisymmetric nonlinear magnetostatics, P2 flux function psi = r A_phi, damped Newton with an energy line search. This is a design-analysis tool; it adds no production dependency.

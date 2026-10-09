@@ -20,8 +20,16 @@ name = "abep-assess-closure"
 path = "src/bin/abep_assess_closure.rs"
 
 [[bin]]
+name = "abep-assess-icp-closure"
+path = "src/bin/abep_assess_icp_closure.rs"
+
+[[bin]]
 name = "abep-assess-power-closure"
 path = "src/bin/abep_assess_power_closure.rs"
+
+[[bin]]
+name = "abep-assess-thermal-closure"
+path = "src/bin/abep_assess_thermal_closure.rs"
 
 [[bin]]
 name = "abep-assess-envelope-summary"

@@ -567,3 +567,25 @@ fn verification_addendum_ver23_is_bound_to_the_pin() {
         assert!(h.len() == 64 && h.bytes().all(|b| b.is_ascii_hexdigit()), "{f}");
     }
 }
+
+#[test]
+fn verification_addendum_ver25_is_bound_to_the_constant() {
+    let root = abep_provenance::workspace_repo_root().unwrap();
+    let a: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(root.join(format!("{}/verification_addendum_ver25_v1.json", abep_icp::context::PREREG_DIR)))
+            .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(a["verify_item"], "VER-25");
+    assert!(a["confirmation"].as_str().unwrap().contains("VER-25 is CLEARED"));
+    assert!(a["read"]["source_line"].as_str().unwrap().contains("2022 CODATA"));
+    let v = a["value_registered"]["value_F_per_m"].as_f64().unwrap();
+    assert_eq!(v.to_bits(), abep_icp::v2::diagnostics::EPS0_CODATA2022.to_bits());
+    let h = a["source"]["document_sha256"].as_str().unwrap();
+    assert!(h.len() == 64 && h.bytes().all(|b| b.is_ascii_hexdigit()));
+    // A sustained v2 solve no longer carries VER-25; the other inherited items stay on the path.
+    let r = model_v2().evaluate(&floating_case_v2(10.0));
+    assert!(r.status.is_converged(), "{:?}", r.reasons);
+    assert!(!r.verify_items_on_path.contains("VER-25"));
+    assert!(r.verify_items_on_path.contains("VER-01"));
+}
