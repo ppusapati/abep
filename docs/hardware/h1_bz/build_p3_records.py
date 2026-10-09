@@ -1,7 +1,7 @@
 """P3 (A9.38) records from the FE B(z) record: the DCR-002 request (DBF1-BZ-04) and the P3 closure-state record.
 
 Reads docs/hardware/h1_bz/h1_bz_fe_v1.json (and its prereg / lock) and writes
-  docs/baseline/DBF-1/dcr/DCR-DBF1-002_request_v1.json
+  docs/baseline/DCR-002/dcr002_request_v1.json
   docs/closure/P3_h1_magnetic_field_closure_v1.json
 Usage: python build_p3_records.py [--check]   (stdlib only)
 """
@@ -17,7 +17,7 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 REC = os.path.join(HERE, "h1_bz_fe_v1.json")
 PRE = os.path.join(HERE, "h1_bz_fe_prereg_v4.json")
 LOCK = os.path.join(HERE, "h1_bz_fe_prereg_lock_v4.json")
-DCR = os.path.join(ROOT, "docs", "baseline", "DBF-1", "dcr", "DCR-DBF1-002_request_v1.json")
+DCR = os.path.join(ROOT, "docs", "baseline", "DCR-002", "dcr002_request_v1.json")
 CLO = os.path.join(ROOT, "docs", "closure", "P3_h1_magnetic_field_closure_v1.json")
 STMT = "docs/closure/statements/P3_h1_magnetic_field.md"
 
@@ -74,7 +74,7 @@ def build():
         "approved_by": None,
         "approval_record": None,
         "process": "docs/baseline/DBF-1/DCR_PROCESS.md (a DCR is approved and committed before any rerun that uses the changed value; this file is the request; the register entry is made in a new register version by the register owner)",
-        "register_note": "dcr_register_v1.json is the empty register at the freeze and is never edited; this request is to be entered in dcr_register_v2.json (or the next version) together with any concurrent DCR (e.g. DCR-DBF1-001, P1 intake)",
+        "register_note": "the DCR register (dcr_register_v2+) is maintained by the coordinator only (coordinator decision); DCR-DBF1-002 is registered there as OPEN_EVALUATION; this lane does not create or edit any dcr_register_v*.json",
         "baseline": {"DBF-1": pin(dbf), "lock": pin(dbf_lock)},
         "items": [{
             "id": "DBF1-BZ-04",

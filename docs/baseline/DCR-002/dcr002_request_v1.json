@@ -8,7 +8,7 @@
  "approved_by": null,
  "approval_record": null,
  "process": "docs/baseline/DBF-1/DCR_PROCESS.md (a DCR is approved and committed before any rerun that uses the changed value; this file is the request; the register entry is made in a new register version by the register owner)",
- "register_note": "dcr_register_v1.json is the empty register at the freeze and is never edited; this request is to be entered in dcr_register_v2.json (or the next version) together with any concurrent DCR (e.g. DCR-DBF1-001, P1 intake)",
+ "register_note": "the DCR register (dcr_register_v2+) is maintained by the coordinator only (coordinator decision); DCR-DBF1-002 is registered there as OPEN_EVALUATION; this lane does not create or edit any dcr_register_v*.json",
  "baseline": {
   "DBF-1": {
    "path": "docs/baseline/DBF-1/dbf1_v1.json",

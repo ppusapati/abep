@@ -5671,7 +5671,7 @@ stays EMPTY and nothing enters layer (b).
   - Envelope: BP-HI needs 497–784 A-turns. The peak sits in the exit pole gap at z − L = −4.5 mm (−5.5 to −2.6). B_anode/B_peak ≈ −0.001.
   - Both registered targets are met: H1F-BZ-02 SHAPE_CONSISTENT and H1F-BZ-03 band reachable.
 - **Profiles:** HallThruster.jl profiles are in `hallthruster_bridge/bfield/h1_fe_v1/` with a MANIFEST. The P5 files are untouched.
-- **DCR-DBF1-002:** requested in `docs/baseline/DBF-1/dcr/DCR-DBF1-002_request_v1.json` to replace DBF1-BZ-04 (surrogate BZ-P5B16) with BZ-H1FE-V1; it is pending owner approval.
+- **DCR-DBF1-002:** requested in `docs/baseline/DCR-002/dcr002_request_v1.json` to replace DBF1-BZ-04 (surrogate BZ-P5B16) with BZ-H1FE-V1; it is pending owner approval.
   - Compared with the surrogate, the max normalised difference is 0.38 (MATERIALLY_DIFFERENT).
   - Hall runs need that approval plus a new envelope addendum (bz_family H1_REGISTERED).
 - **P3 closure:** FROZEN FOR EM (`docs/closure/P3_h1_magnetic_field_closure_v1.json`, statement `docs/closure/statements/P3_h1_magnetic_field.md`).

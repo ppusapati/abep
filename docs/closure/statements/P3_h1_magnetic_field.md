@@ -43,7 +43,7 @@ hot-state reference field sensor.
 | preregistration (governing) | `docs/hardware/h1_bz/h1_bz_fe_prereg_v4.json` | `98fab01d030918e9385fce417a085e580e7c355973e9adf4bcab0e05b5434e9e` |
 | B-H data | `docs/hardware/h1_bz/bh_curves_v1.json` | `6f940f88bf672e0d4e29b109081a5c6e1506e8f566a9b2e56c54361971f22747` |
 | profile files | `hallthruster_bridge/bfield/h1_fe_v1/MANIFEST.json` | per file in the manifest |
-| design change request | `docs/baseline/DBF-1/dcr/DCR-DBF1-002_request_v1.json` | REQUESTED_PENDING_OWNER_APPROVAL |
+| design change request | `docs/baseline/DCR-002/dcr002_request_v1.json` | REQUESTED_PENDING_OWNER_APPROVAL |
 
 Internal numbers above, such as ampere-turns and B_anode/B_peak, are analysis results at the reference operating point.
 They are not contractual acceptance criteria.
