@@ -1,0 +1,10 @@
+{
+ "files": {
+  "docs/closure/thermal/build_thermal_cases_prereg_v1.py": "613bd4fb2c54a3cff82aa688459e64a1a4f341430d0643ff1f850f99fc9d3e13",
+  "docs/closure/thermal/thermal_cases_prereg_v1.json": "5666c528486f8cb7935863b3826c66e60271242637b31826468adde09394ecba",
+  "docs/closure/thermal/thermal_load_inputs_v1.json": "c87cdb2fc913e667760d5c9bce88c9cce5cba237689e0ac93dbf101cd9dd4b41"
+ },
+ "id": "P7-THERMAL-CASES-PREREG-LOCK-v1",
+ "rule": "committed alone before any production case; the harness refuses a prereg whose sha256 differs; a load-input v1 change is a new input version, never an edit",
+ "schema": "abep_closure_prereg_lock_v1"
+}

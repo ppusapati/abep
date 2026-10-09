@@ -1,0 +1,50 @@
+{
+ "schema": "abep_dcr_request_draft_v1",
+ "id": "DCR-REQUEST-P7-MATCH-v1",
+ "dcr_id": "DCR-DBF1-NNN (to be assigned when registered; dcr_register_v2+ is maintained by the coordinator per DCR_PROCESS.md)",
+ "status": "REQUESTED_NOT_APPROVED",
+ "date": "2026-10-08",
+ "requested_by": "lane L-THERMAL (P7, A9.38 priority 7)",
+ "approved_by": null,
+ "approval_record": null,
+ "process": "docs/baseline/DBF-1/DCR_PROCESS.md",
+ "items": [
+  {
+   "id": "DBF1-RF-03",
+   "old_value": "adjustable local match, on / immediately adjacent to the ICP module (match_colocated = true)",
+   "new_value": "NOT PROPOSED HERE: the replacement is chosen only after a preregistered comparison (see evaluation_method)"
+  },
+  {
+   "id": "DBF1-TH-01",
+   "old_value": "N_MATCH PRESENT (match_colocated = true)",
+   "new_value": "follows DBF1-RF-03 (N_MATCH is present iff match_colocated)"
+  }
+ ],
+ "physical_or_evidence_reason": {
+  "finding": "the co-located match node N_MATCH exceeds its continuous-use ceiling in every governing hot case of the preregistered P7 analysis: T_max 183.5 degC (TC4-HOT-I-B0; 147.2-180.6 degC in TC1-TC3) against the design ceiling 60 degC (EEE-INST-002 M1 Table 4 MIL-PRF-27 class S derated 110 degC minus the DBF1-TH-03 50 K), margin -123.5 K; it also exceeds the non-derated 130 degC rating",
+  "why_it_cannot_remain": "the failure is not driven by RF power or by the design levers: the allowable forward power AL-PFWD/N_MATCH does not exist (the node fails at P_fwd = 0 W, heated by conduction from the ICP bracket at 186-211 degC, which carries the Hall discharge-return heat of the ion collector), and the node fails at every R_HALL grid point (0.02-0.40 m^2, 2-10 W/K)",
+  "evidence": [
+   {"path": "docs/closure/thermal/thermal_closure_v2.json", "sha256": "06b26333b265a706e0c9bfcdbee1567fe800dbd19b3a05d9f4922ef85eb9dc4d", "pointer": "/nodes/N_MATCH, /allowables/AL-PFWD~1N_MATCH, /design_lever_search/grid"},
+   {"path": "docs/closure/thermal/thermal_closure_v1.json", "sha256": "1be3d3f3e15c2c0849a87a0df9cd27012c5a7cb2dbf4f90e96de7efa33c9bb00", "pointer": "/nodes/N_MATCH (same verdict on the v1 inputs)"},
+   {"path": "docs/closure/thermal/thermal_cases_prereg_v1.json", "sha256": "5666c528486f8cb7935863b3826c66e60271242637b31826468adde09394ecba", "pointer": "/limits (N_MATCH), /closure_state_rule"},
+   {"path": "schemas/thermal_life/limits_v1.json", "sha256": "0df363f76dcb6efcef41bc0a07e1775b6255c2c9d84b185228862958ef827dbb", "pointer": "/records/eee_inst_002_magnetics"}
+  ],
+  "evidence_class": "model-derived (NP-THERMAL-CATHODELESS 2.0.0, PARAMETRIC, NOT_VALIDATED) on registered engineering assumptions: the match mounting conductance 0.5 W/K to the ICP bracket, a 0.02 m^2 match radiating face, and the 5 % match loss are assumed values (P3-K-06 TBD)"
+ },
+ "resolution_paths_to_evaluate": [
+  {"id": "R-1 (no DBF-1 change)", "description": "keep the match co-located but thermally isolate it from the ICP bracket and give it its own radiating face (mounting conductance and radiator area are not DBF-1 values; they were not levers of P7 prereg v1, so they need a P7 preregistration addendum before evaluation)", "dcr_needed": false},
+  {"id": "R-2 (DBF-1 change)", "description": "move the match off the module to the RF-generator side (match_colocated = false; N_MATCH absent; TK-04 / TK-05 booked at B_PPU_RF RF_CHAIN), with the RF consequence of the remote match (A9.2 local-match selection) evaluated by the P2 impedance map", "dcr_needed": true}
+ ],
+ "evaluation_method": "preregister (committed alone, hash-locked) the comparison of R-1 and R-2 before evaluating either: R-1 as a P7 addendum lever set (match conductance to bracket, match radiator area) on the unchanged prereg v1 cases; R-2 as DBF-1.1 with the N_MATCH-absent topology; acceptance = every governing hot case N_MATCH (R-1) or the B_PPU_RF RF_CHAIN unit (R-2) within its ceiling under the 50 K / 1.2 rule, and no other node verdict degraded",
+ "results_seen_before_request": [
+  "P7 thermal_closure_v1 and v2 (all governing, cold, sensitivity and allowable results in the records)",
+  "M2 DBF-1 record and the A9.38 closure board as read by every lane (no Hall thrust value)"
+ ],
+ "impact": {
+  "items": ["DBF1-RF-03", "DBF1-TH-01 (N_MATCH presence)"],
+  "records": ["docs/closure/thermal/thermal_closure_v1.json stays immutable; a rerun after R-1 or R-2 writes thermal_closure_v2"],
+  "power": "R-2 moves the match loss to the RF-generator side (B_PPU_RF) and adds coax loss; L-POWER-ICD ledger",
+  "icp": "R-2 changes the RF reference plane (P2 impedance map; L-ICP-CLOSURE)"
+ },
+ "new_baseline": "DBF-1.1 only if R-2 is selected"
+}

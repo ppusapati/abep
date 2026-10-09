@@ -18,6 +18,9 @@
 //! New, under preregistration NP-HALL-PARAMETRIC-ENVELOPE v1 (A9.32): the decisive 196-state two-layer closure run and
 //! the A9.32 classification ([`closure`]); its addendum A2 harness v2 consuming every required physics path of the M1
 //! exit item ([`closure_m1`]).
+//!
+//! New, under preregistration `docs/closure/thermal/thermal_cases_prereg_v1.json` (A9.38 priority 7): the DBF-1
+//! frozen-topology thermal closure ([`thermal_closure`]) on the admitted NP-THERMAL-CATHODELESS 2.0.0 network.
 
 pub mod closure;
 pub mod closure_icp;
@@ -37,6 +40,7 @@ pub mod propellant;
 pub mod py;
 pub mod rvm;
 pub mod statewise;
+pub mod thermal_closure;
 pub mod thresholds;
 
 pub use error::{AssessError, AssessResult};

@@ -1,0 +1,509 @@
+{
+ "coils": {
+  "cap_inner_W": {
+   "evidence_class": "model-derived",
+   "source": {
+    "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+    "pointer": "/coil_design/cases/2/coils/inner/chosen/P_kulgrid_538C_W",
+    "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+   },
+   "uncertainty": "MC-1 capability case (SENS-COIL-CAP)",
+   "units": "W",
+   "value": 27.84
+  },
+  "cap_outer_W": {
+   "evidence_class": "model-derived",
+   "source": {
+    "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+    "pointer": "/coil_design/cases/2/coils/outer/chosen/P_kulgrid_538C_W",
+    "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+   },
+   "uncertainty": "MC-1 capability case",
+   "units": "W",
+   "value": 58.4
+  },
+  "cold_inner_W": {
+   "evidence_class": "model-derived",
+   "source": {
+    "note": "RP-1 f_NI 1 at 20 degC x (69.93 / 260.5)^2 to the band lower end",
+    "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+    "pointer": "/coil_design/cases/0/coils/inner/chosen/P20_W",
+    "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+   },
+   "uncertainty": "lumped magnetics",
+   "units": "W",
+   "value": 0.026317362955191007
+  },
+  "cold_outer_W": {
+   "evidence_class": "model-derived",
+   "source": {
+    "note": "RP-1 f_NI 1 at 20 degC x (69.93 / 260.5)^2",
+    "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+    "pointer": "/coil_design/cases/0/coils/outer/chosen/P20_W",
+    "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+   },
+   "uncertainty": "lumped magnetics",
+   "units": "W",
+   "value": 0.06655727389215338
+  },
+  "hot_inner_W": {
+   "evidence_class": "model-derived",
+   "source": {
+    "note": "27.84 W at 403 G x (268.6 / 403)^2 to the DBF1-BZ-02 band upper end; FIXED_POWER at the 538 degC class temperature (conservative)",
+    "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+    "pointer": "/coil_design/cases/2/coils/inner/chosen/P_kulgrid_538C_W",
+    "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+   },
+   "uncertainty": "lumped magnetics; FEMM pending (DBF1-BD-05)",
+   "units": "W",
+   "value": 12.36719348311978
+  },
+  "hot_outer_W": {
+   "evidence_class": "model-derived",
+   "source": {
+    "note": "58.4 W at 403 G x (268.6 / 403)^2",
+    "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+    "pointer": "/coil_design/cases/2/coils/outer/chosen/P_kulgrid_538C_W",
+    "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+   },
+   "uncertainty": "lumped magnetics",
+   "units": "W",
+   "value": 25.942675984705282
+  },
+  "trim_W": {
+   "evidence_class": "assumed",
+   "source": {
+    "note": "hall_magnet_trim: 0 W explicit when unpowered",
+    "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+    "pointer": "/power/configurations/hall_icp_neutralizer/slots",
+    "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
+   },
+   "uncertainty": "trim NI TBD (H1F-CO-07)",
+   "units": "W",
+   "value": 0.0
+  }
+ },
+ "compressor": {
+  "P_el_max_W": {
+   "evidence_class": "model-derived",
+   "label": "FROM_P6_POWER_LEDGER_v1",
+   "source": {
+    "note": "DBF-1 compressor; FLAGGED_FOR_UPDATE_FROM_DCR-001",
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "pointer": "/terms (CP-WORST)",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   },
+   "uncertainty": "PARAMETRIC_SENSITIVITY",
+   "units": "W",
+   "value": 11.1251000485
+  },
+  "eta_drive": {
+   "evidence_class": "model-derived",
+   "label": "FROM_P6_POWER_LEDGER_v1",
+   "source": {
+    "note": "CP-WORST is already the motor-drive electrical input (drive fed from the internal bus)",
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "pointer": "/terms (ETA-CPD)",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   },
+   "uncertainty": "-",
+   "units": "-",
+   "value": 1.0
+  }
+ },
+ "discharge": {
+  "E_return_cold_V": {
+   "evidence_class": "assumed",
+   "source": "cold-case lower bound (no return heat)",
+   "uncertainty": "bound",
+   "units": "V",
+   "value": 0.0
+  },
+  "E_return_hot_V": {
+   "evidence_class": "assumed",
+   "source": "selected engineering assumption: the ICP ion collector receives the Hall discharge current (P8 assumption A-ICP-01, docs/closure/materials/materials_gates_v1.json) at the same per-charge energy as the upper anode analog (EXT-MAZOUFFRE2005 30 eV); the analog collector fall spans 2.7-93.8 V (P8 EV-12, Takahashi Fig. 4a, Ar); verify by P1 / ICD ICP-43 calorimetry",
+   "uncertainty": "2.7-93.8 V analog span; SENS-RETURN-HI and AL-RETURN reported",
+   "units": "V",
+   "value": 30.0
+  },
+  "P_d_band_W": {
+   "evidence_class": "owner-allocation",
+   "source": {
+    "note": "DBF1-H1-06",
+    "path": "docs/baseline/DBF-1/dbf1_v1.json",
+    "pointer": "/items",
+    "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f"
+   },
+   "uncertainty": "band ends",
+   "units": "W",
+   "value": [
+    650.0,
+    1350.0
+   ]
+  },
+  "P_d_hot_W": {
+   "evidence_class": "assumed",
+   "label": "FROM_P6_POWER_LEDGER_v1",
+   "source": {
+    "note": "flight discharge ceiling under the 1,500 W gate with the ICP at the 200 W forward anchor (DESIGN_ALLOCATION_NOT_PREDICTED)",
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "pointer": "/points/0/P_d_max_W/rfp_1500_supremum",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   },
+   "uncertainty": "allocation bound; the Hall envelope (P2) decides the actual P_d",
+   "units": "W",
+   "value": 912.0790714286894
+  },
+  "V_d_band_V": {
+   "evidence_class": "owner-allocation",
+   "source": {
+    "note": "DBF1-H1-05",
+    "path": "docs/baseline/DBF-1/dbf1_v1.json",
+    "pointer": "/items",
+    "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f"
+   },
+   "uncertainty": "band ends",
+   "units": "V",
+   "value": [
+    180.0,
+    350.0
+   ]
+  },
+  "f_anode_cold": {
+   "evidence_class": "inferred",
+   "source": {
+    "note": "H25-04 lower: EXT-MYERS2016 Table 3",
+    "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+    "pointer": "/design_parameters",
+    "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083"
+   },
+   "uncertainty": "xenon analog",
+   "units": "-",
+   "value": 0.0206
+  },
+  "f_anode_hot": {
+   "evidence_class": "inferred",
+   "source": {
+    "note": "H25-04 upper: EXT-MAZOUFFRE2005 30 eV per electron / V_d,min 180 V",
+    "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+    "pointer": "/design_parameters",
+    "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083"
+   },
+   "uncertainty": "xenon analog; air value unknown",
+   "units": "-",
+   "value": 0.16666666666666666
+  },
+  "f_pole_cold": {
+   "evidence_class": "inferred",
+   "source": {
+    "note": "H25-06 lower",
+    "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+    "pointer": "/design_parameters",
+    "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083"
+   },
+   "uncertainty": "unshielded bound",
+   "units": "-",
+   "value": 0.0
+  },
+  "f_pole_hot": {
+   "evidence_class": "inferred",
+   "source": {
+    "note": "H25-06 upper: EXT-MYERS2016 inner front pole",
+    "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+    "pointer": "/design_parameters",
+    "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083"
+   },
+   "uncertainty": "shielded analog",
+   "units": "-",
+   "value": 0.01448
+  },
+  "f_walls_cold": {
+   "evidence_class": "inferred",
+   "source": {
+    "note": "H25-05 lower: EXT-MYERS2016",
+    "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+    "pointer": "/design_parameters",
+    "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083"
+   },
+   "uncertainty": "xenon analog",
+   "units": "-",
+   "value": 0.0439
+  },
+  "f_walls_hot": {
+   "evidence_class": "inferred",
+   "source": {
+    "note": "H25-05 upper: EXT-MARTINEZ2014 13 +/- 2 %",
+    "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+    "pointer": "/design_parameters",
+    "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083"
+   },
+   "uncertainty": "xenon analog",
+   "units": "-",
+   "value": 0.15
+  },
+  "plume_partition": {
+   "evidence_class": "assumed",
+   "source": "assumed split of intercepted plume power (bore-dominated); K-P3-RAYS with a measured angular distribution supersedes it (P3-H-03)",
+   "uncertainty": "verify",
+   "units": "-",
+   "value": {
+    "N_COLLECTOR": 0.5,
+    "N_HOUSING": 0.2,
+    "N_MOUNT": 0.05,
+    "N_VESSEL": 0.25
+   }
+  },
+  "wall_inner_share": {
+   "evidence_class": "assumed",
+   "source": "channel-face area ratio r_in / (r_in + r_out) (assumed uniform wall flux)",
+   "uncertainty": "producer split TBD (HK-04)",
+   "units": "-",
+   "value": 0.41428571428571426
+  }
+ },
+ "icp": {
+  "P_fwd_anchor_W": {
+   "evidence_class": "published analog",
+   "source": {
+    "note": "TK-21 Takahashi 200 W forward",
+    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "pointer": "/anchor_check",
+    "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08"
+   },
+   "uncertainty": "published analog at ~1 A; H-1 need not evaluated (BD-06)",
+   "units": "W",
+   "value": 200.0
+  },
+  "P_fwd_max_W": {
+   "evidence_class": "assumed",
+   "source": {
+    "note": "DBF1-RF-02 forward envelope upper end",
+    "path": "docs/baseline/DBF-1/dbf1_v1.json",
+    "pointer": "/items",
+    "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f"
+   },
+   "uncertainty": "envelope end",
+   "units": "W",
+   "value": 500.0
+  },
+  "P_matching_DC_W": {
+   "evidence_class": "assumed",
+   "label": "FROM_P6_POWER_LEDGER_v1",
+   "source": {
+    "note": "adjustable match actuators / controller",
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "pointer": "/terms (RF-MATCH-ACT)",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   },
+   "uncertainty": "0-10 W",
+   "units": "W",
+   "value": 5.0
+  },
+  "P_refl_frac": {
+   "evidence_class": "published analog",
+   "source": {
+    "note": "TK-22 reflected 0 W",
+    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "pointer": "/anchor_check",
+    "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08"
+   },
+   "uncertainty": "meter resolution not stated",
+   "units": "-",
+   "value": 0.0
+  },
+  "Q_line_frac": {
+   "evidence_class": "assumed",
+   "source": "no in-module line segment registered (co-located match); coax loss outside the module (assumed)",
+   "uncertainty": "verify (P2)",
+   "units": "-",
+   "value": 0.0
+  },
+  "Q_match_frac": {
+   "evidence_class": "assumed",
+   "source": "match loss 5 % of P_fwd (assumed; adjustable L-network class, from memory, verify)",
+   "uncertainty": "verify (P2 impedance map)",
+   "units": "-",
+   "value": 0.05
+  },
+  "abs_split": {
+   "evidence_class": "assumed",
+   "source": "assumed split of the absorbed RF power",
+   "uncertainty": "verify (NP-ICP v2)",
+   "units": "-",
+   "value": {
+    "extraction": 0.1,
+    "outflow_downstream": 0.05,
+    "outflow_upstream": 0.05,
+    "plasma_wall": 0.6,
+    "radiation": 0.2
+   }
+  },
+  "coil_ohmic_split": {
+   "evidence_class": "assumed",
+   "source": "assumed TK-06 split; Takahashi attributes most RF power to electrode eddy heating (TK-27 context)",
+   "uncertainty": "verify (P1-S2 unlit heating)",
+   "units": "-",
+   "value": {
+    "N_ANTENNA": 0.4,
+    "N_COLLECTOR": 0.4,
+    "N_HOUSING": 0.2,
+    "N_MOUNT": 0.0
+   }
+  },
+  "eta_RF": {
+   "evidence_class": "inferred",
+   "label": "FROM_P6_POWER_LEDGER_v1",
+   "source": {
+    "note": "ETA-RFGEN 0.6-0.92, low end (most generator heat)",
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "pointer": "/terms (ETA-RFGEN low)",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   },
+   "uncertainty": "0.6-0.92",
+   "units": "-",
+   "value": 0.6
+  },
+  "eta_p": {
+   "evidence_class": "published analog",
+   "source": {
+    "note": "TK-26 eta_p ~ 0.1",
+    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "pointer": "/anchor_check",
+    "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08"
+   },
+   "uncertainty": "authors' estimate",
+   "units": "-",
+   "value": 0.1
+  },
+  "f_rad": {
+   "evidence_class": "assumed",
+   "source": "assumed f_rad",
+   "uncertainty": "verify",
+   "units": "-",
+   "value": {
+    "EXPORT": 0.3,
+    "H1_POLE_IN": 0.05,
+    "H1_POLE_OUT": 0.05,
+    "N_ANTENNA": 0.0,
+    "N_COLLECTOR": 0.3,
+    "N_HOUSING": 0.0,
+    "N_VESSEL": 0.3
+   }
+  },
+  "f_up": {
+   "evidence_class": "assumed",
+   "source": "assumed RX-H1-FACE f_up",
+   "uncertainty": "verify (K-P3-RAYS)",
+   "units": "-",
+   "value": {
+    "EXPORT": 0.15,
+    "H1_ANODE": 0.05,
+    "H1_POLE_IN": 0.2,
+    "H1_POLE_OUT": 0.3,
+    "H1_WALL_IN": 0.1,
+    "H1_WALL_OUT": 0.1,
+    "N_HOUSING": 0.1,
+    "N_MOUNT": 0.0
+   }
+  },
+  "plasma_wall_node_shares": {
+   "evidence_class": "assumed",
+   "source": "assumed (producer TK-07 shares TBD)",
+   "uncertainty": "verify",
+   "units": "-",
+   "value": {
+    "N_COLLECTOR": 0.5,
+    "N_VESSEL": 0.5
+   }
+  }
+ },
+ "id": "P7-THERMAL-LOAD-INPUTS-v2",
+ "ppu": {
+  "P_hk_out_W": {
+   "evidence_class": "assumed",
+   "label": "FROM_P6_POWER_LEDGER_v1",
+   "source": {
+    "note": "HK-LOAD 12-30 W, high end",
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "pointer": "/terms (HK-LOAD high)",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   },
+   "uncertainty": "12-30 W",
+   "units": "W",
+   "value": 30.0
+  },
+  "P_valve_out_W": {
+   "evidence_class": "inferred",
+   "label": "FROM_P6_POWER_LEDGER_v1",
+   "source": {
+    "note": "one energised atmospheric valve coil, hot",
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "pointer": "/terms (VALVE-COIL high)",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   },
+   "uncertainty": "0.41-1.96 W",
+   "units": "W",
+   "value": 1.96309639118
+  },
+  "eta_d": {
+   "evidence_class": "digitized",
+   "label": "FROM_P6_POWER_LEDGER_v1",
+   "source": {
+    "note": "ETA-HD 0.86-0.92, low end (most heat)",
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "pointer": "/terms (ETA-HD low)",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   },
+   "uncertainty": "0.86-0.92",
+   "units": "-",
+   "value": 0.86
+  },
+  "eta_hk": {
+   "evidence_class": "assumed",
+   "label": "FROM_P6_POWER_LEDGER_v1",
+   "source": {
+    "note": "ETA-HK 0.7-0.85, low end",
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "pointer": "/terms (ETA-HK low)",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   },
+   "uncertainty": "0.7-0.85",
+   "units": "-",
+   "value": 0.7
+  },
+  "eta_mag": {
+   "evidence_class": "assumed",
+   "label": "FROM_P6_POWER_LEDGER_v1",
+   "source": {
+    "note": "ETA-MAG 0.6-0.85, low end",
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "pointer": "/terms (ETA-MAG low)",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   },
+   "uncertainty": "0.6-0.85",
+   "units": "-",
+   "value": 0.6
+  },
+  "eta_valve": {
+   "evidence_class": "assumed",
+   "label": "FROM_P6_POWER_LEDGER_v1",
+   "source": {
+    "note": "ETA-DRV 0.8-0.9, low end",
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "pointer": "/terms (ETA-DRV low)",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   },
+   "uncertainty": "0.8-0.9",
+   "units": "-",
+   "value": 0.8
+  }
+ },
+ "prereg": "docs/closure/thermal/thermal_cases_prereg_v1.json",
+ "schema": "abep_closure_thermal_load_inputs_v1",
+ "status": "power-ledger terms from the P6 power ledger v1 (L-POWER-ICD; conservative ends for heat); compressor = DBF-1 (DCR-001 pending); coils, fractions and the ICP partition unchanged from v1",
+ "supersedes": {
+  "path": "docs/closure/thermal/thermal_load_inputs_v1.json",
+  "sha256": "c87cdb2fc913e667760d5c9bce88c9cce5cba237689e0ac93dbf101cd9dd4b41"
+ },
+ "version": 2
+}
