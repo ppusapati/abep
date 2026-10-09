@@ -5729,3 +5729,9 @@ stays EMPTY and nothing enters layer (b).
   - Compared with the surrogate, the max normalised difference is 0.38 (MATERIALLY_DIFFERENT).
   - Hall runs need that approval plus a new envelope addendum (bz_family H1_REGISTERED).
 - **P3 closure:** FROZEN FOR EM (`docs/closure/P3_h1_magnetic_field_closure_v1.json`, statement `docs/closure/statements/P3_h1_magnetic_field.md`).
+
+## 2026-10-09 — DCR-DBF1-002 approved (coordinator ruling, A9.34 delegation): FE-derived H1 B(z) replaces the P5-shape surrogate → DBF-1.1
+
+- Approval `docs/baseline/DCR-002/dcr002_approval_v1.json`; register `dcr_register_v3.json` (v2 unedited).
+- Change: DBF1-BZ-04 BZ-P5B16 (surrogate) → BZ-H1FE-V1 (FE-derived H1 field, `hallthruster_bridge/bfield/h1_fe_v1/`). Reason: evidence-class upgrade (BD-05), not Hall performance (no converged Hall result exists).
+- DBF-1.1 is to be built as new files with its own lock; DBF-1 stays immutable history; surrogate and FE Hall records are never pooled; the owner may overrule.
