@@ -5752,3 +5752,13 @@ stays EMPTY and nothing enters layer (b).
 - Process lanes stopped (intake DCR-001, ICP rate sets, DCR-003, AIR audit, Hall A7 demonstration); their committed work is kept on their branches; the Hall diagnosis, A7 registration and DBF-1.1 were merged.
 - `docs/closure/conclusion/ARCHITECTURE_CLOSURE_CONCLUSION_v1.md` (sha `b848a9d6d53f…`): AIR mode cannot cover the full ×46 free-stream flux span of the 196 states with any fixed intake (max ×17 even ideally: 12 mN needs ≥ 0.99 m² at the thinnest state, whose capture drag at the densest state is ≥ 67 mN > 25 mN); closure requires a density-window operating concept with Xe outside it. Chemistry-, compressor- and transport-independent (`fixed_intake_window_v1.py`).
 - Hall non-convergence cause identified; partial RP-1 Xe A7 demonstration (unscored, parametric) closes 12 / 25 mN within the ~911 W discharge ceiling.
+
+## 2026-10-09 — A9.39 owner decisions recorded: PHYSICS ARCHITECTURE CLOSED — DETAILED DESIGN / EM VERIFICATION OPEN
+
+- **What:** owner decisions recorded verbatim as `docs/decisions/OD_2026_10_09_A9_39_ARCHITECTURE_CLOSED_OWNER_DECISIONS.md` (sha256 `7c3880c3f2b5dedefcd66c0c8fbe0362b3aa199099183ec3d65c020bf48f2949`), with companion `docs/decisions/OD_2026_10_09_A9_39_architecture_closed_owner_decisions.json`; DCR register v4.
+- **DCR-DBF1-002:** owner-ratified; DBF-1.1 (FE-derived H1 B(z), not measured) is the governing analysis baseline; DBF-1 stays immutable history.
+- **Operating concept:** ambient-air primary with density-aware altitude scheduling inside 180–230 km; the 196-state set is a conservative verification set; Xe is the required secondary capability.
+- **Intake:** variable effective capture; DCR-001 delivers the admissible flux window and the altitude schedule.
+- **Hall AIR:** not an architecture blocker; EM verification; a minimal local-run package is prepared.
+- **Frozen architecture:** variable-effective-capture intake → active compressor / plenum / feed → H1 Hall → 13.56 MHz RF/ICP neutralizer.
+- **Scope now:** DCR-001 finalization, the local Hall AIR package, ICP bench-design closure, the mass / power / thermal roll-up, submission documents.
