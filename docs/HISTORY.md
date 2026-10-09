@@ -5735,3 +5735,14 @@ stays EMPTY and nothing enters layer (b).
 - Approval `docs/baseline/DCR-002/dcr002_approval_v1.json`; register `dcr_register_v3.json` (v2 unedited).
 - Change: DBF1-BZ-04 BZ-P5B16 (surrogate) → BZ-H1FE-V1 (FE-derived H1 field, `hallthruster_bridge/bfield/h1_fe_v1/`). Reason: evidence-class upgrade (BD-05), not Hall performance (no converged Hall result exists).
 - DBF-1.1 is to be built as new files with its own lock; DBF-1 stays immutable history; surrogate and FE Hall records are never pooled; the owner may overrule.
+
+
+## 2026-10-09 — DBF-1.1 built (successor of DBF-1 by the approved DCR-DBF1-002; lane L-H1-BZ)
+
+- **What:** `docs/baseline/DBF-1.1/` (builder `build_dbf1_1.py`, `--check`): `dbf1_1_v1.json`, `DBF1_1_v1.md`, `dbf1_1_config_v1.json`, lock `dbf1_1_lock_v1.json` (sha256 `257e141ca252c3015b5bbd2fc953a1de688bc1606be36ebdf9fff8889307cfb8`).
+- **Change:** DBF-1.1 equals DBF-1 except for DBF1-BZ-04: BZ-P5B16 → **BZ-H1FE-V1**.
+  - Nominal FE profiles are taken at BP-LO / BP-HI. The CORNER-A / CORNER-B profiles at BP-HI form the shape-uncertainty envelope. Every profile is sha256-pinned in the config and the lock.
+  - DBF1-BD-05 is CLOSED_BY_DCR-DBF1-002. A measured map remains an EM verification item.
+- **Lineage:** DBF-1 lock `517e0cf6…`; DCR-DBF1-002 approval `1718ac80…`; register v3. DBF-1 and every record computed on it are unchanged (`build_dbf1.py --check` OK). No dcr_register file was touched.
+- **Config pin:** `abep_config::baseline::load_dbf1_1` / `parse_dbf1_1` (additive; `load_dbf1` unchanged). Profile files are verified on load. Tests are in `crates/abep-config/tests/baseline_dbf1_1.rs`.
+- **Use condition:** a Hall run citing the FE field still needs a new NP-HALL-PARAMETRIC-ENVELOPE addendum committed before the run.
