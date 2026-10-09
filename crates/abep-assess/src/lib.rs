@@ -18,9 +18,13 @@
 //! New, under preregistration NP-HALL-PARAMETRIC-ENVELOPE v1 (A9.32): the decisive 196-state two-layer closure run and
 //! the A9.32 classification ([`closure`]); its addendum A2 harness v2 consuming every required physics path of the M1
 //! exit item ([`closure_m1`]).
+//!
+//! New, under the DCR-DBF1-001 evaluation preregistration (A9.38 P1): the intake / compressor redesign search and
+//! record ([`dcr001`]).
 
 pub mod closure;
 pub mod closure_m1;
+pub mod dcr001;
 pub mod envelope_summary;
 pub mod error;
 pub mod gates;
