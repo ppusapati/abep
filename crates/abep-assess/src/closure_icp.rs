@@ -712,7 +712,7 @@ fn chemistry_value(model: &IcpModelV2) -> Value {
             .collect(),
     );
     dict(vec![
-        ("registry_pin", s(abep_chem::registry::ICP_CHEM_PINNED_SHA256)),
+        ("registry_pin", s(reg.pinned_sha256.clone())),
         ("AIR_PRIMARY", mode(&reg.air)),
         ("XE_CONTINGENCY", mode(&reg.xe)),
         ("routes_2026_10_08", routes),
@@ -777,7 +777,8 @@ pub fn closure_state(
 pub fn build(repo: &Path) -> AssessResult<Value> {
     let b = CaseBuilder::new(repo)?;
     let reg = b.registration().clone();
-    let model = IcpModelV2::load(repo)?;
+    // ICP closure v1 regenerates from the registry it was run on (snapshot abep-icp-air-0.0 / xe-0.0).
+    let model = IcpModelV2::load_with(repo, &abep_chem::registry::RegistrySource::snapshot_0_0())?;
     let thr = Thresholds::load(&abep_config::ConfigPaths::repository(repo))?;
     let grid = b.grid()?;
     let mut ma = Dict::new();
@@ -901,7 +902,7 @@ pub fn build(repo: &Path) -> AssessResult<Value> {
         ("np_icp_v2_lock", s(abep_icp::v2::PREREG_LOCK_V2_SHA256)),
         ("dbf1_lock", s(abep_config::baseline::DBF1_LOCK_SHA256)),
         ("dbf1_config", s(abep_config::baseline::DBF1_CONFIG_SHA256)),
-        ("icp_chem_pinned", s(abep_chem::registry::ICP_CHEM_PINNED_SHA256)),
+        ("icp_chem_pinned", s(model.v1.chem_registry.pinned_sha256.clone())),
         ("m2_record", s(format!("{M2_REL} (sha256 {M2_SHA256})"))),
         ("thresholds_manifest", s(thr.manifest_sha256.clone())),
         ("producer", s("abep-assess closure_icp (bin abep-assess-icp-closure)")),

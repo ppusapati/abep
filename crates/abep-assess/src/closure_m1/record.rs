@@ -710,7 +710,7 @@ pub fn record_v2(inp: &M1Inputs, out: &M1Outcome, run_label: &str) -> Value {
     // NP-HALL-PARAMETRIC-ENVELOPE addendum A7: the XE_CONTINGENCY Hall tests run on the A7 grid stages supplied.
     if let (Some(a), Value::Dict(d)) = (&inp.xe_a7, &mut rec) {
         d.insert("envelope_xe_a7", envelope_summary(Some(&a.envelope)));
-        d.insert("envelope_xe_a7_stages", Value::List(a.stages.iter().map(|x| s(x)).collect()));
+        d.insert("envelope_xe_a7_stages", Value::List(a.stages.iter().map(s).collect()));
         let mut counts = Dict::new();
         for (k, n) in &a.a7_status_counts {
             counts.insert(k.clone(), Value::int(*n as i64));
@@ -723,7 +723,7 @@ pub fn record_v2(inp: &M1Inputs, out: &M1Outcome, run_label: &str) -> Value {
         };
         d.insert(
             "xe_hall_source",
-            s(&format!(
+            s(format!(
                 "A7 ({}; HALL_XE_T12_AT_PBUS, HALL_XE_T25_CAPABILITY_AT_PBUS on one hardware configuration over the \
                  supplied stages only{scope}); the v1 and A6 XE envelopes are reported only",
                 a.stages.join(" + ")

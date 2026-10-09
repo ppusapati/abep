@@ -11,7 +11,9 @@ use crate::chemistry::{
 };
 use crate::constants::AMU;
 use abep_chem::checked::Validity as ChemValidity;
-use abep_chem::registry::{Channel, ChannelKind, IcpChemRegistry, ModeRegistry, ICP_CHEM_PINNED_SHA256};
+use abep_chem::registry::{
+    Channel, ChannelKind, IcpChemRegistry, ModeRegistry, RegistrySource, ICP_CHEM_PINNED_SHA256,
+};
 use abep_provenance::{read_bytes, read_verified, sha256_hex, ConfigManifest};
 use abep_types::{AbepError, AbepResult};
 use serde::Serialize;
@@ -128,6 +130,12 @@ impl IcpModel {
     }
 
     pub fn load(root: &Path) -> AbepResult<Self> {
+        Self::load_with(root, &RegistrySource::live())
+    }
+
+    /// As [`IcpModel::load`] with the chemistry registry read from `registry` (the live registry or a pinned snapshot:
+    /// frozen records regenerate from the registry they were run on).
+    pub fn load_with(root: &Path, registry: &RegistrySource) -> AbepResult<Self> {
         let mut files = BTreeSet::new();
         let mut rd = |rel: &str, sha: &str, by: &str| -> AbepResult<Vec<u8>> {
             let b = read_verified(&root.join(rel), sha)?;
@@ -178,7 +186,7 @@ impl IcpModel {
             return Err(schema(&ca_rel, "NP-ICP-CHEM-AIR does not name this prereg lock as its parent"));
         }
         // IF-CHEM-REG-v1 registry (provider abep-chem): processes with the contract statuses, channels, validity.
-        let chem_registry = IcpChemRegistry::load(root, ICP_CHEM_PINNED)?;
+        let chem_registry = IcpChemRegistry::load_from(root, registry)?;
         if chem_registry.contract_lock_sha256 != CHEM_AIR_LOCK_SHA256 {
             return Err(schema(ICP_CHEM_REGISTRY_DIR, "registry of another NP-ICP-CHEM-AIR lock"));
         }

@@ -1,0 +1,953 @@
+{
+ "schema": "abep_icp_bench_design_v1",
+ "id": "ICP-BENCH-DESIGN-v1",
+ "item": "A9.39 scope item 3: ICP bench-design closure (closure board P4)",
+ "lane": "L-ICP-BENCH",
+ "labels": [
+  "BENCH_DESIGN_NOT_A_MEASUREMENT",
+  "NOT_A_PERFORMANCE_PREDICTION",
+  "ARITHMETIC_ON_REGISTERED_VALUES"
+ ],
+ "baseline": {
+  "DBF-1.1_lock": "257e141ca252c3015b5bbd2fc953a1de688bc1606be36ebdf9fff8889307cfb8",
+  "architecture": "PHYSICS ARCHITECTURE CLOSED - DETAILED DESIGN / EM VERIFICATION OPEN (A9.39)"
+ },
+ "pins": [
+  {
+   "key": "A939_JSON",
+   "path": "docs/decisions/OD_2026_10_09_A9_39_architecture_closed_owner_decisions.json",
+   "sha256": "dd17ada07ab660187d8c762483a340299470d6e04e60f24f06938b9e450ea857"
+  },
+  {
+   "key": "CONCLUSION_V2",
+   "path": "docs/closure/conclusion/ARCHITECTURE_CLOSURE_CONCLUSION_v2.md",
+   "sha256": "4ef4573e346eac88ed87610b569f1eedb9f7107a6ebc9ebe56a42ac2080babf9"
+  },
+  {
+   "key": "DBF11",
+   "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+   "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b"
+  },
+  {
+   "key": "DBF11_LOCK",
+   "path": "docs/baseline/DBF-1.1/dbf1_1_lock_v1.json",
+   "sha256": "257e141ca252c3015b5bbd2fc953a1de688bc1606be36ebdf9fff8889307cfb8"
+  },
+  {
+   "key": "ICP_CLOSURE",
+   "path": "docs/closure/icp/icp_closure_v1.json",
+   "sha256": "3ddf55039b4f682983cfd728ded3bec6bb6e7e1cb73551ccee32521815b1016c"
+  },
+  {
+   "key": "ICP_REG",
+   "path": "docs/closure/icp/icp_closure_registration_v1.json",
+   "sha256": "41ce4d17a58e0ba6896fd4cfb815856f69c06271ae50b0d602575d5606802d51"
+  },
+  {
+   "key": "ICP_A1",
+   "path": "docs/closure/icp/icp_collector_window_a1_v1.json",
+   "sha256": "c414954b13c7e54475d8732de82f37051f07e4bd9e7cc273ccd56fac7098eee6"
+  },
+  {
+   "key": "P1",
+   "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08"
+  },
+  {
+   "key": "P2",
+   "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+   "sha256": "cdd4b04d79fbee4e22d76d2734bb170ce5e8a8eab54b47e93c0b6e15dd8a0a87"
+  },
+  {
+   "key": "ICD",
+   "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+   "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c"
+  },
+  {
+   "key": "RVM",
+   "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
+  },
+  {
+   "key": "THRESHOLDS",
+   "path": "config/assessment/gate_thresholds_v1.json",
+   "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b"
+  },
+  {
+   "key": "POWER",
+   "path": "docs/closure/power/power_ledger_v1.json",
+   "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+  },
+  {
+   "key": "MATERIALS",
+   "path": "docs/closure/materials/materials_gates_v1.json",
+   "sha256": "f3b6e04507429db87b3f94a3a355bb6e87cb78d97ca9bd1f902a766ea667fee1"
+  },
+  {
+   "key": "THERMAL_PREREG",
+   "path": "docs/closure/thermal/thermal_cases_prereg_v1.json",
+   "sha256": "5666c528486f8cb7935863b3826c66e60271242637b31826468adde09394ecba"
+  },
+  {
+   "key": "R5",
+   "path": "docs/procurement/web_track_v1/threads/R5_facilities.json",
+   "sha256": "338132594ceb561992af03d93200e108924f54894f3ebbc3ca041472febc986a"
+  },
+  {
+   "key": "CHEM_ADD01",
+   "path": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/addendum_01_build_rules_xe_v1.json",
+   "sha256": "5dfd1c5928bcc7fe7a06b701a6c5ad53ef83cd1563577494d688bde9085c6f61"
+  },
+  {
+   "key": "VALIDATION_RS",
+   "path": "crates/abep-icp/src/v2/validation.rs",
+   "sha256": "b151ada6ab0db7f7539f36bba67f3bc8c24fb9eb33b488cd4dc4123c1fdae590"
+  }
+ ],
+ "external_evidence": {
+  "DCR003_PREREG": {
+   "path": "docs/baseline/DCR-003/dcr003_eval_prereg_v1.json",
+   "branch": "lane-dcr003-match",
+   "commit": "99af82a (committed alone before evaluation)",
+   "sha256": "13b27c04265660c08a457bab0d03d86d1798028f5672fda008d19bc455f77b9b",
+   "use": "assumed antenna impedance planning ranges (R_A 0.5-5 ohm, X_A 164.1 ohm x 0.7-1.3, Wheeler, P7 antenna geometry) for the RF planning envelope; remote-match line-loss relation"
+  },
+  "DCR003_EVALUATION": {
+   "path": "docs/closure/thermal/dcr003_evaluation_v1.json",
+   "branch": "lane-dcr003-match",
+   "commit": "not committed when read (2026-10-09); Rust harness 1849fef",
+   "sha256": "1a2773df5b8f5586cce9833001b1eb02b7024c72b9d1dd50c31af185bc534ee9",
+   "use": "route R-1 (co-located match isolated from the ICP bracket, own radiator A_MA 0.15 m^2) admissible; R-2 (remote match) not admissible: eta_line 0.022 / 0.228 / 0.933 at the conservative / reference / favourable corners; DCR-DBF1-003 resolution WITHDRAWN proposed to the coordinator"
+  }
+ },
+ "evidence_needed": {
+  "eta_p": "RF coupling efficiency (DG-01)",
+  "I_e_cap": "electron-current capacity CFG-CAP-OFF, I_e,cap = I_on - I_off (P1-IT-38, A9.5 P1Q-16)",
+  "bias_window_and_ion_energy": "collector dPhi in (V_fl, E*/e - T_e/2], E_mean <= E* (A1; P8 DA-03)",
+  "neutralization_margin": "M_n = I_e,cap / I_d,max,H1 - 1, M_n,LB > 0 (HC-05)",
+  "validated_bench_cell": "VC-01..VC-08 (abep_icp::v2::validation)"
+ },
+ "current_targets": {
+  "governing": "I_d,max,H1 (RVM-IT-19, TBD_AFTER_EVIDENCE: registered from measured H-1 operation)",
+  "necessary_lower_bounds": [
+   {
+    "mode": "AIR_PRIMARY",
+    "T_mN": 12.0,
+    "I_e_req_LB_A": 0.7876,
+    "heaviest_ion_u": 31.99954,
+    "P_abs_min_conservation_W": {
+     "AIR_PRIMARY_with_NO": 7.296,
+     "AIR_PRIMARY_without_NO": 9.506
+    }
+   },
+   {
+    "mode": "AIR_PRIMARY",
+    "T_mN": 25.0,
+    "I_e_req_LB_A": 1.641,
+    "heaviest_ion_u": 31.99954,
+    "P_abs_min_conservation_W": {
+     "AIR_PRIMARY_with_NO": 15.2,
+     "AIR_PRIMARY_without_NO": 19.8
+    }
+   },
+   {
+    "mode": "XE_CONTINGENCY",
+    "T_mN": 12.0,
+    "I_e_req_LB_A": 0.3888,
+    "heaviest_ion_u": 131.299,
+    "P_abs_min_conservation_W": {
+     "XE_CONTINGENCY": 4.716
+    }
+   },
+   {
+    "mode": "XE_CONTINGENCY",
+    "T_mN": 25.0,
+    "I_e_req_LB_A": 0.81,
+    "heaviest_ion_u": 131.299,
+    "P_abs_min_conservation_W": {
+     "XE_CONTINGENCY": 9.825
+    }
+   }
+  ],
+  "stand_ceiling_A": 8.3333,
+  "power_envelope_bound_A": 7.5,
+  "label": "CONSERVATION_BOUND / NOT_A_PERFORMANCE_PREDICTION (closure B1 / B2)"
+ },
+ "hardware": [
+  {
+   "id": "BD-01",
+   "name": "ICP topology",
+   "value": "open-tube coaxial downstream ICP, unmagnetized, CFG-CAP-OFF electron extraction topology per P1-IT-36 when registered",
+   "units": "-",
+   "evidence_class": "owner decision",
+   "uncertainty": "categorical",
+   "source": "DBF1-ICP-01",
+   "closure_state": "FROZEN FOR EM"
+  },
+  {
+   "id": "BD-02",
+   "name": "dielectric bore (vessel)",
+   "value": "borosilicate (pyrex class) tube, inner radius 0.06 m, length 0.15 m, wall 3 mm",
+   "units": "m",
+   "evidence_class": "literature topology precedent (bore material, level 3); geometry engineering assumption (level 7); wall thickness assumed (P7 N_VESSEL)",
+   "uncertainty": "flight dielectric not selected (P3-R-03); bench uses the DBF-1.1 geometry exactly",
+   "source": "DBF1-ICP-02, DBF1-ICP-07; thermal_cases_prereg_v1 N_VESSEL",
+   "closure_state": "FROZEN FOR EM"
+  },
+  {
+   "id": "BD-03",
+   "name": "module envelope",
+   "value": {
+    "L_standoff": 0.05,
+    "r_aperture": 0.06,
+    "r_module": 0.09,
+    "L_module": 0.15,
+    "tau_support": 0.0
+   },
+   "units": "m; -",
+   "evidence_class": "engineering assumption (level 7)",
+   "uncertainty": "F6 search not run",
+   "source": "DBF1-ICP-02",
+   "closure_state": "FROZEN FOR EM"
+  },
+  {
+   "id": "BD-04",
+   "name": "antenna (bench baseline)",
+   "value": "external helical coil, 3 turns, 6 x 1 mm copper tube, coil radius 75 mm, pitch 12 mm (L_A ~ 1.93 uH, X_A ~ 164 ohm cold, Wheeler)",
+   "units": "-",
+   "evidence_class": "assumed (level 7): P7 N_ANTENNA geometry; pitch and L_A from the DCR-003 preregistration (verify)",
+   "uncertainty": "N_ant / d_ant not frozen (F6-X-06, F6-X-09); X_A planning range x0.7-1.3",
+   "source": "thermal_cases_prereg_v1 /nodes N_ANTENNA; DCR003_PREREG (external); P1-IT-61 geometry variant matrix",
+   "closure_state": "FROZEN FOR EM (bench variant matrix P1-IT-61 registered before use)"
+  },
+  {
+   "id": "BD-05",
+   "name": "ion collector (C-type)",
+   "value": "C-type electrode on the bore inner wall, 0.10 m axial, axial slit for RF penetration, area 0.0377 m^2; separately biased and metered; ICP body floating",
+   "units": "m, m^2",
+   "evidence_class": "literature topology precedent (level 3)",
+   "uncertainty": "flight collector detail ICD ICP-21 at LOCK-1",
+   "source": "DBF1-ICP-04; A1 A_coll_m2",
+   "closure_state": "FROZEN FOR EM"
+  },
+  {
+   "id": "BD-06",
+   "name": "collector material",
+   "value": "Ar engineering runs: 316L permitted (P1-IT-19). N2, O2-bearing and Xe runs: INCONEL 600 from the procured lot (DBF1-MAT-03 primary; IN601 backup), serialized replaceable collector with pre / post profilometry",
+   "units": "-",
+   "evidence_class": "owner decision / P8 selection",
+   "uncertainty": "sputter yields of the procured lot by TP-04",
+   "source": "P1-IT-19; DBF1-MAT-03; materials_gates_v1 IN600-CO-SPUTTER",
+   "closure_state": "FROZEN FOR EM"
+  },
+  {
+   "id": "BD-07",
+   "name": "electron-collecting electrode (CFG-CAP-OFF capacity sink)",
+   "value": "dedicated, isolated, instrumented electrode across the downstream aperture (RI-02 representation: pi R^2 = 0.01131 m^2), perforated / mesh with a registered open-area fraction so the G-REUSE outflow is not blocked; actively cooled for the PS-EC supply corner (350 V x 8.33 A)",
+   "units": "m^2",
+   "evidence_class": "owner decision (A9.4 P1Q-10 option A) + engineering selection",
+   "uncertainty": "geometry, position and reference registered at P1-G0 (P1-IT-36); measured p_ICP carries the blockage effect",
+   "source": "P1-IT-36, P1-IT-38; RI-02",
+   "closure_state": "FROZEN FOR EM"
+  },
+  {
+   "id": "BD-08",
+   "name": "magnetic configuration",
+   "value": "unmagnetized ICP; CFG-CAP-OFF records with H-1 coils off (B_ICP,max 0 T, RI-04) and, as a registered factor, at the registered H-1 coil setting (P1 F6)",
+   "units": "T",
+   "evidence_class": "owner decision (ICD ICP-32) / registration RI-04",
+   "uncertainty": "geomagnetic and remanent fields recorded",
+   "source": "ICD ICP-32; RI-04; P1 run_matrix F6",
+   "closure_state": "FROZEN FOR EM"
+  },
+  {
+   "id": "BD-09",
+   "name": "module interface",
+   "value": "IP-NEU datum of the KC-1 carrier; controlled interim harness drawing (id at P1-G0); LOCK-1 ICD revision",
+   "units": "-",
+   "evidence_class": "owner decision",
+   "uncertainty": "categorical",
+   "source": "P1-IT-62; ICD ICP-01, ICP-06",
+   "closure_state": "FROZEN FOR EM"
+  }
+ ],
+ "rf_chain": {
+  "topology": "RF generator -> directional coupler -> 50-ohm transmission line -> LOCAL matching network on / immediately adjacent to the ICP module -> ICP antenna (A9.2 OQ-A907-11): the long flexible coax on the thrust stand stays approximately a controlled 50-ohm line; the matching network is ADJUSTABLE for the development article; the flight implementation (fixed / switched / electronically tuned / other) is deferred until Z_antenna = R + jX is measured vs mdot, P_RF, p, gas composition and the Hall operating point; RF reference planes: A9-07 recomputations.rf_reference_plane.a9_2_segments",
+  "frequency_MHz": 13.56,
+  "forward_power_envelope_W": [
+   0.0,
+   500.0
+  ],
+  "measurement_plane": "generator / 50-ohm side of the LOCAL matching network",
+  "match": {
+   "value": "adjustable local match, on / immediately adjacent to the ICP module (match_colocated = true)",
+   "location_evidence": "DCR-DBF1-003 evaluation (lane-dcr003-match, external, read 2026-10-09): R-1 co-located match isolated from the ICP bracket with its own radiator is admissible; R-2 remote match is not (matched-line loss into the unmatched antenna leaves eta_line 0.02-0.93). The bench therefore keeps the match local (DBF1-RF-03 unchanged) and builds the R-1 isolation as the bench mount (Ti standoffs, plated RF lead), so the bench match thermal state is flight-representative.",
+   "tuning": "two adjustable elements re-tuned per set point to minimum reflection (TK-23 practice); position encoders logged (INS-P2-12)"
+  },
+  "instruments": [
+   {
+    "id": "INS-P2-01",
+    "name": "V/I probe (complex V and I, phase-resolved) for RP-VI"
+   },
+   {
+    "id": "INS-P2-02",
+    "name": "dual directional coupler (RP-CPL)"
+   },
+   {
+    "id": "INS-P2-03",
+    "name": "forward / reflected power sensors"
+   },
+   {
+    "id": "INS-P2-04",
+    "name": "vector network analyser (one-port and two-port; receiver/spectrum mode if available)"
+   },
+   {
+    "id": "INS-P2-05",
+    "name": "calibration kits: coaxial SOL/SOLT with standard data + antenna-terminal fixture standards"
+   },
+   {
+    "id": "INS-P2-06",
+    "name": "fixed attenuators (sensor / VNA protection, coupling-arm padding)"
+   },
+   {
+    "id": "INS-P2-07",
+    "name": "dummy loads: (a) 50-ohm calorimetric load; (b) antenna-simulator load of VNA-known low-R / high-X impedance"
+   },
+   {
+    "id": "INS-P2-08",
+    "name": "phase-stable test cables (VNA) + characterized flexible stand-crossing coax pair"
+   },
+   {
+    "id": "INS-P2-09",
+    "name": "antenna RF current probe (Rogowski / current transformer)"
+   },
+   {
+    "id": "INS-P2-10",
+    "name": "optical-emission photodiode + amplifier + DAQ channel, with optical access / window (REQUIRED independent ignition / unlit and E/H-mode indicator; S-08 unlit verification; A9.4 P2Q-05)"
+   },
+   {
+    "id": "INS-P2-11",
+    "name": "input power analyser for P_mains,in of the laboratory generator"
+   },
+   {
+    "id": "INS-P2-12",
+    "name": "match element position read-out / encoders"
+   }
+  ],
+  "impedance_methods": [
+   {
+    "id": "ZM-A",
+    "name": "V/I probe at the antenna terminals (RP-VI -> RP-ANT by fixture de-embedding)"
+   },
+   {
+    "id": "ZM-B",
+    "name": "de-embedding from the calibrated complex reflection at RP-CPL"
+   },
+   {
+    "id": "ZM-C",
+    "name": "antenna RF current probe + delivered power (resistance only)"
+   }
+  ],
+  "ratings": {
+   "status": "TBD_AFTER_IMPEDANCE_MAP (owner A9.2): final ratings = k_RF 1.5 x V_ant,peak at the worst measured P2 mismatch / operating point (ICPQ-11, ICD ICP-44)",
+   "planning_envelope": [
+    {
+     "corner": "CONSERVATIVE",
+     "R_A_ohm": 0.5,
+     "X_A_ohm": 213.3,
+     "P_delivered_W": 200.0,
+     "I_ant_rms_A": 20.0,
+     "V_ant_peak_V": 6033.0,
+     "rating_candidate_k_RF_1p5_V": 9050.0
+    },
+    {
+     "corner": "CONSERVATIVE",
+     "R_A_ohm": 0.5,
+     "X_A_ohm": 213.3,
+     "P_delivered_W": 500.0,
+     "I_ant_rms_A": 31.62,
+     "V_ant_peak_V": 9539.0,
+     "rating_candidate_k_RF_1p5_V": 14310.0
+    },
+    {
+     "corner": "REFERENCE",
+     "R_A_ohm": 1.0,
+     "X_A_ohm": 164.1,
+     "P_delivered_W": 200.0,
+     "I_ant_rms_A": 14.14,
+     "V_ant_peak_V": 3282.0,
+     "rating_candidate_k_RF_1p5_V": 4923.0
+    },
+    {
+     "corner": "REFERENCE",
+     "R_A_ohm": 1.0,
+     "X_A_ohm": 164.1,
+     "P_delivered_W": 500.0,
+     "I_ant_rms_A": 22.36,
+     "V_ant_peak_V": 5189.0,
+     "rating_candidate_k_RF_1p5_V": 7784.0
+    },
+    {
+     "corner": "FAVOURABLE",
+     "R_A_ohm": 5.0,
+     "X_A_ohm": 114.8,
+     "P_delivered_W": 200.0,
+     "I_ant_rms_A": 6.325,
+     "V_ant_peak_V": 1028.0,
+     "rating_candidate_k_RF_1p5_V": 1542.0
+    },
+    {
+     "corner": "FAVOURABLE",
+     "R_A_ohm": 5.0,
+     "X_A_ohm": 114.8,
+     "P_delivered_W": 500.0,
+     "I_ant_rms_A": 10.0,
+     "V_ant_peak_V": 1625.0,
+     "rating_candidate_k_RF_1p5_V": 2438.0
+    }
+   ],
+   "planning_rule": "bench procurement quotes match capacitors, RF feedthrough and antenna leads against the CONSERVATIVE corner at 500 W (planning only, assumed impedance); the power ladder ascends with the V/I probe reading V_ant and a provisional trip at rated / 1.5 until P2 freezes the ratings. The published analog R_total 0.4 ohm (TK-25) lies below the 0.5 ohm planning corner: the conservative corner is not a proven bound, so V_ant is measured, not assumed.",
+   "evidence_class": "assumed (DCR-003 planning ranges, level 7); never a rating"
+  },
+  "protection": [
+   "reflected-power monitoring, mismatch/VSWR interlock, automatic RF reduction/shutdown",
+   "arc detection where feasible; shutdown",
+   "thermal monitoring with automatic RF reduction/shutdown"
+  ],
+  "calorimetric_cross_check_k_x": 2.0,
+  "at_power_loss_model_k_loss": 2.0
+ },
+ "collector_bias": {
+  "window_requirement": "collector sheath drop dPhi = phi_p - V_c within (V_fl, E*/e - T_e/2] (window_N_plus_AIR rows): the collector runs a few T_e below floating; a cathode-common collector with the Hall discharge voltage across its sheath (analog 140 / 220 V) is outside every allowance",
+  "derived": {
+   "N_plus_dPhi_max_V": [
+    23.6,
+    36.9
+   ],
+   "N_plus_V_floating_V": [
+    8.31,
+    24.93
+   ],
+   "Xe_plus_V_floating_V_on_T_e_grid_2_6_eV": [
+    10.55,
+    15.82,
+    21.1,
+    26.37,
+    31.64
+   ],
+   "fine_range_requirement_V": 36.9,
+   "fine_range_selected_V": 40.0,
+   "fine_resolution_selected_V": 0.1,
+   "fine_resolution_basis": "<= T_e,min / 20 of the A1 T_e grid (2 eV): resolves the few-T_e window between V_fl and dPhi_max (selected engineering value)",
+   "n_s_required_m3": [
+    5.536e+16,
+    7.211e+17
+   ],
+   "collector_ion_flux_A_equiv": [
+    1.857,
+    28.0
+   ],
+   "A_coll_m2": 0.0377,
+   "T_e_max_open": [
+    {
+     "allowance_mm": 0.5,
+     "I_d_A": 1.857,
+     "E_star_eV": 29.8,
+     "T_e_max_open_and_not_excluded_eV": 6.0
+    },
+    {
+     "allowance_mm": 0.5,
+     "I_d_A": 7.5,
+     "E_star_eV": 26.1,
+     "T_e_max_open_and_not_excluded_eV": 5.0
+    },
+    {
+     "allowance_mm": 1.0,
+     "I_d_A": 1.857,
+     "E_star_eV": 33.0,
+     "T_e_max_open_and_not_excluded_eV": 6.0
+    },
+    {
+     "allowance_mm": 1.0,
+     "I_d_A": 7.5,
+     "E_star_eV": 27.6,
+     "T_e_max_open_and_not_excluded_eV": 5.0
+    },
+    {
+     "allowance_mm": 2.0,
+     "I_d_A": 1.857,
+     "E_star_eV": 37.9,
+     "T_e_max_open_and_not_excluded_eV": 6.0
+    },
+    {
+     "allowance_mm": 2.0,
+     "I_d_A": 7.5,
+     "E_star_eV": 29.8,
+     "T_e_max_open_and_not_excluded_eV": 6.0
+    }
+   ]
+  },
+  "supplies": [
+   {
+    "id": "PS-EC",
+    "terminal": "electron_collector vs ion collector (CFG-CAP-OFF, RI-03 reference)",
+    "range_V": [
+     0.0,
+     350.0
+    ],
+    "current_limit_A": 8.3333,
+    "fine_range_V": [
+     0.0,
+     40.0
+    ],
+    "fine_resolution_V": 0.1,
+    "basis": "RI-03 grid 25-350 V (DBF1-ICP-06 class); P1-IT-06 8.33 A stand ceiling; fine range covers the A1 window (N+ dPhi_max <= 36.9 V; Xe+ V_fl <= 31.6 V at T_e 6 eV)",
+    "corner_power_W": 2917.0,
+    "evidence_class": "registered ranges + selected engineering values"
+   },
+   {
+    "id": "PS-CB",
+    "terminal": "ICP_COLLECTOR_BIAS: ion collector vs ICP body (floating network)",
+    "range_V": [
+     -350.0,
+     40.0
+    ],
+    "current_limit_A": 8.3333,
+    "fine_range_V": [
+     -40.0,
+     40.0
+    ],
+    "fine_resolution_V": 0.1,
+    "basis": "bipolar: the collector must be set a few T_e below floating (A1) and swept through floating for the collector I-V; the negative extension to the 350 V class reproduces the analog cathodic sheath (ICD ICP-21: about -100 V; P8 TP-04 energies 100 / 140 / 220 eV) for yield cross-checks only, never as an operating point",
+    "evidence_class": "registered ranges + selected engineering values"
+   }
+  ],
+  "flight_ledger_cross_check": "P6 term ICP-BIAS 10 W [0, 20] W is an assumption flagged VERIFY / UPDATE_FROM_P1_IT_18. The bench logs P_bias = V_bias I_bias per point; a measured value outside [0, 20] W updates P6 (not this design).",
+  "collector_range_registration": "P1-IT-18 values registered at P1-G0 from these ranges"
+ },
+ "gas": {
+  "mode": "G-REUSE (Hall exhaust -> ICP; mdot_ICP,dedicated = 0); capped dedicated port retained; declared variant G-XE",
+  "evidence_order": "Ar ENGINEERING_ONLY -> N2 -> O2-bearing NO_ATOMIC_O -> separate AO programme",
+  "blocks": [
+   {
+    "gas": "Ar",
+    "label": "ENGINEERING_ONLY_NON_SCORING",
+    "gate": "ICP-45A",
+    "note": "never counts toward the atmospheric requirement"
+   },
+   {
+    "gas": "N2",
+    "label": "EM-N2 / ICP-45N",
+    "gate": "ICP-45N",
+    "note": "first record class usable for an atmospheric neutralization claim"
+   },
+   {
+    "gas": "N2 + O2 mixtures",
+    "label": "NO_ATOMIC_O",
+    "composition": "O-nuclei fraction chi_O spanning the frozen-state corners 0.0794 and 0.8399 (RI-06); mixture certified by the gas supplier",
+    "note": "molecular O2 only; never atomic-O or AO-life evidence (owner rows 36, 132)"
+   },
+   {
+    "gas": "Xe",
+    "label": "XE_CONTINGENCY bench",
+    "gate": "ICP-45X",
+    "note": "same module (A9.19: one ICP serves both modes); dedicated capped port available as the declared G-XE variant"
+   }
+  ],
+  "atomic_O": "not produced or claimed on this bench; the separate AO programme (P8 TP-03, DEGROH2006 Kapton witness method) covers atomic-O materials and life",
+  "O2_service": "wetted parts cleaned to ASTM G93 Level C; no silver (ICD ICP-30, owner rows 103, 107)",
+  "flow_control": "flow set through the H-1 gas path (G-REUSE) to reach the registered p_ICP nodes; MFC traceability by rate-of-rise / transfer calibration (P1-IT-11); dedicated ICP feed only as a declared DIAGNOSTIC variable (P1-IT-14)",
+  "p_ICP_nodes_Pa": [
+   0.001,
+   0.003,
+   0.01,
+   0.03,
+   0.1
+  ],
+  "p_ICP_basis": "RI-06 registered grid; covers the flight G-REUSE values (<= 0.0021 Pa O at 12 mN, <= 0.0091 Pa at 25 mN, closure B5) and the analog 0.028 Pa (TK-34)"
+ },
+ "facility": {
+  "chambers": "a smaller chamber is allowed for ICP-only engineering stages S0-S5 (P1-IT-34); one qualified facility for score-bearing and Hall-ON stages",
+  "pumping_need": [
+   {
+    "flow": "A4 12 mN",
+    "species": "N2",
+    "mdot_mg_s": 0.04796,
+    "Q_Pa_m3_s": 0.00427,
+    "S_eff_L_s_at_p_b": {
+     "0.001 Pa": 4270.0,
+     "0.01 Pa": 427.0,
+     "0.028 Pa": 152.5
+    }
+   },
+   {
+    "flow": "A4 12 mN",
+    "species": "O",
+    "mdot_mg_s": 0.04796,
+    "Q_Pa_m3_s": 0.007477,
+    "S_eff_L_s_at_p_b": {
+     "0.001 Pa": 7477.0,
+     "0.01 Pa": 747.7,
+     "0.028 Pa": 267.0
+    }
+   },
+   {
+    "flow": "A4 12 mN",
+    "species": "O2",
+    "mdot_mg_s": 0.04796,
+    "Q_Pa_m3_s": 0.003739,
+    "S_eff_L_s_at_p_b": {
+     "0.001 Pa": 3739.0,
+     "0.01 Pa": 373.9,
+     "0.028 Pa": 133.5
+    }
+   },
+   {
+    "flow": "A4 12 mN",
+    "species": "Xe",
+    "mdot_mg_s": 0.04796,
+    "Q_Pa_m3_s": 0.0009112,
+    "S_eff_L_s_at_p_b": {
+     "0.001 Pa": 911.2,
+     "0.01 Pa": 91.12,
+     "0.028 Pa": 32.54
+    }
+   },
+   {
+    "flow": "A4 25 mN",
+    "species": "N2",
+    "mdot_mg_s": 0.2082,
+    "Q_Pa_m3_s": 0.01854,
+    "S_eff_L_s_at_p_b": {
+     "0.001 Pa": 18540.0,
+     "0.01 Pa": 1854.0,
+     "0.028 Pa": 662.1
+    }
+   },
+   {
+    "flow": "A4 25 mN",
+    "species": "O",
+    "mdot_mg_s": 0.2082,
+    "Q_Pa_m3_s": 0.03246,
+    "S_eff_L_s_at_p_b": {
+     "0.001 Pa": 32460.0,
+     "0.01 Pa": 3246.0,
+     "0.028 Pa": 1159.0
+    }
+   },
+   {
+    "flow": "A4 25 mN",
+    "species": "O2",
+    "mdot_mg_s": 0.2082,
+    "Q_Pa_m3_s": 0.01623,
+    "S_eff_L_s_at_p_b": {
+     "0.001 Pa": 16230.0,
+     "0.01 Pa": 1623.0,
+     "0.028 Pa": 579.6
+    }
+   },
+   {
+    "flow": "A4 25 mN",
+    "species": "Xe",
+    "mdot_mg_s": 0.2082,
+    "Q_Pa_m3_s": 0.003955,
+    "S_eff_L_s_at_p_b": {
+     "0.001 Pa": 3955.0,
+     "0.01 Pa": 395.5,
+     "0.028 Pa": 141.3
+    }
+   },
+   {
+    "flow": "TK-31 Ar anchor (P1 F2, 70 sccm)",
+    "species": "Ar",
+    "mdot_mg_s": 2.079,
+    "Q_Pa_m3_s": 0.1298,
+    "S_eff_L_s_at_p_b": {
+     "0.001 Pa": 129800.0,
+     "0.01 Pa": 12980.0,
+     "0.028 Pa": 4636.0
+    }
+   }
+  ],
+  "criteria": [
+   {
+    "id": "FAC-01",
+    "text": "base pressure <= 1e-4 Pa (10 % of the lowest registered p_ICP node, so background gas is a minor share at every node; selected engineering value)"
+   },
+   {
+    "id": "FAC-02",
+    "text": "effective pumping speed S_eff >= Q / p_b for the stage flow at the record's p_b (table pumping_need); supplier states speed per gas, range, compatibility (Ar, N2, O2-bearing, Xe), instrumentation and interface conductance (RFQ3-VAC-N01)"
+   },
+   {
+    "id": "FAC-03",
+    "text": "base background pressure plus two elevated p_b levels per configuration (ICD ICP-28, owner row 23); T-PB-MAX frozen at LOCK-1"
+   },
+   {
+    "id": "FAC-04",
+    "text": "p_ICP measured at the source volume for every record (VC-07 / DOM-15: a record without measured p_ICP is NOT_EVALUATED); chamber gauge position and calibration per the REG-PB practice (REF-DANKANICH2017, as referenced in the Hall transport v2 draft)"
+   },
+   {
+    "id": "FAC-05",
+    "text": "residual-gas analysis with differential pumping at base and both elevated p_b (RFQ2-VAC-R02)"
+   }
+  ],
+  "hall_on_stages": "Hall-ON stages (S6, S7H) use the REQ-FAC-01 planning numbers (model-derived): S_eff 66,818 (N2) / 58,466 (O2) L/s per mg/s at 1.0e-5 Torr; 13,364 / 11,693 at 5.0e-5 Torr"
+ },
+ "diagnostics": [
+  {
+   "id": "DG-01",
+   "quantity": "eta_p (RF coupling)",
+   "method": "P2 ZM-A (V/I probe), ZM-B (de-embedded reflection, VNA), ZM-C (antenna current + delivered power, R_p = R_hot - R_cold at equal antenna temperature)",
+   "requirement": {
+    "u_eta_p_target_k1": 0.02,
+    "basis": "half the gap between the published anchor eta_p 0.1 (TK-26) and the lowest analog-needed Xe value 0.18 (closure M-C), at k = 2: separates them (selected engineering value, proposed for registration)",
+    "relation": "eta_p = R_p / (R_p + R_ant) = 1 - R_cold / R_hot (P2 ZM-C, anchor Eq. (1)); u(eta_p) = (1 - eta_p) sqrt(u_rel(R_cold)^2 + u_rel(R_hot)^2)",
+    "rows": [
+     {
+      "eta_p": 0.05,
+      "u_rel_R_each_for_u_eta_0p02": 0.01489
+     },
+     {
+      "eta_p": 0.1,
+      "u_rel_R_each_for_u_eta_0p02": 0.01571
+     },
+     {
+      "eta_p": 0.18,
+      "u_rel_R_each_for_u_eta_0p02": 0.01725
+     },
+     {
+      "eta_p": 0.35,
+      "u_rel_R_each_for_u_eta_0p02": 0.02176
+     }
+    ]
+   },
+   "source": "P2 z_antenna_methods; TK-26"
+  },
+  {
+   "id": "DG-02",
+   "quantity": "RF forward / reflected / delivered power",
+   "method": "dual directional coupler at RP-CPL, calibrated sensors, calorimetric dummy load cross-check (k_x 2), two-port line / match loss",
+   "source": "P1-M-01..04; P1-IT-24"
+  },
+  {
+   "id": "DG-03",
+   "quantity": "collector I-V and electron-collector current",
+   "method": "4-wire V and calibrated shunt I per reading (ICD ICP-21), every floating channel isolated to the 350 V class; RF-ON / matched RF-OFF pairs",
+   "source": "P1-M-10, P1-M-11, P1-M-27; P1-IT-47..50"
+  },
+  {
+   "id": "DG-04",
+   "quantity": "Kirchhoff closure channels",
+   "method": "ion collector, electron collector, ICP body, H-1 body single metered return, facility return, floating-anode potential",
+   "source": "P1-IT-39, P1-IT-47"
+  },
+  {
+   "id": "DG-05",
+   "quantity": "T_e and n_e at the collector sheath edge",
+   "method": "RF-compensated Langmuir probe (13.56 MHz and harmonics); u(T_e) <= 0.5 eV (half the A1 T_e grid step, selected)",
+   "why": "the A1 window and DCR trigger are stated as T_e_max_open (5-6 eV) and n_s,req [5.536e+16, 7.211e+17] m^-3",
+   "source": "P1-M-30; A1 dcr.trigger_condition"
+  },
+  {
+   "id": "DG-06",
+   "quantity": "plasma potential phi_p",
+   "method": "emissive probe (floating-point / inflection), with the Langmuir probe as cross-check",
+   "why": "dPhi = phi_p - V_c is the window variable",
+   "source": "A1 requirement; P1-M-30"
+  },
+  {
+   "id": "DG-07",
+   "quantity": "ion energy distribution at the collector",
+   "method": "retarding-field energy analyser flush with the collector, referenced to the collector potential, discriminator 0-250 V, energy resolution <= 2.5 eV (half the TP-04 5 eV yield step, selected); mean impact energy E_mean with u",
+   "why": "E* = 26-38 eV ceiling (P8 DA-03) and TP-04 energies 15-60 eV + 100 / 140 / 220 eV",
+   "source": "materials_gates_v1 IN600-CO-SPUTTER TP-04; A1 dcr"
+  },
+  {
+   "id": "DG-08",
+   "quantity": "plasma state",
+   "method": "optical-emission photodiode (required; unlit threshold from S2 / S3 records)",
+   "source": "INS-P2-10; P1-IT-54"
+  },
+  {
+   "id": "DG-09",
+   "quantity": "temperatures",
+   "method": "antenna, dielectric, collector, match, RF source (ICD ICP-34); thermal abort at limit - 50 K (P1-IT-25)",
+   "source": "ICD ICP-34"
+  },
+  {
+   "id": "DG-10",
+   "quantity": "collector recession and deposition",
+   "method": "serialized replaceable collector, pre / post profilometry and mass; witness coupons on the bore and H-1 exit (ICD ICP-29)",
+   "source": "TP-04; ICD ICP-29"
+  },
+  {
+   "id": "DG-11",
+   "quantity": "pressure and gas",
+   "method": "p_ICP gauge at the source volume, chamber gauge, RGA",
+   "source": "P1-M-16..20; FAC-04, FAC-05"
+  }
+ ],
+ "safety_isolation": {
+  "isolation_class_V": 350.0,
+  "design_withstand_V": 525.0,
+  "initial_DWV": {
+   "V_test_V_DC": 1050.0,
+   "duration_s": 60.0
+  },
+  "reverification": "700 V DC / 60 s, current-limited, triggered only (owner development acceptance level, not ECSS)",
+  "gas_line_isolation": "~1 kV DC at representative pressure, gas, geometry and feedthrough/isolator condition, ONLY where the gas line bridges isolated potentials; none where both ends are held at essentially the same floating potential",
+  "rf_insulation": "separate from the 350 V DC class: k_RF 1.5 x V_ant,peak plus the collector / body DC potential for antenna-to-collector clearance, creepage and Paschen (ICD ICP-44); planning envelope in rf_chain.ratings",
+  "interlocks": [
+   "P1-SI-01: RF mismatch / reflected power",
+   "P1-SI-02: RF arcing (antenna, match, feedthrough, coax)",
+   "P1-SI-03: RF component overheating (match, antenna, collector, generator)",
+   "P1-SI-04: personnel RF exposure / RF leakage",
+   "P1-SI-05: HV between floating circuits and ground (collector, ICP body, Hall anode)",
+   "P1-SI-06: gas line bridging isolated potentials",
+   "P1-SI-07: Ar release in the laboratory",
+   "P1-SI-08: vacuum loss / pressure out of range during RF or HV",
+   "P1-SI-09: thermal (H-1 poles, ICP, collector)",
+   "P1-SI-10: unexpected Hall discharge in P1-S6 (ICP OFF)",
+   "P1-SI-11: dielectric-withstand (hipot) testing itself: personnel HV exposure and insulation ageing by repeated proof stress"
+  ],
+  "rf_permissives": "RF output is inhibited unless all permissives are true: chamber vacuum OK, valid ICP MODULE_ID, coax/connector interlock loop closed, reflected power below its trip, collector/bias supply in a defined state, Hall discharge supply in the state required by the sequence. Trip values are set from measured S1a behaviour, never invented. Every trip is logged with time and cause (row 62).",
+  "personnel": "shielded antenna and enclosure, RF leakage survey before first power (P1-SI-04); HV hipot current limited (P1-SI-11); oxygen-deficiency assessment for Ar / N2 / Xe release (P1-SI-07)"
+ },
+ "power_budget_information": {
+  "relation": "P_bus,ICP = 19.94 W + 1.511 x P_fwd (P6 rf_trade_line, linear between 100 and 200 W)",
+  "P6_reference_P_fwd_W": 200.0,
+  "points": [
+   {
+    "point": "P-NOM",
+    "mode": "AIR_PRIMARY",
+    "P_ICP_available_W": 322.2,
+    "P_fwd_ceiling_W": 200.0,
+    "verdict_in_P6": "WITHIN_AVAILABLE"
+   },
+   {
+    "point": "P-12",
+    "mode": "AIR_PRIMARY",
+    "P_ICP_available_W": 480.3,
+    "P_fwd_ceiling_W": 304.6,
+    "verdict_in_P6": "WITHIN_AVAILABLE"
+   },
+   {
+    "point": "P-25",
+    "mode": "AIR_PRIMARY",
+    "P_ICP_available_W": -344.0,
+    "P_fwd_ceiling_W": "NO_ROOM_AT_THE_REGISTERED_P_d",
+    "verdict_in_P6": "EXCEEDS_AVAILABLE"
+   },
+   {
+    "point": "P-WORST",
+    "mode": "AIR_PRIMARY",
+    "P_ICP_available_W": -458.3,
+    "P_fwd_ceiling_W": "NO_ROOM_AT_THE_REGISTERED_P_d",
+    "verdict_in_P6": "EXCEEDS_AVAILABLE"
+   },
+   {
+    "point": "P-XE",
+    "mode": "XE_CONTINGENCY",
+    "P_ICP_available_W": 488.0,
+    "P_fwd_ceiling_W": 309.7,
+    "verdict_in_P6": "WITHIN_AVAILABLE"
+   }
+  ],
+  "note": "P-25 / P-WORST have no ICP room at the registered P_d = 1,350 W band end (P6: a sizing band, not the flight ceiling); the derived Hall requirement P_d,max governs there. Ceilings are information for the owner's GNG-ICP-01 criterion (b), not criteria."
+ },
+ "margin_detectability": [
+  {
+   "u_rel_I_e_equals_u_rel_I_d": 0.005,
+   "minimum_M_n_for_M_n_LB_gt_0": 0.01177,
+   "relation": "M_n,LB = M_n - k u_M, u_M = (1 + M_n) sqrt(2) u_rel, k = 1.6449"
+  },
+  {
+   "u_rel_I_e_equals_u_rel_I_d": 0.01,
+   "minimum_M_n_for_M_n_LB_gt_0": 0.02382,
+   "relation": "M_n,LB = M_n - k u_M, u_M = (1 + M_n) sqrt(2) u_rel, k = 1.6449"
+  },
+  {
+   "u_rel_I_e_equals_u_rel_I_d": 0.02,
+   "minimum_M_n_for_M_n_LB_gt_0": 0.04879,
+   "relation": "M_n,LB = M_n - k u_M, u_M = (1 + M_n) sqrt(2) u_rel, k = 1.6449"
+  },
+  {
+   "u_rel_I_e_equals_u_rel_I_d": 0.05,
+   "minimum_M_n_for_M_n_LB_gt_0": 0.1316,
+   "relation": "M_n,LB = M_n - k u_M, u_M = (1 + M_n) sqrt(2) u_rel, k = 1.6449"
+  }
+ ],
+ "analysis_updates": {
+  "question": "Xe rate-set admission from GK2008: quick and source-backed?",
+  "answer": "NOT QUICK: not done in this lane (no broad chemistry campaign, A9.39 scope). The method is registered (NP-ICP-CHEM-AIR addendum_01, sha256 5dfd1c59..., committed 6fba18d and merged here); none of its build steps is complete.",
+  "state": "abep-icp-xe-0.0 NOT_ADMITTED (registry 074daff9; snapshot pin d4749e7 merged here)",
+  "remaining": [
+   "XE-ION-01: sigma(Xe+) from Mukundan & Bhardwaj 2016 Table 2 (arXiv:1604.08449, sha256 352c3233...) with the two-dataset unit cross-check (Stephan & Maerk sigma(Xe+) and GK2008 Table D-1 Rapp & Englander-Golden, <= 10 % at 35-100 eV) - a draft table exists only as uncommitted work on lane-icp-closure; the Stephan & Maerk source has not been read",
+   "XE-EXC-01: GK2008 Table D-1 Hayashi column transcribed by pdftotext -bbox, onset 8.315 eV, header 10.0 eV, checked against GK2008 Table E-1 (<= 10 % at 1-10 eV)",
+   "XE-EL-01: sigma_m by trapezoid integration of the Mukundan & Bhardwaj Table 1 DCS (5-1000 eV), zero below 5 eV (rate a lower bound below T_e ~ 5 eV)",
+   "XE-WALL-01: structural record naming parent EQ-03 / EQ-09 / EQ-18 (VER-12 stays a parent verify item)",
+   "A1-STATUS evidence records E1..E9 per process, own_tables.json, ICP_CHEM_PINNED.toml bump (one table per commit, A1-OWN byte-for-byte regeneration test)",
+   "A1-CLASS class_address rows for Xe / Xe+",
+   "A1-CA12: ca12_xe_v1.json (XE-ION-02 direct route F_ion; XE-ION-03 bound B-XE-ION3-SAT; registered assumptions B-XE-ION2-ION and B-XE-REC; XE-EXC-02 envelope); OQ-CHEM-15 stays with the owner",
+   "A1-XE-ADMIT: registry label abep-icp-xe-0.1 ADMITTED with conditions (CONDITIONAL_ON_REGISTERED_ASSUMPTIONS)",
+   "A1-XE-PATH: registry-backed Xe set path in abep-icp (RegisteredSet 'registry:XE/<scenario>')",
+   "A1-SNAPSHOT: a new ICP closure record version (v2) evaluated on the new registry; v1 stays on the 0.0 snapshot"
+  ],
+  "bench_link": "the bench does not wait for admission: HC-05 accepts a MEASURED I_e,cap at the registered point (abep_assess::neutralization, CapacityBasis::Measured). Admission is needed for model I_e,cap outside measured points, which then needs a VALIDATED_BENCH cell (TM-7)."
+ },
+ "closure": {
+  "item": "P4 RF/ICP neutralizer (A9.39 scope item 3: bench-design closure)",
+  "state": "FROZEN FOR EM",
+  "meaning": "the bench / EM neutralizer configuration, its test configuration, measurement plan and pass / fail criteria are frozen on registered evidence; coupling efficiency, electron-current capacity, collector ion energy and the neutralization margin are verification-by-test items (A9.39 conclusion v2 sec. 5)",
+  "sub_items": [
+   {
+    "id": "P4-BENCH-HW",
+    "state": "FROZEN FOR EM",
+    "note": "hardware, gas, facility, diagnostics, safety"
+   },
+   {
+    "id": "P4-BENCH-RF-RATINGS",
+    "state": "FROZEN FOR EM",
+    "note": "rating rule frozen (k_RF 1.5 x V_ant,peak at the worst P2 point); values set by the P2 map by owner rule A9.2 (TBD_AFTER_IMPEDANCE_MAP), planning envelope registered"
+   },
+   {
+    "id": "P4-TEST-PLAN",
+    "state": "FROZEN FOR EM",
+    "note": "icp_bench_test_plan_v1.json locked; LOCK-1 registration slots listed in it"
+   },
+   {
+    "id": "P4-ANALYSIS-CAPACITY",
+    "state": "BLOCKED BY SPECIFIC MISSING EVIDENCE",
+    "note": "unchanged from icp_closure_v1.json (model I_e,cap withheld: AIR / Xe rate sets not admitted; I_d,max,H1 not registered); now carried as a bench-verification item, not a design blocker"
+   },
+   {
+    "id": "GNG-ICP-01",
+    "state": "NOT_EVALUATED",
+    "note": "criteria PENDING_OWNER_ACCEPTANCE (owner item; the test plan maps the recorder proposal onto measurable criteria for review)"
+   }
+  ],
+  "governing_evidence": [
+   {
+    "path": "docs/closure/icp_bench/icp_bench_design_v1.json",
+    "sha256": "see icp_bench_test_plan_lock_v1.json"
+   },
+   {
+    "path": "docs/closure/icp/icp_closure_v1.json",
+    "sha256": "3ddf55039b4f682983cfd728ded3bec6bb6e7e1cb73551ccee32521815b1016c"
+   },
+   {
+    "path": "docs/closure/icp/icp_collector_window_a1_v1.json",
+    "sha256": "c414954b13c7e54475d8732de82f37051f07e4bd9e7cc273ccd56fac7098eee6"
+   },
+   {
+    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08"
+   },
+   {
+    "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "sha256": "cdd4b04d79fbee4e22d76d2734bb170ce5e8a8eab54b47e93c0b6e15dd8a0a87"
+   }
+  ],
+  "dcr": "none: no DBF-1 / DBF-1.1 value changes (DBF1-ICP-04 DCR trigger pre-declared in A1, fires only on a measured window closure)"
+ }
+}

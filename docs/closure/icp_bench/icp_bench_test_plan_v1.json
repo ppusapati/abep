@@ -1,0 +1,295 @@
+{
+ "schema": "abep_icp_bench_test_plan_v1",
+ "id": "ICP-BENCH-TEST-PLAN-v1",
+ "status": "PREREGISTRABLE_TEST_PLAN (no data exists; LOCK-1 slots listed)",
+ "labels": [
+  "NOT_SCORE_BEARING_UNTIL_LOCK-1",
+  "NO_DATA_EXAMINED"
+ ],
+ "design": "docs/closure/icp_bench/icp_bench_design_v1.json",
+ "blocks": [
+  {
+   "id": "TM-0",
+   "stage": "P1-S0..S2",
+   "what": "readiness: DWV 1.05 kV DC / 60 s per insulation path, interlock functional test, RF cold checkout into the calorimetric load (k_x 2), line / match two-port loss, cold antenna impedance by VNA, unlit heating and pickup, photodiode dark / unlit records",
+   "exit": "P1-G0..G2; RF trip thresholds frozen from S2 (A9.2)",
+   "gas": "none / Ar"
+  },
+  {
+   "id": "TM-1",
+   "stage": "P1-S3",
+   "what": "ignition map: ascending P_fwd ladder at each p_ICP node; ignition, extinction, delay, match setting, photodiode state",
+   "gas": "Ar, N2, N2+O2 (NO_ATOMIC_O), Xe",
+   "levels": {
+    "P_fwd_W": [
+     100.0,
+     200.0,
+     300.0,
+     400.0,
+     500.0
+    ],
+    "p_ICP_Pa": [
+     0.001,
+     0.003,
+     0.01,
+     0.03,
+     0.1
+    ]
+   },
+   "repeats": ">= 3 independent ignitions per point (P1Q-05 form)"
+  },
+  {
+   "id": "TM-2",
+   "stage": "P2 hot map",
+   "what": "eta_p: R_cold (unlit, same antenna temperature) and R_hot at every lit TM-1 point; ZM-A / ZM-B / ZM-C with the k_loss 2 agreement rule",
+   "gas": "Ar, N2, N2+O2, Xe",
+   "levels": {
+    "P_fwd_W": [
+     100.0,
+     200.0,
+     300.0,
+     400.0,
+     500.0
+    ],
+    "p_ICP_Pa": [
+     0.001,
+     0.003,
+     0.01,
+     0.03,
+     0.1
+    ]
+   }
+  },
+  {
+   "id": "TM-3",
+   "stage": "P1-S4 / S7 (CFG-CAP-OFF, ICP-45A / -45N / -45O / -45X)",
+   "what": "capacity surface I_e = f(P_RF, p_ICP, Z, V_ec) with the Hall discharge supply physically disconnected (anode floating), electrons to the dedicated electron collector; matched RF-OFF record at every point; Kirchhoff closure; ascending current limit with hold points to the 8.33 A stand ceiling",
+   "levels": {
+    "P_fwd_W": [
+     100.0,
+     200.0,
+     300.0,
+     400.0,
+     500.0
+    ],
+    "p_ICP_Pa": [
+     0.001,
+     0.003,
+     0.01,
+     0.03,
+     0.1
+    ],
+    "V_ec_V": {
+     "fine": "0-40 V in 0.5 V steps",
+     "coarse": [
+      25.0,
+      50.0,
+      100.0,
+      200.0,
+      350.0
+     ]
+    },
+    "H1_coils": [
+     "OFF (RI-04)",
+     "registered H-1 setting (h1_point_id)"
+    ]
+   },
+   "gas": "Ar (ICP-45A), N2 (ICP-45N), N2+O2 at chi_O 0.0794 and 0.8399 (NO_ATOMIC_O), Xe (ICP-45X)"
+  },
+  {
+   "id": "TM-4",
+   "stage": "collector window",
+   "what": "at each TM-3 point with I_e,cap,LB >= the mode's I_e,req,LB: PS-CB sweep through floating in the fine range; RFEA ion-energy distribution, emissive-probe phi_p, Langmuir T_e and n_s at the sheath edge; collector I-V",
+   "gas": "N2, N2+O2, Xe"
+  },
+  {
+   "id": "TM-5",
+   "stage": "P1-S5",
+   "what": "stability dwells and re-ignitions at candidate points; drift, step, ignition fraction (P1-IT-30 criteria)",
+   "gas": "N2, Xe"
+  },
+  {
+   "id": "TM-6",
+   "stage": "P1-S6 / S7H (Hall-ON)",
+   "what": "OQ-VI-05 topology control, then the NEUTRALIZATION_CONSISTENCY record at each registered H-1 point: I_d, I_e,ICP, current closure incl. hall_anode, coupling voltage, collector potentials, RF power; descriptive only",
+   "gas": "Ar, N2, Xe"
+  },
+  {
+   "id": "TM-7",
+   "stage": "model validation partition",
+   "what": "CAL / VAL partition of TM-2..TM-4 records frozen (sha256) before any value is examined (VC-06 / IN-27), one role per operating point; VAL cells for EM-N2 and Xe compared with NP-ICP v2 once its chemistry is admitted (VC-01 |z| <= 2)",
+   "gas": "N2, Xe"
+  },
+  {
+   "id": "TM-8",
+   "stage": "facility effects",
+   "what": "selected TM-3 / TM-4 points at base p_b and two elevated p_b levels (ICD ICP-28)",
+   "gas": "N2, Xe"
+  },
+  {
+   "id": "TM-9",
+   "stage": "collector life witness",
+   "what": "long dwell at the selected TM-4 operating point on a serialized IN600 collector; profilometry, mass, deposition witnesses; with P8 TP-04 yields of the same lot",
+   "gas": "N2, N2+O2"
+  }
+ ],
+ "ordering": [
+  "first exposure: monotone ascending ramps in P_RF and in collector-current limit with hold points (safety-ordered; never randomized)",
+  "after the envelope is established: replicate points re-run in randomized order from a recorded seed and generation procedure (PROPOSED; analog of owner row 30 without its LOCK-2 timing because P1 is non-scoring)",
+  "every record carries ENGINEERING_ONLY_NON_SCORING"
+ ],
+ "criteria": [
+  {
+   "id": "C-01",
+   "name": "capacity-record admission",
+   "rule": "Kirchhoff |R_I| <= 3 u_R AND |R_I| / max(I_e, I_scale,min) <= 0.02; instrument adequacy 3 u_R <= 0.02 |I_e| else NOT_EVALUATED_INSTRUMENT; matched RF-OFF; measured p_ICP; anode physically disconnected",
+   "authority": "A9.5 P1Q-15 (owner); P1-IT-47..51; VC-07",
+   "status": "OWNER_DECIDED"
+  },
+  {
+   "id": "C-02",
+   "name": "capacity definition",
+   "rule": "I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF, signed, no clipping",
+   "authority": "A9.5 P1Q-16",
+   "status": "OWNER_CONFIRMED"
+  },
+  {
+   "id": "C-03",
+   "name": "ICP-45 / HC-05 neutralization margin",
+   "rule": "per gas block and registered H-1 point: M_n = I_e,cap / I_d,max,H1 - 1, M_n,LB = M_n - k u_M > 0 with alpha 0.05 one-sided, k >= 1.6449; NOT_EVALUATED until I_d,max,H1 and its uncertainty are registered",
+   "authority": "HC-05 (config/assessment/gate_thresholds_v1.json); P1-IT-29; A9.1 ICP-45",
+   "status": "REGISTERED",
+   "basis_options": [
+    "MEASURED at the point (supersedes the model)",
+    "MODEL inside a VALIDATED_BENCH cell (C-07)"
+   ]
+  },
+  {
+   "id": "C-03N",
+   "name": "necessary-condition screen before I_d,max,H1 exists",
+   "rule": "report I_e,cap,LB >= I_e,req,LB per mode / thrust; never PASS",
+   "targets": [
+    {
+     "mode": "AIR_PRIMARY",
+     "T_mN": 12.0,
+     "I_e_req_LB_A": 0.7876,
+     "heaviest_ion_u": 31.99954,
+     "P_abs_min_conservation_W": {
+      "AIR_PRIMARY_with_NO": 7.296,
+      "AIR_PRIMARY_without_NO": 9.506
+     }
+    },
+    {
+     "mode": "AIR_PRIMARY",
+     "T_mN": 25.0,
+     "I_e_req_LB_A": 1.641,
+     "heaviest_ion_u": 31.99954,
+     "P_abs_min_conservation_W": {
+      "AIR_PRIMARY_with_NO": 15.2,
+      "AIR_PRIMARY_without_NO": 19.8
+     }
+    },
+    {
+     "mode": "XE_CONTINGENCY",
+     "T_mN": 12.0,
+     "I_e_req_LB_A": 0.3888,
+     "heaviest_ion_u": 131.299,
+     "P_abs_min_conservation_W": {
+      "XE_CONTINGENCY": 4.716
+     }
+    },
+    {
+     "mode": "XE_CONTINGENCY",
+     "T_mN": 25.0,
+     "I_e_req_LB_A": 0.81,
+     "heaviest_ion_u": 131.299,
+     "P_abs_min_conservation_W": {
+      "XE_CONTINGENCY": 9.825
+     }
+    }
+   ],
+   "label": "NECESSARY_CONDITION_NOT_A_GATE",
+   "status": "REGISTERED"
+  },
+  {
+   "id": "C-04",
+   "name": "eta_p measurement adequacy",
+   "rule": "u(eta_p) <= 0.02 (k = 1) at every TM-2 point used for a decision, else NOT_EVALUATED_INSTRUMENT; eta_p carries no pass / fail threshold (an input, not a requirement)",
+   "status": "PROPOSED_FOR_LOCK-1_REGISTRATION"
+  },
+  {
+   "id": "C-04B",
+   "name": "power budget (GNG-ICP-01 (b) mapping)",
+   "rule": "the P_fwd at which C-03 is met <= the P6 P_fwd ceiling of the matching ledger point (power_budget_information); excess reported as a P6 trade-line change",
+   "status": "PROPOSED_FOR_OWNER_ACCEPTANCE"
+  },
+  {
+   "id": "C-05",
+   "name": "collector ion energy / bias window",
+   "rule": "at the C-03 operating point: measured E_mean + k u(E_mean) <= E*(allowance) from the TP-04 yields of the procured lot (until TP-04: the P8 prior E* 26.1-37.9 eV, PROVISIONAL); measured T_e <= T_e_max_open of the A1 row; failure fires the pre-declared DCR trigger on DBF1-ICP-04 (collector area / topology / replaceability), never a material swap",
+   "authority": "A1 dcr; P8 DA-03 / IN600-CO-SPUTTER",
+   "status": "REGISTERED (E* value PROVISIONAL until TP-04)"
+  },
+  {
+   "id": "C-06",
+   "name": "neutralization consistency (Hall-ON)",
+   "rule": "descriptive: current closure, sustained discharge per P1-IT-32, coupling voltage; never PASS / FAIL and never I_e,cap",
+   "authority": "A9.4 P1Q-10",
+   "status": "OWNER_DECIDED"
+  },
+  {
+   "id": "C-07",
+   "name": "VALIDATED_BENCH cell",
+   "rule": "partition frozen before data; every VAL point CONSISTENT (|z| <= 2), none NOT_EVALUATED; calibration records never validate their own measurand",
+   "authority": "NP-ICP v2 VC-01..VC-08 (abep_icp::v2::validation)",
+   "status": "REGISTERED"
+  },
+  {
+   "id": "C-08",
+   "name": "stability",
+   "rule": "P1-IT-30 form (ignition repeatability, drift of I_e and P_refl, dwell); values frozen and hashed before the first S5 classification",
+   "status": "OWNER_DECIDED_FORM"
+  },
+  {
+   "id": "C-09",
+   "name": "GNG-ICP-01",
+   "rule": "NOT_EVALUATED until the owner accepts criteria; recorder proposal RP-A919-01 (a) I_e,cap >= I_d,max with a preregistered margin -> C-03; (b) RF W/A within the power budget -> C-04B; (c) repeatable ignition on N2 and Xe -> TM-1 / C-08",
+   "status": "PENDING_OWNER_ACCEPTANCE (owner item)"
+  }
+ ],
+ "registration_slots_before_score_bearing_data": [
+  "I_d,max,H1 and u (RVM-IT-19; P1-IT-07)",
+  "I_scale,min and u(I_k) (P1-IT-48 / -49)",
+  "electron-collector geometry, position, reference (P1-IT-36)",
+  "pressure-match tolerance (P1-IT-37)",
+  "stage operating domains (P1-IT-52)",
+  "stability values (P1-IT-30)",
+  "RF trip thresholds (P1-IT-05)",
+  "DWV leakage limits (P1-IT-55)",
+  "TP-04 yields of the procured collector lot (E*)",
+  "VC-06 partition record",
+  "GNG-ICP-01 criteria (owner)"
+ ],
+ "margin_detectability": [
+  {
+   "u_rel_I_e_equals_u_rel_I_d": 0.005,
+   "minimum_M_n_for_M_n_LB_gt_0": 0.01177,
+   "relation": "M_n,LB = M_n - k u_M, u_M = (1 + M_n) sqrt(2) u_rel, k = 1.6449"
+  },
+  {
+   "u_rel_I_e_equals_u_rel_I_d": 0.01,
+   "minimum_M_n_for_M_n_LB_gt_0": 0.02382,
+   "relation": "M_n,LB = M_n - k u_M, u_M = (1 + M_n) sqrt(2) u_rel, k = 1.6449"
+  },
+  {
+   "u_rel_I_e_equals_u_rel_I_d": 0.02,
+   "minimum_M_n_for_M_n_LB_gt_0": 0.04879,
+   "relation": "M_n,LB = M_n - k u_M, u_M = (1 + M_n) sqrt(2) u_rel, k = 1.6449"
+  },
+  {
+   "u_rel_I_e_equals_u_rel_I_d": 0.05,
+   "minimum_M_n_for_M_n_LB_gt_0": 0.1316,
+   "relation": "M_n,LB = M_n - k u_M, u_M = (1 + M_n) sqrt(2) u_rel, k = 1.6449"
+  }
+ ]
+}

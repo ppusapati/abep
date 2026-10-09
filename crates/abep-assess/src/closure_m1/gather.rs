@@ -372,7 +372,9 @@ pub fn icp_mode(r: &abep_icp::v2::IcpResultV2) -> AssessResult<IcpMode> {
 pub fn icp_path(repo: &Path) -> AssessResult<IcpPath> {
     use abep_icp::case::SupplyMode;
     use abep_icp::chemistry::ChemistryRegistration;
-    let model = IcpModelV2::load(repo)?;
+    // Harness v2 (M1 / A4 / A5 / A8-M2 records) regenerates from the registry it was run on: the pinned snapshot of
+    // abep-icp-air-0.0 / abep-icp-xe-0.0 (coordinator decision 2026-10-09). New registry labels enter new versions.
+    let model = IcpModelV2::load_with(repo, &abep_chem::registry::RegistrySource::snapshot_0_0())?;
     let ledger = ledger_item_status(repo, "NP-ICP-NEUTRALIZER")?;
     let mut modes = BTreeMap::new();
     let mut ver = String::new();

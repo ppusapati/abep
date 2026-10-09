@@ -1,0 +1,75 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-ICP-CHEM-AIR addendum_01",
+ "title": "Build rules for own ICP tables, registry status progression, class addressing, the Xe nominal set, CA-12 method with bounding treatments, and the IF-CHEM-REG-v1 Xe set path",
+ "contract": {
+  "prereg": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_v1.json",
+  "lock": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json",
+  "lock_sha256": "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef"
+ },
+ "registered": "2026-10-09",
+ "lane": "L-ICP-CLOSURE (A9.38 P4)",
+ "authority": [
+  "NP-ICP-CHEM-AIR v1 change_rule: later changes are dated addenda; this addendum adds rules the v1 build plan (BP-S1..S9, BP-X1..X4) needs and does not change a species rule, threshold, domain, metric, composition grid, tier or admission criterion",
+  "coordinator decision of 2026-10-09 (relayed for the A9.38 programme): frozen records regenerate from pinned registry snapshots; build the Xe set first (GK2008 App. D/E), CA-12 with a registered bounding treatment where a process is unsourced; then AIR from the reachable sources; then admission, the registry-backed Xe set path, CA-ICP-v1 and I_e,cap",
+  "A9.38 (OD_2026_10_08_A9_38, verbatim): incomplete evidence becomes a selected engineering assumption with evidence class and uncertainty, not an open variable"
+ ],
+ "status": "REGISTERED_BEFORE_ANY_TABLE_OR_VERDICT",
+ "change_rule": "Frozen by addendum_01_lock.json at commit. Later changes are new addenda.",
+ "rules": [
+  {
+   "id": "A1-OWN",
+   "title": "own ICP tables",
+   "rule": "A table built for the ICP registry lives at data/chemistry/icp/tables/<name>.dat with <name>.dat.source and its source representation data/chemistry/icp/xs/<name>.json (schema icp_chem_xs_v1, field table = the .dat path). Every own table is listed once in data/chemistry/icp/own_tables.json (path, sha256, source_file, source_file_sha256, xs, xs_sha256), which ICP_CHEM_PINNED.toml [files] pins. abep_chem::registry adds own tables to the table pins (the reuse pins stay the contract's verbatim, RU-02). The .dat and .source bytes are exactly abep_chem::reference::hallthruster_table(points, threshold_eV, eps_max_eV = 300, tail, header_label, source_text) of the xs file (the admitted Rust port of rate_tables.write_hallthruster_table); a test regenerates every own table byte for byte. One table per commit (build plan per_table_commit)."
+  },
+  {
+   "id": "A1-STATUS",
+   "title": "process status progression",
+   "rule": "A registry process may carry a status other than the contract's only as IN_REPO_VERIFIED, with status_basis = 'NP-ICP-CHEM-AIR addendum_01' and evidence_record = a file data/chemistry/icp/evidence/<process id>.json pinned by sha256 in the registry entry. The evidence record holds E1..E9 (source identity and sha256, extraction method and its independent check, representation files and builder, threshold basis, uncertainty as stated or NOT_STATED, applicability and validity limit, conservation, materiality, status). A non-structural process needs at least one channel with a REGISTERED representation; a structural process (WALL / NL) names the parent equations it rests on. A ca_verdict other than NOT_EVALUATED names a CA record under data/chemistry/icp/audit/ pinned by sha256. abep_chem::registry refuses any other difference from the contract (MODEL_ERROR)."
+  },
+  {
+   "id": "A1-CLASS",
+   "title": "process-class addressing of a registry-backed set",
+   "rule": "A mode registry may carry [[class_address]] rows: species, class (one of the parent's 12 process classes), address MODELLED (by = a channel or process id) or EXCLUDED (justification and basis = a CA record id, a registered assumption id, or PHYSICAL_DEFINITION with the reason, e.g. a monatomic species has no vibrational class). abep-icp builds the ChemistrySet process classes of a registry-backed set only from these rows and from the modelled channels; an unaddressed (species, class) pair keeps PROCESS_CLASS_GATE_UNADDRESSED."
+  },
+  {
+   "id": "A1-XE-SRC",
+   "title": "Xe nominal sources (engineering selection for OQ-CHEM-13, evidence level stated per process)",
+   "XE-ION-01": "sigma(Xe+) partial: V. Mukundan & A. Bhardwaj, 'Monte Carlo model for electron degradation in xenon gas', arXiv:1604.08449v1 (2016; Proc. R. Soc. A, doi 10.1098/rspa.2015.0727), document sha256 352c3233a4c914d50ebb84ebf8b7a6a333a94a7a3c98f2036a1523741333a5ca, Table 2 row Xe+ (Krishnakumar-Srivastava form, Eq. 5, fitted to Rejoub, Lindsay & Stebbings 2002 measured partials): sigma = (1/(I E)) [A ln(E/I) + sum_i B_i (1 - I/E)^i] with I = 12.12 eV. The table states no unit: the unit 1e-22 m^2 (1e-18 cm^2) is inferred and must be confirmed by two independent cross-checks before registration: Stephan & Maerk sigma(Xe+) and Rapp & Englander-Golden gross sigma (GK2008 Table D-1) - a disagreement above 10 % at 35-100 eV refuses the inference. Evaluated on a fixed grid (I, then 0.5 eV steps to 20 eV, 1 eV to 100 eV, 10 eV to 1000 eV), tail hold; header 12.13 eV (the contract threshold). Evidence level 4 (evaluated fit to measurement).",
+   "XE-EXC-01": "lumped total excitation: GK2008 (registered a373c8a2) Appendix D Table D-1 Hayashi column (Hayashi 1983), transcribed from the PDF word layout (pdftotext -bbox, rows matched by vertical position to the energy column); onset 0 at 8.315 eV (lowest Xe level, Mukundan & Bhardwaj Table 3); an excitation value without an energy label is recorded and omitted; tail hold; header 10.0 eV (GK2008 p. 97 'average excitation potential is 10 V'); independent check: Maxwellian rates of the transcription against GK2008 Table E-1 excitation column (agreement within 10 % at 1-10 eV required, else refused). Evidence level 5.",
+   "XE-EL-01": "momentum transfer: sigma_m(E) = 2 pi integral (1 - cos t) dsigma/dOmega sin t dt by the trapezoid rule on the 10-degree grid of the Mukundan & Bhardwaj Table 1 differential cross sections (Adibzadeh & Theodosiou) at 5, 10, 100, 500, 1000 eV; sigma = 0 below 5 eV (registry rule: the rate is a lower bound below T_e ~ 5 eV); tail hold; header 0 eV. Cross-check (information): GK2008 Eq. (3.6-13). Evidence level 5 (derived from tabulated theory); materiality is judged by F_P_coll in CA-12.",
+   "XE-WALL-01": "structural: Xe+ (and Xe2+ if retained) return to the volume as Xe at every wall (parent EQ-03 / EQ-09 / EQ-18); the wall energy terms are the parent's (VER-12 stays a parent verify item, not a chemistry gap).",
+   "species": "Xe and Xe+ mass 131.293 u (NIST standard atomic weight, registration ICP-CLOSURE-REG-v1 SR-04; ion mass = neutral mass, Z m_e / M < 5e-6)"
+  },
+  {
+   "id": "A1-CA12",
+   "title": "CA-12 (Xe completeness audit) method",
+   "rule": "Contract metrics, thresholds, ambiguity and cross-check rules unchanged (sec. 9). Stage R on CG-XE over T_e 2-30 eV capped at the set's validity limit (above it the set is OUT_OF_DOMAIN, no verdict is needed there), denominators from the tier-1 set of this addendum. Verdicts recorded in data/chemistry/icp/audit/ca12_xe_v1.json with the registry snapshot sha256.",
+   "XE-ION-02": "direct route e + Xe -> Xe2+ + 3e: Mukundan & Bhardwaj Table 2 row Xe2+ (I = 33 eV, same unit inference) -> F_ion = 2 k2 / (k1 + 2 k2) (two charges per event, contract nu_ions convention); ion route e + Xe+ -> Xe2+ + 2e: no reachable source -> registered bounding treatment B-XE-ION2-ION: excluded within the closure domain (p_ICP <= 0.1 Pa, the grid of ICP-CLOSURE-REG-v1) as an engineering assumption (level 7, uncertainty unquantified), EM check by RFEA / mass-resolved ion energy distribution at the collector",
+   "XE-ION-03": "stepwise ionization from metastables: no metastable ionization cross section is reachable. Bounding treatment B-XE-ION3-SAT (sourced bound): stepwise ionization cannot exceed the excitation rate, so F_ion <= k_exc / (k_iz + k_exc) with the Hayashi total excitation (an over-bound: it counts radiating levels). Lower bound 0. Verdict by the ambiguity rule; if PROMOTE AS UNCERTAINTY VARIANT, the bounding member is the scenario XE-STEPWISE-SATURATED: a channel e + Xe -> Xe+ + 2e with the excitation cross section and the ionization energy 12.13 eV as header, replacing the excitation channel (every excitation completed to an ion: the favourable limit for I_e,cap); the nominal member has no stepwise route",
+   "XE-REC-01": "volume recombination and dimer-ion formation: no reachable rate source. Bounding treatment B-XE-REC: excluded within p_ICP <= 0.1 Pa as an engineering assumption (level 7, uncertainty unquantified; the n^2 / n^3 scaling of these processes against the n_e n_g ionization rate is recorded as the qualitative basis, no number from memory enters); EM check: n_e linear in P_abs at fixed p (Langmuir probe)",
+   "XE-EXC-02": "excited-state disposition: the parent's ED-03 vertex sets (RAD / WALL / OUT) are the envelope; verdict ENVELOPE",
+   "status_of_bounding_treatments": "B-XE-ION2-ION and B-XE-REC are registered engineering assumptions, not sourced bounds: they are listed as conditions of the XE admission and in every output that depends on them (label CONDITIONAL_ON_REGISTERED_ASSUMPTIONS); OQ-CHEM-15 (owner disposition of an otherwise unbounded omission) is carried to the owner unanswered"
+  },
+  {
+   "id": "A1-XE-ADMIT",
+   "title": "XE admission mapping",
+   "rule": "AD-XE-01 contract and lock; AD-XE-02 every XE tier-1 process IN_REPO_VERIFIED under A1-STATUS; AD-XE-03 a final CA-12 verdict for XE-ION-02, XE-ION-03, XE-REC-01, XE-EXC-02 (a registered bounding treatment is a final verdict of kind EXCLUDED_BY_REGISTERED_ASSUMPTION); AD-XE-04 label abep-icp-xe-0.x; AD-XE-05 no AIR item used; AD-XE-06 mixed compositions OUT_OF_DOMAIN. The registry admission is then ADMITTED with [admission].conditions listing the registered assumptions; the NP-ICP evaluator echoes the conditions as a flag."
+  },
+  {
+   "id": "A1-XE-PATH",
+   "title": "IF-CHEM-REG-v1 registry-backed set path in abep-icp (implementation of the preregistered interface, additive)",
+   "rule": "ChemistryRegistration::RegisteredSet { config_file: 'registry:XE/<scenario id>' } for XE_CONTINGENCY / EM-XE builds the set from the registry scenario's channels, the species masses, the class_address rows and the channel validity; any other config_file for XE stays MODEL_ERROR (IN-16_SET_DOES_NOT_MATCH_MODE). Rates come only from the abep-chem integrator on the xs representation (EQ-06). The v1 paths (n2_n.toml for EM-N2, NotRegistered) are unchanged."
+  },
+  {
+   "id": "A1-AIR",
+   "title": "AIR builds",
+   "rule": "AIR tables built from reachable sources follow A1-OWN / A1-STATUS / A1-CLASS. AIR admission keeps every AD-AIR item; with NEG-CRIT, AIR-EL-04, AIR-EXC-04 / -05 and SB-Ar without a reachable source it stays NOT_ADMITTED and is reported, never relaxed."
+  },
+  {
+   "id": "A1-SNAPSHOT",
+   "title": "frozen records",
+   "rule": "A registry label bump never changes a frozen record: records regenerate from the pinned snapshot named beside them (data/chemistry/icp_snapshots/abep-icp-air-0.0_xe-0.0 for the records up to ICP closure v1); new results enter new record versions."
+  }
+ ]
+}
