@@ -1,0 +1,8 @@
+{
+ "schema": "abep_icp_bench_test_plan_lock_v1",
+ "plan": "docs/closure/icp_bench/icp_bench_test_plan_v1.json",
+ "plan_sha256": "31f8b6ca7bb65691b3bbd8140945f2e36e983fd29658e2016b18227f0accfbf1",
+ "design": "docs/closure/icp_bench/icp_bench_design_v1.json",
+ "design_sha256": "48f210b68c87070d48b6b3c19ff6ce42f265d0439ca259fb7d36e1bf361090f2",
+ "rule": "the plan is frozen at commit; any change is a new plan version; score-bearing data only after the listed registration slots are filled at LOCK-1"
+}
