@@ -1,0 +1,13 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_lock_v1",
+ "id": "NP-ICP-CHEM-AIR addendum_01",
+ "registered": "2026-10-09",
+ "rule": "Committed alone, before any own table, registry status change, CA-12 verdict or Xe set path.",
+ "files": {
+  "addendum_01_build_rules_xe_v1.json": "5dfd1c5928bcc7fe7a06b701a6c5ad53ef83cd1563577494d688bde9085c6f61"
+ },
+ "contract_lock": {
+  "path": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json",
+  "sha256": "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef"
+ }
+}
