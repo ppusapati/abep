@@ -5762,3 +5762,7 @@ stays EMPTY and nothing enters layer (b).
 - **Hall AIR:** not an architecture blocker; EM verification; a minimal local-run package is prepared.
 - **Frozen architecture:** variable-effective-capture intake → active compressor / plenum / feed → H1 Hall → 13.56 MHz RF/ICP neutralizer.
 - **Scope now:** DCR-001 finalization, the local Hall AIR package, ICP bench-design closure, the mass / power / thermal roll-up, submission documents.
+
+## 2026-10-09 — Architecture Closure Conclusion v2 (A9.39)
+
+- `docs/closure/conclusion/ARCHITECTURE_CLOSURE_CONCLUSION_v2.md` (sha `4ef4573e346e…`) supersedes v1 (kept). It separates the RFP requirement, the internal 196-state verification set, the design operating window and the EM verification items, and uses the owner's qualified wording: a single fixed intake cannot span the complete conservative state set, so density-aware altitude management and variable effective capture are used.
