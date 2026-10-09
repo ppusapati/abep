@@ -5703,3 +5703,11 @@ stays EMPTY and nothing enters layer (b).
   - PPU 225 W (0.62 m²).
 
   The state stays **DCR REQUIRED** (N_MATCH).
+
+## 2026-10-09 — DCR register v2 (coordinator-maintained): DCR-DBF1-001 / 002 / 003 opened
+
+- `docs/baseline/DBF-1/dcr_register_v2.json` supersedes the empty v1 (unedited). The coordinator is the single writer; lanes submit request drafts.
+- **DCR-DBF1-001** intake / compressor (P1; BD-01/02/03), OPEN_EVALUATION.
+- **DCR-DBF1-002** H1 B(z) replaces the P5-shape surrogate (P3; BD-05), OPEN_EVALUATION.
+- **DCR-DBF1-003** co-located RF match fails thermally (P7; 184 °C vs 60 °C at any RF power): routes R-1 (isolation + own radiator, no DCR) and R-2 (relocate to generator side), to be preregistered and compared.
+- No approval is granted yet; every replacement is selected only by a preregistered evaluation.
