@@ -1,0 +1,26 @@
+{
+ "inputs": {
+  "A4_record": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/conservation_bounds_v1.json",
+  "A4_sha256": "5146fe583343bf5de090a8baeecb812640754b7e579f0df69c78e54dd642689f",
+  "Phi_adm_min": 1.8573770943027164e-07,
+  "Phi_adm_max": 8.592515372718126e-06,
+  "Phi_min_state": "ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184",
+  "Phi_max_state": "ds2:ECSS_ST_HIGH:alt180:lat-73.0000:lst15:lon240:doy1",
+  "Vd_max_V": 350.0,
+  "U_m_s": 7800.0,
+  "v_ex_max_m_s": 64971.018784174696
+ },
+ "span_Phi_max_over_min": 46.2615556048077,
+ "T_12mN": {
+  "mdot_req_min_kg_s": 1.846977348448613e-07,
+  "A_req_at_thinnest_m2": 0.9944008430565859,
+  "capture_drag_at_densest_with_that_area_N": 0.06664635533873912,
+  "max_flux_window_ratio_for_fixed_area": 17.35337040175606
+ },
+ "T_25mN": {
+  "mdot_req_min_kg_s": 3.84786947593461e-07,
+  "A_req_at_thinnest_m2": 2.071668423034554,
+  "capture_drag_at_densest_with_that_area_N": 0.13884657362237315,
+  "max_flux_window_ratio_for_fixed_area": 8.32961779284291
+ }
+}

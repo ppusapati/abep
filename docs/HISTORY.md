@@ -5746,3 +5746,9 @@ stays EMPTY and nothing enters layer (b).
 - **Lineage:** DBF-1 lock `517e0cf6…`; DCR-DBF1-002 approval `1718ac80…`; register v3. DBF-1 and every record computed on it are unchanged (`build_dbf1.py --check` OK). No dcr_register file was touched.
 - **Config pin:** `abep_config::baseline::load_dbf1_1` / `parse_dbf1_1` (additive; `load_dbf1` unchanged). Profile files are verified on load. Tests are in `crates/abep-config/tests/baseline_dbf1_1.rs`.
 - **Use condition:** a Hall run citing the FE field still needs a new NP-HALL-PARAMETRIC-ENVELOPE addendum committed before the run.
+
+## 2026-10-09 — Architecture Closure Conclusion v1 (owner instruction: wind down process lanes and conclude)
+
+- Process lanes stopped (intake DCR-001, ICP rate sets, DCR-003, AIR audit, Hall A7 demonstration); their committed work is kept on their branches; the Hall diagnosis, A7 registration and DBF-1.1 were merged.
+- `docs/closure/conclusion/ARCHITECTURE_CLOSURE_CONCLUSION_v1.md` (sha `b848a9d6d53f…`): AIR mode cannot cover the full ×46 free-stream flux span of the 196 states with any fixed intake (max ×17 even ideally: 12 mN needs ≥ 0.99 m² at the thinnest state, whose capture drag at the densest state is ≥ 67 mN > 25 mN); closure requires a density-window operating concept with Xe outside it. Chemistry-, compressor- and transport-independent (`fixed_intake_window_v1.py`).
+- Hall non-convergence cause identified; partial RP-1 Xe A7 demonstration (unscored, parametric) closes 12 / 25 mN within the ~911 W discharge ceiling.
