@@ -1,0 +1,23 @@
+{
+ "id": "dcr001_eval_prereg_lock_v3",
+ "dcr": "DCR-DBF1-001",
+ "locked": "2026-10-09",
+ "note": "sha256 of the DCR-001 preregistration amendment v3 (A9.39 item 3: variable effective capture, AIR flux window, altitude schedule), committed alone before any window / schedule / ranking is computed; v1 / v2 and their locks stay as history",
+ "files_relative_to": "docs/baseline/DCR-001/",
+ "files": {
+  "dcr001_eval_prereg_v3.json": "c79ea6c110f46799c5c3aaab1b091519d13ee2bf7b7c03112236de05f8c4dbb9",
+  "DCR001_EVAL_PREREG_v3.md": "5e90dd4ef75674a9b582a40b0bd5126a6d1e51ba54629daef38399af4548c537"
+ },
+ "v1_lock": {
+  "path": "docs/baseline/DCR-001/dcr001_eval_prereg_lock_v1.json",
+  "sha256": "39e76c68ee48f3d2c15b492f865be6929f8300f8b94afa680476e8bc80c1998d"
+ },
+ "v2_lock": {
+  "path": "docs/baseline/DCR-001/dcr001_eval_prereg_lock_v2.json",
+  "sha256": "038ce60a733e9c3a176b502d4cf4487ba260270a8a16b8555352b7b6063c176e"
+ },
+ "dbf1_1_lock": {
+  "path": "docs/baseline/DBF-1.1/dbf1_1_lock_v1.json",
+  "sha256": "257e141ca252c3015b5bbd2fc953a1de688bc1606be36ebdf9fff8889307cfb8"
+ }
+}
