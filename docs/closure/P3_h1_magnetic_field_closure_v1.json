@@ -1,0 +1,195 @@
+{
+ "schema": "abep_closure_item_v1",
+ "id": "P3",
+ "item": "H1 magnetic field B(z)",
+ "date": "2026-10-08",
+ "governance": "A9.38",
+ "owner_lane": "L-H1-BZ",
+ "closure_state": "FROZEN FOR EM",
+ "closure_state_basis": "the H-1 field is FE-derived from the registered MC-1 circuit, verified on analytic / image / nonlinear benchmarks, mesh-converged, with an uncertainty envelope over the registered assumption ranges; it meets the registered shape and band targets; verification by test (measured B(z) on the engineering model) is pending. Adoption into the controlled baseline is through DCR-DBF1-002 (requested, owner approval pending); until then DBF-1 Hall runs keep the surrogate and stay surrogate records",
+ "field_outcome": "FE_DERIVED_VERIFIED",
+ "evidence_class": "FE-DERIVED (scikit-fem 10.0.2 axisymmetric nonlinear magnetostatics, FEMM-class per A9.14 F5-OQ-01); NOT measured; NOT FEMM",
+ "key_numbers": {
+  "NI_total_A": {
+   "BP-LO": 153.689,
+   "BP-HI": 587.097,
+   "CAP-403": 880.422
+  },
+  "B_peak_G": {
+   "BP-LO": 69.9104,
+   "BP-HI": 268.607,
+   "CAP-403": 403.019
+  },
+  "z_peak_minus_L_mm": {
+   "BP-LO": -4.50222,
+   "BP-HI": -4.50215,
+   "CAP-403": -4.50213
+  },
+  "B_anode_over_B_peak": {
+   "BP-LO": -0.00184154,
+   "BP-HI": -0.000720131,
+   "CAP-403": -0.000599524
+  },
+  "coil_currents_at_registered_turns": {
+   "BP-LO": {
+    "NI_total_A": 153.689,
+    "I_inner_A_at_357_turns": 0.21525,
+    "I_outer_A_at_157_turns": 0.489455,
+    "inside_analog_1_5_A_window": false,
+    "iron_Bmax_T": {
+     "hiperco": 0.766928,
+     "iron": 0.753011
+    },
+    "iron_Bmax_over_Bsat": {
+     "hiperco": 0.333447,
+     "iron": 0.350238
+    }
+   },
+   "BP-HI": {
+    "NI_total_A": 587.097,
+    "I_inner_A_at_357_turns": 0.822264,
+    "I_outer_A_at_157_turns": 1.86973,
+    "inside_analog_1_5_A_window": false,
+    "iron_Bmax_T": {
+     "hiperco": 2.13048,
+     "iron": 1.63227
+    },
+    "iron_Bmax_over_Bsat": {
+     "hiperco": 0.926296,
+     "iron": 0.759197
+    }
+   },
+   "CAP-403": {
+    "NI_total_A": 880.422,
+    "I_inner_A_at_357_turns": 1.23308,
+    "I_outer_A_at_157_turns": 2.80389,
+    "inside_analog_1_5_A_window": true,
+    "iron_Bmax_T": {
+     "hiperco": 2.2344,
+     "iron": 1.67553
+    },
+    "iron_Bmax_over_Bsat": {
+     "hiperco": 0.971479,
+     "iron": 0.779317
+    }
+   }
+  },
+  "envelope_BP_HI": {
+   "z_peak_minus_L_mm": {
+    "min": -5.49602,
+    "max": -2.56578,
+    "nominal": -4.50215,
+    "argmin": "WP10",
+    "argmax": "WP5",
+    "numerical_widening": 0.449399
+   },
+   "B_anode_over_B_peak": {
+    "min": -0.0043152,
+    "max": -0.000651573,
+    "nominal": -0.000720131,
+    "argmin": "CORNER-A",
+    "argmax": "CORNER-B",
+    "numerical_widening": 4.48946e-07
+   },
+   "B_exit_over_B_peak": {
+    "min": 0.897489,
+    "max": 0.95816,
+    "nominal": 0.924665,
+    "argmin": "CORNER-B",
+    "argmax": "WP5",
+    "numerical_widening": 0.000594694
+   },
+   "FWHM_mm": {
+    "min": 31.9613,
+    "max": 54.7404,
+    "nominal": 36.792,
+    "argmin": "CORNER-B",
+    "argmax": "CORNER-A",
+    "numerical_widening": 0.0409739
+   },
+   "L_up_mm": {
+    "min": 17.2456,
+    "max": 37.832,
+    "nominal": 21.6057,
+    "argmin": "CORNER-B",
+    "argmax": "CORNER-A",
+    "numerical_widening": 0.417394
+   },
+   "L_down_mm": {
+    "min": 13.3455,
+    "max": 17.8016,
+    "nominal": 15.1863,
+    "argmin": "TW3",
+    "argmax": "TW6",
+    "numerical_widening": 0.454768
+   },
+   "B_at_L_plus_domain_over_B_peak": {
+    "min": 0.0257535,
+    "max": 0.0376092,
+    "nominal": 0.0295242,
+    "argmin": "CORNER-B",
+    "argmax": "CORNER-A",
+    "numerical_widening": 1.19346e-05
+   },
+   "NI_A": {
+    "min": 496.59,
+    "max": 784.339,
+    "nominal": 587.097,
+    "argmin": "CORNER-B",
+    "argmax": "CORNER-A",
+    "numerical_widening": 0.916097
+   },
+   "not_reached": []
+  }
+ },
+ "item_statuses": {
+  "H1F-BZ-01": "FE-DERIVED H-1 B(z) registered (this record); measured map = EM verification item",
+  "H1F-BZ-02": "SHAPE_CONSISTENT",
+  "H1F-BZ-03": "BAND_REACHABLE_WITHIN_REGISTERED_COIL_NI / BAND_REACHABLE_ACROSS_ENVELOPE",
+  "H1F-BZ-04 / DBF1-BZ-05": "CAPABILITY_WITHIN_REGISTERED_WORST_CASE_NI",
+  "H1F-BZ-05": "B_anode/B_peak reported (-0.000720131 at BP-HI); owner tolerance still TBD_OWNER"
+ },
+ "dcr": {
+  "id": "DCR-DBF1-002",
+  "request": "docs/baseline/DCR-002/dcr002_request_v1.json",
+  "status": "REQUESTED_PENDING_OWNER_APPROVAL"
+ },
+ "governing_evidence": [
+  {
+   "path": "docs/hardware/h1_bz/h1_bz_fe_v1.json",
+   "sha256": "4da00b551e6d0776cd31d6ccdfba383fd7bfb9ffc9def21bcf8a59b92a4cfd42"
+  },
+  {
+   "path": "docs/hardware/h1_bz/h1_bz_fe_prereg_v4.json",
+   "sha256": "98fab01d030918e9385fce417a085e580e7c355973e9adf4bcab0e05b5434e9e"
+  },
+  {
+   "path": "docs/hardware/h1_bz/h1_bz_fe_prereg_lock_v4.json",
+   "sha256": "08516fdcf2590f3f29e658db6c4bd7a882f16bd9dc6f0bcc9d6491e2beb3eef4"
+  },
+  {
+   "path": "docs/hardware/h1_bz/bh_curves_v1.json",
+   "sha256": "6f940f88bf672e0d4e29b109081a5c6e1506e8f566a9b2e56c54361971f22747"
+  },
+  {
+   "path": "hallthruster_bridge/bfield/h1_fe_v1/MANIFEST.json",
+   "sha256": "c797e679613e20948f0f24174db0c95bf0645592e6969363cc661bf1ab2be946"
+  }
+ ],
+ "submission_safe_statement": "docs/closure/statements/P3_h1_magnetic_field.md",
+ "remaining_blockers": [
+  "owner approval of DCR-DBF1-002 and the DBF-1.1 lock before any Hall run cites the FE field; then an NP-HALL-PARAMETRIC-ENVELOPE addendum (bz_family H1_REGISTERED)",
+  "shielded pole contour H1F-MC-05 (the FE field is the registered pre-shielding flat-pole circuit; a shielded design is a new FE version)",
+  "hot-pole B-H (H1F-MA-03 / 04) and the procured-lot B-H (HW-MC-13)",
+  "measured B(z) on the engineering model (H1F-EX-08 probe path, H1F-MC-09 hot-state sensor)"
+ ],
+ "findings": [
+  "the centreline peak lies in the exit pole gap at z - L = -4.5 mm (envelope -5.5 .. -2.6 mm): inside the lane's preregistered S2 screening window [-h/2, +h]; 'at or just downstream of L' still has no owner tolerance (H1F-BZ-05 TBD_OWNER)",
+  "B_anode / B_peak is about -0.001 (a slight reversal; the iron back plate under the anode face), far below the surrogate's 0.201",
+  "the centreline response is linear within 1 % up to 1500 A-turns (0.454-0.458 G per A-turn); saturation lowers it by 6 % at 2008 and 19 % at 3000 A-turns",
+  "local iron |B| maxima reach B_sat already at about 520 A-turns: these sit at the sharp re-entrant corners of the flat-pole geometry (field singularities, not mesh-converged and not a gate); the H1F-MC-07 working-flux factor (0.7 B_sat) cannot be checked before the detailed pole contour (H1F-MC-05) with corner radii exists",
+  "BP-LO envelope: the uncertainty variants started their preregistered sweep at 260 A-turns, so BP-LO (about 154 A-turns) was NOT_REACHED_IN_SWEEP for every variant; only the nominal BP-LO is evaluated (its shape descriptors equal the BP-HI ones to 0.1 %, the response being linear there; this is an observation, not a substitute for the envelope)",
+  "per-coil currents at the registered f_NI 2 turns (357 / 157) at BP-HI are 0.82 / 1.87 A: the inner coil sits below the analog 1-5 A supply window (a gauge / supply item, H1F-CO-03 / CO-06, not a field item)"
+ ],
+ "separation": "the P5 surrogate (BZ-P5B16 / P5B30, REFERENCE_FOR_P5_ONLY / SOURCED_SURROGATE_P5_SHAPE_NOT_H1_BZ) and this FE-derived field are separate evidence; no record computed under the surrogate is relabelled"
+}

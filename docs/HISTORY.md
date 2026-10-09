@@ -5711,3 +5711,21 @@ stays EMPTY and nothing enters layer (b).
 - **DCR-DBF1-002** H1 B(z) replaces the P5-shape surrogate (P3; BD-05), OPEN_EVALUATION.
 - **DCR-DBF1-003** co-located RF match fails thermally (P7; 184 °C vs 60 °C at any RF power): routes R-1 (isolation + own radiator, no DCR) and R-2 (relocate to generator side), to be preregistered and compared.
 - No approval is granted yet; every replacement is selected only by a preregistered evaluation.
+
+## 2026-10-09 — A9.38 P3: H-1 / MC-1 FE-derived B(z) registered; DCR-DBF1-002 requested (lane L-H1-BZ)
+
+- **Solver:** FEMM unavailable (no wine / pyfemm), so the field is **FE-DERIVED**: scikit-fem 10.0.2 (PyPI), axisymmetric nonlinear magnetostatics, P2 flux function psi = r A_phi, damped Newton with an energy line search. This is a design-analysis tool; it adds no production dependency.
+- **Inputs:** B-H data `docs/hardware/h1_bz/bh_curves_v1.json` (`6f940f88…`), read from the registered SRC-HIPERCO50 / SRC-ARMCO PDFs, sha256-verified (Hiperco table; ARMCO Figs. 7–9 vector paths). Geometry: the registered H2-1 RP-1 MC-1 lumped circuit with the solid core (row 79). Unregistered elements are frozen with ranges: pole contour (H1F-MC-05), coil axial placement, trim coil, screens.
+- **Preregistration:** v4 `h1_bz_fe_prereg_v4.json` (`98fab01d…`, lock `08516fdc…`) is governing; it was committed alone.
+  - v1–v3 stay unedited history: v1 had a Newton tolerance below the round-off floor; v2's verification exposed an A_phi cancellation error, a V3 harness defect and an inadequate reference quadrature; v3's verification failed on psi axis pollution, NaN at r = 0 and a line-search stall.
+  - No criterion changed between versions. Every result seen before each version is listed in it.
+- **Result:** `docs/hardware/h1_bz/h1_bz_fe_v1.json` / `H1_BZ_FE_v1.md` (`4da00b55…`), outcome **FE_DERIVED_VERIFIED**.
+  - Verification: V1 / V2 / V3 all pass. Mesh-converged L2 vs L3 (dB_peak 0.11 %, dz_peak 0.45 mm); far-boundary check 4e-6.
+  - Nominal B_peak 0.457 G per A-turn, linear within 1 % to 1500 A-turns. BP-LO / BP-HI / CAP-403 at 154 / 587 / 880 A-turns, all within 1040 / 2008.
+  - Envelope: BP-HI needs 497–784 A-turns. The peak sits in the exit pole gap at z − L = −4.5 mm (−5.5 to −2.6). B_anode/B_peak ≈ −0.001.
+  - Both registered targets are met: H1F-BZ-02 SHAPE_CONSISTENT and H1F-BZ-03 band reachable.
+- **Profiles:** HallThruster.jl profiles are in `hallthruster_bridge/bfield/h1_fe_v1/` with a MANIFEST. The P5 files are untouched.
+- **DCR-DBF1-002:** requested in `docs/baseline/DCR-002/dcr002_request_v1.json` to replace DBF1-BZ-04 (surrogate BZ-P5B16) with BZ-H1FE-V1; it is pending owner approval.
+  - Compared with the surrogate, the max normalised difference is 0.38 (MATERIALLY_DIFFERENT).
+  - Hall runs need that approval plus a new envelope addendum (bz_family H1_REGISTERED).
+- **P3 closure:** FROZEN FOR EM (`docs/closure/P3_h1_magnetic_field_closure_v1.json`, statement `docs/closure/statements/P3_h1_magnetic_field.md`).

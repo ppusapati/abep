@@ -1,0 +1,129 @@
+{
+ "V1a_inner_coil_air": {
+  "status": "OK",
+  "dofs": 317455,
+  "seconds": 43.9,
+  "axis_Bz_rel_err": 0.00024614345419190256,
+  "centreline_Br_rel_err": 0.0016093206309303258,
+  "centreline_Bz_rel_err": 0.005519167813782579,
+  "reference_selfcheck_rel_err": 3.6397027187184634e-12,
+  "pass": true
+ },
+ "V1b_outer_coil_air": {
+  "status": "OK",
+  "dofs": 317455,
+  "seconds": 42.8,
+  "axis_Bz_rel_err": 0.0016353058741734744,
+  "centreline_Br_rel_err": 0.001883940289794567,
+  "centreline_Bz_rel_err": 0.0024714981008426558,
+  "reference_selfcheck_rel_err": 1.0482699116418523e-12,
+  "pass": true
+ },
+ "V2_halfspace_mu10": {
+  "status": "OK",
+  "dofs": 183867,
+  "seconds": 18.1,
+  "max_rel_err": 0.0007808898626202766,
+  "image_share": 0.31387380152788075,
+  "pass": true
+ },
+ "V2_halfspace_mu1000": {
+  "status": "OK",
+  "dofs": 183867,
+  "seconds": 19.2,
+  "max_rel_err": 0.0007644859559576339,
+  "image_share": 0.372829775935807,
+  "pass": true
+ },
+ "V3_hiperco_H300": {
+  "status": "OK",
+  "newton_iterations": 2,
+  "seconds": 0.3,
+  "B_core_exact_T": 1.5750000000000002,
+  "B_core_fe_T": 1.5750000000000004,
+  "rel_err_core": 1.409807015397024e-16,
+  "rel_err_gap": 4.309905826088723e-11,
+  "pass": true
+ },
+ "V3_hiperco_H3000": {
+  "status": "OK",
+  "newton_iterations": 6,
+  "seconds": 0.9,
+  "B_core_exact_T": 2.2533333333333334,
+  "B_core_fe_T": 2.2533333333333285,
+  "rel_err_core": 2.1678911131733823e-15,
+  "rel_err_gap": 6.9172002675203e-13,
+  "pass": true
+ },
+ "V3_hiperco_H30000": {
+  "status": "OK",
+  "newton_iterations": 3,
+  "seconds": 0.6,
+  "B_core_exact_T": 2.3175929188601025,
+  "B_core_fe_T": 2.3175929188601225,
+  "rel_err_core": 8.622745729255102e-15,
+  "rel_err_gap": 5.4036298806947875e-12,
+  "pass": true
+ },
+ "V3_hiperco_H300000": {
+  "status": "OK",
+  "newton_iterations": 3,
+  "seconds": 0.7,
+  "B_core_exact_T": 2.6568849254478004,
+  "B_core_fe_T": 2.6568849254478124,
+  "rel_err_core": 4.51295746801333e-15,
+  "rel_err_gap": 5.592033571200925e-12,
+  "pass": true
+ },
+ "V3_iron_H300": {
+  "status": "OK",
+  "newton_iterations": 7,
+  "seconds": 0.9,
+  "B_core_exact_T": 1.5500584210277055,
+  "B_core_fe_T": 1.5500584210277075,
+  "rel_err_core": 1.289242661576794e-15,
+  "rel_err_gap": 4.020270353387089e-12,
+  "pass": true
+ },
+ "V3_iron_H3000": {
+  "status": "OK",
+  "newton_iterations": 6,
+  "seconds": 0.9,
+  "B_core_exact_T": 1.7178989278350514,
+  "B_core_fe_T": 1.7178989278350567,
+  "rel_err_core": 3.102086177396134e-15,
+  "rel_err_gap": 5.403652888179462e-12,
+  "pass": true
+ },
+ "V3_iron_H30000": {
+  "status": "OK",
+  "newton_iterations": 6,
+  "seconds": 0.9,
+  "B_core_exact_T": 2.069512700471698,
+  "B_core_fe_T": 2.069512700471697,
+  "rel_err_core": 4.2917273206281135e-16,
+  "rel_err_gap": 5.874823166837531e-12,
+  "pass": true
+ },
+ "V3_iron_H300000": {
+  "status": "OK",
+  "newton_iterations": 5,
+  "seconds": 0.9,
+  "B_core_exact_T": 2.526549858296511,
+  "B_core_fe_T": 2.5265498582965344,
+  "rel_err_core": 9.31575842240557e-15,
+  "rel_err_gap": 5.592033571200925e-12,
+  "pass": true
+ },
+ "all_pass": true,
+ "_meta": {
+  "stage": "verify",
+  "seconds": 130.1,
+  "solver": "scikit-fem 10.0.2 (P2 Lagrange, axisymmetric flux function psi = r A_phi, damped Newton, SuperLU / LU-preconditioned CG)",
+  "solver_sha256": "ee45e8154d63d436f2b0bfcb3541da58eb049dd8d370e6b4297749c2b84b165d",
+  "build_sha256": "cd4dd291827a1ce54d84a1b080b57ff1479c1370b6ee78619e25fa8da2032e95",
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1"
+ }
+}
