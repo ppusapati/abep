@@ -1,0 +1,27 @@
+{
+ "id": "np_hall_parametric_envelope_addendum_a9_local_air_rp1_lock_v1",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "addendum": "A9-LP",
+ "locked": "2026-10-09",
+ "note": "sha256 of addendum A9-LP (minimal local Hall AIR package, A9.39 item 4; status PREREGISTERED_NOT_RUN) and its case file, committed before any Hall run on the FE-derived H1 B(z); v1, A1..A8 unchanged; any change after this lock is a new, dated addendum",
+ "base_commit": "8060e55",
+ "predecessor_locks": {
+  "prereg_lock_v1.json": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3",
+  "prereg_addendum_a1_air_family_lock.json": "35388e247ffdcc7af2a605e46f29d955ec29875893d3f7342e6411110f3d17a6",
+  "prereg_addendum_a7_hall_numerical_method_lock_v1.json": "26fc6d53548a63ac792b013673d047753b79f3280cf1f6240232c13142e79299",
+  "prereg_addendum_a8_m2_dbf1_lock_v1.json": "67e37fad110bc14bc36fbe3ff9c906d91e0e5873abdf614921e1196bda54b59c"
+ },
+ "dbf1_1_lock": {
+  "path": "docs/baseline/DBF-1.1/dbf1_1_lock_v1.json",
+  "sha256": "257e141ca252c3015b5bbd2fc953a1de688bc1606be36ebdf9fff8889307cfb8"
+ },
+ "files_relative_to": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/",
+ "files": {
+  "prereg_addendum_a9_local_air_rp1_v1.json": "0e32ac8ee5259b8a85cf5157c41c33ead2482a4e928c2c28b12fce1c81348494",
+  "PREREG_ADDENDUM_A9_LOCAL_AIR_RP1.md": "9e51835c1b03e8fc787e73193931adf2e03099f93d94c748642fb0f26a556766"
+ },
+ "case_file": {
+  "path": "tools/local_runs/hall_air_rp1_v1/cases_v1.json",
+  "sha256": "7e21c5088416c1328956d19dfad88a06e66a6a38124b963a276013ebfe05ff21"
+ }
+}
