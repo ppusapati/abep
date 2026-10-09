@@ -223,7 +223,7 @@ mod tests {
     #[test]
     fn plate_factor_matches_the_closed_form_when_fully_visible() {
         let r = rho(200.0);
-        for theta in [0.0, 0.3, 0.9] {
+        for theta in [0.0, 0.1, 0.2] {
             assert!(theta <= PI / 2.0 - r);
             let exact = r.sin().powi(2) * f64::cos(theta);
             assert!((plate_to_earth(theta, r, NA, NB) - exact).abs() < 1e-5, "theta {theta}");
