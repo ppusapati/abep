@@ -1,0 +1,63 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_10_A9_41_dcr_dbf1_001_approval_mass_risk",
+ "decided_by": "owner",
+ "date": "2026-10-10",
+ "decision": "A9_41_DCR_DBF1_001_APPROVED_WITH_MASS_RISK",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_10_A9_41_DCR_DBF1_001_APPROVAL_MASS_RISK.md",
+  "sha256": "a7286f610a305339dfc60566c8b3293c734c227fdf3235613a31ea7dc448ba79",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "DCR_DBF1_001_APPROVAL",
+   "utc": "2026-10-10T12:38:51.221Z",
+   "text_sha256": "0498562199c15377efee9e1764a3387d1cc5376bad5076941c59918152a7b172",
+   "chars": 101
+  }
+ ],
+ "checkpoint_at_decision": "1dfc195",
+ "owner_decision_summary": {
+  "dcr": "DCR-DBF1-001 APPROVED (owner), with condition",
+  "condition": "the 0.052 kg wet-mass margin is explicitly a mass risk (MR-DCR001-01), not comfortable margin",
+  "approved_content": [
+   "AIR sizing flow 0.448 mg/s (v5)",
+   "plenum setpoint 5.03 Pa, co-designed feed (v5)",
+   "integrated contra-rotating compressor + drum-skin Holweck, 7.767 kg governing MEV before integration, 77 W allowance (v5)",
+   "v6 mass roll-up: AL-07 preliminary CBE 5.46 kg MEV as the AL-07 rebase; AL-08 2.919 kg; AL-01 / AL-02 integration; AL-05 ICP mount de-duplication; wet 39.948 kg"
+  ],
+  "dbf_1_2": "unblocked by this approval (the earlier 'do not build DBF-1.2 until I approve DCR-DBF1-001' is satisfied); proposed status 'DBF-1.2 — RFP-CONFORMING PRELIMINARY DESIGN BASELINE / COMPLIANCE VERIFICATION ON EM/QM'"
+ },
+ "mass_risk": {
+  "id": "MR-DCR001-01",
+  "title": "system wet-mass margin 0.052 kg is a MASS RISK, not margin",
+  "statement": "the 0.052 kg below 40 kg (wet 39.948 kg at 2 kg Xe, A9.26 convention) is NOT available margin: it is carried as an open mass risk; no design change may consume it, and no closure statement may describe it as margin",
+  "drivers": [
+   "AL-07 PPU preliminary CBE 4.55 kg (5.46 kg MEV) largely assumed; reverting to the 6.0 kg floor gives 40.57 kg wet",
+   "AL-08 tank / plumbing / thermal estimates (assumed / model-derived) and Xe MEOP / burst factor TBD (XA9-28 / XA9-29)",
+   "AL-01 / AL-02 integration itemization assumed; compressor component estimates (bearings, motors, drive, lock) assumed",
+   "AL-09 1.0 kg and AL-10 2.5 kg owner allocations not yet CBEs; harness by the 5/95 rule until routed",
+   "the 39.4 kg preferred target is missed by 0.548 kg"
+  ],
+  "exposure_kg": "any adverse growth > 0.052 kg in non-margin terms (equivalently > 0.045 kg non-harness MEV) breaks < 40 kg",
+  "mitigation": [
+   "early AL-07 PPU design / quotation (RFQ3-HALLEL) replacing the preliminary CBE",
+   "AL-08 tank quotation with MEOP at 323 K and burst factor fixed",
+   "compressor EM mass measurement (rotor rows, drums, Holweck band, bearings, motors, drive)",
+   "routed harness replacing the 5/95 rule",
+   "any mass growth triggers a DCR before acceptance; the ranked closure levers stay PPU, Xe hardware, intake structure, structure / thermal"
+  ],
+  "tracking": "re-evaluated at every mass-affecting DCR and at PDR; status OPEN"
+ },
+ "recorder_notes": [
+  "recorder reading: accepting the v6 roll-up accepts the AL-07 preliminary CBE (5.46 kg MEV) as the AL-07 rebase, superseding for the active baseline the 2026-10-04 'do not reduce' floor instruction; the 6.0 kg floor stays recorded history in mass_power_a9_v5 (immutable)",
+  "the F6 / B7 transitional compressor performance remains a controlled EM-verification risk (owner, v5 acceptance)",
+  "mass status wording: 'preliminary roll-up 39.95 kg wet (< 40 kg), margin 0.05 kg carried as open mass risk MR-DCR001-01'; never 'mass PASS with margin'"
+ ],
+ "inputs": {
+  "docs/baseline/DCR-001/preliminary/dcr001_system_mass_closure_v6.json": "8074c0b72b3b8f187a2a348f7f761481de7d8645e563e3e5ae93361695303ab7",
+  "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1"
+ }
+}

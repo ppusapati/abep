@@ -5853,3 +5853,12 @@ stays EMPTY and nothing enters layer (b).
   Margin to 40 kg +0.052 kg; to 39.4 kg −0.548 kg.
 - **Verdict:** DCR-DBF1-001 READY FOR OWNER APPROVAL, conditional on the AL-07 CBE rebase and the AL-05 duplicate removal.
   Without the PPU rebase: NOT READY, 0.57 kg shortfall.
+
+## 2026-10-10 — A9.41 owner decision: DCR-DBF1-001 approved with mass risk
+- **What:** the owner's message is recorded verbatim as `docs/decisions/OD_2026_10_10_A9_41_DCR_DBF1_001_APPROVAL_MASS_RISK.md` (sha256 `a7286f610a305339dfc60566c8b3293c734c227fdf3235613a31ea7dc448ba79`), with companion `docs/decisions/OD_2026_10_10_A9_41_dcr_dbf1_001_approval_mass_risk.json`.
+  The approval record is `docs/baseline/DCR-001/dcr001_approval_v1.json`; the register `docs/baseline/DBF-1/dcr_register_v5.json` supersedes v4, which is kept unchanged.
+- **Decision:** DCR-DBF1-001 is APPROVED on the v4–v6 results (`c68fdca`, `0757093`, `1dfc195`).
+  The 0.052 kg wet-mass margin (39.948 kg) is an OPEN MASS RISK, **MR-DCR001-01**, not margin.
+- **Recorder reading:** this accepts the AL-07 preliminary CBE (5.46 kg MEV) as the active AL-07 rebase. The 6.0 kg floor stays
+  recorded history in `mass_power_a9_v5`.
+- **Next:** DBF-1.2 is unblocked; it is built as new files with its own lock. DBF-1 and DBF-1.1 are immutable.
