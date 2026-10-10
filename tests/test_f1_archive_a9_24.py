@@ -71,3 +71,15 @@ def test_verify_download_fails_closed(fa, tmp_path, capsys):
     assert rec["result"] == "FAILED" and rec["authoritative"] is False and rec["mismatches"]
     with pytest.raises(SystemExit):
         fa.verify_download(str(tmp_path / "missing.tar.zst"))
+
+
+def test_generating_commit_time_accepts_both_git_utc_spellings(fa):
+    # newer git prints UTC as "Z", older git as "+00:00": the same instant must pass either way
+    e = fa.GENERATING_COMMIT_EPOCH
+    assert fa._commit_time_matches(f"{e} 2026-10-03T09:48:13+00:00")
+    assert fa._commit_time_matches(f"{e} 2026-10-03T09:48:13Z")
+    assert fa._commit_time_matches(f"{e} 2026-10-03T11:48:13+02:00")
+    assert not fa._commit_time_matches(f"{e} 2026-10-03T09:48:14Z")
+    assert not fa._commit_time_matches(f"{e + 1} 2026-10-03T09:48:13Z")
+    assert not fa._commit_time_matches("not a time")
+    assert not fa._commit_time_matches("")
