@@ -5944,3 +5944,17 @@ scientific community for evaluation. Every other branch is development.
   - The unfinished NP-ICP-CHEM-AIR own-table work (`wip/lane-icp-closure`).
 - **F1 evidence archive:** a local copy verifies against its manifest (`verify-download` → VERIFIED). The release-asset upload
   is still the owner's manual step (`docs/evidence_archives/f1_intake/UPLOAD_STEPS.md`).
+
+## 2026-10-10 — F1 evidence archive published and download-verified (A9.24 item 11, steps 2–5)
+- **Release:** the owner published `evidence-f1-intake-synthesis-v1-405296e` (target `405296e`) with the asset
+  `F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst`. The owner rebuilt it locally first, and `build --check` reproduced the manifest.
+- **Verification:** a fresh download of the published URL (2,011,661 B, sha256 `c29623c0…`) passed
+  `f1_archive.py verify-download`. The result is VERIFIED with no mismatches: zstd decode, tar sha256, per-member hashes,
+  deterministic metadata, and a byte-for-byte comparison with the local originals.
+- **Authority:** the record `F1_INTAKE_SYNTHESIS_v1_405296e.download_verification.json` is committed, so the release
+  asset is the authoritative copy. The record pins manifest sha256 `27d9783b…`, which is unchanged.
+- **Open:** the manifest's `storage.preferred` status still reads AUTHORIZED_TO_UPLOAD. The builder has no code path for
+  the uploaded state, and regenerating the manifest would change the sha256 the record pins. That update is a follow-up
+  builder change.
+- **Builder fix:** `f1_archive.py` now compares the generating-commit time by value, so newer git's `Z` UTC spelling is
+  accepted (PR #41).

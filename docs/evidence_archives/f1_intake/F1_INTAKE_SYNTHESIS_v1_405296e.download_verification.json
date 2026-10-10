@@ -1,0 +1,74 @@
+{
+ "schema": "evidence_archive_download_verification_v1",
+ "manifest": "docs/evidence_archives/f1_intake/F1_INTAKE_SYNTHESIS_v1_405296e.manifest.json",
+ "manifest_sha256": "27d9783b74d89a52dc540140726f4aa4f0065c52fc2ad2bf9b4258d24e52b41c",
+ "archive_file_name": "F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst",
+ "verified_file": "F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst",
+ "release": {
+  "repository": "ppusapati/abep",
+  "tag": "evidence-f1-intake-synthesis-v1-405296e",
+  "asset_name": "F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst",
+  "download_url": "https://github.com/ppusapati/abep/releases/download/evidence-f1-intake-synthesis-v1-405296e/F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst"
+ },
+ "checks": [
+  {
+   "check": "archive sha256 == manifest",
+   "expected": "c29623c08099c688584439b881c07c7a59b14fba3645642e652e3a2c7ce04dd2",
+   "observed": "c29623c08099c688584439b881c07c7a59b14fba3645642e652e3a2c7ce04dd2",
+   "ok": true
+  },
+  {
+   "check": "archive size == manifest",
+   "expected": 2011661,
+   "observed": 2011661,
+   "ok": true
+  },
+  {
+   "check": "zstd decode",
+   "expected": "OK",
+   "observed": "OK",
+   "ok": true
+  },
+  {
+   "check": "tar sha256 == manifest",
+   "expected": "a03f5e101d86d64500cbdb11c8808d1bc7ee89367a5c2ffb10ec9d0b90f9bebf",
+   "observed": "a03f5e101d86d64500cbdb11c8808d1bc7ee89367a5c2ffb10ec9d0b90f9bebf",
+   "ok": true
+  },
+  {
+   "check": "tar size == manifest",
+   "expected": 36730880,
+   "observed": 36730880,
+   "ok": true
+  }
+ ],
+ "members": [
+  {
+   "path": "F1_INTAKE_SYNTHESIS_v1_405296e/F1_INTAKE_SYNTHESIS.md",
+   "size_bytes": 37140,
+   "sha256": "a6f8003c24db6dc534925d5315b56f54122b68c019d23f4bacfd47a1c5c75142",
+   "manifest_sha256": "a6f8003c24db6dc534925d5315b56f54122b68c019d23f4bacfd47a1c5c75142",
+   "ok": true
+  },
+  {
+   "path": "F1_INTAKE_SYNTHESIS_v1_405296e/f1_intake_synthesis_v1.json",
+   "size_bytes": 36690882,
+   "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e",
+   "manifest_sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e",
+   "ok": true
+  }
+ ],
+ "member_rule": "every tar member re-extracted; size and sha256 equal the manifest per-file entry; deterministic member metadata; byte for byte against the local originals when present",
+ "compared_with_local_originals": true,
+ "mismatches": [],
+ "result": "VERIFIED",
+ "authoritative": true,
+ "authority": "A9.24 item 11: the upload is authoritative only after this verification of a downloaded copy",
+ "verified_at_utc": "2026-10-10T22:33:23+00:00",
+ "tools": {
+  "python": "3.11.15",
+  "python_zstandard": "0.25.0",
+  "libzstd": "1.5.7"
+ },
+ "commit_as": "docs/evidence_archives/f1_intake/F1_INTAKE_SYNTHESIS_v1_405296e.download_verification.json"
+}
