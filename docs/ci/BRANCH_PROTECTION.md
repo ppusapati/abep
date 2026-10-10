@@ -97,7 +97,7 @@ Everything else (signed commits, linear history, merge queue, code owners, conve
   `docs/ci/RUST_PARITY.md`.
 * **The Rust workspace workflow is not a required check yet.** `.github/workflows/rust-workspace.yml` (job
   `Rust workspace (fmt, clippy, cargo test, bid guard, test register, groundtest isolation)`, ES-1) runs on every pull
-  request and on pushes to `main` / `integration/simulation-complete`. Under `docs/rust_migration/CI_PLAN.md` v3.1 § 1
+  request and on pushes to `main`, the single authoritative branch since 2026-10-10. Under `docs/rust_migration/CI_PLAN.md` v3.1 § 1
   principle 4 (plan structure approved by the owner, A9.29) the Rust jobs become required status checks only when the
   first non-Kernel-1 component is admitted; that PR updates this file.
 * **The manual H-1 parametric envelope workflow is not a required check.** `.github/workflows/h1-parametric-envelope.yml`
