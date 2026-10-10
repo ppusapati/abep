@@ -1,0 +1,29 @@
+[package]
+name = "abep-uq"
+description = "Active F8 robust optimisation / UQ of the ABEP Rust simulator (SC-WP-10): scenario-set robustness, the seeded TPMC-statistics Monte Carlo on the registered numpy PCG64 stream (abep-rng, EXACT_STREAM), pointing / compressor sensitivities, the versioned robust Pareto set, and the B2-OF-01 intake-interpolation sensitivity diagnostic. Never depends on assessment or evidence crates."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+abep-types.workspace = true
+abep-provenance.workspace = true
+abep-rng = { path = "../abep-rng" }
+abep-design = { path = "../abep-design" }
+abep-mission = { path = "../abep-mission" }
+abep-gaspath = { path = "../abep-gaspath" }
+abep-intake = { path = "../abep-intake" }
+abep-atmos.workspace = true
+serde_json.workspace = true
+# sha256 of the draw buffers (stream comparison) and of the study outputs.
+sha2.workspace = true
+
+[[bin]]
+name = "abep-design-uq"
+path = "src/bin/abep_design_uq.rs"
+
+[dev-dependencies]
+# CI replay of the gzip-captured numpy stream samples (the crate the workspace uses for the frozen .csv.gz data).
+flate2.workspace = true

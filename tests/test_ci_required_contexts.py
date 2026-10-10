@@ -121,8 +121,44 @@ def test_manual_smoke_workflow_is_not_required():
 def test_no_other_workflows_unaccounted_for():
     wf_dir = os.path.dirname(CI_YML)
     found = sorted(f for f in os.listdir(wf_dir) if f.endswith((".yml", ".yaml")))
-    assert found == ["ci.yml", "julia-smoke.yml"], (
+    # rust-parity.yml: optional, not required (owner A9.14 S10.4 RUST-OQ-02; docs/ci/BRANCH_PROTECTION.md, RUST_PARITY.md).
+    # rust-workspace.yml: not required until the first non-Kernel-1 admission (CI_PLAN.md v3.1 § 1 principle 4, A9.29).
+    # h1-parametric-envelope.yml: manual-only (workflow_dispatch), never required (BRANCH_PROTECTION.md § 2 notes).
+    assert found == ["ci.yml", "h1-parametric-envelope.yml", "julia-smoke.yml", "rust-parity.yml",
+                     "rust-workspace.yml"], (
         f"new workflow(s) {found}: decide (owner) whether they are required and update docs/ci/BRANCH_PROTECTION.md")
+
+
+def test_manual_h1_envelope_workflow_is_not_required():
+    path = os.path.join(os.path.dirname(CI_YML), "h1-parametric-envelope.yml")
+    wf = _load_workflow(path)
+    triggers = set(wf["on"]) if isinstance(wf["on"], dict) else {wf["on"]} if isinstance(wf["on"], str) else set(wf["on"])
+    assert triggers == {"workflow_dispatch"}, f"h1-parametric-envelope.yml must stay manual-only, has {sorted(triggers)}"
+    # its shard matrix is dynamic (fromJSON of the prepare job), so contexts are not expanded here; manual-only means it
+    # never reports on a PR, which is what keeps it out of the required set
+    with open(SPEC_MD, encoding="utf-8") as fh:
+        assert "h1-parametric-envelope.yml" in fh.read()
+
+
+def test_rust_workspace_workflow_is_not_required_and_runs_the_es1_gates():
+    path = os.path.join(os.path.dirname(CI_YML), "rust-workspace.yml")
+    wf = _load_workflow(path)
+    assert set(wf["on"]) == {"pull_request", "push"}
+    assert not set(_workflow_contexts(path)) & set(_documented_contexts())
+    with open(SPEC_MD, encoding="utf-8") as fh:
+        assert "rust-workspace.yml" in fh.read()
+    (job,) = wf["jobs"].values()
+    co = [s for s in job["steps"] if s.get("uses", "").startswith("actions/checkout@")]
+    assert len(co) == 1 and co[0]["with"]["fetch-depth"] == 0          # the bid guard needs the lineage in git
+    runs = [s.get("run", "") for s in job["steps"]]
+    text = "\n".join(runs)
+    for cmd in ("cargo fmt -- --check", "cargo clippy --workspace --all-targets --locked -- -D warnings",
+                "cargo test --workspace --locked", "abep-ci -- bid-source-guard", "abep-ci -- test-register",
+                "abep-ci -- groundtest-isolation", "parity_report_v2.json", "sha256sum --check --strict"):
+        assert cmd in text, cmd
+    assert "fmt --all" not in text                                       # members only: abep_core bytes are hash-bound
+    with open(CI_YML, encoding="utf-8") as fh:
+        assert "cargo" not in fh.read()                                   # normal CI stays Rust-free (S10.4)
 
 
 # ---------------------------------------------------------------------------------- ruleset decision (owner, 2026-09-27)

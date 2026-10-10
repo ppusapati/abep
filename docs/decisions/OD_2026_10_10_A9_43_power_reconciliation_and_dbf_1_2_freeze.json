@@ -1,0 +1,39 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_10_A9_43_power_reconciliation_and_dbf_1_2_freeze",
+ "decided_by": "owner",
+ "date": "2026-10-10",
+ "decision": "A9_43_POWER_RECONCILIATION_AND_DBF_1_2_FREEZE",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_10_A9_43_POWER_RECONCILIATION_AND_DBF_1_2_FREEZE.md",
+  "sha256": "2dcaac3b9cfd29e70bf7d2bedaaaa20539fa33ec990b939fdcefb21dcedd7aab",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "RESOLVE_POWER_HOLD_AND_FREEZE_DBF_1_2",
+   "utc": "2026-10-10T13:00:02.998Z",
+   "text_sha256": "492e9cbcc0c0119b94d331ccb631e715354174ed9caf770a3f2eb76673a3128f",
+   "chars": 4850
+  }
+ ],
+ "checkpoint_at_decision": "779208f",
+ "reconciliation": [
+  "1. the DBF1-H1-06 650 W lower bound (= P6 P-12 PD-LOW allocation) governs the DBF-1.2 AIR 12 mN design point (option A)",
+  "2. the DCR-001 v5 596 / 600 W discharge figures are historical model predictions, not governing power allocations; the DCR-001 records are not edited",
+  "3. the Xe 25 mN discharge allocations use the authoritative P6 ledger (power_ledger_v1.json): P-XE non-discharge load, discharge-chain efficiency 0.850725, RF bus conversion from the P6 rf_trade_line; the DCR-001 v4 values (412.5 W, 0.855, +129 W) are superseded for the active roll-up",
+  "4. no physical architecture change occurred (intake, compressor, plenum, Hall geometry, ICP, AIR sizing flow, operating concept, mass roll-up, PPU, Xe hardware, MR-DCR001-01, host interface unchanged)",
+  "5. no DCR is required: no frozen hardware / design value changes; this reconciles the DBF-1.2 power roll-up to the already-frozen power boundary"
+ ],
+ "owner_decision_summary": {
+  "air_point": "H1 P_d = 650 W at the AIR 12 mN design point (design allocation / operating point, not measured performance); ~12.5 mN at that point is MODEL-DERIVED / NOT VALIDATED and never frozen as demonstrated thrust",
+  "air_bus": "reference and conservative AIR bus power recomputed in the builder from the P6 ledger + DBF-1.2 compressor loads; both < 1350 W and < 1500 W",
+  "xe_25mN": "design capability requirement; Hall discharge allocation <= 876 W (nominal ICP) / <= 748 W (+100 W RF) at the 1450 W design ceiling; < 918.6 / < 790.0 W at the RFP < 1500 W boundary; the ~658 W RP-1 Xe result stays PARAMETRIC / NOT_VALIDATED",
+  "build": "A9.42 stop condition resolved; resume the deterministic DBF-1.2 build and freeze"
+ },
+ "inputs": {
+  "docs/closure/power/power_ledger_v1.json": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a",
+  "docs/decisions/OD_2026_10_10_A9_42_build_and_freeze_dbf_1_2.json": "2928f44a66705708d75e6f56ad175536f41489e4c7437fd46f0e480415c65a24"
+ }
+}

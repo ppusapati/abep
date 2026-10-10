@@ -1,0 +1,659 @@
+{
+ "schema": "abep_bid_source_manifest_v1",
+ "id": "BID-SOURCE-MANIFEST-V1",
+ "date": "2026-10-05",
+ "status": "FROZEN_BID_RECORD_GUARD_MANIFEST",
+ "record_kind": "guard manifest of the frozen bid record (A9.29 sec. 3, RM-OQ-11). It is not a technical source, not a package commit and not a re-freeze; it changes nothing in the bid record. It is the only path under docs/bid/ that is not a file of the terminal package state.",
+ "governing_records": [
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md",
+   "sha256": "5c223f6df59f579deb1ef4788fecf5857c6fa3ff4f365f23738b2c1b7f251989"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_29_rust_plan_v3_1_rulings_and_start_authorization.json",
+   "sha256": "51645f0ea6d0a2b02e029694ca6714854011be45cbe3d6adca53ce975453fc8d"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_28_RUST_PLAN_RULINGS_AND_SIMULATION_COMPLETION_DIRECTIVE.md",
+   "sha256": "7877bdc923fb07876b211924965767800f4f3a8efc46095f4dc3d471733fb54c"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_28_rust_plan_rulings_and_simulation_completion_directive.json",
+   "sha256": "928e0588a635c7df5795b917863cd2035875da6d39cbee2756164deecc2e41e2"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_27_FINAL_BID_OWNER_RULINGS.md",
+   "sha256": "ec775c1c2126b5aa5a7f5350a55a7e080d2d771b449fdb6a2d8a11cb2dd3a577"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_05_A9_27_final_bid_owner_rulings.json",
+   "sha256": "858577587beec007d1131acc17b17ce47f9c46c12d3c00021b7010715460a2fe"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md",
+   "sha256": "159ea2049e3cc05ce7a18b3e6bbdf6fee97c168a74f23fd2359cfef3a1d26106"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_04_A9_25_pre_bid_owner_decisions.json",
+   "sha256": "c05fcc45de0194e60ef30b93aa91294c54a7762d129dac69e933e9a679679385"
+  },
+  {
+   "path": "docs/rust_migration/programme_v3_1.json",
+   "sha256": "b595c4fc740223cb8da10886c358410ffab2cfd38befbe97543237d1b4dee70f"
+  },
+  {
+   "path": "docs/rust_migration/CI_PLAN.md",
+   "sha256": "12e185d99f1e49ea92bd7a62bd47200adaa6374290c429f4dff5970cfacdf0bc"
+  }
+ ],
+ "rule": "A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state; any later change to the historical bid package requires a new explicit owner decision and must not silently alter the frozen bid record. A change is admitted only through owner_change_authorizations, each naming such a decision record.",
+ "technical_source": {
+  "commit": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b",
+  "tree": "ea963c1d26ebb6b1cdd76f7896f0e4821119eeeb",
+  "role": "TECHNICAL SOURCE SHA: code, configs, architecture, engineering records and numerical outputs of the bid (A9.25 msg 8 sec. 13 two-SHA discipline)",
+  "pinned_by": "docs/bid/bid_technical_baseline_v2.json bid_technical_source.commit",
+  "file_set_rule": "every file at the technical source that the package cites (compliance_matrix_v1.json evidence_at_technical_source paths, gates_at_technical_source sources, the mass roll-up record, and backticked repository paths in the package Markdown, excluding docs/bid/ and tests/test_bid_package.py: the tests/test_bid_package.py::_cited_paths rule) or that the package builder reads (source_facts.Source.text during build_package.build_all); docs/decisions/OD_2026_10_05_A9_27_final_bid_owner_rulings.json is read by the builder but is not present at the technical source (post-source decision, pinned in the package record)",
+  "files": {
+   "CLAUDE.md": {
+    "sha256": "c70b83d43608e2b953b790ee61e44380484eb2a02f69bda3a203ea6996920436",
+    "bytes": 33046,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json": {
+    "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+    "bytes": 213965,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "abep_sim/data/atmosphere_msis21_v1.json": {
+    "sha256": "38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160",
+    "bytes": 421,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "config/constraints/engineering_constraints_v1.json": {
+    "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+    "bytes": 10822,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "config/mission/mission_scenario_v2.json": {
+    "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+    "bytes": 7775,
+    "cited": false,
+    "read_by_builder": true
+   },
+   "docs/EVIDENCE.md": {
+    "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
+    "bytes": 16183,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json": {
+    "sha256": "c8d4455d364ade56b3431218f03a6cfe57e5df7c64e3491febcb41475d42a11c",
+    "bytes": 600159,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json": {
+    "sha256": "d086b981e7cb8ff6c6096e7768d89de0b9d8c5ad760308672a90ec75b97b718d",
+    "bytes": 83497,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "docs/architecture_comparison/failure_tree/failure_trees_v1.json": {
+    "sha256": "5b81c1e99fd7ed9a4fbb4f3e4ef0abda5a753af668ffb20003a3888cb0365d93",
+    "bytes": 280695,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json": {
+    "sha256": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980",
+    "bytes": 127818,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json": {
+    "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+    "bytes": 343475,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json": {
+    "sha256": "8240f49dbdfe9eef3dc2a1ab854a276e27a8eb435ddb2f6c62e48be5e511e0fe",
+    "bytes": 253258,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/chemistry/n2_domain_extension/dx5/dx5_evidence_v1.json": {
+    "sha256": "d6240659bb9e81dac0d9fa20ca7f608ddf2b6bd60147689b64d0d01d304cbcea",
+    "bytes": 297323,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "docs/chemistry/o_o2/v0/build_tables_nist107_o.py": {
+    "sha256": "5183535a0938bafde03551780ebe781645b208fbd5a311d727af20c6d4822a3b",
+    "bytes": 10216,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/chemistry/o_o2/v0/channel_status_v0.json": {
+    "sha256": "162544f109211ad67c15a5f64a124a3d49853051aa6cb20d53d3cdf922d61a18",
+    "bytes": 12417,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json": {
+    "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "bytes": 2651,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json": {
+    "sha256": "78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549",
+    "bytes": 2534,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md": {
+    "sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7",
+    "bytes": 14083,
+    "cited": false,
+    "read_by_builder": true
+   },
+   "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json": {
+    "sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c",
+    "bytes": 5836,
+    "cited": false,
+    "read_by_builder": true
+   },
+   "docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md": {
+    "sha256": "159ea2049e3cc05ce7a18b3e6bbdf6fee97c168a74f23fd2359cfef3a1d26106",
+    "bytes": 76237,
+    "cited": false,
+    "read_by_builder": true
+   },
+   "docs/decisions/OD_2026_10_04_A9_25_pre_bid_owner_decisions.json": {
+    "sha256": "c05fcc45de0194e60ef30b93aa91294c54a7762d129dac69e933e9a679679385",
+    "bytes": 8593,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/decisions/OD_2026_10_05_A9_26_MASS_BUDGET_OWNER_DECISIONS.md": {
+    "sha256": "5f40294de9ab736cedd7a24a393b0333823c2624e3469f6b1f775250a85803e5",
+    "bytes": 13698,
+    "cited": false,
+    "read_by_builder": true
+   },
+   "docs/decisions/OD_2026_10_05_A9_26_mass_budget_owner_decisions.json": {
+    "sha256": "18dada24a90fb1a5d17e903bf8eb9f77af622106f9ddfc59ea1f182054b80b76",
+    "bytes": 3330,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json": {
+    "sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+    "bytes": 3147,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json": {
+    "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+    "bytes": 9609,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json": {
+    "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e",
+    "bytes": 36690882,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json": {
+    "sha256": "abd5989e56fb49772e8d49a5f88afc7ab3165b485eff2f792fb598d77c89f1d2",
+    "bytes": 82469,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json": {
+    "sha256": "6871975696f7b40dac897c52b529266eb053ecbf4ea7ab17cb3e3fbdac73a27b",
+    "bytes": 109402,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json": {
+    "sha256": "fffb223023f944f166112acf017af277a50ede84695cb78f933dd5ca918fd3a9",
+    "bytes": 1087597,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json": {
+    "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450",
+    "bytes": 127694,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json": {
+    "sha256": "39ae59e6a9fd1ea2c1a08daf24d9debd70ace536f252d06ae2b7e8887347fbb8",
+    "bytes": 262199,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/design_synthesis/spacecraft_reference_drag/spacecraft_reference_drag_v1.json": {
+    "sha256": "5415f3f2cfdc403c7e23a80cde68eebc8f5bc66868793133094cf0670f9cb39f",
+    "bytes": 55563,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json": {
+    "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+    "bytes": 364946,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json": {
+    "sha256": "cdd4b04d79fbee4e22d76d2734bb170ce5e8a8eab54b47e93c0b6e15dd8a0a87",
+    "bytes": 326134,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json": {
+    "sha256": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a",
+    "bytes": 198333,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json": {
+    "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b",
+    "bytes": 373870,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json": {
+    "sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+    "bytes": 31148,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/experiments/hardware/hardware_requirements_v1.json": {
+    "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0",
+    "bytes": 155931,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/experiments/instrumentation/instrumentation_definition_v1.json": {
+    "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+    "bytes": 137773,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/experiments/lifetime_ao/ao_lifetime_register_v5.json": {
+    "sha256": "fea8aa05bd561d5ea559b934803d472f1fb1ed1013bfa925a5afb6c68a33e637",
+    "bytes": 185377,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/forensics/p5_n2_v1/ood_attribution/ood_attribution.json": {
+    "sha256": "5c69fe1b4507566b11a69ab442c68362d5d2f52adda2bddd85ae11a2b8592660",
+    "bytes": 189928,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": {
+    "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+    "bytes": 197173,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json": {
+    "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+    "bytes": 156020,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md": {
+    "sha256": "d346bcc5a5edc4a4dfa289010c8e48371477a0f3548a5e9dcf8886b6f55dbe77",
+    "bytes": 112903,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "docs/procurement/rfq_a9_v3/rfq_a9_v3.json": {
+    "sha256": "2252523956cd8b281fb33cae2d18fe38028b8b43ad3e5e424cceafed35bef300",
+    "bytes": 1711279,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/procurement/rfq_a9_v3_gas_rev1/rfq3_gas_rev1.json": {
+    "sha256": "ef42ace4c1711b05fd0215c5bee52c05d94d78decaf969920d9363258a32d7d2",
+    "bytes": 12870,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/requirements/rfp_official/rfp_registration_v1.json": {
+    "sha256": "c126be5eef7b9ec6340776ed035eeaa0ced1c4dd2ec585383f3d3a5977d174a0",
+    "bytes": 36533,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/requirements/rvm_a9/rvm_a9_v1.json": {
+    "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4",
+    "bytes": 621994,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "docs/v2/question_a/QUESTION_A_DISPOSITION.json": {
+    "sha256": "bdf3b404c8dc90ee72e3c4b43025d447e57d5aff167fb286e46b703a66d89cd2",
+    "bytes": 3948,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "hallthruster_bridge/PINNED.toml": {
+    "sha256": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280",
+    "bytes": 6097,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "hallthruster_bridge/ensemble/transport_ensemble_v0.json": {
+    "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
+    "bytes": 17327,
+    "cited": true,
+    "read_by_builder": true
+   },
+   "hallthruster_bridge/propellants/rate_validity.toml": {
+    "sha256": "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a",
+    "bytes": 18905,
+    "cited": true,
+    "read_by_builder": false
+   },
+   "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json": {
+    "sha256": "0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c",
+    "bytes": 2850,
+    "cited": true,
+    "read_by_builder": true
+   }
+  }
+ },
+ "package_lineage": [
+  {
+   "commit": "b5849affae22a6709ad217a184f6fe896d15410a",
+   "role": "bid package / freeze-record commit: bid_technical_baseline_v2 pinned to technical source 5eee4b8, package regenerated from it",
+   "named_by": "A9.25 message 8 secs. 12-14; A9.27 preamble",
+   "docs_bid_tree": "dc1eb24639789a0c206ab2a7b9a5d9adb19bd563",
+   "files": {
+    "docs/bid/OWNER_DECISION_BRIEF_P0_P1.md": {
+     "sha256": "1c1b0807b3cd7e249bd47e13973faaf6e6c8fe31bd7ac3ab836d63efb8d8ddd3",
+     "bytes": 100970
+    },
+    "docs/bid/bid_technical_baseline.json": {
+     "sha256": "2372ee7c7d847eb69181c2b5f0fd7f18b6eaace85605638b73d5cefd1c4c22ff",
+     "bytes": 2024
+    },
+    "docs/bid/bid_technical_baseline_v2.json": {
+     "sha256": "987a0d4eb9a4dc7b93b71ca2b338c9245bae63610c79ce0ecfff4ce721b60d1d",
+     "bytes": 14617
+    },
+    "docs/bid/owner_decision_brief_p0_p1.json": {
+     "sha256": "f18ddccc71bae058dea5f5656a6a99864a24938997050caeeead6819df13fd41",
+     "bytes": 172274
+    },
+    "docs/bid/package/01_COMPLIANCE_MATRIX.md": {
+     "sha256": "e321568a9c031af0565bc37f8dbddb3f9845468633a532415110aa2630231520",
+     "bytes": 54062
+    },
+    "docs/bid/package/02_TECHNICAL_APPROACH.md": {
+     "sha256": "57b69348f0221fa188216d20dbb8235ca19a9cd144fc6c941d72cbf330f796e0",
+     "bytes": 23251
+    },
+    "docs/bid/package/03_DEVELOPMENT_AND_TEST_PLAN.md": {
+     "sha256": "b78b4594d11604da031ef683804b20eb06149807f130e7cdd2e5bbf6e14052cf",
+     "bytes": 13642
+    },
+    "docs/bid/package/04_RISK_REGISTER.md": {
+     "sha256": "48aa0c60011c04ebc19ac567f2fae950460d5a941a1c616f085dca6f99accc01",
+     "bytes": 12600
+    },
+    "docs/bid/package/05_PROGRAMMATIC_SECTIONS.md": {
+     "sha256": "0be415f4ebea1b4ce1fcd7232fe10c615217b01695e1be0062a41c00cb5c72af",
+     "bytes": 7077
+    },
+    "docs/bid/package/README.md": {
+     "sha256": "513e45b518080ab0b976377f745fd85b82a963d0ea611402a4e6918c7c8ad00f",
+     "bytes": 13130
+    },
+    "docs/bid/package/build_package.py": {
+     "sha256": "750793d330c46cbc8b8ef3774549ac44984f932470e0f9cc05402ee9bc7e212f",
+     "bytes": 38138
+    },
+    "docs/bid/package/compliance_data.py": {
+     "sha256": "95b418f921886bbb4358c40f7cfae437a978cb330d29e097bf69cc8deb0691fe",
+     "bytes": 46241
+    },
+    "docs/bid/package/compliance_matrix_v1.json": {
+     "sha256": "82c20ee322fba6eab8eb600053b0bd95934ff6e7df5ba5563068b08d4d41108c",
+     "bytes": 71448
+    },
+    "docs/bid/package/docx/01_COMPLIANCE_MATRIX.docx": {
+     "sha256": "eb16527af3e585ca583719adfdb931ff8cf58453f15024ad98ee0effd5df89e2",
+     "bytes": 54129
+    },
+    "docs/bid/package/docx/02_TECHNICAL_APPROACH.docx": {
+     "sha256": "b6ff5c01e4e6e17aec74125902b5cc7afc3a7b28c42759e8f459a1669197d065",
+     "bytes": 47470
+    },
+    "docs/bid/package/docx/03_DEVELOPMENT_AND_TEST_PLAN.docx": {
+     "sha256": "e25d46d569d7cdc6628e08a78f8b309b3c313bb8ad29613e18d12bdd955d1619",
+     "bytes": 42895
+    },
+    "docs/bid/package/docx/04_RISK_REGISTER.docx": {
+     "sha256": "ddd56eb96500431ef3e0b4c08ba2abc4f6e2e9cf923f3bda42be300ee8c9796f",
+     "bytes": 42506
+    },
+    "docs/bid/package/docx/05_PROGRAMMATIC_SECTIONS.docx": {
+     "sha256": "3a98c730b89df2f9558a28250d59d939995483f495adc75dd3187a10ee939883",
+     "bytes": 40111
+    },
+    "docs/bid/package/docx/README.docx": {
+     "sha256": "48d4efc2d1d11728a59450cc51ca8dfe15f18b524d874a529189758c4c183221",
+     "bytes": 42830
+    },
+    "docs/bid/package/source_facts.py": {
+     "sha256": "222c316256014d1f0f6ec48a1914b8722cfdb66cc07fa97c860df0b43ee07b14",
+     "bytes": 13866
+    },
+    "docs/bid/package/templates/02_TECHNICAL_APPROACH.md": {
+     "sha256": "d206e26875be3156459bbeffbd41f9ac5e66a127399349a37186bf81cf187358",
+     "bytes": 19163
+    },
+    "docs/bid/package/templates/03_DEVELOPMENT_AND_TEST_PLAN.md": {
+     "sha256": "0fbf259f2876f39635a4137223beeb2afe520a71046d9d67b37942b8ecac226e",
+     "bytes": 8036
+    },
+    "docs/bid/package/templates/04_RISK_REGISTER.md": {
+     "sha256": "29a25dbb9ca2d263d4f8c64044e334d0a913f6c2fdf72a14e741303c27666aa6",
+     "bytes": 11648
+    },
+    "docs/bid/package/templates/05_PROGRAMMATIC_SECTIONS.md": {
+     "sha256": "959b1c0c7253fdf09a3d70ac3738908fd22d96953c2134a8a56aff781870b71b",
+     "bytes": 7044
+    },
+    "docs/bid/package/templates/README.md": {
+     "sha256": "03be7b4cf6e228ee50349a11ccca344199c0e43b190656ad862aa6ea51517fcc",
+     "bytes": 5734
+    }
+   }
+  },
+  {
+   "commit": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2",
+   "role": "A9.27 package-level post-source bid text update (RFP-P19-03, RFP-P18-08 split, OIR-DOC-01, Part IV(A)-(H) submission checklist); still pins 5eee4b8; named PACKAGE / FREEZE RECORD by A9.28 msg 2 sec. 1 and terminal owner-authorized package state by A9.29 sec. 3",
+   "named_by": "A9.27 (package_level_post_source_allowed); A9.28 msg 2 sec. 1; A9.29 sec. 3",
+   "decision_records": [
+    {
+     "path": "docs/decisions/OD_2026_10_05_A9_27_FINAL_BID_OWNER_RULINGS.md",
+     "sha256": "ec775c1c2126b5aa5a7f5350a55a7e080d2d771b449fdb6a2d8a11cb2dd3a577"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_05_A9_27_final_bid_owner_rulings.json",
+     "sha256": "858577587beec007d1131acc17b17ce47f9c46c12d3c00021b7010715460a2fe"
+    }
+   ],
+   "docs_bid_tree": "37dfe52cb6d1f32c23aab5ccb21866093183ce61",
+   "files": {
+    "docs/bid/OWNER_DECISION_BRIEF_P0_P1.md": {
+     "sha256": "1c1b0807b3cd7e249bd47e13973faaf6e6c8fe31bd7ac3ab836d63efb8d8ddd3",
+     "bytes": 100970
+    },
+    "docs/bid/bid_technical_baseline.json": {
+     "sha256": "2372ee7c7d847eb69181c2b5f0fd7f18b6eaace85605638b73d5cefd1c4c22ff",
+     "bytes": 2024
+    },
+    "docs/bid/bid_technical_baseline_v2.json": {
+     "sha256": "259aa09e1c5bc1b2745f573c70e876537a7312e360f10831c76163d91e374dfb",
+     "bytes": 15593
+    },
+    "docs/bid/owner_decision_brief_p0_p1.json": {
+     "sha256": "f18ddccc71bae058dea5f5656a6a99864a24938997050caeeead6819df13fd41",
+     "bytes": 172274
+    },
+    "docs/bid/package/01_COMPLIANCE_MATRIX.md": {
+     "sha256": "19c2966f385a1bfdc1a01bc4413575f775fe8bd72a6d06f2c1ba0a4984481eba",
+     "bytes": 54883
+    },
+    "docs/bid/package/02_TECHNICAL_APPROACH.md": {
+     "sha256": "131d3763022bc27983a758aea677379e058e2fbd4add96f2a382ba7537fb657f",
+     "bytes": 23415
+    },
+    "docs/bid/package/03_DEVELOPMENT_AND_TEST_PLAN.md": {
+     "sha256": "b78b4594d11604da031ef683804b20eb06149807f130e7cdd2e5bbf6e14052cf",
+     "bytes": 13642
+    },
+    "docs/bid/package/04_RISK_REGISTER.md": {
+     "sha256": "2f9683b35ef6cd66546a59b1371875dea41ea487f23a9c79559073b9cf00a45d",
+     "bytes": 12691
+    },
+    "docs/bid/package/05_PROGRAMMATIC_SECTIONS.md": {
+     "sha256": "dcd0bd8efb9d47b7dc062b9047c206d062133e08ea5648723a25effba176c5da",
+     "bytes": 7257
+    },
+    "docs/bid/package/06_SUBMISSION_CHECKLIST.md": {
+     "sha256": "3e99ca675dc245749a7732d0dbfd066ae3314ef6f4c5a68fa5756c0b53d27b64",
+     "bytes": 5048
+    },
+    "docs/bid/package/README.md": {
+     "sha256": "825443b67087656084740c2a6926e513999c44c87979f74691d624d65c57a17f",
+     "bytes": 14207
+    },
+    "docs/bid/package/build_package.py": {
+     "sha256": "fd2e863dc16a5d1d41efd29eda0c95d8749d4e347c2783ab17a64a2730a85041",
+     "bytes": 38418
+    },
+    "docs/bid/package/compliance_data.py": {
+     "sha256": "50985899f7f43f5cd63bc4d5aec2b21e68b729ee8ec1410b74a96f62e77a8072",
+     "bytes": 49418
+    },
+    "docs/bid/package/compliance_matrix_v1.json": {
+     "sha256": "9c60b1e6bfa831f8bd88fb33c2a65be93293c68cc36f75094cf326fd09be77a1",
+     "bytes": 73192
+    },
+    "docs/bid/package/docx/01_COMPLIANCE_MATRIX.docx": {
+     "sha256": "e5ea25e8da3792dc64105564bc04079f50a76bde9c29e67c1c4adf581dacc777",
+     "bytes": 54458
+    },
+    "docs/bid/package/docx/02_TECHNICAL_APPROACH.docx": {
+     "sha256": "cf6e1a1c70cec0950565739a28a407ea0e40b16df22fcf6638009101c5a10709",
+     "bytes": 47557
+    },
+    "docs/bid/package/docx/03_DEVELOPMENT_AND_TEST_PLAN.docx": {
+     "sha256": "5f9247a5af4d434b08fc930d50e2716e041de8f29eafa728b53281e0e64fa8bd",
+     "bytes": 42895
+    },
+    "docs/bid/package/docx/04_RISK_REGISTER.docx": {
+     "sha256": "18888bbe6b2eba07be5b47ded2d04f754bc58b4dc63c1ebe4f6835e09c021322",
+     "bytes": 42547
+    },
+    "docs/bid/package/docx/05_PROGRAMMATIC_SECTIONS.docx": {
+     "sha256": "bc5a34e2dd43a658c257dbca1f9ecdde1b7bd1e9c11b3612a48b035de8157e1d",
+     "bytes": 40201
+    },
+    "docs/bid/package/docx/06_SUBMISSION_CHECKLIST.docx": {
+     "sha256": "77078caaa41e78c3b09171b5126960ca374a1e50e567da0bbef2522de8c65d56",
+     "bytes": 39297
+    },
+    "docs/bid/package/docx/README.docx": {
+     "sha256": "c4289b7a3ac4bbf36ad47cf0ff25d94b6d2ea65eae44ed7d0fe9c460f9ef539e",
+     "bytes": 43201
+    },
+    "docs/bid/package/source_facts.py": {
+     "sha256": "222c316256014d1f0f6ec48a1914b8722cfdb66cc07fa97c860df0b43ee07b14",
+     "bytes": 13866
+    },
+    "docs/bid/package/templates/02_TECHNICAL_APPROACH.md": {
+     "sha256": "e86e1b1a84d5ac7f3fc03c356cabf3f433d3c7d72a654d4c3b93b911aad12bf6",
+     "bytes": 19327
+    },
+    "docs/bid/package/templates/03_DEVELOPMENT_AND_TEST_PLAN.md": {
+     "sha256": "0fbf259f2876f39635a4137223beeb2afe520a71046d9d67b37942b8ecac226e",
+     "bytes": 8036
+    },
+    "docs/bid/package/templates/04_RISK_REGISTER.md": {
+     "sha256": "83c0601c5e3389cc2cf028a9639ef655ac83d2a8fc54b75bfeb38ce183ef6bc7",
+     "bytes": 11739
+    },
+    "docs/bid/package/templates/05_PROGRAMMATIC_SECTIONS.md": {
+     "sha256": "76d9c6b8a420b9f2f8a6b0973fe861e64578039a134336d4c9555718c1f74afe",
+     "bytes": 7224
+    },
+    "docs/bid/package/templates/06_SUBMISSION_CHECKLIST.md": {
+     "sha256": "992755fba7ca62a59b625de5a69d84b973a655ee819faaa99cea78224a2f985b",
+     "bytes": 5020
+    },
+    "docs/bid/package/templates/README.md": {
+     "sha256": "e2d8b9efa291118ed652b90b2a56eb942fae03b817ece740cc72527b6ad9408e",
+     "bytes": 5897
+    }
+   }
+  }
+ ],
+ "lineage_text": "b5849af -> 2de86ab",
+ "terminal_package_state": {
+  "commit": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2",
+  "rule": "the protected file set is the terminal (last) lineage entry's file map: docs/bid/** must equal its bytes; the manifest is the only other path allowed under docs/bid/"
+ },
+ "protected_root": "docs/bid/",
+ "manifest_path": "docs/bid/bid_source_manifest_v1.json",
+ "mission_scenario_v2": {
+  "path": "config/mission/mission_scenario_v2.json",
+  "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+  "bytes": 7775,
+  "rule": "immutable after the freeze; a later semantic change is mission_scenario_v3 with its own pin (programme_v3_1 bid_boundary.mission_scenario_v2)"
+ },
+ "migration_state_at_freeze": {
+  "source": "programme_v3_1.json bid_boundary.proposed_guard (d)",
+  "python_authoritative": "every component of component_inventory_v3_1.json (inventoried at 2de86ab)",
+  "kernel_1": {
+   "status": "ADMITTED as an optional backend (abep_core trace kernels K1-K5)",
+   "default_backend": "python",
+   "default_backend_source": "abep_sim/design/tpmc_backend.py DEFAULT_BACKEND at 5eee4b8",
+   "admission_evidence": "docs/performance/abep_core/parity_report_v2.json"
+  },
+  "rust_workspace": "absent at 5eee4b8 and 2de86ab (no Cargo.toml, no crates/)"
+ },
+ "ignored_generated_artifacts": [
+  {
+   "pattern": "**/__pycache__/*.pyc",
+   "reason": "gitignored Python bytecode written in the working tree when tests import docs/bid/package/*.py; working tree only, never a committed file"
+  }
+ ],
+ "owner_change_authorizations": [],
+ "owner_change_authorization_rule": "each entry: {decision_record: {path: docs/decisions/OD_*, sha256}, changes: [{path under docs/bid/, action MODIFY | ADD | REMOVE, sha256_after (MODIFY / ADD)}]}; an invalid entry grants nothing (acceptance_v1 semantics owner_change_authorizations)",
+ "guard": {
+  "rust": "crates/abep-provenance/src/bid_guard.rs (abep_provenance::bid_guard)",
+  "python": "scripts/ci_checks.py check bid_source_guard (while Python CI exists)",
+  "acceptance": "docs/rust_migration/contracts/BID_SOURCE_GUARD/acceptance_v1.json",
+  "history_requirement": "full git history (actions/checkout fetch-depth: 0); in a shallow clone the history part is NOT_EVALUATED and the guard does not pass"
+ },
+ "generation": {
+  "method": "generated once from git objects: git ls-tree / git cat-file at b5849af, 2de86ab and 5eee4b8, git rev-parse for the tree ids; every value is re-verified by the guard's history part",
+  "working_tree_check": "git diff --stat 2de86ab HEAD -- docs/bid was empty at 1a852c530115c338ecfe2ad0cebf9cdd8136de7a and every terminal file sha256 equals the working tree"
+ }
+}

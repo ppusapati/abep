@@ -20,7 +20,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import bisect
 import hashlib
 import json
 import math
@@ -33,6 +32,12 @@ LANE_DIR = REPO / "docs" / "hardware" / "h1_freeze_candidate"
 JSON_PATH = LANE_DIR / "h1_freeze_candidate_v1.json"
 MD_PATH = LANE_DIR / "H1_FREEZE_CANDIDATE.md"
 REL_SELF = "docs/hardware/h1_freeze_candidate/build_h1_freeze_candidate.py"
+sys.path.insert(0, str(LANE_DIR))
+import a9_16_h1 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
+import a9_19_h1 as A19  # noqa: E402  (A9.19 / A9.20 owner-decision application, design + experiments lane)
+sys.path.insert(0, str(REPO / "docs" / "experiments" / "hall_icp" / "programme"))
+import hw_programme_a9_21 as PROG  # noqa: E402  (A9.21 HW_PROGRAMME order, items 6 and 11)
+from abep_sim import h1_geometry as _H1G  # noqa: E402  (A9.22: geometric_admissibility library)
 BASE_COMMIT = "1c9d7a648cd4ce739e587248693271e5115698e1"
 DATE = "2026-10-01"
 
@@ -64,6 +69,18 @@ PINS = {
             "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083"),
     "H27": ("docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json",
             "d1813e153af37ebd45cb2ead964ead6c53c756d1a82f93ea89346a83168d0630"),
+    # A9.16 step 1: owner decisions applied to this record (immutable decision files; verbatim .md governs)
+    "A912": (A16.L.DECISIONS["A9.12"][0], A16.L.DECISIONS["A9.12"][1]),
+    "A912_MD": (A16.L.LOADED["A9.12"]["md"], A16.L.LOADED["A9.12"]["md_sha256"]),
+    "A914": (A16.L.DECISIONS["A9.14"][0], A16.L.DECISIONS["A9.14"][1]),
+    "A914_MD": (A16.L.LOADED["A9.14"]["md"], A16.L.LOADED["A9.14"]["md_sha256"]),
+    "A915": (A16.L.DECISIONS["A9.15"][0], A16.L.DECISIONS["A9.15"][1]),
+    "A915_MD": (A16.L.LOADED["A9.15"]["md"], A16.L.LOADED["A9.15"]["md_sha256"]),
+    # A9.19 / A9.20 (pinned in abep_sim/design/a9_19_architecture.py)
+    "A919": (A19.A.DECISIONS["A9.19"]["json"], A19.A.DECISIONS["A9.19"]["json_sha256"]),
+    "A919_MD": (A19.A.DECISIONS["A9.19"]["md"], A19.A.DECISIONS["A9.19"]["md_sha256"]),
+    "A920": (A19.A.DECISIONS["A9.20"]["json"], A19.A.DECISIONS["A9.20"]["json_sha256"]),
+    "A920_MD": (A19.A.DECISIONS["A9.20"]["md"], A19.A.DECISIONS["A9.20"]["md_sha256"]),
     "P5B16": ("hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
               "65216f4d713be929b9c59f101711301d933df7b2ae1ed3478b36aa3772926625"),
     "P5B30": ("hallthruster_bridge/bfield/p5_vacuum_Br_centerline_3p0kW.csv",
@@ -74,11 +91,12 @@ CONSUMED = {
     "A9REV": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
     "ICD": "schemas/interfaces/icp_neutralizer_icd_v1.json",
     "HWREQ": "docs/experiments/hardware/hardware_requirements_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "MP2": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "M16": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "OQ4": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "OQ5": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "PREREG": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
     "ENS": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
     "VAL": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
@@ -834,10 +852,8 @@ def build_parameters() -> list:
 # --------------------------------------------------------------------------------------------------------------------
 # geometric admissibility (interface to F7: x_Hall bounds; fail closed; never a PASS)
 # --------------------------------------------------------------------------------------------------------------------
-# The H2-1 windows and corners are published to 4 significant figures; window edges are compared with this relative
-# rounding allowance so that the published corners themselves are not rejected by their own rounding. It is a
-# publication-rounding treatment, not a physical tolerance.
-ROUNDING_REL = 1e-3
+# publication-rounding allowance of the H2-1 window edges (abep_sim/h1_geometry.py, A9.22 library)
+ROUNDING_REL = _H1G.ROUNDING_REL
 
 
 def x_hall_definition() -> dict:
@@ -862,45 +878,9 @@ def x_hall_definition() -> dict:
 
 def geometric_admissibility(h_mm: float, d_mean_mm: float, L_mm: float, assumptions: str = "worst_case_assumptions",
                             xdef: dict | None = None) -> dict:
-    """Check a candidate (h, d_mean, L) against the declared H-1 geometric windows only.
-
-    Returns WITHIN_DECLARED_GEOMETRIC_WINDOWS or OUTSIDE_DECLARED_GEOMETRIC_WINDOWS (or OUT_OF_DOMAIN for an h outside
-    the tabulated inner-coil floor). It is never a PASS: FEMM, thermal, supply, mass and every Hall performance
-    quantity stay NOT_EVALUATED. Between tabulated h rows the larger (upper-row) floor is used (conservative)."""
-    xdef = xdef or x_hall_definition()
-    c = xdef["constraints"]
-    if not all(isinstance(v, (int, float)) and math.isfinite(v) and v > 0 for v in (h_mm, d_mean_mm, L_mm)):
-        return {"status": "OUT_OF_DOMAIN", "violations": ["non-finite or non-positive input"],
-                "not_evaluated": xdef["not_evaluated"], "performance": "NOT_EVALUATED"}
-    floors = c["inner_coil_solid_core_floor_mm"]
-    if assumptions not in next(iter(floors.values())):
-        raise ValueError(f"unknown assumption set {assumptions!r}")
-    hs = sorted(float(k) for k in floors)
-    if h_mm < hs[0] or h_mm > hs[-1]:
-        return {"status": "OUT_OF_DOMAIN", "violations": [f"h {h_mm} mm outside the tabulated floor range "
-                                                          f"[{hs[0]}, {hs[-1]}] mm"],
-                "not_evaluated": xdef["not_evaluated"], "performance": "NOT_EVALUATED"}
-    k = bisect.bisect_left(hs, h_mm)
-    key = {float(kk): kk for kk in floors}[hs[k]]
-    floor = floors[key][assumptions]
-    viol = []
-    area_cm2 = math.pi * h_mm * d_mean_mm / 100.0
-    tol = ROUNDING_REL
-    a0, a1 = c["area_window_cm2"]
-    if not (a0 * (1 - tol) <= area_cm2 <= a1 * (1 + tol)):
-        viol.append(f"area {area_cm2:.4g} cm^2 outside [{a0}, {a1}]")
-    r0, r1 = c["d_over_h_window"]
-    if not (r0 * (1 - tol) <= d_mean_mm / h_mm <= r1 * (1 + tol)):
-        viol.append(f"d_mean/h {d_mean_mm / h_mm:.4g} outside [{r0}, {r1}]")
-    l0, l1 = c["L_over_h_window"]
-    if not (l0 * (1 - tol) <= L_mm / h_mm <= l1 * (1 + tol)):
-        viol.append(f"L/h {L_mm / h_mm:.4g} outside [{l0}, {l1}]")
-    if d_mean_mm < floor:
-        viol.append(f"d_mean {d_mean_mm} mm below the inner-coil solid-core floor {floor} mm ({assumptions}, h row "
-                    f"{key} mm)")
-    return {"status": "OUTSIDE_DECLARED_GEOMETRIC_WINDOWS" if viol else "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
-            "violations": viol, "floor_row_h_mm": key, "floor_mm": floor, "assumptions": assumptions,
-            "not_evaluated": xdef["not_evaluated"], "performance": "NOT_EVALUATED"}
+    """Check a candidate (h, d_mean, L) against the declared H-1 geometric windows only (library implementation
+    abep_sim/h1_geometry.py since A9.22; this builder supplies its own window definition by default)."""
+    return _H1G.geometric_admissibility(h_mm, d_mean_mm, L_mm, assumptions, xdef or x_hall_definition())
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -996,6 +976,8 @@ def build_document() -> dict:
                          "response-domain statement must be revisited before rebuilding")
 
     params = build_parameters()
+    a916_touched = A16.apply_to_parameters(params, FEMM, COUPLED)
+    a919_touched = A19.apply_to_parameters(params)
     ids = [p["id"] for p in params]
     assert len(ids) == len(set(ids))
 
@@ -1054,6 +1036,7 @@ def build_document() -> dict:
         "status": "DRAFT_IMPLEMENTATION_FIRST_PENDING_CONSOLIDATED_VERIFICATION",
         "architecture_status": "INVESTIGATION_HYPOTHESIS",
         "article_freeze_state": "NOT_FROZEN (OPEN / TBD items remain; FREEZE_CANDIDATE items are candidates only)",
+        "lock1_release": A16.lock1_release_status(params, None),
         "configuration_items": ["H-1", "MC-1"],
         "interface_planes": ["HALL_INLET_Z0", "IP-EXIT", "IP-NEU (datum owned by the ICD / F6)"],
         "standing_facts": {
@@ -1062,8 +1045,15 @@ def build_document() -> dict:
             "hall_response_maps": "no admitted domain exists; none is used",
             "icp45": "NOT_EVALUATED (I_d,max,H1 not registered; no P1 data)",
             "p1_p2": "no data",
-            "a9": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; C1 CONTROL_FALLBACK",
+            "a9": A19.A9_STANDING,
             "a9_2_statuses": get("A92", "/decisions/a9_10_statuses"),
+            # A9.24 item 13 (owner messages 2026-10-04): a9_2_statuses is only the labelled A9.2 historical quote
+            "a9_2_statuses_label": "HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); current statuses: "
+                                   "current_statuses",
+            "current_statuses": {k: ("GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: no C1 flight "
+                                  "fallback; never in flight architecture, mass, power, Xe or thermal closure)"
+                                     if v == "CONTROL_FALLBACK" else v)
+                                 for k, v in get("A92", "/decisions/a9_10_statuses").items()},
         },
         "what_this_is_not": [
             "not a Hall performance prediction: no thrust, T - D, discharge current, efficiency or plasma state",
@@ -1124,11 +1114,19 @@ def build_document() -> dict:
             "probe_evaluations": probe_rows,
         },
         "consistency_checks": consistency_checks(),
+        "femm_analysis_points": A16.femm_analysis_points(probe_rows),
         "interface_demands": interface_demands(),
-        "open_owner_questions": open_owner_questions(),
+        "open_owner_questions": A16.answered_open_questions(open_owner_questions()),
+        "a9_16_owner_answers_applied": A16.owner_answers_applied(),
+        "a9_16_touched_parameters": a916_touched,
+        "flight_architecture": A19.A.FLIGHT_ARCHITECTURE,
+        "a9_19_owner_answers_applied": A19.owner_answers_applied(),
+        "a9_19_touched_parameters": a919_touched,
+        "a9_21_programme": a921_programme(params),
         "existing_owner_questions_touched": [
-            {"id": q, "status": get("OQ4", find("OQ4", "/rows", "id", q) + "/status"),
-             "source": ref("OQ4", find("OQ4", "/rows", "id", q))}
+            {"id": q, "status": get("OQ5", find("OQ5", "/rows", "id", q) + "/status"),
+             "v4_status": get("OQ4", find("OQ4", "/rows", "id", q) + "/status"),
+             "source": ref("OQ5", find("OQ5", "/rows", "id", q))}
             for q in ("MQ-03", "OQ-A907-04", "OQ-A907-05", "OQ-A907-06", "OQ-A907-08", "P1Q-06", "OQ-RFQV2-10",
                       "P4-OQ-01", "P4-OQ-02", "P4-OQ-04")],
         "m16_impact": m16,
@@ -1146,6 +1144,27 @@ def build_document() -> dict:
         },
     }
     return doc
+
+
+def a921_programme(params: list) -> dict:
+    """A9.21 HW_PROGRAMME items 6 / 11: this record's steps (S7.1 -> S7.2; measured thrust / feed map -> AG-12 -> AG-13)
+    from the programme record. Fail closed: while S7.2 has no registered entry (S7.1 FEMM results for every authorised
+    point), H1F-CH-11 must stay NOT_SELECTED_PENDING_FEMM; the point is never thrust-optimised."""
+    view = PROG.artifact_view("H1")
+    ch11 = next(p for p in params if p["id"] == "H1F-CH-11")
+    s72 = PROG.entry_status("H1-S7.2")["status"]
+    if s72 != PROG.ENTRY_REGISTERED and ch11["a9_16"]["point_status"] != "NOT_SELECTED_PENDING_FEMM":
+        raise SystemExit(f"REFUSED: H1F-CH-11 point_status {ch11['a9_16']['point_status']!r} while S7.2 entry is "
+                         f"{s72} (A9.21 item 6: S7.1 FEMM analysis points first)")
+    if ch11["a9_16"]["status_when_selected"] != PROG.H1_POINT_STATUS:
+        raise SystemExit("REFUSED: H1F-CH-11 status_when_selected is not ENGINEERING_FREEZE_CANDIDATE (A9.21 item 6)")
+    view["h1f_ch_11"] = {"point_status": ch11["a9_16"]["point_status"], "s7_2_entry": s72,
+                         "status_when_selected": PROG.H1_POINT_STATUS,
+                         "optimisation_basis": PROG.H1_NOT_THRUST_OPTIMISED,
+                         "selection_criteria_a9_21": list(PROG.H1_SELECTION_CRITERIA),
+                         "selection_check": "hw_programme_a9_21.s7_2_selection_check (refuses before S7.1 covers "
+                                            "every authorised point, and refuses any thrust / performance criterion)"}
+    return view
 
 
 def interface_demands() -> list:
@@ -1289,9 +1308,10 @@ def key_findings(params: list, counts: dict) -> list:
         f"F5-K1 H-1 definition: {len(params)} parameters; FREEZE_CANDIDATE {counts['FREEZE_CANDIDATE']}, OPEN "
         f"{counts['OPEN']}, TBD_AFTER_EVIDENCE {counts['TBD_AFTER_EVIDENCE']}, TBD_OWNER {counts['TBD_OWNER']}. "
         "The article is NOT frozen; every FREEZE_CANDIDATE is an owner-given decision, convention or rule.",
-        "F5-K2 the channel design point (h, d_mean, L) is TBD_OWNER: windows exist (xenon-derived rules, hypotheses "
+        "F5-K2 the channel design point (h, d_mean, L) is not selected: windows exist (xenon-derived rules, hypotheses "
         "for air species), but no Hall performance can discriminate inside them (credible set empty, P5-N2 v1 "
-        "INCONCLUSIVE); selection needs FEMM + coupled thermal + owner (F5-OQ-01 / F5-OQ-02).",
+        "INCONCLUSIVE); the owner rule (A9.14 F5-OQ-01 / F5-OQ-02) selects an ENGINEERING_FREEZE_CANDIDATE point on "
+        "non-performance criteria after the authorised FEMM analysis points (FEMM_AUTHORISED_NOT_RUN).",
         "F5-K3 magnetic circuit decided at topology level only (T2 shielded, EM-only, FeCo-2V inner / pure-iron outer, "
         "ceramic-insulated copper coils); all dimensions, ampere-turns, coil currents and B(z) are lumped-circuit "
         "values at the RP-1 calculation anchor or TBD pending FEMM.",
@@ -1304,7 +1324,10 @@ def key_findings(params: list, counts: dict) -> list:
         "at RP-1 f_NI 2 (booked), 0.136 kg is the 60 W fixed-NI sensitivity basis and never the coil mass.",
         "F5-K7 inlet interface: H-1 needs mdot_s, P, T, x_s and transient quality from F4, all TBD; transient "
         "tolerances cannot be derived by H-1 today (no admitted Hall map) and need Phase-1 sensitivity data.",
-        "F5-K8 iron Curie discrepancy recorded (770 vs 754 degC between H2-1 and A9-07); not resolved here (F5-OQ-03).",
+        "F5-K8 iron Curie discrepancy recorded (770 vs 754 degC between H2-1 and A9-07); the owner uses 754 degC as the "
+        "conservative necessary ceiling, never the usable limit (A9.14 F5-OQ-03).",
+        "F5-K9 LOCK-1 release (A9.14 F5-OQ-04): RELEASE_BLOCKED - every non-FREEZE_CANDIDATE item is an explicit "
+        "blocker and the release needs the drawing id, revision and content hash.",
     ]
 
 
@@ -1463,10 +1486,42 @@ def render_md(doc: dict) -> str:
         a(f"| {x['id']} | {x['direction']} | {_fmt(x['counterpart'])} | {_fmt(x['quantity'])} | {_fmt(x['value'])} | "
           f"{_fmt(x['units'])} | {_fmt(x['status'])} | {x['freeze_point']} |")
     a("")
-    a("## Open owner questions (new)")
+    a("## Owner questions raised by F5 (answered by A9.14)")
     a("")
     for q in doc["open_owner_questions"]:
-        a(f"* **{q['id']}** {q['question']} *Proposed:* {q['proposed_answer']} (blocks: {', '.join(q['blocks'])})")
+        a(f"* **{q['id']}** {q['question']} *Proposed:* {q['proposed_answer']} (blocks: {', '.join(q['blocks'])}) "
+          f"**{q['status']}** {q['decision_code']} - {q['decision']}")
+    a("")
+    a("## A9.16 owner decisions applied")
+    a("")
+    lr = doc["lock1_release"]
+    a(f"LOCK-1 release: **{lr['status']}** ({lr['blocker_count']} blockers; missing drawing fields: "
+      f"{', '.join(lr['missing_drawing_fields']) or 'none'}). {lr['rule']}.")
+    a("")
+    fp = doc["femm_analysis_points"]
+    a(f"FEMM analysis points: **{fp['status']}** ({fp['role']}); authorised: "
+      + ", ".join(x["probe"] for x in fp["points"] if x["authorised_analysis_point"]) + ".")
+    a("")
+    a("| decision | question | code | records | how applied |")
+    a("|---|---|---|---|---|")
+    for r in doc["a9_16_owner_answers_applied"]:
+        a(f"| {r['decision']} | {r['question_id']} | {r['decision_code']} | {', '.join(r['record_ids'])} | "
+          f"{_fmt(r['how_applied'])} |")
+    a("")
+    a("A9.19 / A9.20 owner decisions applied (one Hall + one RF/ICP neutralizer, supply modes AIR_PRIMARY / "
+      "XE_CONTINGENCY, no conventional hollow cathode; C1 ground-only):")
+    a("")
+    a("| decision | item | records | how applied |")
+    a("|---|---|---|---|")
+    for r in doc["a9_19_owner_answers_applied"]:
+        a(f"| {r['decision']} | {r['question_id']} | {', '.join(r['record_ids'])} | {_fmt(r['how_applied'])} |")
+    a("")
+    pv = doc["a9_21_programme"]
+    L.extend(PROG.render_view_md(pv))
+    a(f"H1F-CH-11: point_status **{pv['h1f_ch_11']['point_status']}** (S7.2 entry {pv['h1f_ch_11']['s7_2_entry']}); "
+      f"when selected {pv['h1f_ch_11']['status_when_selected']} / {pv['h1f_ch_11']['optimisation_basis']}. AG-12 / "
+      "AG-13 (F9) programme input: " + ", ".join(f"{g} {v['programme_input']}"
+                                                  for g, v in pv["ag12_ag13_dependency"].items()) + ".")
     a("")
     a("Existing owner questions touched (not restated): " + ", ".join(
         f"{q['id']} ({q['status']})" for q in doc["existing_owner_questions_touched"]) + ".")

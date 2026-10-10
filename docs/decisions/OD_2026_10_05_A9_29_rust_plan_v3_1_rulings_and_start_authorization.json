@@ -1,0 +1,39 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_05_A9_29_rust_plan_v3_1_rulings_and_start_authorization",
+ "decided_by": "owner",
+ "date": "2026-10-05",
+ "decision": "A9_29_RUST_PLAN_V3_1_AND_START",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md",
+  "sha256": "5c223f6df59f579deb1ef4788fecf5857c6fa3ff4f365f23738b2c1b7f251989",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION",
+   "utc": "2026-10-05T10:04:26.573Z",
+   "text_sha256": "7e8a48d1f6e7c28713ff016b498b784d5f6fc201ee8c1a44392d88345cbd3f00",
+   "chars": 15938
+  }
+ ],
+ "reviewed_plan": "1236f911b326b308ec9019d7e3561a34b478c449",
+ "owner_decision_summary": {
+  "fifth_class": "GROUND_TEST_PROGRAMME_ONLY approved; separate from ACTIVE_SELECTED_ARCHITECTURE / GROUND_REFERENCE_ONLY / HISTORICAL_LEGACY_REGRESSION; no flight-runtime crate depends on it; abep-groundtest isolation approved",
+  "RM-OQ-10": "successor feed-qualification record if it exists before cutover; otherwise freeze the feed-state closure outputs as immutable hash-pinned REFERENCE EVIDENCE; historical Python builder archive-only; normal CI verifies frozen artifact / hash / schema; any live S1/S1a feed-state need implemented deliberately in abep-groundtest under its own Rust contract",
+  "RM-OQ-11": "terminal protected package state 2de86abefacbd36ce7516d3cf017f6258bd7e7a2; technical source 5eee4b8c82a9403b6bb82d5f8d324526f5d6399b; lineage b5849af -> 2de86ab; later change needs a new explicit owner decision",
+  "RM-OQ-12": "PREDICTIVE_RF_ICP_MODEL_REQUIRED_FOR_SIMULATION_COMPLETE: new-physics model NP-ICP-NEUTRALIZER for the downstream 13.56 MHz RF/ICP electron-source / neutralizer (inputs, raw outputs incl. I_e,cap, system coupling to Hall demand / bus power / thermal / feed; no HC-05 or thresholds in raw physics; no invented efficiencies / impedances / stable regions; calibrated / uncalibrated modes with explicit provenance and domain; admission by conservation, analytic limits, published evidence, P1/P2 evidence when available, preregistered criteria); no plasma_chem wholesale port; no LaB6 / hollow-cathode / ECR / legacy stage-1 topology",
+  "RM-OQ-01": "Python wrapper default unchanged; the Rust simulator calls the admitted Rust TPMC library directly; backend switch irrelevant at cutover",
+  "RM-OQ-02": "frozen hash-pinned atmosphere / design-state datasets are the production source; Rust implements deterministic loading, schema / domain checks, hash verification, state selection, full 196-state execution; no live NRLMSIS / HWM14 regeneration or Fortran FFI on the critical path; any later regeneration is a separately governed native tool",
+  "RM-OQ-03": "EXACT_STREAM (numpy PCG64 semantics) for the Python-reference -> Rust parity campaign of active UQ / F8 sampling; not applied to the admitted TPMC kernel (its own statistical contract); migration parity dataset stays exactly reproducible",
+  "RM-OQ-04": "no retired-directory moves during migration; at final cutover tag python-final-reference-<date>, branch archive/python-final-reference, docs/archive/PYTHON_FINAL_REFERENCE.md + python_final_reference.json mapping Python -> Rust replacement / retirement -> evidence; then Python may be removed from the active main tree; history preserved",
+  "RM-OQ-05": "Rust-era rule: cargo test --workspace --locked, all active tests pass; no silent skip / ignore; missing evidence asserted as fail-closed results; empty Hall credible set asserted explicitly; platform / hardware tests in a registered class (reason, evidence basis, environment, trigger); Python 5 skips / 1 xfail is archive-era metadata; CLAUDE.md updated",
+  "CLAUDE_md": "CA-01 rule 2 applies to ACTIVE canonical goldens (historical goldens archive / regression history); CA-02 execution baseline integration/simulation-complete; CA-03 stale pre-Rust / pre-bid wording updated; CA-04 Rust-era test rule; language direction: target simulator Rust, Hall solver HallThruster.jl, Python migration reference until admitted then archive-only; historical decision files not rewritten",
+  "end_state_stack": "Rust simulator + HallThruster.jl + versioned configuration / evidence data; no normal production dependency on python / python3 / pip / virtualenv / PyO3 / maturin; abep_core PyO3 interface is migration tooling, its Rust TPMC becomes a normal Rust library dependency",
+  "plan_merge": "apply only these decisions as plan v3.1 (v1/v2/v3 unchanged, additive, no numeric change, CI green, zero unclassified / provisional, RM-OQ-01..12 closed or converted to execution tasks) and merge into integration/simulation-complete without another owner review; never into main",
+  "execution": "lanes A infrastructure / provenance (ES-1), B environment / upstream (ES-2, ES-3), C NP-ICP-NEUTRALIZER preregistration, D NP-THERMAL-CATHODELESS preregistration (ES-4); no implementation of new physics before its preregistration is committed; working RFP deadline 12 October 2026; speed never weakens provenance, preregistration, conservation, determinism, domain checks, separation, uncertainty, fail-closed semantics",
+  "simulation_complete": "full selected-architecture chain end-to-end under Rust or Rust + HallThruster.jl with zero Python production dependency, AIR_PRIMARY and XE_CONTINGENCY, flight hollow cathode NONE, C1 ground test / reference only",
+  "report": "after plan merge and the first execution batch: A integration SHA, B crates, C provenance / config, D environment / 196-state, E TPMC / upstream, F NP-ICP prereg, G NP-THERMAL prereg, H tests / CI, I blockers; stop only for genuine owner decisions, evidence / model-domain conflicts, failed preregistration, physics inconsistency or governance conflict"
+ }
+}

@@ -1,0 +1,31 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_08_A9_33_hall_run_location_hall_air_chemistry_plenum_v8",
+ "decided_by": "owner",
+ "date": "2026-10-08",
+ "decision": "A9_33_HALL_RUN_LOCATION_HALL_AIR_CHEMISTRY_PLENUM_V8",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_08_A9_33_HALL_RUN_LOCATION_HALL_AIR_CHEMISTRY_PLENUM_V8.md",
+  "sha256": "2a14ce4b6ffa28da6009be18e155bc63d3a48b18ecd5a6256f7e1ec09ff35d6f",
+  "method": "exact structured questions and answers extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "STRUCTURED_ANSWERS",
+   "utc": "2026-10-08T03:24:59.874Z",
+   "qa_json_sha256": "2faea0a9c6026d9fc26be65e9b1c8d6fab7c3ed18fa6074ea92cbade79d6ef21"
+  }
+ ],
+ "checkpoint_at_decision": "557442c",
+ "owner_decision_summary": {
+  "q1_hall_run_location": "run the preregistered NP-HALL-PARAMETRIC-ENVELOPE v1 grid in this session's container after the owner allows the Julia hosts (julialang-s3.julialang.org, pkg.julialang.org, storage.julialang.net) under the environment's network access; Xe family first (as recommended in the option)",
+  "q2_hall_air_chemistry": "authorize a narrow, preregistered, sourced Hall O/O2 chemistry contract for AIR_PRIMARY (analogous to NP-ICP-CHEM-AIR); no fabricated coefficients; AIR Hall stays NOT_EVALUATED until that contract's chemistry is admitted",
+  "q3_plenum_feed_v8": "keep the v8 scored result (PARITY_FAIL / NOT_ADMITTED) as the result; plenum / feed transients stay PYTHON_REFERENCE (PARITY_FAILED); no v9 now; revisit later"
+ },
+ "recorder_notes": [
+  "Q2 extends A9.30 (which limited O/O2 chemistry to the RF/ICP neutralizer) to a separate, narrow Hall air-chemistry contract; it does not reopen the P5 Hall campaign, plasma_chem.py, the credible-set rule or HallMap admission, and does not change the HallThruster.jl pin.",
+  "At decision time the Julia hosts still answered 403 in this container; the runs start when the network change reaches the session.",
+  "Open owner questions OQ-HPE-01 (surrogate B(z) asymmetric rule), OQ-HPE-03 (Xe flow), OQ-HPE-06 (numerics adequacy) were not asked in this round; the preregistered treatment applies and the outputs carry its labels."
+ ]
+}

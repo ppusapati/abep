@@ -1,0 +1,819 @@
+{
+ "schema": "abep_assess_icp_closure_v1",
+ "id": "ICP-CLOSURE-v1",
+ "item": "A9.38 Priority 4: RF/ICP neutralizer closure (closure board P4; DBF1-BD-06)",
+ "lane": "L-ICP-CLOSURE",
+ "provenance": {
+  "registration": "docs/closure/icp/icp_closure_registration_v1.json (sha256 41ce4d17a58e0ba6896fd4cfb815856f69c06271ae50b0d602575d5606802d51; lock 5a03e399a980d975651ccd7392077b4fbc56fe825e53f002bba6371d22a156f4)",
+  "np_icp_v2_lock": "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287",
+  "dbf1_lock": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907",
+  "dbf1_config": "5bd76159fb9761b5c47619fb42217f05c24841d7009067ac71dcedf731759864",
+  "icp_chem_pinned": "074daff90b00dd1dd6ca776c845c7897bbd84b4217ec014e70fb374a16f16eb2",
+  "m2_record": "docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json (sha256 600cf229ecdb5f91f0471f03cfdd6d287486ad21e9d9ebadde3cdafa54a37394)",
+  "thresholds_manifest": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+  "producer": "abep-assess closure_icp (bin abep-assess-icp-closure)"
+ },
+ "labels": [
+  "NP_ICP_V2_IMPLEMENTED_UNVERIFIED",
+  "NOT_VALIDATED",
+  "ASSUMED_GEOMETRIC_TUBE",
+  "CFG-CAP-OFF",
+  "CM-ABS_PARAMETRIC_ABSORBED_POWER"
+ ],
+ "model_evaluation_M_A": {
+  "AIR_PRIMARY": {
+   "n_cases": 600,
+   "status_counts": {
+    "INCOMPLETE_EVIDENCE": 600
+   },
+   "reason_codes_with_counts": {
+    "DOM-12_NO_NEGATIVE_ION_BALANCE": 600,
+    "IN-05_DELIVERED_COMPOSITION_TBD": 600,
+    "IN-16_NO_REGISTERED_RATE_SET:AIR": 600,
+    "IN-17_NO_EDGE_FACTOR_SOURCE": 600,
+    "NP-ICP-CHEM-AIR:AIR-DIS-02": 600,
+    "NP-ICP-CHEM-AIR:AIR-EL-03": 600,
+    "NP-ICP-CHEM-AIR:AIR-EL-04": 600,
+    "NP-ICP-CHEM-AIR:AIR-EXC-04": 600,
+    "NP-ICP-CHEM-AIR:AIR-EXC-05": 600,
+    "NP-ICP-CHEM-AIR:AIR-EXC-09": 600,
+    "NP-ICP-CHEM-AIR:AIR-ION-02": 600,
+    "NP-ICP-CHEM-AIR:AIR-ION-05": 600,
+    "NP-ICP-CHEM-AIR:AIR-NL-02": 600,
+    "NP-ICP-CHEM-AIR:AIR-WALL-01": 600,
+    "NP-ICP-CHEM-AIR:AIR-WALL-02": 600,
+    "NP-ICP-CHEM-AIR:AIR-WALL-03": 600,
+    "NP_ICP_CHEM_AIR_NOT_ADMITTED": 600,
+    "SP-04_SPECIES_BOUND_UNRESOLVED:SB-NO": 600
+   },
+   "flags": [
+    "ASSUMED_GEOMETRIC_TUBE",
+    "MAXWELLIAN_ASSUMED",
+    "PARAMETRIC_ABSORBED_POWER"
+   ],
+   "verify_items_on_path": [
+    "VER-01"
+   ],
+   "I_e_cap_converged_points": 0,
+   "I_e_cap_envelope": {
+    "status": "WITHHELD",
+    "reason": "no CONVERGED I_e,cap at any grid point"
+   },
+   "I_e_cap_withheld_statuses": [
+    "INCOMPLETE_EVIDENCE: NP_ICP_CHEM_AIR_NOT_ADMITTED, NP-ICP-CHEM-AIR:AIR-ION-02, NP-ICP-CHEM-AIR:AIR-ION-05, NP-ICP-CHEM-AIR:AIR-DIS-02, NP-ICP-CHEM-AIR:AIR-EXC-04, NP-ICP-CHEM-AIR:AIR-EXC-05, NP-ICP-CHEM-AIR:AIR-EXC-09, NP-ICP-CHEM-AIR:AIR-EL-03, NP-ICP-CHEM-AIR:AIR-EL-04, NP-ICP-CHEM-AIR:AIR-WALL-01, NP-ICP-CHEM-AIR:AIR-WALL-02, NP-ICP-CHEM-AIR:AIR-WALL-03, NP-ICP-CHEM-AIR:AIR-NL-02, SP-04_SPECIES_BOUND_UNRESOLVED:SB-NO, DOM-12_NO_NEGATIVE_ION_BALANCE, IN-05_DELIVERED_COMPOSITION_TBD, IN-16_NO_REGISTERED_RATE_SET:AIR, IN-17_NO_EDGE_FACTOR_SOURCE"
+   ],
+   "reference_point": {
+    "case_id": "DBF1_ICP_CLOSURE_V1_AIR_PRIMARY_CG-AIR-ATOM-CHIMAX_P50_p0.01_V100",
+    "status": "INCOMPLETE_EVIDENCE",
+    "reason_codes": [
+     "DOM-12_NO_NEGATIVE_ION_BALANCE",
+     "IN-05_DELIVERED_COMPOSITION_TBD",
+     "IN-16_NO_REGISTERED_RATE_SET:AIR",
+     "IN-17_NO_EDGE_FACTOR_SOURCE",
+     "NP-ICP-CHEM-AIR:AIR-DIS-02",
+     "NP-ICP-CHEM-AIR:AIR-EL-03",
+     "NP-ICP-CHEM-AIR:AIR-EL-04",
+     "NP-ICP-CHEM-AIR:AIR-EXC-04",
+     "NP-ICP-CHEM-AIR:AIR-EXC-05",
+     "NP-ICP-CHEM-AIR:AIR-EXC-09",
+     "NP-ICP-CHEM-AIR:AIR-ION-02",
+     "NP-ICP-CHEM-AIR:AIR-ION-05",
+     "NP-ICP-CHEM-AIR:AIR-NL-02",
+     "NP-ICP-CHEM-AIR:AIR-WALL-01",
+     "NP-ICP-CHEM-AIR:AIR-WALL-02",
+     "NP-ICP-CHEM-AIR:AIR-WALL-03",
+     "NP_ICP_CHEM_AIR_NOT_ADMITTED",
+     "SP-04_SPECIES_BOUND_UNRESOLVED:SB-NO"
+    ],
+    "I_e_cap_A": null,
+    "I_e_cap_withheld": [
+     "INCOMPLETE_EVIDENCE: NP_ICP_CHEM_AIR_NOT_ADMITTED, NP-ICP-CHEM-AIR:AIR-ION-02, NP-ICP-CHEM-AIR:AIR-ION-05, NP-ICP-CHEM-AIR:AIR-DIS-02, NP-ICP-CHEM-AIR:AIR-EXC-04, NP-ICP-CHEM-AIR:AIR-EXC-05, NP-ICP-CHEM-AIR:AIR-EXC-09, NP-ICP-CHEM-AIR:AIR-EL-03, NP-ICP-CHEM-AIR:AIR-EL-04, NP-ICP-CHEM-AIR:AIR-WALL-01, NP-ICP-CHEM-AIR:AIR-WALL-02, NP-ICP-CHEM-AIR:AIR-WALL-03, NP-ICP-CHEM-AIR:AIR-NL-02, SP-04_SPECIES_BOUND_UNRESOLVED:SB-NO, DOM-12_NO_NEGATIVE_ION_BALANCE, IN-05_DELIVERED_COMPOSITION_TBD, IN-16_NO_REGISTERED_RATE_SET:AIR, IN-17_NO_EDGE_FACTOR_SOURCE"
+    ],
+    "verify_items_on_path": [
+     "VER-01"
+    ],
+    "flags": [
+     "ASSUMED_GEOMETRIC_TUBE",
+     "MAXWELLIAN_ASSUMED",
+     "PARAMETRIC_ABSORBED_POWER"
+    ],
+    "validation_status": "NOT_VALIDATED",
+    "verification_status": "IMPLEMENTED_UNVERIFIED"
+   }
+  },
+  "XE_CONTINGENCY": {
+   "n_cases": 150,
+   "status_counts": {
+    "INCOMPLETE_EVIDENCE": 150
+   },
+   "reason_codes_with_counts": {
+    "CHG-04_NO_XE_RATE_SET": 150,
+    "IN-16_NO_REGISTERED_RATE_SET:XE": 150,
+    "NP-ICP-CHEM-AIR:XE-EL-01": 150,
+    "NP-ICP-CHEM-AIR:XE-EXC-01": 150,
+    "NP-ICP-CHEM-AIR:XE-ION-01": 150,
+    "NP-ICP-CHEM-AIR:XE-WALL-01": 150,
+    "NP_ICP_CHEM_AIR_XE_NOT_ADMITTED": 150
+   },
+   "flags": [
+    "ASSUMED_GEOMETRIC_TUBE",
+    "MAXWELLIAN_ASSUMED",
+    "PARAMETRIC_ABSORBED_POWER"
+   ],
+   "verify_items_on_path": [
+    "VER-01"
+   ],
+   "I_e_cap_converged_points": 0,
+   "I_e_cap_envelope": {
+    "status": "WITHHELD",
+    "reason": "no CONVERGED I_e,cap at any grid point"
+   },
+   "I_e_cap_withheld_statuses": [
+    "INCOMPLETE_EVIDENCE: CHG-04_NO_XE_RATE_SET, NP_ICP_CHEM_AIR_XE_NOT_ADMITTED, NP-ICP-CHEM-AIR:XE-ION-01, NP-ICP-CHEM-AIR:XE-EXC-01, NP-ICP-CHEM-AIR:XE-EL-01, NP-ICP-CHEM-AIR:XE-WALL-01, IN-16_NO_REGISTERED_RATE_SET:XE"
+   ],
+   "reference_point": {
+    "case_id": "DBF1_ICP_CLOSURE_V1_XE_CONTINGENCY_XE_P50_p0.01_V100",
+    "status": "INCOMPLETE_EVIDENCE",
+    "reason_codes": [
+     "CHG-04_NO_XE_RATE_SET",
+     "IN-16_NO_REGISTERED_RATE_SET:XE",
+     "NP-ICP-CHEM-AIR:XE-EL-01",
+     "NP-ICP-CHEM-AIR:XE-EXC-01",
+     "NP-ICP-CHEM-AIR:XE-ION-01",
+     "NP-ICP-CHEM-AIR:XE-WALL-01",
+     "NP_ICP_CHEM_AIR_XE_NOT_ADMITTED"
+    ],
+    "I_e_cap_A": null,
+    "I_e_cap_withheld": [
+     "INCOMPLETE_EVIDENCE: CHG-04_NO_XE_RATE_SET, NP_ICP_CHEM_AIR_XE_NOT_ADMITTED, NP-ICP-CHEM-AIR:XE-ION-01, NP-ICP-CHEM-AIR:XE-EXC-01, NP-ICP-CHEM-AIR:XE-EL-01, NP-ICP-CHEM-AIR:XE-WALL-01, IN-16_NO_REGISTERED_RATE_SET:XE"
+    ],
+    "verify_items_on_path": [
+     "VER-01"
+    ],
+    "flags": [
+     "ASSUMED_GEOMETRIC_TUBE",
+     "MAXWELLIAN_ASSUMED",
+     "PARAMETRIC_ABSORBED_POWER"
+    ],
+    "validation_status": "NOT_VALIDATED",
+    "verification_status": "IMPLEMENTED_UNVERIFIED"
+   }
+  },
+  "EM-N2": {
+   "n_cases": 150,
+   "status_counts": {
+    "INCOMPLETE_EVIDENCE": 150
+   },
+   "reason_codes_with_counts": {
+    "CHG-06_SIGMA_I_NOT_REGISTERED:N^2+": 150,
+    "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_1": 150,
+    "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_10": 150,
+    "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_2": 150,
+    "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_3": 150,
+    "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_4": 150,
+    "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_5": 150,
+    "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_6": 150,
+    "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_7": 150,
+    "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_8": 150,
+    "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_9": 150,
+    "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-ION-04/ionization_N": 150,
+    "OQ-NPICP-04_ICP_COMPLETENESS_AUDIT_OPEN": 150,
+    "PROCESS_CLASS_GATE_UNADDRESSED": 150
+   },
+   "flags": [
+    "ASSUMED_GEOMETRIC_TUBE",
+    "H_LIEB_ARGON_STATEMENT_EXTRAPOLATED",
+    "MAXWELLIAN_ASSUMED",
+    "MULTI_ION_H_ENVELOPE",
+    "PARAMETRIC_ABSORBED_POWER"
+   ],
+   "verify_items_on_path": [
+    "VER-01",
+    "VER-02",
+    "VER-07"
+   ],
+   "I_e_cap_converged_points": 0,
+   "I_e_cap_envelope": {
+    "status": "WITHHELD",
+    "reason": "no CONVERGED I_e,cap at any grid point"
+   },
+   "I_e_cap_withheld_statuses": [
+    "INCOMPLETE_EVIDENCE: OQ-NPICP-04_ICP_COMPLETENESS_AUDIT_OPEN, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-ION-04/ionization_N, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_1, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_2, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_3, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_4, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_5, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_6, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_7, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_8, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_9, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_10, PROCESS_CLASS_GATE_UNADDRESSED, CHG-06_SIGMA_I_NOT_REGISTERED:N^2+"
+   ],
+   "reference_point": {
+    "case_id": "DBF1_ICP_CLOSURE_V1_EM-N2_N2_P50_p0.01_V100",
+    "status": "INCOMPLETE_EVIDENCE",
+    "reason_codes": [
+     "CHG-06_SIGMA_I_NOT_REGISTERED:N^2+",
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_1",
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_10",
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_2",
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_3",
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_4",
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_5",
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_6",
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_7",
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_8",
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_9",
+     "EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-ION-04/ionization_N",
+     "OQ-NPICP-04_ICP_COMPLETENESS_AUDIT_OPEN",
+     "PROCESS_CLASS_GATE_UNADDRESSED"
+    ],
+    "I_e_cap_A": null,
+    "I_e_cap_withheld": [
+     "INCOMPLETE_EVIDENCE: OQ-NPICP-04_ICP_COMPLETENESS_AUDIT_OPEN, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-ION-04/ionization_N, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_1, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_2, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_3, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_4, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_5, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_6, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_7, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_8, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_9, EQ-06_REPRESENTATION_NOT_REGISTERED:AIR-EXC-02/excitation_N2_vib_0_to_10, PROCESS_CLASS_GATE_UNADDRESSED, CHG-06_SIGMA_I_NOT_REGISTERED:N^2+"
+    ],
+    "verify_items_on_path": [
+     "VER-01",
+     "VER-02",
+     "VER-07"
+    ],
+    "flags": [
+     "ASSUMED_GEOMETRIC_TUBE",
+     "H_LIEB_ARGON_STATEMENT_EXTRAPOLATED",
+     "MAXWELLIAN_ASSUMED",
+     "MULTI_ION_H_ENVELOPE",
+     "PARAMETRIC_ABSORBED_POWER"
+    ],
+    "validation_status": "NOT_VALIDATED",
+    "verification_status": "IMPLEMENTED_UNVERIFIED"
+   }
+  }
+ },
+ "inputs_vs_m2_p_icp_dbf1": {
+  "AIR_PRIMARY": {
+   "closed_by_registration": [
+    "DOM-06_B_ICP_NOT_REGISTERED",
+    "IN-08_RF_INPUT_NOT_REGISTERED",
+    "IN-11_ELECTRODES_NOT_REGISTERED",
+    "IN-12_NEUTRAL_SOURCE_NOT_REGISTERED"
+   ],
+   "remaining": [
+    "DOM-12_NO_NEGATIVE_ION_BALANCE",
+    "IN-05_DELIVERED_COMPOSITION_TBD",
+    "IN-16_NO_REGISTERED_RATE_SET:AIR",
+    "IN-17_NO_EDGE_FACTOR_SOURCE",
+    "NP-ICP-CHEM-AIR:AIR-DIS-02",
+    "NP-ICP-CHEM-AIR:AIR-EL-03",
+    "NP-ICP-CHEM-AIR:AIR-EL-04",
+    "NP-ICP-CHEM-AIR:AIR-EXC-04",
+    "NP-ICP-CHEM-AIR:AIR-EXC-05",
+    "NP-ICP-CHEM-AIR:AIR-EXC-09",
+    "NP-ICP-CHEM-AIR:AIR-ION-02",
+    "NP-ICP-CHEM-AIR:AIR-ION-05",
+    "NP-ICP-CHEM-AIR:AIR-NL-02",
+    "NP-ICP-CHEM-AIR:AIR-WALL-01",
+    "NP-ICP-CHEM-AIR:AIR-WALL-02",
+    "NP-ICP-CHEM-AIR:AIR-WALL-03",
+    "NP_ICP_CHEM_AIR_NOT_ADMITTED",
+    "SP-04_SPECIES_BOUND_UNRESOLVED:SB-NO"
+   ],
+   "new_in_closure_case": []
+  },
+  "XE_CONTINGENCY": {
+   "closed_by_registration": [
+    "DOM-06_B_ICP_NOT_REGISTERED",
+    "IN-08_RF_INPUT_NOT_REGISTERED",
+    "IN-11_ELECTRODES_NOT_REGISTERED",
+    "IN-12_NEUTRAL_SOURCE_NOT_REGISTERED",
+    "IN-17_NO_EDGE_FACTOR_SOURCE"
+   ],
+   "remaining": [
+    "CHG-04_NO_XE_RATE_SET",
+    "IN-16_NO_REGISTERED_RATE_SET:XE",
+    "NP-ICP-CHEM-AIR:XE-EL-01",
+    "NP-ICP-CHEM-AIR:XE-EXC-01",
+    "NP-ICP-CHEM-AIR:XE-ION-01",
+    "NP-ICP-CHEM-AIR:XE-WALL-01",
+    "NP_ICP_CHEM_AIR_XE_NOT_ADMITTED"
+   ],
+   "new_in_closure_case": []
+  }
+ },
+ "bounds_M_B": {
+  "labels": [
+   "CONSERVATION_BOUND",
+   "NOT_A_PERFORMANCE_PREDICTION"
+  ],
+  "V_d_max_V": 350.0,
+  "P_net_max_W": 500.0,
+  "per_mode": {
+   "AIR_PRIMARY": {
+    "m_heaviest_u": 31.99954,
+    "thrust_points": [
+     {
+      "T_N": 0.012,
+      "I_beam_LB_A": 0.7875733400675274,
+      "I_e_req_LB_A": 0.7875733400675274,
+      "P_abs_min_cons_W": {
+       "AIR_PRIMARY_with_NO": 7.296236937053588,
+       "AIR_PRIMARY_without_NO": 9.505773942613036
+      },
+      "eta_p_min_cons_at_P_net_max": {
+       "AIR_PRIMARY_with_NO": 0.014592473874107175,
+       "AIR_PRIMARY_without_NO": 0.019011547885226073
+      },
+      "I_e_cap_UB_at_P_net_max_eta_1_A": {
+       "AIR_PRIMARY_with_NO": 53.97120096716392,
+       "AIR_PRIMARY_without_NO": 41.42605035750682
+      },
+      "conservation_feasible_in_envelope": true
+     },
+     {
+      "T_N": 0.025,
+      "I_beam_LB_A": 1.640777791807349,
+      "I_e_req_LB_A": 1.640777791807349,
+      "P_abs_min_cons_W": {
+       "AIR_PRIMARY_with_NO": 15.200493618861643,
+       "AIR_PRIMARY_without_NO": 19.80369571377716
+      },
+      "eta_p_min_cons_at_P_net_max": {
+       "AIR_PRIMARY_with_NO": 0.030400987237723286,
+       "AIR_PRIMARY_without_NO": 0.03960739142755432
+      },
+      "I_e_cap_UB_at_P_net_max_eta_1_A": {
+       "AIR_PRIMARY_with_NO": 53.97120096716392,
+       "AIR_PRIMARY_without_NO": 41.42605035750682
+      },
+      "conservation_feasible_in_envelope": true
+     }
+    ],
+    "I_e_cap_UB_A_on_P_abs_grid": {
+     "AIR_PRIMARY_with_NO": [
+      1.0794240193432783,
+      2.1588480386865565,
+      5.3971200967163915,
+      10.794240193432783,
+      21.588480386865566,
+      53.97120096716392
+     ],
+     "AIR_PRIMARY_without_NO": [
+      0.8285210071501363,
+      1.6570420143002726,
+      4.142605035750682,
+      8.285210071501364,
+      16.57042014300273,
+      41.42605035750682
+     ]
+    },
+    "P_abs_grid_W": [
+     10.0,
+     20.0,
+     50.0,
+     100.0,
+     200.0,
+     500.0
+    ]
+   },
+   "XE_CONTINGENCY": {
+    "m_heaviest_u": 131.299,
+    "thrust_points": [
+     {
+      "T_N": 0.012,
+      "I_beam_LB_A": 0.3888052897778201,
+      "I_e_req_LB_A": 0.3888052897778201,
+      "P_abs_min_cons_W": {
+       "XE_CONTINGENCY": 4.716147394738165
+      },
+      "eta_p_min_cons_at_P_net_max": {
+       "XE_CONTINGENCY": 0.00943229478947633
+      },
+      "I_e_cap_UB_at_P_net_max_eta_1_A": {
+       "XE_CONTINGENCY": 41.22064656117539
+      },
+      "conservation_feasible_in_envelope": true
+     },
+     {
+      "T_N": 0.025,
+      "I_beam_LB_A": 0.8100110203704585,
+      "I_e_req_LB_A": 0.8100110203704585,
+      "P_abs_min_cons_W": {
+       "XE_CONTINGENCY": 9.825307072371178
+      },
+      "eta_p_min_cons_at_P_net_max": {
+       "XE_CONTINGENCY": 0.019650614144742357
+      },
+      "I_e_cap_UB_at_P_net_max_eta_1_A": {
+       "XE_CONTINGENCY": 41.22064656117539
+      },
+      "conservation_feasible_in_envelope": true
+     }
+    ],
+    "I_e_cap_UB_A_on_P_abs_grid": {
+     "XE_CONTINGENCY": [
+      0.8244129312235078,
+      1.6488258624470156,
+      4.122064656117539,
+      8.244129312235078,
+      16.488258624470156,
+      41.22064656117539
+     ]
+    },
+    "P_abs_grid_W": [
+     10.0,
+     20.0,
+     50.0,
+     100.0,
+     200.0,
+     500.0
+    ]
+   }
+  },
+  "B5_greuse_pressure_information": [
+   {
+    "flow": "DBF1-BD-01 worst delivered",
+    "mdot_kg_s": 1.43e-09,
+    "p_Pa_by_species": {
+     "O": 6.256975474454707e-05,
+     "N2": 4.728565612625343e-05,
+     "Xe": 2.1841910000908916e-05
+    }
+   },
+   {
+    "flow": "A4 12 mN",
+    "mdot_kg_s": 4.796e-08,
+    "p_Pa_by_species": {
+     "O": 0.0020984933129709633,
+     "N2": 0.0015858881593112687,
+     "Xe": 0.0007325440584920221
+    }
+   },
+   {
+    "flow": "A4 25 mN",
+    "mdot_kg_s": 2.082e-07,
+    "p_Pa_by_species": {
+     "O": 0.00910980625022007,
+     "N2": 0.00688452699684333,
+     "Xe": 0.003180059903628836
+    }
+   }
+  ]
+ },
+ "analog_M_C": {
+  "AIR_PRIMARY": {
+   "status": "NOT_EVALUATED",
+   "reason": "no registered AIR / N2 / O analog of absorbed power per extracted ampere"
+  },
+  "XE_CONTINGENCY": {
+   "labels": [
+    "ANALOG_ESTIMATE_NOT_A_MODEL_RESULT",
+    "RISK_INDICATOR"
+   ],
+   "source": "SR-05 GK2008 sec. 4.5 pp. 154-157 (rf ion thruster, absorbed-power basis)",
+   "rows": [
+    {
+     "T_N": 0.012,
+     "epsilon_ext_eV_per_ion": 230.0,
+     "P_abs_analog_W": 89.42521664889863,
+     "eta_p_req_analog_at_P_net_max": 0.17885043329779726,
+     "shortfall_factor_vs_eta_p_ref": 1.7885043329779726,
+     "I_e_at_eta_p_ref_analog_A": 0.21739130434782608
+    },
+    {
+     "T_N": 0.012,
+     "epsilon_ext_eV_per_ion": 450.0,
+     "P_abs_analog_W": 174.96238040001904,
+     "eta_p_req_analog_at_P_net_max": 0.3499247608000381,
+     "shortfall_factor_vs_eta_p_ref": 3.4992476080003807,
+     "I_e_at_eta_p_ref_analog_A": 0.1111111111111111
+    },
+    {
+     "T_N": 0.025,
+     "epsilon_ext_eV_per_ion": 230.0,
+     "P_abs_analog_W": 186.30253468520544,
+     "eta_p_req_analog_at_P_net_max": 0.3726050693704109,
+     "shortfall_factor_vs_eta_p_ref": 3.7260506937041087,
+     "I_e_at_eta_p_ref_analog_A": 0.21739130434782608
+    },
+    {
+     "T_N": 0.025,
+     "epsilon_ext_eV_per_ion": 450.0,
+     "P_abs_analog_W": 364.5049591667063,
+     "eta_p_req_analog_at_P_net_max": 0.7290099183334127,
+     "shortfall_factor_vs_eta_p_ref": 7.290099183334126,
+     "I_e_at_eta_p_ref_analog_A": 0.1111111111111111
+    }
+   ]
+  }
+ },
+ "neutralization_M_D": {
+  "AIR_PRIMARY": {
+   "hc05": {
+    "gate": "HC-05",
+    "rule": "M_n,LB > HC-05 threshold (config/assessment/gate_thresholds_v1.json), M_n = I_e,cap / I_d,max,H1 - 1",
+    "status": "NOT_EVALUATED",
+    "value_status": null,
+    "reason_code": "I_D_MAX_H1_NOT_REGISTERED",
+    "reason": "I_d,max,H1 not registered / not evaluated (admitted Hall member or measured H-1 registration needed; H-03)",
+    "M_n": null,
+    "u_M_n": null,
+    "M_n_LB": null,
+    "threshold": 0.0,
+    "authority": "A9.24 item 5; A9.29 sec. 4; A9.31 sec. 10; P1-IT-29"
+   },
+   "neutralization_quantities": {
+    "I_d_max_H1": {
+     "value_A": null,
+     "status": "NOT_EVALUATED"
+    },
+    "I_e_cap": {
+     "value_A": null,
+     "status": "INCOMPLETE_EVIDENCE"
+    },
+    "M_n_point": null,
+    "M_n_point_role": "MODEL_QUANTITY_NOT_A_GATE (A9.31 sec. 18 Q3; HC-05 uses M_n,LB only)"
+   },
+   "brief_form_I_e_cap_over_I_beam": "NOT_FORMED: reported as the necessary condition below",
+   "necessary_condition_I_e_cap_ge_I_beam_LB": [
+    {
+     "I_e_req_LB_A": 0.7875733400675274,
+     "I_e_cap_A": null,
+     "status": "NOT_FORMED (I_e,cap withheld)"
+    },
+    {
+     "I_e_req_LB_A": 1.640777791807349,
+     "I_e_cap_A": null,
+     "status": "NOT_FORMED (I_e,cap withheld)"
+    }
+   ],
+   "label": "NECESSARY_CONDITION_NOT_A_GATE"
+  },
+  "XE_CONTINGENCY": {
+   "hc05": {
+    "gate": "HC-05",
+    "rule": "M_n,LB > HC-05 threshold (config/assessment/gate_thresholds_v1.json), M_n = I_e,cap / I_d,max,H1 - 1",
+    "status": "NOT_EVALUATED",
+    "value_status": null,
+    "reason_code": "I_D_MAX_H1_NOT_REGISTERED",
+    "reason": "I_d,max,H1 not registered / not evaluated (admitted Hall member or measured H-1 registration needed; H-03)",
+    "M_n": null,
+    "u_M_n": null,
+    "M_n_LB": null,
+    "threshold": 0.0,
+    "authority": "A9.24 item 5; A9.29 sec. 4; A9.31 sec. 10; P1-IT-29"
+   },
+   "neutralization_quantities": {
+    "I_d_max_H1": {
+     "value_A": null,
+     "status": "NOT_EVALUATED"
+    },
+    "I_e_cap": {
+     "value_A": null,
+     "status": "INCOMPLETE_EVIDENCE"
+    },
+    "M_n_point": null,
+    "M_n_point_role": "MODEL_QUANTITY_NOT_A_GATE (A9.31 sec. 18 Q3; HC-05 uses M_n,LB only)"
+   },
+   "brief_form_I_e_cap_over_I_beam": "NOT_FORMED: reported as the necessary condition below",
+   "necessary_condition_I_e_cap_ge_I_beam_LB": [
+    {
+     "I_e_req_LB_A": 0.3888052897778201,
+     "I_e_cap_A": null,
+     "status": "NOT_FORMED (I_e,cap withheld)"
+    },
+    {
+     "I_e_req_LB_A": 0.8100110203704585,
+     "I_e_cap_A": null,
+     "status": "NOT_FORMED (I_e,cap withheld)"
+    }
+   ],
+   "label": "NECESSARY_CONDITION_NOT_A_GATE"
+  },
+  "GNG-ICP-01": {
+   "gate": "GNG-ICP-01",
+   "status": "NOT_EVALUATED",
+   "criteria": "PENDING_OWNER_ACCEPTANCE",
+   "status_reason": "no owner-accepted GO / NO-GO criterion (criteria PENDING_OWNER_ACCEPTANCE); fail closed (A9.21)",
+   "source": "docs/requirements/rvm_a9/rvm_a9_v1.json owner_approved_gates[GNG-ICP-01] (sha256 f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4)"
+  }
+ },
+ "chemistry_admission": {
+  "registry_pin": "074daff90b00dd1dd6ca776c845c7897bbd84b4217ec014e70fb374a16f16eb2",
+  "AIR_PRIMARY": {
+   "label": "abep-icp-air-0.0",
+   "admission_status": "NOT_ADMITTED",
+   "admission_today": "NOT ADMITTED: tier-1 gaps (AIR-EL-04, AIR-EXC-04/05/09, AIR-DIS-02 envelope inputs, SONG2026 version-of-record checks), SB-NO, SB-He, SB-Ar, NEG-CRIT",
+   "completeness_audit": "NOT_RUN",
+   "neg_crit": "NOT_EVALUABLE",
+   "tier1_gaps": [
+    "AIR-ION-02 (SOURCE_IDENTIFIED_TO_ACQUIRE)",
+    "AIR-ION-05 (SOURCE_IDENTIFIED_TO_ACQUIRE)",
+    "AIR-DIS-02 (INCOMPLETE_EVIDENCE)",
+    "AIR-EXC-04 (INCOMPLETE_EVIDENCE)",
+    "AIR-EXC-05 (INCOMPLETE_EVIDENCE)",
+    "AIR-EXC-09 (SOURCE_IDENTIFIED_TO_ACQUIRE)",
+    "AIR-EL-03 (SOURCE_IDENTIFIED_TO_ACQUIRE)",
+    "AIR-EL-04 (SOURCE_IDENTIFIED_TO_ACQUIRE)",
+    "AIR-WALL-01 (INCOMPLETE_EVIDENCE)",
+    "AIR-WALL-02 (INCOMPLETE_EVIDENCE)",
+    "AIR-WALL-03 (INCOMPLETE_EVIDENCE)",
+    "AIR-NL-02 (INCOMPLETE_EVIDENCE)"
+   ],
+   "species_bounds": [
+    "SB-He UNRESOLVED",
+    "SB-Ar UNRESOLVED",
+    "SB-NO UNRESOLVED"
+   ],
+   "n_channels": 43
+  },
+  "XE_CONTINGENCY": {
+   "label": "abep-icp-xe-0.0",
+   "admission_status": "NOT_ADMITTED",
+   "admission_today": "NOT ADMITTED: no Xe table registered (XE-ION-01, XE-EXC-01, XE-EL-01 to acquire)",
+   "completeness_audit": "NOT_RUN",
+   "neg_crit": null,
+   "tier1_gaps": [
+    "XE-ION-01 (SOURCE_IDENTIFIED_TO_ACQUIRE)",
+    "XE-EXC-01 (SOURCE_IDENTIFIED_TO_ACQUIRE)",
+    "XE-EL-01 (SOURCE_IDENTIFIED_TO_ACQUIRE)",
+    "XE-WALL-01 (SOURCE_IDENTIFIED_TO_ACQUIRE)"
+   ],
+   "species_bounds": [],
+   "n_channels": 0
+  },
+  "routes_2026_10_08": [
+   {
+    "item": "AIR-ION-02",
+    "route": "IN_REPO: SONG2026 accepted-manuscript table (docs/chemistry/o_o2/v0, sha-pinned; Hall set abep-air-0.3)",
+    "barrier": "version-of-record check: pubs.aip.org HTTP 403"
+   },
+   {
+    "item": "AIR-ION-05",
+    "route": "IN_REPO: SONG2026 accepted-manuscript upper / lower pair (v0; Hall abep-air-0.4 / 0.5)",
+    "barrier": "version-of-record check: pubs.aip.org HTTP 403"
+   },
+   {
+    "item": "AIR-EL-03",
+    "route": "IN_REPO: SONG2026 Table V (v0; Hall abep-air-0.7)",
+    "barrier": "version-of-record check: pubs.aip.org HTTP 403"
+   },
+   {
+    "item": "AIR-DIS-02",
+    "route": "IN_REPO >= 13.5 eV: SONG2026 Table VI (Cosby 1993)",
+    "barrier": "below 13.5 eV (Herzberg / Schumann-Runge): no reachable source; Cosby 1993 pubs.aip.org HTTP 403"
+   },
+   {
+    "item": "AIR-EL-04",
+    "route": "PARTIAL: Itikawa & Ichimura 1990 JPCRD 19, 637 NIST reprint (srd.nist.gov reachable; Fig. 4.1, < 14 eV, figure only)",
+    "barrier": "Tayal & Zatsarinny 2016 BSR (journals.aps.org HTTP 403, supplement paywalled); SONG2026 Fig. 24 (pubs.aip.org HTTP 403); Williams & Allen 1989 (iopscience paywall)"
+   },
+   {
+    "item": "AIR-EXC-04",
+    "route": "PARTIAL: Tashiro, Morokuma & Tennyson 2006 arXiv:physics/0604098 (open; figure only)",
+    "barrier": "Huang 2022 (pubs.acs.org HTTP 403); Shyn & Sweeney 1993 (journals.aps.org HTTP 403); above 20 eV no source (OD-6)"
+   },
+   {
+    "item": "AIR-EXC-05",
+    "route": "PARTIAL: Tashiro 2006 arXiv (open preprint)",
+    "barrier": "Huang 2022 (pubs.acs.org HTTP 403); Teillet-Billy 1989 (iopscience paywall)"
+   },
+   {
+    "item": "AIR-EXC-09",
+    "route": "REACHABLE: Laher & Gilmore 1990 JPCRD 19, 277 NIST reprint (srd.nist.gov; analytic fits, evaluated measurement)",
+    "barrier": "BSR-1116 Tayal & Zatsarinny 2016 (journals.aps.org HTTP 403); O state list = owner OD-3 (OQ-CHEM-07)"
+   },
+   {
+    "item": "AIR-NL-02",
+    "route": "INPUT: delivered composition from the upstream chain (DCR-001, L-INTAKE-DCR001)",
+    "barrier": "not registered: no admitted delivered state"
+   },
+   {
+    "item": "AIR-WALL-01",
+    "route": "STRUCTURAL: ion-to-neutral wall return (parent EQ-03 / EQ-09 / EQ-18); molecular branching envelope (UE-02)",
+    "barrier": "energy terms wait on VER-12 (no surface-physics source read)"
+   },
+   {
+    "item": "AIR-WALL-02",
+    "route": "ENVELOPE: gamma_O in {0, 1} (parent IN-18)",
+    "barrier": "sourced gamma for borosilicate (Kim & Boudart 1991, Langmuir: pubs.acs.org HTTP 403)"
+   },
+   {
+    "item": "AIR-WALL-03",
+    "route": "ENVELOPE: gamma_N in {0, 1}",
+    "barrier": "as AIR-WALL-02"
+   },
+   {
+    "item": "SB-NO",
+    "route": "REACHABLE: NIST SRD 107 NO entry (BEB orbital constants, physics.nist.gov)",
+    "barrier": "Itikawa 2016 JPCRD 45, 033106 (pubs.aip.org HTTP 403)"
+   },
+   {
+    "item": "SB-He",
+    "route": "REACHABLE (ionization): NIST SRD 107 He",
+    "barrier": "He momentum transfer / excitation: no source identified (LXCat excluded)"
+   },
+   {
+    "item": "SB-Ar",
+    "route": "none reachable",
+    "barrier": "Ar is not in NIST SRD 107; Rapp & Englander-Golden 1965 / Straub 1995 (pubs.aip.org / journals.aps.org HTTP 403)"
+   },
+   {
+    "item": "NEG-CRIT",
+    "route": "none reachable",
+    "barrier": "AIR-NEG-02 Vejby-Christensen 1996 (journals.aps.org HTTP 403); AIR-NEG-03 no source"
+   },
+   {
+    "item": "CA-ICP-v1",
+    "route": "method preregistered (NP-ICP-CHEM-AIR sec. 9)",
+    "barrier": "NOT_RUN: needs every tier-1 table and the Stage-E grid addendum (OQ-CHEM-04); Hall CA-HALL-AIR-v1 verdicts do not transfer (RU-03)"
+   },
+   {
+    "item": "XE-ION-01",
+    "route": "REACHABLE: GK2008 Appendix D Table D-1 (Rapp & Englander-Golden ionization 12.5-100 eV, level 5; registered document a373c8a2)",
+    "barrier": "primary Rejoub, Lindsay & Stebbings 2002 (journals.aps.org HTTP 403); Rapp & Englander-Golden 1965 (pubs.aip.org HTTP 403); table ends at 100 eV, so the validity limit falls below the 45 eV mean-energy D-CHEM end (IX-04 tail rule)"
+   },
+   {
+    "item": "XE-EXC-01",
+    "route": "REACHABLE: GK2008 Table D-1 Hayashi total excitation to 100 eV and the 10 V average excitation potential (p. 97), level 5",
+    "barrier": "primary Hayashi 1983 (iopscience paywall); candidate compilation Mukundan & Bhardwaj arXiv:1604.08449 (open, not read)"
+   },
+   {
+    "item": "XE-EL-01",
+    "route": "REACHABLE: GK2008 Eq. (3.6-13) Maxwellian-averaged e-Xe fit (p. 58, level 5; from Katz et al. 2003)",
+    "barrier": "a direct-rate fit representation (registry channel kind) is needed; primary Hayashi 1983 (iopscience paywall)"
+   },
+   {
+    "item": "XE-WALL-01",
+    "route": "STRUCTURAL: Xe+ -> Xe at walls",
+    "barrier": "energy terms wait on VER-12"
+   },
+   {
+    "item": "XE-CA-12",
+    "route": "method preregistered (CA-12)",
+    "barrier": "XE-ION-02 Syage 1992 (journals.aps.org HTTP 403) / Stephan & Maerk 1984 (pubs.aip.org HTTP 403); XE-ION-03 and XE-REC-01 have no source (UNBOUNDED_OMISSION unless bounded or owner-disposed); XE-EXC-02 envelope"
+   },
+   {
+    "item": "XE-LOADER",
+    "route": "IF-CHEM-REG-v1 (preregistered interface)",
+    "barrier": "abep-icp has no registry-backed Xe set path today: ChemistryRegistration::RegisteredSet for XE_CONTINGENCY is MODEL_ERROR IN-16_SET_DOES_NOT_MATCH_MODE (implementation step, not a model change)"
+   },
+   {
+    "item": "GOVERNANCE",
+    "route": "registry edits are one table per commit (build plan)",
+    "barrier": "every tier-1 change alters the codes that the frozen M2 record regenerates byte for byte (m2_dbf1.rs committed_m2_record_is_the_a8_record_of_today): coordinator decision needed (snapshot pin or M2 v2)"
+   }
+  ],
+  "admission_verdict": "AIR_PRIMARY and XE_CONTINGENCY stay NOT_ADMITTED: neither has its tier-1 tables, its final CA verdicts or (XE) a registry-backed set path; no table is built in this lane (GOVERNANCE)"
+ },
+ "verify_items": {
+  "cleared": [
+   "VER-25: CLEARED (docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/verification_addendum_ver25_v1.json)"
+  ],
+  "recorded_not_cleared": [
+   "VER-01: CONFIRMED_BY_SAME_AUTHOR_COURSE_NOT_CLEARED",
+   "VER-02: PARTIALLY_CONFIRMED_NOT_CLEARED",
+   "VER-09: PARTIALLY_CONFIRMED_NOT_CLEARED",
+   "VER-22: FORM_CONFIRMED_NOT_IMPLEMENTED"
+  ],
+  "still_blocked": [
+   "VER-06: pubs.aip.org HTTP 403 (publisher); no arXiv copy found (export.arxiv.org author search, 2026-10-08)",
+   "VER-07: pubs.aip.org HTTP 403; HAL record hal-01549430 holds metadata only (no file)",
+   "VER-08: REF-LIEB15 treats Z = 1 only",
+   "VER-12: no surface-physics source read; REF-LIEB15 gives 2 T_e per electron and V_s + T_e/2 per ion only",
+   "VER-20: Chiggiato 2014 (arXiv:1404.0960) treats isothermal molecular flow only",
+   "VER-21: journals.aps.org HTTP 403; no arXiv copy found",
+   "VER-24: no published law located"
+  ],
+  "np_icp_verification_status": "IMPLEMENTED_UNVERIFIED (admission-rule item 4 not met)"
+ },
+ "closure": {
+  "item": "P4",
+  "state": "BLOCKED BY SPECIFIC MISSING EVIDENCE",
+  "rule": "ICP-CLOSURE-REG-v1 closure_state_rule, applied literally; M-C never changes the state",
+  "conservation_feasible_in_frozen_envelope": true,
+  "I_e_cap_status": "INCOMPLETE_EVIDENCE in every mode (model withheld; see model_evaluation_M_A)",
+  "M_n_status": "NOT_EVALUATED (HC-05): I_e,cap withheld, I_d,max,H1 not registered, no validated cell",
+  "GNG-ICP-01": "NOT_EVALUATED (criteria PENDING_OWNER_ACCEPTANCE)",
+  "HC-05": "NOT_EVALUATED",
+  "blockers": [
+   "AIR_PRIMARY: DOM-12_NO_NEGATIVE_ION_BALANCE",
+   "AIR_PRIMARY: IN-05_DELIVERED_COMPOSITION_TBD",
+   "AIR_PRIMARY: IN-16_NO_REGISTERED_RATE_SET:AIR",
+   "AIR_PRIMARY: IN-17_NO_EDGE_FACTOR_SOURCE",
+   "AIR_PRIMARY: NP-ICP-CHEM-AIR:AIR-DIS-02",
+   "AIR_PRIMARY: NP-ICP-CHEM-AIR:AIR-EL-03",
+   "AIR_PRIMARY: NP-ICP-CHEM-AIR:AIR-EL-04",
+   "AIR_PRIMARY: NP-ICP-CHEM-AIR:AIR-EXC-04",
+   "AIR_PRIMARY: NP-ICP-CHEM-AIR:AIR-EXC-05",
+   "AIR_PRIMARY: NP-ICP-CHEM-AIR:AIR-EXC-09",
+   "AIR_PRIMARY: NP-ICP-CHEM-AIR:AIR-ION-02",
+   "AIR_PRIMARY: NP-ICP-CHEM-AIR:AIR-ION-05",
+   "AIR_PRIMARY: NP-ICP-CHEM-AIR:AIR-NL-02",
+   "AIR_PRIMARY: NP-ICP-CHEM-AIR:AIR-WALL-01",
+   "AIR_PRIMARY: NP-ICP-CHEM-AIR:AIR-WALL-02",
+   "AIR_PRIMARY: NP-ICP-CHEM-AIR:AIR-WALL-03",
+   "AIR_PRIMARY: NP_ICP_CHEM_AIR_NOT_ADMITTED",
+   "AIR_PRIMARY: SP-04_SPECIES_BOUND_UNRESOLVED:SB-NO",
+   "BOTH: CFG-FLIGHT-HALL-ON NOT_EVALUATED (CPL-HALL-ON-v1 gate: credible Hall set EMPTY, HI-04..HI-08)",
+   "BOTH: I_d,max,H1 not registered (HALL_NUMERICS_NOT_CONVERGED, A9.36) -> HC-05 NOT_EVALUATED",
+   "BOTH: no VALIDATED_BENCH cell (P1 bench / P2 impedance map) -> HC-05 NOT_EVALUATED (AS-02)",
+   "XE_CONTINGENCY: CHG-04_NO_XE_RATE_SET",
+   "XE_CONTINGENCY: IN-16_NO_REGISTERED_RATE_SET:XE",
+   "XE_CONTINGENCY: NP-ICP-CHEM-AIR:XE-EL-01",
+   "XE_CONTINGENCY: NP-ICP-CHEM-AIR:XE-EXC-01",
+   "XE_CONTINGENCY: NP-ICP-CHEM-AIR:XE-ION-01",
+   "XE_CONTINGENCY: NP-ICP-CHEM-AIR:XE-WALL-01",
+   "XE_CONTINGENCY: NP_ICP_CHEM_AIR_XE_NOT_ADMITTED"
+  ]
+ }
+}

@@ -21,9 +21,9 @@ import pytest
 REPO = Path(__file__).resolve().parents[1]
 DIR = REPO / "docs" / "architecture_comparison" / "compressor_downselect"
 SCRIPT = DIR / "build_compressor_downselect.py"
-JSON_PATH = DIR / "compressor_downselect_v1.json"
-MD_PATH = DIR / "COMPRESSOR_DOWNSELECT.md"
-CLOSURE = REPO / "docs" / "architecture_comparison" / "feed_state_closure" / "feed_state_closure_v1.json"
+JSON_PATH = DIR / "compressor_downselect_v2.json"
+MD_PATH = DIR / "COMPRESSOR_DOWNSELECT_v2.md"
+CLOSURE = REPO / "docs" / "architecture_comparison" / "feed_state_closure" / "feed_state_closure_v2.json"
 EVIDENCE = {"measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"}
 CASES = {f"alt{a}_{l}" for a in (180, 200, 230) for l in ("low", "mean", "high")}
 FORBIDDEN_TOKENS = ("ensemble_member_id", "sgb-screen", "screening_candidate", "coil_shape", "beam_efficiency",
@@ -124,9 +124,11 @@ def test_envelope_matches_w1_closure(doc):
     s = doc["requirement_summary"]
     assert s["candidate_cases"] == 9 * len(closed)
     assert 2.3 < s["CR_required_self_consistent"]["min"] < 2.4
-    assert 141 < s["CR_required_self_consistent"]["max"] < 143
-    assert 0.029 < s["mdot_valve_bracket_kgps"]["min"] * 1e6 < 0.031
-    assert 3.13 < s["mdot_valve_bracket_kgps"]["max"] * 1e6 < 3.15
+    # re-pinned after the A9.13 S6.8 pressure-domain gate in the W1 closure (only DC-S12-G20 closes, at 0.05 Pa;
+    # the > 0.1 Pa DC-S25-G20 / DC-S12-G10 closures are NOT_EVALUATED_OUT_OF_DOMAIN; review findings RVF-01 / PHY-01)
+    assert 30.2 < s["CR_required_self_consistent"]["max"] < 30.4
+    assert 0.027 < s["mdot_valve_bracket_kgps"]["min"] * 1e6 < 0.029
+    assert 1.03 < s["mdot_valve_bracket_kgps"]["max"] * 1e6 < 1.04
 
 
 def test_matrix_complete_and_eliminations_explicit(doc):

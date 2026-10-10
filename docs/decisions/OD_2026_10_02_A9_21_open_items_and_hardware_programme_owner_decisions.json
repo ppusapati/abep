@@ -1,0 +1,32 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-02",
+ "parents": [
+  "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+  "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md",
+  "sha256": "01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440"
+ },
+ "decisions": {
+  "PERF_RERUN": "owner reruns the dedicated baseline on the exact commit SHA supplied, into a new folder; previous baseline unchanged",
+  "AL08": "KEEP_6_05KG_PROVISIONAL_WAIT_FOR_QUOTES_TO_REBASE_AL08 (provisional planning floor, not frozen; quotations split tank, regulator, valves, plumbing, mounting/thermal and any C1-specific branch)",
+  "H2_6": "H2_6_BUILDER_FROZEN_LIVE_SOURCE_CHECK_IN_CI",
+  "ICP_GATE": "ICP_GO_NO_GO_REQUIRED_BEFORE_LOCK1 (gate existence and placement approved; fail-closed NOT_EVALUATED without evidence; NO numerical criterion approved; recorder proposal text preserved separately for review)",
+  "BID_CLOSE": "operational submission deadline 2026-10-05 17:00 (DefProc tender 2026_DRDO_788433_1, owner-cited listings) unless a DefProc corrigendum changes it; not in the RFP PDF",
+  "HW_PROGRAMME": [
+   "H-1: S7.1 FEMM analysis points, then S7.2 engineering channel point (engineering freeze candidate)",
+   "C1 ground reference: H-1 + C1 characterization registers I_d,max,H1,Ar before P1-S7",
+   "ICP: Ar commissioning reference where required -> registered air/N2 ICP-45 campaign -> separate registered Xe-mode campaign; own domain/provenance per gas/mode; stage domains, pressure-match tolerance, DWV leakage, stable-region criteria closed first",
+   "P2 impedance map after the in-house V/I calibration + uncertainty budget are frozen",
+   "coupled H-1 + ICP -> thermal -> P4 (thresholds frozen before acceptance-bearing exposure)",
+   "measured H-1 thrust/feed map (mandatory) -> AG-12 performance-derived feed requirement -> statewise AG-13 T-D >= 0"
+  ],
+  "EXTERNAL_INPUTS": "AOCS pointing envelope, inclination/LTAN and host-spacecraft drag ICD cannot be supplied from current evidence; stay TBD (no code default as mission truth)",
+  "RFQ_DISPATCH": "packages finalized in the repository; dispatch by owner/procurement only"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

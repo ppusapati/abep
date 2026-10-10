@@ -1,0 +1,214 @@
+{
+ "id": "dbf1_2_requirement_trace_v1",
+ "baseline": "DBF-1.2",
+ "rvm": {
+  "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+  "sha256": "f91a00b40e24a66ceec8fd16dba3ad5ecb249ae186cc39bf717efe083223a5c4"
+ },
+ "rfp": {
+  "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+  "sha256": "c126be5eef7b9ec6340776ed035eeaa0ced1c4dd2ec585383f3d3a5977d174a0"
+ },
+ "trace": [
+  {
+   "requirement": "altitude 180-230 km",
+   "rvm": "RVM-01",
+   "rfp_clauses": [
+    "RFP-P18-08"
+   ],
+   "dbf1_2_items": [
+    "DBF12-OPS-01"
+   ],
+   "state": "CONFORMING_BY_DESIGN / VERIFY_EM_QM",
+   "note": "density-aware altitude scheduling"
+  },
+  {
+   "requirement": ">= 12 mN sustained atmospheric",
+   "rvm": "RVM-02",
+   "rfp_clauses": [
+    "RFP-P18-06"
+   ],
+   "dbf1_2_items": [
+    "DBF12-AIR-01",
+    "DBF12-PWR-05"
+   ],
+   "state": "CONFORMING_BY_DESIGN_ALLOCATION / VERIFY_EM_QM",
+   "note": "12 mN at P_d 650 W inside the AIR window; not demonstrated"
+  },
+  {
+   "requirement": "25 mN capability",
+   "rvm": "RVM-03",
+   "rfp_clauses": [
+    "RFP-P18-06"
+   ],
+   "dbf1_2_items": [
+    "DBF12-OPS-02",
+    "DBF12-PWR-06"
+   ],
+   "state": "CONFORMING_BY_DESIGN_ALLOCATION / VERIFY_EM_QM",
+   "note": "Xe mode (A9.40); Xe use booked; not atmospheric"
+  },
+  {
+   "requirement": "P_bus < 1500 W",
+   "rvm": "RVM-04",
+   "rfp_clauses": [
+    "RFP-P18-10"
+   ],
+   "dbf1_2_items": [
+    "DBF12-PWR-05",
+    "DBF12-PWR-06"
+   ],
+   "state": "CONFORMING_BY_DESIGN_ALLOCATION / VERIFY_EM_QM",
+   "note": "AIR 1222.3 / 1263.1 W; Xe 25 mN at <= 1450 W design ceiling"
+  },
+  {
+   "requirement": "internal 1350 W allocation",
+   "rvm": "RVM-05",
+   "rfp_clauses": [],
+   "dbf1_2_items": [
+    "DBF1-PWR-01",
+    "DBF12-PWR-05"
+   ],
+   "state": "WITHIN_ALLOCATION (AIR nominal)",
+   "note": "Xe 25 mN capability uses the 1350-1450 W band (non-nominal, A9.40)"
+  },
+  {
+   "requirement": "mass < 40 kg",
+   "rvm": "RVM-06",
+   "rfp_clauses": [
+    "RFP-P18-11"
+   ],
+   "dbf1_2_items": [
+    "DBF12-MASS-05"
+   ],
+   "state": "CONFORMING_BY_PRELIMINARY_ROLLUP / OPEN_MASS_RISK",
+   "note": "39.948 kg wet; MR-DCR001-01"
+  },
+  {
+   "requirement": "internal 34 / 36 kg allocation",
+   "rvm": "RVM-07",
+   "rfp_clauses": [],
+   "dbf1_2_items": [
+    "DBF1-MASS-02",
+    "DBF12-MASS-05"
+   ],
+   "state": "TARGET_NOT_MET (nominal dry 34.498 kg)",
+   "note": "DBF1-BD-04 open as mass risk"
+  },
+  {
+   "requirement": "atmospheric propellant",
+   "rvm": "RVM-08",
+   "rfp_clauses": [
+    "RFP-P18-08",
+    "RFP-P17-03",
+    "RFP-P17-04"
+   ],
+   "dbf1_2_items": [
+    "DBF12-IN-01",
+    "DBF12-CMP-01",
+    "DBF12-FEED-01"
+   ],
+   "state": "CONFORMING_BY_DESIGN / VERIFY_EM_QM",
+   "note": "intake + compressor + plenum / feed"
+  },
+  {
+   "requirement": "Xe capability, two separate tanks",
+   "rvm": "RVM-10 / RVM-29",
+   "rfp_clauses": [
+    "RFP-P18-08",
+    "RFP-P17-05"
+   ],
+   "dbf1_2_items": [
+    "DBF12-OPS-02"
+   ],
+   "state": "CONFORMING_BY_DESIGN",
+   "note": "AL-08 Xe branch 2 kg reference"
+  },
+  {
+   "requirement": "Hall preferred",
+   "rvm": "RVM-11",
+   "rfp_clauses": [
+    "RFP-P18-07"
+   ],
+   "dbf1_2_items": [
+    "DBF1-H1-01"
+   ],
+   "state": "CONFORMING_BY_DESIGN",
+   "note": "H1 inherited unchanged"
+  },
+  {
+   "requirement": "neutralization (cathodeless)",
+   "rvm": "RVM-15 / RVM-28",
+   "rfp_clauses": [],
+   "dbf1_2_items": [
+    "DBF1-ICP-01"
+   ],
+   "state": "CONFORMING_BY_DESIGN / VERIFY_EM_QM",
+   "note": "ICP inherited unchanged"
+  },
+  {
+   "requirement": "AO material compatibility",
+   "rvm": "RVM-16",
+   "rfp_clauses": [
+    "RFP-P19-04"
+   ],
+   "dbf1_2_items": [
+    "DBF1-MAT-01"
+   ],
+   "state": "VERIFY_EM_QM",
+   "note": "materials inherited"
+  },
+  {
+   "requirement": "thermal closure",
+   "rvm": "RVM-17",
+   "rfp_clauses": [],
+   "dbf1_2_items": [
+    "DBF1-TH-01"
+   ],
+   "state": "VERIFY_EM_QM",
+   "note": "thermal inherited; anode / coupled thermal UNRESOLVED"
+  },
+  {
+   "requirement": "electronics redundancy (no SPF)",
+   "rvm": "RVM-19",
+   "rfp_clauses": [
+    "RFP-P18-09",
+    "RFP-P18-02"
+   ],
+   "dbf1_2_items": [
+    "DBF12-MASS-05"
+   ],
+   "state": "CONFORMING_BY_DESIGN (PPU N+1) / VERIFY_FMEA",
+   "note": "v6 PPU CBE carries N+1 / redundant electronics"
+  },
+  {
+   "requirement": "MIL-1553B interface",
+   "rvm": "RVM-20",
+   "rfp_clauses": [
+    "RFP-P18-12"
+   ],
+   "dbf1_2_items": [],
+   "state": "ALLOCATED_TO_AL-09",
+   "note": "controls allocation"
+  },
+  {
+   "requirement": "environmental qualification",
+   "rvm": "RVM-21",
+   "rfp_clauses": [
+    "RFP-P19-04"
+   ],
+   "dbf1_2_items": [],
+   "state": "VERIFY_EM_QM",
+   "note": "EM / QM programme"
+  },
+  {
+   "requirement": "mission life / firing hours",
+   "rvm": "RVM-12 / RVM-13",
+   "rfp_clauses": [],
+   "dbf1_2_items": [],
+   "state": "VERIFY_EM_QM",
+   "note": "life tests"
+  }
+ ],
+ "rule": "CONFORMING_BY_DESIGN / ALLOCATION means the frozen design meets the requirement by specification and allocation; measured compliance is verified on EM / QM"
+}

@@ -1,0 +1,36 @@
+{
+ "schema": "np_hall_parametric_envelope_a3_numerics_air_raw_manifest_v1",
+ "name": "h1_parametric_envelope_a3_numerics_v1_AIR",
+ "layer": "PARAMETRIC / NOT_VALIDATED",
+ "addendum_lock_sha256": "b840f1b080c94be58472ccb07f6cf35cc9ad8822161ff9a1440ecb55c76e04bd",
+ "prereg_lock_sha256": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3",
+ "cases_file_sha256": "e58e9dda8058ba0cbae4cdfb24a7ae452f2b5318c80c1ffe362d04eea7bfd839",
+ "driver_sha256": "cb908501aa81cd09fb4cac978164e19b34e8fb58d2e28fe1e18b0761f448a2c2",
+ "n_records": 51,
+ "raw_file": "h1_parametric_envelope_a3_numerics_v1_AIR_raw.jsonl.gz",
+ "raw_sha256": "2556d20d68590d16124fe1fe4af6c106d2a6d4c31350eaabae20e290c8f190ba",
+ "shards": [
+  {
+   "file": "a3air_s00.jsonl",
+   "sha256": "45ee3ad7f0a75e1d79b3ff7e9a6cdd5e3f5d63f03b3a269aed8b3541d098312f",
+   "n_records": 17,
+   "sidecar": "a3air_s00.jsonl.sidecar.json",
+   "sidecar_sha256": "97545364e0f0c69722ee8c264d77214ce304929973ebff441a615ce003494603"
+  },
+  {
+   "file": "a3air_s01.jsonl",
+   "sha256": "7b13c5878b9041530d7b474037203413ac57d6461d914280c6c4692414b1760f",
+   "n_records": 17,
+   "sidecar": "a3air_s01.jsonl.sidecar.json",
+   "sidecar_sha256": "46238526ee29fad792fe7dfb74fdd2107a6493e75a5d3ad85175d2a4461e2ff2"
+  },
+  {
+   "file": "a3air_s02.jsonl",
+   "sha256": "e713577d3d01856dcb554f4665f7e0f731438e2c5bd2ce6678a56b964a4f8438",
+   "n_records": 17,
+   "sidecar": "a3air_s02.jsonl.sidecar.json",
+   "sidecar_sha256": "639a3451c792e3040549cb15ff74ad687a89f1d3072ed4b8c477f9a0c8543ffb"
+  }
+ ],
+ "frozen_by": "abep-h1-envelope-a3 freeze --family AIR"
+}

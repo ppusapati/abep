@@ -3,7 +3,8 @@
 
 Runs abep_sim/design/architecture_optimizer.py (F7) and abep_sim/design/robust_optimizer.py (F8) on the committed
 lane deliverables (F1 IF-A1 records and species table, F2/F4 filter cases, F3 compressor front union, F4 plenum grid,
-F5 x_Hall windows, F6 x_ICP definition, P1-P4 frameworks, mass/power v2, the A9-02 bus boundary, the RVM) and writes
+F5 x_Hall windows, F6 x_ICP definition, P1-P4 frameworks, mass/power v3, the A9-02 bus boundary v2, the RVM) and
+writes
 
   f7_f8_optimizer_v1.json         design-vector blocks, parameters, upstream Pareto summary, system evaluation
                                   (every system objective evaluated or refused with its unlock evidence), fail-closed
@@ -39,8 +40,12 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from abep_sim.design import architecture_optimizer as ao  # noqa: E402
+from abep_sim.design import intake_synthesis as isy  # noqa: E402
 from abep_sim.design import plenum_feed as pf  # noqa: E402
 from abep_sim.design import robust_optimizer as ro  # noqa: E402
+from abep_sim.design import upstream_a9_13 as u13  # noqa: E402
+from abep_sim.assessment import design_gates as dg  # noqa: E402  (A9.22: assessment layer, builder level)
+from abep_sim.programme import design_synthesis as ds  # noqa: E402  (A9.22: programme layer, builder level)
 
 OUT_DIR_REL = "docs/design_synthesis/f7_f8_optimizer"
 SCRIPT_REL = f"{OUT_DIR_REL}/build_f7_f8_optimizer.py"
@@ -52,32 +57,46 @@ TEST_REL = "tests/test_design_f7_f8_optimizer.py"
 BASE_COMMIT = "1bcfe0e4ba2242ebd8deaf1263fa98d85f75f631"
 SIG = 7
 N_MC = 100
-OWNER_FLOW_RANGE_MGPS = (0.38, 3.2)       # owner row 73 ground characterization range (via F4 requirement sweep)
+OWNER_FLOW_RANGE_MGPS = (u13.GROUND_CHARACTERIZATION_ONLY_MGPS, 3.2)   # characterization COVERAGE only (A9.13 S6.13 /
+#                                                                        S6.21; owner row 73 range), never a gate
+# A9.14 S9.8 OD3 / A9.13 S6.14: F7 / F8 now run over every F1 state (design-case reference + the required states of the
+# frozen design-state set v2). The builder keeps no output history; the superseded five-state run is recorded here
+# (facts of the committed outputs at 61eefc4).
+STATE_SET_HISTORY = {
+    "superseded_state_set": isy.HISTORY_FIVE_STATE_SET,
+    "superseded_outputs": {
+        "commit": "61eefc4",
+        "f7_f8_optimizer_v1.json": "45e055ccae563440180f89a6c26415357abd51064cc6296bfbf14139ffee517b",
+        "f7_upstream_pareto_v1.json": "7a282dd217cd876999c5c65b3a445449175bfa3362a3b59bed74ed120a9bb0c9",
+        "f8_robust_candidates_v1.json": "43adc213f7f7b7f34fdda5e494033fcac52615ec7627777a010b1e2497d5927d"},
+    "reason": "A9.14 S9.8 OD3; A9.13 S6.14 OQ-F4-05 (application-matrix residual RVF-03)",
+}
 
 PINNED = (
     "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
     "docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json",
-    ao.F1_REL, ao.F3_REL, ao.F3D_REL, ao.F4_REL, ao.F5_REL, ao.F6_REL,
+    ao.F1_CORE_REL, ao.F3_REL, ao.F3D_REL, ao.F4_REL, ao.F5_REL, ao.F6_REL,
 )
 REFERENCED_NOT_PINNED = (
     (ao.F2_REL, "F2 filter-stage deliverable (filter cases are built through abep_sim/design/filter_stage.py)"),
-    (ao.MP_REL, "mass/power v2: slot TBD texts, allocations, wet roll-ups (mutable package; identity checked)"),
+    (ao.MP_REL, "mass/power v3 (A9.15-applied): slot TBD texts, allocations, wet roll-ups (mutable package; "
+                "identity checked)"),
     (ao.P1_REL, "P1 ICP bench (ICP-45 status, I_d,max,H1 TBD)"),
     (ao.P2_REL, "P2 impedance-map preparation (no data)"),
     (ao.P3_REL, "P3 coupled thermal framework (fail-closed evaluations, items)"),
     (ao.P4_REL, "P4 anode / collector materials (gate matrix, fixed statuses)"),
     (ao.RVM_REL, "RVM A9 (requirement rows behind HARD_CONSTRAINTS; hall_status)"),
-    (ao.RFQ_REL, "RFQ v2 (RF chain procurement architecture)"),
+    (ao.RFQ_REL, "RFQ v3 (RF chain procurement architecture, A9.15-applied)"),
     (ao.ENS_REL, "transport ensemble (admitted members: credible set)"),
     (ao.VAL_REL, "P5-N2 v1 validation release (decision)"),
     (ao.PARITY_REL, "abep_core parity report (TPMC backend policy only; no TPMC is run)"),
     ("abep_sim/design/architecture_optimizer.py", "the F7 module"),
     ("abep_sim/design/robust_optimizer.py", "the F8 module"),
     ("abep_sim/design/plenum_feed.py", "F4 physics (called)"),
-    ("abep_sim/bus_boundary_a9.py", "A9-02 bus boundary (called, never modified)"),
+    ("abep_sim/bus_boundary_a9_v2.py", "A9-02 bus boundary v2 (A9.22 G8; called, never modified)"),
     (ao.F5_BUILDER_REL, "F5 geometric_admissibility (imported by path, read-only)"),
 )
-IDENTITY = {ao.MP_REL: "mass_power_a9_v2", ao.P3_REL: "p3_coupled_thermal_v1", ao.P4_REL: "p4_anode_materials_v1",
+IDENTITY = {ao.MP_REL: "mass_power_a9_v5", ao.P3_REL: "p3_coupled_thermal_v2", ao.P4_REL: "p4_anode_materials_v1",
             ao.RVM_REL: "rvm_a9_v1", ao.P1_REL: "p1_icp_bench_v1", ao.P2_REL: "p2_impedance_prep_v1"}
 
 
@@ -115,7 +134,7 @@ def stage_f7(inp):
         for filt in inp.filters:
             for sc in inp.scenarios:
                 ctx = ao.upstream_context(inp, sc, filt, wall)
-                pars[(sc, filt, wall)] = ao.context_pareto(ctx)
+                pars[(sc, filt, wall)] = ds.context_pareto(ctx)
                 if filt == ro.NOMINAL_FILTER:
                     ctxs[(sc, filt, wall)] = ctx
     return ctxs, pars
@@ -139,6 +158,17 @@ def pareto_rows(pars):
     return out
 
 
+def _f4_single_frontier() -> str:
+    """F4-01 single-setpoint all-state frontier as stated by the committed F4 record (read, never hard-coded)."""
+    import re
+    f4 = json.loads((REPO / "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json").read_text(encoding="utf-8"))
+    txt = next(f["finding"] for f in f4["findings"] if f["id"] == "F4-01")
+    m = re.search(r"WALL-G0\) is ([0-9.eE+-]+) mg/s", txt)
+    if m is None:
+        raise SystemExit("REFUSED: F4-01 no longer states the single-setpoint frontier")
+    return m.group(1)
+
+
 def pareto_summary(inp, pars):
     rows = []
     for (sc, filt, wall), par in sorted(pars.items()):
@@ -149,7 +179,7 @@ def pareto_summary(inp, pars):
                          best["design_id"] if best else None,
                          sum(1 for m in b["members"] if m["mdot_delivered_min_kgps"] * 1e6 >= OWNER_FLOW_RANGE_MGPS[0])])
     cols = ["context_id", "scenario", "filter", "wall", "P_set_Pa", "n_evaluated", "n_feasible", "n_pareto",
-            "frontier_mdot_delivered_min_mgps", "frontier_attained_by", "n_pareto_ge_0.38_mgps"]
+            "frontier_mdot_delivered_min_mgps", "frontier_attained_by", "n_pareto_reaching_coverage_0.38_mgps"]
     return {"columns": cols, "rows": rows}
 
 
@@ -163,7 +193,8 @@ def reason_totals(pars):
 
 
 def stage_system(inp, pars):
-    """Full system evaluation of every nominal (filter none, WALL-G0) Pareto member, both configurations, and the
+    """Full system evaluation of every nominal (filter none, WALL-G0) Pareto member, every flight configuration
+    (ao.CONFIGURATIONS; A9.19 / A9.20: hall_icp_neutralizer only), and the
     full-system ranking attempt."""
     evals = {c: [] for c in ao.CONFIGURATIONS}
     exemplar = None
@@ -173,7 +204,7 @@ def stage_system(inp, pars):
         for P, b in sorted(par.items()):
             for m in b["members"]:
                 for cfg in ao.CONFIGURATIONS:
-                    ev = ao.evaluate_system(m, cfg, design=inp.designs[m["compressor"]])
+                    ev = ds.evaluate_system(m, cfg, design=inp.designs[m["compressor"]])
                     ev["design_id"] = f"{sc}|{m['design_id']}"
                     evals[cfg].append(ev)
                     if exemplar is None and cfg == "hall_icp_neutralizer":
@@ -186,7 +217,7 @@ def stage_system(inp, pars):
                 status[(cfg, k, o["status"])] += 1
             for c in ev["constraints"]:
                 cons[(cfg, c["id"], c["status"])] += 1
-    ranking = {cfg: ao.rank_full_system(evs) for cfg, evs in evals.items()}
+    ranking = {cfg: ds.rank_full_system(evs) for cfg, evs in evals.items()}
     pel = [ev["objectives"]["P_bus_W"]["parametric_lower_bound_W"] for ev in evals["hall_icp_neutralizer"]]
     mcomp = [ev["objectives"]["m_wet_kg"]["lines"][1]["design_parametric"]["m_compressor_max_kg"]
              for ev in evals["hall_icp_neutralizer"]]
@@ -202,7 +233,7 @@ def stage_system(inp, pars):
 
 # ----------------------------------------------------------------------------------------------------- F8
 def stage_f8(inp, ctxs, pars):
-    before = ro.gate_snapshot()
+    before = dg.gate_snapshot()
     surv = ro.survivors(pars)
     scen = ro.scenario_robustness(surv, ctxs, inp.scenarios, ro.NOMINAL_WALL)
     mc = ro.tpmc_monte_carlo(inp, surv, inp.scenarios, n=N_MC)
@@ -213,7 +244,7 @@ def stage_f8(inp, ctxs, pars):
     wall = ro.scenario_robustness(mem, ctxs, inp.scenarios, "WALL-TI64-DB")
     point = ro.pointing_sensitivity(inp, mem, inp.scenarios)
     elas = {m["design_id"]: ro.compressor_elasticities(inp, m, inp.scenarios) for m in mem}
-    after = ro.gate_snapshot()
+    after = dg.gate_snapshot()
     tiers = Counter(scen[s["design_id"]]["n_scenarios_feasible"] for s in surv)
     return {"survivors": surv, "scenario": scen, "mc": mc, "all_scenario_feasible": allsc, "robust_pareto": rp,
             "members": mem, "wall": wall, "pointing": point, "elasticities": elas, "gates_before": before,
@@ -245,7 +276,7 @@ def parameters():
         P.append({"id": pid, "value": value, "units": units, "basis": basis, "source": source,
                   "evidence_class": ec, "status": status})
     p("F78-P-01", list(ao.UPSTREAM_TARGETS_PA), "Pa", "plenum set pressures evaluated (F4 requirement sweep up to the "
-      "0.1 Pa free-molecular domain cap; above it everything is INFEASIBLE_OUT_OF_DOMAIN in F3/F4)",
+      "0.1 Pa free-molecular domain cap; above it everything is NOT_EVALUATED_OUT_OF_DOMAIN in F3/F4, A9.13 S6.8)",
       f"{ao.F4_REL} requirement_sweep; F3 P-MOLECULAR-LIMIT", "TBD (requirement)", "CONTEXT_AXIS")
     p("F78-P-02", list(ao.VOLUMES_M3), "m^3", "plenum volume grid", f"{ao.F4_REL} search_variables x_plenum.V",
       "assumed", "SEARCHED (F4 grid)")
@@ -258,8 +289,9 @@ def parameters():
     p("F78-P-06", [o[0] for o in ao.UPSTREAM_OBJECTIVES], "-", "upstream Pareto objectives (directions in "
       "upstream_objectives); weak dominance, ties kept, infeasible / out-of-domain vectors never enter",
       "abep_sim/design/architecture_optimizer.py UPSTREAM_OBJECTIVES / pareto_mask", "definition", "DEFINITION")
-    p("F78-P-07", "single setpoint for all five orbit states", "-", "a vector is feasible only if every orbit state is "
-      "feasible at the one set pressure (F4 single-setpoint frontier; the scheduled alternative is F4 OQ-F4-01)",
+    p("F78-P-07", "single setpoint for every F1 state", "-", "a vector is feasible only if every F1 state (design-case "
+      f"reference + all {len(isy.required_states())} required states of {isy.DESIGN_STATE_SET_ID}) is feasible at "
+      "the one set pressure (F4 single-setpoint frontier; the scheduled alternative is F4 OQ-F4-01)",
       f"{ao.F4_REL} requirement_sweep.feasibility_rule", "definition", "DEFINITION")
     p("F78-P-08", N_MC, "-", "TPMC-statistics Monte Carlo draws per (candidate, scenario)", "this study",
       "numerical-setting", "STUDY_SETTING")
@@ -268,12 +300,22 @@ def parameters():
     p("F78-P-10", ro.ELASTICITY_STEP, "-", "relative central-difference step of the compressor elasticities "
       "(numerical setting, not an uncertainty)", "abep_sim/design/robust_optimizer.py", "numerical-setting",
       "STUDY_SETTING")
-    p("F78-P-11", OWNER_FLOW_RANGE_MGPS, "mg/s", "owner ground-characterization flow range used only to COUNT "
-      "Pareto members reaching it (context, not a requirement)", f"{ao.F4_REL} requirement_sweep.mdot_req_basis "
-      "(owner row 73)", "owner-allocation", "CONTEXT_ONLY")
+    p("F78-P-11", OWNER_FLOW_RANGE_MGPS, "mg/s", "characterization coverage range (A9.13 S6.21: 0.38 mg/s and "
+      "~1.3 mg/s are not requirements; no fixed flight mass-flow gate) used only to COUNT Pareto members reaching its "
+      "lower end (coverage, never PASS / FAIL)", f"{ao.F4_REL} requirement_sweep.mdot_req_basis "
+      "(owner row 73; A9.13 S6.21)", "owner-allocation", "CHARACTERIZATION_COVERAGE_ONLY")
     p("F78-P-12", "TBD", "N", "spacecraft body / array drag D_body", "none (F1-ID-08)", "TBD", "TBD")
     p("F78-P-13", "TBD", "N", "thrust T of H-1 on the delivered feed", f"{ao.ENS_REL} (members = [])", "TBD",
       "NOT_EVALUATED (no admitted Hall response map)")
+    p("F78-P-14", isy.DESIGN_STATE_SET_ID, "-", f"orbit / atmosphere states: design-case reference "
+      f"{isy.DESIGN_STATE.id} + every required state of the frozen design-state set v2 (sha256 "
+      f"{isy.DESIGN_STATE_SET_SHA256}); broad envelope, {isy.ORBIT_BASIS_LABEL}", f"{ao.F1_REL} coverage_rule",
+      "model-derived", "FROZEN_DATASET (A9.14 S9.8 OD3; all states, no subset)")
+    p("F78-P-15", "PENDING_EVIDENCE", "mixed", "flight feed requirement: performance-derived only (A9.13 S6.21, rank 1 "
+      "of the S6.13 owner order); needs the measured / validated H-1 thrust-versus-feed map; never lowered to a "
+      "deliverable frontier, a state subset or 0.38 mg/s (ground characterization only)",
+      "abep_sim/design/upstream_a9_13.py flight_feed_requirement / refuse_feed_requirement_lowering", "TBD",
+      "PENDING_EVIDENCE")
     return P
 
 
@@ -305,12 +347,12 @@ def interface_demands():
       "fail-closed objective contract (F6-IF-S01)", "CONSUMED (bounds TBD, not searchable)")
     d("F78-ID-11", "P1 -> F7", ao.P1_REL, "ICP-45A result and registered I_d,max,H1 for I_e,cap - I_d,max",
       "DEMANDED (NOT_EVALUATED)")
-    d("F78-ID-12", "P2 / RFQ v2 -> F7", f"{ao.P2_REL}; {ao.RFQ_REL}", "RF ratings, match loss, flight source "
+    d("F78-ID-12", "P2 / RFQ v3 -> F7", f"{ao.P2_REL}; {ao.RFQ_REL}", "RF ratings, match loss, flight source "
       "efficiency (x_RF)", "DEMANDED (TBD_AFTER_IMPEDANCE_MAP)")
     d("F78-ID-13", "P3 -> F7", ao.P3_REL, "solved coupled network for Q_reject and the 50 K margin", "DEMANDED "
       "(INCOMPLETE_EVIDENCE)")
     d("F78-ID-14", "P4 -> F7", ao.P4_REL, "material gate evidence for life / material indicators", "DEMANDED")
-    d("F78-ID-15", "mass/power v2 -> F7", ao.MP_REL, "A9-02 slot TBD texts, allocations, evidence floors, wet "
+    d("F78-ID-15", "mass/power v3 -> F7", ao.MP_REL, "A9-02 slot TBD texts, allocations, evidence floors, wet "
       "roll-ups; F7 returns design-parametric masses in a separate column (never merged)", "CONSUMED / PROVIDED")
     d("F78-ID-16", "F7/F8 -> F9", "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (F9-ID-07)",
       "upstream Pareto sets per context, robust Pareto set, full-system ranking status REFUSED_INCOMPLETE with the "
@@ -362,9 +404,10 @@ def findings(inp, f7sum, totals, sysd, f8, pars):
     F.append({"id": "F78-02", "evidence_class": "model-derived", "finding":
               f"nominal context (filter none, WALL-G0): the all-state delivered-flow frontier is "
               f"{best['frontier_mdot_delivered_min_mgps']} mg/s ({best['scenario']}, P_set {best['P_set_Pa']} Pa, "
-              f"{best['frontier_attained_by']}); Pareto members reaching the owner ground-characterization lower end "
-              f"0.38 mg/s at every state: {sum(r['n_pareto_ge_0.38_mgps'] for r in rows)} (all contexts). Consistent "
-              "with F4-01 (single-setpoint frontier 0.1027 mg/s)"})
+              f"{best['frontier_attained_by']}); Pareto members reaching 0.38 mg/s (ground characterization only, "
+              f"A9.13 S6.13 / S6.21: never a flight requirement or gate) at every state: "
+              f"{sum(r['n_pareto_reaching_coverage_0.38_mgps'] for r in rows)} (all contexts). Compare F4-01 (single-setpoint "
+              f"frontier {_f4_single_frontier()} mg/s)"})
     byP = Counter()
     for r in rows:
         if r["n_pareto"]:
@@ -385,7 +428,8 @@ def findings(inp, f7sum, totals, sysd, f8, pars):
               f"system level: for all {sysd['evaluations_by_configuration']} nominal Pareto evaluations every system "
               "objective (T - D, P_bus, m_wet, Q_reject, I_e,cap - I_d,max, life) is NOT_EVALUATED and every RVM "
               "hard constraint except the intake-face drag bound HC-09 is NOT_EVALUATED (fail closed); full-system "
-              f"ranking {rk['status']} for both configurations (missing counts {rk.get('missing_counts')})"})
+              f"ranking {rk['status']} for every flight configuration {list(ao.CONFIGURATIONS)} (A9.19 / A9.20: C1 is a "
+              f"GROUND_REFERENCE, never evaluated as a flight candidate) (missing counts {rk.get('missing_counts')})"})
     F.append({"id": "F78-06", "evidence_class": "model-derived (code-default coefficients)", "finding":
               "P_bus: the official A9-02 ledger is PARTIAL_BOUNDARY (compressor load TBD, row 22) with lower bound "
               f"0 W; the parametric sensitivity ledger booking the F3/F4 compressor draw has lower bound "
@@ -421,8 +465,9 @@ def findings(inp, f7sum, totals, sysd, f8, pars):
     rel = [v["rel_change"] for d in f8["pointing"].values() for v in d.values() if v["rel_change"] is not None]
     flips = sum(1 for d in f8["pointing"].values() for v in d.values() if v["status_theta0"] != v["status_theta5"])
     F.append({"id": "F8-03", "evidence_class": "model-derived (frozen surface node)", "finding":
-              f"pointing node theta = 5 deg (design state only): delivered-flow change {rnd([min(rel), max(rel)]) if rel else None}"
-              f" on the robust members, {flips} status changes; the corner states have no theta node (NOT_EVALUATED)"})
+              f"pointing node theta = 5 deg (design-case reference point only): delivered-flow change "
+              f"{rnd([min(rel), max(rel)]) if rel else None} on the robust members, {flips} status changes; the "
+              f"required design states have no theta node (NOT_EVALUATED)"})
     wl = Counter(v["n_scenarios_feasible"] for v in f8["wall"].values())
     F.append({"id": "F8-04", "evidence_class": "model-derived (uncited DB gamma prior)", "finding":
               f"wall-recombination case WALL-TI64-DB: robust members feasible in n of 10 scenarios {dict(sorted(wl.items()))}"})
@@ -440,6 +485,31 @@ def findings(inp, f7sum, totals, sysd, f8, pars):
               f"Hall set {f8['gates_after']['hall_credible_set']}, A9.2 statuses verbatim, H-1 article "
               f"{f8['gates_after']['h1_article_freeze_state'].split(' ')[0]})"})
     return F
+
+
+def statewise_gate_records() -> dict:
+    """AG-13 (HC-08) and AG-12 (HC-11) evaluated over EVERY required design state (A9.13 S6.15 / S6.21, A9.14 S9.7 /
+    S9.8): thrust has no admitted Hall member, the host-spacecraft drag ICD and the validated H-1 map do not exist, so
+    both are NOT_EVALUATED over the full required set (never satisfied, never evaluated on a subset)."""
+    sts = [{"state_id": sid} for sid in ao.required_state_ids()]
+
+    def thrust(st):
+        return {"value_N": None, "status": u13.VALUE_TBD, "state_id": st["state_id"],
+                "source": "no admitted Hall transport member (credible set EMPTY)"}
+
+    def drag(st):
+        return {"value_N": None, "status": u13.VALUE_TBD, "state_id": st["state_id"],
+                "source": "host-spacecraft drag ICD absent (A9.21 EXTERNAL_INPUTS)"}
+
+    ag13 = ds.statewise_T_minus_D(sts, thrust, drag)
+    ag12 = dg.feed_state_sufficiency(sts, lambda st: {"status": u13.VALUE_TBD}, thrust, h1_map=None)
+    keep = ("constraint", "gate", "rule", "status", "reason", "n_required_states", "value_status", "h1_map_status",
+            "fixed_mass_flow_gate")
+    return {"required_state_set": isy.DESIGN_STATE_SET_ID, "n_required_states": len(sts),
+            "orbit_basis": isy.ORBIT_BASIS_LABEL,
+            "AG-13_HC-08": {k: ag13[k] for k in keep if k in ag13},
+            "AG-12_HC-11": {**{k: ag12[k] for k in keep if k in ag12}, "n_required_states": len(sts)},
+            "flight_feed_requirement": u13.flight_feed_requirement()}
 
 
 def robust_section(f8):
@@ -468,15 +538,24 @@ def robust_section(f8):
 
 
 def assemble(inp, blocks, pars, f7sum, totals, sysd, f8):
+    _f4 = json.loads((REPO / "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json").read_text(encoding="utf-8"))
+    n_union = len(next(v["value"] for v in _f4["search_variables"] if v["id"] == "x_compressor"))
+    _f3d = json.loads((REPO / "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json").read_text(encoding="utf-8"))
+    _inv = {v: k for k, v in _f3d["reason_codes"].items()}
+    _indep = {_inv[r] for r in ("ROTOR_MATERIAL_ALLOWABLE_TBD", "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+                                "TIP_SPEED_ABOVE_PUBLISHED_TMP_PRACTICE")}
+    n_gate = sum(1 for i, x in enumerate(_f3d["design_grid"]) if x["N_drag"] == 0 and x["rotor_material"] == "Ti6Al4V"
+                 and all(not (set(c["status_by_design"][i].split(",")) & _indep) for c in _f3d["cases"].values()))
     lim = [
         "INT-01 (consolidated verification round 1): x_compressor is searched only over the union of the F3 per-case "
-        "Pareto ids (32 designs, as in F4), and those F3 fronts were built on the down-selection envelope inlets, not "
-        "on the F1-coupled states coupled here. F3's inlet-independent gates (N_drag = 0, Ti-6Al-4V, cited tip speed "
-        "<= 305.5 m/s) admit 48 designs. Every F7 upstream Pareto set and the F8 robust set are therefore 'Pareto "
-        "within the F3 front-union subset': the consolidated-verification evidence for INT-01 (a re-run over all 48) "
-        "reports 9 of the 10 nominal contexts changing (members added, and some committed members dominated by an "
-        "excluded design, e.g. T4-A0-U2-D0). Searching "
-        "all 48 designs is an open follow-up; no set here is a Pareto set over the admissible compressor space",
+        f"Pareto ids ({n_union} designs, as in F4), and those F3 fronts were built on the down-selection envelope "
+        "inlets, not on the F1-coupled states coupled here. F3's inlet-independent gates (N_drag = 0, Ti-6Al-4V, cited "
+        f"tip speed <= 305.5 m/s) admit {n_gate} designs (A9.16: hub-ratio coverage included). Every F7 upstream "
+        "Pareto set and the F8 robust set are therefore 'Pareto within the F3 front-union subset': the A9.7 "
+        "consolidated-verification evidence for INT-01 (a re-run over the then 48 gate-passing designs) reported 9 of "
+        "the 10 nominal contexts changing (members added, and some committed members dominated by an excluded design, "
+        f"e.g. T4-A0-U2-D0). Searching all {n_gate} designs is an open follow-up; no set here is a Pareto set over the "
+        "admissible compressor space",
         "every upstream number inherits PARAMETRIC_SENSITIVITY inputs: uncited DragCompressor coefficients (F3), "
         "parametric filter cases (F2/F4), the assumed isothermal 350 K chain (F4-P-01), the parametric leak (F4-P-05)",
         "steady operating points only in the F7 search; transient quality enters as the open-loop ripple transfer "
@@ -485,6 +564,11 @@ def assemble(inp, blocks, pars, f7sum, totals, sysd, f8):
         "masses: proxies (intake wall area, plenum volume) where TBD; the compressor mass is the DragCompressor "
         "model's (code defaults), never a CBE",
         "probabilities only over the quantified TPMC statistics; scenario sets carry counts and worst cases only",
+        "orbit states: the frozen design-state set v2 is a broad envelope over every inclination / LTAN (A9.21: not "
+        "specified; no code-default orbit as mission truth); every statewise result is a design-envelope result ("
+        + isy.ORBIT_BASIS_LABEL + "), V_rel = V_orb (no co-rotation / winds)",
+        "intake structural mass (A9.13 S6.1 / F1Q-02): PARAMETRIC_SENSITIVITY, budgeting only; never a CBE, frozen "
+        "intake mass or structural qualification; sourced structural definition required before LOCK-1",
     ]
     exemplar = sysd.pop("exemplar")
     return {
@@ -514,12 +598,21 @@ def assemble(inp, blocks, pars, f7sum, totals, sysd, f8):
         "upstream_status_totals": totals[0], "upstream_reason_totals": totals[1],
         "system_objectives": [{"key": k, "sense": s} for k, s in ao.SYSTEM_OBJECTIVES] +
                              [{"key": "life_material", "sense": "indicator"}],
-        "hard_constraints": list(ao.HARD_CONSTRAINTS),
+        "hard_constraints": list(dg.HARD_CONSTRAINTS),
         "constraint_rule": "fail closed: NOT_EVALUATED never counts as satisfied; MET / VIOLATED carry the status "
                            "label of the value they used (parametric / synthetic values are labelled, never evidence)",
         "system_evaluation": rnd(sysd), "system_evaluation_exemplar": rnd(exemplar),
         "unlock_evidence": dict(ao.UNLOCK),
         "uq_axes": list(ro.UQ_AXES),
+        "design_state_set": dict(inp.f1["coverage_rule"]["design_state_set"]),
+        "orbit_basis_label": isy.ORBIT_BASIS_LABEL,
+        "evaluated_states": {"n": len(ao.states()), "design_case_reference": ao.DESIGN_STATE,
+                             "n_required": len(ao.required_state_ids()),
+                             "ids_in": f"{ao.F1_REL} coverage_rule.orbit_states"},
+        "statewise_gate_records": statewise_gate_records(),
+        "flow_gap_owner_order": u13.flow_gap_record(),
+        "intake_structural_mass_label": isy.f1q02_label(),
+        "state_set_history": STATE_SET_HISTORY,
         "robust": robust_section(f8),
         "architecture_questions": ao.architecture_questions(),
         "tpmc_backend_policy": ao.tpmc_backend_policy(),
@@ -602,14 +695,14 @@ def render_md(doc: dict) -> str:
     for o in doc["upstream_objectives"]:
         L.append(f"| {o['key']} | {o['sense']} | {o['units']} | {o['definition']} |")
     L += ["", "## Upstream Pareto summary (nominal context: filter none, WALL-G0)", "",
-          "| scenario | P_set [Pa] | evaluated | feasible | Pareto | frontier [mg/s] | >= 0.38 mg/s |",
+          "| scenario | P_set [Pa] | evaluated | feasible | Pareto | frontier [mg/s] | >= 0.38 mg/s (coverage only) |",
           "|---|---|---|---|---|---|---|"]
     cols = doc["upstream_pareto_summary"]["columns"]
     for r in doc["upstream_pareto_summary"]["rows"]:
         d = dict(zip(cols, r))
         if d["filter"] == "F4-FIL-NONE" and d["wall"] == "WALL-G0" and d["n_feasible"]:
             L.append(f"| {d['scenario']} | {d['P_set_Pa']} | {d['n_evaluated']} | {d['n_feasible']} | {d['n_pareto']} | "
-                     f"{_f(d['frontier_mdot_delivered_min_mgps'])} | {d['n_pareto_ge_0.38_mgps']} |")
+                     f"{_f(d['frontier_mdot_delivered_min_mgps'])} | {d['n_pareto_reaching_coverage_0.38_mgps']} |")
     L += ["", "## System objectives (every vector)", "", "| objective | status | reason | unlock |", "|---|---|---|---|"]
     for k, o in doc["system_evaluation_exemplar"]["objectives"].items():
         L.append(f"| {k} | {o['status']} | {o['reason']} | {' / '.join(o['unlock'] or [])} |")
@@ -643,6 +736,35 @@ def render_md(doc: dict) -> str:
     L += ["", "## Interface demands", "", "| id | direction | counterpart | content | status |", "|---|---|---|---|---|"]
     for d in doc["interface_demands"]:
         L.append(f"| {d['id']} | {d['direction']} | {d['counterpart']} | {d['content']} | {d['status']} |")
+    ds = doc["design_state_set"]
+    L += ["", "## Orbit-state set (A9.14 S9.8 OD3)", "",
+          f"- `{ds['design_state_set_id']}` sha256 `{ds['sha256']}`: {doc['evaluated_states']['n_required']} required "
+          f"states + design-case reference {doc['evaluated_states']['design_case_reference']} = "
+          f"{doc['evaluated_states']['n']} evaluated F1 states (no subset). Orbit basis **{doc['orbit_basis_label']}**: "
+          f"{ds['orbit_basis_note']}"]
+    sg = doc["statewise_gate_records"]
+    L += [f"- AG-13 / HC-08 over the {sg['n_required_states']} required states: **{sg['AG-13_HC-08']['status']}** "
+          f"({sg['AG-13_HC-08'].get('reason')}).",
+          f"- AG-12 / HC-11 over the {sg['n_required_states']} required states: **{sg['AG-12_HC-11']['status']}** "
+          f"({sg['AG-12_HC-11'].get('reason')}).",
+          f"- HC-09 intake-face drag: evaluated at every F1 state (drag_intake_max_N = maximum over all "
+          f"{doc['evaluated_states']['n']} states)."]
+    h = doc["state_set_history"]
+    L += [f"- Superseded: {h['superseded_state_set']['state_ids']} ({h['superseded_state_set']['status']}); outputs "
+          f"at {h['superseded_outputs']['commit']}: " + ", ".join(f"`{k}` {v[:12]}" for k, v in
+                                                                 h["superseded_outputs"].items() if k != "commit") + "."]
+    fg = doc["flow_gap_owner_order"]
+    L += ["", f"## Flow gap: owner order ({fg['authority']})", ""]
+    L += [f"{o['rank']}. **{o['lever']}** ({o['authority']}; {o['status']}): {o['what']}"
+          + (f"; needs {o['needs']}" if o.get("needs") else "") for o in fg["order"]]
+    L += ["", f"- {fg['rule']}.", f"- {fg['ground_characterization_mgps']} mg/s: {fg['ground_characterization_role']}.",
+          f"- Higher-density-only operation: {fg['dense_state_only_operation']['role']}; "
+          f"{fg['dense_state_only_operation']['rule']}.",
+          f"- Flight feed requirement: {fg['flight_feed_requirement']['status']} "
+          f"({fg['flight_feed_requirement']['needs']})."]
+    lab = doc["intake_structural_mass_label"]
+    L += ["", f"## Intake structural mass ({lab['authority']})", "",
+          f"- {lab['label']}, {lab['use']}: never {', '.join(lab['not'])}; {lab['lock1_condition']}."]
     L += ["", "## Open owner questions (new)", ""]
     for q in doc["open_owner_questions"]:
         L.append(f"- **{q['id']}**: {q['question']} (needed for: {q['needed_for']})")

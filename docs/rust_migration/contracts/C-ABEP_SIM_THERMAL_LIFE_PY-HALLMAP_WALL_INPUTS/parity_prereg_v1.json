@@ -1,0 +1,380 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_THERMAL_LIFE_PY-HALLMAP_WALL_INPUTS-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_THERMAL_LIFE_PY",
+  "migration_wave": "W10",
+  "scope": "named function subset (kernel granularity, RM-R17): the Hall-map wall-flux gate (SC-WP-08 element 'erosion': 'Hall wall erosion uses Hall-map wall flux only with wall_life_trustworthy'); the inventory component is SC-WP-06's",
+  "functions_or_entry_points": [
+   "W1 hallmap_wall_inputs(point, ensemble_member_id, evidence_level, *, map_meta, uncertainty, applicability_domain, validation_status, schema=None) with _check_evidence, _require_admitted_member (hall_ensemble.require_admitted), _pinned_hall_commit, load_hall_map_schema, _canonical_sha256"
+  ],
+  "out_of_scope": [
+   "every other function of thermal_life.py (check_feasibility, the heat kernels, limits): SC-WP-06 contracts; the LaB6 / RF / ECR parts are not ported (inventory)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "thermal_life LaB6 / conventional hollow-cathode logic and rf_source / ecr_source checks (inventory not_ported_parts): not traversed"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "owner_disposition_a9_29": "NOT_APPLICABLE",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "simulation_completion_wp": "SC-WP-08"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. No Rust code for the component exists at registration. The commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "reference_implementation": {
+  "python_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+  "files": [
+   {
+    "path": "abep_sim/thermal_life.py",
+    "sha256_at_registration": "dce2048233746ecc596866c1d561c8828f820c7960b9778db0d6d66a9c86d83c"
+   },
+   {
+    "path": "abep_sim/hall_ensemble.py",
+    "sha256_at_registration": "218f890c8444af1f593396da5051e38d2d093bbb3cb0bc976cc44b01b67df704"
+   },
+   {
+    "path": "abep_sim/hall_map.py",
+    "sha256_at_registration": "e466f94c9058e2ab949a4a4a451d3438c046b1abd91933815467590f90a707e0"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4 (not used by the component)",
+   "scipy": "1.17.1 (not used)",
+   "pandas": "3.0.2 (not used by the scored functions)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "NOT_APPLICABLE",
+   "thread_env": {
+    "OMP_NUM_THREADS": "NOT_APPLICABLE",
+    "OPENBLAS_NUM_THREADS": "NOT_APPLICABLE"
+   },
+   "stdlib": "math (glibc libm: exp, log, sqrt, pow through float ** float), json, hashlib; CPython 3.11 float repr and format(x, '.Ng') correctly rounded"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-subsystems",
+  "functions_or_entry_points": [
+   "abep_subsystems::life::hall_wall::{hallmap_wall_inputs, hall_wall_life_input_status}",
+   "abep_hall::ensemble::{load_ensemble, require_admitted} and abep_hall::hall_map::pinned_commit (admitted, reused)",
+   "`life_eval <calls.json>` (harness interface; crates/abep-subsystems/examples/life_eval.rs)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/**",
+   "crates/abep-provenance/**",
+   "crates/abep-data/**",
+   "crates/abep-hall/**",
+   "crates/abep-subsystems/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE (no configuration file is read; the single flight configuration is hall_icp_neutralizer, A9.19)",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "both implementations read the same pinned inputs (pinned_inputs_sha256); a mismatch voids the run (INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "hallthruster_bridge/hall_map_schema_v1.json": "f371b43bced1020d55e2b28303c877220f41395767cdf6ebab6019475e9bdde9",
+  "hallthruster_bridge/ensemble/transport_ensemble_v0.json": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
+  "hallthruster_bridge/PINNED.toml": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280"
+ },
+ "frozen_data_read_only": [
+  "the transport ensemble (credible set EMPTY) and PINNED.toml: read only"
+ ],
+ "inputs": {
+  "argument_encoding": "{point, member_id, evidence_level, map_meta, uncertainty, applicability_domain, validation_status, schema (null = default file), ensemble: 'REAL' | fixture}. With a fixture Python monkeypatches hall_ensemble.load_ensemble to return it (as tests/test_thermal_life_framework.py does); Rust receives it as the ensemble value",
+  "golden_vectors": {
+   "source": "tests/test_thermal_life_framework.py (test_hallmap_wall_inputs_gate, test_hallmap_wall_inputs_refuses_real_ensemble)",
+   "count": "see vector_totals",
+   "list_or_generator": {
+    "R-W01": "the gate test vectors under the SYNTHETIC fixture ensemble {members: [adm-fixture-01], screening_candidates: [sgb-screen-01]} (SYNTHETIC_TEST_DATA_NOT_EVIDENCE)",
+    "R-W02": "the REAL ensemble: every screening id sgb-screen-01..09 and 'unknown-member' with the valid point"
+   }
+  },
+  "edge_cases": [
+   {
+    "id": "E-W01",
+    "inputs": "member '' ; evidence_level 0, 8, True, 6.0, None, '6'",
+    "note": "ValueError, message scored"
+   },
+   {
+    "id": "E-W02",
+    "inputs": "point trustworthy / wall_life_trustworthy False, 1, None, absent; commit absent / short",
+    "note": "ValueError"
+   },
+   {
+    "id": "E-W03",
+    "inputs": "map_meta a list; member / commit / ion_wall_losses mismatch",
+    "note": "ValueError"
+   },
+   {
+    "id": "E-W04",
+    "inputs": "statements '' / ' ' / None / 5",
+    "note": "ValueError"
+   },
+   {
+    "id": "E-W05",
+    "inputs": "field absent; value True / '1e21' / 'abc' / None / [1]",
+    "note": "ValueError / value / TypeError"
+   },
+   {
+    "id": "E-W06",
+    "inputs": "schema {} (falsy: default file), a schema without a field unit",
+    "note": "default / KeyError"
+   }
+  ],
+  "randomized_domain": {
+   "count": 2300,
+   "generators": {
+    "0 fixture ensemble": 2000,
+    "1 REAL ensemble": 300
+   },
+   "draw": "the valid fixture call with 0..3 mutations from the E-W pools and positive floats for the four fields (log-uniform); REAL: a random id from the screening ids, 'adm-fixture-01' and random strings",
+   "domain_note": "structural parity domain only. Excluded: non-ASCII whitespace in statements"
+  },
+  "vector_totals": {
+   "R-W01..R-W02": "fixed",
+   "edge cases": "E-W01..E-W06",
+   "randomized": 2300
+  }
+ },
+ "campaign_seeds": {
+  "applicable": "true (input generation only; the component is deterministic)",
+  "scoring_master_seed": 1657292530,
+  "development_master_seed": 8106,
+  "derivation": "random.Random(master_seed * 1000 + k) per generator k (inputs.randomized_domain.generators)",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the admitted statistical contract; the roles are never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE",
+   "other_streams": "NOT_APPLICABLE: the harness's random.Random only generates input cases (the component is deterministic and draws no random numbers)",
+   "migration_parity_dataset": "seeds and the generated call file stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic component)",
+  "development_rule": "development comparisons use development_master_seed (and the registered deterministic vectors) only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "every call": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED"
+    },
+    {
+     "name": "value",
+     "units": "as the Python returns",
+     "tolerance_class": "EXACT_VALUE + ULP_BOUNDED (floats)",
+     "tolerance": "see tolerance_classes",
+     "definition": "the returned value (dicts in insertion order, tuples as lists)"
+    },
+    {
+     "name": "error_class",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "Python exception class name; Rust reports the mapped class name"
+    },
+    {
+     "name": "error_message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "str(exception) character for character for the message classes listed; class only otherwise"
+    }
+   ],
+   "message_classes": [
+    "ValueError"
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "NOT_APPLICABLE",
+  "EXACT_VALUE": "strings, ints, booleans, None, statuses, dict key order, list lengths and the int-vs-float type of every value equal; error class equal; messages equal for the registered message classes",
+  "ULP_BOUNDED": "every float: |rust - py| <= 4 ulp(py) or <= 1e-12 * max(1, |py|); NaN matches NaN, +-inf exact",
+  "SOLVER_TOLERANCE": "NOT_APPLICABLE",
+  "STATISTICAL": "NOT_APPLICABLE",
+  "EXACT_STREAM": "NOT_APPLICABLE"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-DET",
+   "statement": "determinism: the Rust call list evaluated in two separate processes gives byte-identical output",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-W01",
+   "statement": "binding rule (CLAUDE.md next-work 5): with the REAL ensemble (credible set EMPTY) every call is RAISED ValueError, so no Hall wall flux / energy input is formed and every Hall-erosion-derived life is NOT_EVALUATED (both; Rust maps the refusal to EvalStatus NOT_EVALUATED)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-W02",
+   "statement": "every returned record carries quantity_type 'model-derived' and, on the two wall fields, wall_flux_provenance with trustworthy and wall_life_trustworthy True (both)",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": "false (input-record gate)",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "cases": "E-W01..E-W06 and every randomized mutation",
+  "mapping": {
+   "ValueError": "ValueError (refusal: NOT_EVALUATED for not-admitted / not wall_life_trustworthy, MODEL_ERROR otherwise); message scored",
+   "KeyError / TypeError": "the same class; class scored"
+  },
+  "documented_divergence": [
+   {
+    "id": "DIV-W00",
+    "statement": "none (Python call-signature TypeErrors for missing keyword arguments have no Rust analogue and are not registered calls)",
+    "disposition": "NOT_APPLICABLE"
+   }
+  ],
+  "mapping_rule": "every Python exception class maps to exactly one Rust class name; no Rust path may return a value where Python fails, or fail where Python returns, except the registered divergences (CLAUDE.md rule 3)"
+ },
+ "schema_parity": {
+  "schemas": [
+   "hallthruster_bridge/hall_map_schema_v1.json (units)"
+  ],
+  "rules": [
+   "record keys value, unit, source, evidence_level, quantity_type, uncertainty, applicability_domain, validation_status (+ wall_flux_provenance) in that order",
+   "map_meta_sha256 = sha256 of json.dumps(map_meta, sort_keys=True, separators=(',', ':'))"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "tests/test_thermal_life_framework.py vectors (R-W01 / R-W02)"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_THERMAL_LIFE_PY-HALLMAP_WALL_INPUTS/reference_outputs/",
+   "captured_at_python_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+   "sha256_manifest": "FILL at scoring",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: no golden_v1 / golden_v2 case is used"
+ },
+ "julia_bridge": {
+  "applicable": "false",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "julia_version": "NOT_APPLICABLE",
+  "launch_equivalence": "NOT_APPLICABLE",
+  "record_comparison": "NOT_APPLICABLE",
+  "execution_provenance": "NOT_APPLICABLE"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-W01",
+    "description": "the valid fixture call, 5000 repeats"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine; speed-up = median_python / median_rust (Rust timed inside life_eval)",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every call meets its tolerance class",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": "true if conservation_checks.applicable",
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED (= PARITY_PASS) iff every call of every vector, every invariant, every conservation check and every registered divergence outcome passes and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays",
+  "disagreement_rule": "never rewrite a Python result, golden, evidence record or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "restricted to the retained selected-architecture functions listed (RM-R20)",
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust (abep_subsystems::life::hall_wall) becomes authoritative for the Hall-map wall-flux gate within the registered domain; with the credible set EMPTY it refuses every member (NOT_EVALUATED)"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output of this contract may be cited by the bid package unless the owner re-freezes",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (terminal package state, A9.29 sec. 3)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, evidence record, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): literature-class priors stay priors",
+  "not a gate PASS and not a life verdict: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31); no 15,000 h / 26,280 h comparison is made in raw physics (SC-WP-11)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_THERMAL_LIFE_PY-HALLMAP_WALL_INPUTS/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_life_v1.py (Python harness calling `life_eval`)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance",
+   "environment",
+   "per-test results",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "captured reference outputs",
+   "ledger_update_requested"
+  ],
+  "ledger_scope_requested_on_admission": "partial admission (W1) of C-ABEP_SIM_THERMAL_LIFE_PY"
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS in component_inventory_v3_1.json: PASS",
+   "the fixture ensemble is SYNTHETIC_TEST_DATA_NOT_EVIDENCE and exercises the admitted path only; no real member is admitted",
+   "the Rust implementation contains none of the principle-6 forbidden identifiers (crates/abep-subsystems/tests/prereg_binding.rs scan)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [],
+  "check": "NOT_APPLICABLE beyond the labels carried in the outputs"
+ },
+ "new_physics_verification": {
+  "applies_when": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY)"
+ }
+}

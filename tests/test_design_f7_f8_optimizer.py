@@ -13,10 +13,14 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from abep_sim import bus_boundary_a9 as bb
+from abep_sim import bus_boundary_a9_v2 as bb
+from abep_sim.assessment import design_gates as dg  # A9.22: assessment layer
+from abep_sim.programme import design_synthesis as ds  # A9.22: programme layer (F7/F8 runners)
 from abep_sim.design import architecture_optimizer as ao
+from abep_sim.design import intake_synthesis as isy
 from abep_sim.design import plenum_feed as pf
 from abep_sim.design import robust_optimizer as ro
+from abep_sim.design import upstream_a9_13 as u13
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs/design_synthesis/f7_f8_optimizer"
@@ -36,7 +40,10 @@ def inp():
 @pytest.fixture(scope="module")
 def small_ctx(inp):
     cands = ("A0.25_Ld10_phi0.8", "A0.5_Ld20_phi0.8", "A1.5_Ld3_phi0.9")
-    comps = ("T3-A1-U2-D0-Ti6Al4V", "T6-A2-U1-D0-Ti6Al4V")
+    # F3 front-union members (A1 = the 0.196 m^2 LI2015 area; the A2 grid bound moved with the W1 S6.8 re-pin)
+    # (T6-A1-U2-D0 replaces T6-A1-U1-D0 since A9.14 S9.8 OD3: with every required design state, A0.25_Ld10_phi0.8 is
+    # all-state feasible only with the former; the committed nominal cll_a0.8 Pareto set contains that pair)
+    comps = ("T3-A1-U2-D0-Ti6Al4V-H0.25", "T6-A1-U2-D0-Ti6Al4V-H0.25")
     return ao.upstream_context(inp, "cll_a0.8", "F4-FIL-NONE", "WALL-G0", candidates=cands, compressors=comps)
 
 
@@ -101,7 +108,7 @@ def test_upstream_context_matches_scalar_reference(inp, small_ctx):
     # infeasible vectors carry no objective (fail closed)
     bad = ~small_ctx["feasible"]
     assert bad.any() and np.isnan(arr["mdot_delivered_min_kgps"][bad]).all()
-    # the drag-infeasible intake (A1.5 > 25 mN at h180_f230, F1 C-DRAG-RFP) is never feasible
+    # the drag-infeasible intake (A1.5 > 25 mN at the dense design states, F1 C-DRAG-RFP) is never feasible
     assert not small_ctx["feasible"][2].any()
 
 
@@ -140,7 +147,7 @@ def test_pareto_mask_semantics():
 
 
 def test_context_pareto_members_feasible_and_carry_not_evaluated(small_ctx):
-    par = ao.context_pareto(small_ctx)
+    par = ds.context_pareto(small_ctx)
     n = 0
     for P, b in par.items():
         assert b["n_pareto"] == len(b["members"]) <= b["n_feasible"]
@@ -153,14 +160,14 @@ def test_context_pareto_members_feasible_and_carry_not_evaluated(small_ctx):
 
 # ------------------------------------------------------------------------------------------------- system level
 def _row(small_ctx):
-    par = ao.context_pareto(small_ctx)
+    par = ds.context_pareto(small_ctx)
     return next(m for b in par.values() for m in b["members"])
 
 
 def test_system_objectives_refused_today(inp, small_ctx):
     row = _row(small_ctx)
     for cfg in ao.CONFIGURATIONS:
-        ev = ao.evaluate_system(row, cfg, design=inp.designs[row["compressor"]])
+        ev = ds.evaluate_system(row, cfg, design=inp.designs[row["compressor"]])
         assert all(o["status"] == ao.NOT_EVALUATED for o in ev["objectives"].values())
         assert all(o["unlock"] for o in ev["objectives"].values())
         assert ev["system_not_evaluated"] == list(ao.SYSTEM_NOT_EVALUATED_CODES)
@@ -171,11 +178,11 @@ def test_system_objectives_refused_today(inp, small_ctx):
         pb = ev["objectives"]["P_bus_W"]
         assert pb["official_status"] == "PARTIAL_BOUNDARY" and pb["official_lower_bound_W"] == 0.0
         assert pb["parametric_lower_bound_W"] == pytest.approx(row["P_compressor_el_max_W"])
-        assert ao.rank_full_system([ev])["status"] == ao.RANK_REFUSED_INCOMPLETE
+        assert ds.rank_full_system([ev])["status"] == ao.RANK_REFUSED_INCOMPLETE
 
 
 def test_constraints_fail_closed_on_nothing():
-    cons = ao.evaluate_constraints({})
+    cons = dg.evaluate_constraints({})
     assert {c["status"] for c in cons} == {ao.C_NOT_EVALUATED}
 
 
@@ -207,13 +214,41 @@ def _syn(v):
     return {"value": v, "evidence_class": SYN, "source": "SYNTHETIC_TEST_FIXTURE"}
 
 
+TEST_STATES = [{"state_id": "test-s1", "weight": 0.5}, {"state_id": "test-s2", "weight": 0.5}]
+
+
+class _TestH1Map:
+    """A test-only H-1 thrust-versus-feed map (no such validated map exists; the status is set by the caller)."""
+
+    def __init__(self, status):
+        self.status = status
+
+    def min_feed_state(self, st, thrust_N, offered):
+        return {"mdot_kgps": 1e-7, "P_Pa": 0.01, "T_range_K": (300.0, 400.0), "x_domain_ok": True,
+                "ripple_tolerance_frac": 0.05}
+
+
+def _statewise_records(vs, thrust, drag=0.002, hall_admitted=False):
+    """A9.13 S6.15 / S6.21 / S6.17 records for HC-08 / HC-11 / HC-12 from test values of value status ``vs``."""
+    rec = lambda v: (lambda st: {"value_N": v, "status": vs, "source": "TEST_FIXTURE", "state_id": st["state_id"]})
+    tw = dg.statewise_drag_compensation(TEST_STATES, rec(thrust), rec(drag), hall_admitted=hall_admitted)
+    off = lambda st: {"mdot_kgps": 2e-7, "P_Pa": 0.02, "T_K": 350.0, "x_mole": {"O": 0.5, "N2": 0.45, "O2": 0.05},
+                      "ripple_frac": 0.01, "status": vs}
+    fss = dg.feed_state_sufficiency(TEST_STATES, off, rec(thrust),
+                                     _TestH1Map(u13.SYNTHETIC if vs == u13.VALUE_SYNTHETIC else u13.H1_MAP_VALIDATED))
+    rip = dg.ripple_feed_quality(0.01, vs, u13.H1Tolerance("ripple", 0.05, vs, "TEST_FIXTURE"))
+    return {"statewise_T_minus_D": tw, "feed_state_sufficiency": fss, "ripple_feed_quality": rip}
+
+
 def _syn_eval(row, thrust, pbus_scale, mwet, design_id, measured_bus=False):
     sup = {"thrust": _syn(thrust), "thrust_capability": _syn(0.03), "spacecraft_drag": _syn(0.002),
            "bus": _syn_ledgers("hall_icp_neutralizer", pbus_scale, measured_bus),
            "m_wet": dict(_syn(mwet), all_terms_resolved=True), "Q_reject": _syn(300.0), "I_e_margin": _syn(1.0),
+           "M_n_LB": dict(_syn(0.2), uncertainty_basis="SYNTHETIC_TEST_FIXTURE"),
            "thermal_margin": _syn(60.0), "firing_life": _syn(16000.0), "life_material": _syn(1.0),
-           "drag_intake_max": _syn(0.005)}
-    ev = ao.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
+           "drag_intake_max": _syn(0.005), "propellant_capability": _syn(1.0),
+           **_statewise_records(u13.VALUE_SYNTHETIC, thrust)}
+    ev = ds.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
     ev["design_id"] = design_id
     return ev
 
@@ -226,18 +261,18 @@ def test_full_system_ranking_code_path_with_synthetic_fixtures(small_ctx):
     d = _syn_eval(row, 0.010, 1.0, 30.0, "SYN-D")             # violates HC-01 (12 mN) -> excluded
     for ev in (a, b, c, d):
         assert all(o["status"] == ao.SYNTHETIC_ONLY for o in ev["objectives"].values())
-    r = ao.rank_full_system([a, b, c, d])
+    r = ds.rank_full_system([a, b, c, d])
     assert r["status"] == ao.RANK_COMPUTED_SYNTHETIC and r["label"] == ao.SYNTHETIC_ONLY
     assert r["layers"][1] == ["SYN-A", "SYN-C"] and r["layers"][2] == ["SYN-B"]
     assert [e["design_id"] for e in r["excluded"]] == ["SYN-D"] and "HC-01" in r["excluded"][0]["constraints"]
     # mixing synthetic and evidence refuses
     m = _syn_eval(row, 0.020, 1.0, 30.0, "MIX", measured_bus=True)
     assert m["objectives"]["P_bus_W"]["status"] == ao.EVALUATED
-    assert ao.rank_full_system([a, m])["status"] == ao.RANK_REFUSED_MIXED
+    assert ds.rank_full_system([a, m])["status"] == ao.RANK_REFUSED_MIXED
     # one missing objective anywhere refuses the whole ranking (no subset ranking)
-    assert ao.rank_full_system([a, ao.evaluate_system(row, "hall_icp_neutralizer")])["status"] == \
+    assert ds.rank_full_system([a, ds.evaluate_system(row, "hall_icp_neutralizer")])["status"] == \
         ao.RANK_REFUSED_INCOMPLETE
-    assert ao.rank_full_system([d])["status"] == ao.RANK_REFUSED_NO_FEASIBLE
+    assert ds.rank_full_system([d])["status"] == ao.RANK_REFUSED_NO_FEASIBLE
 
 
 def test_supplied_objective_labels():
@@ -253,7 +288,7 @@ def test_supplied_objective_labels():
 
 # ------------------------------------------------------------------------------------------------- F8 helpers
 def test_plant_with_overrides_identity_and_effect(inp):
-    d = inp.designs["T6-A2-U1-D0-Ti6Al4V"]
+    d = inp.designs["T6-A1-U1-D0-Ti6Al4V-H0.25"]
     p0, p1 = pf.CompressorPlant.from_design(d), ro.plant_with_overrides(d, {})
     assert p0.characteristic() == p1.characteristic() and p0.leak_m3_s == p1.leak_m3_s
     p2 = ro.plant_with_overrides(d, {"turbo_kK": 1.2 * 1.01})
@@ -263,20 +298,21 @@ def test_plant_with_overrides_identity_and_effect(inp):
 
 
 def test_perturbed_zero_draw_is_identity(inp):
-    rec = inp.records[("A0.25_Ld10_phi0.8", "cll_a0.8", "h180_f70")]
-    se = ro.record_se_index(inp.f1)[(10.0, 0.8, "cll_a0.8", "h180_f70")]
+    st = ao.required_state_ids()[0]
+    rec = inp.records[("A0.25_Ld10_phi0.8", "cll_a0.8", st)]
+    se = ro.record_se_index(inp.f1)[(10.0, 0.8, "cll_a0.8", st)]
     z = {s: 0.0 for s in ao.SPECIES}
     r2 = ro.perturbed(rec, 0.25, se, z, z)
     assert r2.mdot_fwd_kgps == rec.mdot_fwd_kgps and r2.p_passive_Pa == rec.p_passive_Pa
 
 
 def test_mc_deterministic_and_theta_node(inp):
-    cand = {"design_id": "t", "candidate": "A0.25_Ld10_phi0.8", "compressor": "T3-A1-U2-D0-Ti6Al4V",
+    cand = {"design_id": "t", "candidate": "A0.25_Ld10_phi0.8", "compressor": "T3-A1-U2-D0-Ti6Al4V-H0.25",
             "V_m3": 0.001, "P_set_Pa": 0.01, "filter": "F4-FIL-NONE"}
     a = ro.tpmc_monte_carlo(inp, [cand], ["cll_a0.8"], n=4)
     b = ro.tpmc_monte_carlo(inp, [cand], ["cll_a0.8"], n=4)
     assert a == b
-    rec = a[("A0.25_Ld10_phi0.8", "F4-FIL-NONE", "T3-A1-U2-D0-Ti6Al4V", 0.01)]["cll_a0.8"]
+    rec = a[("A0.25_Ld10_phi0.8", "F4-FIL-NONE", "T3-A1-U2-D0-Ti6Al4V-H0.25", 0.01)]["cll_a0.8"]
     assert 0.0 <= rec["P_feasible"] <= 1.0 and rec["n"] == 4
     tr = ro.theta_ratio_index(inp.f1)
     assert len(tr) == 10 * 4 * 2 * 3 and all(0 < e <= 1.0 + 1e-9 for e, _ in tr.values())
@@ -289,7 +325,7 @@ def test_uq_axes_and_gate_snapshot():
     assert t["tpmc_statistics"] == "SEEDED_MONTE_CARLO"
     assert t["compressor_performance"] == "LOCAL_ELASTICITY"
     assert [a["axis"] for a in ro.UQ_AXES if a["quantified"]] == ["tpmc_statistics"]
-    g = ro.gate_snapshot(ROOT)
+    g = dg.gate_snapshot(ROOT)
     assert g["hall_credible_set"] == "EMPTY" and g["a9_2_statuses"]["ICP electron-current capacity"] == "PENDING_ICP45"
 
 
@@ -376,7 +412,7 @@ def test_model_derived_thrust_never_meets_hc01_hc02_while_credible_set_empty(sma
            "thrust_capability": {"value": 0.03, "evidence_class": "model-derived", "source": "x"},
            "firing_life": {"value": 2e4, "evidence_class": "assumed", "source": "x"},
            "thermal_margin": {"value": 80.0, "evidence_class": "assumed", "source": "x"}}
-    ev = ao.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
+    ev = ds.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
     st = {c["id"]: c["status"] for c in ev["constraints"]}
     assert st["HC-01"] == st["HC-02"] == ao.C_NOT_EVALUATED
     assert st["HC-06"] == st["HC-07"] == ao.C_MET_PARAMETRIC
@@ -390,9 +426,11 @@ def _evidence_eval(monkeypatch, row, design_id, cons_rec):
     sup = {"thrust": _meas(0.02), "thrust_capability": _meas(0.03), "spacecraft_drag": _meas(0.002),
            "bus": _syn_ledgers("hall_icp_neutralizer", 1.0, measured=True),
            "m_wet": dict(_meas(30.0), all_terms_resolved=True), "Q_reject": _meas(300.0), "I_e_margin": _meas(1.0),
+           "M_n_LB": dict(_meas(0.2), uncertainty_basis="TEST_FIXTURE_NOT_EVIDENCE"),
            "thermal_margin": cons_rec(60.0), "firing_life": cons_rec(16000.0), "life_material": _meas(1.0),
-           "drag_intake_max": _meas(0.005)}
-    ev = ao.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
+           "drag_intake_max": _meas(0.005), "propellant_capability": _meas(1.0),
+           **_statewise_records(u13.VALUE_EVIDENCE, 0.02, hall_admitted=True)}
+    ev = ds.evaluate_system(row, "hall_icp_neutralizer", supplied=sup)
     ev["design_id"] = design_id
     return ev
 
@@ -404,10 +442,10 @@ def test_assumed_or_synthetic_constraint_values_never_admit_to_evidence_ranking(
     st = {c["id"]: c["status"] for c in a["constraints"]}
     assert st["HC-06"] == st["HC-07"] == ao.C_MET_PARAMETRIC
     assert {v for k, v in st.items() if k not in ("HC-06", "HC-07")} == {ao.C_MET}
-    r = ao.rank_full_system([a])
+    r = ds.rank_full_system([a])
     assert r["status"] == ao.RANK_REFUSED_NO_FEASIBLE
     s = _evidence_eval(monkeypatch, row, "S", _syn)
-    assert ao.rank_full_system([s])["status"] == ao.RANK_REFUSED_MIXED
+    assert ds.rank_full_system([s])["status"] == ao.RANK_REFUSED_MIXED
 
 
 def test_ranking_refuses_while_life_material_not_evaluated(monkeypatch, small_ctx):
@@ -415,7 +453,7 @@ def test_ranking_refuses_while_life_material_not_evaluated(monkeypatch, small_ct
     row = _row(small_ctx)
     a = _syn_eval(row, 0.020, 1.0, 30.0, "SYN-A")
     a["objectives"]["life_material"] = ao.life_material_indicators()
-    r = ao.rank_full_system([a])
+    r = ds.rank_full_system([a])
     assert r["status"] == ao.RANK_REFUSED_INCOMPLETE and r["missing_counts"] == {"life_material": 1}
 
 
@@ -425,15 +463,15 @@ def test_ranking_refuses_unlabelled_or_parametric_upstream_objectives(small_ctx)
     a = _syn_eval(row, 0.020, 1.0, 30.0, "SYN-A")
     b = _syn_eval(row, 0.020, 1.0, 30.0, "SYN-B")
     a["upstream"], b["upstream"] = {"P_compressor_el_max_W": 10.0}, {"P_compressor_el_max_W": 5.0}
-    r = ao.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])
+    r = ds.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])
     assert r["status"] == ao.RANK_REFUSED_PARAMETRIC_UPSTREAM
     a["upstream"] = {"P_compressor_el_max_W": {"value": 10.0, "status": ao.PARAMETRIC_ONLY}}
     b["upstream"] = {"P_compressor_el_max_W": {"value": 5.0, "status": ao.PARAMETRIC_ONLY}}
-    assert ao.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])["status"] == \
+    assert ds.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])["status"] == \
         ao.RANK_REFUSED_PARAMETRIC_UPSTREAM
     a["upstream"] = {"P_compressor_el_max_W": {"value": 10.0, "status": ao.SYNTHETIC_ONLY}}
     b["upstream"] = {"P_compressor_el_max_W": {"value": 5.0, "status": ao.SYNTHETIC_ONLY}}
-    r = ao.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])
+    r = ds.rank_full_system([a, b], upstream_objectives=["P_compressor_el_max_W"])
     assert r["status"] == ao.RANK_COMPUTED_SYNTHETIC and r["layers"] == {1: ["SYN-B"], 2: ["SYN-A"]}
 
 
@@ -461,7 +499,7 @@ def test_hc03_gate_verdict_on_parametric_ledger_never_met():
     the A9-02 gate verdict (which ignores evidence class) must not turn HC-03 into MET_ON_SUPPLIED_VALUES."""
     L = _syn_ledgers("hall_icp_neutralizer", 1.0, measured=False)
     L["synthetic"] = False
-    ev = ao.evaluate_system({"design_id": "x"}, "hall_icp_neutralizer", supplied={"bus": L})
+    ev = ds.evaluate_system({"design_id": "x"}, "hall_icp_neutralizer", supplied={"bus": L})
     hc03 = [c for c in ev["constraints"] if c["id"] == "HC-03"]
     assert len(hc03) == 1
     c = hc03[0]
@@ -469,12 +507,12 @@ def test_hc03_gate_verdict_on_parametric_ledger_never_met():
     assert c["status"] != ao.C_MET
     assert c["status"] in (ao.C_MET_PARAMETRIC, ao.C_VIOLATED_PARAMETRIC, ao.C_NOT_EVALUATED)
     # direct: a parametric record carrying a PASS verdict maps to the parametric sensitivity status
-    out = ao.evaluate_constraints({"P_bus_W": {"status": ao.PARAMETRIC_ONLY, "value": 1000.0, "gate_verdict": "PASS"}})
+    out = dg.evaluate_constraints({"P_bus_W": {"status": ao.PARAMETRIC_ONLY, "value": 1000.0, "gate_verdict": "PASS"}})
     hc = [x for x in out if x["id"] == "HC-03"][0]
     assert hc["status"] == ao.C_MET_PARAMETRIC
-    out = ao.evaluate_constraints({"P_bus_W": {"status": ao.PARAMETRIC_ONLY, "value": 2000.0, "gate_verdict": "FAIL"}})
+    out = dg.evaluate_constraints({"P_bus_W": {"status": ao.PARAMETRIC_ONLY, "value": 2000.0, "gate_verdict": "FAIL"}})
     assert [x for x in out if x["id"] == "HC-03"][0]["status"] == ao.C_VIOLATED_PARAMETRIC
-    out = ao.evaluate_constraints({"P_bus_W": {"status": ao.EVALUATED, "value": 1000.0, "gate_verdict": "PASS"}})
+    out = dg.evaluate_constraints({"P_bus_W": {"status": ao.EVALUATED, "value": 1000.0, "gate_verdict": "PASS"}})
     assert [x for x in out if x["id"] == "HC-03"][0]["status"] == ao.C_MET
 
 
@@ -493,9 +531,9 @@ def test_bus_power_counts_efficiency_evidence(monkeypatch):
                        label="T", power_basis="p_bus_1ms_max", gate_measurement=gm)
         return {"steady": st, "startup": [st], "source": "x"}
 
-    assert ao.bus_power(config, None, led("measured", "measured"), ROOT)["status"] == ao.EVALUATED
-    assert ao.bus_power(config, None, led("assumed", "measured"), ROOT)["status"] == ao.PARAMETRIC_ONLY
-    assert ao.bus_power(config, None, led("measured", "assumed"), ROOT)["status"] == ao.PARAMETRIC_ONLY
+    assert ds.bus_power(config, None, led("measured", "measured"), ROOT)["status"] == ao.EVALUATED
+    assert ds.bus_power(config, None, led("assumed", "measured"), ROOT)["status"] == ao.PARAMETRIC_ONLY
+    assert ds.bus_power(config, None, led("measured", "assumed"), ROOT)["status"] == ao.PARAMETRIC_ONLY
 
 
 def test_thrust_minus_drag_inherits_intake_drag_status(monkeypatch):
@@ -509,3 +547,57 @@ def test_thrust_minus_drag_inherits_intake_drag_status(monkeypatch):
     o = ao.thrust_minus_drag(0.01, 1e-5, t, db, ROOT, intake_drag=_meas(0.005))
     assert o["status"] == ao.EVALUATED and o["value"] == pytest.approx(0.03 - 0.005 - 0.002)
     assert ao.thrust_minus_drag(0.01, 1e-5, t, db, ROOT, intake_drag=_syn(0.005))["status"] == ao.SYNTHETIC_ONLY
+
+
+# ------------------------------------------------------------------------- A9.14 S9.8 OD3 / A9.13 S6.1 / S6.13
+def test_states_are_the_design_state_set(inp):
+    assert ao.STATES == ao.states() == tuple(s.id for s in isy.envelope_states())
+    assert ao.STATES[0] == ao.DESIGN_STATE and ao.STATES[1:] == ao.required_state_ids()
+    assert len(ao.required_state_ids()) == len(isy.load_design_state_set()["states"])
+    assert tuple(inp.f1["coverage_rule"]["orbit_states"]) == ao.STATES
+    assert {k[2] for k in inp.records} == set(ao.STATES)
+    atm = [a for a in ro.UQ_AXES if a["axis"] == "atmosphere"][0]
+    assert atm["members"] == list(ao.STATES) and atm["design_state_set_sha256"] == isy.DESIGN_STATE_SET_SHA256
+
+
+def test_upstream_context_refuses_a_stale_f1_state_set(inp, monkeypatch):
+    full = ao.states()
+    monkeypatch.setattr(ao, "states", lambda: full[:5])
+    with pytest.raises(RuntimeError):
+        ao.load_upstream_inputs(ROOT)
+
+
+def test_f1q02_intake_mass_is_budgeting_only():
+    for bad in ("CBE", "FROZEN_INTAKE_MASS", "STRUCTURAL_QUALIFICATION"):
+        with pytest.raises(isy.IntakeMassUseError):
+            ao.intake_mass_code_default(0.5, 10.0, 0.9, use=bad)
+    with pytest.raises(isy.IntakeMassUseError):                    # an unlabelled intake mass never enters m_wet
+        ao.wet_mass("hall_icp_neutralizer", {"AL-01": {"m_intake_parametric_kg": 1.0}})
+    rec = ao.intake_mass_budget_record(0.5, 10.0, 0.9)
+    o = ao.wet_mass("hall_icp_neutralizer", {"AL-01": rec})
+    assert o["status"] == ao.NOT_EVALUATED                         # never a CBE, m_wet stays NOT_EVALUATED
+    line = [x for x in o["lines"] if x["line"] == "AL-01"][0]
+    assert line["design_parametric"]["f1q02"]["use"] == "BUDGETING_ONLY" and line["cbe_kg"] is None
+    blk = {b["block"]: b for b in ao.design_vector_blocks(ROOT)}["x_intake"]
+    st = [v for v in blk["variables"] if v["id"] == "x_intake.structure"][0]
+    assert st["f1q02"] == isy.f1q02_label()
+
+
+def test_committed_design_states_flow_gap_and_f1q02(main_doc):
+    d = main_doc
+    assert d["design_state_set"]["sha256"] == isy.DESIGN_STATE_SET_SHA256
+    assert d["orbit_basis_label"] == isy.ORBIT_BASIS_LABEL
+    assert d["evaluated_states"]["n"] == len(ao.STATES) and d["evaluated_states"]["n_required"] == len(ao.STATES) - 1
+    sg = d["statewise_gate_records"]
+    assert sg["n_required_states"] == len(ao.required_state_ids())
+    for k in ("AG-13_HC-08", "AG-12_HC-11"):
+        assert sg[k]["status"] == ao.C_NOT_EVALUATED and sg[k]["n_required_states"] == sg["n_required_states"]
+    assert sg["flight_feed_requirement"]["status"] == "PENDING_EVIDENCE"
+    fg = d["flow_gap_owner_order"]
+    assert fg == u13.flow_gap_record() and fg["order"][0]["lever"] == "PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT"
+    assert d["intake_structural_mass_label"] == isy.f1q02_label()
+    assert d["state_set_history"]["superseded_state_set"]["state_ids"] == isy.HISTORY_FIVE_STATE_SET["state_ids"]
+    items = {i["id"]: i for i in d["items"]}
+    assert items["F78-P-15"]["value"] == "PENDING_EVIDENCE" and items["F78-P-14"]["value"] == isy.DESIGN_STATE_SET_ID
+    md = MD.read_text(encoding="utf-8")
+    assert "PERFORMANCE_DERIVED_H1_FEED_REQUIREMENT" in md and isy.ORBIT_BASIS_LABEL in md

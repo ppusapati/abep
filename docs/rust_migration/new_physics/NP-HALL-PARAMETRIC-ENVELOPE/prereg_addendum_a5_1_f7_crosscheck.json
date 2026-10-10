@@ -1,0 +1,24 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-HALL-PARAMETRIC-ENVELOPE/addendum_a5_1_f7_crosscheck",
+ "addendum": "A5.1",
+ "amends": "addendum A5 (prereg_addendum_a5_m2_intake_closure.json 45e6013d30c57d80ed0f39af2428e53ada24b6c36ca8020d7f58392f5d3b57ed, lock prereg_addendum_a5_lock.json d143fd4c97909f06717e1f993ee800bb3e6a610681acaf5fa30c7c715359b544), clause quantities.Q-MDOT-DEL.cross_check only (and the matching fail_closed item); A5 and every other file are not edited",
+ "status": "PREREGISTERED_BEFORE_EVALUATION",
+ "date": "2026-10-08",
+ "lane": "lane-m2-intake-a5",
+ "base_commit": "29fec8e",
+ "drafted_by": "agent session (M2 intake-closure lane); under A9.34 there is no lane-level owner review; nothing here is an owner decision; reported to the coordinator as a registration correction",
+ "what_happened": {
+  "event": "the first harness run under A5 (abep-assess-closure --harness v2 --intake-closure, development run; no output was written) refused the record with MODEL_ERROR in the A5 input gathering, at the first F7 member checked: A0.25_Ld10_phi0.9|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01 in context cll_a0.2|F4-FIL-T0.5|WALL-G0: Rust statewise minimum 1.614853955983687e-9 kg/s vs committed 1.6148539559836865e-9 kg/s (1 ulp)",
+  "root_cause": "the committed F7 Pareto blocks (f7_pareto_blocks_v1.json.gz) are the Python reference capture (python commit ba8adc3). The admitted F7 contract (PARITY-C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-V1) reproduces them under its ULP_BOUNDED tolerance class (k_ulp 4 or r_rel 1e-9), not bit for bit: parity_report_v1.json results.study_pareto shows 23401 of 23622 float leaves bit-identical and max_ulp 24. The A5 clause 'equals the member's committed mdot_delivered_min_kgps bit for bit' was a registration error (it restated the A2 harness description 'reproduced bit for bit by Rust', which does not hold for every float leaf)",
+  "nothing_seen": "the refusal happened inside the input gathering, before any A5 evaluation: no captured or delivered flow, efficiency, requirement comparison, multiplier, verdict or cell constraint was computed or seen. A5 change_control allows a new, dated addendum registered before the evaluation it governs; this is one"
+ },
+ "rule": {
+  "cross_check": "for every F7 member: every state of the Rust rerun is in domain (sweep bits 0; otherwise MODEL_ERROR, unchanged), and |mdot_min,rust - mdot_min,committed| <= max(4 ulp(mdot_min,committed), 1e-9 |mdot_min,committed|), where mdot_min is the minimum of the delivered flow over the F7 state list; otherwise MODEL_ERROR",
+  "basis": "k_ulp 4 and r_rel 1e-9 are the tolerances of the admitted F7 contract's ULP_BOUNDED class (r_rel is the abep-gaspath steady-path tolerance); r_rel is applied relative to |committed| (the contract's threshold_proximity_rule form), which is stricter than the class's r_rel max(1, |py|) form that would be vacuous at flows of 1e-9 kg/s",
+  "values_used": "the per-state delivered flows and compositions A5 uses are those of the Rust rerun (the admitted implementation: A9.24 item 1, Rust authoritative within the registered domain); the committed Python capture is the cross-check reference only",
+  "record": "the standalone A5 record reports, per member, the committed and the rerun statewise minimum and their difference in ulp; the summary reports the maximum ulp difference and the number of members not bit-identical"
+ },
+ "unchanged": "every other A5 clause: design sets, quantities, requirements, comparisons, margins, statewise rules, classification effect, codes, records, determinism and change control",
+ "change_control": "any change after this lock is a new, dated addendum registered before the evaluation it governs"
+}

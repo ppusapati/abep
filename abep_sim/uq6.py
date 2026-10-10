@@ -13,7 +13,8 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 from .intake import IntakeParams, CompressorParams
-from .system import Config, evaluate
+from .system import Config
+from .programme.closure import evaluate      # legacy merged record (uses its assessment flags; A9.22 programme layer)
 from .thruster import CARDS
 from .mission_env import Spacecraft, spacecraft_drag
 from .atmosphere import atmosphere
@@ -131,7 +132,10 @@ def evaluate_full(design: dict, x: dict | None = None, sc: Spacecraft | None = N
     alpha_end = min(surface_ageing_alpha(x["alpha0"], r["ao_fluence_mission_m2"], phi_c=x["phi_c"]), 1.0)
     from .intake import _tpmc_surface
     surf = _tpmc_surface(atm)
-    eta_end = surf(x["L_over_d"], x["phi_open"], alpha_end)["eta_c"]; eta0 = r["eta_c"]
+    # explicit free-stream mass fractions (review fix D-07/N6, 2026-10-01): the species-resolved surface no longer
+    # substitutes a hard-coded {O 0.45, N2 0.50, O2 0.05} when none are given
+    eta_end = surf(x["L_over_d"], x["phi_open"], alpha_end,
+                   fractions={"O": atm["fO"], "N2": atm["fN2"], "O2": atm["fO2"]})["eta_c"]; eta0 = r["eta_c"]
     T_end = r["T_air_mN"] * (eta_end / max(eta0, 1e-9)) * x["f107_season"]        # thrust ~ collected flow
     TD_sc_start = r["T_air_mN"] * x["f107_season"] / (d["D_total_N"] * 1e3)
     TD_sc_end = T_end / (d["D_total_N"] * 1e3)
@@ -171,7 +175,8 @@ def monte_carlo6(design: dict, n: int = 200, seed: int = 0, priors=PRIORS6) -> p
         except Exception as e:      # a physics solver failing is itself information
             r = {"mission_ok_rom": False, "technical_compliant": False, "error": str(e)[:60]}
         rows.append({**x, **{k: r.get(k) for k in ("T_air_mN", "T_over_D_air", "TD_sc_start", "TD_sc_end", "eng_P_bus_steady_W", "eng_m_mev_kg",
-                                                     "eng_life_hall_h", "eng_blade_coating_life_h", "eng_R_26000h", "technical_compliant",
+                                                     "eng_life_hall_h", "eng_blade_coating_life_h", "eng_R_mission", "eng_R_26000h",
+                                                     "technical_compliant",
                                                      "mission_ok_rom", "chk_conservation", "pl_sustained", "error")}})
     return pd.DataFrame(rows)
 

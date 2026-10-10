@@ -1,0 +1,123 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a3_numerics_v1",
+ "addendum": "A3 (numerics adequacy; A1 = AIR family, A2 = closure lane)",
+ "amends": "NP-HALL-PARAMETRIC-ENVELOPE v1 (prereg_v1.json 3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d, lock prereg_lock_v1.json 25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3); v1, its case file (c4a73dbb...), launch manifest and driver are not edited",
+ "status": "PREREGISTERED_NOT_RUN",
+ "status_label": "PARAMETRIC / NOT_VALIDATED",
+ "date": "2026-10-08",
+ "lane": "lane-hall-envelope-runs",
+ "base": "64a078e (origin/integration/simulation-complete)",
+ "drafted_by": "agent session (lane-level call under A9.34 milestone governance); not reviewed by the owner; nothing here is an owner decision",
+ "mandate": "v1 open owner question OQ-HPE-06 / hall_transport_v2_prereg_DRAFT RG-04 (numerical settings fixed for H-1 plus a data-free grid-adequacy check); v1 change_control: a new, dated addendum registered before the runs it governs",
+ "registered_before": "any v1 grid case beyond the smoke runs listed here and any refined run. Smoke runs seen before this registration (pipeline and runtime check only, in a scratch directory; never reused here, never part of the frozen grid output, rerun by the grid): (i) Rust run-shard of v1 shard 0, family XE, stopped after 6 records: XE|G-AMINDHMAX-LH8603|BZ-P5B16|BP-LO|VD-180|MF-LO|sgb-screen-01, XE|G-AMINDHMAX-LH8603|BZ-P5B16|BP-LO|VD-350|MF-MID|sgb-screen-02, XE|G-AMINDHMAX-LH8603|BZ-P5B16|BP-HI|VD-265|MF-HI|sgb-screen-03, XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-LO|VD-265|MF-LO|sgb-screen-04, XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-180|MF-MID|sgb-screen-05, XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-350|MF-HI|sgb-screen-06; (ii) bridge run_case on three largest-geometry XE cases: XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-HI|VD-350|MF-HI|sgb-screen-09, XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-LO|VD-350|MF-HI|sgb-screen-09, XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-LO|VD-180|MF-LO|sgb-screen-01; (iii) the v1 driver on shard 28, family N2_PROXY, first case N2_PROXY|G-AMINDHMAX-LH8603|BZ-P5B16|BP-LO|VD-180|MF-LO|sgb-screen-01. None is in the check set below, whose selection is fixed by the seed rule and does not depend on any result",
+ "governing_records": {
+  "A9.32_json": {"path": "docs/decisions/OD_2026_10_07_A9_32_hall_thrust_critical_path_parametric_envelope.json", "sha256": "b3deaf25c9db25ed7fe349d28b8c4b7585d434c9e90f952d9757ee725473ddde"},
+  "A9.33_json": {"path": "docs/decisions/OD_2026_10_08_A9_33_hall_run_location_hall_air_chemistry_plenum_v8.json", "sha256": "8799ee1069a0916d611738fff29b8c03af1e25d74fbd602114475d2f7454602b"},
+  "A9.34_json": {"path": "docs/decisions/OD_2026_10_08_A9_34_milestone_governance_m1_m2_m3.json", "sha256": "f51f3d0179dfe4fa99a4c71afdec48a91dc1930ef93e8ddaf38d3d9ac1d36c89"},
+  "v1_prereg": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json", "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d"},
+  "v1_cases": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/cases/h1_parametric_envelope_cases_v1.json", "sha256": "c4a73dbbc1f7cbf25add986211e2e4ad945a91b7328ab0b99663de35e6021b12"},
+  "v1_launch_manifest": {"path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/launch_manifest_v1.json", "sha256": "36a0eb61980d447c5d10159a526eabba37a56f97b48b0cec0f7d34aa5bc039ba"},
+  "bridge_lib": {"path": "hallthruster_bridge/bridge_lib.jl", "sha256": "cf26aab8607b640ebb78be9715f2c7c5d957f145ac17f52c1b23db2e980e21ab"},
+  "convergence_draft_basis": {"path": "docs/hallmap/drafts/hallmap_convergence_prereg_DRAFT.json", "sha256": "6eec2f0c6676526c6ee07c1065c0d8c21cd222a6780fe9745b0e35a42eb14f6f", "use": "source of the refinement design (R1 grid, R3 duration, one factor at a time), the 2 % tolerances and the categorical invariants; the draft itself stays a DRAFT and governs nothing"},
+  "rg04": {"path": "docs/validation/hall_transport_v2_prereg/hall_transport_v2_prereg_DRAFT.json", "sha256": "24de36ed89b4455783d4f38becdcb97effbbd37dc28f93d90f54d3c8798a68d2"}
+ },
+ "what_changes": [
+  "adds a registered grid-adequacy check (RG-04 for this envelope only) of the v1 scaled numerics on a seeded check set, and the consequence of its outcome for the ingestion and classification of the envelope family it covers",
+  "nothing else: the v1 grid, its numerics, run-status rule, raw-record schema, frozen-raw format, B(z) family, transport set and classification procedure are unchanged"
+ ],
+ "what_does_not_change": [
+  "the v1 grid numerics: no grid case is ever rerun at refined numerics as a replacement, and no grid numerical setting is changed after any grid result is seen",
+  "the frozen raw records and their v1 run statuses (A3 acts at ingestion and classification only, as an overlay with its own label)",
+  "credible Hall transport set EMPTY; HallMap admission; layer (b); the HallThruster.jl pin (v0.23.1, bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5, Julia 1.11.7); bridge_lib.jl",
+  "evidence condition EC-NUM of v1 C3: an A3 check is a sampled check on 17 of 2268 cases, not a per-point convergence proof; EC-NUM stays listed and cites the A3 result"
+ ],
+ "scope": {
+  "XE": "covered now (the family with a classification role that runs first)",
+  "AIR": "covered by reference when the AIR family of addendum A1 runs on the v1 numerics: the same rule is applied to the AIR rows with family = AIR in the seed texts (geometry, B_peak, V_d, mdot, shape and transport as below; the composition corner = A1 corner order [pick(SEED|AIR|geometry|B_peak|V_d|mdot|composition, 4)]), with the same refinements, criteria, outcome and consequence, and the check runs before AIR grid cases beyond smoke, unless A1 or a later addendum registers its own numerics check",
+  "N2_PROXY": "not covered (diagnostic only, no classification effect); its records keep the v1 label NUMERICAL_ADEQUACY_NOT_VERIFIED_FOR_H1 and no A3 outcome"
+ },
+ "solver_timestepping_basis": {
+  "finding": "bridge_lib.jl run_case builds SimParams(grid = EvenGrid(cells), dt, duration, verbose = false); in the pinned HallThruster.jl v0.23.1 the remaining SimParams keyword defaults are adaptive = true, CFL = 0.799, min_dt = 1e-10 s, max_dt = 1e-7 s, num_save = 1000 (printed in this lane from the installed package whose tree hash 7505b3a2a6cfeb6854801de53c6985443aeb8363 equals the Manifest git-tree-sha1 and the tree of commit bfb3019f)",
+  "consequence": "under adaptive stepping SimParams.dt is only the uniform step of the solver's escape hatch (convergence draft solver_timestep_finding, inferred from the source), so a dt-only refinement can be a no-op; the effective step is CFL-limited and shrinks with the cell size. A3 therefore refines time resolution through the grid refinement R1 (label TIMESTEP_REFINED_THROUGH_CFL_IN_R1) and does not run a dt-only refinement. CFL and num_save are not passed by the pinned bridge and are not changed (no bridge change)."
+ },
+ "check_set": {
+  "selection_rule": [
+   "geometry: the two v1 geometry points with the smallest and the largest v1 cell count (domain length): G-AMINDHMAX-LH8603 (266 cells) and G-AMAXDHMIN-LH12 (546 cells); centre geometry: the median cell count of the seven points, G-RP1 (339 cells)",
+   "corners (16): each of the two extreme geometries x B_peak {BP-LO, BP-HI} x V_d {VD-180, VD-350} x mdot {MF-LO, MF-HI}, in that nested order",
+   "centre (1): G-RP1, VD-265, MF-MID, B_peak picked by the seed (v1 has only the two band ends)",
+   "per selection, the B(z) shape and the transport candidate are picked by the seed: pick(text, n) = (first 8 bytes of sha256(UTF-8 text) as a big-endian unsigned 64-bit integer) mod n; centre B_peak = [BP-LO, BP-HI][pick(SEED|family|geometry|V_d|mdot|B_peak, 2)]; shape = [BZ-P5B16, BZ-P5B30][pick(SEED|family|geometry|B_peak|V_d|mdot|bz_shape, 2)]; transport = [sgb-screen-01..09][pick(SEED|family|geometry|B_peak|V_d|mdot|transport, 9)] (| is the literal separator, ids as in v1)"
+  ],
+  "seed": "NP-HALL-PARAMETRIC-ENVELOPE/A3/v1",
+  "n_cases_per_family": 17,
+  "xe_keys": [
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-LO|VD-180|MF-LO|sgb-screen-09",
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B16|BP-LO|VD-180|MF-HI|sgb-screen-08",
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-LO|VD-350|MF-LO|sgb-screen-06",
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-LO|VD-350|MF-HI|sgb-screen-06",
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-180|MF-LO|sgb-screen-04",
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-180|MF-HI|sgb-screen-09",
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B16|BP-HI|VD-350|MF-LO|sgb-screen-08",
+   "XE|G-AMINDHMAX-LH8603|BZ-P5B30|BP-HI|VD-350|MF-HI|sgb-screen-08",
+   "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-LO|VD-180|MF-LO|sgb-screen-07",
+   "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-LO|VD-180|MF-HI|sgb-screen-02",
+   "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-LO|VD-350|MF-LO|sgb-screen-02",
+   "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-LO|VD-350|MF-HI|sgb-screen-09",
+   "XE|G-AMAXDHMIN-LH12|BZ-P5B30|BP-HI|VD-180|MF-LO|sgb-screen-08",
+   "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-HI|VD-180|MF-HI|sgb-screen-01",
+   "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-HI|VD-350|MF-LO|sgb-screen-03",
+   "XE|G-AMAXDHMIN-LH12|BZ-P5B16|BP-HI|VD-350|MF-HI|sgb-screen-04",
+   "XE|G-RP1|BZ-P5B30|BP-LO|VD-265|MF-MID|sgb-screen-04"
+  ],
+  "xe_keys_note": "computed from the rule above before registration; the Rust generator recomputes them and refuses to write the A3 case file unless they are equal",
+  "smoke_reuse": "none: no smoke result is used in the check (no smoke case is in the check set)"
+ },
+ "refinements": {
+  "design": "one factor at a time, each compared with the same baseline R0 (convergence draft refinement_design)",
+  "R0_baseline": "the v1 case object unchanged (v1 numerics: cells = ceil(domain_m / 5e-4), dt 5e-9 s, duration 2e-3 x max(1, domain_m / 0.1) s, average from duration / 2)",
+  "R1_grid": "cells = 2 x v1 cells (0.25 mm cells); dt, duration_s, average_start_s and everything physical unchanged; under adaptive stepping this also refines the CFL-limited time step",
+  "R3_duration": "duration_s = 2 x v1 duration_s, average_start_s = v1 duration_s (the same 50 % transient discard; averaging window doubled); cells, dt and everything physical unchanged; num_save stays the solver default 1000 (not passed by the bridge), so the saved-frame spacing doubles (recorded)",
+  "not_run": "dt-only refinement (solver_timestepping_basis); CFL refinement (needs a bridge change); combined refinement",
+  "runs": "17 cases x 3 = 51 runs per covered family, through bridge_lib.jl run_case in vacuum mode, threads / BLAS pinned to 1, every run recording the v1 per-record provenance plus the A3 refinement id and the v1 key and case_sha256 it derives from"
+ },
+ "criteria": {
+  "per_case_and_refinement": {
+   "C-STATUS": "the v1 run status (run_status_rule: NUMERICAL_FAILURE > OUT_OF_DOMAIN > NOT_SUSTAINED > PASS) of the refined run equals that of R0; a refined run that is missing counts as NUMERICAL_FAILURE",
+   "C-QUIET": "when both runs are numerically valid (status not NUMERICAL_FAILURE), the quiet class Id_rms_rel < 0.5 is identical",
+   "C-T": "when R0 is PASS: |thrust_N(Rk) - thrust_N(R0)| / |thrust_N(R0)| <= 0.02",
+   "C-ID": "when R0 is PASS: |discharge_current_A(Rk) - discharge_current_A(R0)| / |discharge_current_A(R0)| <= 0.02; discharge_power_W = I_d x V_d at fixed V_d inherits C-ID (no separate criterion)",
+   "tolerance_source": "convergence draft observables.thrust_N / discharge_current_A proposed_tolerance 0.02 (prior: quiescent Xe runs moved I_d < 0.2 % between 200 / 400 cells and 2 / 4 ms; breathing runs up to 21 %, HISTORY 2026-09-25); fixed here before any refined run"
+  },
+  "report_only": "relative and absolute deltas of ion_current_A, mass_eff, current_eff, voltage_eff, anode_eff, Te_max_eV, ne_max_m3, Id_rms_rel, Id_pp_rel, Id_f_dominant_Hz (resolution 1 / averaging window), wall_s; no tolerance",
+  "aggregates": "delta_T = max over the covered family's check cases with R0 PASS and over R1, R3 of the C-T relative delta; delta_I likewise for C-ID (both reported with their keys)"
+ },
+ "outcome": {
+  "A3_ADEQUATE": "every check case passes C-STATUS, C-QUIET, C-T and C-ID under R1 and R3",
+  "A3_ADEQUATE_WITH_NUMERICAL_MARGIN": "every check case passes C-STATUS and C-QUIET under R1 and R3, and delta_T <= 0.10 and delta_I <= 0.10, but some C-T or C-ID fails",
+  "A3_NOT_ADEQUATE": "any C-STATUS or C-QUIET failure, or delta_T > 0.10, or delta_I > 0.10",
+  "A3_NOT_RUN": "no committed A3 result for the family: the v1 rules apply unchanged (v1 label NUMERICAL_ADEQUACY_NOT_VERIFIED_FOR_H1, EC-NUM)",
+  "margin_cap_basis": "0.10 bounds the numerical uncertainty that may be carried as a margin instead of withdrawing the family; it is fixed here before any refined run (no in-repo basis beyond the 2 % draft tolerance and the 21 % breathing-run spread)"
+ },
+ "consequence": {
+  "A3_ADEQUATE": "the scaled v1 numerics stand for the family: points are ingested and classified exactly as v1 says; the record carries the label NUMERICS_A3_ADEQUATE_ON_CHECK_SET with the A3 result sha256; EC-NUM stays listed (sampled check)",
+  "A3_ADEQUATE_WITH_NUMERICAL_MARGIN": {
+   "label": "every ingested point of the family carries NUMERICS_A3_MARGIN with delta_T and delta_I",
+   "point_tests": "a v1 Hall point test (T12, T25, XE_FUNC) on a PASS point counts as passing only if it also passes with thrust_N x (1 - delta_T) in place of thrust_N and discharge_power_W x (1 + delta_I) in place of discharge_power_W inside P_bus_fav; a PASS point that passes nominally but not at the margin is NUMERICS_NOT_CONVERGED for that test",
+   "constraint_status": "CLOSES_IN_ENVELOPE iff some point passes at the margin; NON_CLOSING_IN_ENVELOPE iff no point passes nominally and every point is evaluated physics (v1); otherwise NOT_DETERMINABLE_IN_ENVELOPE with blocker NUMERICS_NOT_CONVERGED (count) next to the v1 unknown counts",
+   "evaluated_physics": "NOT_SUSTAINED points stay evaluated physics (no status flip was observed)"
+  },
+  "A3_NOT_ADEQUATE": {
+   "label": "every PASS and NOT_SUSTAINED point of the family is NUMERICS_NOT_CONVERGED (its raw values are reported with that label)",
+   "classification": "a NUMERICS_NOT_CONVERGED point is an unknown, like NUMERICAL_FAILURE: it never counts toward feasibility (never CLOSES) and never toward an evaluated non-closure; every Hall test of the family is NOT_DETERMINABLE_IN_ENVELOPE with blocker NUMERICS_NOT_CONVERGED, A9.31 sec. 21 category MISSING_EVIDENCE"
+  },
+  "fail_closed_consumer_rule": "a consumer (ingestion or the closure harness) that does not implement this overlay must not report CLOSES_IN_ENVELOPE or NON_CLOSING_IN_ENVELOPE for a family whose committed A3 outcome is not A3_ADEQUATE; it reports NOT_DETERMINABLE_IN_ENVELOPE with blocker A3_OVERLAY_NOT_IMPLEMENTED",
+  "never": "an A3 outcome never makes a point feasible that v1 does not, never changes a frozen record, and never justifies changing the v1 grid numerics"
+ },
+ "execution": {
+  "case_file": "cases/h1_parametric_envelope_a3_numerics_cases_v1.json, generated after this lock by the Rust tool (abep-julia-bridge) from the frozen v1 case file: one object per (check case, refinement) = the v1 case object with only the refined numerical fields changed, plus a3_refinement, v1_key and v1_case_sha256; case_sha256 by the v1 convention; byte-reproducible (generate / check)",
+  "driver": "driver/h1_envelope_a3_driver.jl: verifies check_pin(), this addendum's lock, the v1 lock and pinned inputs, and the A3 case file sha256 against its launch manifest; calls run_case(c, \"vacuum\") and records the v1 raw-record fields; no status, threshold or verdict",
+  "launch": "Rust launch (pin, input sha256, julia --version == Manifest julia_version, nine-field sidecar per shard), 3 shards (case index mod 3)",
+  "freeze_and_score": "the shard outputs are frozen (sha-pinned gzip JSONL + manifest) before scoring; the Rust scorer applies the v1 run-status rule (abep_hall::envelope::run_status) and the criteria above once and writes a3_numerics_result_v1.json / .md, committed whatever the outcome",
+  "determinism_diagnostic": "report only: the R0 records are compared with the frozen grid records of the same keys once the family's grid is frozen (thrust_N, discharge_current_A, retcode); a difference is reported, never used to change either record"
+ }
+}

@@ -172,7 +172,7 @@ def test_diff_table_complete_and_row_13_repointed():
         assert d["blocking_item_changed"] == bool(r["blocking_item"] and not r["blocking_item"]["carried_from_v3"])
     repointed = [d["row"] for d in DOC["diff_v3_v4"] if d["blocking_item_changed"]]
     assert repointed == [13]
-    p3 = {i["id"]: i for i in _load("docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json")["items"]}
+    p3 = {i["id"]: i for i in _load("docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json")["items"]}
     for it in ROWS[12]["blocking_item"]["items"]:
         assert str(p3[it["id"]]["value"]).startswith("TBD"), it["id"]
 
@@ -231,10 +231,28 @@ def test_s01_rvm_open_readings_agree_with_state_v4():
     rvm = json.loads((ROOT / "docs/requirements/rvm_a9/rvm_a9_v1.json").read_text(encoding="utf-8"))
     v4 = {r["id"]: r for r in json.loads((ROOT / "docs/budgets/owner_decisions/owner_questions_state_v4.json")
                                         .read_text(encoding="utf-8"))["rows"]}
+    # A9.16 step 1: readings answered by the owner (A9.8 .. A9.15) name state v5 as their register and must be
+    # answered there; the others still agree with state v4 by status
+    v5 = {}
+    v5doc = json.loads((ROOT / "docs/budgets/owner_decisions/owner_questions_state_v5.json").read_text(encoding="utf-8"))
+    for r in v5doc["rows"]:
+        if r.get("v4_status") == "TBD_OWNER" or r["status"] == "TBD_OWNER":
+            v5[r["id"]] = r
     n = 0
     for row in rvm["rows"]:
         for o in row.get("open_readings", []):
-            assert o["id"] in v4 and v4[o["id"]]["status"] == o["status"], (row["id"], o["id"])
+            if o["current_register"].endswith("owner_questions_state_v5.json"):
+                assert o["status"] == "OWNER_DECIDED" and v4[o["id"]]["status"] == "TBD_OWNER", (row["id"], o["id"])
+                # owner-decided in state v5: A9.8 .. A9.14 answers, A9.15 amendments, or a later A9.19 / A9.20 /
+                # A9.21 amendment (which keeps the earlier owner-decided status in pre_a9_17_status)
+                st = v5[o["id"]]["status"]
+                assert st in v5doc["status_vocabulary"], (row["id"], o["id"])
+                assert st.startswith(("ANSWERED_BY_A9_", "AMENDED_BY_A9_")), (row["id"], o["id"])
+                if st.startswith("AMENDED_BY_A9_") and st != "AMENDED_BY_A9_15":
+                    assert v5[o["id"]]["pre_a9_17_status"].startswith(("ANSWERED_BY_A9_", "AMENDED_BY_A9_15"))
+                    assert v5[o["id"]]["later_owner_decisions"], (row["id"], o["id"])
+            else:
+                assert o["id"] in v4 and v4[o["id"]]["status"] == o["status"], (row["id"], o["id"])
             n += 1
     assert n > 0
     od13 = [o for r in rvm["rows"] if r["id"] == "RVM-12" for o in r["open_readings"] if o["id"] == "OD13"]
@@ -244,3 +262,68 @@ def test_s01_rvm_open_readings_agree_with_state_v4():
     rec = doc["rvm_register_reconciliation"]
     assert rec["all_agree"] is True and rec["n_readings"] == n
     assert "PENDING fo_a9_6_" not in out.read_text(encoding="utf-8")
+
+
+# ------------------------------------------------------------------------------------------- A9.19 / A9.20 / A9.21
+def test_single_flight_configuration_and_c1_ground_only_labels():
+    assert DOC["flight_configurations"] == ["hall_icp_neutralizer"]
+    assert set(DOC["configurations"]) == {"hall_icp_neutralizer", "hall_c1_reference"}
+    assert DOC["configurations"]["hall_c1_reference"].startswith("GROUND_ONLY_LAB_REFERENCE (A9.20)")
+    labelled = {r["row"]: r["a9_19_20"] for r in ROWS if "a9_19_20" in r}
+    assert sorted(labelled) == [6, 7, 8, 11] == DOC["a9_19_21"]["rows_labelled"]
+    assert labelled[11]["configuration_status"].startswith("GROUND_ONLY_LAB_REFERENCE (A9.20): NOT_A_FLIGHT_SUBSYSTEM")
+    for n in (6, 7, 8):
+        assert labelled[n]["configuration_status"].startswith("FLIGHT_SUBSYSTEM (hall_icp_neutralizer")
+    cls = {h["pointer"]: h["classification"] for h in labelled[11]["statements"]}
+    assert cls["/a9_2_statuses/C1 conventional reference"] == "SUPERSEDED_FOR_FLIGHT_PRE_A9_19"
+    assert cls["/owner/functional_role"] == "SUPERSEDED_FOR_FLIGHT_PRE_A9_19"
+    assert cls["/a9_6_lanes/0/how"] == "CONSISTENT_WITH_A9_19_20"
+    for r in labelled.values():
+        assert all(h["classification"] in DOC["a9_19_21"]["statement_classes"] for h in r["statements"])
+    # verbatim history kept: the A9.2 status and the owner-accepted role name are not rewritten
+    row11 = ROWS[10]
+    assert row11["a9_2_statuses"] == {"C1 conventional reference": "CONTROL_FALLBACK"}
+    assert row11["owner"]["functional_role"] == "electron-source lead (C1 reference / fallback)"
+    assert "CONTROL_FALLBACK" in DOC["a9_2_status_notes"]["C1 conventional reference"]
+    # requirement status: the one flight configuration, the ground reference labelled separately
+    n = 0
+    for r in ROWS:
+        for x in r["rvm_requirement_status"]:
+            assert list(x["status"]) == ["hall_icp_neutralizer"]
+            assert list(x["ground_reference_status"]) == ["hall_c1_reference"]
+            assert x["ground_reference_role"].startswith("GROUND_ONLY_LAB_REFERENCE")
+            n += 1
+    assert n > 0
+    assert {i["id"]: i["value"] for i in DOC["items"]}["M16V4-IT-12"] == 1
+    # labels only: no readiness state changes
+    assert {r["execution_state"] for r in ROWS} <= {"BLOCKED", "SUPERSEDED_FOR_PRIMARY_LINE"}
+    assert DOC["m16_impact"]["rows_state_changed"] == 0
+
+
+def test_a9_21_programme_attached_per_row():
+    by = {r["row"]: {x["item"] for x in r["a9_21"]} for r in ROWS}
+    assert by[18] == {"HW_PROGRAMME", "ICP_GATE"} and by[11] == {"HW_PROGRAMME"}
+    assert by[6] == by[7] == by[8] == {"AL08"} and by[1] == {"EXTERNAL_INPUTS"}
+    gate = [x for x in ROWS[17]["a9_21"] if x["item"] == "ICP_GATE"][0]
+    assert "`NOT_EVALUATED`, not GO" in gate["verbatim_excerpt"]
+    md = (HERE.parents[4] / "docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md")
+    text = " ".join(md.read_text(encoding="utf-8").split())
+    for r in ROWS:
+        for x in r["a9_21"]:
+            assert " ".join(x["verbatim_excerpt"].split()) in text
+    applied = {(x["decision"], x["question_id"]) for x in DOC["a9_19_21_owner_answers_applied"]}
+    assert {("A9.19", "architecture"), ("A9.20", "answer"), ("A9.21", "ICP_GATE"), ("A9.21", "HW_PROGRAMME")} <= applied
+    for x in DOC["a9_19_21_owner_answers_applied"]:
+        assert hashlib.sha256((ROOT / x["decision_json"]).read_bytes()).hexdigest() == x["decision_json_sha256"]
+
+
+def test_a9_19_labels_fail_closed(monkeypatch):
+    rows = copy.deepcopy(ROWS)
+    rows[2]["a9_6_lanes"].append({"how": "C1 fallback line in hall_c1_reference"})   # an unreviewed C1 reading
+    with pytest.raises(B.A19.A919M16Error):
+        B.A19.apply(rows)
+    with pytest.raises(B.A19.A919M16Error):
+        B.A19.split_rvm_status({"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED",
+                                "some_other_config": "NOT_EVALUATED"})
+    with pytest.raises(B.A19.A919M16Error):
+        B.A19.check_rvm_configurations({"configurations": {"hall_icp_neutralizer": "x", "hall_c1_reference": "y"}})

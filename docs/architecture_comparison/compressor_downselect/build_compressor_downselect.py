@@ -40,9 +40,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[3]
 OUT_DIR_REL = "docs/architecture_comparison/compressor_downselect"
 SCRIPT_REL = f"{OUT_DIR_REL}/build_compressor_downselect.py"
-JSON_NAME = "compressor_downselect_v1.json"
-MD_NAME = "COMPRESSOR_DOWNSELECT.md"
-CLOSURE_REL = "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json"
+JSON_NAME = "compressor_downselect_v2.json"   # v2 (A9.16 regeneration); v1 kept byte-identical as history
+MD_NAME = "COMPRESSOR_DOWNSELECT_v2.md"
+CLOSURE_REL = "docs/architecture_comparison/feed_state_closure/feed_state_closure_v2.json"
 LANE16_REL = "scripts/architecture/build_feed_envelope.py"
 SCHEMA_ID = "compressor_downselect_v1"
 VERSION = "1.0.0"

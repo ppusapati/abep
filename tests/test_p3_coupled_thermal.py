@@ -22,9 +22,9 @@ import pytest
 
 REPO = Path(__file__).resolve().parents[1]
 LANE = REPO / "docs" / "experiments" / "hall_icp" / "p3_coupled_thermal"
-BUILDER = LANE / "build_p3_coupled_thermal.py"
-OUT_JSON = LANE / "p3_coupled_thermal_v1.json"
-OUT_MD = LANE / "P3_COUPLED_THERMAL.md"
+BUILDER = LANE / "build_p3_coupled_thermal_v2.py"
+OUT_JSON = LANE / "p3_coupled_thermal_v2.json"
+OUT_MD = LANE / "P3_COUPLED_THERMAL_V2.md"
 H25_PY = REPO / "docs" / "hardware" / "h2" / "h2_5_thermal_network" / "build_h2_5_thermal_network.py"
 
 
@@ -409,18 +409,23 @@ def test_items_discipline(d, mod):
     by = {s: {i for i, _ in lst} for s, lst in d["inputs_by_supplier"].items()}
     for s, must in need.items():
         assert must <= by[s], s
-    # ICPQ-10 alternatives carried side by side, neither chosen
+    # ICPQ-10 decided by the owner (A9.12 S5.1, alternative A; updated in A9.16 step 1 - previously both alternatives
+    # were carried TBD_OWNER): A stays TBD until P_fwd,max / P_d,max are registered, B is kept as rejected history
     alts = {i["id"]: i for i in d["items"] if i["id"] in ("P3-B-01", "P3-B-02")}
-    assert all(a["status"] == "TBD_OWNER" for a in alts.values())
+    assert alts["P3-B-01"]["status"] == "TBD_AFTER_IMPEDANCE_MAP" and "A9.12 ICPQ-10" in alts["P3-B-01"]["source"]
+    assert alts["P3-B-02"]["status"] == "OWNER_REJECTED" and alts["P3-B-02"]["value"].startswith("REJECTED")
 
 
 def test_owner_questions(d):
     oq3 = json.loads((REPO / "docs/budgets/owner_decisions/owner_questions_state_v3.json").read_text())
     known = {r["id"] for r in oq3["rows"]}
+    # A9.16 step 1: P3Q-01 (A9.8 S1.7) and P3Q-02 (A9.12 S5.9) are now OWNER_DECIDED (previously TBD_OWNER)
     for q in d["open_owner_questions"]:
-        assert q["id"] not in known and q["status"] == "TBD_OWNER" and len(q["alternatives"]) >= 2
+        assert q["id"] not in known and q["status"] == "OWNER_DECIDED" and len(q["alternatives"]) >= 2
+        assert q["answer"] and q["decided_by"].startswith(("A9.8 P3Q-01", "A9.12 P3Q-02"))
+    # carried questions decided by A9.12 / A9.14 are recorded OWNER_DECIDED with the v3 snapshot status kept
     for qid, v in d["existing_open_owner_questions_carried"].items():
-        assert v["status"] == "OPEN"
+        assert v["status"] == "OWNER_DECIDED" and v["status_v3_snapshot"] == "OPEN", qid
     for sec in ("interface_demands", "owner_answers_applied", "open_owner_questions", "historical_reuse",
                 "m16_impact"):
         assert d[sec]
@@ -473,17 +478,20 @@ def test_p2_refused_line_loss_refused_by_q_rf_match(L):
 
 def test_p3_interface_ids_and_p1_conditional_probe(d):
     """Every P3 interface demand carries an id, units and a status; the P3Q-01 sheath-edge probe stays TBD_OWNER and is
-    listed by P1 as the CONDITIONAL measurement P1-M-30 (pair XL-18)."""
+    listed by P1 as the REQUIRED Langmuir-probe measurement P1-M-30 (pair XL-18; A9.8 P3Q-01 option C)."""
     ids = [e["id"] for v in d["interface_demands"].values() for e in v]
     assert len(ids) == len(set(ids)) and all(e["units"] and e["status"] for v in d["interface_demands"].values()
                                              for e in v)
     n02 = [e for e in d["interface_demands"]["p3_needs"] if e["id"] == "P3-IF-N02"][0]
-    assert n02["status"].startswith("TBD_OWNER (P3Q-01")
+    # A9.16 repair F2 (A9.8 S1.7 P3Q-01 option C): XL-18 re-stated on both sides - the Langmuir probe P1-M-30 is a
+    # REQUIRED Ar-P1 cross-check, calorimetry primary (updated test; step 1 kept 'TBD_OWNER (P3Q-01 OPEN ...)')
+    assert n02["status"].startswith("OWNER_DECIDED (A9.8 P3Q-01 option C")
     p1 = json.loads((REPO / "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json").read_text(encoding="utf-8"))
     m30 = [m for m in p1["measurements"] if m["id"] == "P1-M-30"][0]
-    assert m30["status"] == "CONDITIONAL (TBD_OWNER P3Q-01)" and "P3-P1-04" in m30["note"]
+    assert m30["status_a9_16"].startswith("REQUIRED (A9.8 P3Q-01") and "P3-P1-04" in m30["note"]
     qc = {q["id"]: q for q in d["open_owner_questions"]}
-    assert qc["P3Q-01"]["status"] == "TBD_OWNER"
+    assert qc["P3Q-01"]["status"] == "OWNER_DECIDED" and qc["P3Q-01"]["answer"] == "C_BOTH_CALORIMETRY_PRIMARY"
+    assert "A9.8 S1.7" in n02["a9_16_note"] and "re-stated on both sides" in n02["a9_16_note"]
 
 
 # ------------------------------------------------------------------ A9.6 cross-lane integration (fo_a9_6_cross_lane_integration)
@@ -491,14 +499,14 @@ _XL_SELF = 'P3'
 _XL_JSON = {
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
     "RFQ": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
 }
-_XL_MD = ['docs/experiments/hall_icp/p3_coupled_thermal/P3_COUPLED_THERMAL.md']
-_XL_BUILDER = 'docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py'
+_XL_MD = ['docs/experiments/hall_icp/p3_coupled_thermal/P3_COUPLED_THERMAL_V2.md']
+_XL_BUILDER = 'docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal_v2.py'
 _XL_ROOT = __import__("pathlib").Path(__file__).resolve().parents[1]
 
 

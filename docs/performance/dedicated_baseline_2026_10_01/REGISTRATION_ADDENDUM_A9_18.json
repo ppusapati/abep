@@ -1,0 +1,35 @@
+{
+ "schema": "dedicated_performance_baseline_registration_addendum_v1",
+ "id": "REGISTRATION_ADDENDUM_A9_18",
+ "status": "HISTORICAL_FOR_EARLIER_CODE_STATE",
+ "recorded_utc_date": "2026-10-01",
+ "supersedes_for_current_use": {
+  "path": "docs/performance/dedicated_baseline_2026_10_01/REGISTRATION.json",
+  "sha256": "44d608ea4aaf46f79ab9fe83205208e74bee6199b347470347be09aa70350585",
+  "field": "status",
+  "recorded_value": "ADMISSION_BASELINE_PERFORMANCE_ONLY",
+  "current_value": "HISTORICAL_FOR_EARLIER_CODE_STATE",
+  "note": "REGISTRATION.json and the measured files (baseline.json, baseline.md, machine.json) are kept byte-identical as recorded; this addendum supersedes only the registration's status label for current use"
+ },
+ "authority": {
+  "A9.18 PERF_RERUN": "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json"
+ },
+ "decision_sha256": {
+  "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json": "7c170e1000ae039c1f032ccf38bcacf2c59825d5dab26b4d98658a96914a8c3a"
+ },
+ "a9_18_verbatim": "The earlier dedicated measurement remains valid historical evidence for the earlier code state, but it must not be used to admit Rust kernels against code that has since changed.",
+ "a9_18_perf_rerun_answer": "RERUN_DEDICATED_BASELINE_AFTER_STEP3_MERGE_BEFORE_RUST_ADMISSION",
+ "rust_performance_admission": "BLOCKED_UNTIL_A9_18_PERF_RERUN",
+ "admission_baseline": "none registered for the current code; the owner rerun of the identical dedicated procedure after the step-3 merge becomes the Rust-admission baseline (A9.18 PERF_RERUN)",
+ "source_drift_records": [
+  "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_9.json",
+  "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_18_REPAIR.json"
+ ],
+ "baseline_md_shared_machine_line": {
+  "path": "docs/performance/dedicated_baseline_2026_10_01/baseline.md",
+  "line": "measured on a shared machine; other A9.7 lane worktrees may run concurrently - per-workload 1-minute load averages are recorded; treat timings as +-tens of percent, ranking as order-of-magnitude",
+  "status": "HARNESS_BOILERPLATE_NOT_APPLICABLE_TO_THIS_RUN",
+  "note": "the unmodified A9.7 harness (scripts/perf/profile_baseline.py render_md) prints this sentence for every run; this run followed the owner's idle-machine procedure (REGISTRATION.json source.run_by and deviations_and_notes); recorded Windows CPU load 7 % before and 1 % after (REGISTRATION.json machine.windows_cpu_load_percent_before_after)"
+ },
+ "immutability": "new file; REGISTRATION.json is not rewritten"
+}

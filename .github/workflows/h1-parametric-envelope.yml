@@ -1,0 +1,169 @@
+# MANUAL ONLY: the preregistered HallThruster.jl parametric feasibility envelope of H-1 (A9.32; NP-HALL-PARAMETRIC-ENVELOPE
+# v1, docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json, hash-locked by prereg_lock_v1.json).
+# Every output is PARAMETRIC / NOT_VALIDATED: it never enters a Hall map, the transport ensemble or layer (b), and the
+# credible Hall transport set stays EMPTY. It never runs on push or pull_request; the coordinator decides whether to run it.
+#   - prepare: the Rust tool regenerates the case file and launch manifest from the locked preregistration and requires
+#     byte equality plus the bridge dry run (abep-h1-envelope-cases check); it builds the tool once.
+#   - run: 64 shards (case index mod 64), each one Julia process with JULIA / BLAS threads pinned to 1, launched by the Rust
+#     tool (pin check, input sha256 re-check, `julia --version` == Manifest julia_version, nine-field sidecar per shard).
+#     The driver itself refuses any other HallThruster.jl commit (check_pin), preregistration lock, pinned input, case
+#     file or driver than the launch manifest names.
+#   - freeze: all shard outputs are frozen into one sha-pinned raw file plus its manifest (abep-h1-envelope-cases freeze)
+#     and uploaded with a SHA256SUMS file. Ingestion (abep_hall::envelope::ingest) refuses an incomplete or tampered set.
+# Pin: hallthruster_bridge/PINNED.toml (HallThruster.jl v0.23.1, bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5); the committed
+# Manifest.toml is instantiated as is (no re-resolution) and the checkout must stay unchanged.
+name: H-1 parametric Hall envelope (manual, PARAMETRIC / NOT_VALIDATED)
+
+on:
+  workflow_dispatch:
+    inputs:
+      family:
+        description: "Envelope family to run (XE = XE_CONTINGENCY input; N2_PROXY = diagnostic only; ALL = both)"
+        type: choice
+        options: [XE, N2_PROXY, ALL]
+        default: XE
+      confirm_preregistered_runs:
+        description: "Run the preregistered NP-HALL-PARAMETRIC-ENVELOPE v1 grid (PARAMETRIC / NOT_VALIDATED, never score-bearing)"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: h1-parametric-envelope
+  cancel-in-progress: false
+
+env:
+  RUST_TOOLCHAIN: "1.94.1"
+  CARGO_TERM_COLOR: never
+  JULIA_NUM_THREADS: "1"
+  OPENBLAS_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  OMP_NUM_THREADS: "1"
+
+jobs:
+  prepare:
+    if: ${{ inputs.confirm_preregistered_runs }}
+    name: Verify the preregistered case file and build the tool
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      julia_version: ${{ steps.pin.outputs.julia_version }}
+      commit: ${{ steps.pin.outputs.commit }}
+      shards: ${{ steps.pin.outputs.shards }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the pinned Rust toolchain (rustup)
+        run: |
+          rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal --no-self-update
+          rustup default "$RUST_TOOLCHAIN"
+          grep -qx "channel = \"$RUST_TOOLCHAIN\"" rust-toolchain.toml
+
+      - name: Regenerate and dry-run the case file (byte equality with the committed files)
+        run: |
+          cargo build --locked --release -p abep-julia-bridge --bin abep-h1-envelope-cases
+          target/release/abep-h1-envelope-cases check
+
+      - name: Read the pin and the shard list
+        id: pin
+        run: |
+          jv=$(sed -n 's/^julia_version = "\(.*\)"$/\1/p' hallthruster_bridge/Manifest.toml)
+          commit=$(sed -n 's/^commit = "\([0-9a-f]\{40\}\)".*$/\1/p' hallthruster_bridge/PINNED.toml)
+          n=$(jq -r .n_shards docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/launch_manifest_v1.json)
+          test -n "$jv" && test -n "$commit" && test "$n" -gt 0
+          echo "julia_version=$jv" >> "$GITHUB_OUTPUT"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+          echo "shards=$(seq 0 $((n - 1)) | jq -cs .)" >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: abep-h1-envelope-cases
+          path: target/release/abep-h1-envelope-cases
+          retention-days: 7
+
+  run:
+    needs: prepare
+    name: Shard ${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.prepare.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: abep-h1-envelope-cases
+          path: ${{ runner.temp }}/bin
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ needs.prepare.outputs.julia_version }}
+
+      - name: Install the pinned HallThruster.jl from the committed Manifest.toml
+        run: |
+          julia --project=hallthruster_bridge -e 'using Pkg; Pkg.instantiate(); Pkg.status()'
+          julia --project=hallthruster_bridge -e 'include("hallthruster_bridge/bridge_lib.jl"); rev = check_pin(); rev == ARGS[1] || error("pin mismatch")' "${{ needs.prepare.outputs.commit }}"
+          test -z "$(git status --porcelain)"
+
+      - name: Run the shard (Rust launch; sidecar written next to the output)
+        run: |
+          chmod +x "$RUNNER_TEMP/bin/abep-h1-envelope-cases"
+          mkdir -p "$RUNNER_TEMP/out"
+          "$RUNNER_TEMP/bin/abep-h1-envelope-cases" run-shard --shard "${{ matrix.shard }}" --out "$RUNNER_TEMP/out" \
+            --family "${{ inputs.family }}"
+          s=$(printf '%02d' "${{ matrix.shard }}")
+          jq -n --arg os "$ImageOS" --arg ver "$ImageVersion" --arg runner "$RUNNER_NAME" --arg run "$GITHUB_RUN_ID" \
+            --arg attempt "$GITHUB_RUN_ATTEMPT" --arg sha "$GITHUB_SHA" --arg family "${{ inputs.family }}" \
+            '{runner_image: $os, runner_image_version: $ver, runner_name: $runner, run_id: $run, run_attempt: $attempt,
+              commit: $sha, family: $family}' > "$RUNNER_TEMP/out/s$s.runner.json"
+          sha256sum "$RUNNER_TEMP"/out/*
+          test -z "$(git status --porcelain)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shard-${{ matrix.shard }}
+          path: ${{ runner.temp }}/out/
+          retention-days: 30
+
+  freeze:
+    needs: [prepare, run]
+    if: ${{ !cancelled() && needs.prepare.result == 'success' }}
+    name: Freeze the raw envelope (sha-pinned)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: abep-h1-envelope-cases
+          path: ${{ runner.temp }}/bin
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: shard-*
+          path: ${{ runner.temp }}/shards
+          merge-multiple: true
+
+      - name: Freeze
+        run: |
+          chmod +x "$RUNNER_TEMP/bin/abep-h1-envelope-cases"
+          name="h1_parametric_envelope_v1_${{ inputs.family }}_run${GITHUB_RUN_ID}"
+          ls "$RUNNER_TEMP"/shards/
+          "$RUNNER_TEMP/bin/abep-h1-envelope-cases" freeze --name "$name" --out "$RUNNER_TEMP/frozen" "$RUNNER_TEMP"/shards/s*.jsonl
+          cp "$RUNNER_TEMP"/shards/*.sidecar.json "$RUNNER_TEMP"/shards/*.runner.json "$RUNNER_TEMP/frozen/" 2>/dev/null || true
+          (cd "$RUNNER_TEMP/frozen" && sha256sum * > SHA256SUMS && cat SHA256SUMS)
+          jq '{n_records, raw_sha256, cases_file_sha256, prereg_lock_sha256}' "$RUNNER_TEMP/frozen/${name}_raw_manifest.json"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h1-parametric-envelope-frozen
+          path: ${{ runner.temp }}/frozen/
+          retention-days: 90

@@ -1,0 +1,91 @@
+{
+ "schema": "abep_rust_extract_audit_v1",
+ "id": "AUDIT-SC-WP-08-K-GAS-LIFE-V1",
+ "date": "2026-10-06",
+ "lane": "SC-WP-08 materials / life",
+ "method": "AUDIT_THEN_EXTRACT_ONLY_IF_NEEDED (simulation_completion_programme_v1_1.json method_vocabulary)",
+ "item": {
+  "kernel_id": "K-GAS-LIFE",
+  "source": "abep_sim/archengine.py::gas_path_state / make_gas_fn (gas-state wrapper only) + abep_sim/life.py::intake_life, blade_life",
+  "inventory_v3_status": "EXTRACT_ONLY_IF_AN_ACTIVE_CONSUMER_IS_CONFIRMED",
+  "host_classes": "C-ABEP_SIM_LIFE_PY and C-ABEP_SIM_ARCHENGINE_PY: HISTORICAL_LEGACY_REGRESSION, NOT_PORTED_RETIRE_FROM_ACTIVE_GRAPH"
+ },
+ "base_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+ "read_at_base_sha256": {
+  "docs/rust_migration/simulation_completion_programme_v1_1.json": "5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a",
+  "docs/rust_migration/component_inventory_v3_1.json": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "docs/rust_migration/migration_state_v1.json": "eb169a51ed1819a82efea556adcd51d39ebf202e12eb1641e8447fa73dde31ef",
+  "abep_sim/life.py": "e8119a9c09e997553076bf879147b87f99b182a78bf7d6f1f305d6d2d25a71fe",
+  "abep_sim/archengine.py": "12f5ff2c4ca773b0856b93468afc078172f5de52350fa433b418c86aac60f97d",
+  "abep_sim/golden.py": "c455203bc6616ddc6d171ed10472f3d4635cf7655f75b00ecb704674865c5c07",
+  "abep_sim/system.py": "3a2f4e230dcd2f879510c6cff12ee8d801dbddc27786d6bfec51290cdc362f84",
+  "abep_sim/mission5.py": "a793451896bd3e99a0be20add777a952c0824b4f0b8f7630f7e32a2dab35b245",
+  "abep_sim/uq_modular.py": "55d4f0b3e9b3c4691579f13ae2c07a59a4f6bad2c484b2c1ca4d29f503933c2e",
+  "abep_sim/design/architecture_optimizer.py": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af"
+ },
+ "question": "Does an active hall_icp_neutralizer consumer of the intake AO-coating life / compressor blade AO-coating life exist, with evidence?",
+ "consumers_found": [
+  {
+   "where": "abep_sim/archengine.py:995-1003 gas_path_state (intake_life_h = 1e6 if coating_ok else 5000.0; blade_life_h) and :722 life_items",
+   "class": "HISTORICAL_LEGACY_REGRESSION (archengine)",
+   "active": false
+  },
+  {
+   "where": "abep_sim/golden.py:416-447 case_hall_icp_neutralizer_reference ao_exposure_mission",
+   "class": "HISTORICAL_LEGACY_REGRESSION (golden.py; golden_v2 is historical, RM-OQ-06; the case is hall_1stage-computed, AFI-04 HISTORICAL_REGRESSION_COMPATIBILITY)",
+   "active": false
+  },
+  {
+   "where": "abep_sim/system.py:338-372 (eng_intake_coating_erosion_um, eng_intake_alpha_end, eng_blade_coating_life_h)",
+   "class": "HISTORICAL_LEGACY_REGRESSION",
+   "active": false
+  },
+  {
+   "where": "abep_sim/mission5.py:19, 97 (reliability over blade_life)",
+   "class": "HISTORICAL_LEGACY_REGRESSION",
+   "active": false
+  },
+  {
+   "where": "abep_sim/uq_modular.py:78 (gas blade / intake life)",
+   "class": "HISTORICAL_LEGACY_REGRESSION",
+   "active": false
+  },
+  {
+   "where": "docs/traceability/build_rtm.py:213 (text reference to life.py::compressor_life)",
+   "class": "documentation string, not a call",
+   "active": false
+  }
+ ],
+ "active_path_reading": [
+  "abep_sim/design/architecture_optimizer.py::life_material_indicators (the selected-architecture life / material indicator set, SC-WP-08 element 'firing / mission life quantities') does not call intake_life or blade_life: it reports x_intake 'AO compatibility of the honeycomb wall / coating' NOT_EVALUATED (unlock: coating selection and AO coupon evidence F1-P-03/04) and x_compressor 'bearing / motor life' NOT_EVALUATED.",
+  "simulation_completion_programme_v1_1.json active_golden.covers lists no AO coating-life entry; NI-ACTIVE-GOLDEN (SC-WP-15) is not started, so no active golden key consumes the kernel.",
+  "SC-WP-02 has no K-GAS-LIFE consumer: no K-GASPATH contract or Rust gas-state record exists at the base commit (docs/rust_migration/contracts/)."
+ ],
+ "kernel_content_findings": [
+  "intake_life: coating_ok = depth < coating thickness and blade_life: ok = coating_life_h >= mission_h are threshold comparisons inside raw physics (the mission / firing bases belong to assessment, SC-WP-11).",
+  "blade_life: yield scaling (E / 5 eV)^0.7, blade flux = 0.5 x ram flux and pinhole fraction 0.01 carry no source (CLAUDE.md rule 6).",
+  "archengine wrapper: intake_life_h = 1e6 h if coating_ok else 5000.0 h are placeholder lives, not physics.",
+  "LifeInputs defaults (intake coating 15 um Al2O3_anodised, blade coating 20 um, tip 430 m/s) are uncited design guesses."
+ ],
+ "retained_physics_covered_elsewhere": [
+  "ram AO flux, fluence and Kapton-referenced erosion depth: abep_sim/aochem.py (contract C-ABEP_SIM_AOCHEM_PY)",
+  "accommodation drift with AO fluence surface_ageing_alpha: abep_sim/materials.py (contract C-ABEP_SIM_MATERIALS_PY)",
+  "external ram AO environment at 180 / 200 / 230 km from the frozen NRLMSIS 2.1 table: build_ao_lifetime_register.py::compute_ao_environment (contract C-DOCS_EXPERIMENTS_LIFETIME_AO-AO_REGISTER_KERNELS)"
+ ],
+ "decision": "NOT_EXTRACTED: no active consumer is confirmed; the kernel is not ported and gets no parity contract. abep_sim/life.py and the archengine wrapper stay NOT_PORTED_RETIREMENT_PENDING (inventory disposition unchanged).",
+ "intake_and_blade_coating_life_status": "NOT_EVALUATED (no coating selection, no AO coupon / AO-beam evidence; owner row 132, UNLOCK['life'])",
+ "reopen_trigger": "an active chain stage or the SC-WP-15 active golden registers a consumer of intake / blade AO-coating life together with a sourced coating erosion basis; then a new audit version and a contract (fresh seeds) follow",
+ "admission_criterion_note": "SC-WP-08 admission_criteria name 'parity contracts PARITY_PASS for ... K-GAS-LIFE'; K-GAS-LIFE carries v3_status EXTRACT_ONLY_IF_AN_ACTIVE_CONSUMER_IS_CONFIRMED, so this audit (no consumer) closes the item as NOT_EXTRACTED. The ledger owner / owner confirm the disposition (ledger_update_requested).",
+ "ledger_update_requested": [
+  {
+   "item": "K-GAS-LIFE",
+   "v3_status": "NOT_EXTRACTED_NO_ACTIVE_CONSUMER",
+   "evidence": "docs/rust_migration/audits/SC-WP-08/K-GAS-LIFE_audit_v1.json"
+  }
+ ],
+ "what_this_is_not": [
+  "not a life result",
+  "not a change of the inventory classification of life.py or archengine.py",
+  "not an owner decision"
+ ]
+}

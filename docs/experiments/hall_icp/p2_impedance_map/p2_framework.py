@@ -25,8 +25,16 @@ Everything needed to ingest REAL P2 data later without further software work, on
     Monte Carlo (REF-JCGM101 6.4.8.4 Cholesky sampling, 7.6 estimate, 7.7.2 coverage interval);
   * impedance-map storage (p2_impedance_map_v1) with a canonical writer / reader and a content sha256;
   * rating-derivation STRUCTURE for the RF components: every output TBD_AFTER_EVIDENCE until a complete MEASURED
-    envelope exists and the owner inputs (ICPQ-10 heat-load bound, ICPQ-11 k_RF, P2Q-10 margins) are given;
+    envelope exists (owner inputs given: ICPQ-10 heat-load bound form A9.12 S5.1 alternative A, ICPQ-11 k_RF, P2Q-10
+    margins);
     RF_COMPONENT_RATINGS stays TBD_AFTER_IMPEDANCE_MAP in every case.
+
+A9.16 step 1 (owner decisions of 2026-10-01): the E/H / transition criteria form is k x combined step uncertainty with
+k_transition = 2.0 (A9.11 P2Q-09; the absolute-step alternative formerly carried side by side is refused); the at-power
+loss check uses k_loss = 2.0 (A9.10 P1Q-24); the rating structure applies the stress-class policy of A9.14 P2Q-10 /
+ICPQ-11 (RF voltage 1.5 x = k_RF, continuous RF power / current 1.25 x, thermal 1.20 x, transient below the
+manufacturer transient / peak rating; a stricter supplier / qualification derating governs; never two margins on the
+same stress) - candidates only, RF_COMPONENT_RATINGS stays TBD_AFTER_IMPEDANCE_MAP.
 
 Pure and deterministic, standard library only; no network access, no Julia; not wired into archengine; imports no
 abep_sim module. Nothing here predicts an impedance, power, plasma state, thrust or rating.
@@ -65,7 +73,11 @@ TS_2PORT_ORDER = ("S11", "S21", "S12", "S22")           # REF-TOUCHSTONE11 p. 6:
 FREQ_MATCH_RTOL = 1e-12                                 # float-representation tolerance only; never interpolation
 AMPLITUDE_CONVENTIONS = ("peak", "rms")
 SENSOR_K_CONVENTIONS = ("indicated_over_incident",)
-EH_FORMS = ("absolute_step", "k_times_uc")              # admissible criteria forms (P2Q-09 / HM-R06 open)
+EH_FORMS = ("k_times_uc",)                            # owner A9.11 P2Q-09: k x combined uncertainty, k = 2.0
+EH_FORMS_REFUSED = ("absolute_step",)                   # formerly carried side by side; refused since A9.11 P2Q-09
+K_TRANSITION = 2.0                                      # owner A9.11 P2Q-09 (S4.7) k_transition, frozen
+A911_P2Q09 = ("owner A9.11 P2Q-09 (docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json, sha256 "
+              "d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c)")
 EH_CHANNELS = ("photodiode_V", "P_reflected_W", "I_ant_rms_A")
 STEP_FRACTION_OF_U = 1e-3                               # numerical-derivative step = 1e-3 u(x_i) (not a physical value)
 MC_COVERAGE_P_PERCENT = 95
@@ -92,6 +104,31 @@ RATING_COMPONENTS = (
     ("RC-ANT-V", "antenna circuit: rated RF voltage vs V_ant,peak (ICP-44)", "antenna_V_peak_max_V", "V", "ICPQ-11"),
     ("RC-HEAT", "total ICP module heat-load bound (ICP-43)", "P_forward_W_at_RP_CPL", "W", "ICPQ-10"),
 )
+# A9.16 step 1: owner A9.14 S9.6 P2Q-10 (RF_RATING_POLICY_V1_5_PI_1_25_THERMAL_1_20) and S8.4 ICPQ-11 (K_RF_1_5) -
+# stress-class-specific factors on the measured envelope maximum (never one universal factor, never two margins on
+# the same physical stress; a more stringent supplier / qualification derating governs)
+K_RF = 1.5                       # RF voltage (incl. antenna-circuit voltage >= 1.5 x V_ant,peak at the worst P2 point)
+K_CONTINUOUS_PI = 1.25           # continuous RF power / current carrying capability
+K_THERMAL = 1.20                 # thermal dissipation (existing 1.20 heat-load margin)
+STRESS_CLASS_FACTORS = {"RF_VOLTAGE": K_RF, "CONTINUOUS_RF_POWER_CURRENT": K_CONTINUOUS_PI, "THERMAL": K_THERMAL}
+RATING_STRESS_CLASS = {"RC-GEN-PFWD": "CONTINUOUS_RF_POWER_CURRENT", "RC-CPL-V": "RF_VOLTAGE",
+                       "RC-CPL-I": "CONTINUOUS_RF_POWER_CURRENT", "RC-COAX-V": "RF_VOLTAGE",
+                       "RC-COAX-I": "CONTINUOUS_RF_POWER_CURRENT", "RC-FT-V": "RF_VOLTAGE",
+                       "RC-FT-I": "CONTINUOUS_RF_POWER_CURRENT", "RC-MATCH-EL": "RF_VOLTAGE+CONTINUOUS_RF_POWER_CURRENT",
+                       "RC-ANT-V": "RF_VOLTAGE", "RC-HEAT": "THERMAL"}
+CANDIDATE_STATUS = "REQUIRED_MINIMUM_UNDER_OWNER_POLICY_NOT_A_RATING"
+A914_RATING = ("owner A9.14 S9.6 P2Q-10 / S8.4 ICPQ-11 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json, "
+               "sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)")
+ANTENNA_SEPARATE_QUALIFICATIONS = ("Paschen", "creepage / clearance", "combined RF + DC stress")
+# A9.16 repair F1: owner A9.12 S5.1 ICPQ-10 = alternative A. Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max), P_fwd,max = the
+# maximum admitted RF forward-power operating point of the registered ICP / P2 envelope, P_d,max = the applicable
+# registered H-1 discharge-power bound; 'Do not use 1.20 x 1.5 kW' (the bus ceiling never becomes an ICP thermal bound).
+# The bound itself is evaluated (fail-closed) by the P3 rule below; P2 supplies P_fwd,max.
+ICPQ10_OWNER_ALTERNATIVE = "A"
+ICPQ10_RULE = "Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max) (A9.12 S5.1 ICPQ-10 alternative A; never 1.20 x 1.5 kW)"
+ICPQ10_BOUND_RULE = "docs/experiments/hall_icp/p3_coupled_thermal/p3_a9_16_rules.py::icp43_total_module_bound"
+A912_ICPQ10 = ("owner A9.12 S5.1 ICPQ-10 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json, sha256 "
+               "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)")
 
 
 class FrameworkError(ValueError):
@@ -622,6 +659,9 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
     kk = _fin(k, "k")
     if kk <= 0:
         raise FrameworkError("k must be positive")
+    if kk != RED.K_LOSS:
+        raise CriteriaMissingError(f"k {kk!r}: the at-power loss check uses k_loss = {RED.K_LOSS} for P1 and P2, never "
+                                   f"relaxed separately ({RED.A910_P1Q24})")
     mk = (model_ref or {}).get("tuning_state_id") if (model_ref or {}).get("kind") == "two_port" \
         else (model_ref or {}).get("loss_bound_id")
     try:
@@ -873,24 +913,25 @@ def z_deembed_function(z0):
 
 # ================================================================================================ E/H transitions
 def _check_criteria(criteria):
+    """HM-R06 transition criteria (owner A9.11 P2Q-09): form k_times_uc with k = K_TRANSITION = 2.0, frozen before
+    the first P2 hot-map reduction with a non-TBD basis; the absolute-step form is refused (no longer an alternative)."""
     if criteria is None:
-        raise CriteriaMissingError("E/H transition criteria not supplied: form TBD_OWNER (P2Q-09, HM-R06), values "
-                                   "TBD_AFTER_EVIDENCE (frozen before the P2 map); nothing is defaulted")
+        raise CriteriaMissingError("E/H transition criteria not supplied: the owner-fixed form k_times_uc with "
+                                   "k_transition = 2.0 must be registered and frozen before the first P2 hot-map "
+                                   "reduction (" + A911_P2Q09 + "); nothing is defaulted")
     for k in ("form", "basis", "frozen_before_p2_map"):
         if k not in criteria:
             raise CriteriaMissingError(f"criteria lack {k}")
+    if criteria["form"] in EH_FORMS_REFUSED:
+        raise CriteriaMissingError(f"criteria form {criteria['form']!r} refused: the owner fixed k x combined "
+                                   f"uncertainty ({A911_P2Q09})")
     if criteria["form"] not in EH_FORMS:
         raise CriteriaMissingError(f"criteria form {criteria['form']!r} not in {EH_FORMS}")
     if criteria["frozen_before_p2_map"] is not True or not RED._ref_ok(criteria["basis"]):
         raise CriteriaMissingError("criteria must be frozen before the P2 map with a non-TBD basis")
-    if criteria["form"] == "absolute_step":
-        for ch in EH_CHANNELS:
-            v = criteria.get("step_" + ch)
-            if v is None or _fin(v, "step_" + ch) <= 0:
-                raise CriteriaMissingError(f"absolute step threshold for {ch} missing (TBD_AFTER_EVIDENCE)")
-    else:
-        if criteria.get("k") is None or _fin(criteria["k"], "k") <= 0:
-            raise CriteriaMissingError("multiple k of the combined step uncertainty missing (TBD_AFTER_EVIDENCE)")
+    if criteria.get("k") is None or _fin(criteria["k"], "k") != K_TRANSITION:
+        raise CriteriaMissingError(f"k_transition must be the owner-frozen {K_TRANSITION} (got {criteria.get('k')!r}); "
+                                   f"never adjusted after observing transition locations ({A911_P2Q09})")
 
 
 def _step_exceeds(a, b, ch, criteria):
@@ -898,15 +939,12 @@ def _step_exceeds(a, b, ch, criteria):
     if va is None or vb is None:
         return None
     d = _fin(vb, ch) - _fin(va, ch)
-    if criteria["form"] == "absolute_step":
-        thr = criteria["step_" + ch]
-    else:
-        ua, ub = a.get("u_" + ch), b.get("u_" + ch)
-        if ua is None or ub is None:
-            return None                                                   # missing uncertainty -> not evaluable
-        thr = criteria["k"] * math.hypot(_fin(ua, "u"), _fin(ub, "u"))
-        if thr <= 0:
-            return None
+    ua, ub = a.get("u_" + ch), b.get("u_" + ch)
+    if ua is None or ub is None:
+        return None                                                       # missing uncertainty -> not evaluable
+    thr = criteria["k"] * math.hypot(_fin(ua, "u"), _fin(ub, "u"))
+    if thr <= 0:
+        return None
     return (abs(d) > thr, d)
 
 
@@ -961,7 +999,9 @@ def detect_eh_transitions(points, criteria):
 def hysteresis(up_points, down_points, criteria, fixed_factors_up, fixed_factors_down):
     """Up / down sweep pair (HM-R05): first corroborated emission-UP transition on the up sweep and first corroborated
     emission-DOWN transition on the down sweep, located as power intervals in P_forward AND P_delivered (RF-DALT08-01).
-    The agreement / hysteresis judgement rule is P2Q-03 (TBD_OWNER): reported, never judged."""
+    These transition intervals are reported; the up / down hysteresis judgement per registered factor level is
+    p2_a9_16_rules.updown_hysteresis (owner A9.11 P2Q-03: z_hyst <= 2.0 NO_HYSTERESIS_RESOLVED_AT_REGISTERED_UNCERTAINTY,
+    > 2.0 RESOLVED_HYSTERESIS - a physical finding, never a FAIL)."""
     if fixed_factors_up != fixed_factors_down or not fixed_factors_up:
         raise FrameworkError("up and down sweeps must share the same (non-empty) fixed factors")
     up = detect_eh_transitions(up_points, criteria)
@@ -976,7 +1016,9 @@ def hysteresis(up_points, down_points, criteria, fixed_factors_up, fixed_factors
         return None
 
     eu, ed = first(up, "UP"), first(dn, "DOWN")
-    out = {"up": up, "down": dn, "judgement": "REPORTED_NOT_JUDGED (agreement rule P2Q-03 TBD_OWNER)"}
+    out = {"up": up, "down": dn, "judgement": "REPORTED_NOT_JUDGED (transition intervals only; the up / down "
+                                              "judgement per registered factor level is p2_a9_16_rules."
+                                              "updown_hysteresis, owner A9.11 P2Q-03, k = 2.0)"}
     for basis in ("P_forward_W", "P_delivered_W"):
         if eu is None or ed is None:
             out["width_" + basis] = "NOT_EVALUATED - no corroborated transition pair"
@@ -1265,16 +1307,46 @@ def map_json_schema():
 
 
 # ================================================================================================ rating structure
+def _governing_factor(cid, stress_class, supplier):
+    """Owner stress-class factor vs a supplier / qualification derating for the SAME stress: the more stringent one
+    governs (max), never the product (A9.14 P2Q-10: no double margin on one physical stress)."""
+    owner = STRESS_CLASS_FACTORS[stress_class]
+    if supplier is None:
+        return owner, "owner " + stress_class
+    if isinstance(supplier, dict):
+        supplier = supplier.get(stress_class)
+        if supplier is None:
+            return owner, "owner " + stress_class
+    m = _fin(supplier, "supplier derating")
+    if m < 1:
+        raise RatingInputError(f"{cid}: margin {m} < 1 would rate below the measured envelope")
+    return (m, "supplier / qualification derating (more stringent than the owner factor)") if m > owner else \
+        (owner, "owner " + stress_class + " (supplier derating not more stringent)")
+
+
 def rating_structure(envelope, *, k_rf=None, component_margins=None, heat_load_option=None, match_element_peaks=None,
                      feedthrough_peaks=None):
     """Rating-derivation STRUCTURE (A9.2: ratings are selected by the owner after the complete map). For every RF
-    component it lists the envelope quantity it is derived from, the owner input it needs and a candidate minimum
-    rating = margin x envelope maximum ONLY when (i) the envelope is MEASURED, (ii) its coverage is complete and
-    (iii) the owner input exists; otherwise the value is TBD_AFTER_EVIDENCE (and the input TBD_OWNER). The overall
-    RF_COMPONENT_RATINGS status stays TBD_AFTER_IMPEDANCE_MAP in every case (a candidate is not a rating)."""
+    component it lists the envelope quantity, its stress class and the governing factor, and a candidate minimum =
+    governing factor x measured envelope maximum ONLY when (i) the envelope is MEASURED and (ii) its coverage is
+    complete; otherwise TBD_AFTER_EVIDENCE. Factors (owner A9.14 S9.6 P2Q-10, S8.4 ICPQ-11): RF voltage 1.5 x (k_RF;
+    the antenna-circuit rated voltage >= 1.5 x V_ant,peak at the worst measured P2 mismatch / operating point),
+    continuous RF power / current 1.25 x, thermal 1.20 x; ``component_margins`` are supplier / qualification deratings
+    per component id (number, or {stress_class: factor}) - the more stringent factor governs, never the product.
+    ``k_rf`` may be omitted (owner value) and must otherwise equal 1.5. Start-up / reflected-power / transient stress is
+    checked against the manufacturer's documented transient / peak rating by p2_a9_16_rules.transient_stress_check
+    (no factor). The heat-load bound RC-HEAT follows the owner's ICPQ-10 decision (A9.12 S5.1 alternative A,
+    Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max), evaluated by p3_a9_16_rules.icp43_total_module_bound; heat_load_option
+    may only be omitted or 'A' - the rejected 1.20 x 1.5 kW form is refused). RF_COMPONENT_RATINGS stays
+    TBD_AFTER_IMPEDANCE_MAP in every case (a candidate is not a rating)."""
+    if k_rf is not None and _fin(k_rf, "k_rf") != K_RF:
+        raise RatingInputError(f"k_rf {k_rf!r} != the owner-set k_RF = {K_RF} ({A914_RATING})")
     measured = isinstance(envelope, dict) and envelope.get("data_classes") == ["measured"]
     complete = isinstance(envelope, dict) and envelope.get("coverage", {}).get("complete") is True
     margins = component_margins or {}
+    unknown = sorted(set(margins) - {c[0] for c in RATING_COMPONENTS})
+    if unknown:
+        raise RatingInputError(f"supplier deratings for unknown components {unknown}")
     rows = []
     for cid, name, quantity, units, owner_q in RATING_COMPONENTS:
         if quantity == "feedthrough_V_peak_max_V" or quantity == "feedthrough_I_peak_max_A":
@@ -1289,32 +1361,56 @@ def rating_structure(envelope, *, k_rf=None, component_margins=None, heat_load_o
             env_v = src["max"] if isinstance(src, dict) else (src if isinstance(src, (int, float)) else None)
         else:
             env_v = None
-        if owner_q == "ICPQ-11":
-            margin = k_rf
-        elif owner_q == "ICPQ-10":
-            margin = heat_load_option
-        else:
-            margin = margins.get(cid)
+        sclass = RATING_STRESS_CLASS[cid]
         row = {"id": cid, "component": name, "envelope_quantity": quantity, "units": units,
-               "envelope_value": env_v if env_v is not None else TBD_EVIDENCE,
-               "owner_input": owner_q, "owner_input_value": margin if margin is not None else TBD_OWNER,
-               "rating_status": RATING_STATUS}
+               "envelope_value": env_v if env_v is not None else TBD_EVIDENCE, "owner_input": owner_q,
+               "stress_class": sclass, "rating_status": RATING_STATUS}
         if owner_q == "ICPQ-10":
-            row["candidate_minimum"] = TBD_OWNER + " (ICPQ-10 open; alternatives carried side by side in the package)"
-        elif not (measured and complete):
+            # A9.12 S5.1: alternative A is the owner's decision; any other option (the rejected 1.20 x 1.5 kW bus-
+            # ceiling form B included) is refused, never carried as a live alternative
+            if heat_load_option is not None and heat_load_option != ICPQ10_OWNER_ALTERNATIVE:
+                raise RatingInputError(f"heat_load_option {heat_load_option!r}: ICPQ-10 is decided - alternative "
+                                       f"{ICPQ10_OWNER_ALTERNATIVE} only ({A912_ICPQ10}; 'Do not use 1.20 x 1.5 kW')")
+            row["owner_input_value"] = ICPQ10_RULE
+            row["owner_decision"] = A912_ICPQ10
+            row["bound_rule"] = ICPQ10_BOUND_RULE
+            row["candidate_minimum"] = TBD_EVIDENCE + (
+                " (ICPQ-10 decided, alternative A: needs the registered P_fwd,max of the complete measured ICP / P2 "
+                "envelope and the registered H-1 P_d,max; evaluated fail-closed by " + ICPQ10_BOUND_RULE + ")")
+            rows.append(row)
+            continue
+        classes = sclass.split("+")
+        gov = {c: _governing_factor(cid, c, margins.get(cid)) for c in classes}
+        row["owner_input_value"] = {c: STRESS_CLASS_FACTORS[c] for c in classes}
+        row["governing_factor"] = {c: {"value": g[0], "basis": g[1]} for c, g in gov.items()}
+        row["owner_policy"] = A914_RATING
+        if owner_q == "ICPQ-11":
+            row["separate_qualifications"] = {q: "OPEN (not replaced by k_RF; any more stringent supplier / "
+                                                 "qualification requirement governs)"
+                                              for q in ANTENNA_SEPARATE_QUALIFICATIONS}
+            row["envelope_point"] = "worst measured P2 mismatch / operating point (max over the measured map)"
+        if not (measured and complete):
             row["candidate_minimum"] = TBD_EVIDENCE + (" (synthetic envelope is not evidence)" if envelope and
                                                        not measured else " (requires a complete measured envelope)")
-        elif margin is None:
-            row["candidate_minimum"] = TBD_OWNER + f" ({owner_q} open)"
+        elif cid == "RC-MATCH-EL":
+            if isinstance(env_v, dict) and all(isinstance(env_v.get(k), (int, float)) and not isinstance(env_v.get(k), bool)
+                                               for k in ("V_peak_max_V", "I_peak_max_A")):
+                row["candidate_minimum"] = {
+                    "V_peak_V": _r(gov["RF_VOLTAGE"][0] * env_v["V_peak_max_V"]),
+                    "I_peak_A": _r(gov["CONTINUOUS_RF_POWER_CURRENT"][0] * env_v["I_peak_max_A"]),
+                    "status": CANDIDATE_STATUS}
+            else:
+                row["candidate_minimum"] = TBD_EVIDENCE + " (per-element V / I envelope not measured)"
         elif isinstance(env_v, (int, float)) and not isinstance(env_v, bool):
-            m = _fin(margin, "margin")
-            if m < 1:
-                raise RatingInputError(f"{cid}: margin {m} < 1 would rate below the measured envelope")
-            row["candidate_minimum"] = {"value": _r(m * env_v), "status": "CANDIDATE_FOR_OWNER_SELECTION"}
+            row["candidate_minimum"] = {"value": _r(gov[classes[0]][0] * env_v), "status": CANDIDATE_STATUS}
         else:
             row["candidate_minimum"] = TBD_EVIDENCE + " (envelope quantity not measured)"
         rows.append(row)
-    return {"RF_COMPONENT_RATINGS": RATING_STATUS, "rows": rows,
+    return {"RF_COMPONENT_RATINGS": RATING_STATUS, "rows": rows, "policy": {
+                "RF_VOLTAGE": K_RF, "CONTINUOUS_RF_POWER_CURRENT": K_CONTINUOUS_PI, "THERMAL": K_THERMAL,
+                "TRANSIENT": "below the manufacturer's documented transient / peak rating (no factor)",
+                "combination": "more stringent supplier / qualification derating governs; never two margins on the "
+                               "same physical stress", "source": A914_RATING},
             "note": "structure only; no rating is selected here (A9.2 a9_10_statuses; owner selects after the complete "
                     "map of the P1 stable region)"}
 

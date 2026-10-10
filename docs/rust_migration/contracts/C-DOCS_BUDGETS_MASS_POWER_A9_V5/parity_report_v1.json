@@ -1,0 +1,1201 @@
+{
+ "schema": "abep_rust_parity_report_v3_1",
+ "id": "PARITY-REPORT-C-DOCS_BUDGETS_MASS_POWER_A9_V5-V1",
+ "lane": "SC-WP-07 mass (A9.29)",
+ "contract": {
+  "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_prereg_v1.json",
+  "id": "PARITY-C-DOCS_BUDGETS_MASS_POWER_A9_V5-V1",
+  "sha256": "3ca4edef06b9f79242e6638db21cf59d609639f8a7ad466108c4538344876ad0"
+ },
+ "verdict": "ADMITTED",
+ "parity": "PARITY_PASS",
+ "verdict_rule": "ADMITTED (= PARITY_PASS) iff E1 is byte-identical (Rust == Python == committed), every call of E2-E7 passes, every invariant (INV-V01..V06, VS-01), conservation check and registered divergence outcome (DIV-V01..V03) passes and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+ "python_commit": "1e2f66d72c01d3d0d413ff85c62de17f528d8f31",
+ "reference_sha256": {
+  "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py": {
+   "registered": "669e5e5706d4b27c60214ad103b3276bfb1d983010eb482dbffaf9858ab013ee",
+   "now": "669e5e5706d4b27c60214ad103b3276bfb1d983010eb482dbffaf9858ab013ee"
+  },
+  "docs/budgets/mass_power_a9_v4/build_mass_power_a9_v4.py": {
+   "registered": "6eccc6e7ee443bee77513ad51f141cb36e6ad9fe40949bb5d0a2809d59fe6597",
+   "now": "6eccc6e7ee443bee77513ad51f141cb36e6ad9fe40949bb5d0a2809d59fe6597"
+  },
+  "docs/budgets/mass_power_a9_v3/build_mass_power_a9_v3.py": {
+   "registered": "b1df7537456d5334e8b051bb6ed9bca9626933497b3b52e916c9997338e6a572",
+   "now": "b1df7537456d5334e8b051bb6ed9bca9626933497b3b52e916c9997338e6a572"
+  },
+  "abep_sim/design/architecture_optimizer.py": {
+   "registered": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af",
+   "now": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af"
+  },
+  "abep_sim/design/intake_synthesis.py": {
+   "registered": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191",
+   "now": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191"
+  }
+ },
+ "reference_unchanged_at_scoring": true,
+ "pinned_inputs_verified": true,
+ "rust_commit": "9fbd35088bb22e651409d697e7e0d6c785e57d94",
+ "rust_tree_clean_at_scoring": true,
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "profile": "release (cargo build --release --locked -p abep-subsystems --bin abep-mass)",
+  "cargo_lock_sha256": "c5f63f31f0a27610c0326d45d5188cfbd0dd214f8a6c293dc57063053b8868c8",
+  "source_sha256": {
+   "Cargo.toml": "35d63d9a1b6bda67d978b0eb2a3c10f48b4b3247f2789b0701bdd6e09f6ca98f",
+   "Cargo.lock": "c5f63f31f0a27610c0326d45d5188cfbd0dd214f8a6c293dc57063053b8868c8",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499",
+   "crates/abep-types/Cargo.toml": "a210ee487a186c6edc28a87868e1b2c84094e890586ad159b8d77e16e7e7511f",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "0a067299e38d3dac702c3eb23ee3e34a55f844b389ec54b7463962c65d6a4b0e",
+   "crates/abep-types/src/pyjson.rs": "5ce15fdb06043a01ce8bd441a8e8f1906e74a0c4dd9fea2b9e4505f182a8d88e",
+   "crates/abep-types/src/pyjson_unicode.rs": "c6f59e0936c35051ef1f7d45a6611d3a7269a8d972c900805463f5f0bf6b2a75",
+   "crates/abep-types/tests/data/pyjson_vectors_v1.json": "8d7f76445f758714dd436cb208b243883b38bd95afd8e0e94156ecebed9d12ef",
+   "crates/abep-types/tests/pyjson_vectors.rs": "111021b67c74a663ec4b86baa768de21e19681b8774062d5ac90860a65951c24",
+   "crates/abep-provenance/Cargo.toml": "7e13a3433579dc2f097d16e614a7b941a91d0c4889cc34d2e8beabdda35a8bbf",
+   "crates/abep-provenance/build.rs": "7ab9c6440456ad997ce15816576814bc7c26c857af07045aaceca06921940e27",
+   "crates/abep-provenance/src/bid_guard/acceptance.rs": "187739f27b297b6183928a3f951dc68127708072cb915173539b4582118a6693",
+   "crates/abep-provenance/src/bid_guard.rs": "6f13a31a479deea38caafd78491be295c12f40a41dc39139a4af4e86a3553c7d",
+   "crates/abep-provenance/src/bin/abep-provenance-verify.rs": "99350805d9b01876b29b3e8cdcefe3c9f893c5bc0fd16d8f43b6327549d4cfbe",
+   "crates/abep-provenance/src/git.rs": "68fdacdf9514432ec890fcb153c6ba5d02fbb2e44e6accb0ff5e3d2b918ef69e",
+   "crates/abep-provenance/src/lib.rs": "0beec4429b0d6cc891389d6bc83584b693c7f1698700b03ffac4defe43919761",
+   "crates/abep-provenance/src/run_record.rs": "c36e400a38d411c6fdfad5cf26e962c4dbb074631b4d6e81d1688b3fec9a6a53",
+   "crates/abep-provenance/src/verifier/checks.rs": "8462b1704b9ca0091ade566217db5c77b34c3f074721e0d95c8b9b4e6ccfac1d",
+   "crates/abep-provenance/src/verifier/live_sources.rs": "bab4b17e1900dede61c23ce8bc0407ed021b2ab79458af2c3b6dd0747083d1b1",
+   "crates/abep-provenance/src/verifier/load.rs": "0b9ba7424fc2fe586218fffb66d3073a4ad26717e133364409fee2fcd10edab8",
+   "crates/abep-provenance/src/verifier/mod.rs": "7b7328197f8608d921aead7a0960611553a8b73e3d03bade01012c5cffdf0e25",
+   "crates/abep-provenance/src/verifier/pyliteral.rs": "6a5d3582cdbb41d96fea1cf0d87d8a8f6b1f45250a55892b784bc5c5a31a4537",
+   "crates/abep-provenance/src/verifier/pyvalue.rs": "acbd670dff4e9ea3b6cd5f893c9d001adc14d2883acfba7a66509fef878fc337",
+   "crates/abep-provenance/src/verifier/sha_map.rs": "d0589e3cc5269297407dc4f2f37930b362abe21a75481fb3430be9cc35812191",
+   "crates/abep-provenance/tests/bid_source_guard.rs": "e19ce7a19a6c49b6431a3f3d60260f1c435c4935d9c89c74b3403f94410328be",
+   "crates/abep-provenance/tests/config_manifest.rs": "2674591e5610b528764ec8094b8b1b8e5a94d6999889fd48394e1aaceedd4a34",
+   "crates/abep-provenance/tests/provenance_verifier.rs": "350e26de86bf844c8b4c78b7c6aaa2089613d09b989fdf2e463fe633df4b34f0",
+   "crates/abep-provenance/tests/run_record.rs": "2cd59402c0f52c0f6b8c47f23b991d70750b64f8c968f21fa4834010fd7c456e",
+   "crates/abep-subsystems/Cargo.toml": "803e38117df9dfa173a53028459fa3d8e665a354ed390e96bf46942227813582",
+   "crates/abep-subsystems/src/lib.rs": "17c67683558be66c115acbd6585cb93d66410153efb227a095d0041fb92a4754",
+   "crates/abep-subsystems/src/mass/eval.rs": "0d0334cb93dd44c0c2cdb1946908931435e5d6c7c353f96a8c8f45efeeb9a24e",
+   "crates/abep-subsystems/src/mass/mod.rs": "91ed1a46c9094ef6aab7368d01388d9439f299ad1f8942429212c87a94e00bd4",
+   "crates/abep-subsystems/src/mass/py.rs": "6632750f2c07294b9cfbabdb5124506f0c9a44a45f5233fc284246792ab79b57",
+   "crates/abep-subsystems/src/mass/pyfmt.rs": "3975403f94f2a362cde76ba7e52a285612536e49d055baf11b5675497bd0fd30",
+   "crates/abep-subsystems/src/mass/rules.rs": "201e5f6d6b5d64e2287b4d88e6b7114c94363cb99b912107ab6ed87d97ca9109",
+   "crates/abep-subsystems/src/mass/v5.rs": "6da56f8c0344c7f9ddf8e3c92787245296f077e28eef2ffdc3e0a14133be9d55",
+   "crates/abep-subsystems/src/mass/wet_mass.rs": "7e627e6f5a3b4c37f6bb20f2f4866b011418e2ff763aec4c0429142a015a2de4",
+   "crates/abep-subsystems/src/mass/xe.rs": "a0a46d509b653cdbfa6a5665aa4ef2aaf636d165279ea02166ddd625bbd28ca4",
+   "crates/abep-subsystems/src/bin/abep-mass.rs": "7f49cd96a0f11c6e04027d2454b423fc476e4e900ffb194d855a2491d06896d0"
+  }
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "platform": "Linux 6.18.44-fc-v70 x86_64",
+  "thread_env": {
+   "OMP_NUM_THREADS": null,
+   "OPENBLAS_NUM_THREADS": null
+  }
+ },
+ "harness_sha256": {
+  "scripts/rust_migration/parity_mass_v1.py": "d6084fa4bba9e3f5786331df490979bd6528224a87abf583a1a18ff656efc5e3",
+  "scripts/rust_migration/parity_common.py": "337b1c74847d21f92c17b5f59b34540d30b2aecefa2f20853e9bca1c4ee17e8c"
+ },
+ "scoring_execution": {
+  "scoring_master_seed": 2307932994,
+  "utc": "2026-10-06T13:09:34+00:00",
+  "calls": 1729,
+  "case_file_sha256": "4dd41ae00ac995ce49902ed25f95292d0c5677a92f0c279da6a9738c37b26a1f",
+  "wall_s": 2.56
+ },
+ "per_test": {
+  "by_entry_point": {
+   "build_doc_v5": {
+    "n": 9,
+    "pass": 9,
+    "fail": 0
+   },
+   "a9_26_message2": {
+    "n": 6,
+    "pass": 6,
+    "fail": 0
+   },
+   "rollup_v5": {
+    "n": 618,
+    "pass": 618,
+    "fail": 0
+   },
+   "unresolved_v5": {
+    "n": 430,
+    "pass": 430,
+    "fail": 0
+   },
+   "set_al09": {
+    "n": 329,
+    "pass": 329,
+    "fail": 0
+   },
+   "wet_mass": {
+    "n": 330,
+    "pass": 330,
+    "fail": 0
+   },
+   "wet_mass_pinned": {
+    "n": 7,
+    "pass": 7,
+    "fail": 0
+   }
+  },
+  "failures": [],
+  "passed": 1729,
+  "failed": 0
+ },
+ "aggregates": "NOT_APPLICABLE (no STATISTICAL entry point)",
+ "invariants": {
+  "determinism": {
+   "python_twice_identical": true,
+   "rust_twice_identical": true,
+   "note": "abep-mass eval evaluates the call list twice and exits 3 on a difference"
+  },
+  "no_pass_rust": true,
+  "no_pass_python": true,
+  "INV-V01": {
+   "rollup": {
+    "nonharness_known_kg": 33.1196,
+    "harness_kg": 1.743136842,
+    "nominal_dry_known_kg": 34.86273684,
+    "system_margin_kg": 3.486273684,
+    "dry_known_kg": 38.34901052
+   },
+   "hard_40_wet": {
+    "2.0": [
+     40.34901052,
+     "DOES_NOT_CLOSE"
+    ],
+    "5.0": [
+     43.34901052,
+     "DOES_NOT_CLOSE"
+    ],
+    "10.0": [
+     48.34901052,
+     "DOES_NOT_CLOSE"
+    ]
+   },
+   "mass_status": "MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED",
+   "pass": true
+  },
+  "INV-V02": {
+   "dry_identity": true,
+   "dry_vs_nh_over_095_x_1p1": 6.315794109923445e-09,
+   "line_factors": {
+    "AL-04": true,
+    "AL-07": true,
+    "AL-08": true
+   },
+   "effective_factor": 1.32,
+   "pass": true
+  },
+  "INV-V03": {
+   "flight_ids_without_AL_C1": true,
+   "one_rollup_flight": true,
+   "c1_history_equals_v4": true,
+   "pass": true
+  },
+  "INV-V04": {
+   "pass": true
+  },
+  "INV-V06": {
+   "gates": [
+    {
+     "gate": "no CBE or measured mass for any BOM line",
+     "status": "NOT_EVALUATED"
+    },
+    {
+     "gate": "mass compliance",
+     "status": "INCOMPLETE_EVIDENCE",
+     "hard_40_wet_state_by_loaded_case": {
+      "2.0": "DOES_NOT_CLOSE",
+      "5.0": "DOES_NOT_CLOSE",
+      "10.0": "DOES_NOT_CLOSE"
+     },
+     "xe_input": {
+      "mission_xe_load": "NOT_ADMITTED",
+      "reading": "the 2 / 5 / 10 kg LOADED cases are planning / sensitivity cases; no Xe load is selected"
+     }
+    },
+    {
+     "gate": "AL-07 value status (PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT, AFI-02-RA1 open)",
+     "status": "INCOMPLETE_EVIDENCE"
+    }
+   ],
+   "pass": true
+  },
+  "VS-01": {
+   "rust_value_status": {
+    "line": "AL-07",
+    "value_kg": 6.0,
+    "governs": "MEV_PLANNING_FLOOR",
+    "cbe_kg": null,
+    "measured_kg": null,
+    "committed_labels": [
+     "PROVISIONAL_CONSERVATIVE_OWNER_ANALOG_FLOOR",
+     "CONTAINS_LEGACY_FUNCTIONS_NOT_PRESENT_IN_CURRENT_FLIGHT_ARCHITECTURE",
+     "REBASE_REQUIRED_FROM_CURRENT_LOAD_CONVERTER_CBE"
+    ],
+    "open_rebase_action": {
+     "id": "AFI-02-RA1",
+     "state": "OPEN"
+    },
+    "a9_28_value_status": "PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT",
+    "a9_28_open_action": "AFI-02-RA1_OPEN",
+    "never_promoted_by_migration_to": [
+     "CBE",
+     "measured mass",
+     "frozen flight truth"
+    ],
+    "status": "INCOMPLETE_EVIDENCE"
+   },
+   "pass_rust_view": true,
+   "record_al07_unchanged": true,
+   "pass": true
+  },
+  "CONS-V01_record": {
+   "checks": [
+    {
+     "rollup": "rollups[0]",
+     "pass": true
+    },
+    {
+     "rollup": "historical 20 %",
+     "pass": true
+    },
+    {
+     "rollup": "internal allocation target",
+     "pass": true
+    }
+   ],
+   "pass": true
+  }
+ },
+ "conservation": {
+  "rollups_checked_rust": 490,
+  "violations_rust": [],
+  "rollups_checked_python": 492,
+  "violations_python": [],
+  "pass": true
+ },
+ "record_bytes_E1": {
+  "json": {
+   "python": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+   "rust": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+   "committed": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
+  },
+  "md": {
+   "python": "50b4867e7e60e132db01e2213a2d3a87ab1ffdd5ca2f0fcf60a8ec3ae57e875e",
+   "rust": "50b4867e7e60e132db01e2213a2d3a87ab1ffdd5ca2f0fcf60a8ec3ae57e875e",
+   "committed": "50b4867e7e60e132db01e2213a2d3a87ab1ffdd5ca2f0fcf60a8ec3ae57e875e"
+  },
+  "rust_build_twice_identical": true,
+  "pass": true
+ },
+ "domain_and_error": {
+  "raised_python": 471,
+  "raised_rust": 474,
+  "classes_python": [
+   "FileNotFoundError",
+   "IntakeMassUseError",
+   "KeyError",
+   "MassError",
+   "MassPolicyError",
+   "OptimizerError",
+   "PinError",
+   "RuntimeError",
+   "StopIteration",
+   "TypeError",
+   "ValueError"
+  ],
+  "classes_rust": [
+   "FileNotFoundError",
+   "IntakeMassUseError",
+   "KeyError",
+   "MassError",
+   "MassPolicyError",
+   "OptimizerError",
+   "PinError",
+   "RuntimeError",
+   "StopIteration",
+   "TypeError",
+   "ValueError"
+  ]
+ },
+ "documented_divergence_observed": [
+  {
+   "div": "DIV-V03",
+   "tag": "DIV-V03 RT-01",
+   "python": {
+    "outcome": "RAISED",
+    "class": "RuntimeError",
+    "message": "mass/power v3 now carries a CBE / measured line mass: m_wet needs re-evaluation"
+   },
+   "rust": {
+    "outcome": "RAISED",
+    "class": "PinError",
+    "message": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json sha256 dbcad44dd85ff9abb997f8dd0793b2e00e212292bb32afc576988e2c8b2a0e06 != pinned 3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a (frozen mass / power v5 record, read as a pinned input)"
+   },
+   "rust_matches_registered": true
+  },
+  {
+   "div": "DIV-V03",
+   "tag": "DIV-V03 RT-02",
+   "python": {
+    "outcome": "RAISED",
+    "class": "RuntimeError",
+    "message": "mass/power v3 now carries a CBE / measured line mass: m_wet needs re-evaluation"
+   },
+   "rust": {
+    "outcome": "RAISED",
+    "class": "PinError",
+    "message": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json sha256 1f4c38e5f9dc83162900c7a24c1431bede08ae83c16bc0e5b5ef56432dce4a0d != pinned 3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a (frozen mass / power v5 record, read as a pinned input)"
+   },
+   "rust_matches_registered": true
+  },
+  {
+   "div": "DIV-V03",
+   "tag": "DIV-V03 RT-03",
+   "python": {
+    "outcome": "RAISED",
+    "class": "RuntimeError",
+    "message": "mass/power v3: no HARD_40_WET wet roll-up for hall_icp_neutralizer"
+   },
+   "rust": {
+    "outcome": "RAISED",
+    "class": "PinError",
+    "message": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json sha256 a441b2ee24f77a7096ed2cbb04e74b490be0a64e4d3bd7e3990db1471a0449c0 != pinned 3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a (frozen mass / power v5 record, read as a pinned input)"
+   },
+   "rust_matches_registered": true
+  },
+  {
+   "div": "DIV-V03",
+   "tag": "DIV-V03 RT-04",
+   "python": {
+    "outcome": "RAISED",
+    "class": "RuntimeError",
+    "message": "mass/power v3: expected one owner-reading roll-up for hall_icp_neutralizer, got 2"
+   },
+   "rust": {
+    "outcome": "RAISED",
+    "class": "PinError",
+    "message": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json sha256 188b8bfd39309f81d29a2819c65b4a8dd5a34e26a4d6adabbac11ee7bf50ea14 != pinned 3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a (frozen mass / power v5 record, read as a pinned input)"
+   },
+   "rust_matches_registered": true
+  },
+  {
+   "div": "DIV-V03",
+   "tag": "DIV-V03 RT-05",
+   "python": {
+    "outcome": "RAISED",
+    "class": "KeyError",
+    "message": "'hall_icp_neutralizer'"
+   },
+   "rust": {
+    "outcome": "RAISED",
+    "class": "PinError",
+    "message": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json sha256 3bdda46556595041b2b18743214cc13e64035d694b93caf7ac9a8d40d722cda1 != pinned 3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a (frozen mass / power v5 record, read as a pinned input)"
+   },
+   "rust_matches_registered": true
+  },
+  {
+   "div": "DIV-V03",
+   "tag": "DIV-V03 RT-06",
+   "python": {
+    "outcome": "RETURNED",
+    "value": {
+     "objective": "m_wet_kg",
+     "status": "NOT_EVALUATED",
+     "value": null,
+     "units": "kg",
+     "evidence_class": null,
+     "source": null,
+     "reason": "no CBE or measured mass exists for any BOM line (mass/power v3); the wet roll-ups of the owner reading 'MEV_LEVEL_EVIDENCE_BASED (the single owner reading; A9.26: 10 % system margin, active proposal / bid basis)' against the 40 kg wet limit are ['CLOSES', 'DOES_NOT_CLOSE'] for the Xe load cases [2.0, 5.0, 10.0] kg",
+     "unlock": [
+      "a CBE or measured mass for every mass/power v3 BOM line (no CBE exists) plus the Xe load case (XA9Q-01 / MQ-09) and the MQ-01 margin reading decided by the owner"
+     ],
+     "wet_known_allocation_envelope_kg": [
+      40.34901052,
+      48.34901052
+     ],
+     "wet_rollup_states": [
+      "CLOSES",
+      "DOES_NOT_CLOSE"
+     ],
+     "wet_rollup_by_xe_case": [
+      {
+       "xe_case_kg": 2.0,
+       "wet_known_kg": 40.34901052,
+       "state": "CLOSES",
+       "exceedance_kg": 0.34901052
+      },
+      {
+       "xe_case_kg": 5.0,
+       "wet_known_kg": 43.34901052,
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 3.34901052
+      },
+      {
+       "xe_case_kg": 10.0,
+       "wet_known_kg": 48.34901052,
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 8.34901052
+      }
+     ],
+     "owner_reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading; A9.26: 10 % system margin, active proposal / bid basis)",
+     "budget_source": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json rollups[configuration=hall_icp_neutralizer].wet[reference=HARD_40_WET]",
+     "lines": [
+      {
+       "line": "AL-01",
+       "name": "intake/filter/duct",
+       "allocation_kg": 3.5,
+       "evidence_floor_kg": null,
+       "cbe_kg": null,
+       "measured_kg": null,
+       "design_parametric": null,
+       "budget_value_kg": 3.5,
+       "budget_value_governs": "ALLOCATION_MEV"
+      },
+      {
+       "line": "AL-02",
+       "name": "compressor+drive",
+       "allocation_kg": 5.5,
+       "evidence_floor_kg": null,
+       "cbe_kg": null,
+       "measured_kg": null,
+       "design_parametric": null,
+       "budget_value_kg": 5.5,
+       "budget_value_governs": "ALLOCATION_MEV"
+      },
+      {
+       "line": "AL-03",
+       "name": "plenum/feed",
+       "allocation_kg": 1.0,
+       "evidence_floor_kg": null,
+       "cbe_kg": null,
+       "measured_kg": null,
+       "design_parametric": null,
+       "budget_value_kg": 1.0,
+       "budget_value_governs": "ALLOCATION_MEV"
+      },
+      {
+       "line": "AL-04",
+       "name": "Hall head+magnet (incl. anode heat-removal hardware, MPQ-02)",
+       "allocation_kg": 3.0,
+       "evidence_floor_kg": 3.504,
+       "cbe_kg": null,
+       "measured_kg": null,
+       "design_parametric": null,
+       "budget_value_kg": 4.2048,
+       "budget_value_governs": "MEV_PLANNING_FLOOR"
+      },
+      {
+       "line": "AL-05",
+       "name": "ICP neutralizer (incl. collector/bias electrode, ICP isolation hardware)",
+       "allocation_kg": 2.0,
+       "evidence_floor_kg": null,
+       "cbe_kg": null,
+       "measured_kg": null,
+       "design_parametric": null,
+       "budget_value_kg": 2.0,
+       "budget_value_governs": "ALLOCATION_MEV"
+      },
+      {
+       "line": "AL-06",
+       "name": "RF generator/matching (incl. RF feedthrough/coax/local match, RF protection/sensing electronics)",
+       "allocation_kg": 1.5,
+       "evidence_floor_kg": null,
+       "cbe_kg": null,
+       "measured_kg": null,
+       "design_parametric": null,
+       "budget_value_kg": 1.5,
+       "budget_value_governs": "ALLOCATION_MEV"
+      },
+      {
+       "line": "AL-07",
+       "name": "Hall PPU (incl. collector/bias supply; no C1 electronics - C1 is ground-only, A9.19 / A9.20)",
+       "allocation_kg": 2.5,
+       "evidence_floor_kg": 5.0,
+       "cbe_kg": null,
+       "measured_kg": null,
+       "design_parametric": null,
+       "budget_value_kg": 6.0,
+       "budget_value_governs": "MEV_PLANNING_FLOOR"
+      },
+      {
+       "line": "AL-08",
+       "name": "complete Xe storage/flow hardware: tank, regulator, valves, plumbing, mounting, thermal (REQUIRED_RFP_XE_CAPABILITY; role CONTINGENCY_EMERGENCY, A9.19)",
+       "allocation_kg": 1.5,
+       "evidence_floor_kg": 4.929,
+       "cbe_kg": null,
+       "measured_kg": null,
+       "design_parametric": null,
+       "budget_value_kg": 5.9148,
+       "budget_value_governs": "MEV_PLANNING_FLOOR"
+      },
+      {
+       "line": "AL-09",
+       "name": "controls / electronics / valve drivers / flight sensors (MQ-06 split; harness excluded)",
+       "allocation_kg": null,
+       "evidence_floor_kg": null,
+       "cbe_kg": null,
+       "measured_kg": null,
+       "design_parametric": null,
+       "budget_value_kg": 1.0,
+       "budget_value_governs": "ALLOCATION_MEV"
+      },
+      {
+       "line": "AL-10",
+       "name": "structure/thermal (incl. ICP open-frame support/spacer, MPQ-02)",
+       "allocation_kg": 2.5,
+       "evidence_floor_kg": null,
+       "cbe_kg": null,
+       "measured_kg": null,
+       "design_parametric": null,
+       "budget_value_kg": 2.5,
+       "budget_value_governs": "ALLOCATION_MEV"
+      },
+      {
+       "line": "AL-HAR",
+       "name": "harness (row-60 rule until a routed harness exists; MQ-06)",
+       "allocation_kg": null,
+       "evidence_floor_kg": null,
+       "cbe_kg": null,
+       "measured_kg": null,
+       "design_parametric": null,
+       "budget_value_kg": null,
+       "budget_value_governs": "HARNESS_POLICY_ROW60 (computed in the roll-up)"
+      }
+     ],
+     "rule": "allocation / evidence floor / design-parametric / CBE never merged"
+    }
+   },
+   "rust": {
+    "outcome": "RAISED",
+    "class": "PinError",
+    "message": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json sha256 4f1077b11c7184c5649f6dfd1a82a2f62b60ce6046820a272d971a4dfa5573ed != pinned 3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a (frozen mass / power v5 record, read as a pinned input)"
+   },
+   "rust_matches_registered": true
+  },
+  {
+   "div": "DIV-V01",
+   "tag": "E-V02 cfg C1",
+   "python": {
+    "outcome": "RETURNED",
+    "value": {
+     "configuration": "hall_c1_reference",
+     "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading; A9.26: 10 % system margin, active proposal / bid basis)",
+     "parts": [
+      {
+       "line": "AL-01",
+       "used": "ALLOCATION_MEV",
+       "kg": 3.5
+      },
+      {
+       "line": "AL-02",
+       "used": "ALLOCATION_MEV",
+       "kg": 5.5
+      },
+      {
+       "line": "AL-03",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.0
+      },
+      {
+       "line": "AL-04",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 4.2048
+      },
+      {
+       "line": "AL-05",
+       "used": "ALLOCATION_MEV",
+       "kg": 2.0
+      },
+      {
+       "line": "AL-06",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.5
+      },
+      {
+       "line": "AL-07",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 6.0
+      },
+      {
+       "line": "AL-08",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 5.9148
+      },
+      {
+       "line": "AL-09",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.0
+      },
+      {
+       "line": "AL-10",
+       "used": "ALLOCATION_MEV",
+       "kg": 2.5
+      },
+      {
+       "line": "AL-HAR",
+       "used": "HARNESS_POLICY_ROW60",
+       "kg": 1.743136842,
+       "partial": false,
+       "note": null
+      }
+     ],
+     "nonharness_known_kg": 33.1196,
+     "harness_kg": 1.743136842,
+     "nominal_dry_known_kg": 34.86273684,
+     "system_margin_kg": 3.486273684,
+     "reserve_kg": 0.0,
+     "dry_known_kg": 38.34901052,
+     "lines_without_value": [],
+     "tbd": [
+      "AL-01: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-02: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-03: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-04: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-04: floor INCOMPLETE - channel ceramics, anode/distributor, body, fasteners",
+      "AL-05: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-06: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-07: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-08: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-08: floor INCOMPLETE - plumbing, mounting/thermal",
+      "AL-09: PROVISIONAL_OWNER_ALLOCATION / NOT_CBE / NOT_MEASURED 1 kg (A9.26 section 2); replace with a design-derived CBE",
+      "AL-10: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-HAR: harness by the row-60 rule until a routed harness exists (not a CBE)"
+     ],
+     "all_terms_resolved": false,
+     "wet": [
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 40.34901052,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 0.34901052,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 0.3014181818,
+        "nonharness_nominal_max_kg": 32.81818182,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 40.34901052,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 6.34901052,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 5.483236364,
+        "nonharness_nominal_max_kg": 27.63636364,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 40.34901052,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 4.34901052,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 3.755963636,
+        "nonharness_nominal_max_kg": 29.36363636,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.34901052,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 3.34901052,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 2.892327273,
+        "nonharness_nominal_max_kg": 30.22727273,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.34901052,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 9.34901052,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 8.074145455,
+        "nonharness_nominal_max_kg": 25.04545455,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.34901052,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 7.34901052,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 6.346872727,
+        "nonharness_nominal_max_kg": 26.77272727,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 48.34901052,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 8.34901052,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 7.210509091,
+        "nonharness_nominal_max_kg": 25.90909091,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 48.34901052,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 14.34901052,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 12.39232727,
+        "nonharness_nominal_max_kg": 20.72727273,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 48.34901052,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 12.34901052,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 10.66505455,
+        "nonharness_nominal_max_kg": 22.45454545,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      }
+     ]
+    }
+   },
+   "rust": {
+    "outcome": "RAISED",
+    "class": "MassError",
+    "message": "rollup configuration 'hall_c1_reference' refused: the only flight configuration is 'hall_icp_neutralizer' (A9.19 / A9.20: C1 is GROUND_REFERENCE_ONLY and never enters a flight mass roll-up)"
+   },
+   "rust_matches_registered": true
+  },
+  {
+   "div": "DIV-V02",
+   "tag": "E-V02 AL-C1",
+   "python": {
+    "outcome": "RETURNED",
+    "value": {
+     "configuration": "hall_icp_neutralizer",
+     "reading": "MEV_LEVEL_EVIDENCE_BASED (the single owner reading; A9.26: 10 % system margin, active proposal / bid basis)",
+     "parts": [
+      {
+       "line": "AL-01",
+       "used": "ALLOCATION_MEV",
+       "kg": 3.5
+      },
+      {
+       "line": "AL-02",
+       "used": "ALLOCATION_MEV",
+       "kg": 5.5
+      },
+      {
+       "line": "AL-03",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.0
+      },
+      {
+       "line": "AL-04",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 4.2048
+      },
+      {
+       "line": "AL-05",
+       "used": "ALLOCATION_MEV",
+       "kg": 2.0
+      },
+      {
+       "line": "AL-06",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.5
+      },
+      {
+       "line": "AL-07",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 6.0
+      },
+      {
+       "line": "AL-08",
+       "used": "MEV_PLANNING_FLOOR",
+       "kg": 5.9148
+      },
+      {
+       "line": "AL-09",
+       "used": "ALLOCATION_MEV",
+       "kg": 1.0
+      },
+      {
+       "line": "AL-10",
+       "used": "ALLOCATION_MEV",
+       "kg": 2.5
+      },
+      {
+       "line": "AL-C1",
+       "used": "ALLOCATION_MEV",
+       "kg": 0.5
+      },
+      {
+       "line": "AL-HAR",
+       "used": "HARNESS_POLICY_ROW60",
+       "kg": 1.769452632,
+       "partial": false,
+       "note": null
+      }
+     ],
+     "nonharness_known_kg": 33.6196,
+     "harness_kg": 1.769452632,
+     "nominal_dry_known_kg": 35.38905263,
+     "system_margin_kg": 3.538905263,
+     "reserve_kg": 0.0,
+     "dry_known_kg": 38.92795789,
+     "lines_without_value": [],
+     "tbd": [
+      "AL-01: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-02: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-03: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-04: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-04: floor INCOMPLETE - channel ceramics, anode/distributor, body, fasteners",
+      "AL-05: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-06: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-07: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-08: MEV planning floor from an analog / preliminary-design floor, not a CBE",
+      "AL-08: floor INCOMPLETE - plumbing, mounting/thermal",
+      "AL-09: PROVISIONAL_OWNER_ALLOCATION / NOT_CBE / NOT_MEASURED 1 kg (A9.26 section 2); replace with a design-derived CBE",
+      "AL-10: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-C1: owner MEV allocation, not a CBE (row 54; MQ-01)",
+      "AL-HAR: harness by the row-60 rule until a routed harness exists (not a CBE)"
+     ],
+     "all_terms_resolved": false,
+     "wet": [
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 40.92795789,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 0.92795789,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 0.8014181818,
+        "nonharness_nominal_max_kg": 32.81818182,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 40.92795789,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 6.92795789,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 5.983236364,
+        "nonharness_nominal_max_kg": 27.63636364,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 2.0,
+       "xe_loaded_kg": 2.0,
+       "residual_inside_case_kg": 0.0392157,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 40.92795789,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 4.92795789,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 4.255963636,
+        "nonharness_nominal_max_kg": 29.36363636,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.92795789,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 3.92795789,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 3.392327273,
+        "nonharness_nominal_max_kg": 30.22727273,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.92795789,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 9.92795789,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 8.574145455,
+        "nonharness_nominal_max_kg": 25.04545455,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 5.0,
+       "xe_loaded_kg": 5.0,
+       "residual_inside_case_kg": 0.0980392,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 43.92795789,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 7.92795789,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 6.846872727,
+        "nonharness_nominal_max_kg": 26.77272727,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 48.92795789,
+       "reference": "HARD_40_WET",
+       "reference_kg": 40.0,
+       "comparator": "<",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 8.92795789,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 7.710509091,
+        "nonharness_nominal_max_kg": 25.90909091,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 48.92795789,
+       "reference": "INTERNAL_34",
+       "reference_kg": 34.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 14.92795789,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 12.89232727,
+        "nonharness_nominal_max_kg": 20.72727273,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      },
+      {
+       "xe_case_kg": 10.0,
+       "xe_loaded_kg": 10.0,
+       "residual_inside_case_kg": 0.196078,
+       "residual_added_on_top_kg": 0.0,
+       "wet_known_kg": 48.92795789,
+       "reference": "INTERNAL_36",
+       "reference_kg": 36.0,
+       "comparator": "<=",
+       "state": "DOES_NOT_CLOSE",
+       "exceedance_kg": 12.92795789,
+       "redesign_need": {
+        "nonharness_nominal_reduction_kg_at_least": 11.16505455,
+        "nonharness_nominal_max_kg": 22.45454545,
+        "rule": "MQ-10 / A9.26: reduce actual subsystem CBE (redesign, integration, lighter qualified parts); the 40 kg requirement and the A9.26 margin policy are not relaxed further"
+       }
+      }
+     ]
+    }
+   },
+   "rust": {
+    "outcome": "RAISED",
+    "class": "MassError",
+    "message": "AL-C1: C1 is GROUND_REFERENCE_ONLY (A9.19 / A9.20); no C1 line enters a flight mass roll-up"
+   },
+   "rust_matches_registered": true
+  }
+ ],
+ "performance": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "PERF-V01": {
+   "python_s": 0.6833040540000184,
+   "rust_process_s": 0.204317728000035,
+   "note": "Rust: one `abep-mass eval` process building the record 20 times, twice; Python: 20 in-process render() calls",
+   "speed_up_median_python_over_median_rust": 3.344
+  },
+  "machine": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+   "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+   "platform": "Linux 6.18.44-fc-v70 x86_64",
+   "thread_env": {
+    "OMP_NUM_THREADS": null,
+    "OPENBLAS_NUM_THREADS": null
+   }
+  }
+ },
+ "captured_reference_outputs": {
+  "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/reference_outputs/",
+  "files": {
+   "python_outcomes_v1.json.gz": "a2a458502de7b449907af6f7e95db7c6eeb6f769cb4b2ffe7193d90ae2cf6b00"
+  },
+  "uncompressed_sha256": "e83d4269cf14dbc768892290cfd23151a8088138a77ec5f17345147da3f4f123",
+  "entries": 1729,
+  "captured_at_python_commit": "1e2f66d72c01d3d0d413ff85c62de17f528d8f31",
+  "replay": "crates/abep-subsystems/tests/mass_captured_replay.rs (added after scoring; not a provenance source of the scored build)"
+ },
+ "campaign_history": [
+  {
+   "execution": "scoring",
+   "seed": 2307932994,
+   "verdict": "ADMITTED",
+   "rust_commit": "9fbd35088bb22e651409d697e7e0d6c785e57d94",
+   "utc": "2026-10-06T13:09:34+00:00"
+  }
+ ],
+ "development_runs": "development comparisons used development_master_seed 7105 and the registered deterministic vectors only; never scored",
+ "ledger_update_requested": [
+  {
+   "row": "C-DOCS_BUDGETS_MASS_POWER_A9_V5",
+   "transition": {
+    "from": "PYTHON_REFERENCE",
+    "to": "ADMITTED"
+   },
+   "scope": "the whole builder (build_doc / render_md with verify_pins, a9_26_message2, rollup_v5, unresolved_v5, set_al09); main() is replaced by `abep-mass build-v5 / check-v5`",
+   "authoritative_implementation": {
+    "kind": "rust",
+    "crate": "abep-subsystems (abep_subsystems::mass::v5)",
+    "paths": [
+     "crates/abep-subsystems/src/mass/v5.rs",
+     "crates/abep-subsystems/src/mass/rules.rs"
+    ]
+   },
+   "contract": {
+    "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_prereg_v1.json",
+    "id": "PARITY-C-DOCS_BUDGETS_MASS_POWER_A9_V5-V1",
+    "sha256": "3ca4edef06b9f79242e6638db21cf59d609639f8a7ad466108c4538344876ad0"
+   },
+   "admission_evidence": "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_report_v1.json",
+   "value_status": "AL-07 6.0 kg PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT / AFI-02-RA1_OPEN preserved (VS-01); never promoted to CBE / measured / frozen truth",
+   "report_disclosures": "DIV-V01 / DIV-V02 (C1 / non-flight roll-up refused), DIV-V03 (production wet-mass read verifies the record sha256); cutover pin note"
+  },
+  {
+   "row": "C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY",
+   "partial_admission": {
+    "scope": "wet_mass (with _obj, supplied_objective and intake_synthesis.require_f1q02_label)",
+    "status": "ADMITTED",
+    "parity": "PARITY_PASS",
+    "rust_implementation": {
+     "crate": "abep-subsystems (abep_subsystems::mass::wet_mass)",
+     "paths": [
+      "crates/abep-subsystems/src/mass/wet_mass.rs"
+     ]
+    },
+    "contract": {
+     "path": "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_prereg_v1.json",
+     "id": "PARITY-C-DOCS_BUDGETS_MASS_POWER_A9_V5-V1",
+     "sha256": "3ca4edef06b9f79242e6638db21cf59d609639f8a7ad466108c4538344876ad0"
+    },
+    "admission_evidence": "docs/rust_migration/contracts/C-DOCS_BUDGETS_MASS_POWER_A9_V5/parity_report_v1.json"
+   }
+  }
+ ],
+ "notes": [
+  "E1: the Rust build reproduces the committed frozen record (5eee4b8) byte for byte from its six pinned inputs; the record files are only read, never written.",
+  "Owner arithmetic (A9.26 sec. 3) reproduced exactly: dry 38.34901052 kg; HARD_40_WET wet 40.34901052 / 43.34901052 / 48.34901052 kg at 2 / 5 / 10 kg loaded Xe, each DOES_NOT_CLOSE; MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED.",
+  "VS-01: AL-07 stays 6.0 kg MEV_PLANNING_FLOOR with its committed labels; A9.28 status PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT / AFI-02-RA1_OPEN read from the sha256-verified A9.28 record.",
+  "Cutover: the v5 PINS include the v3 / v4 builder .py files (sha256 only); when the Python tree is archived the Rust builder needs them kept as archived evidence or a successor pin set (new contract version).",
+  "crates/abep-subsystems/src/lib.rs and Cargo.toml changed (mass module, flate2 dev-dependency): the NP-THERMAL-CATHODELESS verification report's recorded sha256 of those two files needs re-recording."
+ ],
+ "meaning_of_ADMITTED": "A9.24 item 1: Rust (abep_subsystems::mass::v5 / wet_mass) becomes authoritative for the selected-flight mass record regeneration and the wet-mass objective within the registered domain; it is NOT physics validation, not a mass-compliance verdict (MASS stays INCOMPLETE_EVIDENCE / NOT_YET_CLOSED) and not a gate PASS",
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, budget record, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): AL-07 6.0 kg stays PROVISIONAL_LEGACY_DERIVED_ANALOG_INPUT / AFI-02-RA1_OPEN; no line becomes a CBE, measured mass or frozen flight truth",
+  "not a gate PASS: mass compliance stays INCOMPLETE_EVIDENCE / NOT_YET_CLOSED (DOES_NOT_CLOSE visible); absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE (RM-R31)"
+ ]
+}

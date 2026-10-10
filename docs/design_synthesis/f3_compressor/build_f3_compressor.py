@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """A9.7 F3 compressor geometry synthesis study (follow-on fo_a9_7_f3_compressor_synthesis).
 
-Runs abep_sim/design/compressor_synthesis.py over the 36 W1 candidate-cases of the DI-1.4 compressor down-selection
+Runs abep_sim/design/compressor_synthesis.py over the W1 candidate-cases of the DI-1.4 compressor down-selection
 requirement envelope (taken as PARAMETRIC_SENSITIVITY inlet records; the F1/F2 records exist but the F3 fronts are not
 rebuilt on them - F4 / F7 couple F1 -> F2 -> F3 directly, see IFD-F3-01/02 and the INT-01 limitation), and
 writes:
@@ -34,6 +34,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from abep_sim.design import compressor_synthesis as cs  # noqa: E402
+from abep_sim.assessment import design_gates as ost  # noqa: E402  (owner-question state v5 reader; A9.22)
 
 OUT_DIR_REL = "docs/design_synthesis/f3_compressor"
 SCRIPT_REL = f"{OUT_DIR_REL}/build_f3_compressor.py"
@@ -42,7 +43,7 @@ DESIGNS_NAME = "f3_compressor_designs_v1.json"
 MD_NAME = "F3_COMPRESSOR_SYNTHESIS.md"
 TEST_REL = "tests/test_design_f3_compressor.py"
 BASE_COMMIT = "1c9d7a648cd4ce739e587248693271e5115698e1"
-DOWNSELECT_REL = "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json"
+DOWNSELECT_REL = "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json"
 SIG = 10
 
 # Immutable inputs (owner decisions are immutable after commit; the versioned v1 deliverables are frozen by version).
@@ -204,12 +205,15 @@ def build() -> tuple[dict, dict]:
     findings = [
         {"id": "F3-01", "finding": f"no design with drag stages is feasible: {n_drag_clip} of {n_drag_designs} "
          "drag-stage design evaluations have an unclipped Gaede K < 1 (throughput above the stage capacity S0 p at "
-         "the code-default channel h, w, L, xi; the module silently reports K = 1). Feasible drag-stage designs: "
+         "the code-default channel h, w, L, xi; since A9.9 S2.5 / MCC-02 the module reports the unclipped K and flags "
+         "the stage OUT_OF_MODEL_DOMAIN_STAGE_CAPACITY instead of silently using K = 1). Feasible drag-stage designs: "
          f"{drag_feasible}. Agrees with the down-selection drag-only probe (S_required / S0 ~ 1e3)",
          "evidence_class": "model-derived (from assumed code-default coefficients)"},
         {"id": "F3-02", "finding": f"rotor stress: with the cited Ti-6Al-4V A-basis Fty 827 MPa and the module safety "
-         f"factor 2 (uncited), sigma = rho u^2 caps the tip speed at {ti_u_allow:.4g} m/s; the module's own rotor_ok "
-         f"(uncited DB yield 880 MPa) allows {db_u_allow:.4g} m/s, so size_for can return rotors this search rejects. "
+         f"factor 2 (uncited), sigma = rho u^2 caps the tip speed at {ti_u_allow:.4g} m/s; the module's legacy "
+         f"sensitivity tip-speed cap (uncited DB yield 880 MPa; since A9.9 S2.3 not a qualification: rotor_ok is False "
+         f"without a registered strength basis) allows {db_u_allow:.4g} m/s, so size_for in PARAMETRIC_SENSITIVITY "
+         "mode can return rotors this search rejects. "
          "Both are below the 500 m/s published TMP practice (Al alloys)",
          "evidence_class": "inferred (cited allowable) + assumed (safety factor, density)"},
         {"id": "F3-03", "finding": f"evidence domain: every stage outlet is capped at 0.1 Pa (free-molecular, "
@@ -309,6 +313,7 @@ def build() -> tuple[dict, dict]:
          "supplied (CFRP also subject to the AO policy OD-C3)?", "proposed_answer": "only with a cited A/B-basis "
          "allowable and an AO disposition", "needed_by": "next F3 revision"},
     ]
+    open_owner_questions = ost.apply_to_questions(open_owner_questions)       # RVF-02: v5 answer state applied
     m16_impact = [{"row": 3, "key": "compressor", "state_before": "BLOCKED", "state_after": "BLOCKED",
                    "change": "none: this artifact is a model-derived PARAMETRIC_SENSITIVITY screening under uncited code "
                              "defaults (counts_as_evidence false); the blocking inputs remain compressor_downselect "
@@ -423,7 +428,7 @@ def render_md(doc: dict) -> str:
     A("")
     A("Every coefficient that is not searched is an uncited code default (compressor_downselect CD-01). For that reason "
       "**MODE_STRICT returns NOT_EVALUATED**, and every number below is a **PARAMETRIC_SENSITIVITY** result. None of "
-      "them is a design value, a CBE or a PASS. The inlet records are the 36 W1 candidate-cases of the DI-1.4 "
+      f"them is a design value, a CBE or a PASS. The inlet records are the {len(doc['cases'])} W1 candidate-cases of the DI-1.4 "
       "requirement envelope, which are PROPOSED and model-derived. The F1/F2 interface records exist, but this study's "
       "fronts are not rebuilt on them; F4 and F7 couple F1 -> F2 -> F3 directly over the F3 front union (a "
       "restriction recorded as a limitation in F4 / F7 / F9).")
@@ -495,10 +500,13 @@ def render_md(doc: dict) -> str:
     for d in doc["interface_demands"]:
         A(f"| {d['id']} | {d['direction']} | {d['counterpart']} | {d['path']} | {d['what']} | {d['status']} |")
     A("")
-    A("## Open owner questions (new)")
+    A("## Owner questions raised by this lane")
+    A("")
+    A(f"Status from `{ost.OQ5_REL}` (as raised: TBD_OWNER).")
     A("")
     for q in doc["open_owner_questions"]:
-        A(f"- **{q['id']}**: {q['question']} Proposed: {q['proposed_answer']}. Needed by: {q['needed_by']}.")
+        A(f"- **{q['id']}** ({q['status']}): {q['question']} Proposed (as raised): {q['proposed_answer']}. "
+          f"Needed by: {q['needed_by']}.")
     A("")
     A("## M16 impact")
     A("")

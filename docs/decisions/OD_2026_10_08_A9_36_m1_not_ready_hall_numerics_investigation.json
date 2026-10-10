@@ -1,0 +1,34 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_08_A9_36_m1_not_ready_hall_numerics_investigation",
+ "decided_by": "owner",
+ "date": "2026-10-08",
+ "decision": "A9_36_M1_NOT_READY_HALL_NUMERICS_INVESTIGATION",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_08_A9_36_M1_NOT_READY_HALL_NUMERICS_INVESTIGATION.md",
+  "sha256": "d573a93b5fadd43721eeec35c3235b7af3f65e3a062508c593017638e3b03440",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "M1_NOT_READY_HALL_NUMERICS",
+   "utc": "2026-10-08T12:09:53.445Z",
+   "text_sha256": "392d42dce153472e01061715353ca8bf91e746d8e08e8e230ad326185ebcd01c",
+   "chars": 724
+  }
+ ],
+ "checkpoint_at_decision": "5c92682",
+ "owner_decision_summary": {
+  "m1_audit": "complete the M1 audit once, including the AIR chemistry audit if it finishes before the audit closes; distinguish 'all software paths connected' from 'physics ready for architecture closure'",
+  "m1_conclusion_rule": "if Hall numerics remain unconverged, M1 concludes NOT READY FOR DECISIVE M2 HALL CLOSURE, single critical blocker HALL_NUMERICS_NOT_CONVERGED",
+  "m2_gate": "do not start M2 with Hall thrust values while A6 remains STOP_NO_LEVEL_CONVERGED",
+  "scope": "no more broad work",
+  "next_action": "a narrow Hall numerical-method investigation to determine why HallThruster.jl is non-convergent for the H1 cases",
+  "then": "once a converged Hall subset is demonstrated, rerun the registered envelope and proceed directly to M2"
+ },
+ "recorder_notes": [
+  "The M1 audit v1 (5c92682) concluded M1 EXIT and started M2; that M2 lane was stopped before any commit. Audit v1 is kept as history and superseded by audit v2 under this decision.",
+  "The rerun of the registered envelope uses the H1 v1 case set unchanged with numerics registered from the investigation, under a new addendum committed before the rerun."
+ ]
+}

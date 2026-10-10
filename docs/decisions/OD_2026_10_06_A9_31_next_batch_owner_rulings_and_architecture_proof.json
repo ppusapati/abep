@@ -1,0 +1,40 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_06_A9_31_next_batch_owner_rulings_and_architecture_proof",
+ "decided_by": "owner",
+ "date": "2026-10-06",
+ "decision": "A9_31_NEXT_BATCH_RULINGS_AND_ARCHITECTURE_PROOF",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_06_A9_31_NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF.md",
+  "sha256": "ae2b97e426fe648c3e1829fefcc19095af0d0cdf9b5b58b384c837146ae9bedc",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "NEXT_BATCH_OWNER_RULINGS_AND_ARCHITECTURE_PROOF",
+   "utc": "2026-10-06T17:32:29.791Z",
+   "text_sha256": "ab7705efeb0835b9443cebd86018cd5c29bdbc3f29d6f618c147dab1e7dec75a",
+   "chars": 26527
+  }
+ ],
+ "checkpoint_verified_by_owner": "d5ace89c685b6ffbe96fc88402147fb68a215200",
+ "owner_decision_summary": {
+  "sec1": "NI-ABEP-CLI acceptance v2 active; v1 immutable history",
+  "sec2": "materials DB admission in SC-WP-08 approved; ledger records admitted-during SC-WP-08 / planning owner SC-WP-12; one authoritative Rust implementation; inventory not rewritten",
+  "sec3": "K-GAS-LIFE AUDITED_NOT_EXTRACTED",
+  "sec4": "NP-RELIABILITY generic Rust engine under committed prereg, analytic / synthetic verification; flight R_item INCOMPLETE_EVIDENCE, R_rbd NOT_EVALUATED until registered RBD + sourced parameters; no inferred redundancy; no default handbook rates",
+  "sec5": "plenum/feed parity contract v3 with a preregistered convergence-derived tolerance procedure (refinement grid, numerical envelopes frozen before held-out scoring); solver internals not scored",
+  "sec6": "B2-OF-01 accepted as a known numerical property of the frozen reference; exact parity preserved; SC-WP-10 adds an exact-face NUMERICAL_INTERPOLATION_SENSITIVITY diagnostic",
+  "sec7": "matched IF-ICP-THERMAL v2 with the additional keys and Q_j = L_j + C_j; no residual dumped to B_PPU_RF; v1 records immutable",
+  "sec8": "bus_power_boundary_a9_v2; IF-ICP-BUS-v2 only if needed; no flight cathode load; 1.5 kW assessment-only",
+  "sec9": "NP-ICP-NEUTRALIZER prereg v2 for PF-01/PF-02/GAP-01..05 from conservation / dimensional consistency / sources / bounding branches; INT-16, INT-17, INT-18 approved",
+  "sec10": "OQ-NPICP-02 (HC-05 NOT_EVALUATED outside VALIDATED_BENCH), -03, -04, -07, -08, -09, -10, -11 (Hall-ON coupling preregistered now, execution gated), -12 (ASSUMED_GEOMETRIC_TUBE), -13, -14, -15 ruled",
+  "sec11": "OQ-CHEM-01..15 ruled",
+  "sec12": "start SC-WP-09 (NP-MISSION-INTEGRATION, preregister first), SC-WP-10 (active F7/F8, exact PCG64), SC-WP-11 (assessment), SC-WP-14 (active builders) in parallel",
+  "sec13": "then SC-WP-15/16/17; final acceptance with no Python / pip / virtualenv / PyO3 / maturin",
+  "sec14": "stop only for true architecture decision, conservation contradiction, unresolvable prereg conflict, incompatible evidence, model-domain contradiction, change to a scored / admitted contract",
+  "sec15_23": "primary objective: architecture proof for hall_icp_neutralizer; decisive 196-state end-to-end run; RFP constraint matrix with four separate layers; Q1-Q7; compact controlled comparison with credible alternatives; one of conclusions A-D; binding-constraint decomposition if the robust set is empty; priority order; immediate report items A-J"
+ },
+ "immutable_after_commit": true
+}

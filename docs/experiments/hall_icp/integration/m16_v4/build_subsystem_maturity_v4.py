@@ -24,6 +24,11 @@ state v4, M16 v4. State v4 reads rvm_a9_v1.json (ids of RVM-ID-10 / RVM-ID-11, R
 reads only the immutable state v3 snapshot, and M16 v4 reads both - so after any RVM change rebuild state v4 and
 then M16 v4 (--check on each catches a stale downstream output).
 
+Owner decisions A9.19 / A9.20 / A9.21 (a9_19_m16.py): one flight configuration hall_icp_neutralizer; C1 /
+hall_c1_reference only as the labelled ground-only laboratory reference (rows 6 / 7 / 8 / 11 labelled, requirement
+status split into flight and ground reference); A9.21 programme items attached per row. Labels only - no readiness
+state changes; quoted owner-question text and A9.2 statuses stay verbatim.
+
 stdlib only. Usage:
     python docs/experiments/hall_icp/integration/m16_v4/build_subsystem_maturity_v4.py          # write JSON + MD
     python docs/experiments/hall_icp/integration/m16_v4/build_subsystem_maturity_v4.py --check  # verify outputs
@@ -39,6 +44,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[4]
+sys.path.insert(0, str(HERE))
+import a9_16_m16 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
+import a9_19_m16 as A19  # noqa: E402  (A9.19 / A9.20 / A9.21 owner-decision application)
 
 
 def _rel(p: Path) -> str:
@@ -88,6 +96,10 @@ PINS = {
     A96_MD_REL: ("c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634", "owner directive A9.6 (verbatim; sec. 16)"),
     "docs/EVIDENCE.md": ("a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
                          "evidence rules (quantity types; CLAUDE.md rule 10)"),
+    **{d["json"]: (d["json_sha256"], f"owner decision {k} ({d['label']})") for k, d in A19.X.LOADED.items()
+       if k in ("A9.19", "A9.20", "A9.21")},
+    **{d["md"]: (d["md_sha256"], f"owner decision {k} (verbatim)") for k, d in A19.X.LOADED.items()
+       if k in ("A9.19", "A9.20", "A9.21")},
 }
 
 # mutable deliverables: read at build time, identity and ids checked, never pinned (they are rebuilt by their lanes)
@@ -96,7 +108,7 @@ ARTIFACTS = {
            "fo_a9_6_p1_workflow_completion"),
     "P2": ("docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json", "id", "p2_impedance_prep_v1",
            "fo_a9_6_p2_framework_completion"),
-    "P3": ("docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json", "id", "p3_coupled_thermal_v1",
+    "P3": ("docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json", "id", "p3_coupled_thermal_v2",
            "fo_a9_6_p3_coupled_thermal"),
     "P4": ("docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json", "id", "p4_anode_materials_v1",
            "fo_a9_6_p4_anode_materials"),
@@ -108,6 +120,8 @@ ARTIFACTS = {
     "RVM": ("docs/requirements/rvm_a9/rvm_a9_v1.json", "id", "rvm_a9_v1", "fo_a9_6_rvm"),
     "OQ4": ("docs/budgets/owner_decisions/owner_questions_state_v4.json", "id", "owner_questions_state_v4",
             "fo_a9_6_decision_propagation (+ register completion by fo_a9_6_m16_refresh)"),
+    "OQ5": ("docs/budgets/owner_decisions/owner_questions_state_v5.json", "id", "owner_questions_state_v5",
+            "A9.16 step 1 integration (owner answers A9.8 .. A9.15)"),
     "ICD": ("schemas/interfaces/icp_neutralizer_icd_v1.json", "id", "icp_neutralizer_icd_v1", "A9-03 (verified)"),
     "BUS": ("docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json", "id",
             "bus_power_boundary_a9_v1", "A9-02 (verified)"),
@@ -381,7 +395,7 @@ def _rvm_status(ctx: Ctx) -> dict:
     out = {}
     for e in ctx.docs["RVM"].get("m16_impact", []):
         out[e["m16_row"]] = [{"rvm_row": i, "title": rows[i]["title"],
-                              "status": {c: v["status"] for c, v in rows[i]["configurations"].items()}}
+                              **A19.split_rvm_status({c: v["status"] for c, v in rows[i]["configurations"].items()})}
                              for i in e["rvm_rows"]]
     return out
 
@@ -393,25 +407,26 @@ def rvm_register_reconciliation(ctx: Ctx) -> dict:
     compared with its v4 row; any disagreement (or a reading absent from v4) raises - the RVM must then be rebuilt with
     the current classification, never silently left stale."""
     v4 = {r["id"]: r for r in ctx.docs["OQ4"]["rows"]}
+    idx5 = A16.v5_index(ctx.docs["OQ5"])
     rows, bad = [], []
     for row in ctx.docs["RVM"]["rows"]:
         for o in row.get("open_readings", []):
-            r4 = v4.get(o["id"])
-            st4 = r4["status"] if r4 else None
-            agree = st4 is not None and st4 == o["status"]
-            rows.append({"rvm_row": row["id"], "id": o["id"], "rvm_status": o["status"], "state_v4_status": st4,
-                         "agrees": agree})
+            agree, st, reg = A16.reconcile_reading(o, v4, idx5)
+            rows.append({"rvm_row": row["id"], "id": o["id"], "rvm_status": o["status"], "register": reg,
+                         "register_status": st, "agrees": agree})
             if not agree:
-                bad.append(f"{row['id']} {o['id']}: RVM {o['status']!r} vs state v4 {st4!r}")
+                bad.append(f"{row['id']} {o['id']}: RVM {o['status']!r} vs {reg} {st!r}")
     if bad:
-        raise BuildError("RVM open readings disagree with owner-question state v4 (rebuild the RVM): " + "; ".join(bad))
-    return {"rule": "every RVM open reading has the same status as its row in owner_questions_state_v4 (S-01); "
-                    "checked after both are built (build order ... RVM, state v4, M16 v4)",
+        raise BuildError("RVM open readings disagree with the owner-question register (rebuild the RVM): " + "; ".join(bad))
+    return {"rule": "every RVM open reading agrees with the register it names (S-01): state v4 by status equality; "
+                    "state v5 (A9.16) OWNER_DECIDED matches ANSWERED_BY_A9_* / AMENDED_BY_A9_15; checked after both "
+                    "are built (build order: RVM, state v5, M16 v4)",
             "n_readings": len(rows), "all_agree": True, "rows": rows}
 
 
 def build() -> dict:
     ctx = Ctx()
+    A19.check_rvm_configurations(ctx.docs["RVM"])
     if sorted(SPEC.ROWS) != [r["row"] for r in ctx.v3["rows"]]:
         raise BuildError("row specifications do not cover exactly the v3 rows")
     touch = _lane_impacts(ctx)
@@ -519,6 +534,9 @@ def build() -> dict:
         if r["waits_on"]:
             waits_c[r["waits_on"]] = waits_c.get(r["waits_on"], 0) + 1
     oq_ids = sorted({b["id"] for r in rows for b in r["contributing_blockers"] if b["kind"] == "OWNER_QUESTION"})
+    answered_since_v4 = A16.overlay_blockers(rows, A16.v5_index(ctx.docs["OQ5"]))
+    A16.apply_owner_role_map(rows)
+    a919 = A19.apply(rows)
     m16q = ctx.oq4.get("M16-V3-Q-01", [])
     if len(m16q) != 1 or m16q[0]["status"] != "TBD_OWNER":
         raise BuildError("M16-V3-Q-01 must be exactly one TBD_OWNER row in state v4")
@@ -543,6 +561,11 @@ def build() -> dict:
              "each resolves to one TBD_OWNER row"),
         item("M16V4-IT-10", "A9.2 statuses carried verbatim", len(carried_a92), "count", "R-M16V4-06"),
         item("M16V4-IT-11", "new measured / validated artifacts", 0, "count", "A9.6 batch: frameworks only"),
+        item("M16V4-IT-12", "flight configurations evaluated", len(A19.CONFIGURATIONS) - 1, "count",
+             "A9.19: one flight configuration (hall_icp_neutralizer); hall_c1_reference a labelled ground reference "
+             "(A9.20)"),
+        item("M16V4-IT-13", "rows labelled for A9.19 / A9.20 (C1 / hall_c1_reference / fallback text)",
+             len(a919["rows_labelled"]), "count", "a9_19_m16.apply (fail closed on an unreviewed row)"),
     ]
     return {
         "schema": "subsystem_maturity_matrix_v4", "id": "subsystem_maturity_v4",
@@ -556,7 +579,9 @@ def build() -> dict:
                          "the immutable H2-7 v1 builder globs that folder; OQ-A910-04 DERIVED in state v4)",
         "what_it_is_not": ["not a performance prediction", "not an architecture selection (no winner)",
                            "not a requirement verdict (see the RVM)", "not a change to v1 / v2 / v3",
-                           "not an owner decision: blocking-item selection, roles and latest decision points are PROPOSED",
+                           "not an owner decision itself: the blocking-item selection, roles and latest decision points "
+                           "were PROPOSED here and accepted by the owner (A9.14 M16-V3-Q-01); named persons come only "
+                           "from the project staffing ledger",
                            "software / framework completeness is not physical readiness"],
         "state_vocabulary": STATES, "waits_on_vocabulary": WAITS_ON,
         "implementation_kinds": SPEC.IMPLEMENTATION_KINDS, "blocker_kinds": SPEC.BLOCKER_KINDS,
@@ -565,6 +590,11 @@ def build() -> dict:
                                   "owner_acceptance": {"row": 141, "verbatim": ctx.answers[141]["owner_answer_verbatim"]}},
         "owner_rule": {"row": 140, "verbatim": ctx.answers[140]["owner_answer_verbatim"]},
         "a9_2_statuses": {"source": f"{A92_REL} decisions.a9_10_statuses", "sha256": PINS[A92_REL][0], "statuses": a92_all},
+        "a9_2_status_notes": {"C1 conventional reference": "CONTROL_FALLBACK carried verbatim (R-M16V4-06; immutable "
+                              "A9.2 history); superseded for use: C1 is not a flight fallback (A9.19) and is a "
+                              "ground-only laboratory reference (A9.20)"},
+        "configurations": A19.CONFIGURATIONS,
+        "flight_configurations": [A19.FLIGHT],
         "pins": ctx.pins,
         "referenced_not_pinned": {"rule": "mutable deliverables: read at build time, identity and every cited id checked (a "
                                           "missing or no-longer-open id raises); never sha-pinned; governance files "
@@ -598,7 +628,7 @@ def build() -> dict:
              "status": "OFFERED"},
             {"id": "M16V4-ID-07", "direction": "provides", "counterpart": "owner (M16-V3-Q-01)",
              "quantity": "PROPOSED blocking items, roles and latest decision points for acceptance; named engineers",
-             "status": "AWAITING_OWNER_DECISION"},
+             "status": "OWNER_DECIDED (A9.14 M16-V3-Q-01: accepted; names from the staffing ledger)"},
         ],
         "owner_answers_applied": [
             {"id": "owner row 140", "how_applied": "R-M16V4-05: READY needs a named responsible engineer; functional roles "
@@ -613,8 +643,22 @@ def build() -> dict:
             {"id": "A9.6 sec. 7", "how_applied": "no open owner question answered; blockers cite TBD_OWNER rows"},
         ],
         "open_owner_questions": [],
-        "open_owner_questions_note": "no new owner question: M16-V3-Q-01 (TBD_OWNER, state v4) is carried and covers "
-                                     "acceptance of the v4 blocking-item selection, roles and latest decision points",
+        "open_owner_questions_note": "no new owner question: M16-V3-Q-01 (TBD_OWNER in state v4) is answered by A9.14 "
+                                     "(state v5 ANSWERED_BY_A9_14)",
+        "a9_16_owner_answers_applied": A16.owner_answers_applied(),
+        "a9_19_21": {**a919, "statement_classes": A19.STATEMENT_CLASSES,
+                     "rule": "labels only: rows naming C1 / hall_c1_reference / a fallback carry a9_19_20 "
+                                     "(configuration status, each such statement classified); A9.21 programme "
+                                     "items attached per row (a9_21); requirement status split into the flight "
+                                     "configuration and the labelled ground reference; no readiness state changes; "
+                                     "quoted owner-question text and A9.2 statuses verbatim"},
+        "a9_19_21_owner_answers_applied": A19.owner_answers_applied(a919),
+        "a9_16_owner_question_blockers_answered_since_v4": {
+            "ids": answered_since_v4,
+            "rule": "blockers are resolved against the immutable state v4 snapshot (historical); each OWNER_QUESTION "
+                    "blocker carries its state v5 status and decision; re-deriving the scheduler blocking items from "
+                    "the owner answers (what evidence each answer now waits on) is a follow-on M16 v5 refresh, not "
+                    "done here; no row changes state"},
         "historical_reuse": [{"path": p["path"], "sha256": p["sha256"], "use": p["role"]} for p in ctx.pins
                              if p["path"].startswith(("docs/experiments/hall_icp/integration/m16_v3",
                                                       "docs/budgets/subsystem_maturity"))],
@@ -623,6 +667,8 @@ def build() -> dict:
                                   f"SUPERSEDED_FOR_PRIMARY_LINE, 0 READY, 0 VERIFIED; no state change v3 -> v4"
                                   if n_changed == 0 else "state changes present: see diff_v3_v4"},
         "compliance": ["v1 / v2 / v3 unchanged (v3 pinned)", "every cited id resolved at build time; no-longer-open ids raise",
+                       "one flight configuration (hall_icp_neutralizer, A9.19); C1 / hall_c1_reference only as the "
+                       "labelled ground-only laboratory reference (A9.20)",
                        "no PASS; no winner; no prediction", "A9.2 statuses verbatim",
                        "no file under docs/budgets/subsystem_maturity/"],
     }
@@ -645,6 +691,7 @@ def render_md(d: dict) -> str:
          "Software / framework completeness is not physical readiness: no physical row becomes READY or VERIFIED without "
          "a cited measured hardware artifact (A9.6 sec. 16). No PASS, no winner, no prediction.", "",
          f"Roll-up: {_c(d['rollup'])}. {d['m16_impact']['summary']}.", "",
+         "Configurations (A9.19 / A9.20): " + "; ".join(f"`{k}` {v}" for k, v in d["configurations"].items()) + ".", "",
          "## Readiness rules", ""]
     L += [f"* **{r['id']}** {r['rule']}" for r in d["readiness_rules"]]
     L += ["", "## Rows", "",
@@ -660,6 +707,7 @@ def render_md(d: dict) -> str:
           f"{x['blocking_item_changed']} | {_c(x['reason'])} |" for x in d["diff_v3_v4"]]
     L += ["", "## A9.2 statuses (verbatim, never PASS)", ""]
     L += [f"* {k}: **{v}**" for k, v in d["a9_2_statuses"]["statuses"].items()]
+    L += [f"* note: {k}: {v}" for k, v in d["a9_2_status_notes"].items()]
     L += ["", "## Per-row detail", ""]
     for r in d["rows"]:
         L += [f"### Row {r['row']}: {r['key']} ({r['execution_state']})", ""]
@@ -675,8 +723,16 @@ def render_md(d: dict) -> str:
         if r["contributing_blockers"]:
             L.append("* contributing blockers: " + "; ".join(f"{b['kind']} {b['id']} ({_c(b['state'])})"
                                                             for b in r["contributing_blockers"]))
+        if r.get("a9_19_20"):
+            a = r["a9_19_20"]
+            L.append(f"* A9.19 / A9.20: **{a['configuration_status']}** - {a['note']}")
+            L += [f"  * {h['classification']} `{h['pointer']}`: {_c(h['text'])}" for h in a["statements"]]
+        for x in r["a9_21"]:
+            L.append(f"* A9.21 {x['item']}: {_c(x['verbatim_excerpt'])}")
         if r["rvm_requirement_status"]:
-            L.append("* RVM: " + "; ".join(f"{x['rvm_row']} {_c(x['status'])}" for x in r["rvm_requirement_status"]))
+            L.append("* RVM (flight): " + "; ".join(f"{x['rvm_row']} {_c(x['status'])}" for x in r["rvm_requirement_status"]))
+            L.append("* RVM (ground reference, never flight evidence): " + "; ".join(
+                f"{x['rvm_row']} {_c(x['ground_reference_status'])}" for x in r["rvm_requirement_status"]))
         for t in r["a9_6_lanes"]:
             L.append(f"* lane {t['lane']}: {_c(t['how'])}")
         L.append("")
@@ -687,6 +743,8 @@ def render_md(d: dict) -> str:
     L += [f"| {x['id']} | {x['direction']} | {_c(x['counterpart'])} | {_c(x['quantity'])} | {x['status']} |"
           for x in d["interface_demands"]]
     L += ["", "## Owner answers applied", ""] + [f"* {x['id']}: {x['how_applied']}" for x in d["owner_answers_applied"]]
+    L += [f"* {x['decision']} {x['question_id']} (`{x['decision_json']}` sha256 `{x['decision_json_sha256']}`): "
+          f"{x['how_applied']}" for x in d["a9_19_21_owner_answers_applied"]]
     L += ["", "## Open owner questions", "", d["open_owner_questions_note"], "",
           "Owner-question v4 ids used as blockers: " + ", ".join(d["owner_question_ids_used"]) + ".", "",
           "## Historical reuse", ""] + [f"* `{x['path']}` sha256 `{x['sha256']}` ({x['use']})" for x in d["historical_reuse"]]

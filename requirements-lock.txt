@@ -4,5 +4,7 @@ scipy==1.17.1
 pandas==3.0.2
 matplotlib==3.10.8
 PyYAML==6.0.3
+jsonschema==4.26.0   # schema validation tests (A9.22 bus boundary v2); locked so it never adds a rule-9 skip
+zstandard==0.25.0   # F1 evidence archive tooling (scripts/evidence/f1_archive.py) and its tests; locked for the same reason
 pytest==9.1.1
 pymsis==0.13.0   # only for live NRLMSIS / point evaluations; the frozen scenario dataset needs no pymsis

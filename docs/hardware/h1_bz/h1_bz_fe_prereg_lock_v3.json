@@ -1,0 +1,15 @@
+{
+ "id": "h1_bz_fe_prereg_lock_v3",
+ "locked": "2026-10-08",
+ "note": "sha256 of the H-1 / MC-1 FE B(z) preregistration v3 (supersedes v2 after its verification run exposed a solver-formulation defect, a harness defect and an inadequate reference quadrature; no criterion changed; history in the prereg 'supersedes' block) and its B-H input data, committed alone before the v3 verification, convergence and production solves. Any change after this lock is a new dated prereg version, never an edit. Code hashes at lock time are informational; every result records the code hashes it ran with.",
+ "base_commit": "f8170fd",
+ "supersedes_lock": {"path": "docs/hardware/h1_bz/h1_bz_fe_prereg_lock_v2.json", "sha256": "761b5c69731b1c22085b5e2ede7e6539a41b46a8b3057c43b2579594c1215e4e"},
+ "files": {
+  "docs/hardware/h1_bz/h1_bz_fe_prereg_v3.json": "416450aefe8fe28be5f7b2c4b2e0913d627d71e252648ef0bf91e8b0ef825e88",
+  "docs/hardware/h1_bz/bh_curves_v1.json": "6f940f88bf672e0d4e29b109081a5c6e1506e8f566a9b2e56c54361971f22747"
+ },
+ "code_at_lock": {
+  "docs/hardware/h1_bz/h1_bz_fe_solver.py": "25ef3f7c1515b7a40b1f019a4b7b0eb0fce279989ee003bb18ed9d76299bbc57",
+  "docs/hardware/h1_bz/build_h1_bz_fe.py": "c2a51f7bfc76d7bef4f47fa365872e364f1d70ad066ee87af4a4d50a171235b8"
+ }
+}

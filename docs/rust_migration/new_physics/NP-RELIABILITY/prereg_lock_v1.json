@@ -1,0 +1,12 @@
+{
+ "id": "np_reliability_prereg_lock_v1",
+ "model_id": "NP-RELIABILITY",
+ "locked": "2026-10-06",
+ "note": "sha256 of the NP-RELIABILITY v1 preregistration (SC-WP-08, docs only, status PREREGISTERED_NOT_IMPLEMENTED); any change after this lock is a new, dated version or addendum, never an edit",
+ "base_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-RELIABILITY/",
+ "files": {
+  "prereg_v1.json": "d8650f5fea8cea73a364e806a1159d9b02e25935278997b0e214f534ccfdbdee",
+  "PREREG.md": "1c8ae0bb523d3add2ad951ccf2ddea3dea698a660f557885220608f9e814b79b"
+ }
+}

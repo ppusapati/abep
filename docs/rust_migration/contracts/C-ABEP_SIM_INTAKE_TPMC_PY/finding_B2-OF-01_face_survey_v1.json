@@ -1,0 +1,531 @@
+{
+ "schema": "abep_finding_face_survey_v1",
+ "id": "B2-OF-01",
+ "property_of": "the frozen Python reference abep_sim.intake_tpmc.IntakeSurface over abep_sim/data/intake_surface_v1.csv (scipy LinearNDInterpolator / Qhull); NOT a property of the Rust port, which replicates scipy's simplex search and reproduces it",
+ "frozen_surface": {
+  "csv": "abep_sim/data/intake_surface_v1.csv",
+  "csv_sha256": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a"
+ },
+ "reference_module_sha256": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433",
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "pandas": "3.0.2"
+ },
+ "generator": {
+  "path": "scripts/rust_migration/survey_intake_surface_faces.py",
+  "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python3 scripts/rust_migration/survey_intake_surface_faces.py"
+ },
+ "method": "per scattering table and interior face (axis at an interior grid value), 60 points with the other axes uniform in the table range (numpy default_rng(0), draws in axis order); every non-degenerate reference simplex containing the rescaled point within eps = 100 DBL_EPSILON is evaluated; spread = (max - min) / |mean| of the interpolated row value per field and species; a point is non-conforming when any spread exceeds 1e-12. phi has no interior grid value (2 values), hence no interior face",
+ "tables": {
+  "maxwell": {
+   "faces": [
+    {
+     "face": "L_over_d = 5",
+     "points": 60,
+     "non_conforming_points": 20,
+     "max_relative_spread": {
+      "N2": {
+       "eta_c": 0.00411608681883207,
+       "C_D": 0.0001729366042234931,
+       "CR_passive": 0.007315458948589495,
+       "K_back": 0.0046305166776450775,
+       "mass_kg": 1.9976921784732587e-16
+      },
+      "O": {
+       "eta_c": 0.005803414175244114,
+       "C_D": 0.0002699154347048292,
+       "CR_passive": 0.002550898939592569,
+       "K_back": 0.0058598969508370105,
+       "mass_kg": 1.9976921784732587e-16
+      },
+      "O2": {
+       "eta_c": 0.004352141008780545,
+       "C_D": 0.00016348455665584095,
+       "CR_passive": 0.00697145864115553,
+       "K_back": 0.0038661893116375065,
+       "mass_kg": 1.9976921784732587e-16
+      }
+     }
+    },
+    {
+     "face": "L_over_d = 10",
+     "points": 60,
+     "non_conforming_points": 14,
+     "max_relative_spread": {
+      "N2": {
+       "eta_c": 0.015373903135956055,
+       "C_D": 0.0006244669597869313,
+       "CR_passive": 0.021501956684370577,
+       "K_back": 0.0015366793178129264,
+       "mass_kg": 1.9054145466665393e-16
+      },
+      "O": {
+       "eta_c": 0.0065516064066423975,
+       "C_D": 0.0003706623088258236,
+       "CR_passive": 0.024705573349712528,
+       "K_back": 0.009182202453613078,
+       "mass_kg": 1.9054145466665393e-16
+      },
+      "O2": {
+       "eta_c": 0.01287561740929015,
+       "C_D": 0.0005087630340604398,
+       "CR_passive": 0.01605628067118808,
+       "K_back": 0.010690578560988569,
+       "mass_kg": 1.9054145466665393e-16
+      }
+     }
+    },
+    {
+     "face": "alpha = 0.2",
+     "points": 60,
+     "non_conforming_points": 43,
+     "max_relative_spread": {
+      "N2": {
+       "eta_c": 0.010893514493675321,
+       "C_D": 0.00036892522086068546,
+       "CR_passive": 0.03452049552550579,
+       "K_back": 0.012634891831868373,
+       "mass_kg": 0.03729597039010955
+      },
+      "O": {
+       "eta_c": 0.006711493560524713,
+       "C_D": 0.0002981209710313704,
+       "CR_passive": 0.004798781159151134,
+       "K_back": 0.00537144202224931,
+       "mass_kg": 0.03729597039010955
+      },
+      "O2": {
+       "eta_c": 0.00378471656776838,
+       "C_D": 0.0001070368777584889,
+       "CR_passive": 0.006260800047316603,
+       "K_back": 0.014268898571730275,
+       "mass_kg": 0.03729597039010955
+      }
+     }
+    },
+    {
+     "face": "alpha = 0.5",
+     "points": 60,
+     "non_conforming_points": 38,
+     "max_relative_spread": {
+      "N2": {
+       "eta_c": 0.012327752077340428,
+       "C_D": 0.00041451152719617637,
+       "CR_passive": 0.022178387135313653,
+       "K_back": 0.002418889856711154,
+       "mass_kg": 0.028637673902938813
+      },
+      "O": {
+       "eta_c": 0.007732880176116208,
+       "C_D": 0.0003675117064031146,
+       "CR_passive": 0.016749005772013915,
+       "K_back": 0.004980814233734881,
+       "mass_kg": 0.028637673902938813
+      },
+      "O2": {
+       "eta_c": 0.011952221443042015,
+       "C_D": 0.0004999019270264299,
+       "CR_passive": 0.0319948706456294,
+       "K_back": 0.007772035726205279,
+       "mass_kg": 0.028637673902938813
+      }
+     }
+    },
+    {
+     "face": "alpha = 0.8",
+     "points": 60,
+     "non_conforming_points": 5,
+     "max_relative_spread": {
+      "N2": {
+       "eta_c": 0.00777535298613151,
+       "C_D": 0.0002698201103323484,
+       "CR_passive": 9.917698729970636e-05,
+       "K_back": 9.343715610755015e-05,
+       "mass_kg": 0.025310538427418233
+      },
+      "O": {
+       "eta_c": 0.009130336838407298,
+       "C_D": 0.0004045195453363648,
+       "CR_passive": 0.00012667944462108847,
+       "K_back": 4.898243285374681e-05,
+       "mass_kg": 0.025310538427418233
+      },
+      "O2": {
+       "eta_c": 0.006846640725963692,
+       "C_D": 0.00023300176598349873,
+       "CR_passive": 0.0004080734238484636,
+       "K_back": 0.00011451985457712416,
+       "mass_kg": 0.025310538427418233
+      }
+     }
+    },
+    {
+     "face": "theta_deg = 2",
+     "points": 60,
+     "non_conforming_points": 34,
+     "max_relative_spread": {
+      "N2": {
+       "eta_c": 0.03768632268222069,
+       "C_D": 0.0012607662739453913,
+       "CR_passive": 0.11769222142730956,
+       "K_back": 0.06075133086085581,
+       "mass_kg": 0.027576691965349554
+      },
+      "O": {
+       "eta_c": 0.03522230451472463,
+       "C_D": 0.0017608465594885767,
+       "CR_passive": 0.09505375547161311,
+       "K_back": 0.06068944836794398,
+       "mass_kg": 0.027576691965349554
+      },
+      "O2": {
+       "eta_c": 0.03550679400162208,
+       "C_D": 0.0011345314036018174,
+       "CR_passive": 0.10623480167536141,
+       "K_back": 0.0434177387170543,
+       "mass_kg": 0.027576691965349554
+      }
+     }
+    }
+   ],
+   "default_points_checked": [
+    {
+     "point": [
+      10.0,
+      0.85,
+      0.5,
+      0.0
+     ],
+     "max_relative_spread": 1.8894056475075715e-16
+    },
+    {
+     "point": [
+      5.0,
+      0.85,
+      0.8,
+      0.0
+     ],
+     "max_relative_spread": 2.8415071837634318e-16
+    },
+    {
+     "point": [
+      10.0,
+      0.85,
+      0.95,
+      0.0
+     ],
+     "max_relative_spread": 1.3702932677296868e-16
+    },
+    {
+     "point": [
+      3.0,
+      0.85,
+      0.5,
+      0.0
+     ],
+     "max_relative_spread": 1.6351024739785166e-16
+    },
+    {
+     "point": [
+      5.0,
+      0.85,
+      0.8,
+      2.0
+     ],
+     "max_relative_spread": 1.8882126697431662e-16
+    }
+   ]
+  },
+  "cll": {
+   "faces": [
+    {
+     "face": "L_over_d = 5",
+     "points": 60,
+     "non_conforming_points": 19,
+     "max_relative_spread": {
+      "N2": {
+       "eta_c": 0.008026758447423421,
+       "C_D": 0.00029353934047080454,
+       "CR_passive": 0.008704189659467385,
+       "K_back": 0.010581752850539862,
+       "mass_kg": 1.9976921784732587e-16
+      },
+      "O": {
+       "eta_c": 0.010810896885650288,
+       "C_D": 0.000506145977643731,
+       "CR_passive": 0.004905903951289947,
+       "K_back": 0.006547532075619645,
+       "mass_kg": 1.9976921784732587e-16
+      },
+      "O2": {
+       "eta_c": 0.007692603365500917,
+       "C_D": 0.0002728471146823495,
+       "CR_passive": 0.009848323511583853,
+       "K_back": 0.00322712761433529,
+       "mass_kg": 1.9976921784732587e-16
+      }
+     }
+    },
+    {
+     "face": "L_over_d = 10",
+     "points": 60,
+     "non_conforming_points": 14,
+     "max_relative_spread": {
+      "N2": {
+       "eta_c": 0.00029292583881595515,
+       "C_D": 1.928608604756116e-05,
+       "CR_passive": 0.0059639236004578305,
+       "K_back": 0.0018993286654589057,
+       "mass_kg": 1.9054145466665393e-16
+      },
+      "O": {
+       "eta_c": 0.00039421812821070936,
+       "C_D": 2.5506541495939887e-05,
+       "CR_passive": 0.0029686066387878546,
+       "K_back": 0.003901596599860759,
+       "mass_kg": 1.9054145466665393e-16
+      },
+      "O2": {
+       "eta_c": 0.00017567120659707622,
+       "C_D": 7.0704392598891545e-06,
+       "CR_passive": 0.009169959444125306,
+       "K_back": 0.003689904799004259,
+       "mass_kg": 1.9054145466665393e-16
+      }
+     }
+    },
+    {
+     "face": "alpha = 0.2",
+     "points": 60,
+     "non_conforming_points": 43,
+     "max_relative_spread": {
+      "N2": {
+       "eta_c": 7.901172779423099e-05,
+       "C_D": 4.484836076345872e-06,
+       "CR_passive": 0.003974642192880712,
+       "K_back": 0.005413221661401786,
+       "mass_kg": 0.03729597039010955
+      },
+      "O": {
+       "eta_c": 0.0001868384672052323,
+       "C_D": 5.011817167326398e-06,
+       "CR_passive": 0.005836251080354452,
+       "K_back": 0.0060079291911876885,
+       "mass_kg": 0.03729597039010955
+      },
+      "O2": {
+       "eta_c": 8.658674277719075e-05,
+       "C_D": 3.4652496375898253e-06,
+       "CR_passive": 0.008108450045168853,
+       "K_back": 0.004788397946468393,
+       "mass_kg": 0.03729597039010955
+      }
+     }
+    },
+    {
+     "face": "alpha = 0.5",
+     "points": 60,
+     "non_conforming_points": 38,
+     "max_relative_spread": {
+      "N2": {
+       "eta_c": 0.0045086879213110925,
+       "C_D": 0.00023886887207974126,
+       "CR_passive": 0.01687247761354193,
+       "K_back": 0.018954882716244573,
+       "mass_kg": 0.028637673902938813
+      },
+      "O": {
+       "eta_c": 0.005656565856053995,
+       "C_D": 0.0003625421409551933,
+       "CR_passive": 0.02235374400366875,
+       "K_back": 0.01160255011683282,
+       "mass_kg": 0.028637673902938813
+      },
+      "O2": {
+       "eta_c": 0.003335106572002179,
+       "C_D": 0.00015936615332783709,
+       "CR_passive": 0.010011505293725338,
+       "K_back": 0.009475065536934887,
+       "mass_kg": 0.028637673902938813
+      }
+     }
+    },
+    {
+     "face": "alpha = 0.8",
+     "points": 60,
+     "non_conforming_points": 5,
+     "max_relative_spread": {
+      "N2": {
+       "eta_c": 0.0011182210493369405,
+       "C_D": 5.618404372879803e-05,
+       "CR_passive": 2.8386259308325835e-05,
+       "K_back": 6.430020203945838e-05,
+       "mass_kg": 0.025310538427418233
+      },
+      "O": {
+       "eta_c": 0.003173252912444922,
+       "C_D": 0.00020771915334610796,
+       "CR_passive": 7.75392327038937e-05,
+       "K_back": 0.0001017647346193235,
+       "mass_kg": 0.025310538427418233
+      },
+      "O2": {
+       "eta_c": 0.0008433257981332461,
+       "C_D": 3.643696421528535e-05,
+       "CR_passive": 0.00027390647264426626,
+       "K_back": 0.00013454254114325903,
+       "mass_kg": 0.025310538427418233
+      }
+     }
+    },
+    {
+     "face": "theta_deg = 2",
+     "points": 60,
+     "non_conforming_points": 34,
+     "max_relative_spread": {
+      "N2": {
+       "eta_c": 0.01808143004232782,
+       "C_D": 0.0006440960530736684,
+       "CR_passive": 0.1733934754224049,
+       "K_back": 0.060278335536051865,
+       "mass_kg": 0.027576691965349554
+      },
+      "O": {
+       "eta_c": 0.036433461800432325,
+       "C_D": 0.002217463318732964,
+       "CR_passive": 0.16840762379582527,
+       "K_back": 0.057833594190927276,
+       "mass_kg": 0.027576691965349554
+      },
+      "O2": {
+       "eta_c": 0.017302627682600314,
+       "C_D": 0.0005307387043738413,
+       "CR_passive": 0.17178553085417445,
+       "K_back": 0.061172634747115436,
+       "mass_kg": 0.027576691965349554
+      }
+     }
+    }
+   ],
+   "default_points_checked": [
+    {
+     "point": [
+      10.0,
+      0.85,
+      0.5,
+      0.0
+     ],
+     "max_relative_spread": 1.8894056475075715e-16
+    },
+    {
+     "point": [
+      5.0,
+      0.85,
+      0.8,
+      0.0
+     ],
+     "max_relative_spread": 2.286762151648108e-16
+    },
+    {
+     "point": [
+      10.0,
+      0.85,
+      0.95,
+      0.0
+     ],
+     "max_relative_spread": 1.1701338792423656e-16
+    },
+    {
+     "point": [
+      3.0,
+      0.85,
+      0.5,
+      0.0
+     ],
+     "max_relative_spread": 1.6357454827024902e-16
+    },
+    {
+     "point": [
+      5.0,
+      0.85,
+      0.8,
+      2.0
+     ],
+     "max_relative_spread": 1.8882126697431662e-16
+    }
+   ]
+  }
+ },
+ "max_relative_spread_per_field": {
+  "eta_c": {
+   "spread": 0.03768632268222069,
+   "scattering": "maxwell",
+   "species": "N2",
+   "face": "theta_deg = 2",
+   "point": [
+    8.227784022690075,
+    0.8374126887937825,
+    0.6952669150405878,
+    2.0
+   ]
+  },
+  "C_D": {
+   "spread": 0.002217463318732964,
+   "scattering": "cll",
+   "species": "O",
+   "face": "theta_deg = 2",
+   "point": [
+    8.227784022690075,
+    0.8374126887937825,
+    0.6952669150405878,
+    2.0
+   ]
+  },
+  "CR_passive": {
+   "spread": 0.1733934754224049,
+   "scattering": "cll",
+   "species": "N2",
+   "face": "theta_deg = 2",
+   "point": [
+    14.915437578732714,
+    0.8108001576950183,
+    0.048672246638759575,
+    2.0
+   ]
+  },
+  "K_back": {
+   "spread": 0.061172634747115436,
+   "scattering": "cll",
+   "species": "O2",
+   "face": "theta_deg = 2",
+   "point": [
+    13.642166426737925,
+    0.8551641047390511,
+    0.38885151921681604,
+    2.0
+   ]
+  },
+  "mass_kg": {
+   "spread": 0.03729597039010955,
+   "scattering": "maxwell",
+   "species": "N2",
+   "face": "alpha = 0.2",
+   "point": [
+    15.193095968023385,
+    0.8484514633109874,
+    0.2,
+    3.880158262223903
+   ]
+  }
+ },
+ "affected_faces": [
+  "L_over_d = 10",
+  "L_over_d = 5",
+  "alpha = 0.2",
+  "alpha = 0.5",
+  "alpha = 0.8",
+  "theta_deg = 2"
+ ]
+}

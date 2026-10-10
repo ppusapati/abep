@@ -1,0 +1,101 @@
+{
+ "schema": "source_register_v1",
+ "id": "hwm14_source_register_v1",
+ "subject": "HWM14 horizontal wind model used to build atmosphere_msis21_hwm14_orbit_v2",
+ "retrieved": "2026-10-01",
+ "retrieved_by": "A9.17 WINDS lane (repository agent); public HTTPS download, no account, no contact with authors",
+ "authority": {
+  "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+  "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+  "decision_key": "WINDS",
+  "answer": "AUTHORIZE_HWM14_ATMOSPHERE_V2_KEEP_V1_IMMUTABLE",
+  "verbatim": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+   "sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13",
+   "quote": "HWM14 is publicly available: NASA CCMC explicitly marks the source code as publicly available/open, and NRL hosts the Fortran source and supporting data in its public repository."
+  }
+ },
+ "model": {
+  "name": "HWM14 (quiet-time Horizontal Wind Model 2014 + DWM07 disturbance wind model)",
+  "version": "HWM14.123114",
+  "version_source": "README.txt line 2 'Version HWM14.123114'; VERSION HISTORY '31 Dec 2014 (Release version)'; hwm14.f90 header 'DATE July 8, 2014'",
+  "references": [
+   "Drob, D. P., et al. (2015), An update to the Horizontal Wind Model (HWM): The quiet time thermosphere, Earth and Space Science 2, 301-319, doi:10.1002/2014EA000089 (Supporting Information 'Software S1' = the .tgz below)",
+   "Drob, D. P., et al. (2008), An empirical model of the Earth's horizontal wind fields: HWM07, J. Geophys. Res. 113, doi:10.1029/2008JA013668 (cited in README.txt)",
+   "Emmert, J. T., et al. (2008), DWM07 global empirical model of upper thermospheric storm-induced disturbance winds, J. Geophys. Res. 113, doi:10.1029/2008JA013541 (cited in README.txt)"
+  ]
+ },
+ "sources": {
+  "nrl_public_repository": {
+   "url": "https://map.nrl.navy.mil/map/pub/nrl/HWM/HWM14/",
+   "listing_2026_10_01": [
+    "HWM14_ess224-sup-0002-supinfo/ (directory, 22-Nov-2016)",
+    "HWM14_ess224-sup-0001-supinfo.doc (29-Aug-2016, 1.1M)",
+    "HWM14_ess224-sup-0002-supinfo.tgz (29-Aug-2016, 211.8K)",
+    "HWM14_ess224.pdf (29-Aug-2016, 6.3M)"
+   ],
+   "package_used": {
+    "file": "HWM14_ess224-sup-0002-supinfo.tgz",
+    "url": "https://map.nrl.navy.mil/map/pub/nrl/HWM/HWM14/HWM14_ess224-sup-0002-supinfo.tgz",
+    "sha256": "4de451beeadef7b3ec3aa5b91129ea98866b9e7156cecf4be1343c33a6f57978",
+    "bytes": 216852,
+    "tar_member_prefix": "HWM14/ (macOS '._*' resource-fork members ignored)"
+   },
+   "extracted_files_sha256": {
+    "README.txt": "14b6e5e48d346ff034e2f6bfd7f26dc550945c9b90ad9661c7710e721ac89b15",
+    "hwm14.f90": "6bb4e031917b44c93201f0289ada8bf6f6d81eb3f292c89151c6937e2e7bf76e",
+    "hwm123114.bin": "6e445f8337c7efc815b7ff7f9f967d8a9a16b469d93df9c46e54930553beb906",
+    "dwm07b104i.dat": "f2b8eff002d55b0f6d49d202c73b7a9cb6685f2c6bb57f1291a2adc7aa07cf4f",
+    "gd2qd.dat": "6bb1f2384e30b409240ee92c32726ed2a3d73eb550c05e0969d1178032319804",
+    "checkhwm14.f90": "6a58eaafb065ffa9d34cfba409f865531b8cbe7c1a0ee274ca6c21fcbeb26091",
+    "makefile": "de8f0ddcfb1a24084342de89232c4407f6cf0436397cb7cd0561195753ab76cf",
+    "Check/gfortran.txt": "2b1d4f4f103be3531393c48bf32d034548babfb6c080549884cad9fd3a2c8652",
+    "Check/ifort.nopt.txt": "32f6e5b5a8b33ac8dffae73767296c36ae10105b613f43d01a6da27f7eb80bb5",
+    "Check/ifort.opt.txt": "e294e625690b22f0c988afc13a8556a583de95dc450d75ed3b0474001b4d0757"
+   },
+   "unpacked_directory_observation": "the individual files under HWM14_ess224-sup-0002-supinfo/ give the same sha256 for README.txt, hwm14.f90, hwm123114.bin, checkhwm14.f90 and makefile; the direct URLs of dwm07b104i.dat and gd2qd.dat returned an HTML 'Page not found' page (961 bytes) on 2026-10-01, so the .tgz is the authoritative copy",
+   "article_pdf": {
+    "file": "HWM14_ess224.pdf",
+    "url": "https://map.nrl.navy.mil/map/pub/nrl/HWM/HWM14/HWM14_ess224.pdf",
+    "sha256": "071658ddb154a2e8c225fcd644be70a6607434b9c5189b0c3d7f10abdfdb7c0d",
+    "pages": 19,
+    "identity": "Drob et al. 2015, Earth and Space Science 2, 301-319, doi:10.1002/2014EA000089 (PDF metadata keywords)"
+   }
+  },
+  "nasa_ccmc": {
+   "owner_cited_url": "https://kauai.ccmc.gsfc.nasa.gov/CMR/view/model/SimulationModel?resourceID=spase%3A%2F%2FCCMC%2FSimulationModel%2FHWM14%2F2014",
+   "owner_cited_url_status_2026_10_01": "HTTP 301 Moved Permanently to https://ccmc.gsfc.nasa.gov/news/major-updates (the CMR view is retired); the owner's description of it is recorded verbatim under authority",
+   "current_model_page": "https://ccmc.gsfc.nasa.gov/models/HWM14~2014/",
+   "current_model_page_content_2026_10_01": "Code Language: Fortran; Public Repository: https://map.nrl.navy.mil/map/pub/nrl/HWM/HWM14/; Instant Run: https://ccmc.gsfc.nasa.gov/instantrun/hwm; Runs-on-Request available; model contact Douglas Drob, NRL; users should refer to the CCMC General Publication Policy (https://ccmc.gsfc.nasa.gov/publication-policy/)",
+   "access_note": "read through a web-fetch tool (rendered page); a plain curl GET of the same URL returned the site's 404 page, so the content is recorded as fetched, not hashed"
+  },
+  "pypi_pyhwm2014": {
+   "package": "pyhwm2014 1.1 (only release, uploaded 2017-05-01)",
+   "url": "https://files.pythonhosted.org/packages/source/p/pyhwm2014/pyhwm2014-1.1.tar.gz",
+   "sha256": "0e1273fe642f1ebe920e4780135c3b137dbe640db2b7383c99b447be9bd25ba8",
+   "home_page": "https://github.com/rilma/pyHWM14",
+   "licence_metadata": "PKG-INFO 'License: UNKNOWN'; trove classifier 'License :: OSI Approved :: MIT License' (applies to the wrapper; NRL code inside carries no licence text)",
+   "contents": "source/hwm14.f90 byte-identical to the NRL file (sha256 6bb4e031...e76e); NO data files (hwm123114.bin, dwm07b104i.dat, gd2qd.dat absent from the sdist although setup.py globs data/*.dat and data/*.bin); a Python wrapper",
+   "assessment": "NOT USED: incomplete (no coefficient files), builds with numpy.distutils (absent from the NumPy 2.4.4 / Python 3.11 lock), and its setup.py calls pip/conda to install unrelated packages at build time. The NRL package is the primary source and is used directly"
+  }
+ },
+ "terms_and_licence": {
+  "package_text": "no licence, copyright or distribution text in README.txt, hwm14.f90 or checkhwm14.f90 (searched for licen / copyright / public / distribut on 2026-10-01)",
+  "article_licence_verbatim": "©2015. The Authors. This is an open access article under the terms of the Creative Commons Attribution-NonCommercial-NoDerivs License, which permits use and distribution in any medium, provided the original work is properly cited, the use is non-commercial and no modifications or adaptations are made.",
+  "article_licence_scope": "printed on the article; whether it extends to the Supporting Information software is not stated in the package (verify)",
+  "repository_policy_applied": "the repository redistributes NO HWM14 code or data file: it records URLs and sha256 identities, and stores only HWM14 model outputs (wind values) with full provenance. fetch-hwm14 downloads the package from NRL for a local build",
+  "open_question_for_owner": "terms for using HWM14 outputs in a commercial bid are not stated by NRL or CCMC beyond 'public repository'; the article licence is CC BY-NC-ND. Recorded as TERMS_NOT_EXPLICIT (verify) - not resolved by this lane"
+ },
+ "build_and_validation": {
+  "compiler": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 (apt package gfortran-13 13.3.0-6ubuntu2~24.04.1, Ubuntu 24.04.4 LTS, x86_64)",
+  "flags": "none (gfortran default, -O0), as NRL Check/gfortran.txt ('gfortran (v4.8.1) default flags'); -J <tmp> only places .mod files",
+  "nrl_reference_check": "checkhwm14.f90 output identical (text, 0 differing lines, max numeric diff 0.0) to Check/gfortran.txt; vs Check/ifort.nopt.txt 18 lines differ in formatting only (max numeric diff 0.0); vs Check/ifort.opt.txt max numeric diff 0.001 m/s (README: optimisation-level differences ~1e-4..1e-3)",
+  "recorded_in": "abep_sim/data/atmosphere_msis21_hwm14_orbit_v2.json producer.nrl_reference_check (rewritten by every build; the build refuses if the check fails)"
+ },
+ "standards_note": "ECSS-E-ST-10-04C Rev.1 clause 7.2.2 names HWM07 for thermospheric winds (recorded in atmosphere_orbit.py ATM-OI-01). HWM14 is the NRL update of HWM07 (same argument list, README 'HWM14 ARGUMENT CHANGES FROM HWM07: None'); the owner authorised HWM14 explicitly (A9.17 WINDS)",
+ "evidence": {
+  "evidence_level": 4,
+  "quantity_type": "model-derived (empirical climatological wind model output)",
+  "validation_status": "installation verified against the NRL reference test output; HWM14 itself not independently validated by the project"
+ }
+}

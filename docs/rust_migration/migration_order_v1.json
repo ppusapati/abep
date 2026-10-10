@@ -1,0 +1,2922 @@
+{
+ "schema": "abep_rust_migration_order_v1",
+ "id": "RUSTMIG-ORDER-V1",
+ "governing_record": {
+  "path": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+  "items": [
+   6,
+   7
+  ],
+  "json": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json"
+ },
+ "status": "PROPOSED_PLAN_POST_BID_FREEZE",
+ "inventory": {
+  "path": "docs/rust_migration/component_inventory_v1.json",
+  "inventoried_at_commit": "4b5563b643aa2103d999484ce4ccf5e2eca040e3"
+ },
+ "ordering_rules": [
+  "Item 7 initial order is kept: W0 TPMC (admitted), W1 intake / design-state geometry sweep, W2 compressor design search / gaspath, W3 mission propagation, W4 UQ / Monte Carlo driver, W5 P3 ray sampling; then every remaining active Python execution path (W6-W20).",
+  "The migration does not stop after W5: the objective is ZERO Python execution dependency (item 7), so every component in the inventory is scheduled, including those with little speed benefit (item 6).",
+  "Profiling ORDERS the waves, it never GATES them (item 6): no Rust kernel may be blocked for lack of a per-kernel profiling result once the item-6 baseline is registered.",
+  "Re-prioritisation: the order of W1-W5 and of the remaining waves is re-ranked once the A9.24 item-6 pre-migration performance rerun is registered (status PENDING). Re-ranking may move waves earlier or later; it never removes a component and never changes a parity contract already registered.",
+  "Dependency closure: a Rust component may not call Python at runtime. When a component depends on a module scheduled in a later wave (pull_forward_required), that dependency is ported and admitted first under its own parity contract (pulled forward), never shimmed. W1E lists the enablers already known to be needed by W1-W5.",
+  "Evidence builders (W18) port after the physics crates they import are ADMITTED (depends_on_waves); until then they remain Python and keep producing the reference outputs.",
+  "Components marked HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE may be FORMALLY_RETIRED_NOT_PORTED instead of ported (item 14 'or has been formally retired'), only by an explicit owner/lane decision recorded in docs/HISTORY.md; their committed outputs stay as immutable evidence.",
+  "One component (or one tightly coupled group named in its contract) per parity contract; no big-bang wave admission (item 1).",
+  "Nothing in this order applies before the bid freeze (item 2 / item 9): every wave starts after the bid-freeze SHA is recorded."
+ ],
+ "reprioritisation_input": {
+  "a9_24_item_6_performance_rerun": "PENDING (not registered at the inventory commit)",
+  "requirements_from_item_6": [
+   "final verified PRE-RUST-MIGRATION reference commit, exact SHA",
+   "new output directory; docs/performance/dedicated_baseline_2026_10_01/ never overwritten",
+   "same machine where practical; machine/environment manifest before and after",
+   "wall-clock and per-stage profiles; CPU/RAM utilisation",
+   "deterministic inputs; hashes of produced evidence"
+  ],
+  "current_ordering_evidence": {
+   "path": "docs/performance/dedicated_baseline_2026_10_01/baseline.json",
+   "measured_head": "3257374d0613c5be2f55c673f0e18b0e157fdc63 (base 98fbbb9)",
+   "ranking_at_that_head": [
+    "uq_modular_run_uq (PORT_CANDIDATE, deferred)",
+    "intake_response_surface_reduced (PORT_CANDIDATE)",
+    "archengine_close_architecture (MARGINAL, deferred)",
+    "mission_run_generic",
+    "system_evaluate_gas_path",
+    "uq6_robust_design",
+    "compressor_size_for",
+    "p3_view_factors_verify"
+   ],
+   "use": "informational only until the item-6 rerun is registered; drift addenda (DRIFT_AFTER_*) show the profiled sources have moved since"
+  },
+  "rule": "after registration, recompute each wave's addressable interpreter time from the new baseline and reorder W1-W5 and W6-W17 by it; record the re-ranking as migration_order_v2.json (v1 stays as history)"
+ },
+ "pulled_forward_dependencies_detected": [
+  {
+   "component": "abep_sim/(package entry points)",
+   "needs_wave": "W15"
+  },
+  {
+   "component": "abep_sim/archengine.py",
+   "needs_wave": "W15"
+  },
+  {
+   "component": "abep_sim/assessment/arch_constraints.py",
+   "needs_wave": "W16"
+  },
+  {
+   "component": "abep_sim/cathode_integration.py",
+   "needs_wave": "W13"
+  },
+  {
+   "component": "abep_sim/cathode_integration.py",
+   "needs_wave": "W18"
+  },
+  {
+   "component": "abep_sim/compressor.py",
+   "needs_wave": "W10"
+  },
+  {
+   "component": "abep_sim/design/architecture_optimizer.py",
+   "needs_wave": "W18"
+  },
+  {
+   "component": "abep_sim/design/compressor_synthesis.py",
+   "needs_wave": "W10"
+  },
+  {
+   "component": "abep_sim/design/compressor_synthesis.py",
+   "needs_wave": "W13"
+  },
+  {
+   "component": "abep_sim/design/icp_geometry_synthesis.py",
+   "needs_wave": "W18"
+  },
+  {
+   "component": "abep_sim/design/plenum_feed.py",
+   "needs_wave": "W10"
+  },
+  {
+   "component": "abep_sim/design/plenum_feed.py",
+   "needs_wave": "W13"
+  },
+  {
+   "component": "abep_sim/design/robust_optimizer.py",
+   "needs_wave": "W13"
+  },
+  {
+   "component": "abep_sim/hall1d.py",
+   "needs_wave": "W10"
+  },
+  {
+   "component": "abep_sim/icp_bench_lib.py",
+   "needs_wave": "W18"
+  },
+  {
+   "component": "abep_sim/intake_tpmc.py",
+   "needs_wave": "W1E"
+  },
+  {
+   "component": "abep_sim/mission5.py",
+   "needs_wave": "W10"
+  },
+  {
+   "component": "abep_sim/mission5.py",
+   "needs_wave": "W12"
+  },
+  {
+   "component": "abep_sim/mission5.py",
+   "needs_wave": "W8"
+  },
+  {
+   "component": "abep_sim/mission_env.py",
+   "needs_wave": "W10"
+  },
+  {
+   "component": "abep_sim/mission_uq.py",
+   "needs_wave": "W7"
+  },
+  {
+   "component": "abep_sim/mission_uq.py",
+   "needs_wave": "W8"
+  },
+  {
+   "component": "abep_sim/plasma_devices.py",
+   "needs_wave": "W10"
+  },
+  {
+   "component": "abep_sim/programme/arch_compare.py",
+   "needs_wave": "W15"
+  },
+  {
+   "component": "abep_sim/programme/closure.py",
+   "needs_wave": "W13"
+  },
+  {
+   "component": "abep_sim/programme/closure.py",
+   "needs_wave": "W14"
+  },
+  {
+   "component": "abep_sim/programme/closure.py",
+   "needs_wave": "W15"
+  },
+  {
+   "component": "abep_sim/programme/design_synthesis.py",
+   "needs_wave": "W15"
+  },
+  {
+   "component": "abep_sim/programme/sweep.py",
+   "needs_wave": "W15"
+  },
+  {
+   "component": "abep_sim/programme/uq_modular.py",
+   "needs_wave": "W13"
+  },
+  {
+   "component": "abep_sim/programme/uq_modular.py",
+   "needs_wave": "W15"
+  },
+  {
+   "component": "abep_sim/reservoir.py",
+   "needs_wave": "W10"
+  },
+  {
+   "component": "abep_sim/system.py",
+   "needs_wave": "W10"
+  },
+  {
+   "component": "abep_sim/system.py",
+   "needs_wave": "W11"
+  },
+  {
+   "component": "abep_sim/system.py",
+   "needs_wave": "W12"
+  },
+  {
+   "component": "abep_sim/system.py",
+   "needs_wave": "W9"
+  },
+  {
+   "component": "abep_sim/thermal_life.py",
+   "needs_wave": "W13"
+  },
+  {
+   "component": "abep_sim/transient.py",
+   "needs_wave": "W7"
+  },
+  {
+   "component": "abep_sim/transient.py",
+   "needs_wave": "W8"
+  },
+  {
+   "component": "abep_sim/uncertainty.py",
+   "needs_wave": "W7"
+  },
+  {
+   "component": "abep_sim/uncertainty.py",
+   "needs_wave": "W8"
+  },
+  {
+   "component": "abep_sim/uq6.py",
+   "needs_wave": "W10"
+  },
+  {
+   "component": "abep_sim/uq6.py",
+   "needs_wave": "W12"
+  },
+  {
+   "component": "abep_sim/uq6.py",
+   "needs_wave": "W7"
+  },
+  {
+   "component": "abep_sim/uq6.py",
+   "needs_wave": "W8"
+  },
+  {
+   "component": "abep_sim/uq6.py",
+   "needs_wave": "W9"
+  },
+  {
+   "component": "abep_sim/uq_modular.py",
+   "needs_wave": "W13"
+  },
+  {
+   "component": "abep_sim/uq_modular.py",
+   "needs_wave": "W7"
+  },
+  {
+   "component": "abep_sim/uq_modular.py",
+   "needs_wave": "W8"
+  },
+  {
+   "component": "docs/decisions/application/",
+   "needs_wave": "W19"
+  },
+  {
+   "component": "docs/experiments/hall_icp/p3_coupled_thermal/",
+   "needs_wave": "W18"
+  }
+ ],
+ "waves": [
+  {
+   "wave": "W0",
+   "name": "TPMC intake kernel (Kernel 1) - ADMITTED",
+   "a9_24_item_7_position": 1,
+   "status": "ADMITTED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_INTAKE_TPMC_PY",
+     "component": "abep_sim/intake_tpmc.py",
+     "loc_total": 475,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ],
+     "pull_forward_required": [
+      "W1E"
+     ],
+     "note": "Split component: the five TPMC trace kernels (_flux_weighted_entry/_drifting_maxwellian, _diffuse, _cll, trace_channel, clausing_transmission; lines ~94-223) are Kernel 1 = ADMITTED (abep_core, parity v2). intake_response / response_surface / build_frozen_surface / IntakeSurface (lines ~224-475) remain PYTHON_REFERENCE in W1."
+    }
+   ],
+   "non_py_execution_paths": [],
+   "note": "done: abep_core parity v2 ADMITTED (docs/performance/abep_core/parity_report_v2.json)",
+   "component_count": 1,
+   "loc_total": 475
+  },
+  {
+   "wave": "W1E",
+   "name": "Wave-1 enablers pulled forward (constants, frozen-data readers, operating inputs, config loading needed by W1-W5 Rust code)",
+   "a9_24_item_7_position": "enablers pulled forward for positions 2-6",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_ATMOSPHERE_PY",
+     "component": "abep_sim/atmosphere.py",
+     "loc_total": 171,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_CONFIGURATION_PY",
+     "component": "abep_sim/configuration.py",
+     "loc_total": 405,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-ABEP_SIM_CONSTANTS_PY",
+     "component": "abep_sim/constants.py",
+     "loc_total": 37,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_ENGINEERING_CONSTRAINTS_PY",
+     "component": "abep_sim/design/engineering_constraints.py",
+     "loc_total": 88,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_OPERATING_INPUTS_PY",
+     "component": "abep_sim/operating_inputs.py",
+     "loc_total": 51,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "note": "pulled forward: registered with the first W1 contract that needs them; each gets its own parity contract (no unverified shim)",
+   "component_count": 5,
+   "loc_total": 752
+  },
+  {
+   "wave": "W1",
+   "name": "intake / design-state geometry sweep",
+   "a9_24_item_7_position": 2,
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_DESIGN_INTAKE_SYNTHESIS_PY",
+     "component": "abep_sim/design/intake_synthesis.py",
+     "loc_total": 1598,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_INTAKE_PY",
+     "component": "abep_sim/intake.py",
+     "loc_total": 130,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_INTAKE_SURFACE_V2_SPEC_PY",
+     "component": "abep_sim/intake_surface_v2_spec.py",
+     "loc_total": 189,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-ABEP_SIM_INTAKE_TPMC_PY",
+     "component": "abep_sim/intake_tpmc.py",
+     "loc_total": 475,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ],
+     "note": "Split component: the five TPMC trace kernels (_flux_weighted_entry/_drifting_maxwellian, _diffuse, _cll, trace_channel, clausing_transmission; lines ~94-223) are Kernel 1 = ADMITTED (abep_core, parity v2). intake_response / response_surface / build_frozen_surface / IntakeSurface (lines ~224-475) remain PYTHON_REFERENCE in W1."
+    },
+    {
+     "id": "C-ABEP_SIM_SPACECRAFT_REFERENCE_DRAG_PY",
+     "component": "abep_sim/spacecraft_reference_drag.py",
+     "loc_total": 560,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 5,
+   "loc_total": 2952
+  },
+  {
+   "wave": "W2",
+   "name": "compressor design search / gaspath",
+   "a9_24_item_7_position": 3,
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_COMPRESSOR_PY",
+     "component": "abep_sim/compressor.py",
+     "loc_total": 317,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W2",
+      "W10"
+     ],
+     "pull_forward_required": [
+      "W10"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_COMPRESSOR_TRANSITIONAL_PY",
+     "component": "abep_sim/compressor_transitional.py",
+     "loc_total": 489,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W2"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_COMPRESSOR_SYNTHESIS_PY",
+     "component": "abep_sim/design/compressor_synthesis.py",
+     "loc_total": 995,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W2",
+      "W10",
+      "W13"
+     ],
+     "pull_forward_required": [
+      "W10",
+      "W13"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_FILTER_STAGE_PY",
+     "component": "abep_sim/design/filter_stage.py",
+     "loc_total": 1065,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_PLENUM_FEED_PY",
+     "component": "abep_sim/design/plenum_feed.py",
+     "loc_total": 1511,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W2",
+      "W10",
+      "W13"
+     ],
+     "pull_forward_required": [
+      "W10",
+      "W13"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_RESERVOIR_PY",
+     "component": "abep_sim/reservoir.py",
+     "loc_total": 180,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W10"
+     ],
+     "pull_forward_required": [
+      "W10"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_ROTOR_STRENGTH_PY",
+     "component": "abep_sim/rotor_strength.py",
+     "loc_total": 281,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 7,
+   "loc_total": 4838
+  },
+  {
+   "wave": "W3",
+   "name": "mission propagation",
+   "a9_24_item_7_position": 4,
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_MISSION5_PY",
+     "component": "abep_sim/mission5.py",
+     "loc_total": 195,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W3",
+      "W8",
+      "W10",
+      "W12"
+     ],
+     "pull_forward_required": [
+      "W8",
+      "W10",
+      "W12"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_MISSION_ENV_PY",
+     "component": "abep_sim/mission_env.py",
+     "loc_total": 173,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W10"
+     ],
+     "pull_forward_required": [
+      "W10"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_ORBIT_ATM_PY",
+     "component": "abep_sim/orbit_atm.py",
+     "loc_total": 100,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_STATEWISE_PY",
+     "component": "abep_sim/statewise.py",
+     "loc_total": 76,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-ABEP_SIM_TRANSIENT_PY",
+     "component": "abep_sim/transient.py",
+     "loc_total": 205,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W7",
+      "W8"
+     ],
+     "pull_forward_required": [
+      "W7",
+      "W8"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 5,
+   "loc_total": 749
+  },
+  {
+   "wave": "W4",
+   "name": "UQ / Monte Carlo driver",
+   "a9_24_item_7_position": 5,
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY",
+     "component": "abep_sim/design/robust_optimizer.py",
+     "loc_total": 451,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1",
+      "W2",
+      "W13"
+     ],
+     "pull_forward_required": [
+      "W13"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_MISSION_UQ_PY",
+     "component": "abep_sim/mission_uq.py",
+     "loc_total": 120,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1",
+      "W3",
+      "W4",
+      "W7",
+      "W8"
+     ],
+     "pull_forward_required": [
+      "W7",
+      "W8"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_PROGRAMME_UQ_MODULAR_PY",
+     "component": "abep_sim/programme/uq_modular.py",
+     "loc_total": 57,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W4",
+      "W13",
+      "W15"
+     ],
+     "pull_forward_required": [
+      "W13",
+      "W15"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_UNCERTAINTY_PY",
+     "component": "abep_sim/uncertainty.py",
+     "loc_total": 256,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1",
+      "W7",
+      "W8"
+     ],
+     "pull_forward_required": [
+      "W7",
+      "W8"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_UQ6_PY",
+     "component": "abep_sim/uq6.py",
+     "loc_total": 293,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W2",
+      "W3",
+      "W7",
+      "W8",
+      "W9",
+      "W10",
+      "W12"
+     ],
+     "pull_forward_required": [
+      "W7",
+      "W8",
+      "W9",
+      "W10",
+      "W12"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_UQ_MODULAR_PY",
+     "component": "abep_sim/uq_modular.py",
+     "loc_total": 100,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W3",
+      "W4",
+      "W7",
+      "W8",
+      "W13"
+     ],
+     "pull_forward_required": [
+      "W7",
+      "W8",
+      "W13"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 6,
+   "loc_total": 1277
+  },
+  {
+   "wave": "W5",
+   "name": "P3 ray sampling (view factors) and coupled-thermal library",
+   "a9_24_item_7_position": 6,
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_ICP_THERMAL_LIB_PY",
+     "component": "abep_sim/icp_thermal_lib.py",
+     "loc_total": 509,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W5"
+     ]
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_P3_COUPLED_THERMAL",
+     "component": "docs/experiments/hall_icp/p3_coupled_thermal/",
+     "loc_total": 4927,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "pull_forward_required": [
+      "W18"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 2,
+   "loc_total": 5436
+  },
+  {
+   "wave": "W6",
+   "name": "atmosphere / orbit wrappers",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_ATMOSPHERE_ORBIT_PY",
+     "component": "abep_sim/atmosphere_orbit.py",
+     "loc_total": 1479,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W3"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_ATMOSPHERE_ORBIT_V2_PY",
+     "component": "abep_sim/atmosphere_orbit_v2.py",
+     "loc_total": 1180,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W3",
+      "W6"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 2,
+   "loc_total": 2659
+  },
+  {
+   "wave": "W7",
+   "name": "chemistry / support calculations (incl. rate-table builders and chemistry audits)",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_AOCHEM_PY",
+     "component": "abep_sim/aochem.py",
+     "loc_total": 113,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_PLASMA_CHEM_PY",
+     "component": "abep_sim/plasma_chem.py",
+     "loc_total": 261,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_RATE_TABLES_PY",
+     "component": "abep_sim/rate_tables.py",
+     "loc_total": 66,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-SCRIPTS_AUDIT_N2_COMPLETENESS_FINAL_PY",
+     "component": "scripts/audit_n2_completeness_final.py",
+     "loc_total": 210,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_AUDIT_N2_DISSOCIATIVE_IONIZATION_PY",
+     "component": "scripts/audit_n2_dissociative_ionization.py",
+     "loc_total": 126,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_AUDIT_N2_VIBRATIONAL_EXCITATION_PY",
+     "component": "scripts/audit_n2_vibrational_excitation.py",
+     "loc_total": 183,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_MULTIPLY_CHARGED_TABLES_PY",
+     "component": "scripts/build_multiply_charged_tables.py",
+     "loc_total": 156,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_DISSOCIATION_TABLE_PY",
+     "component": "scripts/build_n2_dissociation_table.py",
+     "loc_total": 65,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_DISSOCIATIVE_IONIZATION_TABLE_PY",
+     "component": "scripts/build_n2_dissociative_ionization_table.py",
+     "loc_total": 97,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_ELASTIC_SONG2023_TABLE_PY",
+     "component": "scripts/build_n2_elastic_song2023_table.py",
+     "loc_total": 78,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_ELECTRONIC_EXCITATION_TABLES_PY",
+     "component": "scripts/build_n2_electronic_excitation_tables.py",
+     "loc_total": 147,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_IONIZATION_SONG2023_TABLE_PY",
+     "component": "scripts/build_n2_ionization_song2023_table.py",
+     "loc_total": 69,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_ROTATIONAL_TABLES_PY",
+     "component": "scripts/build_n2_rotational_tables.py",
+     "loc_total": 42,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_TO_N_Z2PLUS_TABLE_PY",
+     "component": "scripts/build_n2_to_n_z2plus_table.py",
+     "loc_total": 62,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N2_VIBRATIONAL_TABLES_PY",
+     "component": "scripts/build_n2_vibrational_tables.py",
+     "loc_total": 74,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N_ELASTIC_TABLES_PY",
+     "component": "scripts/build_n_elastic_tables.py",
+     "loc_total": 125,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N_IONIZATION_TABLE_PY",
+     "component": "scripts/build_n_ionization_table.py",
+     "loc_total": 66,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_BUILD_N_Z1PLUS_TO_Z2PLUS_TABLE_PY",
+     "component": "scripts/build_n_z1plus_to_z2plus_table.py",
+     "loc_total": 66,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_CHEMISTRY_N2_DOMAIN_EXTENSION_REQUIREMENTS_PY",
+     "component": "scripts/chemistry/n2_domain_extension_requirements.py",
+     "loc_total": 892,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-SCRIPTS_MAKE_N2_VARIANT_CONFIGS_PY",
+     "component": "scripts/make_n2_variant_configs.py",
+     "loc_total": 98,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-SCRIPTS_N2_CLOSURE_TABLE_PY",
+     "component": "scripts/n2_closure_table.py",
+     "loc_total": 136,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-SCRIPTS_SUMMARIZE_BLIND_ENVELOPE_PY",
+     "component": "scripts/summarize_blind_envelope.py",
+     "loc_total": 79,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 22,
+   "loc_total": 3211
+  },
+  {
+   "wave": "W8",
+   "name": "system closure",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_ARCH_BOUNDARY_PY",
+     "component": "abep_sim/arch_boundary.py",
+     "loc_total": 158,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-ABEP_SIM_CATHODE_INTEGRATION_PY",
+     "component": "abep_sim/cathode_integration.py",
+     "loc_total": 1065,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W13",
+      "W18"
+     ],
+     "pull_forward_required": [
+      "W13",
+      "W18"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_H1_GEOMETRY_PY",
+     "component": "abep_sim/h1_geometry.py",
+     "loc_total": 64,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-ABEP_SIM_HALL1D_PY",
+     "component": "abep_sim/hall1d.py",
+     "loc_total": 189,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W1E",
+      "W7",
+      "W10"
+     ],
+     "pull_forward_required": [
+      "W10"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_INTERSTAGE_PY",
+     "component": "abep_sim/interstage.py",
+     "loc_total": 1917,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_PLASMA_DEVICES_PY",
+     "component": "abep_sim/plasma_devices.py",
+     "loc_total": 553,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W1E",
+      "W7",
+      "W10"
+     ],
+     "pull_forward_required": [
+      "W10"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_PROGRAMME_CLOSURE_PY",
+     "component": "abep_sim/programme/closure.py",
+     "loc_total": 64,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W13",
+      "W14",
+      "W15"
+     ],
+     "pull_forward_required": [
+      "W13",
+      "W14",
+      "W15"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_SIZING_PY",
+     "component": "abep_sim/sizing.py",
+     "loc_total": 92,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W8"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_SYSTEM_PY",
+     "component": "abep_sim/system.py",
+     "loc_total": 476,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W2",
+      "W7",
+      "W8",
+      "W9",
+      "W10",
+      "W11",
+      "W12"
+     ],
+     "pull_forward_required": [
+      "W9",
+      "W10",
+      "W11",
+      "W12"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_THRUSTER_PY",
+     "component": "abep_sim/thruster.py",
+     "loc_total": 211,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_XE_LEDGER_PY",
+     "component": "abep_sim/xe_ledger.py",
+     "loc_total": 460,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 11,
+   "loc_total": 5249
+  },
+  {
+   "wave": "W9",
+   "name": "power",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_BUS_BOUNDARY_A9_PY",
+     "component": "abep_sim/bus_boundary_a9.py",
+     "loc_total": 956,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY",
+     "component": "abep_sim/bus_boundary_a9_v2.py",
+     "loc_total": 122,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W9"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_ICP_BENCH_LIB_PY",
+     "component": "abep_sim/icp_bench_lib.py",
+     "loc_total": 174,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "pull_forward_required": [
+      "W18"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_MAGNET_POWER_PY",
+     "component": "abep_sim/magnet_power.py",
+     "loc_total": 336,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-ABEP_SIM_PPU_PY",
+     "component": "abep_sim/ppu.py",
+     "loc_total": 116,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 5,
+   "loc_total": 1704
+  },
+  {
+   "wave": "W10",
+   "name": "thermal",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_MATERIALS_PY",
+     "component": "abep_sim/materials.py",
+     "loc_total": 104,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_RADIATION_PY",
+     "component": "abep_sim/radiation.py",
+     "loc_total": 94,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-ABEP_SIM_THERMAL_PY",
+     "component": "abep_sim/thermal.py",
+     "loc_total": 138,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-ABEP_SIM_THERMAL_LIFE_PY",
+     "component": "abep_sim/thermal_life.py",
+     "loc_total": 979,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W13"
+     ],
+     "pull_forward_required": [
+      "W13"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 4,
+   "loc_total": 1315
+  },
+  {
+   "wave": "W11",
+   "name": "mass",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_MASS_BOM_PY",
+     "component": "abep_sim/mass_bom.py",
+     "loc_total": 880,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W8",
+      "W10"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 1,
+   "loc_total": 880
+  },
+  {
+   "wave": "W12",
+   "name": "lifetime",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_LIFE_PY",
+     "component": "abep_sim/life.py",
+     "loc_total": 139,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W10"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 1,
+   "loc_total": 139
+  },
+  {
+   "wave": "W13",
+   "name": "architecture engine and design synthesis (incl. Hall-map consumers)",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_ARCH_COMPARE_PY",
+     "component": "abep_sim/arch_compare.py",
+     "loc_total": 890,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W13"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_ARCHENGINE_PY",
+     "component": "abep_sim/archengine.py",
+     "loc_total": 1014,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W3",
+      "W7",
+      "W8",
+      "W9",
+      "W10",
+      "W11",
+      "W12",
+      "W15"
+     ],
+     "pull_forward_required": [
+      "W15"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_BREAKEVEN_PY",
+     "component": "abep_sim/breakeven.py",
+     "loc_total": 746,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_CONVERGENCE_PY",
+     "component": "abep_sim/convergence.py",
+     "loc_total": 124,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W3",
+      "W7",
+      "W8",
+      "W13"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY",
+     "component": "abep_sim/design/a9_19_architecture.py",
+     "loc_total": 293,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY",
+     "component": "abep_sim/design/architecture_optimizer.py",
+     "loc_total": 1237,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W2",
+      "W8",
+      "W9",
+      "W13",
+      "W18"
+     ],
+     "pull_forward_required": [
+      "W18"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_ICP_GEOMETRY_SYNTHESIS_PY",
+     "component": "abep_sim/design/icp_geometry_synthesis.py",
+     "loc_total": 806,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W5",
+      "W9",
+      "W18"
+     ],
+     "pull_forward_required": [
+      "W18"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_DESIGN_UPSTREAM_A9_13_PY",
+     "component": "abep_sim/design/upstream_a9_13.py",
+     "loc_total": 818,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1",
+      "W2",
+      "W3",
+      "W13"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_EXPLORER_PY",
+     "component": "abep_sim/explorer.py",
+     "loc_total": 111,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-ABEP_SIM_HALL_ENSEMBLE_PY",
+     "component": "abep_sim/hall_ensemble.py",
+     "loc_total": 168,
+     "activity": "ACTIVE",
+     "depends_on_waves": []
+    },
+    {
+     "id": "C-ABEP_SIM_HALL_MAP_PY",
+     "component": "abep_sim/hall_map.py",
+     "loc_total": 99,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W13"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_HALLMAP_REGISTRY_PY",
+     "component": "abep_sim/hallmap_registry.py",
+     "loc_total": 572,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W13"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_PROGRAMME_ARCH_COMPARE_PY",
+     "component": "abep_sim/programme/arch_compare.py",
+     "loc_total": 78,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W13",
+      "W15"
+     ],
+     "pull_forward_required": [
+      "W15"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_PROGRAMME_DESIGN_SYNTHESIS_PY",
+     "component": "abep_sim/programme/design_synthesis.py",
+     "loc_total": 291,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W2",
+      "W9",
+      "W13",
+      "W15"
+     ],
+     "pull_forward_required": [
+      "W15"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_VALIDATION_PY",
+     "component": "abep_sim/validation.py",
+     "loc_total": 111,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 15,
+   "loc_total": 7358
+  },
+  {
+   "wave": "W14",
+   "name": "sweep generation and CLI entry points",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_PACKAGE_ENTRY_POINTS",
+     "component": "abep_sim/(package entry points)",
+     "loc_total": 56,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W14",
+      "W15"
+     ],
+     "pull_forward_required": [
+      "W15"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_PROGRAMME_SWEEP_PY",
+     "component": "abep_sim/programme/sweep.py",
+     "loc_total": 195,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1",
+      "W8",
+      "W14",
+      "W15"
+     ],
+     "pull_forward_required": [
+      "W15"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 2,
+   "loc_total": 251
+  },
+  {
+   "wave": "W15",
+   "name": "assessment",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_ASSESSMENT_ARCH_CONSTRAINTS_PY",
+     "component": "abep_sim/assessment/arch_constraints.py",
+     "loc_total": 93,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W11",
+      "W13",
+      "W16"
+     ],
+     "pull_forward_required": [
+      "W16"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_ASSESSMENT_CLOSURE_CHECKS_PY",
+     "component": "abep_sim/assessment/closure_checks.py",
+     "loc_total": 209,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W8"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_ASSESSMENT_DESIGN_GATES_PY",
+     "component": "abep_sim/assessment/design_gates.py",
+     "loc_total": 484,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W4",
+      "W9",
+      "W13"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_THRESHOLDS_PY",
+     "component": "abep_sim/thresholds.py",
+     "loc_total": 94,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1",
+      "W4",
+      "W7",
+      "W8"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 4,
+   "loc_total": 880
+  },
+  {
+   "wave": "W16",
+   "name": "hard gates",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_HARD_GATES_PY",
+     "component": "abep_sim/hard_gates.py",
+     "loc_total": 1054,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W13"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 1,
+   "loc_total": 1054
+  },
+  {
+   "wave": "W17",
+   "name": "configuration builders / loaders and hash verification",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-SCRIPTS_CONFIG_BUILD_CONFIG_PY",
+     "component": "scripts/config/build_config.py",
+     "loc_total": 871,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W2",
+      "W10"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_CONFIG_BUILD_RESULT_SCHEMAS_PY",
+     "component": "scripts/config/build_result_schemas.py",
+     "loc_total": 161,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1",
+      "W8",
+      "W15"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [],
+   "component_count": 2,
+   "loc_total": 1032
+  },
+  {
+   "wave": "W18",
+   "name": "evidence builders and campaign / scoring / forensics / orchestration scripts",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-DOCS_ARCHITECTURE_FREEZE_CANDIDATE",
+     "component": "docs/architecture/freeze_candidate/",
+     "loc_total": 3555,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1",
+      "W2",
+      "W13",
+      "W18"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_AUX_BUS",
+     "component": "docs/architecture_comparison/aux_bus/",
+     "loc_total": 1162,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W9",
+      "W13",
+      "W16"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_CATHODE_INTEGRATION",
+     "component": "docs/architecture_comparison/cathode_integration/",
+     "loc_total": 65,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W8"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_COMPRESSOR_DOWNSELECT",
+     "component": "docs/architecture_comparison/compressor_downselect/",
+     "loc_total": 1315,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W2",
+      "W10",
+      "W18"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_ELECTRICAL_CLOSURE_TOOLS",
+     "component": "docs/architecture_comparison/electrical_closure/tools/",
+     "loc_total": 864,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W9"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_EXPERIMENT_PACKAGE",
+     "component": "docs/architecture_comparison/experiment_package/",
+     "loc_total": 1766,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W8",
+      "W13",
+      "W16",
+      "W18"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_EXPERIMENT_PROTOCOL",
+     "component": "docs/architecture_comparison/experiment_protocol/",
+     "loc_total": 509,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_FAILURE_TREE",
+     "component": "docs/architecture_comparison/failure_tree/",
+     "loc_total": 314,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_FEED_STATE_CLOSURE",
+     "component": "docs/architecture_comparison/feed_state_closure/",
+     "loc_total": 1518,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W2",
+      "W8",
+      "W10",
+      "W13",
+      "W18"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_HALL_REFERENCE",
+     "component": "docs/architecture_comparison/hall_reference/",
+     "loc_total": 414,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_LOCK1",
+     "component": "docs/architecture_comparison/lock1/",
+     "loc_total": 1461,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W1E",
+      "W18"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_MINIMUM_DECISIVE_EXPERIMENT",
+     "component": "docs/architecture_comparison/minimum_decisive_experiment/",
+     "loc_total": 821,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_OVERLAYS_ECR",
+     "component": "docs/architecture_comparison/overlays/ecr/",
+     "loc_total": 1994,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W8",
+      "W13",
+      "W14"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_OVERLAYS_HALL_SUSTAINMENT",
+     "component": "docs/architecture_comparison/overlays/hall_sustainment/",
+     "loc_total": 2248,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_OVERLAYS_RF",
+     "component": "docs/architecture_comparison/overlays/rf/",
+     "loc_total": 1509,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W1E",
+      "W8",
+      "W13"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_POWER_BOUNDARY_TOOLS",
+     "component": "docs/architecture_comparison/power_boundary/tools/",
+     "loc_total": 312,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W2",
+      "W3",
+      "W8",
+      "W9",
+      "W13"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_POWER_BOUNDARY_A9",
+     "component": "docs/architecture_comparison/power_boundary_a9/",
+     "loc_total": 1049,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W9"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_POWER_BOUNDARY_A9_V2",
+     "component": "docs/architecture_comparison/power_boundary_a9_v2/",
+     "loc_total": 1501,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W4",
+      "W9",
+      "W13",
+      "W18"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_ARCHITECTURE_COMPARISON_VETO_LAYER",
+     "component": "docs/architecture_comparison/veto_layer/",
+     "loc_total": 1478,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W10",
+      "W11",
+      "W13",
+      "W16"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_BID_PACKAGE",
+     "component": "docs/bid/package/",
+     "loc_total": 713,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_BUDGETS_MASS_A9",
+     "component": "docs/budgets/mass_a9/",
+     "loc_total": 1844,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W11"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_BUDGETS_MASS_POWER_A9_V2",
+     "component": "docs/budgets/mass_power_a9_v2/",
+     "loc_total": 1767,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W9",
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_BUDGETS_MASS_POWER_A9_V3",
+     "component": "docs/budgets/mass_power_a9_v3/",
+     "loc_total": 1421,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W9",
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_BUDGETS_OWNER_DECISIONS",
+     "component": "docs/budgets/owner_decisions/",
+     "loc_total": 3828,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_BUDGETS_SUBSYSTEM_MATURITY",
+     "component": "docs/budgets/subsystem_maturity/",
+     "loc_total": 2745,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W8",
+      "W10",
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V2",
+     "component": "docs/budgets/xe_accounting_a9_v2/",
+     "loc_total": 1510,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_BUDGETS_XE_ACCOUNTING_A9_V3",
+     "component": "docs/budgets/xe_accounting_a9_v3/",
+     "loc_total": 1430,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_BUDGETS_XE_LEDGER",
+     "component": "docs/budgets/xe_ledger/",
+     "loc_total": 1088,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W1E",
+      "W8"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_BUDGETS_XE_LEDGER_A9",
+     "component": "docs/budgets/xe_ledger_a9/",
+     "loc_total": 1400,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_CHEMISTRY_N2_DOMAIN_EXTENSION_DX5",
+     "component": "docs/chemistry/n2_domain_extension/dx5/",
+     "loc_total": 509,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_CHEMISTRY_N2_DOMAIN_EXTENSION_DX5_ACQUISITION",
+     "component": "docs/chemistry/n2_domain_extension/dx5/acquisition/",
+     "loc_total": 335,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_CHEMISTRY_N2_DOMAIN_EXTENSION_DX5_CURATION",
+     "component": "docs/chemistry/n2_domain_extension/dx5/curation/",
+     "loc_total": 224,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_CHEMISTRY_O_O2_V0",
+     "component": "docs/chemistry/o_o2/v0/",
+     "loc_total": 710,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7"
+     ],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_DECISIONS_APPLICATION",
+     "component": "docs/decisions/application/",
+     "loc_total": 1822,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W2",
+      "W3",
+      "W4",
+      "W6",
+      "W8",
+      "W9",
+      "W13",
+      "W15",
+      "W18",
+      "W19"
+     ],
+     "sub_batch": "W18d",
+     "pull_forward_required": [
+      "W19"
+     ]
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_F1_INTAKE",
+     "component": "docs/design_synthesis/f1_intake/",
+     "loc_total": 821,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W10",
+      "W15",
+      "W18"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_F2_FILTER",
+     "component": "docs/design_synthesis/f2_filter/",
+     "loc_total": 708,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1",
+      "W2",
+      "W8",
+      "W11",
+      "W15",
+      "W18"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_F3_COMPRESSOR",
+     "component": "docs/design_synthesis/f3_compressor/",
+     "loc_total": 561,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W2",
+      "W10",
+      "W15"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_F4_PLENUM",
+     "component": "docs/design_synthesis/f4_plenum/",
+     "loc_total": 1423,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W2",
+      "W10",
+      "W13",
+      "W15"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_F6_ICP_GEOMETRY",
+     "component": "docs/design_synthesis/f6_icp_geometry/",
+     "loc_total": 607,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W13",
+      "W18"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_F7_F8_OPTIMIZER",
+     "component": "docs/design_synthesis/f7_f8_optimizer/",
+     "loc_total": 810,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1",
+      "W2",
+      "W4",
+      "W9",
+      "W13",
+      "W15"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_DESIGN_SYNTHESIS_SPACECRAFT_REFERENCE_DRAG",
+     "component": "docs/design_synthesis/spacecraft_reference_drag/",
+     "loc_total": 157,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-DOCS_EVIDENCE_COMPRESSOR_TRANSITIONAL",
+     "component": "docs/evidence/compressor_transitional/",
+     "loc_total": 494,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W2"
+     ],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_EVIDENCE_ECR_SOURCE",
+     "component": "docs/evidence/ecr_source/",
+     "loc_total": 1184,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_EVIDENCE_HALL_SUSTAINMENT",
+     "component": "docs/evidence/hall_sustainment/",
+     "loc_total": 1531,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_EVIDENCE_ICP_NEUTRALIZER",
+     "component": "docs/evidence/icp_neutralizer/",
+     "loc_total": 1222,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_EVIDENCE_RF_SOURCE",
+     "component": "docs/evidence/rf_source/",
+     "loc_total": 218,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1",
+     "component": "docs/evidence/sputter_yields_v1/",
+     "loc_total": 864,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_CAPABILITY_DEMO",
+     "component": "docs/experiments/capability_demo/",
+     "loc_total": 2080,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_INTEGRATION",
+     "component": "docs/experiments/hall_icp/integration/",
+     "loc_total": 6623,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W9",
+      "W11",
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_INTEGRATION_M16_V4",
+     "component": "docs/experiments/hall_icp/integration/m16_v4/",
+     "loc_total": 1332,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W5",
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_INTEGRATION_M16_V5",
+     "component": "docs/experiments/hall_icp/integration/m16_v5/",
+     "loc_total": 1133,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_P1_ICP_BENCH",
+     "component": "docs/experiments/hall_icp/p1_icp_bench/",
+     "loc_total": 8189,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W13",
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP",
+     "component": "docs/experiments/hall_icp/p2_impedance_map/",
+     "loc_total": 6531,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W13",
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_P4_ANODE_MATERIALS",
+     "component": "docs/experiments/hall_icp/p4_anode_materials/",
+     "loc_total": 2793,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_PREREG_FRAMEWORK",
+     "component": "docs/experiments/hall_icp/prereg_framework/",
+     "loc_total": 1171,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W9",
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_PROGRAMME",
+     "component": "docs/experiments/hall_icp/programme/",
+     "loc_total": 882,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_UNCERTAINTY_BUDGET",
+     "component": "docs/experiments/hall_icp/uncertainty_budget/",
+     "loc_total": 1899,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HALL_ICP_VALIDATION_INPUTS",
+     "component": "docs/experiments/hall_icp/validation_inputs/",
+     "loc_total": 945,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_HARDWARE",
+     "component": "docs/experiments/hardware/",
+     "loc_total": 266,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_INSTRUMENTATION",
+     "component": "docs/experiments/instrumentation/",
+     "loc_total": 2006,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_LIFETIME_AO",
+     "component": "docs/experiments/lifetime_ao/",
+     "loc_total": 2558,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_MAGNET_COIL",
+     "component": "docs/experiments/magnet_coil/",
+     "loc_total": 1283,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_EXPERIMENTS_PHASE1_PREREG_FRAMEWORK",
+     "component": "docs/experiments/phase1_prereg_framework/",
+     "loc_total": 1702,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W8"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H1_FREEZE_CANDIDATE",
+     "component": "docs/hardware/h1_freeze_candidate/",
+     "loc_total": 1868,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W13",
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_1_HALL_CHAMBER_MAGNET",
+     "component": "docs/hardware/h2/h2_1_hall_chamber_magnet/",
+     "loc_total": 1649,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W9"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_2_CATHODE_INTEGRATION",
+     "component": "docs/hardware/h2/h2_2_cathode_integration/",
+     "loc_total": 1775,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_3_GAS_PATH_PLENUM",
+     "component": "docs/hardware/h2/h2_3_gas_path_plenum/",
+     "loc_total": 2147,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W8"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_4_PPU_BUS",
+     "component": "docs/hardware/h2/h2_4_ppu_bus/",
+     "loc_total": 1663,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W9"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_5_THERMAL_NETWORK",
+     "component": "docs/hardware/h2/h2_5_thermal_network/",
+     "loc_total": 1434,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W10"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_6_DIAGNOSTICS_FIXTURE",
+     "component": "docs/hardware/h2/h2_6_diagnostics_fixture/",
+     "loc_total": 2286,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W8"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_H2_7_MECHANICAL_BOM",
+     "component": "docs/hardware/h2/h2_7_mechanical_bom/",
+     "loc_total": 1548,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_HARDWARE_H2_A9_REVISIONS",
+     "component": "docs/hardware/h2_a9_revisions/",
+     "loc_total": 3493,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_INTERFACES_ICP_NEUTRALIZER",
+     "component": "docs/interfaces/icp_neutralizer/",
+     "loc_total": 1550,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W9",
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_INTERFACES_PREIONIZER_MODULE",
+     "component": "docs/interfaces/preionizer_module/",
+     "loc_total": 1439,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W8",
+      "W10"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_MILESTONES_BUNDLE1",
+     "component": "docs/milestones/bundle1/",
+     "loc_total": 2165,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W9",
+      "W13",
+      "W16"
+     ],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_O4_DISPOSITION_MATRIX",
+     "component": "docs/o4/disposition_matrix/",
+     "loc_total": 667,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_O4_JOHNSONLOW_ASSESSMENT",
+     "component": "docs/o4/johnsonlow_assessment/",
+     "loc_total": 739,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_PROCUREMENT_RFQ_A9",
+     "component": "docs/procurement/rfq_a9/",
+     "loc_total": 1919,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W8"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_PROCUREMENT_RFQ_A9_V2",
+     "component": "docs/procurement/rfq_a9_v2/",
+     "loc_total": 3707,
+     "activity": "HISTORICAL_LINE_OR_SUPERSEDED_CANDIDATE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_PROCUREMENT_RFQ_A9_V3",
+     "component": "docs/procurement/rfq_a9_v3/",
+     "loc_total": 3108,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-DOCS_REQUIREMENTS_RFP_OFFICIAL",
+     "component": "docs/requirements/rfp_official/",
+     "loc_total": 351,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_REQUIREMENTS_RVM_A9",
+     "component": "docs/requirements/rvm_a9/",
+     "loc_total": 4040,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_TRACEABILITY",
+     "component": "docs/traceability/",
+     "loc_total": 704,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_V2_QUESTION_A",
+     "component": "docs/v2/question_a/",
+     "loc_total": 751,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-DOCS_VALIDATION_HALL_TRANSPORT_V2_PREREG",
+     "component": "docs/validation/hall_transport_v2_prereg/",
+     "loc_total": 72,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_ARCHITECTURE_BUILD_BREAKEVEN_SURFACES_PY",
+     "component": "scripts/architecture/build_breakeven_surfaces.py",
+     "loc_total": 790,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W13"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-SCRIPTS_ARCHITECTURE_BUILD_COMPARISON_GRID_PY",
+     "component": "scripts/architecture/build_comparison_grid.py",
+     "loc_total": 1017,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W13"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-SCRIPTS_ARCHITECTURE_BUILD_DECISION_DOSSIER_PY",
+     "component": "scripts/architecture/build_decision_dossier.py",
+     "loc_total": 1036,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W8",
+      "W10",
+      "W13",
+      "W16"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-SCRIPTS_ARCHITECTURE_BUILD_FEED_ENVELOPE_PY",
+     "component": "scripts/architecture/build_feed_envelope.py",
+     "loc_total": 1668,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W2",
+      "W4",
+      "W8",
+      "W10",
+      "W13"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-SCRIPTS_ARCHITECTURE_SCALING_SIMILARITY_PY",
+     "component": "scripts/architecture/scaling_similarity.py",
+     "loc_total": 1759,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W8",
+      "W10",
+      "W13"
+     ],
+     "sub_batch": "W18b"
+    },
+    {
+     "id": "C-SCRIPTS_AUDIT_P5_N2_CAMPAIGN_RECORDS_PY",
+     "component": "scripts/audit_p5_n2_campaign_records.py",
+     "loc_total": 61,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_AUDIT_P5_N2_MEASUREMENTS_PY",
+     "component": "scripts/audit_p5_n2_measurements.py",
+     "loc_total": 187,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_DIGITIZE_P5_BFIELD_PY",
+     "component": "scripts/digitize_p5_bfield.py",
+     "loc_total": 59,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_EVIDENCE_EVIDENCE_ARCHIVE_PY",
+     "component": "scripts/evidence/evidence_archive.py",
+     "loc_total": 124,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-SCRIPTS_EVIDENCE_F1_ARCHIVE_PY",
+     "component": "scripts/evidence/f1_archive.py",
+     "loc_total": 251,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W13",
+      "W18"
+     ],
+     "sub_batch": "W18d"
+    },
+    {
+     "id": "C-SCRIPTS_EXPERIMENTS_S1_READINESS_PY",
+     "component": "scripts/experiments/s1_readiness.py",
+     "loc_total": 632,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-SCRIPTS_EXPERIMENTS_S1A_READINESS_PY",
+     "component": "scripts/experiments/s1a_readiness.py",
+     "loc_total": 774,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18c"
+    },
+    {
+     "id": "C-SCRIPTS_FORENSICS_P5_N2_V1_EXB_PHYSICS_PY",
+     "component": "scripts/forensics/p5_n2_v1_exb_physics.py",
+     "loc_total": 604,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_FORENSICS_P5_N2_V1_OOD_ATTRIBUTION_PY",
+     "component": "scripts/forensics/p5_n2_v1_ood_attribution.py",
+     "loc_total": 994,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_FORENSICS_P5_N2_V1_SCOREABLE_SUBSET_PY",
+     "component": "scripts/forensics/p5_n2_v1_scoreable_subset.py",
+     "loc_total": 1386,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_FREEZE_P5_N2_DATASET_PY",
+     "component": "scripts/freeze_p5_n2_dataset.py",
+     "loc_total": 141,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_IDENTIFY_P5_TRANSPORT_PY",
+     "component": "scripts/identify_p5_transport.py",
+     "loc_total": 256,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_MAKE_P5_N2_CASES_PY",
+     "component": "scripts/make_p5_n2_cases.py",
+     "loc_total": 68,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_MAKE_P5_N2_LAUNCH_MANIFESTS_PY",
+     "component": "scripts/make_p5_n2_launch_manifests.py",
+     "loc_total": 80,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_MAKE_P5_XENON_CASES_PY",
+     "component": "scripts/make_p5_xenon_cases.py",
+     "loc_total": 68,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_MAKE_VALIDATION_RELEASE_PY",
+     "component": "scripts/make_validation_release.py",
+     "loc_total": 106,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W13"
+     ],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_ORCHESTRATION_LANE_STATUS_PY",
+     "component": "scripts/orchestration/lane_status.py",
+     "loc_total": 303,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W13",
+      "W18"
+     ],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_ORCHESTRATION_O4_SCORE_DATASET_PY",
+     "component": "scripts/orchestration/o4_score_dataset.py",
+     "loc_total": 51,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_ORCHESTRATION_TRIGGER_LEDGER_PY",
+     "component": "scripts/orchestration/trigger_ledger.py",
+     "loc_total": 167,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_REPORT_P5_N2_CAMPAIGN_PY",
+     "component": "scripts/report_p5_n2_campaign.py",
+     "loc_total": 144,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_RESCORE_P5_AXIAL_THRUST_PY",
+     "component": "scripts/rescore_p5_axial_thrust.py",
+     "loc_total": 141,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_SCORE_P5_N2_CAMPAIGN_PY",
+     "component": "scripts/score_p5_n2_campaign.py",
+     "loc_total": 235,
+     "activity": "ACTIVE",
+     "depends_on_waves": [],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_SCORE_P5_N2_FROZEN_PY",
+     "component": "scripts/score_p5_n2_frozen.py",
+     "loc_total": 95,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18a"
+    },
+    {
+     "id": "C-SCRIPTS_SCORE_P5_N2_STAGED_PY",
+     "component": "scripts/score_p5_n2_staged.py",
+     "loc_total": 169,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W18"
+     ],
+     "sub_batch": "W18a"
+    }
+   ],
+   "non_py_execution_paths": [
+    "docs/orchestration/runner_scripts/*.sh (inline python)"
+   ],
+   "sub_batches": {
+    "W18a": {
+     "scope": "Hall / Julia campaign tooling: case and launch-manifest generators, freeze / score / report / forensics, validation release, orchestration ledgers (ported together with the Rust<->Julia bridge crate)",
+     "components": 21,
+     "loc_total": 5387
+    },
+    "W18b": {
+     "scope": "design-synthesis and architecture-comparison evidence builders",
+     "components": 31,
+     "loc_total": 35212
+    },
+    "W18c": {
+     "scope": "budgets, hardware, interfaces, experiments and procurement evidence builders",
+     "components": 41,
+     "loc_total": 89418
+    },
+    "W18d": {
+     "scope": "requirements, traceability, decision application, bid package, milestones, O4, v2, chemistry and evidence builders",
+     "components": 21,
+     "loc_total": 19618
+    }
+   },
+   "component_count": 115,
+   "loc_total": 149635
+  },
+  {
+   "wave": "W19",
+   "name": "CI / check / parity / performance utilities and the test infrastructure",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [
+    {
+     "id": "C-ABEP_SIM_DESIGN_TPMC_BACKEND_PY",
+     "component": "abep_sim/design/tpmc_backend.py",
+     "loc_total": 313,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1"
+     ]
+    },
+    {
+     "id": "C-ABEP_SIM_GOLDEN_PY",
+     "component": "abep_sim/golden.py",
+     "loc_total": 654,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W3",
+      "W7",
+      "W8",
+      "W12",
+      "W13"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_CI_CHECKS_PY",
+     "component": "scripts/ci_checks.py",
+     "loc_total": 566,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W7",
+      "W13",
+      "W18"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_PERF_PROFILE_BASELINE_PY",
+     "component": "scripts/perf/profile_baseline.py",
+     "loc_total": 1328,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W2",
+      "W3",
+      "W4",
+      "W5",
+      "W7",
+      "W8",
+      "W13",
+      "W19"
+     ]
+    },
+    {
+     "id": "C-SCRIPTS_VERIFY_ABEP_CORE_PY",
+     "component": "scripts/verify_abep_core.py",
+     "loc_total": 1189,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W19"
+     ]
+    },
+    {
+     "id": "C-TESTS",
+     "component": "tests",
+     "loc_total": 62019,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W2",
+      "W3",
+      "W4",
+      "W5",
+      "W6",
+      "W7",
+      "W8",
+      "W9",
+      "W10",
+      "W11",
+      "W12",
+      "W13",
+      "W14",
+      "W15",
+      "W16",
+      "W17",
+      "W18",
+      "W19"
+     ]
+    },
+    {
+     "id": "C-TESTS_FIXTURES",
+     "component": "tests/fixtures",
+     "loc_total": 164,
+     "activity": "ACTIVE",
+     "depends_on_waves": [
+      "W1E",
+      "W1",
+      "W8"
+     ]
+    }
+   ],
+   "non_py_execution_paths": [
+    ".github/workflows/*.yml (inline python)"
+   ],
+   "component_count": 8,
+   "loc_total": 66233
+  },
+  {
+   "wave": "W20",
+   "name": "final: retire the abep_core PyO3 binding layer and every remaining Python entry point",
+   "a9_24_item_7_position": "7 (remaining active paths)",
+   "status": "PLANNED",
+   "components": [],
+   "non_py_execution_paths": [
+    "abep_core PyO3 / maturin binding layer"
+   ],
+   "component_count": 1,
+   "loc_total": 0
+  }
+ ]
+}

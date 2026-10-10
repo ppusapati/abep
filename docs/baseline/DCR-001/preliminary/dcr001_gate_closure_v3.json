@@ -1,0 +1,335 @@
+{
+ "label": "PROPOSAL-LEVEL PRELIMINARY / COMPONENT CBE (not measured)",
+ "compressor_design": {
+  "stages": 7,
+  "PR_stage": 2.8,
+  "rotor_D1_m": 0.6649038006690545,
+  "A1_m2": 0.29166666666666663,
+  "annulus_sum_m2": 0.4533674507521667,
+  "S_inlet_m3_s": 11.253567441244025,
+  "p_inlet_Pa_12mN": 0.004135237259590124,
+  "p_plenum_Pa": 5.0,
+  "PR_total": 1209.120465435057,
+  "plenum_V_L": 9.307234277268515,
+  "finishing_pump": "deleted (plenum 5 Pa)",
+  "angular_momentum": "cancelled by contra-rotating rows"
+ },
+ "bom": {
+  "AL-01 intake": [
+   {
+    "item": "Al 5052 honeycomb collimator 1/8 in cell, 32 kg/m3, 0.70 m2 x 64 mm",
+    "cbe_kg": 1.434,
+    "mga": 0.2,
+    "mev_kg": 1.72,
+    "basis": "geometry x catalogue density (verify)",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "collection chamber / shroud, CFRP 0.8 mm, ~1.05 m2",
+    "cbe_kg": 1.344,
+    "mga": 0.2,
+    "mev_kg": 1.613,
+    "basis": "geometry x CFRP areal density",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "F4 filter mesh",
+    "cbe_kg": 0.28,
+    "mga": 0.2,
+    "mev_kg": 0.336,
+    "basis": "areal estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "frame, mounts",
+    "cbe_kg": 0.5,
+    "mga": 0.2,
+    "mev_kg": 0.6,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "single-shot launch / contamination cover incl. release",
+    "cbe_kg": 0.3,
+    "mga": 0.2,
+    "mev_kg": 0.36,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   }
+  ],
+  "AL-02 compressor": [
+   {
+    "item": "7-stage tapered contra-rotating molecular rotor stack (annulus sum 0.453 m2 x 2 counter-rotating rows x 1.74 kg/m2)",
+    "cbe_kg": 1.578,
+    "mga": 0.2,
+    "mev_kg": 1.893,
+    "basis": "geometry: CFRP 0.5 mm blades, solidity 0.9, Al hub rings",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "2 shafts, hybrid ceramic bearings, dampers",
+    "cbe_kg": 1.0,
+    "mga": 0.2,
+    "mev_kg": 1.2,
+    "basis": "estimate (small turbopump bearing analog)",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "2 BLDC motors ~30 W continuous",
+    "cbe_kg": 0.8,
+    "mga": 0.2,
+    "mev_kg": 0.96,
+    "basis": "estimate (small space motor analog)",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "conical CFRP housing + flanges",
+    "cbe_kg": 1.18,
+    "mga": 0.2,
+    "mev_kg": 1.416,
+    "basis": "geometry",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "motor drives (2)",
+    "cbe_kg": 0.4,
+    "mga": 0.2,
+    "mev_kg": 0.48,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   }
+  ],
+  "AL-03 plenum/feed": [
+   {
+    "item": "plenum vessel 9.3 L (vacuum-rated, thin Al/CFRP)",
+    "cbe_kg": 0.45,
+    "mga": 0.2,
+    "mev_kg": 0.54,
+    "basis": "geometry",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "low-pressure variable-conductance metering valves x2 (redundant)",
+    "cbe_kg": 0.3,
+    "mga": 0.2,
+    "mev_kg": 0.36,
+    "basis": "estimate (stepper / piezo iris)",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "isolation valve",
+    "cbe_kg": 0.15,
+    "mga": 0.2,
+    "mev_kg": 0.18,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "pressure sensors x2",
+    "cbe_kg": 0.2,
+    "mga": 0.2,
+    "mev_kg": 0.24,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "lines, fittings",
+    "cbe_kg": 0.2,
+    "mga": 0.2,
+    "mev_kg": 0.24,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   }
+  ],
+  "AL-04 Hall head + magnets": [
+   {
+    "item": "H1 Hall head incl. magnetic circuit (A9.26 floor 3.504 kg x 1.2)",
+    "cbe_kg": 3.504,
+    "mga": 0.2,
+    "mev_kg": 4.205,
+    "basis": "owner MEV planning floor",
+    "evidence_class": "inferred"
+   }
+  ],
+  "AL-05 ICP neutralizer": [
+   {
+    "item": "borosilicate tube R0.06 m, L 0.15 m",
+    "cbe_kg": 0.25,
+    "mga": 0.2,
+    "mev_kg": 0.3,
+    "basis": "geometry",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "antenna, 3 turns 6 mm Cu tube",
+    "cbe_kg": 0.15,
+    "mga": 0.2,
+    "mev_kg": 0.18,
+    "basis": "geometry",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "C-type collector IN600 0.0377 m2 x 1 mm",
+    "cbe_kg": 0.319,
+    "mga": 0.2,
+    "mev_kg": 0.383,
+    "basis": "geometry x density",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "insulators, housing, gas inlet",
+    "cbe_kg": 0.4,
+    "mga": 0.2,
+    "mev_kg": 0.48,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "mount / spacer",
+    "cbe_kg": 0.2,
+    "mga": 0.2,
+    "mev_kg": 0.24,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   }
+  ],
+  "AL-06 RF generator / match": [
+   {
+    "item": "RF generator 13.56 MHz + local match + sensing (owner allocation)",
+    "cbe_kg": 1.5,
+    "mga": 0.0,
+    "mev_kg": 1.5,
+    "basis": "owner MEV allocation",
+    "evidence_class": "owner-allocation"
+   }
+  ],
+  "AL-07 PPU": [
+   {
+    "item": "Hall PPU incl. bias supplies (A9.26 floor 5.0 kg x 1.2)",
+    "cbe_kg": 5.0,
+    "mga": 0.2,
+    "mev_kg": 6.0,
+    "basis": "owner MEV planning floor",
+    "evidence_class": "inferred"
+   }
+  ],
+  "AL-08 Xe hardware (single branch, 2 kg Xe)": [
+   {
+    "item": "Ti-6Al-4V tank ~1.1 L at <= 150 bar (2 kg Xe, NIST 2045 kg/m3), shell + bosses",
+    "cbe_kg": 0.8,
+    "mga": 0.2,
+    "mev_kg": 0.96,
+    "basis": "thin-shell sizing (sigma_allow 440 MPa) + bosses; family analog MT XS-XTA <= 3.5 kg at 1-7 L",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "Moog Xenon Flow Controller (XFC)",
+    "cbe_kg": 0.974,
+    "mga": 0.05,
+    "mev_kg": 1.023,
+    "basis": "measured analog (H2-7 AN-MOOG-XFC)",
+    "evidence_class": "measured"
+   },
+   {
+    "item": "latch / isolation valve",
+    "cbe_kg": 0.25,
+    "mga": 0.1,
+    "mev_kg": 0.275,
+    "basis": "analog estimate (verify)",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "pressure transducer, filter",
+    "cbe_kg": 0.15,
+    "mga": 0.1,
+    "mev_kg": 0.165,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "plumbing, fittings",
+    "cbe_kg": 0.3,
+    "mga": 0.2,
+    "mev_kg": 0.36,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "tank mount, heater, MLI",
+    "cbe_kg": 0.3,
+    "mga": 0.2,
+    "mev_kg": 0.36,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   }
+  ],
+  "AL-09 controls / FDIR": [
+   {
+    "item": "controls, valve drivers, flight sensors (owner allocation)",
+    "cbe_kg": 1.0,
+    "mga": 0.0,
+    "mev_kg": 1.0,
+    "basis": "owner MEV allocation",
+    "evidence_class": "owner-allocation"
+   }
+  ],
+  "AL-10 structure / thermal": [
+   {
+    "item": "module structure, thruster radiator R_HALL 0.15 m2, heat paths (owner allocation)",
+    "cbe_kg": 2.5,
+    "mga": 0.0,
+    "mev_kg": 2.5,
+    "basis": "owner MEV allocation; PPU / RF-generator rejection (0.62 + 1.10 m2, P7) via host radiating panels per SCI-A",
+    "evidence_class": "owner-allocation"
+   }
+  ]
+ },
+ "subtotals_mev_kg": {
+  "AL-01 intake": 4.629,
+  "AL-02 compressor": 5.949,
+  "AL-03 plenum/feed": 1.56,
+  "AL-04 Hall head + magnets": 4.205,
+  "AL-05 ICP neutralizer": 1.583,
+  "AL-06 RF generator / match": 1.5,
+  "AL-07 PPU": 6.0,
+  "AL-08 Xe hardware (single branch, 2 kg Xe)": 3.143,
+  "AL-09 controls / FDIR": 1.0,
+  "AL-10 structure / thermal": 2.5
+ },
+ "nonharness_kg": 32.069,
+ "harness_kg": 1.688,
+ "nominal_dry_kg": 33.757,
+ "dry_10pct_kg": 37.133,
+ "wet_2kgXe_kg": 39.133,
+ "margin_to_40_kg": 0.867,
+ "target_39_4_met": true,
+ "wet_if_finishing_pump_retained_kg": 41.911,
+ "power": {
+  "AIR_12mN_reference": {
+   "Pd": 595.6,
+   "nd": 445.9,
+   "bus_W": 1142.5,
+   "margin_to_1500_W": 357.5
+  },
+  "AIR_12mN_conservative": {
+   "Pd": 600.0,
+   "nd": 487.1,
+   "bus_W": 1188.9,
+   "margin_to_1500_W": 311.1
+  },
+  "XE_25mN_parametric_A7": {
+   "Pd": 658.0,
+   "nd": 412.5,
+   "basis": "RP-1 Xe A7 runs near 25 mN: 23.3-23.8 mN at 442-617 W; 38 mN/kW lowest T/P -> 658 W (PARAMETRIC / NOT_VALIDATED)",
+   "bus_W": 1182.1,
+   "margin_to_1500_W": 317.9
+  },
+  "XE_25mN_RF_plus_100W": {
+   "Pd": 658.0,
+   "nd": 541.5,
+   "basis": "sensitivity: +100 W RF forward power (P6: ~1.29 W bus per W RF)",
+   "bus_W": 1311.1,
+   "margin_to_1500_W": 188.9
+  }
+ }
+}

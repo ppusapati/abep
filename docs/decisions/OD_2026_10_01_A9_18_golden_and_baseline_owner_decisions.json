@@ -1,0 +1,30 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_18_golden_and_baseline_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "A9_18_GOLDEN_AND_BASELINE_DECISIONS_RECORDED",
+ "parents": [
+  "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json",
+  "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_18_GOLDEN_AND_BASELINE_OWNER_DECISIONS.md",
+  "sha256": "b26b739244d87fb98001936688650c8b0cf307abeddb2ee4c494ff4f06c5951d"
+ },
+ "decisions": {
+  "GOLDEN": {
+   "answer": "NEW_ADMISSIBLE_CONVERGED_GOLDEN; RETAIN_OLD_AS_NONCONVERGED_REGRESSION_REFERENCE",
+   "summary": "canonical golden design point replaced by a point inside the registered model domain, converged under G-03/G-04/G-05, passing all input validation, no silent clipping/fallback, reproducible from frozen inputs, with provenance and hashes; not tuned to reproduce old numbers; the old non-converged case kept unchanged as an explicit NONCONVERGED_REFERENCE / EXPECTED_NONCONVERGENCE regression fixture"
+  },
+  "PERF_RERUN": {
+   "answer": "RERUN_DEDICATED_BASELINE_AFTER_STEP3_MERGE_BEFORE_RUST_ADMISSION",
+   "summary": "after step 3 is merged and the owner is told, rerun the identical dedicated procedure on the idle owner machine; that run is the Rust-admission baseline; the earlier dedicated run is historical for the earlier code state; workload definition and S10.1 thresholds unchanged; record commit SHA, workload hashes, machine/toolchain metadata, timings; nothing to run now"
+  }
+ },
+ "execution": {
+  "instruction": "golden replacement now (parallel to step 3); baseline rerun requested from the owner only after step 3 merges",
+  "merge": "no merge to main is authorized by this addendum"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

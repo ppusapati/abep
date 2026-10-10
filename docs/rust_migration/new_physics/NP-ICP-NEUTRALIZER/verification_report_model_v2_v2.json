@@ -1,0 +1,63 @@
+{
+  "schema": "abep_new_physics_verification_report_v1",
+  "id": "np_icp_neutralizer_model_v2_verification_report_v2",
+  "model_id": "NP-ICP-NEUTRALIZER",
+  "model_version": "2",
+  "report_version": 2,
+  "date": "2026-10-07",
+  "lane": "A9.31: RF/ICP + thermal v2 implementation lane, follow-up (branch lane-icp-thermal-v2-impl on b533453)",
+  "previous_report": "verification_report_model_v2_v1.json (immutable; every result not listed here stands)",
+  "contract": {
+    "prereg_lock_v2_sha256": "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287",
+    "verify_gate": "inherited v1 verify_gate: a verify item is cleared only by a verification addendum recording the source read (locator, access, sha256 where lawful) and confirming the text; lawful acquisition only (A9.31 OQ-NPICP-10)"
+  },
+  "implementation": {
+    "commits": ["7d4bddb (VER-23 consequence in cpl.rs; coupling smoke case and adapter)", "6a4f961 (smoke case registration)"],
+    "tests": "cargo test --workspace --locked: 507 passed, 0 failed, 2 ignored (registered PT-01 / PT-02); abep-ci test-register 0 violations; fmt and clippy -D warnings clean on abep-icp, abep-subsystems, abep-mission"
+  },
+  "verification_status": "IMPLEMENTED_UNVERIFIED",
+  "validation_status": "NOT_VALIDATED",
+  "admission_rule_evaluation": {
+    "1_record_and_lock_committed": "MET",
+    "2_LC_CC_NV_FC_items_pass": "MET (unchanged; LC-18 and the coupling smoke case add the consumer side)",
+    "3_abep_chem_evaluator_admitted": "unchanged",
+    "4_verify_items_cleared": "NOT MET: of the verify items on the v2 code paths only VER-23 is cleared; VER-01, VER-02, VER-12 and VER-25 lie on every sustained solve, the others on the branches listed below",
+    "5_matched_consumers": "MET (NP-THERMAL 2.0.0 with the identical key table; IF-ICP-BUS-v2 consumer passes LC-18; the producer -> consumer chain closes in the registered coupling smoke case)",
+    "6_admission_record": "not written (item 4 open)"
+  },
+  "correction_to_report_v1": "report v1 omitted VER-02 from its open list: the shared registration step puts VER-02 on the path of every set with an elastic momentum-transfer channel (e.g. EM-N2). It is listed below.",
+  "verify_items": [
+    {"id": "VER-01", "on_v2_path": "every sustained solve (EQ-03 cross-reference; the identity is model-derived and LC-01 passes)", "status": "OPEN", "means_under_prereg": "source read only (verify_gate)", "why_not_closed": "Lieberman & Lichtenberg 2005 ch. 10 is not in the repository and no lawful copy is available in this environment; the registered Lieberman 2015 short-course slides (INTERSTAGE_MODEL.md citation registry) are a different source than the one cited and their host (people.eecs.berkeley.edu) is also blocked by this session's network policy", "closes_with": "a verification addendum recording a lawful read of the chapter (locator, access) confirming the global particle / energy balance form"},
+    {"id": "VER-02", "on_v2_path": "every set with an elastic momentum-transfer channel (EQ-07)", "status": "OPEN", "means_under_prereg": "source read only", "why_not_closed": "the elastic loss form n_k k_m,k (3 m_e / M_k)(T_e - T_g) is cited from memory to Lieberman & Lichtenberg 2005; source not in the repository; conservation checks hold for any coefficient and cannot confirm the form; the registered Lieberman 2015 short-course slides (INTERSTAGE_MODEL.md citation registry) are a different source than the one cited and their host (people.eecs.berkeley.edu) is also blocked by this session's network policy", "closes_with": "an addendum with a lawful read confirming the form (or a v2 prereg if the source differs)"},
+    {"id": "VER-06", "on_v2_path": "EQ-09 electron-saturation branch (a biased surface above phi_p; I_e_sat sweeps)", "status": "OPEN", "means_under_prereg": "source read only", "why_not_closed": "Baalrud, Hershkowitz, Longmier, Phys. Plasmas 14, 042109 (2007) is not in the repository; subscription journal; this session's egress policy blocks publisher and preprint hosts", "closes_with": "an addendum recording a lawful read of the electron-saturation flux and the area condition"},
+    {"id": "VER-07", "on_v2_path": "H-LIEB / H-MS with an open tube end (axial h_L)", "status": "OPEN", "means_under_prereg": "source read only", "why_not_closed": "Chabert et al., Phys. Plasmas 19, 073512 (2012) not in the repository; subscription journal", "closes_with": "an addendum confirming the open-end treatment"},
+    {"id": "VER-08", "on_v2_path": "any Z > 1 ion (EQ-04 Bohm speed)", "status": "OPEN", "means_under_prereg": "source read only (a derivation does not satisfy the verify_gate, which asks for the source text)", "why_not_closed": "no registered source for the Z > 1 Bohm speed (the repository interstage record also marks it verify)", "closes_with": "an addendum with a lawful textbook / journal read of the multiply-charged Bohm criterion"},
+    {"id": "VER-11", "on_v2_path": "only when an IN-23 disposition other than UNRESOLVED is registered (none today: every electronic channel uses the class-X vertex set)", "status": "OPEN (not on a path today)", "means_under_prereg": "source read per excited state", "why_not_closed": "no disposition is registered", "closes_with": "a registered disposition per state with its source (radiative lifetime vs metastability) and the addendum"},
+    {"id": "VER-12", "on_v2_path": "every sustained solve (surface energy terms behind Q_icp_plasma_wall_W / F_j)", "status": "OPEN", "means_under_prereg": "source read only", "why_not_closed": "the surface energy terms (work function, neutralization energy) are not sourced in the repository", "closes_with": "an addendum with a lawful surface-physics source confirming the ion-neutralization energy release at walls"},
+    {"id": "VER-20", "on_v2_path": "PF-02 non-isothermal passage (flag NON_ISOTHERMAL_PASSAGE)", "status": "OPEN", "means_under_prereg": "source read only; LC-12 verifies the implemented detailed-balance form, not its physical premise", "why_not_closed": "no registered source for tau reciprocity with T_b != T_g under diffuse re-emission", "closes_with": "an addendum confirming reciprocity (or a v2 form if the source differs)"},
+    {"id": "VER-21", "on_v2_path": "member H-MS (two or more ion species with distinct sigma)", "status": "OPEN", "means_under_prereg": "source read only", "why_not_closed": "Baalrud, Hegna and Callen 2009 recalled from memory; not in the repository; preprint host blocked by this session's egress policy", "closes_with": "an addendum with a lawful read of the multi-ion sheath-edge speeds"},
+    {"id": "VER-22", "on_v2_path": "none computed: s_j / R is reported NOT_EVALUATED", "status": "OPEN (not on a computed path)", "means_under_prereg": "source read only", "why_not_closed": "Child-law sheath width form recalled from memory (Lieberman & Lichtenberg 2005); not in the repository", "closes_with": "an addendum confirming the form; then s_j is implemented under it"},
+    {"id": "VER-23", "on_v2_path": "CPL-HON-05 (CPL-HALL-ON-v1, gated)", "status": "CLEARED", "means_under_prereg": "source read of the pinned code", "addendum": "verification_addendum_ver23_v1.json (HallThruster.jl bfb3019f, five files with sha256 and line references): the coupling potential is the right-boundary input cathode_coupling_voltage [V] entering Delta V = V_L - V_R of the discharge-current integral; Te_R = cathode_Tev at the same boundary", "consequence": "HALL_COUPLING_POTENTIAL_INPUT_UNVERIFIED removed from CPL-HALL-ON-v1; the record stays NOT_EVALUATED (CPL-HON-01 gate, HI-04..HI-06, HI-08, VER-24)", "test": "crates/abep-icp/tests/v2_fail_closed.rs fc20_* and verification_addendum_ver23_is_bound_to_the_pin"},
+    {"id": "VER-24", "on_v2_path": "CPL-HON-04 (gated; V_coupling NOT_EVALUATED)", "status": "OPEN", "means_under_prereg": "source read only", "why_not_closed": "no published extraction-boundary law of an RF electron source emitting into a Hall plume has been located (the prereg says 'published sources to be located')", "closes_with": "a located, lawfully read source and its addendum; CPL-HALL-ON stays gated in any case until a Hall member is admitted"},
+    {"id": "VER-25", "on_v2_path": "every sustained solve (EQ-20 lambda_D diagnostics)", "status": "OPEN", "means_under_prereg": "source check of the CODATA 2022 value", "why_not_closed": "the CODATA 2022 eps0 is not registered in the repository (prereg v2 references_added: 'Not in the repository (verify): ... CODATA 2022 eps0'); physics.nist.gov and arxiv.org are blocked by this session's network policy (connect rejected, 2026-10-07). The shared v1 constant cannot change (v1 also uses lambda_D; v1 is byte-identical by rule)", "closes_with": "a lawful read of the NIST CODATA 2022 eps0 page (allow physics.nist.gov in the environment's network access, or register the value with its locator and sha256), recorded in an addendum; then a v2-only constant for EQ-20 so v1 stays unchanged"}
+  ],
+  "not_on_v2_paths_today": "VER-03..VER-05, VER-13 (CM-PRED, not implemented in v2); VER-09 / VER-10 (sourced ion-neutral and Xe / Ar cross sections: no such registration is used); VER-19 (documentation only)",
+  "coupling_smoke_case": {
+    "registration": "verification/coupling_smoke_v2_registration_v1.json (case sha256 a08a263c, committed alone in 6a4f961)",
+    "test": "crates/abep-mission/tests/coupling_smoke_v2.rs (abep-mission already depends on both crates; abep-subsystems gains no dependency, INV-A05 unchanged)",
+    "observed": {
+      "scenario_members": 1,
+      "producer_closures": "every CC-05 / CC-06 / CONS-I3 v2 closure CONVERGED, <= 1e-10",
+      "per_key_exactly_once": "TK-01..TK-13: deposited + exported + booked - key = 0 (worst residual / CONS-I2 bound 0.0)",
+      "slot_load_sum_W": 36.01241541272104,
+      "destinations_minus_slot_load_sum_W": 1.4210854715202004e-14,
+      "thermal_CONS_I3_observed_over_bound_W": [1.4210854715202004e-14, 3.601341541272104e-05],
+      "bus_v2_load_planes": "BK-01..BK-03 equal the thermal record's TK-R2, TK-05, TK-R5 exactly",
+      "cons_l1_icp_account": {"ledger_W": 36.01241541272104, "accounted_W": 36.01241541272104, "mismatch_W": 0.0, "supply_loss_outside_W": 5.842751714749677},
+      "cons_l1_relative_residual": 1.412939523470522e-16
+    },
+    "fail_closed": "adapter: a duplicated JSON key, the same watt under a second name, a dropped key, an unmapped status, a CONVERGED key without a value, a withheld key with a value, a key-row mismatch, a duplicated member, a v1 interface and another producer lock are refused; downstream: a double-booked share (IFI2-08), a doubled key (IFI2-04) and an ICP slot claimed by two accounts (CONS-L1_DOUBLE_COUNT) are refused"
+  },
+  "preregistration_consistency": "No conflict with prereg v2 found; no frozen record edited.",
+  "ledger_update_requested": "NP-ICP-NEUTRALIZER model_version 2: RUST_IMPL, IMPLEMENTED_UNVERIFIED (unchanged), VER-23 cleared."
+}

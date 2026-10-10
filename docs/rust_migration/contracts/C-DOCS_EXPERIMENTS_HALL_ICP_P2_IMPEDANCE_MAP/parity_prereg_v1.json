@@ -1,0 +1,2415 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W15b",
+  "scope": "named function subset (kernel granularity, RM-R17) of SC-WP-05 element 'RF generator / matching': the RF-network kernels of p2_framework.py and the basic RF relations of p2_impedance_reducer.py that they use, plus the P1 refusal p1_reducer.p_bus_from_generator_input (function subset of C-DOCS_EXPERIMENTS_HALL_ICP_P1_ICP_BENCH; P_mains is never P_bus); the bus-side RF power planes (bus_boundary_a9.rf_power_planes) are in PARITY-C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY-V1",
+  "coupled_inventory_ids": [
+   "C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP (function subset)",
+   "C-DOCS_EXPERIMENTS_HALL_ICP_P1_ICP_BENCH (p_bus_from_generator_input only; row stays SC-WP-03)"
+  ],
+  "functions_or_entry_points": [
+   "R1 p2_framework.py::parse_touchstone (with _parse_option, _pair)",
+   "R2 p2_framework.py::sol_error_terms (with _solve3, _cxv, _r)",
+   "R3 p2_framework.py::sol_correct",
+   "R4 p2_framework.py::ladder_abcd",
+   "R5 p2_framework.py::dissipated_fraction_matched",
+   "R6 p2_framework.py::vi_power_and_impedance",
+   "R7 p2_impedance_reducer.py::{cx, gamma_from_z, z_from_gamma, vswr, gamma_mag_from_powers, s_to_abcd, abcd_to_s, cascade, z_in, deembed_load, transfer_efficiency, correct_reflection, fixture_to_plane, line_peak_stress} (with _finite)",
+   "R8 p1_reducer.py::p_bus_from_generator_input"
+  ],
+  "out_of_scope": [
+   "p2_framework.py::verify_line_match_loss and the reducer machinery it needs (loss_check_protocol, loss_model_prediction, loss_statistic, network_cpl_to_ant, validate_calibration_set): listed by SC-WP-05, deferred to a later contract version of this component; stays PYTHON_REFERENCE",
+   "every other function of p2_framework.py (Touchstone writer, S-parameter sets, coupler / scalar error models, V/I calibration from a known load, ladder_element_stress, GUM / Monte Carlo propagation, E/H transition detection, map storage, P1 hand-off, rating structure) and of p2_impedance_reducer.py (record reduction, plasma-state classification, guards): stay PYTHON_REFERENCE",
+   "a9_16_application.py, build_p2_impedance_prep.py, p2_a9_16_rules.py, p2_a9_19_application.py: document builders / owner-rule applications; stay PYTHON_REFERENCE",
+   "every other function of p1_reducer.py (SC-WP-03 component)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "none in the scored subset (no cathode, C1 or ECR path is reachable from these functions)"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-05",
+  "owner_disposition_a9_29": "NOT_APPLICABLE; binding statuses A9.2: RF matching LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT, RF ratings TBD_AFTER_IMPEDANCE_MAP"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. No Rust code for the component exists at registration. The commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "reference_implementation": {
+  "python_commit": "fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73",
+  "files": [
+   {
+    "path": "docs/experiments/hall_icp/p2_impedance_map/p2_framework.py",
+    "sha256_at_registration": "bc0f59c97c1e474ceadb9dd9a4c389d1a3e11e16e71f56e6a566bafe829c5305"
+   },
+   {
+    "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_reducer.py",
+    "sha256_at_registration": "f762f9805feffaa6dfd2cfbdabcd89f9a7c26b93d6d373fb56196839bdf3a36c"
+   },
+   {
+    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py",
+    "sha256_at_registration": "140cc9cf68b40b585bd8b096fcd66b6fb9a3344608c88f4e759b0587d5da7a65"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "import": "p2_framework.py is loaded by file path (it loads p2_impedance_reducer.py itself); p1_reducer.py is loaded by file path; the harness imports nothing else from these directories",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4 (imported by p1_reducer.py, not used by p_bus_from_generator_input)",
+   "scipy": "1.17.1 (not used)",
+   "pandas": "3.0.2 (not used)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "NOT_APPLICABLE",
+   "thread_env": {
+    "OMP_NUM_THREADS": "NOT_APPLICABLE",
+    "OPENBLAS_NUM_THREADS": "NOT_APPLICABLE"
+   },
+   "stdlib": "CPython 3.11 complex arithmetic (_Py_c_sum / _diff / _prod / _quot; int and float operands promoted to complex(x, 0.0); 'complex division by zero'), abs(complex) = hypot, cmath.rect (phi == 0 branch), math.radians, float(str) (underscores, inf / nan spellings), str.splitlines / split / strip, built-in sum starting at int 0 (no Neumaier compensation in 3.11), float pow via libm, format '.9g'"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-subsystems",
+  "functions_or_entry_points": [
+   "abep_subsystems::power::cplx (CPython-semantics complex arithmetic)",
+   "abep_subsystems::power::rf_match::{parse_touchstone, sol_error_terms, sol_correct, ladder_abcd, dissipated_fraction_matched, vi_power_and_impedance, cx, gamma_from_z, z_from_gamma, vswr, gamma_mag_from_powers, s_to_abcd, abcd_to_s, cascade, z_in, deembed_load, transfer_efficiency, correct_reflection, fixture_to_plane, line_peak_stress, p_bus_from_generator_input}",
+   "`power_eval` example (harness interface, shared with the other SC-WP-05 contracts)"
+  ],
+  "target_crate_note": "the plan names abep-subsystems::power and abep-icp for SC-WP-05; the RF-network kernels go into abep-subsystems::power so that the NP-ICP crate's verified sources are not touched (its verification report v1 binds them)",
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/**",
+   "crates/abep-provenance/**",
+   "crates/abep-subsystems/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "no governed file is read by the scored functions"
+ },
+ "pinned_inputs_sha256": {
+  "docs/experiments/hall_icp/p2_impedance_map/p2_framework.py": "bc0f59c97c1e474ceadb9dd9a4c389d1a3e11e16e71f56e6a566bafe829c5305",
+  "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_reducer.py": "f762f9805feffaa6dfd2cfbdabcd89f9a7c26b93d6d373fb56196839bdf3a36c",
+  "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py": "140cc9cf68b40b585bd8b096fcd66b6fb9a3344608c88f4e759b0587d5da7a65"
+ },
+ "frozen_data_read_only": [
+  "none"
+ ],
+ "inputs": {
+  "golden_vectors": {
+   "source": "registered_cases plus the randomized domain; Python outputs captured at scoring",
+   "count": "see vector_totals",
+   "list_or_generator": "registered_cases"
+  },
+  "encoding": {
+   "passed_as_given": "cx (v, what), vi_power_and_impedance (all four phasor arguments and the convention), sol_error_terms (standards), ladder_abcd (elements), parse_touchstone (text, n_ports; allow_spec_defaults False and source None when absent) and p_bus_from_generator_input (record) receive the JSON value unchanged: the reference validates it",
+   "converted": "every other complex parameter given as a JSON [re, im] list is converted by the harness to complex(re, im) (sol_correct gamma_measured and the values of terms; dissipated_fraction_matched s11 / s21; gamma_from_z z; z_from_gamma g; s_to_abcd s11 / s12 / s21 / s22; correct_reflection m_raw / e00 / e11 / e10e01; z_in z_load; deembed_load z_input; transfer_efficiency z_load; fixture_to_plane v_p / i_p); an ABCD argument (abcd, abcd_fix, m1, m2) is a list of four [re, im] lists converted to a tuple of complex; a number is passed unchanged; real parameters (z0, gmag, p_fwd, p_ref, line_peak_stress arguments) are passed unchanged",
+   "floats": "{'$float': 'nan' | 'inf' | '-inf'} decoded by the harness",
+   "$sol": "standards built by the harness: for each actual gamma a (as complex), measured = e00 + e10e01 * a / (1 - e11 * a) + noise_i (Python complex arithmetic, the registered terms as complex), entries {'id': ids[i] or 'STD<i>', 'gamma_actual': [a.real, a.imag], 'gamma_measured': [m.real, m.imag], 'definition_source': 'registered synthetic standard'}",
+   "outputs": "complex values -> [re, im]; tuples -> lists"
+  },
+  "registered_cases": [
+   {
+    "id": "TS-01",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n13.56e6 0.1 -0.2\n13.57e6 0.11 -0.19\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-02",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "! comment\n# MHZ S MA R 50\n13.56 0.1 45 0.9 -10 0.9 -10 0.05 30 ! trailing\n\n13.60 0.12 40 0.88 -11 0.88 -11 0.06 31\n",
+     "n_ports": 2,
+     "source": "cal.s2p"
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-03",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# GHZ S DB R 75\n0.01356 -20 45 -0.5 -10 -0.5 -10 -25 30\n",
+     "n_ports": 2
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-04",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# S RI\n1 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-05",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# S RI\n1 0.1 0.2\n",
+     "n_ports": 1,
+     "allow_spec_defaults": true
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-06",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "#\n1 0.1 0.2\n",
+     "n_ports": 1,
+     "allow_spec_defaults": true
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-07",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1 0.1 0.2 ! µ\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-08",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "1 0.1 0.2\n# HZ S RI R 50\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-09",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ Y RI R 50\n1 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-10",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1 0.1 0.2 0.3\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-11",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n2 0.1 0.2\n1 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-12",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1 0.1 abc\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-13",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1 inf 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-14",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S MA R 50\n1 -0.1 20\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-15",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R\n1 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-16",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R fifty\n1 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-17",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 0\n1 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-18",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50 X\n1 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-19",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ MHZ S RI R 50\n1 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-20",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n# GHZ S MA R 75\n1 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-21",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1e6 0.1 0.2 0.9 0 0.9 0 0.1 0.1\n2e6 0.1 0.2 0.9 0 0.9 0 0.1 0.1\n1e6 1.5 0.3 45 0.2\n3e6 1.6 0.31 46 0.21\n",
+     "n_ports": 2
+    },
+    "note": "noise-parameter block"
+   },
+   {
+    "id": "TS-22",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1e6 0.1 0.2 0.9 0 0.9 0 0.1 0.1\n2e6 1.5 0.3 45 0.2\n1e6 1.5 0.3 45 0.2\n3e6 0.1 0.2 0.9 0 0.9 0 0.1 0.1\n",
+     "n_ports": 2
+    },
+    "note": "network data after the noise block"
+   },
+   {
+    "id": "TS-23",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1 0.1 0.2\n",
+     "n_ports": 3
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-24",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1 0.1 0.2\n",
+     "n_ports": "2"
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-25",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1 0.1 0.2\n",
+     "n_ports": null
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-26",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": 5,
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-27",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n! only comments\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-28",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-29",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\r\n1 0.1 0.2\r2 0.1 0.2\f3 0.1 0.2\u001c4 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": "str.splitlines separators"
+   },
+   {
+    "id": "TS-30",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# mhz s ri r 50\n13.56 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-31",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 5_0\n1_000 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": "Python float() accepts single underscores between digits"
+   },
+   {
+    "id": "TS-32",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R +50.\n+5 .5 5.\n1E3 -0.e0 1e-3\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-33",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1e400 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-34",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1e6 1.5 0.3 45 0.2\n",
+     "n_ports": 2
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-35",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1e6 0.1 0.2 0.9 0 0.9 0 0.1 0.1\n1e6 0.1 0.2 0.9 0 0.9 0 0.1 0.1\n",
+     "n_ports": 2
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-36",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R nan\n1 0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-37",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "#\tHZ\tS RI R 50\n1\t0.1 0.2\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-38",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S DB R 50\n1 200 30\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-39",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1 0.1 0.2\n",
+     "n_ports": true
+    },
+    "note": "bool equal to 1 behaves as 1 in the reference"
+   },
+   {
+    "id": "TS-40",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8\n",
+     "n_ports": 2.0
+    },
+    "note": "float n_ports: TypeError at the first data line in the reference"
+   },
+   {
+    "id": "TS-41",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n",
+     "n_ports": 1.0
+    },
+    "note": "float n_ports without data"
+   },
+   {
+    "id": "TS-42",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1 1__0 0.2\n1 _1 0.2\n",
+     "n_ports": 1
+    },
+    "note": "malformed underscores refused by float()"
+   },
+   {
+    "id": "TS-43",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S MA R 50\n1 0.5 -0.0\n2 0.5 0\n3 0.5 1e-320\n",
+     "n_ports": 1
+    },
+    "note": "cmath.rect at phi = 0 / -0.0 / subnormal"
+   },
+   {
+    "id": "TS-44",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1 Infinity 0\n",
+     "n_ports": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "TS-45",
+    "fn": "parse_touchstone",
+    "args": {
+     "text": "# HZ S RI R 50\n1 0.1 0.2\n",
+     "n_ports": 1,
+     "allow_spec_defaults": false,
+     "source": null
+    },
+    "note": ""
+   },
+   {
+    "id": "SO-01",
+    "fn": "sol_error_terms",
+    "args": {
+     "standards": {
+      "$sol": {
+       "terms": {
+        "e00": [
+         0.05,
+         0.02
+        ],
+        "e11": [
+         0.1,
+         -0.05
+        ],
+        "e10e01": [
+         0.95,
+         0.03
+        ]
+       },
+       "actual": [
+        [
+         -1.0,
+         0.0
+        ],
+        [
+         1.0,
+         0.0
+        ],
+        [
+         0.0,
+         0.0
+        ]
+       ]
+      }
+     }
+    },
+    "note": "SHORT / OPEN / LOAD measured through the registered terms (measured values computed by the harness from the three-term model in Python complex arithmetic)"
+   },
+   {
+    "id": "SO-02",
+    "fn": "sol_error_terms",
+    "args": {
+     "standards": {
+      "$sol": {
+       "terms": {
+        "e00": [
+         0.05,
+         0.02
+        ],
+        "e11": [
+         0.1,
+         -0.05
+        ],
+        "e10e01": [
+         0.95,
+         0.03
+        ]
+       },
+       "actual": [
+        [
+         -1.0,
+         0.0
+        ],
+        [
+         1.0,
+         0.0
+        ],
+        [
+         0.0,
+         0.0
+        ],
+        [
+         -0.8,
+         -0.6
+        ]
+       ],
+       "noise": [
+        [
+         0.0,
+         0.0
+        ],
+        [
+         0.0,
+         0.0
+        ],
+        [
+         0.001,
+         -0.0005
+        ],
+        [
+         0.0,
+         0.002
+        ]
+       ]
+      }
+     }
+    },
+    "note": "four standards: least squares"
+   },
+   {
+    "id": "SO-03",
+    "fn": "sol_error_terms",
+    "args": {
+     "standards": [
+      {
+       "id": "S",
+       "gamma_actual": [
+        -1.0,
+        0.0
+       ],
+       "gamma_measured": [
+        -0.9,
+        0.0
+       ],
+       "definition_source": "ideal"
+      },
+      {
+       "id": "S",
+       "gamma_actual": [
+        -1.0,
+        0.0
+       ],
+       "gamma_measured": [
+        -0.9,
+        0.0
+       ],
+       "definition_source": "ideal"
+      }
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "SO-04",
+    "fn": "sol_error_terms",
+    "args": {
+     "standards": {
+      "a": 1
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "SO-05",
+    "fn": "sol_error_terms",
+    "args": {
+     "standards": [
+      {
+       "id": "S",
+       "gamma_actual": [
+        -1.0,
+        0.0
+       ],
+       "gamma_measured": [
+        -0.9,
+        0.0
+       ]
+      },
+      {
+       "id": "O",
+       "gamma_actual": [
+        1.0,
+        0.0
+       ],
+       "gamma_measured": [
+        0.9,
+        0.0
+       ],
+       "definition_source": "ideal"
+      },
+      {
+       "id": "L",
+       "gamma_actual": [
+        0.0,
+        0.0
+       ],
+       "gamma_measured": [
+        0.05,
+        0.0
+       ],
+       "definition_source": "ideal"
+      }
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "SO-06",
+    "fn": "sol_error_terms",
+    "args": {
+     "standards": [
+      {
+       "id": "S",
+       "gamma_actual": "",
+       "gamma_measured": [
+        -0.9,
+        0.0
+       ],
+       "definition_source": "ideal"
+      },
+      {
+       "id": "S",
+       "gamma_actual": "",
+       "gamma_measured": [
+        -0.9,
+        0.0
+       ],
+       "definition_source": "ideal"
+      },
+      {
+       "id": "S",
+       "gamma_actual": "",
+       "gamma_measured": [
+        -0.9,
+        0.0
+       ],
+       "definition_source": "ideal"
+      }
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "SO-07",
+    "fn": "sol_error_terms",
+    "args": {
+     "standards": [
+      {
+       "id": "S",
+       "gamma_actual": [
+        -1.0,
+        0.0
+       ],
+       "gamma_measured": [
+        1
+       ],
+       "definition_source": "ideal"
+      },
+      {
+       "id": "S",
+       "gamma_actual": [
+        -1.0,
+        0.0
+       ],
+       "gamma_measured": [
+        1
+       ],
+       "definition_source": "ideal"
+      },
+      {
+       "id": "S",
+       "gamma_actual": [
+        -1.0,
+        0.0
+       ],
+       "gamma_measured": [
+        1
+       ],
+       "definition_source": "ideal"
+      }
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "SO-08",
+    "fn": "sol_error_terms",
+    "args": {
+     "standards": [
+      {
+       "id": "S",
+       "gamma_actual": [
+        -1.0,
+        0.0
+       ],
+       "gamma_measured": [
+        -0.9,
+        0.1
+       ],
+       "definition_source": "ideal"
+      },
+      {
+       "id": "S",
+       "gamma_actual": [
+        -1.0,
+        0.0
+       ],
+       "gamma_measured": [
+        -0.9,
+        0.1
+       ],
+       "definition_source": "ideal"
+      },
+      {
+       "id": "S",
+       "gamma_actual": [
+        -1.0,
+        0.0
+       ],
+       "gamma_measured": [
+        -0.9,
+        0.1
+       ],
+       "definition_source": "ideal"
+      }
+     ]
+    },
+    "note": "singular: identical standards"
+   },
+   {
+    "id": "SO-09",
+    "fn": "sol_error_terms",
+    "args": {
+     "standards": [
+      {
+       "id": "A",
+       "gamma_actual": [
+        -1.0,
+        0.0
+       ],
+       "gamma_measured": [
+        0.1,
+        0.0
+       ],
+       "definition_source": "ideal"
+      },
+      {
+       "id": "B",
+       "gamma_actual": [
+        1.0,
+        0.0
+       ],
+       "gamma_measured": [
+        0.1,
+        0.0
+       ],
+       "definition_source": "ideal"
+      },
+      {
+       "id": "C",
+       "gamma_actual": [
+        0.0,
+        0.0
+       ],
+       "gamma_measured": [
+        0.1,
+        0.0
+       ],
+       "definition_source": "ideal"
+      }
+     ]
+    },
+    "note": "constant reading: singular or e10e01 = 0 (whichever the reference reaches)"
+   },
+   {
+    "id": "SO-10",
+    "fn": "sol_error_terms",
+    "args": {
+     "standards": [
+      {
+       "id": "S",
+       "gamma_actual": [
+        {
+         "$float": "inf"
+        },
+        0.0
+       ],
+       "gamma_measured": [
+        -0.9,
+        0.0
+       ],
+       "definition_source": "ideal"
+      },
+      {
+       "id": "S",
+       "gamma_actual": [
+        {
+         "$float": "inf"
+        },
+        0.0
+       ],
+       "gamma_measured": [
+        -0.9,
+        0.0
+       ],
+       "definition_source": "ideal"
+      },
+      {
+       "id": "S",
+       "gamma_actual": [
+        {
+         "$float": "inf"
+        },
+        0.0
+       ],
+       "gamma_measured": [
+        -0.9,
+        0.0
+       ],
+       "definition_source": "ideal"
+      }
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "SO-11",
+    "fn": "sol_error_terms",
+    "args": {
+     "standards": {
+      "$sol": {
+       "terms": {
+        "e00": [
+         0.05,
+         0.02
+        ],
+        "e11": [
+         0.1,
+         -0.05
+        ],
+        "e10e01": [
+         0.95,
+         0.03
+        ]
+       },
+       "actual": [
+        [
+         -1.0,
+         0.0
+        ],
+        [
+         1.0,
+         0.0
+        ],
+        [
+         0.0,
+         0.0
+        ]
+       ],
+       "ids": [
+        "X",
+        "X",
+        "Y"
+       ]
+      }
+     }
+    },
+    "note": "duplicate ids in residuals"
+   },
+   {
+    "id": "SC-01",
+    "fn": "sol_correct",
+    "args": {
+     "gamma_measured": [
+      0.3,
+      0.1
+     ],
+     "terms": {
+      "e00": [
+       0.05,
+       0.02
+      ],
+      "e11": [
+       0.1,
+       -0.05
+      ],
+      "e10e01": [
+       0.95,
+       0.03
+      ]
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "SC-02",
+    "fn": "sol_correct",
+    "args": {
+     "gamma_measured": [
+      0.5,
+      0.0
+     ],
+     "terms": {
+      "e00": [
+       0.0,
+       0.0
+      ],
+      "e11": [
+       1.0,
+       0.0
+      ],
+      "e10e01": [
+       -0.5,
+       0.0
+      ]
+     }
+    },
+    "note": "singular correction"
+   },
+   {
+    "id": "SC-03",
+    "fn": "sol_correct",
+    "args": {
+     "gamma_measured": [
+      0.3,
+      0.1
+     ],
+     "terms": {
+      "e00": [
+       0.0,
+       0.0
+      ],
+      "e10e01": [
+       1.0,
+       0.0
+      ]
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "SC-04",
+    "fn": "sol_correct",
+    "args": {
+     "gamma_measured": 0.5,
+     "terms": {
+      "e00": [
+       0.05,
+       0.02
+      ],
+      "e11": [
+       0.1,
+       -0.05
+      ],
+      "e10e01": [
+       0.95,
+       0.03
+      ]
+     }
+    },
+    "note": "real reading"
+   },
+   {
+    "id": "LA-01",
+    "fn": "ladder_abcd",
+    "args": {
+     "elements": [
+      {
+       "id": "L1",
+       "kind": "series",
+       "Z_ohm": [
+        0.0,
+        50.0
+       ]
+      },
+      {
+       "id": "C1",
+       "kind": "shunt",
+       "Z_ohm": [
+        0.0,
+        -100.0
+       ]
+      }
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "LA-02",
+    "fn": "ladder_abcd",
+    "args": {
+     "elements": []
+    },
+    "note": ""
+   },
+   {
+    "id": "LA-03",
+    "fn": "ladder_abcd",
+    "args": {
+     "elements": [
+      {
+       "id": "L1",
+       "kind": "series"
+      }
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "LA-04",
+    "fn": "ladder_abcd",
+    "args": {
+     "elements": [
+      {
+       "kind": "series",
+       "Z_ohm": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "LA-05",
+    "fn": "ladder_abcd",
+    "args": {
+     "elements": [
+      {
+       "id": "L1",
+       "Z_ohm": [
+        1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "LA-06",
+    "fn": "ladder_abcd",
+    "args": {
+     "elements": [
+      {
+       "id": "P1",
+       "kind": "parallel",
+       "Z_ohm": [
+        10.0,
+        5.0
+       ]
+      }
+     ]
+    },
+    "note": "any kind other than 'series' is taken as shunt by the reference"
+   },
+   {
+    "id": "LA-07",
+    "fn": "ladder_abcd",
+    "args": {
+     "elements": [
+      {
+       "id": "S0",
+       "kind": "shunt",
+       "Z_ohm": [
+        0.0,
+        0.0
+       ]
+      }
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "LA-08",
+    "fn": "ladder_abcd",
+    "args": {
+     "elements": [
+      {
+       "id": "L1",
+       "kind": "series",
+       "Z_ohm": [
+        1,
+        "x"
+       ]
+      }
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "LA-09",
+    "fn": "ladder_abcd",
+    "args": {
+     "elements": [
+      {
+       "id": "C1",
+       "kind": "shunt",
+       "Z_ohm": [
+        0.2,
+        -120.0
+       ]
+      },
+      {
+       "id": "L1",
+       "kind": "series",
+       "Z_ohm": [
+        0.8,
+        85.0
+       ]
+      },
+      {
+       "id": "C2",
+       "kind": "shunt",
+       "Z_ohm": [
+        0.1,
+        -60.0
+       ]
+      }
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "DF-01",
+    "fn": "dissipated_fraction_matched",
+    "args": {
+     "s11": [
+      0.1,
+      0.1
+     ],
+     "s21": [
+      0.9,
+      0.0
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "DF-02",
+    "fn": "dissipated_fraction_matched",
+    "args": {
+     "s11": [
+      0.6,
+      0.0
+     ],
+     "s21": [
+      0.0,
+      0.8
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "DF-03",
+    "fn": "dissipated_fraction_matched",
+    "args": {
+     "s11": [
+      0.9,
+      0.0
+     ],
+     "s21": [
+      0.9,
+      0.0
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "DF-04",
+    "fn": "dissipated_fraction_matched",
+    "args": {
+     "s11": 0.5,
+     "s21": [
+      0.5,
+      0.5
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "VI-01",
+    "fn": "vi_power_and_impedance",
+    "args": {
+     "V_raw": [
+      1.2,
+      0.3
+     ],
+     "I_raw": [
+      0.02,
+      -0.01
+     ],
+     "k_V": [
+      100.0,
+      0.5
+     ],
+     "k_I": [
+      2.0,
+      0.0
+     ],
+     "amplitude_convention": "peak"
+    },
+    "note": ""
+   },
+   {
+    "id": "VI-02",
+    "fn": "vi_power_and_impedance",
+    "args": {
+     "V_raw": [
+      1.2,
+      0.3
+     ],
+     "I_raw": [
+      0.02,
+      -0.01
+     ],
+     "k_V": [
+      100.0,
+      0.5
+     ],
+     "k_I": [
+      2.0,
+      0.0
+     ],
+     "amplitude_convention": "rms"
+    },
+    "note": ""
+   },
+   {
+    "id": "VI-03",
+    "fn": "vi_power_and_impedance",
+    "args": {
+     "V_raw": [
+      1.2,
+      0.3
+     ],
+     "I_raw": [
+      0.02,
+      -0.01
+     ],
+     "k_V": [
+      100.0,
+      0.5
+     ],
+     "k_I": [
+      2.0,
+      0.0
+     ],
+     "amplitude_convention": "other"
+    },
+    "note": "no convention check in the reference: rms factor"
+   },
+   {
+    "id": "VI-04",
+    "fn": "vi_power_and_impedance",
+    "args": {
+     "V_raw": [
+      1.2,
+      0.3
+     ],
+     "I_raw": [
+      0.0,
+      0.0
+     ],
+     "k_V": [
+      100.0,
+      0.5
+     ],
+     "k_I": [
+      2.0,
+      0.0
+     ],
+     "amplitude_convention": "peak"
+    },
+    "note": ""
+   },
+   {
+    "id": "VI-05",
+    "fn": "vi_power_and_impedance",
+    "args": {
+     "V_raw": [
+      1.2,
+      0.3
+     ],
+     "I_raw": [
+      0.02,
+      -0.01
+     ],
+     "k_V": [
+      100.0
+     ],
+     "k_I": [
+      2.0,
+      0.0
+     ],
+     "amplitude_convention": "peak"
+    },
+    "note": ""
+   },
+   {
+    "id": "VI-06",
+    "fn": "vi_power_and_impedance",
+    "args": {
+     "V_raw": [
+      1.2,
+      0.3
+     ],
+     "I_raw": [
+      0.02,
+      -0.01
+     ],
+     "k_V": [
+      100.0,
+      0.5
+     ],
+     "k_I": [
+      0.0,
+      0.0
+     ],
+     "amplitude_convention": "peak"
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-01",
+    "fn": "cx",
+    "args": {
+     "v": [
+      1.0,
+      2.0
+     ],
+     "what": "w"
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-02",
+    "fn": "cx",
+    "args": {
+     "v": [
+      1.0
+     ],
+     "what": "w"
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-03",
+    "fn": "cx",
+    "args": {
+     "v": [
+      true,
+      0.0
+     ],
+     "what": "w"
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-04",
+    "fn": "cx",
+    "args": {
+     "v": "ab",
+     "what": "w"
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-05",
+    "fn": "cx",
+    "args": {
+     "v": [
+      1,
+      2
+     ],
+     "what": "w"
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-06",
+    "fn": "cx",
+    "args": {
+     "v": [
+      1.0,
+      {
+       "$float": "nan"
+      }
+     ],
+     "what": "w"
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-07",
+    "fn": "gamma_from_z",
+    "args": {
+     "z": [
+      25.0,
+      10.0
+     ],
+     "z0": 50.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-08",
+    "fn": "gamma_from_z",
+    "args": {
+     "z": [
+      25.0,
+      10.0
+     ],
+     "z0": 0.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-09",
+    "fn": "gamma_from_z",
+    "args": {
+     "z": [
+      -50.0,
+      0.0
+     ],
+     "z0": 50.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-10",
+    "fn": "z_from_gamma",
+    "args": {
+     "g": [
+      0.2,
+      -0.1
+     ],
+     "z0": 50.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-11",
+    "fn": "z_from_gamma",
+    "args": {
+     "g": [
+      1.0,
+      0.0
+     ],
+     "z0": 50.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-12",
+    "fn": "vswr",
+    "args": {
+     "gmag": 0.2
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-13",
+    "fn": "vswr",
+    "args": {
+     "gmag": 1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-14",
+    "fn": "vswr",
+    "args": {
+     "gmag": -0.1
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-15",
+    "fn": "vswr",
+    "args": {
+     "gmag": 0.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-16",
+    "fn": "gamma_mag_from_powers",
+    "args": {
+     "p_fwd": 100.0,
+     "p_ref": 4.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-17",
+    "fn": "gamma_mag_from_powers",
+    "args": {
+     "p_fwd": 0.0,
+     "p_ref": 1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-18",
+    "fn": "gamma_mag_from_powers",
+    "args": {
+     "p_fwd": 100.0,
+     "p_ref": 101.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-19",
+    "fn": "gamma_mag_from_powers",
+    "args": {
+     "p_fwd": 100.0,
+     "p_ref": -1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-20",
+    "fn": "s_to_abcd",
+    "args": {
+     "s11": [
+      0.1,
+      0.05
+     ],
+     "s12": [
+      0.85,
+      -0.2
+     ],
+     "s21": [
+      0.85,
+      -0.2
+     ],
+     "s22": [
+      0.12,
+      0.03
+     ],
+     "z0": 50.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-21",
+    "fn": "s_to_abcd",
+    "args": {
+     "s11": [
+      0.1,
+      0.05
+     ],
+     "s12": [
+      0.0,
+      0.0
+     ],
+     "s21": [
+      0.0,
+      0.0
+     ],
+     "s22": [
+      0.12,
+      0.03
+     ],
+     "z0": 50.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-22",
+    "fn": "abcd_to_s",
+    "args": {
+     "abcd": [
+      [
+       1.02,
+       0.01
+      ],
+      [
+       3.5,
+       40.0
+      ],
+      [
+       0.0001,
+       0.004
+      ],
+      [
+       0.98,
+       0.02
+      ]
+     ],
+     "z0": 50.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-23",
+    "fn": "cascade",
+    "args": {
+     "m1": [
+      [
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       50.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       1.0,
+       0.0
+      ]
+     ],
+     "m2": [
+      [
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.01
+      ],
+      [
+       1.0,
+       0.0
+      ]
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-24",
+    "fn": "z_in",
+    "args": {
+     "abcd": [
+      [
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       50.0
+      ],
+      [
+       0.0,
+       0.01
+      ],
+      [
+       1.0,
+       0.0
+      ]
+     ],
+     "z_load": [
+      50.0,
+      0.0
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-25",
+    "fn": "z_in",
+    "args": {
+     "abcd": [
+      [
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       1.0
+      ],
+      [
+       0.0,
+       0.0
+      ]
+     ],
+     "z_load": [
+      0.0,
+      0.0
+     ]
+    },
+    "note": "complex division by zero"
+   },
+   {
+    "id": "RR-26",
+    "fn": "deembed_load",
+    "args": {
+     "abcd": [
+      [
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       50.0
+      ],
+      [
+       0.0,
+       0.01
+      ],
+      [
+       1.0,
+       0.0
+      ]
+     ],
+     "z_input": [
+      30.0,
+      20.0
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-27",
+    "fn": "deembed_load",
+    "args": {
+     "abcd": [
+      [
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       50.0
+      ],
+      [
+       1.0,
+       0.0
+      ],
+      [
+       1.0,
+       0.0
+      ]
+     ],
+     "z_input": [
+      1.0,
+      0.0
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-28",
+    "fn": "transfer_efficiency",
+    "args": {
+     "abcd": [
+      [
+       1.0,
+       0.0
+      ],
+      [
+       2.0,
+       50.0
+      ],
+      [
+       0.0,
+       0.01
+      ],
+      [
+       1.0,
+       0.0
+      ]
+     ],
+     "z_load": [
+      50.0,
+      0.0
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-29",
+    "fn": "transfer_efficiency",
+    "args": {
+     "abcd": [
+      [
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       1.0,
+       0.0
+      ]
+     ],
+     "z_load": [
+      0.0,
+      5.0
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-30",
+    "fn": "correct_reflection",
+    "args": {
+     "m_raw": [
+      0.3,
+      0.1
+     ],
+     "e00": [
+      0.05,
+      0.02
+     ],
+     "e11": [
+      0.1,
+      -0.05
+     ],
+     "e10e01": [
+      0.95,
+      0.03
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-31",
+    "fn": "correct_reflection",
+    "args": {
+     "m_raw": [
+      0.5,
+      0.0
+     ],
+     "e00": [
+      0.0,
+      0.0
+     ],
+     "e11": [
+      1.0,
+      0.0
+     ],
+     "e10e01": [
+      -0.5,
+      0.0
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-32",
+    "fn": "fixture_to_plane",
+    "args": {
+     "abcd_fix": [
+      [
+       1.0,
+       0.0
+      ],
+      [
+       0.5,
+       2.0
+      ],
+      [
+       0.0,
+       0.001
+      ],
+      [
+       1.0,
+       0.0
+      ]
+     ],
+     "v_p": [
+      10.0,
+      1.0
+     ],
+     "i_p": [
+      0.2,
+      -0.05
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-33",
+    "fn": "fixture_to_plane",
+    "args": {
+     "abcd_fix": [
+      [
+       1.0,
+       0.0
+      ],
+      [
+       1.0,
+       0.0
+      ],
+      [
+       1.0,
+       0.0
+      ],
+      [
+       1.0,
+       0.0
+      ]
+     ],
+     "v_p": [
+      10.0,
+      1.0
+     ],
+     "i_p": [
+      0.2,
+      -0.05
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-34",
+    "fn": "line_peak_stress",
+    "args": {
+     "p_fwd": 100.0,
+     "gmag": 0.2,
+     "z0": 50.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-35",
+    "fn": "line_peak_stress",
+    "args": {
+     "p_fwd": 0.0,
+     "gmag": 0.0,
+     "z0": 50.0
+    },
+    "note": ""
+   },
+   {
+    "id": "RR-36",
+    "fn": "line_peak_stress",
+    "args": {
+     "p_fwd": -1.0,
+     "gmag": 0.0,
+     "z0": 50.0
+    },
+    "note": "math domain error"
+   },
+   {
+    "id": "RR-37",
+    "fn": "line_peak_stress",
+    "args": {
+     "p_fwd": 1.0,
+     "gmag": 0.0,
+     "z0": 0.0
+    },
+    "note": "float division by zero"
+   },
+   {
+    "id": "PG-01",
+    "fn": "p_bus_from_generator_input",
+    "args": {
+     "record": null
+    },
+    "note": ""
+   },
+   {
+    "id": "PG-02",
+    "fn": "p_bus_from_generator_input",
+    "args": {
+     "record": {
+      "generator": {
+       "generator_class": "GROUND/FACILITY_ONLY"
+      }
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "PG-03",
+    "fn": "p_bus_from_generator_input",
+    "args": {
+     "record": {}
+    },
+    "note": ""
+   },
+   {
+    "id": "PG-04",
+    "fn": "p_bus_from_generator_input",
+    "args": {
+     "record": {
+      "generator": {}
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "PG-05",
+    "fn": "p_bus_from_generator_input",
+    "args": {
+     "record": {
+      "generator": null
+     }
+    },
+    "note": ""
+   }
+  ],
+  "edge_cases": "registered_cases (every raise branch of R1-R8)",
+  "randomized_domain": {
+   "count": {
+    "R1": 60,
+    "R2": 60,
+    "R3": 60,
+    "R4": 100,
+    "R5": 100,
+    "R6": 100,
+    "R7": 480
+   },
+   "draw": {
+    "rng": "Python random.Random(master_seed * 1000 + k), k = 1..7 for R1..R7",
+    "R1": "n_ports choice(1, 2); unit choice(HZ, KHZ, MHZ, GHZ); format choice(RI, MA, DB); R choice(50, 75, 100) written as given; 1-12 points with increasing frequency (uniform steps); values uniform(-1, 1) (RI), magnitude uniform(0, 1) and angle uniform(-180, 180) (MA), dB uniform(-60, 0) and angle (DB); written with repr(); with probability 0.15 one defect (swap two frequencies, drop a value, add a non-numeric token)",
+    "R2": "true terms e00, e11 with |.| <= 0.2 / 0.3 and e10e01 of magnitude uniform(0.7, 1.0) and random phase; 3-6 standards with actual gammas of magnitude <= 1; measured through the model plus noise uniform(-1e-3, 1e-3) on each part with probability 0.5",
+    "R3": "terms as R2, gamma_measured magnitude uniform(0, 1), random phase",
+    "R4": "1-5 elements, kind choice(series, shunt), Z_ohm re uniform(0, 5), im uniform(-500, 500)",
+    "R5": "s11, s21 with magnitudes uniform(0, 1) and random phases",
+    "R6": "V_raw, I_raw, k_V, k_I parts uniform(-10, 10) (k parts uniform(0.1, 200)), convention choice(peak, rms)",
+    "R7": "60 calls each of gamma_from_z, z_from_gamma, vswr, gamma_mag_from_powers, s_to_abcd, abcd_to_s, transfer_efficiency and correct_reflection with magnitudes in the registered edge-case ranges (refusals included where the draw reaches them)"
+   },
+   "domain_note": "numerical parity domain only; dB values within [-300, 300] and angles within [-1e4, 1e4] degrees"
+  },
+  "vector_totals": {
+   "registered": "121 calls",
+   "randomized": "960 calls"
+  }
+ },
+ "campaign_seeds": {
+  "applicable": "true (input generation only; the component is deterministic)",
+  "scoring_master_seed": 3315226577,
+  "development_master_seed": 5053,
+  "derivation": "random.Random(master_seed * 1000 + k) as in inputs.randomized_domain.draw",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE",
+   "other_streams": "NOT_APPLICABLE: the harness's random.Random only generates input cases (the framework's seeded propagate_mc is out of scope)",
+   "migration_parity_dataset": "seeds and the generated case file stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic component)",
+  "development_rule": "development comparisons use development_master_seed (and the registered deterministic cases) only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "every call": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED"
+    },
+    {
+     "name": "value_structure",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "returned value as JSON (complex as [re, im], tuples as lists): keys and order, lengths, strings, booleans, nulls, integers and the int / float type of every number equal"
+    },
+    {
+     "name": "value_floats",
+     "units": "SI as the field",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": "|rust - py| <= 4 ulp(py) OR <= 1e-12 * max(1, |py|); NaN equals NaN",
+     "definition": "every float leaf"
+    },
+    {
+     "name": "error_class",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "Python exception class name"
+    },
+    {
+     "name": "error_message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "str(exception) character for character for TouchstoneError, FrameworkError, CalibrationSolveError, RecordError, PMainsNotPBusError, ZeroDivisionError and ValueError; class only for KeyError and TypeError"
+    }
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_VALUE": "integers, strings, booleans, error classes / messages, schema shape: equal",
+  "ULP_BOUNDED": "k_ulp = 4, r_rel = 1e-12 (template proposal); the complex operations are ported with CPython 3.11's formulas so bit-identical results are expected, except where libm pow results reach the ULP bound"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-C01",
+   "statement": "determinism: every Rust call evaluated in two separate processes gives byte-identical output",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-C02",
+   "statement": "p_bus_from_generator_input never returns (always PMainsNotPBusError) in both",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-C03",
+   "statement": "ladder_abcd of an empty element list is the identity ((1, 0), (0, 0), (0, 0), (1, 0)) in both",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": "true (passive-network identities, evaluated where the reference returns)",
+  "checks": [
+   {
+    "id": "CONS-C1",
+    "statement": "reciprocity of a ladder: det(ABCD) = A D - B C = 1 for every R4 result",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "|det - 1| <= 1e-9"
+   },
+   {
+    "id": "CONS-C2",
+    "statement": "power balance of a matched two-port: dissipated_fraction_matched + |S11|^2 + |S21|^2 = 1 when the fraction is not clipped",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "1e-12"
+   },
+   {
+    "id": "CONS-C3",
+    "statement": "SOL round trip: correcting the measured value of every R2 standard with the returned terms reproduces gamma_actual within the reported residual for exactly determined (3-standard, noise-free) cases",
+    "evaluated_on": "Rust outputs",
+    "tolerance": "|corrected - actual| <= 1e-9"
+   }
+  ]
+ },
+ "rust_only_registered_interfaces": {
+  "impedance-map gate (abep_subsystems::power::rf_match::rf_chain_status)": {
+   "rule": "without a registered measured P2 impedance map point the matched-RF-chain transfer is NOT_EVALUATED with reason TBD_AFTER_IMPEDANCE_MAP (A9.2 binding status; SC-WP-05 determining_evidence_gates); with a registered point (two-port ABCD of the characterized match state, measured load impedance, evidence class 'measured') it returns transfer_efficiency of that point; no default network, impedance or efficiency exists",
+   "tests": "absent map -> NOT_EVALUATED; a synthetic point -> the transfer_efficiency value; a non-measured evidence class -> INCOMPLETE_EVIDENCE"
+  }
+ },
+ "domain_and_error_parity": {
+  "cases": "all registered and randomized calls",
+  "mapping": {
+   "TouchstoneError": "PowerError class 'TouchstoneError'",
+   "FrameworkError": "'FrameworkError'",
+   "CalibrationSolveError": "'CalibrationSolveError'",
+   "RecordError": "'RecordError'",
+   "PMainsNotPBusError": "'PMainsNotPBusError'",
+   "ZeroDivisionError": "'ZeroDivisionError'",
+   "ValueError": "'ValueError' (math domain error)",
+   "KeyError": "'KeyError'",
+   "TypeError": "'TypeError'"
+  },
+  "mapping_rule": "every Python exception class maps to exactly one Rust class name; no Rust path may return a value where Python fails, or fail where Python returns",
+  "documented_divergence": [
+   {
+    "id": "DIV-C01",
+    "statement": "none expected",
+    "disposition": "NOT_APPLICABLE"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_map_schema_v1.json (context; map storage is out of scope)"
+  ],
+  "rules": [
+   "parsed Touchstone record and SOL record field names, order and types identical"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "tests/test_p2_impedance_framework.py patterns re-expressed as registered cases"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP/reference_outputs/",
+   "captured_at_python_commit": "fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73",
+   "sha256_manifest": "FILL at scoring",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: not applicable"
+ },
+ "julia_bridge": {
+  "applicable": "false",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "julia_version": "NOT_APPLICABLE",
+  "launch_equivalence": "NOT_APPLICABLE",
+  "record_comparison": "NOT_APPLICABLE",
+  "execution_provenance": "NOT_APPLICABLE"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-C01",
+    "description": "TS-02 parse_touchstone, 10000 repeats"
+   },
+   {
+    "id": "PERF-C02",
+    "description": "SO-02 sol_error_terms, 10000 repeats"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every call meets its tolerance class",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": "true: CONS-C1..C3 on every Rust result where they apply",
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED (= PARITY_PASS) iff every call, INV-C01..C03 and CONS-C1..C3 pass and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for the listed RF-network kernels (Touchstone ingestion, SOL correction, ladder / two-port relations, V/I power and impedance, the P_mains refusal) within the registered domain; it is NOT physics validation; RF ratings stay TBD_AFTER_IMPEDANCE_MAP and no impedance is predicted",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow",
+  "disagreement_rule": "never rewrite a Python result to make Rust pass (RM-R11)",
+  "observable_scope": "restricted to the retained RF-network kernels (RM-R20)"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output may be cited by the bid package unless the owner re-freezes",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (terminal package state, A9.29 sec. 3)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics validation and not an impedance prediction: every network, impedance and reading is a caller input",
+  "not an RF component rating (RF_COMPONENT_RATINGS stays TBD_AFTER_IMPEDANCE_MAP)",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-DOCS_EXPERIMENTS_HALL_ICP_P2_IMPEDANCE_MAP/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_rf_match_v1.py (committed with the implementation; sha256 in the report)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance",
+   "environment",
+   "per-test results",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator",
+  "checks": [
+   "migration_class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS: PASS",
+   "no excluded path is reachable from the scored functions",
+   "forbidden identifiers: none (abep-subsystems scan)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27",
+  "inputs": [],
+  "check": "NOT_APPLICABLE: no provisional value is carried; RATING_STATUS TBD_AFTER_IMPEDANCE_MAP is not touched"
+ },
+ "new_physics_verification": {
+  "applies_when": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY)"
+ }
+}

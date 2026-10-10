@@ -1,0 +1,599 @@
+{
+ "schema": "abep_assess_icp_collector_window_a1_v1",
+ "id": "ICP-CLOSURE-v1-A1",
+ "provenance": {
+  "addendum": "docs/closure/icp/icp_closure_registration_a1_v1.json (sha256 73d177fc5aa8dfcf85d51a284ea2d7cb381055072c02304f155179a54796983c; lock 768809949bff34138de3de97b63bf32b80cd1ccc64fe6f715518bb1e7fe56636)",
+  "parent": "docs/closure/icp/icp_closure_registration_v1.json (sha256 41ce4d17a58e0ba6896fd4cfb815856f69c06271ae50b0d602575d5606802d51; lock 5a03e399a980d975651ccd7392077b4fbc56fe825e53f002bba6371d22a156f4)",
+  "p8_record": "docs/closure/materials/materials_gates_v1.json (sha256 f3b6e04507429db87b3f94a3a355bb6e87cb78d97ca9bd1f902a766ea667fee1)",
+  "dbf1_config": "5bd76159fb9761b5c47619fb42217f05c24841d7009067ac71dcedf731759864"
+ },
+ "labels": [
+  "NECESSARY_CONDITION",
+  "NOT_A_PERFORMANCE_PREDICTION",
+  "T_E_PARAMETRIC"
+ ],
+ "A_coll_m2": 0.03769911184307752,
+ "floors": {
+  "N+": {
+   "E_floor_over_T_e": 4.6549085222242645,
+   "E_floor_eV_on_T_e_grid": [
+    9.309817044448529,
+    13.964725566672794,
+    18.619634088897058,
+    23.274542611121323,
+    27.929451133345587
+   ],
+   "E_star_window": "EVALUATED (P8 N+ -> Ni prior)"
+  },
+  "N2+": {
+   "E_floor_over_T_e": 5.001482112504237,
+   "E_floor_eV_on_T_e_grid": [
+    10.002964225008474,
+    15.00444633751271,
+    20.00592845001695,
+    25.007410562521187,
+    30.00889267502542
+   ],
+   "E_star_window": "NOT_EVALUATED (no P8 prior for this ion)"
+  },
+  "O+": {
+   "E_floor_over_T_e": 4.721414314980199,
+   "E_floor_eV_on_T_e_grid": [
+    9.442828629960397,
+    14.164242944940597,
+    18.885657259920794,
+    23.607071574900992,
+    28.328485889881193
+   ],
+   "E_star_window": "NOT_EVALUATED (no P8 prior for this ion)"
+  },
+  "O2+": {
+   "E_floor_over_T_e": 5.06798790526017,
+   "E_floor_eV_on_T_e_grid": [
+    10.13597581052034,
+    15.20396371578051,
+    20.27195162104068,
+    25.339939526300853,
+    30.40792743156102
+   ],
+   "E_star_window": "NOT_EVALUATED (no P8 prior for this ion)"
+  },
+  "Xe+": {
+   "E_floor_over_T_e": 5.773843150532171,
+   "E_floor_eV_on_T_e_grid": [
+    11.547686301064342,
+    17.32152945159651,
+    23.095372602128684,
+    28.869215752660857,
+    34.64305890319302
+   ],
+   "E_star_window": "NOT_EVALUATED (no P8 prior for this ion)"
+  }
+ },
+ "window_N_plus_AIR": [
+  {
+   "allowance_mm": 0.5,
+   "I_d_A": 1.857,
+   "E_star_eV": 29.8,
+   "T_e_eV": 2.0,
+   "E_floor_eV": 9.309817044448529,
+   "window": "OPEN",
+   "dPhi_floating_V": 8.309817044448529,
+   "dPhi_max_V": 28.8,
+   "f_max": 0.9999644685194286,
+   "collector_ion_flux_current_min_A": 1.8570659843039412,
+   "n_s_req_m3": 8.28330979557022e+16,
+   "P_abs_min_cons_W": 17.204230691788574,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 0.5,
+   "I_d_A": 1.857,
+   "E_star_eV": 29.8,
+   "T_e_eV": 3.0,
+   "E_floor_eV": 13.964725566672794,
+   "window": "OPEN",
+   "dPhi_floating_V": 12.464725566672794,
+   "dPhi_max_V": 28.3,
+   "f_max": 0.9948995413458491,
+   "collector_ion_flux_current_min_A": 1.866520108641266,
+   "n_s_req_m3": 6.797725334002714e+16,
+   "P_abs_min_cons_W": 17.291815590474418,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 0.5,
+   "I_d_A": 1.857,
+   "E_star_eV": 29.8,
+   "T_e_eV": 4.0,
+   "E_floor_eV": 18.619634088897058,
+   "window": "OPEN",
+   "dPhi_floating_V": 16.619634088897058,
+   "dPhi_max_V": 27.8,
+   "f_max": 0.9388907160644775,
+   "collector_ion_flux_current_min_A": 1.9778659733519743,
+   "n_s_req_m3": 6.238187589317058e+16,
+   "P_abs_min_cons_W": 18.32334595032736,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 0.5,
+   "I_d_A": 1.857,
+   "E_star_eV": 29.8,
+   "T_e_eV": 5.0,
+   "E_floor_eV": 23.274542611121323,
+   "window": "OPEN",
+   "dPhi_floating_V": 20.774542611121323,
+   "dPhi_max_V": 27.3,
+   "f_max": 0.7288522700801705,
+   "collector_ion_flux_current_min_A": 2.5478414161977407,
+   "n_s_req_m3": 7.1875182058066504e+16,
+   "P_abs_min_cons_W": 23.603712447939113,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 0.5,
+   "I_d_A": 1.857,
+   "E_star_eV": 29.8,
+   "T_e_eV": 6.0,
+   "E_floor_eV": 27.929451133345587,
+   "window": "OPEN",
+   "dPhi_floating_V": 24.929451133345587,
+   "dPhi_max_V": 26.8,
+   "f_max": 0.26784141656099614,
+   "collector_ion_flux_current_min_A": 6.933207059025172,
+   "n_s_req_m3": 1.7854599475048752e+17,
+   "P_abs_min_cons_W": 64.230616836221,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 0.5,
+   "I_d_A": 7.5,
+   "E_star_eV": 26.1,
+   "T_e_eV": 2.0,
+   "E_floor_eV": 9.309817044448529,
+   "window": "OPEN",
+   "dPhi_floating_V": 8.309817044448529,
+   "dPhi_max_V": 25.1,
+   "f_max": 0.9997740261961946,
+   "collector_ion_flux_current_min_A": 7.5016951865963035,
+   "n_s_req_m3": 3.346077401003379e+17,
+   "P_abs_min_cons_W": 69.49720454766548,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 0.5,
+   "I_d_A": 7.5,
+   "E_star_eV": 26.1,
+   "T_e_eV": 3.0,
+   "E_floor_eV": 13.964725566672794,
+   "window": "OPEN",
+   "dPhi_floating_V": 12.464725566672794,
+   "dPhi_max_V": 24.6,
+   "f_max": 0.9824918970197815,
+   "collector_ion_flux_current_min_A": 7.6336507433292295,
+   "n_s_req_m3": 2.7801179750820986e+17,
+   "P_abs_min_cons_W": 70.71966721635066,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 0.5,
+   "I_d_A": 7.5,
+   "E_star_eV": 26.1,
+   "T_e_eV": 4.0,
+   "E_floor_eV": 18.619634088897058,
+   "window": "OPEN",
+   "dPhi_floating_V": 16.619634088897058,
+   "dPhi_max_V": 24.1,
+   "f_max": 0.8458904364297918,
+   "collector_ion_flux_current_min_A": 8.866396494154587,
+   "n_s_req_m3": 2.7964606963768515e+17,
+   "P_abs_min_cons_W": 82.14007040114693,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 0.5,
+   "I_d_A": 7.5,
+   "E_star_eV": 26.1,
+   "T_e_eV": 5.0,
+   "E_floor_eV": 23.274542611121323,
+   "window": "OPEN",
+   "dPhi_floating_V": 20.774542611121323,
+   "dPhi_max_V": 23.6,
+   "f_max": 0.43169184318650333,
+   "collector_ion_flux_current_min_A": 17.373504082540155,
+   "n_s_req_m3": 4.901104758641777e+17,
+   "P_abs_min_cons_W": 160.9516165214685,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 0.5,
+   "I_d_A": 7.5,
+   "E_star_eV": 26.1,
+   "T_e_eV": 6.0,
+   "E_floor_eV": 27.929451133345587,
+   "window": "WINDOW_CLOSED"
+  },
+  {
+   "allowance_mm": 1.0,
+   "I_d_A": 1.857,
+   "E_star_eV": 33.0,
+   "T_e_eV": 2.0,
+   "E_floor_eV": 9.309817044448529,
+   "window": "OPEN",
+   "dPhi_floating_V": 8.309817044448529,
+   "dPhi_max_V": 32.0,
+   "f_max": 0.9999928263177934,
+   "collector_ion_flux_current_min_A": 1.8570133216234228,
+   "n_s_req_m3": 8.28307489745616e+16,
+   "P_abs_min_cons_W": 17.203742814183716,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 1.0,
+   "I_d_A": 1.857,
+   "E_star_eV": 33.0,
+   "T_e_eV": 3.0,
+   "E_floor_eV": 13.964725566672794,
+   "window": "OPEN",
+   "dPhi_floating_V": 12.464725566672794,
+   "dPhi_max_V": 31.5,
+   "f_max": 0.9982446578394235,
+   "collector_ion_flux_current_min_A": 1.8602654022905023,
+   "n_s_req_m3": 6.7749461656345336e+16,
+   "P_abs_min_cons_W": 17.23387073989967,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 1.0,
+   "I_d_A": 1.857,
+   "E_star_eV": 33.0,
+   "T_e_eV": 4.0,
+   "E_floor_eV": 18.619634088897058,
+   "window": "OPEN",
+   "dPhi_floating_V": 16.619634088897058,
+   "dPhi_max_V": 31.0,
+   "f_max": 0.9725418287513065,
+   "collector_ion_flux_current_min_A": 1.9094294405663685,
+   "n_s_req_m3": 6.022338823409255e+16,
+   "P_abs_min_cons_W": 17.68933622329495,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 1.0,
+   "I_d_A": 1.857,
+   "E_star_eV": 33.0,
+   "T_e_eV": 5.0,
+   "E_floor_eV": 23.274542611121323,
+   "window": "OPEN",
+   "dPhi_floating_V": 20.774542611121323,
+   "dPhi_max_V": 30.5,
+   "f_max": 0.8570258562168033,
+   "collector_ion_flux_current_min_A": 2.166795769963598,
+   "n_s_req_m3": 6.112579827719346e+16,
+   "P_abs_min_cons_W": 20.073629372096764,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 1.0,
+   "I_d_A": 1.857,
+   "E_star_eV": 33.0,
+   "T_e_eV": 6.0,
+   "E_floor_eV": 27.929451133345587,
+   "window": "OPEN",
+   "dPhi_floating_V": 24.929451133345587,
+   "dPhi_max_V": 30.0,
+   "f_max": 0.5704819349436883,
+   "collector_ion_flux_current_min_A": 3.25514251416796,
+   "n_s_req_m3": 8.382739088834288e+16,
+   "P_abs_min_cons_W": 30.156291279754818,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 1.0,
+   "I_d_A": 7.5,
+   "E_star_eV": 27.6,
+   "T_e_eV": 2.0,
+   "E_floor_eV": 9.309817044448529,
+   "window": "OPEN",
+   "dPhi_floating_V": 8.309817044448529,
+   "dPhi_max_V": 26.6,
+   "f_max": 0.9998932575332866,
+   "collector_ion_flux_current_min_A": 7.50080065396413,
+   "n_s_req_m3": 3.345678401130613e+17,
+   "P_abs_min_cons_W": 69.48891741845449,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 1.0,
+   "I_d_A": 7.5,
+   "E_star_eV": 27.6,
+   "T_e_eV": 3.0,
+   "E_floor_eV": 13.964725566672794,
+   "window": "OPEN",
+   "dPhi_floating_V": 12.464725566672794,
+   "dPhi_max_V": 26.1,
+   "f_max": 0.9893807987490914,
+   "collector_ion_flux_current_min_A": 7.580498842793909,
+   "n_s_req_m3": 2.760760454145324e+17,
+   "P_abs_min_cons_W": 70.22725737941134,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 1.0,
+   "I_d_A": 7.5,
+   "E_star_eV": 27.6,
+   "T_e_eV": 4.0,
+   "E_floor_eV": 18.619634088897058,
+   "window": "OPEN",
+   "dPhi_floating_V": 16.619634088897058,
+   "dPhi_max_V": 25.6,
+   "f_max": 0.8940821491990402,
+   "collector_ion_flux_current_min_A": 8.388490930860039,
+   "n_s_req_m3": 2.6457293225640368e+17,
+   "P_abs_min_cons_W": 77.71265768167358,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 1.0,
+   "I_d_A": 7.5,
+   "E_star_eV": 27.6,
+   "T_e_eV": 5.0,
+   "E_floor_eV": 23.274542611121323,
+   "window": "OPEN",
+   "dPhi_floating_V": 20.774542611121323,
+   "dPhi_max_V": 25.1,
+   "f_max": 0.5789869624705186,
+   "collector_ion_flux_current_min_A": 12.95365955737197,
+   "n_s_req_m3": 3.654256631065236e+17,
+   "P_abs_min_cons_W": 120.00529287140542,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 1.0,
+   "I_d_A": 7.5,
+   "E_star_eV": 27.6,
+   "T_e_eV": 6.0,
+   "E_floor_eV": 27.929451133345587,
+   "window": "WINDOW_CLOSED"
+  },
+  {
+   "allowance_mm": 2.0,
+   "I_d_A": 1.857,
+   "E_star_eV": 37.9,
+   "T_e_eV": 2.0,
+   "E_floor_eV": 9.309817044448529,
+   "window": "OPEN",
+   "dPhi_floating_V": 8.309817044448529,
+   "dPhi_max_V": 36.9,
+   "f_max": 0.999999380957234,
+   "collector_ion_flux_current_min_A": 1.8570011495631282,
+   "n_s_req_m3": 8.283020604853138e+16,
+   "P_abs_min_cons_W": 17.203630049782735,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 2.0,
+   "I_d_A": 1.857,
+   "E_star_eV": 37.9,
+   "T_e_eV": 3.0,
+   "E_floor_eV": 13.964725566672794,
+   "window": "OPEN",
+   "dPhi_floating_V": 12.464725566672794,
+   "dPhi_max_V": 36.4,
+   "f_max": 0.9996572210609399,
+   "collector_ion_flux_current_min_A": 1.857636758757326,
+   "n_s_req_m3": 6.765372844320281e+16,
+   "P_abs_min_cons_W": 17.20951846047962,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 2.0,
+   "I_d_A": 1.857,
+   "E_star_eV": 37.9,
+   "T_e_eV": 4.0,
+   "E_floor_eV": 18.619634088897058,
+   "window": "OPEN",
+   "dPhi_floating_V": 16.619634088897058,
+   "dPhi_max_V": 35.9,
+   "f_max": 0.991933950758894,
+   "collector_ion_flux_current_min_A": 1.8721004544498896,
+   "n_s_req_m3": 5.904603233105854e+16,
+   "P_abs_min_cons_W": 17.343513030114668,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 2.0,
+   "I_d_A": 1.857,
+   "E_star_eV": 37.9,
+   "T_e_eV": 5.0,
+   "E_floor_eV": 23.274542611121323,
+   "window": "OPEN",
+   "dPhi_floating_V": 20.774542611121323,
+   "dPhi_max_V": 35.4,
+   "f_max": 0.9463402169893904,
+   "collector_ion_flux_current_min_A": 1.9622963989713005,
+   "n_s_req_m3": 5.5356824813073144e+16,
+   "P_abs_min_cons_W": 18.17910629934992,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 2.0,
+   "I_d_A": 1.857,
+   "E_star_eV": 37.9,
+   "T_e_eV": 6.0,
+   "E_floor_eV": 27.929451133345587,
+   "window": "OPEN",
+   "dPhi_floating_V": 24.929451133345587,
+   "dPhi_max_V": 34.9,
+   "f_max": 0.8101950179951458,
+   "collector_ion_flux_current_min_A": 2.2920407540831436,
+   "n_s_req_m3": 5.902531007114793e+16,
+   "P_abs_min_cons_W": 21.23392395397706,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 2.0,
+   "I_d_A": 7.5,
+   "E_star_eV": 29.8,
+   "T_e_eV": 2.0,
+   "E_floor_eV": 9.309817044448529,
+   "window": "OPEN",
+   "dPhi_floating_V": 8.309817044448529,
+   "dPhi_max_V": 28.8,
+   "f_max": 0.9999644685194286,
+   "collector_ion_flux_current_min_A": 7.5002664955732685,
+   "n_s_req_m3": 3.345440143606713e+17,
+   "P_abs_min_cons_W": 69.48396886828988,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 2.0,
+   "I_d_A": 7.5,
+   "E_star_eV": 29.8,
+   "T_e_eV": 3.0,
+   "E_floor_eV": 13.964725566672794,
+   "window": "OPEN",
+   "dPhi_floating_V": 12.464725566672794,
+   "dPhi_max_V": 28.3,
+   "f_max": 0.9948995413458491,
+   "collector_ion_flux_current_min_A": 7.53844955024744,
+   "n_s_req_m3": 2.745446419225652e+17,
+   "P_abs_min_cons_W": 69.83770432340233,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 2.0,
+   "I_d_A": 7.5,
+   "E_star_eV": 29.8,
+   "T_e_eV": 4.0,
+   "E_floor_eV": 18.619634088897058,
+   "window": "OPEN",
+   "dPhi_floating_V": 16.619634088897058,
+   "dPhi_max_V": 27.8,
+   "f_max": 0.9388907160644775,
+   "collector_ion_flux_current_min_A": 7.988150134701027,
+   "n_s_req_m3": 2.51946186967571e+17,
+   "P_abs_min_cons_W": 74.00382047789726,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 2.0,
+   "I_d_A": 7.5,
+   "E_star_eV": 29.8,
+   "T_e_eV": 5.0,
+   "E_floor_eV": 23.274542611121323,
+   "window": "OPEN",
+   "dPhi_floating_V": 20.774542611121323,
+   "dPhi_max_V": 27.3,
+   "f_max": 0.7288522700801705,
+   "collector_ion_flux_current_min_A": 10.29015111549976,
+   "n_s_req_m3": 2.9028748811820077e+17,
+   "P_abs_min_cons_W": 95.33001796421289,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  },
+  {
+   "allowance_mm": 2.0,
+   "I_d_A": 7.5,
+   "E_star_eV": 29.8,
+   "T_e_eV": 6.0,
+   "E_floor_eV": 27.929451133345587,
+   "window": "OPEN",
+   "dPhi_floating_V": 24.929451133345587,
+   "dPhi_max_V": 26.8,
+   "f_max": 0.26784141656099614,
+   "collector_ion_flux_current_min_A": 28.001644018680015,
+   "n_s_req_m3": 7.211066023848445e+17,
+   "P_abs_min_cons_W": 259.4128305178554,
+   "conservation": "NOT_EXCLUDED_BY_CONSERVATION"
+  }
+ ],
+ "window_summary_N_plus": [
+  {
+   "allowance_mm": 0.5,
+   "I_d_A": 1.857,
+   "E_star_eV": 29.8,
+   "T_e_max_open_and_not_excluded_eV": 6.0
+  },
+  {
+   "allowance_mm": 0.5,
+   "I_d_A": 7.5,
+   "E_star_eV": 26.1,
+   "T_e_max_open_and_not_excluded_eV": 5.0
+  },
+  {
+   "allowance_mm": 1.0,
+   "I_d_A": 1.857,
+   "E_star_eV": 33.0,
+   "T_e_max_open_and_not_excluded_eV": 6.0
+  },
+  {
+   "allowance_mm": 1.0,
+   "I_d_A": 7.5,
+   "E_star_eV": 27.6,
+   "T_e_max_open_and_not_excluded_eV": 5.0
+  },
+  {
+   "allowance_mm": 2.0,
+   "I_d_A": 1.857,
+   "E_star_eV": 37.9,
+   "T_e_max_open_and_not_excluded_eV": 6.0
+  },
+  {
+   "allowance_mm": 2.0,
+   "I_d_A": 7.5,
+   "E_star_eV": 29.8,
+   "T_e_max_open_and_not_excluded_eV": 6.0
+  }
+ ],
+ "window_open_somewhere_on_the_T_e_grid": true,
+ "xe_information": [
+  {
+   "I_d_A": 1.857,
+   "P_abs_min_cons_W_at_f_1": 22.5251197509,
+   "P_abs_analog_W_at_f_1": [
+    427.11,
+    835.65
+   ]
+  },
+  {
+   "I_d_A": 7.5,
+   "P_abs_min_cons_W_at_f_1": 90.97382775,
+   "P_abs_analog_W_at_f_1": [
+    1725.0,
+    3375.0
+   ]
+  }
+ ],
+ "cfg_cap_off_bias_grid": [
+  {
+   "V_bias_V": 25.0,
+   "class": "INSIDE_THE_LARGEST_ALLOWED_DROP (2 mm, T_e 2 eV)"
+  },
+  {
+   "V_bias_V": 50.0,
+   "class": "ABOVE_EVERY_ALLOWED_DROP"
+  },
+  {
+   "V_bias_V": 100.0,
+   "class": "ABOVE_EVERY_ALLOWED_DROP"
+  },
+  {
+   "V_bias_V": 200.0,
+   "class": "ABOVE_EVERY_ALLOWED_DROP"
+  },
+  {
+   "V_bias_V": 350.0,
+   "class": "ABOVE_EVERY_ALLOWED_DROP"
+  }
+ ],
+ "requirement": "collector sheath drop dPhi = phi_p - V_c within (V_fl, E*/e - T_e/2] (window_N_plus_AIR rows): the collector runs a few T_e below floating; a cathode-common collector with the Hall discharge voltage across its sheath (analog 140 / 220 V) is outside every allowance",
+ "reachability": "NOT_EVALUATED by the model (I_e,cap and T_e withheld: chemistry not admitted). Necessary conditions only: the window is open for N+ at the lower T_e of the grid and conservation does not exclude the required collector current inside the 500 W envelope there; at the allowed bias the collector ion flux is I_d / f_max and the required edge density is n_s,req",
+ "p8_feedback": "P8 DA-03 uses an ion flux equal to I_d; at a near-floating collector the ion flux is I_d / f > I_d, so the P8 E* is a favourable ceiling and the self-consistent ceiling is lower (P8 to re-evaluate with I_d / f)",
+ "dcr": {
+  "state": "DCR_NOT_TRIGGERED_PENDING_EVIDENCE",
+  "item": "DBF1-ICP-04",
+  "rule": "A1 dcr_rule: triggered only when a CONVERGED model T_e or an EM measurement shows the window closed or conservation-excluded at the operating point; a parametric T_e never triggers it",
+  "trigger_condition": "operating T_e above T_e_max_open_and_not_excluded_eV of window_summary_N_plus (chosen allowance), or I_e,cap at dPhi <= dPhi_max below I_d with the HC-05 margin"
+ }
+}

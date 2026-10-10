@@ -285,7 +285,7 @@
    "fo_a9_7_f9_freeze_candidate": "VERIFIED (232c1af); INVESTIGATION_HYPOTHESIS, 204 parameters"
   },
   "hygiene": "post-merge d63b113: full suite 2901/5/1, golden OK, ci 10/10, production modules / frozen data / decision files unchanged vs main 98fbbb9",
-  "phase": "VERIFIED; awaiting owner merge approval (checkpoint 6)",
+  "phase": "VERIFIED; merged to main as b1e5b76 (checkpoint 6, PR #36, owner approval consumed; 5 Codex fail-closed findings fixed in e2d8f9a before merge)",
   "consolidated_verification": "wf_ba93b973-628: six dimensions, 25 findings (14 blocker/major), 2 repair rounds, 0 blocker/major remaining; repairs merged d63b113"
  },
  "owner_question_sequencing": {
@@ -295,8 +295,19 @@
    "S2": "A9.9 (5)",
    "S3": "A9.10 (10)",
    "S4": "A9.11 (7)",
-   "S5": "A9.12 (14)"
+   "S5": "A9.12 (14)",
+   "S6": "A9.13 (22)",
+   "S7-S10": "A9.14 (61)"
   },
-  "application": "A9.8/A9.10/A9.11 to P1/P2/P3/RFQ artifacts and the A9.9 production-model changes are pending (not yet implemented)"
+  "application": "A9.16 step 1 running (wf_db2a13f8-1bb); step 2 (A9.9 model changes) launched in parallel on owner instruction 'implement rest of the things meanwhile'; step 3 (A9.13 architecture code + full F-lane regeneration) after steps 1 and 2 are merged",
+  "amendments": {
+   "A9.15": "RFP-compliant propellant policy: Xe is an RFP-required system capability; amends A9.13 xenon statement and A9.14 OQ-A907-07, XA9Q-07, MPQ-01, XV2Q-01, XA9Q-05, OD6"
+  },
+  "icp_feed_gas_confirmation": "owner 2026-10-01: keep the A9.1 ICP feed-gas baseline unchanged (G-REUSE primary; G-XE declared ICP-feed variant); A9.15 concerns system propellant capability only"
+ },
+ "checkpoint_6": {
+  "pr": "ppusapati/abep#36",
+  "main": "b1e5b761a40f82ca225dc412d17a87585653d4ff",
+  "approval": "owner 2026-10-01 (one merge, consumed)"
  }
 }

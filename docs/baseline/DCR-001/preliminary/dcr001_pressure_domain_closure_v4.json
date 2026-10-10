@@ -1,0 +1,211 @@
+{
+ "label": "PROPOSAL-LEVEL / PARAMETRIC / NOT_VALIDATED",
+ "feed": {
+  "AIR_12mN_ref_0.45": {
+   "p_anode_Pa": 0.5929915549028587,
+   "p_distributor_Pa": 1.778974664708576,
+   "C_distributor_req_m3_s": 0.03943466973229979,
+   "dp_line_Pa": 1.0851654318342454,
+   "dp_valve_Pa": 1.7789746647085762,
+   "p_plenum_min_Pa": 4.643114761251398
+  },
+  "AIR_12mN_cons_0.55": {
+   "p_anode_Pa": 0.7247674559923829,
+   "p_distributor_Pa": 2.1743023679771487,
+   "C_distributor_req_m3_s": 0.03943466973229978,
+   "dp_line_Pa": 1.3263133055751888,
+   "dp_valve_Pa": 2.1743023679771487,
+   "p_plenum_min_Pa": 5.6749180415294855
+  },
+  "AIR_capability_1.33": {
+   "p_anode_Pa": 1.7526194844906713,
+   "p_distributor_Pa": 5.257858453472014,
+   "C_distributor_req_m3_s": 0.039434669732299775,
+   "dp_line_Pa": 3.2072667207545473,
+   "dp_valve_Pa": 2.6289292267360067,
+   "p_plenum_min_Pa": 11.094054400962568
+  }
+ },
+ "C_channel_m3_s": 0.13144889910766594,
+ "C_line_m3_s": 0.043098361661061506,
+ "valve_C_nom_m3_s": 0.026289779821533188,
+ "valve_C_full_m3_s": 0.052579559643066376,
+ "plenum_min_Pa": 11.094054400962568,
+ "plenum_selected_Pa": 12.0,
+ "plenum_band_Pa": [
+  11.1,
+  14.0
+ ],
+ "plenum_Kn": 0.0028333333333333327,
+ "plenum_V_L": 4.763494209963122,
+ "compressor": {
+  "S_inlet_m3_s": 11.253567441244025,
+  "p_inlet_Pa_12mN": 0.005079449767196535,
+  "n_front": 3,
+  "finishing_inlet_speed_m3_s": 0.5716193051955747,
+  "holweck_only_channel_width_needed_m": 25.405302453136652,
+  "stages": [
+   {
+    "stage": "F1 front axial (shaft 1, contra-rotating)",
+    "p_in_Pa": 0.005079449767196535,
+    "p_out_Pa": 0.014222459348150298,
+    "PR": 2.8,
+    "Kn_out": 23.905851419727817,
+    "domain": "free molecular (<= 0.1 Pa)",
+    "evidence": "turbomolecular stage theory inside the admitted 0.1 Pa limit (EV-01..03); stage coefficients not measured"
+   },
+   {
+    "stage": "F2 front axial (shaft 1, contra-rotating)",
+    "p_in_Pa": 0.014222459348150298,
+    "p_out_Pa": 0.03982288617482083,
+    "PR": 2.8,
+    "Kn_out": 14.286478773677961,
+    "domain": "free molecular (<= 0.1 Pa)",
+    "evidence": "turbomolecular stage theory inside the admitted 0.1 Pa limit (EV-01..03); stage coefficients not measured"
+   },
+   {
+    "stage": "F3 front axial (shaft 1, contra-rotating)",
+    "p_in_Pa": 0.03982288617482083,
+    "p_out_Pa": 0.1,
+    "PR": 2.5111188466100653,
+    "Kn_out": 9.519999999999998,
+    "domain": "free molecular (<= 0.1 Pa)",
+    "evidence": "turbomolecular stage theory inside the admitted 0.1 Pa limit (EV-01..03); stage coefficients not measured"
+   },
+   {
+    "stage": "T turbo section of finishing unit (shaft 2, ~1 kHz)",
+    "p_in_Pa": 0.1,
+    "p_out_Pa": 1.0,
+    "PR": 10.0,
+    "Kn_out": 1.7,
+    "domain": "transitional (blade spacing ~4 mm: Kn 1.7-17)",
+    "evidence": "NOT admitted in the repository model; analog evidence: commercial turbo-drag hybrid pumps operate turbo rows in this range (EV-03 pump class; verify)"
+   },
+   {
+    "stage": "H Holweck drag section of finishing unit",
+    "p_in_Pa": 1.0,
+    "p_out_Pa": 12.0,
+    "PR": 12.0,
+    "Kn_out": 1.8888888888888888,
+    "domain": "molecular-drag channel, gap 0.3 mm: Kn 1.9-23 (repository drag-channel bound Kn >= 0.5 met)",
+    "evidence": "drag-channel form ln K0 ~ u sqrt(m) L / h (EV-02, model-derived); coefficients uncited"
+   }
+  ],
+  "bom": [
+   {
+    "item": "front: 3-stage tapered contra-rotating rotor stack (annulus sum 0.433 m2 x 2 rows x 1.74 kg/m2)",
+    "cbe_kg": 1.507,
+    "mga": 0.2,
+    "mev_kg": 1.808,
+    "basis": "geometry",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "front: 2 shafts, hybrid ceramic bearings, dampers",
+    "cbe_kg": 1.0,
+    "mga": 0.2,
+    "mev_kg": 1.2,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "front: 2 BLDC motors",
+    "cbe_kg": 0.8,
+    "mga": 0.2,
+    "mev_kg": 0.96,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "front: conical CFRP housing + flanges",
+    "cbe_kg": 1.18,
+    "mga": 0.2,
+    "mev_kg": 1.416,
+    "basis": "geometry",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "front: motor drives (2)",
+    "cbe_kg": 0.4,
+    "mga": 0.2,
+    "mev_kg": 0.48,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "finishing unit rotor: turbo rows (~572 L/s class at 0.1 Pa, Al alloy) + Holweck drum",
+    "cbe_kg": 1.3,
+    "mga": 0.2,
+    "mev_kg": 1.56,
+    "basis": "estimate (DN160-class rotor; EV-04 Al-alloy blade sets, ~1 kHz)",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "finishing unit: shaft, hybrid / magnetic bearings",
+    "cbe_kg": 0.5,
+    "mga": 0.2,
+    "mev_kg": 0.6,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "finishing unit: motor",
+    "cbe_kg": 0.4,
+    "mga": 0.2,
+    "mev_kg": 0.48,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "finishing unit: Al housing integrated with the front housing (no flanges)",
+    "cbe_kg": 1.0,
+    "mga": 0.2,
+    "mev_kg": 1.2,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "finishing unit: drive electronics",
+    "cbe_kg": 0.6,
+    "mga": 0.2,
+    "mev_kg": 0.72,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   }
+  ],
+  "cbe_kg": 8.687,
+  "mev_kg": 10.424,
+  "power_W": {
+   "target": 45.0,
+   "allowance": 90.0
+  }
+ },
+ "bom_subtotals_mev_kg": {
+  "AL-01 intake": 4.629,
+  "AL-02 compressor": 10.424,
+  "AL-03 plenum/feed": 1.44,
+  "AL-04 Hall head + magnets": 4.205,
+  "AL-05 ICP neutralizer": 1.583,
+  "AL-06 RF generator / match": 1.5,
+  "AL-07 PPU": 6.0,
+  "AL-08 Xe hardware (single branch, 2 kg Xe)": 3.143,
+  "AL-09 controls / FDIR": 1.0,
+  "AL-10 structure / thermal": 2.5
+ },
+ "nonharness_kg": 36.424,
+ "harness_kg": 1.917,
+ "nominal_dry_kg": 38.341,
+ "dry_10pct_kg": 42.175,
+ "wet_2kgXe_kg": 44.175,
+ "miss_vs_40_kg": 4.175,
+ "bus_12mN_W": {
+  "reference": 1166.0,
+  "conservative": 1224.2
+ },
+ "xe_25mN_Pd_allocation_W": {
+  "1500W_nominal_ICP": 929.8,
+  "1500W_RF_plus_100W": 819.5,
+  "1450W_nominal_ICP": 887.0,
+  "1450W_RF_plus_100W": 776.8
+ }
+}

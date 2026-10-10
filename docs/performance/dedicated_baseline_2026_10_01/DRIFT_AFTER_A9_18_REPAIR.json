@@ -1,0 +1,33 @@
+{
+ "schema": "perf_baseline_source_drift_v1",
+ "id": "DRIFT_AFTER_A9_18_REPAIR",
+ "status": "HISTORICAL_SOURCE_DRIFT",
+ "recorded_utc_date": "2026-10-01",
+ "recorded_at_base_commit": "760433a39b13b568121cd38f2fb20c248cee09c5",
+ "chains_on": "docs/performance/dedicated_baseline_2026_10_01/DRIFT_AFTER_A9_9.json",
+ "authority": {
+  "A9.13 S6.8": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+  "A9.18 GOLDEN and PERF_RERUN": "docs/decisions/OD_2026_10_01_A9_18_golden_and_baseline_owner_decisions.json"
+ },
+ "statement": "Two profiled sources changed again after the DRIFT_AFTER_A9_9 record (repair lane production_data_perf: PHY-02, PHY-06). Each entry's old sha256 is the DRIFT_AFTER_A9_9 new sha256. The recorded timings are NOT re-measured, NOT altered and NOT fabricated; they remain valid only for the code state they were measured on. The owner rerun (A9.18 PERF_RERUN) is REQUIRED before any Rust performance admission.",
+ "owner_rerun_required": true,
+ "rust_performance_admission": "BLOCKED_UNTIL_A9_18_PERF_RERUN",
+ "drifted_files": [
+  {
+   "path": "abep_sim/system.py",
+   "old_sha256": "8fa53acfa1595f06dc67cc19492c2074bb8e55dd823e6035ed1fa600f5d44525",
+   "old_git_blob": "3170d3e10e5bbe3971f69b968fb5465d33c7303e",
+   "new_sha256": "d95d01e35fd5968cc4f1ac31b24d2e8904bb51c85ffeec7e4aad1812734981ad",
+   "new_git_blob": "c612562062104e3df4d3284c88e34fc9b2379d70",
+   "changed_by": "PHY-02 repair: A9.13 S6.8 free-molecular 0.1 Pa domain enforced in system.evaluate (NOT_EVALUATED_OUT_OF_DOMAIN above 0.1 Pa; new labels)"
+  },
+  {
+   "path": "abep_sim/golden.py",
+   "old_sha256": "0bf0f9229e5742272871b382116ae325cb04e05976ed23cc3b6885c7d0141bc5",
+   "old_git_blob": "c65e881697165ea208abafe92885f544c268179a",
+   "new_sha256": "eeebe9a2d6b60c24a8226fdc0879bfdc5f4d3df494095a21e5ba6e0a7948ba53",
+   "new_git_blob": "f5364243bae92bccc687fb0eecd9b5bf4408c7a0",
+   "changed_by": "PHY-06 repair: Hall calibration domain recorded (HALL_CALIBRATION_DOMAIN, not gating) in admissibility / selection / provenance"
+  }
+ ]
+}

@@ -1,0 +1,637 @@
+{
+ "schema": "abep_h1_bz_fe_prereg_v3",
+ "id": "h1_bz_fe_prereg_v3",
+ "title": "H-1 / MC-1 FE-derived B(z): preregistered magnetostatic evaluation (A9.38 P3)",
+ "status": "PREREGISTERED_NOT_RUN",
+ "date": "2026-10-08",
+ "lane": "L-H1-BZ (A9.38 priority P3)",
+ "base_commit": "42bb83ae09e5bf729b61ff66dd41ca8dfccc6e65",
+ "governing_records": {
+  "A9.38": {
+   "path": "docs/decisions/OD_2026_10_08_A9_38_architecture_frozen_design_closure_programme.json",
+   "sha256": "2a66ce271f1b697d0373a66c3da0d459e157437209f2a13e983f7f8f02edc91d",
+   "note": "P3: replace the P5-shape surrogate with the best admissible H1-specific B(z); FEMM-derived first, measured when hardware exists; keep surrogate and actual-field results separated"
+  },
+  "A9.14 F5-OQ-01": {
+   "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "note": "YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION: FEMM-class axisymmetric magnetostatics at the RP-1 anchor (an authorised analysis point, h1_freeze_candidate femm_analysis_points); use sourced B-H; do not infer Hall performance from magnetic feasibility"
+  },
+  "DBF-1": {
+   "path": "docs/baseline/DBF-1/dbf1_v1.json",
+   "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+   "lock": "docs/baseline/DBF-1/dbf1_lock_v1.json sha256 517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907",
+   "items": [
+    "DBF1-H1-01..04 (RP-1 70 / 12 / 103.2 mm)",
+    "DBF1-BZ-01 shape target",
+    "DBF1-BZ-02 band",
+    "DBF1-BZ-04 surrogate BZ-P5B16",
+    "DBF1-BZ-05 capability 403 G",
+    "DBF1-BD-05"
+   ]
+  },
+  "DCR process": {
+   "path": "docs/baseline/DBF-1/DCR_PROCESS.md"
+  }
+ },
+ "what_this_is": "the evaluation plan for an FE-derived vacuum B(z) of the registered H-1 / MC-1 electromagnet at the RP-1 anchor: geometry and material basis, solver and pins, verification cases, mesh convergence, outputs, uncertainty propagation over the registered assumption ranges, acceptance against H1F-BZ-02 / H1F-BZ-03, and the DCR-002 evaluation method. Committed alone before any production solve (v2 supersedes v1 before any scored result; see 'supersedes').",
+ "what_this_is_not": [
+  "not a measured field: the result is FE-DERIVED (solver named), never FEMM unless FEMM ran, never 'measured'; measured B(z) on hardware remains an engineering-model verification item (H1F-EX-08 probe path, H1F-MC-09 hot-state reference sensor)",
+  "not a Hall simulation and not a Hall performance inference (A9.14 F5-OQ-01 rule 3); no Hall preregistration is edited",
+  "not a magnetic-circuit redesign: no registered dimension is changed; elements that are not registered are frozen here as engineering assumptions with a range",
+  "not a transport optimum: the band H1F-BZ-03 is a design target, the coil current is an operating variable"
+ ],
+ "solver": {
+  "femm_check": "FEMM is not available in this environment (no wine, no femm / pyfemm executable or module; checked 2026-10-08); no network-policy workaround was attempted. The result is therefore labelled FE-DERIVED (scikit-fem): FEMM-class axisymmetric magnetostatics as authorised by A9.14 F5-OQ-01, not FEMM.",
+  "name": "scikit-fem (open source, BSD-3-Clause), installed from PyPI",
+  "pins": {
+   "scikit-fem": "10.0.2",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1"
+  },
+  "wheel_sha256": {
+   "scikit_fem-10.0.2-py3-none-any.whl": "ba95349ca9af0204c4250a712796cca196dd8cf1b1e233668f87dff03d30b41e"
+  },
+  "python": "3.11.15",
+  "formulation": "axisymmetric magnetostatics in the flux function psi = r A_phi (Wb per radian); weak form int (nu / r) grad psi . grad v dr dz = int J v dr dz; P2 Lagrange triangles on a tensor (r, z) grid containing every material boundary, r = d_mean / 2 and z = 0, L, 2L; psi = 0 on the axis and on the far boundary; B_r = -(1/r) dpsi/dz, B_z = (1/r) dpsi/dr",
+  "nonlinearity": "iron reluctivity nu(|B|) = H(B) / B from the piecewise-linear B-H data (bh_curves_v1.json), saturated slope mu0 beyond the last point; damped Newton with the exact tangent (2 dnu/dB^2 term) and a backtracking line search",
+  "convergence_of_one_solve": "relative residual ||R||/||F|| < 1e-7 AND relative Newton step < 1e-10 within 60 iterations; otherwise the solve is MODEL_ERROR and no field is returned (fail closed)",
+  "code": "docs/hardware/h1_bz/h1_bz_fe_solver.py and build_h1_bz_fe.py; their sha256 at run time are recorded in every result (a code change after this lock is recorded; a change to any rule below is a new prereg version)",
+  "field_type": "vacuum field of the coils + iron (no plasma current, as the P5 vacuum maps); coercivity / remanence neglected (normal curve)"
+ },
+ "geometry": {
+  "basis": "the registered H2-1 RP-1 lumped magnetic circuit at f_NI 2 (h2_1 coil_design case 'RP-1 f_NI=2'), laid out by its own coil_case rules (build_h2_1_hall_chamber_magnet.py coil_case, read only), with the central bore removed (owner row 79, A9.19 no hollow cathode; H1F-MC-04 'solid (no cathode bore)'). The registered RP-1 inner_core_r_mm 13.0 is kept as the solid-core radius (bore filled with core material; the registered outer dimensions, coil windows and 122 mm body OD are unchanged).",
+  "frame": "z along the thrust axis, z = 0 at HALL_INLET_Z0 (anode / distributor face), IP-EXIT at z = L (H1F-CH-01); r from the axis",
+  "nominal": {
+   "d_mean_mm": 70.0,
+   "h_mm": 12.0,
+   "L_mm": 103.2,
+   "t_wall_mm": 4.0,
+   "gap_clearance_mm": 1.0,
+   "pole_tip_width_mm": 8.0,
+   "screen_mm": 2.0,
+   "bobbin_mm": 1.0,
+   "outer_coil_build_mm": 10.0,
+   "coil_axial_fraction_of_L": 0.8,
+   "inner_core_r_mm": 13.0,
+   "back_plate_t_mm": 5.0,
+   "outer_core_t_mm": 3.0,
+   "inner_coil_min_build_mm": 5.0,
+   "coil_axial_placement": "centered"
+  },
+  "derived_nominal_layout_mm": {
+   "channel": "r 29..41 (DBF1-H1-04), z 0..103.2; ceramic walls r 25..29 and 41..45 are non-magnetic (air in the model)",
+   "inner core (FeCo-2V / Hiperco 50 class)": "solid cylinder r 0..13, z -5..103.2",
+   "inner pole (FeCo-2V)": "annular disk r 13..24, z 95.2..103.2 (flush with the exit plane)",
+   "back plate (pure iron)": "r 13..61, z -5..0",
+   "outer core (pure iron)": "tube r 58..61, z -5..103.2",
+   "outer pole (pure iron)": "annular disk r 46..58, z 95.2..103.2",
+   "pole gap": "r 24..46 = 22 mm = h + 2 t_wall + 2 clearance (h2_1 gap_mm 22)",
+   "inner coil": "r 14..23 (build 9), z 6.32..88.88 (82.56 = 0.8 L, centred between back plate and pole)",
+   "outer coil": "r 47..57 (build 10), same z window",
+   "body": "OD 122 mm, axial length 108.2 mm (H1F-MC-06)"
+  },
+  "sources": {
+   "RP-1 channel": [
+    {
+     "path": "docs/baseline/DBF-1/dbf1_v1.json",
+     "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+     "pointer": "/items (DBF1-H1-01..04)"
+    }
+   ],
+   "layout rules and values": [
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+     "pointer": "/coil_design/cases/1"
+    },
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+     "pointer": "/assumed_inputs"
+    },
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/build_h2_1_hall_chamber_magnet.py",
+     "pointer": "coil_case()",
+     "note": "read only"
+    }
+   ],
+   "solid core": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters (H1F-MC-04)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+     "pointer": "/answers/78 (row 79)"
+    },
+    {
+     "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+     "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa",
+     "pointer": "/recomputations/h21_central_bore"
+    }
+   ],
+   "topology and coils": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters (H1F-MC-01, MC-02, MC-06, CO-02, CO-03, CO-07)"
+    }
+   ],
+   "materials": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters (H1F-MA-01, MA-02)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+     "pointer": "/answers/75 (row 76)"
+    }
+   ]
+  },
+  "missing_registered_elements": [
+   {
+    "element": "pole-piece contour including the shielding chamfers of the downstream wall edges (T2 magnetically shielded topology)",
+    "register": "H1F-MC-05 TBD_AFTER_EVIDENCE (requires a shielded-topology FEMM design at the design point)",
+    "frozen_here": "flat annular exit pole disks of axial thickness w_p, downstream faces flush with z = L, tips at r_in - t_wall - 1 and r_out + t_wall + 1 (the registered H2-1 lumped-circuit geometry)",
+    "range": "w_p in {5, 8, 10} mm (H2-1 pole_tip_width_mm min / ref / max)",
+    "evidence_class": "assumed (registered engineering layout)",
+    "consequence": "the FE field is that of the registered pre-shielding MC-1 circuit; a shielded pole design changes the near-wall and anode-region field and is a later design step (a new FE version), not covered by this envelope"
+   },
+   {
+    "element": "axial position of the coil windows between the back plate and the poles",
+    "register": "not registered (H2-1 fixes only the length 0.8 L)",
+    "frozen_here": "centred in the 0 .. L - w_p space",
+    "range": "abutting the back plate .. abutting the poles",
+    "evidence_class": "assumed"
+   },
+   {
+    "element": "solid inner-core radius",
+    "register": "RP-1 inner_core_r_mm 13.0 with an 18 mm bore (h2_1 case 1); row 79 removes the bore; H1F-MC-04 floors are d_mean floors, not a core radius",
+    "frozen_here": "13.0 mm solid",
+    "range": "not varied (filling the bore adds iron at unchanged outer dimensions)",
+    "evidence_class": "assumed (registered dimension, bore removed)"
+   },
+   {
+    "element": "trim coil",
+    "register": "H1F-CO-07 TBD (provision only)",
+    "frozen_here": "not modelled (zero ampere-turns)",
+    "evidence_class": "assumed"
+   },
+   {
+    "element": "magnetic screens",
+    "register": "h2_1 screen_mm 2.0 is a radial allowance ('magnetic screen / heat shield'); no screen part is registered",
+    "frozen_here": "no screen (air)",
+    "evidence_class": "assumed"
+   },
+   {
+    "element": "inner / outer ampere-turn split",
+    "register": "h2_1 NI_split_inner 0.5 (PROPOSED, 'set by FEMM')",
+    "frozen_here": "0.5 / 0.5; current-controlled supplies make the split an operating variable (H1F-CO-01)",
+    "range": "0.4 and 0.6 reported as an operating sensitivity, not part of the uncertainty envelope",
+    "evidence_class": "assumed"
+   },
+   {
+    "element": "B-H at the hot-pole temperature",
+    "register": "H1F-MA-03 / MA-04 TBD (sourced B_sat(T) missing)",
+    "frozen_here": "room-temperature DC curves (bh_curves_v1.json)",
+    "range": "BH-LO / BH-NOM / BH-HI permeability bracket only; temperature NOT covered",
+    "evidence_class": "measured / digitized supplier-typical"
+   },
+   {
+    "element": "all other parts (ceramic walls, Inconel 600 anode / distributor, ICP module, housing, spacecraft)",
+    "register": "DBF1-MAT-01 / -04, DBF1-ICP-07",
+    "frozen_here": "non-magnetic (mu_r = 1); Inconel 600 taken as paramagnetic at room temperature (verify against a supplier datum); external magnetic structure not modelled",
+    "evidence_class": "assumed"
+   }
+  ]
+ },
+ "materials": {
+  "bh_data": {
+   "path": "docs/hardware/h1_bz/bh_curves_v1.json",
+   "generated_by": "docs/hardware/h1_bz/digitize_bh_sources.py from the registered SRC-HIPERCO50 / SRC-ARMCO PDFs (sha256 verified equal to the H2-1 /sources values)"
+  },
+  "sets": {
+   "BH-NOM": "Hiperco 50 magnetic-anneal table (secant below 400 A/m) + ARMCO Fig. 7 / Fig. 8",
+   "BH-LO": "Hiperco 50 mechanical-anneal table + ARMCO Fig. 9 lower envelope / Fig. 8",
+   "BH-HI": "Hiperco 50 at mu_max to 2.0 T + table + ARMCO Fig. 9 upper envelope / Fig. 8"
+  },
+  "assignment": "inner core + inner pole: Hiperco 50 class (H1F-MA-01); back plate + outer core + outer pole: pure iron (H1F-MA-02); coils, walls, anode, air: mu0"
+ },
+ "mesh": {
+  "box_r_m": 0.6,
+  "box_z_m": [
+   -0.5,
+   0.7
+  ],
+  "levels_h_mm": {
+   "L1": 2.0,
+   "L2": 1.0,
+   "L3": 0.5
+  },
+  "fine_region": {
+   "r_max_mm": 70.0,
+   "z_mm": [
+    -10.0,
+    120.0
+   ]
+  },
+  "medium_region": {
+   "z_max_mm": 220.0,
+   "factor": 2.0
+  },
+  "growth": 1.25,
+  "h_far_m": 0.02
+ },
+ "verification": {
+  "mesh_level": "L3",
+  "V1": {
+   "what": "the nominal H-1 inner coil and outer coil, each alone in air (no iron)",
+   "NI_A": 520.0,
+   "z_range_mm": [
+    -60.0,
+    160.0
+   ],
+   "axis_eval_r_mm": 0.05,
+   "quadrature_n": 12,
+   "references": "on the axis: exact closed form of a uniform rectangular-section coil; at r = 35 mm: composite Gauss-Legendre quadrature (n x n per panel, panels <= 2 mm) of the exact elliptic-integral loop field over the coil section; the elliptic reference is self-checked against the closed form on the axis",
+   "criteria": {
+    "axis_Bz_rel_err_max": 0.005,
+    "centreline_B_rel_err_max": 0.01,
+    "reference_selfcheck_max": 0.0001
+   },
+   "quadrature_panel_max_mm": 2.0
+  },
+  "V2": {
+   "what": "square-section (1 mm) loop of radius 30 mm at 10 mm above a linear iron half-space z < 0 filling the domain; exact image solution in air: real loop + image loop at -z with current (mu_r - 1)/(mu_r + 1) I",
+   "NI_A": 100.0,
+   "loop_radius_mm": 30.0,
+   "loop_height_mm": 10.0,
+   "section_mm": 1.0,
+   "mu_r": [
+    10.0,
+    1000.0
+   ],
+   "eval_r_mm": [
+    0,
+    5,
+    10,
+    15,
+    20,
+    25,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60
+   ],
+   "eval_z_mm": [
+    3.0,
+    6.0,
+    15.0,
+    20.0,
+    30.0,
+    45.0
+   ],
+   "criteria": {
+    "max_rel_err": 0.01,
+    "metric": "max |B_FE - B_ref| / max |B_ref| over the evaluation points (air only)"
+   }
+  },
+  "V3": {
+   "what": "infinite solenoid (natural boundaries at the z ends and at the outer radius, A = 0 on the axis) with a nonlinear core of each iron class (BH-NOM): Ampere's law gives H = J t inside the winding, so B_core = B(H) exactly and B_gap = mu0 H",
+   "core_r_mm": 20.0,
+   "coil_r_mm": [
+    30.0,
+    40.0
+   ],
+   "outer_r_mm": 60.0,
+   "height_mm": 10.0,
+   "h_mm": 0.5,
+   "H_A_per_m": [
+    300.0,
+    3000.0,
+    30000.0,
+    300000.0
+   ],
+   "criteria": {
+    "rel_err_max": 0.001
+   }
+  },
+  "rule": "all V1-V3 cases must pass; any failure makes the field FE_DERIVED_NOT_VERIFIED (not registered for use, no DCR proposal)"
+ },
+ "convergence": {
+  "levels": [
+   "L1",
+   "L2",
+   "L3"
+  ],
+  "NI_A": [
+   260.0,
+   1040.0,
+   2008.0
+  ],
+  "compare": [
+   "L2",
+   "L3"
+  ],
+  "criteria": {
+   "B_peak_rel": 0.01,
+   "z_peak_mm": 0.5,
+   "anode_ratio_abs": 0.005,
+   "profile_rel_of_B_peak": 0.02,
+   "box_B_peak_rel": 0.005
+  },
+  "box_check": {
+   "NI_A": 1040.0,
+   "level": "L2",
+   "scale": 2.0
+  },
+  "rule": "converged when every NI row passes L2 vs L3 and the far-boundary check passes; then L3 is the production level of the nominal field and |L2 - L3| per descriptor is carried as the numerical uncertainty of the L2 uncertainty variants; otherwise NUMERICAL_CONVERGENCE_NOT_DEMONSTRATED (not registered, no DCR proposal)"
+ },
+ "production": {
+  "level": "L3",
+  "geometry": "nominal",
+  "bh": "BH-NOM"
+ },
+ "operating": {
+  "NI_split_inner": 0.5,
+  "NI_sweep_A": [
+   100.0,
+   260.0,
+   520.0,
+   780.0,
+   1040.0,
+   1500.0,
+   2008.0,
+   3000.0
+  ],
+  "B_peak_targets_G": {
+   "BP-LO": 69.93,
+   "BP-HI": 268.6,
+   "CAP-403": 403.0
+  },
+  "exact_tol_rel": 0.001,
+  "split_sensitivity": [
+   0.4,
+   0.6
+  ],
+  "registered_ratings": {
+   "NI_total_RP1_fNI1_A": 520.2,
+   "NI_total_RP1_fNI2_A": 1040.0,
+   "NI_total_RP1_worst_A": 2008.0,
+   "turns_fNI2": {
+    "inner": 357,
+    "outer": 157
+   },
+   "analog_supply_window_A": [
+    1.0,
+    5.0
+   ],
+   "source": "h2_1 coil_design cases 0-2 (H1F-CO-02 / CO-03)"
+  }
+ },
+ "outputs": {
+  "centreline": "B_r(z) and B_z(z) at r = d_mean / 2 = 35 mm, z = 0 .. 2 L (0.1 mm sampling for descriptors)",
+  "radial_profile_z_mm": [
+   0.0,
+   25.8,
+   51.6,
+   77.4,
+   95.2,
+   99.2,
+   103.2,
+   115.2
+  ],
+  "peak_vs_current": "B_peak and z_peak at every sweep NI; NI at BP-LO / BP-HI / CAP-403 by exact (secant) solves",
+  "descriptors": [
+   "B_peak_G",
+   "z_peak_mm",
+   "z_peak_minus_L_mm",
+   "B_anode_over_B_peak (z = 0)",
+   "B_exit_over_B_peak (z = L)",
+   "z_half_max_upstream_mm",
+   "z_half_max_downstream_mm",
+   "FWHM_mm",
+   "L_up_mm",
+   "L_down_mm",
+   "B_at_L_plus_domain_over_B_peak",
+   "max_drop_before_peak_over_B_peak",
+   "mean_gradient_anode_to_peak_G_per_mm",
+   "iron_Bmax_T per material"
+  ],
+  "domain_end_rule_mm_beyond_L": 66.0,
+  "hallthruster_files": {
+   "dir": "hallthruster_bridge/bfield/h1_fe_v1/",
+   "format": "as the P5 files: '#' provenance comment lines, header 'z_from_anode_face_mm,Br_G', z = 0 .. 2 L at 0.5 mm",
+   "files": [
+    "nominal at BP-LO, BP-HI, CAP-403 (L3, BH-NOM, exact NI)",
+    "the uncertainty variants with the smallest and the largest FWHM at BP-HI (L2)"
+   ],
+   "manifest": "MANIFEST.json with sha256, NI, level, variant, provenance"
+  },
+  "p5_files": "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_*.csv are not touched"
+ },
+ "uncertainty": {
+  "level": "L2",
+  "method": "one-at-a-time over the registered assumption ends plus two corner combinations fixed here before any solve; every variant runs the full NI sweep and the exact BP-LO / BP-HI / CAP-403 solves; envelope = [min, max] over NOM (L3) and all variants (L2), widened by the nominal |L2 - L3| of each descriptor",
+  "one_at_a_time": [
+   {
+    "id": "TW3",
+    "t_w": 3.0,
+    "w_p": null,
+    "placement": null,
+    "bh": "BH-NOM"
+   },
+   {
+    "id": "TW6",
+    "t_w": 6.0,
+    "w_p": null,
+    "placement": null,
+    "bh": "BH-NOM"
+   },
+   {
+    "id": "WP5",
+    "t_w": null,
+    "w_p": 5.0,
+    "placement": null,
+    "bh": "BH-NOM"
+   },
+   {
+    "id": "WP10",
+    "t_w": null,
+    "w_p": 10.0,
+    "placement": null,
+    "bh": "BH-NOM"
+   },
+   {
+    "id": "PL-BACK",
+    "t_w": null,
+    "w_p": null,
+    "placement": "back",
+    "bh": "BH-NOM"
+   },
+   {
+    "id": "PL-POLE",
+    "t_w": null,
+    "w_p": null,
+    "placement": "pole",
+    "bh": "BH-NOM"
+   },
+   {
+    "id": "BH-LO",
+    "t_w": null,
+    "w_p": null,
+    "placement": null,
+    "bh": "BH-LO"
+   },
+   {
+    "id": "BH-HI",
+    "t_w": null,
+    "w_p": null,
+    "placement": null,
+    "bh": "BH-HI"
+   }
+  ],
+  "corners": [
+   {
+    "id": "CORNER-A",
+    "t_w": 6.0,
+    "w_p": 5.0,
+    "placement": "back",
+    "bh": "BH-LO",
+    "why": "wide gap, thin pole, coils far from the poles, low permeability"
+   },
+   {
+    "id": "CORNER-B",
+    "t_w": 3.0,
+    "w_p": 10.0,
+    "placement": "pole",
+    "bh": "BH-HI",
+    "why": "narrow gap, thick pole, coils at the poles, high permeability"
+   }
+  ],
+  "ranges_source": "h2_1 /assumed_inputs t_wall_mm [3, 4, 6], pole_tip_width_mm [5, 8, 10]; coil placement and B-H bracket as frozen above",
+  "not_covered": [
+   "shielded pole contour (H1F-MC-05)",
+   "hot B-H (H1F-MA-03 / 04)",
+   "manufacturing tolerances (design release)",
+   "trim coil",
+   "3-D effects (azimuthal asymmetry of coils / supports)",
+   "plasma (Hall) current self-field"
+  ]
+ },
+ "acceptance": {
+  "H1F-BZ-02": {
+   "target": "monotonic rise toward the exit, peak at or just downstream of z = L; field near the anode as low as the circuit allows (numeric B_anode/B_peak TBD; owner tolerance H1F-BZ-05 TBD_OWNER)",
+   "S1_monotonic_tolerance_of_B_peak": 0.005,
+   "S1": "B_r(z) on the centreline never drops by more than 0.5 % of B_peak between z = 0 and the peak",
+   "S2_peak_window_relative_to_L_in_h": [
+    -0.5,
+    1.0
+   ],
+   "S2": "lane screening reading of 'at or just downstream of z = L': -h/2 <= z_peak - L <= +h (the owner tolerance H1F-BZ-05 remains TBD_OWNER and is not set here)",
+   "S3": "B_anode / B_peak reported (no threshold: 'as low as the circuit allows' has no registered number)",
+   "outcome": "SHAPE_CONSISTENT if S1 and S2 hold for the nominal field at BP-LO and BP-HI; SHAPE_INCONSISTENT otherwise (reported per criterion); the count of envelope variants meeting S1 / S2 is reported"
+  },
+  "H1F-BZ-03": {
+   "target": "B_peak band 69.93-268.6 G at / near IP-EXIT; capability 403 G (H1F-BZ-04 / DBF1-BZ-05)",
+   "B1": "nominal NI(BP-HI) <= 1040 A-turns (registered RP-1 f_NI 2 total): BAND_REACHABLE_WITHIN_REGISTERED_COIL_NI",
+   "B2": "envelope max NI(BP-HI) <= 1040 A-turns: BAND_REACHABLE_ACROSS_ENVELOPE",
+   "B3": "nominal NI(CAP-403) <= 2008 A-turns (registered RP-1 worst-case total): CAPABILITY_WITHIN_REGISTERED_WORST_CASE_NI; envelope reported",
+   "report": "per-coil currents at the registered f_NI 2 turns (357 / 157) against the analog 1-5 A window; iron B_max / B_sat at CAP-403"
+  }
+ },
+ "outcomes": {
+  "field": [
+   "FE_DERIVED_VERIFIED (all V pass and converged)",
+   "FE_DERIVED_NOT_VERIFIED",
+   "NUMERICAL_CONVERGENCE_NOT_DEMONSTRATED",
+   "MODEL_ERROR (a required solve did not converge)"
+  ],
+  "rule": "only FE_DERIVED_VERIFIED is registered for use by Hall runs and proposed through DCR-002"
+ },
+ "dcr_002_evaluation": {
+  "dbf1_item": "DBF1-BZ-04 (simulation B(z) shape, value BZ-P5B16, label SOURCED_SURROGATE_P5_SHAPE_NOT_H1_BZ)",
+  "reason_known_before_any_solve": "DBF1-BD-05: the simulated field is a P5-shape surrogate scaled into the H1F-BZ-03 band; its gradient, high-field width and anode-to-peak ratio (0.201) are P5 properties, not H-1 properties; under the envelope prereg bz_family classification_effect a Hall non-closure under it is never eligible (NOT_DETERMINABLE with blocker H1_BZ_NOT_REGISTERED). An H-1-registered field is the BD-05 closure condition.",
+  "method": "if and only if the field outcome is FE_DERIVED_VERIFIED, DCR-002 proposes replacing DBF1-BZ-04 by the FE-derived H-1 field (nominal L3 profiles at BP-LO and BP-HI, evidence class FE-DERIVED, uncertainty = the envelope); the proposal does not depend on whether the FE shape is favourable or unfavourable for Hall closure, and no Hall / M2 / M3 result is computed or used",
+  "comparison_reported": [
+   "B_anode / B_peak (FE vs 0.201)",
+   "z_peak - L (FE vs 0 by registration)",
+   "FWHM and L_up / L_down",
+   "max |B_FE / B_peak,FE - B_surr / B_peak,surr| over z = 0 .. L + 66 mm"
+  ],
+  "surrogate_registration": {
+   "file": "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+   "sha256": "65216f4d713be929b9c59f101711301d933df7b2ae1ed3478b36aa3772926625",
+   "align": "exit",
+   "z_ref_in_file_mm": 28.23,
+   "scale_to": "max",
+   "beyond_data": "held constant (HallThruster.jl)"
+  },
+  "materiality_flag": "informational only: MATERIALLY_DIFFERENT if the max normalised difference > 0.10 or |delta B_anode/B_peak| > 0.05",
+  "unchanged_items": [
+   "DBF1-BZ-01",
+   "DBF1-BZ-02",
+   "DBF1-BZ-03",
+   "DBF1-BZ-05"
+  ],
+  "approval": "owner decision record (DCR_PROCESS.md) before any Hall rerun uses the FE field; this lane only requests"
+ },
+ "hall_citation_rule": {
+  "how": "a later Hall run cites a file of hallthruster_bridge/bfield/h1_fe_v1/ with B_profile = {file: 'bfield/h1_fe_v1/<file>', align: 'anode', z_ref_in_file_mm: 0.0, scale_to: 'max'} and B_ref_T = B_peak_G x 1e-4 (the file z is already the H-1 z; no rigid shift)",
+  "requires": [
+   "DCR-002 approved (DBF1-BZ-04 change) and the new DBF baseline locked",
+   "a new NP-HALL-PARAMETRIC-ENVELOPE preregistration addendum declaring bz_family kind H1_REGISTERED (FE-DERIVED), registered before the runs it governs; the v1 prereg and earlier addenda are not edited",
+   "the MANIFEST sha256 of the cited file"
+  ],
+  "never": "surrogate (BZ-P5B16 / P5B30) and FE-derived results are never pooled or relabelled; records computed under the surrogate stay surrogate records"
+ },
+ "change_control": "any change to a rule, criterion, range, mesh level or variant after the lock is a new dated prereg version; results seen under v1 cannot justify a v1 change",
+ "supersedes": {
+  "prereg": "docs/hardware/h1_bz/h1_bz_fe_prereg_v2.json",
+  "sha256": "57c3bfb3661c36acf5f789564c2723e7879516fec547100cd62b3dde43b0a54d",
+  "lock": "docs/hardware/h1_bz/h1_bz_fe_prereg_lock_v2.json (sha256 761b5c69731b1c22085b5e2ede7e6539a41b46a8b3057c43b2579594c1215e4e)",
+  "v2_status": "VERIFICATION_RUN_INVALID_HARNESS (kept unedited as history; its verification record is preserved, see below)",
+  "history_v1": {
+   "prereg": "docs/hardware/h1_bz/h1_bz_fe_prereg_v1.json",
+   "sha256": "88b8a768e088783e0f00ab52166e55a0e3bb7a6614b9b632acf8358250fefa5a",
+   "lock": "docs/hardware/h1_bz/h1_bz_fe_prereg_lock_v1.json (sha256 d90c73c186be5cf814eb861e94f3c7a7455c86b4eb3d67add42ab15f1e86063c)",
+   "v1_status": "SUPERSEDED_BEFORE_ANY_SCORED_RESULT (kept unedited as history)",
+   "only_change": "solver.convergence_of_one_solve: relative residual tolerance 1e-9 -> 1e-7 and relative Newton step tolerance 1e-9 -> 1e-10. Every geometry, material, mesh, verification, convergence, uncertainty, acceptance, DCR-002 and citation rule is identical to v1.",
+   "reason": "under v1 the V3 verification solves (infinite solenoid, nonlinear core) stalled at a relative residual of 2e-9 with relative Newton steps of 1e-17, i.e. at the double-precision residual floor of an iron/air system (reluctivity contrast ~1e3-1e4): the v1 residual tolerance 1e-9 is below what the arithmetic can resolve, and the solver reported MODEL_ERROR (line search cannot decrease a round-off residual). 1e-7 stays four orders of magnitude below the tightest verification criterion (V3 1e-3); the step tolerance is tightened to keep the convergence test strict.",
+   "results_seen_before_v2": [
+    "v1 verify stage: crashed at the first V3 case (MODEL_ERROR returned by the solver, then a TypeError in the stage runner when reading the missing field); no V1 / V2 / V3 error value was computed or printed",
+    "v1 convergence stage (killed after two solves): L1 (2 mm mesh) nominal geometry, B_peak 118.57 G at 260 A-turns and 475.85 G at 1040 A-turns, z_peak 99.18 mm, B_anode/B_peak -0.0016 / -0.0009",
+    "V3 debug: Newton status / residual / step only (no comparison with the exact solution)"
+   ],
+   "code_changes_with_v2": [
+    "h1_bz_fe_solver.py solve_problem default tolerances",
+    "build_h1_bz_fe.py: a MODEL_ERROR verification solve is recorded as a failed case instead of crashing; v2 prereg / lock paths"
+   ]
+  },
+  "changes": [
+   "solver formulation: the unknown becomes the flux function psi = r A_phi (weak form int (nu / r) grad psi . grad v dr dz = int J v dr dz; B_r = -(1/r) dpsi/dz, B_z = (1/r) dpsi/dr). Reason: the v2 V3 case exposed that with the A_phi unknown, B_z in air next to strongly magnetized iron is a small difference of large terms (A ~ Phi / (2 pi r), B_z = dA/dr + A/r): the P2 error of A is amplified by ~B_iron r_core^2 / (2 B_air r^2) (~1e3 in V3), giving 5-50 % errors in the V3 gap; psi is smooth there (exactly quadratic in the V3 gap). This is a correction of the numerical method, found by the preregistered verification; no criterion changes.",
+   "verification.V1 reference quadrature: composite Gauss-Legendre with panels <= 2 mm (quadrature_panel_max_mm 2.0, n 12 per panel) instead of one 12 x 12 panel over the whole coil section. Every FE criterion, every other verification case and criterion, and every geometry, material, mesh, convergence, uncertainty, acceptance, DCR-002 and citation rule is identical to v2. V3 is rerun with its harness defect corrected (the v2 text 'H = J t inside the winding' is unchanged; the v2 code set N I = H t_winding height, i.e. H x t_winding / 1, which the solver then honoured in the iron core: the FE core field was B(H x 0.01)).",
+   "convergence and sweep stages launched under v2 (A_phi solver) were stopped and are rerun under v3 (their partial console logs were not read)"
+  ],
+  "v2_verification_record": {
+   "file": "docs/hardware/h1_bz/runs/verify_v2_invalid_harness.json",
+   "V1a_inner_coil_air": "FE errors axis 1.46e-3, centreline B_r 1.56e-3, B_z 3.20e-3 (all inside the FE criteria); FAILED on reference_selfcheck 3.89e-4 > 1e-4: a single 12-point Gauss panel along the 82.56 mm inner coil is not accurate to 1e-4 on the axis near the coil ends (the reference, not the FE, failed its own check)",
+   "V1b_outer_coil_air": "PASS (axis 4.51e-3, B_r 1.81e-3, B_z 1.26e-3, self-check 1.1e-10)",
+   "V2": "PASS (mu_r 10: 7.47e-4; mu_r 1000: 7.31e-4; image share 0.31 / 0.37)",
+   "V3": "FAILED / INVALID: the harness injected H x 0.01 (N I = H t height instead of H height): the FE core field equalled B(H x 0.01) to 1e-5, but the FE gap field differed from mu0 H x 0.01 by 4-46 % (A_phi cancellation error, the reason for the psi formulation)"
+  },
+  "why_not_a_post_hoc_relaxation": "no criterion changes; the solver method is corrected, the V1 reference becomes more accurate (more quadrature panels) and must still self-check to 1e-4; V3 compares the same exact solution with the injected H now equal to the preregistered H",
+  "results_seen_before_v3": [
+   "the v2 verification record above",
+   "a V3 debug profile (H = 300 A/m, corrected injection) with the A_phi and with the psi solver: psi reproduces mu0 H in the gap and B(H) in the core to < 1e-4; A_phi does not"
+  ],
+  "stages_rerun": "verification, convergence and sweep are all run under v3"
+ }
+}

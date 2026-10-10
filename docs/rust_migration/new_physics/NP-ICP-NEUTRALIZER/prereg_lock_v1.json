@@ -1,0 +1,13 @@
+{
+ "id": "np_icp_neutralizer_prereg_lock_v1",
+ "model_id": "NP-ICP-NEUTRALIZER",
+ "locked": "2026-10-05",
+ "note": "sha256 of the final NP-ICP-NEUTRALIZER v1 preregistration (A9.29 sec. 4 RM-OQ-12 / sec. 13 lane C; SC-WP-03, target crate abep-icp; docs only, status PREREGISTERED_NOT_IMPLEMENTED); any change after this lock is a new, dated addendum or version, never an edit",
+ "base_commit": "35c06e42ae0112452a32aeb0f3c1fe5e8a5690b9",
+ "files_relative_to": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/",
+ "files": {
+  "prereg_v1.json": "5d496ea6538ef65999c3cb8b1f4274622dc060889b1cf14f46a0a02a855a91a8",
+  "PREREG.md": "3af97940032b2ebff530d92c886a6690ceca30a21ed6d8bf5354d7cca79f36cc"
+ },
+ "regenerated": "2026-10-05, a pre-merge alignment to plan v3.1, done before any implementation: plan references re-pointed to simulation_completion_programme_v1_1.json / programme_v3_1.json / SIMULATION_COMPLETION_PROGRAMME.md v1.1 (plan commit eb78b4a, merged a5a59ea; local integration head 35c06e4) and re-pinned; the IF-ICP-THERMAL-v1 consumer re-pointed to the merged NP-THERMAL-CATHODELESS prereg (fa10c76); CLAUDE.md re-pinned (30afe1d); CONF-04 updated; plan v3.1 SC-WP-03 traceability added. No modelling content, interface key, tolerance or open owner question changed. First lock at 7e1b349 on base e5528bd (prereg_v1.json 6f925b20818810f2614cfff2d4f320d698d6efecbc9a66b90131ecef9939556e, PREREG.md 596b6c9d637a7b38535d8b57751ebf6bcd38bb3309a3fd30c3692ffdb33e3eac)"
+}

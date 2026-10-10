@@ -1,0 +1,22 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_03_A9_22_layer_separation_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-03",
+ "decision": "A9_22_LAYER_SEPARATION_DECISIONS_RECORDED",
+ "applies_to": "requirements / frozen engineering configuration / physics / assessment separation (owner directive 2026-10-03) and audit items G1-G9",
+ "verbatim": {"path": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md", "sha256": "749999db6926a2cdda85c7aab7677410b290df11fe4a7bac903a8a8fd6fcfc77"},
+ "migration_plan": "APPROVED with the answers below (phases A-E of the separation audit; no-physics-change rule; numerical changes only where named here as governed baseline changes)",
+ "decisions": {
+  "G1_MISSION_LIFE": "MISSION_DURATION_26280_H (mission-integrated Xe, AO fluence and life exposure on 26,280 h; 15,000 h only as an explicitly labelled subsystem firing/life assumption; governed baseline change for affected Xe / MEV / fluence / golden outputs, never silent)",
+  "G2_C_DRAG_RFP": "OPTION_1_GENERATION_FILTER_FROM_FROZEN_SNAPSHOT (Option 2 = later separately approved semantic change)",
+  "G3_REQUIREMENTS_SNAPSHOT": "AG15_CLOSED_SNAPSHOT_FROZEN (requirement_frozen = true on applicable RFP-clause rows; owner reviewed the unscreened RFP pages: no additional ABEP technical-performance requirement; freezes the requirements basis only, not compliance; RVM row evidence/status values unchanged)",
+  "G4_GOLDEN_ARCHITECTURE": "CATHODELESS_ACTIVE_BASELINE (new governed golden/reference case for hall_icp_neutralizer; existing LaB6 golden data kept only as HISTORICAL_NON_FLIGHT_REGRESSION, excluded from closure / selection / optimisation / compliance / flight budgets / design decisions; history not rewritten)",
+  "G5_ALTITUDE_BAND": "MISSION_DOMAIN_ALTITUDE_180_230_KM_FROZEN_CONSTRAINT (consumed as mission_domain.altitude_km with provenance to the requirements snapshot; physics never parses RFP clauses)",
+  "G6_IC_HALL_PREFERRED": "MOVE_TO_ASSESSMENT (raw physics outputs physical/design quantities only; merged/final assessment outputs keep them for tool compatibility; raw-output schema version increment; numerical physics unchanged)",
+  "G7_DEAD_LOGIC": "REMOVE (ignition_req_met '... or True', unused Budgets.duty_cycle, unused RFP import in sizing; any expected field reconstructed in the assessment/compatibility layer from real ignition evidence; stop and report if any numerical physics output changes)",
+  "G8_BUS_BOUNDARY": "CREATE_BUS_BOUNDARY_A9_V2 (hall_icp_neutralizer only; C1 as ground-reference/test metadata only; v1 immutable; list every consumer first, re-point all pinned consumers in one controlled migration, update pins together, run all affected tests, verify no physics result changes)",
+  "G9_F1_OUTPUT": "KEEP_FULL_OUTPUT_OUT_OF_ORDINARY_GIT (deterministic F1_<run-id>.tar.zst with the listed manifest fields; preferred storage GitHub Release asset on a tagged engineering-evidence release or controlled evidence storage, Git LFS acceptable; Git holds manifest, hashes, compact summaries, essential derived tables and the external artefact identifier; original not deleted until the archive is hash-verified byte-for-byte)"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

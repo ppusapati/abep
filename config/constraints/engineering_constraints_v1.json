@@ -1,0 +1,331 @@
+{
+ "schema": "abep_config_engineering_constraints_v1",
+ "id": "engineering_constraints_v1",
+ "layer": "FROZEN_ENGINEERING_CONSTRAINTS",
+ "title": "Frozen engineering constraints (values) consumed by the physics / design seams and the assessment layer; derived from the requirements snapshot (requirements extraction -> engineering constraints)",
+ "set_status": "FROZEN",
+ "set_status_rule": "FROZEN only when every constraint is FROZEN; each constraint's status is derived from the requirement_frozen flags its provenance rows carry in the requirements snapshot (never hard-coded). FROZEN freezes the constraint basis only; it never means compliance.",
+ "constraints_frozen": "12/12",
+ "generated_by": "scripts/config/build_config.py",
+ "regenerate": "python scripts/config/build_config.py  (check: --check)",
+ "governing_directive_a9_23": {
+  "json": "docs/decisions/OD_2026_10_03_A9_23_simulation_architecture_owner_directive.json",
+  "json_sha256": "7ecf593a150bd8d80cad8cce3ba2db7b1c46704e7d5c0d70779b1bb9480a6775",
+  "md": "docs/decisions/OD_2026_10_03_A9_23_SIMULATION_ARCHITECTURE_OWNER_DIRECTIVE.md",
+  "md_sha256": "0c187b16cb25d853650ca1ddfe19b5404bf0c87835a753fa0167405cb33ec81d"
+ },
+ "rule": "A9.23: physics / design code consumes the values of this file only (abep_sim.configuration.load_engineering_constraints; abep_sim/operating_inputs.py; abep_sim/design/engineering_constraints.py); the assessment layer reads its limits here. Requirement / clause ids below are PROVENANCE ONLY: no code computes with them. The only derivation path is requirements snapshot -> this file (scripts/config/build_config.py).",
+ "provenance": {
+  "requirements_snapshot": {
+   "id": "rfp_constraints_v1",
+   "path": "config/requirements/rfp_constraints_v1.json",
+   "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+   "snapshot_status": "FROZEN"
+  },
+  "role": "PROVENANCE_ONLY"
+ },
+ "constraints": {
+  "altitude_band_km": {
+   "value": [
+    180,
+    230
+   ],
+   "units": "km",
+   "comparator": "within",
+   "kind": "DOMAIN",
+   "status": "FROZEN",
+   "consumed_by": [
+    "abep_sim/design/engineering_constraints.py MISSION_DOMAIN_ALTITUDE_KM (design-state domain check)",
+    "frozen design-state set v2 domain validation (the states themselves are the physics input; owner ruling 2026-10-04: never an operating-scenario input)"
+   ],
+   "note": "A9.22 G5: frozen mission / design-state domain constraint (mission_domain.altitude_km)",
+   "provenance": {
+    "snapshot_field": "mission_domain.altitude_km",
+    "rvm_row": "RVM-01",
+    "rvm_key": "ALTITUDE_ENVELOPE",
+    "rfp_clauses": [
+     "RFP-P18-04",
+     "RFP-P18-05"
+    ],
+    "requirement_origin": "RFP_CLAUSE",
+    "requirement_frozen": true
+   }
+  },
+  "thrust_sustained_min_mN": {
+   "value": 12,
+   "units": "mN",
+   "comparator": ">=",
+   "kind": "LIMIT",
+   "status": "FROZEN",
+   "consumed_by": [
+    "abep_sim/design/engineering_constraints.py THRUST_MIN_MN / HC-01"
+   ],
+   "provenance": {
+    "snapshot_field": "rfp_constraints_compat.thrust_min_mN",
+    "rvm_row": "RVM-02",
+    "rvm_key": "THRUST_12MN_SUSTAINED",
+    "rfp_clauses": [
+     "RFP-P18-06"
+    ],
+    "requirement_origin": "RFP_CLAUSE",
+    "requirement_frozen": true
+   }
+  },
+  "thrust_capability_mN": {
+   "value": 25,
+   "units": "mN",
+   "comparator": ">=",
+   "kind": "LIMIT",
+   "status": "FROZEN",
+   "consumed_by": [
+    "abep_sim/design/engineering_constraints.py THRUST_MAX_MN / HC-02",
+    "abep_sim/assessment/closure_checks.py Constraints.thrust_max_mN (peak-capability check)"
+   ],
+   "note": "upper end of the printed 12-25 mN thrust envelope; carried as the >= 25 mN capability requirement",
+   "provenance": {
+    "snapshot_field": "rfp_constraints_compat.thrust_max_mN",
+    "rvm_row": "RVM-03",
+    "rvm_key": "THRUST_25MN_CAPABILITY",
+    "rfp_clauses": [
+     "RFP-P18-06",
+     "RFP-P18-10"
+    ],
+    "requirement_origin": "RFP_CLAUSE",
+    "requirement_frozen": true
+   }
+  },
+  "p_bus_max_W": {
+   "value": 1500,
+   "units": "W",
+   "comparator": "<",
+   "kind": "LIMIT",
+   "status": "FROZEN",
+   "consumed_by": [
+    "abep_sim/design/engineering_constraints.py P_BUS_MAX_W / HC-03",
+    "abep_sim/assessment/closure_checks.py Constraints.power_max_W",
+    "abep_sim/assessment/arch_constraints.py default_limits power_max_W"
+   ],
+   "provenance": {
+    "snapshot_field": "rfp_constraints_compat.power_max_W",
+    "rvm_row": "RVM-04",
+    "rvm_key": "PBUS_LT_1500W_FULL_BUS",
+    "rfp_clauses": [
+     "RFP-P18-10",
+     "RFP-P18-01"
+    ],
+    "requirement_origin": "RFP_CLAUSE",
+    "requirement_frozen": true
+   }
+  },
+  "wet_mass_max_kg": {
+   "value": 40,
+   "units": "kg",
+   "comparator": "<",
+   "kind": "LIMIT",
+   "status": "FROZEN",
+   "consumed_by": [
+    "abep_sim/design/engineering_constraints.py M_WET_MAX_KG / HC-04",
+    "abep_sim/assessment/arch_constraints.py design_constraints default m_max_kg (archengine search preset)",
+    "abep_sim/assessment/closure_checks.py Constraints.mass_max_kg"
+   ],
+   "provenance": {
+    "snapshot_field": "rfp_constraints_compat.mass_max_kg",
+    "rvm_row": "RVM-06",
+    "rvm_key": "MASS_LT_40KG_WET",
+    "rfp_clauses": [
+     "RFP-P18-11"
+    ],
+    "requirement_origin": "RFP_CLAUSE",
+    "requirement_frozen": true
+   }
+  },
+  "mission_life_h": {
+   "value": 26280,
+   "units": "h",
+   "comparator": ">=",
+   "kind": "LIMIT",
+   "status": "FROZEN",
+   "consumed_by": [
+    "config/mission/mission_scenario_v2.json mission_hours initial_basis (provenance only; the mission-integration horizon is an independently versioned operating choice, A9.24 item 4)"
+   ],
+   "g1_status": "APPLIED",
+   "historical_value": {
+    "value_h": 26000,
+    "label": "HISTORICAL_CONSTANT_NOT_CONSUMED",
+    "note": "pre-A9.22 basis (abep_sim.constants.RFP.mission_hours, immutable); no consumer computes with it"
+   },
+   "provenance": {
+    "snapshot_field": "mission_duration.authoritative_basis_h",
+    "rvm_row": "RVM-13",
+    "rvm_key": "MISSION_LIFE_GE_26280H",
+    "rfp_clauses": [
+     "RFP-P19-01"
+    ],
+    "requirement_origin": "RFP_CLAUSE",
+    "requirement_frozen": true
+   }
+  },
+  "firing_life_h": {
+   "value": 15000,
+   "units": "h",
+   "comparator": ">",
+   "kind": "LIMIT",
+   "status": "FROZEN",
+   "consumed_by": [
+    "config/assessment/gate_thresholds_v1.json HC-07 (assessment only, A9.24 item 5)",
+    "abep_sim/assessment/arch_constraints.py design_constraints default life_min_h (via HC-07)",
+    "config/mission/mission_scenario_v2.json firing_hours initial_basis (provenance only; the physics firing duration is an independent operating choice, owner ruling 2026-10-04)"
+   ],
+   "label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION",
+   "provenance": {
+    "snapshot_field": "subsystem_firing_life.value_h",
+    "rvm_row": "RVM-12",
+    "rvm_key": "FIRING_GT_15000H_PROVISIONAL",
+    "rfp_clauses": [
+     "RFP-P19-01"
+    ],
+    "requirement_origin": "RFP_CLAUSE",
+    "requirement_frozen": true
+   }
+  },
+  "propellant_capability": {
+   "value": {
+    "ambient_atmosphere": "delivered atmospheric air",
+    "xe": "bounded functional"
+   },
+   "units": "-",
+   "comparator": {
+    "ambient_atmosphere": "is",
+    "xe": "demonstrated"
+   },
+   "kind": "CATEGORICAL",
+   "status": "FROZEN",
+   "consumed_by": [
+    "assessment / compliance mapping only (no physics consumer)"
+   ],
+   "note": "ambient atmospheric propellant primary + Xe-capable operating mode (architecture: config/architecture/hall_icp_neutralizer_v1.json supply modes)",
+   "provenance": [
+    {
+     "snapshot_field": "rvm_limits[RVM-08]",
+     "rvm_row": "RVM-08",
+     "rvm_key": "ATMOSPHERIC_PROPELLANT",
+     "rfp_clauses": [
+      "RFP-P18-08",
+      "RFP-P16-02",
+      "RFP-P17-03",
+      "RFP-P17-04",
+      "RFP-P19-03"
+     ],
+     "requirement_origin": "RFP_CLAUSE",
+     "requirement_frozen": true
+    },
+    {
+     "snapshot_field": "rvm_limits[RVM-10]",
+     "rvm_row": "RVM-10",
+     "rvm_key": "XE_CAPABILITY",
+     "rfp_clauses": [
+      "RFP-P18-08",
+      "RFP-P17-05",
+      "RFP-P16-02"
+     ],
+     "requirement_origin": "RFP_CLAUSE",
+     "requirement_frozen": true
+    }
+   ]
+  },
+  "intake_drag_generation_limit_mN": {
+   "value": 25,
+   "units": "mN",
+   "comparator": "<=",
+   "kind": "GENERATION_FILTER",
+   "status": "FROZEN",
+   "consumed_by": [
+    "abep_sim/design/engineering_constraints.py INTAKE_DRAG_GENERATION_LIMIT_N (F1 C-DRAG-RFP generation filter)",
+    "config/assessment/gate_thresholds_v1.json HC-09 (also reported in assessment, A9.24 item 5)"
+   ],
+   "derived_from": "thrust_capability_mN",
+   "note": "A9.22 G2 Option 1: C-DRAG-RFP stays a generation filter (intake-face drag <= thrust maximum); Option 2 (assessment-only) is a separately approved change",
+   "provenance": {
+    "snapshot_field": "rfp_constraints_compat.thrust_max_mN",
+    "rvm_row": "RVM-03",
+    "rvm_key": "THRUST_25MN_CAPABILITY",
+    "rfp_clauses": [
+     "RFP-P18-06",
+     "RFP-P18-10"
+    ],
+    "requirement_origin": "RFP_CLAUSE",
+    "requirement_frozen": true
+   }
+  },
+  "ic_total_min": {
+   "value": 0.75,
+   "units": "fraction",
+   "comparator": ">=",
+   "kind": "PROGRAMME_METRIC_LIMIT",
+   "status": "FROZEN",
+   "consumed_by": [
+    "abep_sim/assessment/closure_checks.py Constraints.ic_total_min"
+   ],
+   "layer": "ASSESSMENT_ONLY (A9.22 G6)",
+   "provenance": {
+    "snapshot_field": "rfp_constraints_compat.ic_total_min",
+    "rvm_row": "RVM-18",
+    "rvm_key": "INDIGENOUS_CONTENT",
+    "rfp_clauses": [
+     "RFP-P19-05",
+     "RFP-P18-03"
+    ],
+    "requirement_origin": "RFP_CLAUSE",
+    "requirement_frozen": true
+   }
+  },
+  "ic_subsystem_min": {
+   "value": {
+    "thruster": 0.8,
+    "intake": 0.8,
+    "compressor": 0.6,
+    "pse": 0.7
+   },
+   "units": "fraction",
+   "comparator": ">=",
+   "kind": "PROGRAMME_METRIC_LIMIT",
+   "status": "FROZEN",
+   "consumed_by": [
+    "abep_sim/assessment/closure_checks.py Constraints.ic_thruster_min (thruster)"
+   ],
+   "layer": "ASSESSMENT_ONLY (A9.22 G6)",
+   "provenance": {
+    "snapshot_field": "rfp_constraints_compat.ic_subsystem_min",
+    "rvm_row": "RVM-18",
+    "rvm_key": "INDIGENOUS_CONTENT",
+    "rfp_clauses": [
+     "RFP-P19-05",
+     "RFP-P18-03"
+    ],
+    "requirement_origin": "RFP_CLAUSE",
+    "requirement_frozen": true
+   }
+  },
+  "hall_preferred": {
+   "value": true,
+   "units": "-",
+   "comparator": "is",
+   "kind": "CATEGORICAL_PREFERENCE",
+   "status": "FROZEN",
+   "consumed_by": [
+    "abep_sim/assessment/closure_checks.py (architecture-preference flag)"
+   ],
+   "layer": "ASSESSMENT_ONLY (A9.22 G6)",
+   "provenance": {
+    "snapshot_field": "rfp_constraints_compat.hall_preferred",
+    "rvm_row": "RVM-11",
+    "rvm_key": "HALL_PREFERENCE",
+    "rfp_clauses": [
+     "RFP-P18-07"
+    ],
+    "requirement_origin": "RFP_CLAUSE",
+    "requirement_frozen": true
+   }
+  }
+ }
+}

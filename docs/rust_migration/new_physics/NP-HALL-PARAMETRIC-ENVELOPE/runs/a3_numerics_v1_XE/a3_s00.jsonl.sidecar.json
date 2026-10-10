@@ -1,0 +1,50 @@
+{
+  "julia_version": "1.11.7",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "threads_blas": {
+    "JULIA_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "host": "vm",
+  "argv": [
+    "julia",
+    "--project=hallthruster_bridge",
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/driver/h1_envelope_a3_driver.jl",
+    "/opt/abep-runs/a3/shards/a3_s00.jsonl",
+    "0",
+    "3"
+  ],
+  "input_sha256": {
+    "config/assessment/gate_thresholds_v1.json": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+    "config/constraints/engineering_constraints_v1.json": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+    "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+    "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+    "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/cases/h1_parametric_envelope_a3_numerics_cases_v1.json": "1569624f6199e5788843c31eee2b04101dc828c95175d4c34f087bca4698bb2e",
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/driver/h1_envelope_a3_driver.jl": "bd1248a002f9049cdeefe520c148d5df286ff74e7df88a8e9c0fb4bf966258d6",
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a3_numerics_lock_v1.json": "b840f1b080c94be58472ccb07f6cf35cc9ad8822161ff9a1440ecb55c76e04bd",
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a3_numerics_v1.json": "ca1b895efbf5c469fb0fe26951acf695bf4b39685e7cac65fcc708d0a8a7b20f",
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_lock_v1.json": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3",
+    "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d",
+    "hallthruster_bridge/Manifest.toml": "a98c1a6e9cdf491ef602ef7cd1d08371b2bbe3da4e1df74e45a1c9d84f6c5634",
+    "hallthruster_bridge/PINNED.toml": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280",
+    "hallthruster_bridge/Project.toml": "6abb74e3e4fd8078904b0035391ba63fa20d27a358f39b085708bb6a8ae6f617",
+    "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv": "65216f4d713be929b9c59f101711301d933df7b2ae1ed3478b36aa3772926625",
+    "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_3p0kW.csv": "1f1cb42cdc9a2b40b527e8e0a8daf5d4559c460ba8e4342e4f488e4ce283efe2",
+    "hallthruster_bridge/bridge_lib.jl": "cf26aab8607b640ebb78be9715f2c7c5d957f145ac17f52c1b23db2e980e21ab",
+    "hallthruster_bridge/ensemble/transport_ensemble_v0.json": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
+    "hallthruster_bridge/hall_map_schema_v1.json": "f371b43bced1020d55e2b28303c877220f41395767cdf6ebab6019475e9bdde9",
+    "hallthruster_bridge/prereg/p5_n2_run_status_rule_v1.json": "e72eb4c65417ebda87fbb1f2df75b3d97156f4a4a25207a336197872d88151e0",
+    "hallthruster_bridge/prereg/p5_n2_run_status_rule_v1_addendum1_extinction.json": "56e767747b92e1fad8c0820c564700e0052a5496e63192f4c38f9539ce3c04bf",
+    "hallthruster_bridge/propellants/n2_n.toml": "4f10db747cfb11cfefb8080a9cad52e502c2ab11f0e485ac644a532b929607de",
+    "hallthruster_bridge/propellants/rate_validity.toml": "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a",
+    "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json": "0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c"
+  },
+  "output_sha256": {
+    "/opt/abep-runs/a3/shards/a3_s00.jsonl": "dd4245f7f121ee20b762dbd48409282f88bf3f3956e9658710638f10bba1b227"
+  },
+  "rust_commit": "3d31e7235929a10874b20a80b51c9655e6b51aa9",
+  "contract_id": "NP-HALL-PARAMETRIC-ENVELOPE-A3-NUMERICS-V1"
+}

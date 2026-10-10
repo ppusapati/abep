@@ -1,0 +1,63 @@
+{
+ "schema": "milestone_audit_v1",
+ "milestone": "M1_ARCHITECTURE_PHYSICS_READY",
+ "audit_version": 2,
+ "governance": [
+  "A9.34 (docs/decisions/OD_2026_10_08_A9_34_*)",
+  "A9.36 (docs/decisions/OD_2026_10_08_A9_36_*)"
+ ],
+ "supersedes": {
+  "path": "docs/milestones/M1_architecture_physics_ready/m1_audit_v1.json",
+  "sha256": "a3c497fc74e1d882e2776b2f1bbe3397c6b57e91a4b09cd778f6dcb22e635cd2",
+  "reason": "A9.36: v1 did not distinguish software connectivity from physics readiness and concluded M1 EXIT with Hall numerics unconverged; the M2 lane it started was stopped before any commit. v1 is kept unedited as history."
+ },
+ "date": "2026-10-08",
+ "audited_commit": "5c926829c091817627b035049fe56fadd00e659e",
+ "auditor": "coordinator",
+ "part_1_software_paths_connected": {
+  "verdict": "YES — ALL SOFTWARE PATHS CONNECTED",
+  "evidence": "m1_readiness_v1.json (sha256 c1422e817e9660d073a85bfc9edba82edbf8445f25b9e7898d18bca7617cf855): 13 required paths, BLOCKED none; AWAITING_INPUT P-FEED-STABILITY, P-HALL-AIR, P-THERMAL (each awaiting a registered input, not code)",
+  "items": [
+   {
+    "id": "M1-EX-3",
+    "text": "RF/ICP coupling is available",
+    "status": "CONNECTED (layer (a), parametric); I_e,cap NOT_EVALUATED pending ICP registrations"
+   },
+   {
+    "id": "M1-EX-4",
+    "text": "the 196-state closure harness can consume all required physics paths",
+    "status": "CONNECTED (A2 774bf761, A4 5a03333e, A5 d143fd4c / A5.1 d56e34f9)"
+   }
+  ]
+ },
+ "part_2_physics_ready_for_architecture_closure": {
+  "verdict": "NOT READY FOR DECISIVE M2 HALL CLOSURE",
+  "critical_blocker": "HALL_NUMERICS_NOT_CONVERGED",
+  "basis": [
+   "M1-EX-1 the H1 Hall envelope has run: XE v1 grid run and frozen (2268 records, raw manifest b9efec88...), but A3 (lock b840f1b0) XE and AIR both A3_NOT_ADEQUATE and A6 (lock e0a97161) convergence study STOP_NO_LEVEL_CONVERGED: no level up to 4x cells (vs 8x) or doubled duration agrees to 2 %; observed order 0.6-0.7 or non-monotone; 8 of 22 study cases fail numerically at every level",
+   "every XE Hall point is NUMERICS_NOT_CONVERGED (unknown); no Hall thrust value may enter M2 while A6 remains STOP (A9.36)"
+  ],
+  "not_critical_but_recorded": [
+   "M1-EX-2 Hall AIR chemistry: EXPLICITLY_BOUNDED (BV-AIR-LL, addendum 03 lock 20485e24; A1 lock 35388e24: information only)",
+   "AIR delivered flow DESIGN_VARIABLE_LIMIT (A5; A9.35); conservation bound needs >= 0.251 m2 / >= 0.048 mg/s (A4); A4-REG-01 OPEN",
+   "credible Hall transport set EMPTY; layer (b) NOT_EVALUATED"
+  ]
+ },
+ "air_chemistry_audit_at_close": {
+  "id": "CA-HALL-AIR-v1 omitted-process audit (576 cases)",
+  "status": "RUNNING — not finished before this audit closed (229 / 576 cases at close)",
+  "effect": "its verdicts cannot complete abep-air-0.7 (tier-1 sources OQ-HA-05 not acquired); it is reported with the AIR chemistry lane, not in this audit"
+ },
+ "decision": "M1 NOT EXITED. M2 is not started. Next action (A9.36): a narrow Hall numerical-method investigation into why HallThruster.jl is non-convergent for the H1 cases. When a converged Hall subset is demonstrated, rerun the registered envelope under a new addendum and proceed directly to M2.",
+ "open_owner_items": [
+  "A4-REG-01 maximum effective intake collection area (A9.35: stays open)",
+  "host-spacecraft drag ICD (T-D, HC-08)",
+  "H-1 B(z) registration (H1F-BZ-01)",
+  "H-1 Xe flow (OQ-HPE-03)",
+  "complete bus ledger (24 TBD terms)",
+  "flight thermal case / spacecraft thermal ICD",
+  "CBE wet mass; Xe load",
+  "ICP geometry / RF input / neutral source registration",
+  "Hall AIR tier-1 sources (OQ-HA-05)"
+ ]
+}

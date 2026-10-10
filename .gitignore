@@ -3,7 +3,17 @@ __pycache__/
 .pytest_cache/
 .venv/
 results/
+!schemas/results/
 hallthruster_bridge/out/
 *.egg-info/
 .DS_Store
 .vscode/
+
+# A9.22 item 9: generated full outputs live in deterministic evidence archives (docs/evidence_archives/), never as
+# ordinary Git blobs. Ignored here so regenerations are not committed; a path already tracked stays tracked until the
+# integrator removes it from the index (git rm --cached) after the archive is stored and hash-verified.
+/docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json
+docs/evidence_archives/**/*.tar.zst
+
+# Rust workspace build output (A9.29 lane A)
+/target/

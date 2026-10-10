@@ -1,0 +1,40 @@
+{
+ "schema": "new_physics_prereg_addendum_v1",
+ "id": "NP-ICP-NEUTRALIZER_addendum_01_a9_30",
+ "model_id": "NP-ICP-NEUTRALIZER",
+ "date": "2026-10-05",
+ "applies_to": {
+  "prereg": "prereg_v1.json",
+  "prereg_lock": "prereg_lock_v1.json",
+  "locked_sha256": {
+   "prereg_v1.json": "5d496ea6538ef65999c3cb8b1f4274622dc060889b1cf14f46a0a02a855a91a8",
+   "PREREG.md": "3af97940032b2ebff530d92c886a6690ceca30a21ed6d8bf5354d7cca79f36cc"
+  }
+ },
+ "governing_record": {
+  "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+  "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f",
+  "message_text_sha256": "465f2d95e808f3bef5f4d2488e21112b3dca7b033c72ceb40ddc6c1eb7124618"
+ },
+ "nature": "owner rulings that resolve open owner questions / recorded conflicts; prereg_v1 is unchanged (no model content, interface key, tolerance or criterion edited); its lock stays valid",
+ "resolutions": [
+  {
+   "item": "OQ-NPICP-01",
+   "also": "CONF-01",
+   "ruling": "A9.30 sec. 5: the active bus boundary for hall_icp_neutralizer is bus_power_boundary_a9_v2 (as drafted in IF-ICP-BUS-v1); bus_power_boundary_v1 is historical / superseded for active flight closure where it carries cathode heater / keeper assumptions; flight C1 loads NONE; 1.5 kW limit assessment-only",
+   "status": "RESOLVED_BY_OWNER_A9_30"
+  },
+  {
+   "item": "OQ-NPICP-06",
+   "also": "CONF-05",
+   "ruling": "A9.30 secs. 3-4: O / O2 chemistry is authorized now for the active RF/ICP neutralizer model only, through the separate preregistered contract NP-ICP-CHEM-AIR; atomic O never replaced by an N2-only surrogate; the old CLAUDE.md next-work item 4 sequencing does not block it",
+   "status": "RESOLVED_BY_OWNER_A9_30"
+  }
+ ],
+ "added_gate": {
+  "id": "G-A930-AIR",
+  "rule": "A9.30 sec. 4: AIR_PRIMARY predictive admission is not claimed until NP-ICP-CHEM-AIR is committed and its required chemistry set is admitted for the model domain; until then AIR_PRIMARY outputs are INCOMPLETE_EVIDENCE (reason NP_ICP_CHEM_AIR_NOT_ADMITTED); XE_CONTINGENCY portions may proceed where their evidence is sufficient; the gate does not block provenance / config, atmosphere, TPMC, intake, compressor, feed or Rust infrastructure lanes",
+  "relation_to_v1": "stricter than or equal to v1 (v1 already treats O / O2 as INCOMPLETE_EVIDENCE); no criterion relaxed"
+ },
+ "unchanged": "all other OQ-NPICP items and CONF items stay open as recorded in prereg_v1"
+}

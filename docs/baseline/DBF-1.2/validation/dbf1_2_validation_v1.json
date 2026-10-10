@@ -1,0 +1,86 @@
+{
+ "id": "dbf1_2_validation_v1",
+ "baseline": "DBF-1.2",
+ "date": "2026-10-10",
+ "dbf1_2_lock_sha256": "103f4c9a5c0ab61d9d12e989c47e5f4fd713caa6bcbe7c45e9207e2e6ce19ee5",
+ "pre_freeze_checkpoint": "79ffe549ff325fd651a30e1b29a338617f244ee1",
+ "mandatory_freeze_gates": {
+  "builder normal build (byte-identical rebuild)": "PASS",
+  "builder --check": "PASS",
+  "schema / lock validation (lock file hashes)": "PASS",
+  "source-pin / hash verification (builder refuses on mismatch; tests/test_dbf1_2.py::test_lock_matches_files_and_pins)": "PASS",
+  "DBF-1.1 parent verification (DBF-1.1 lock + build_dbf1_1.py --check)": "PASS",
+  "DCR-001 approval verification (owner, A9.41 pin, evidence pins v4/v5/v6)": "PASS",
+  "A9.40 / A9.41 / A9.42 / A9.43 decision-pin verification": "PASS",
+  "mass arithmetic (A9.26 convention)": "PASS",
+  "power arithmetic (P6 ledger)": "PASS",
+  "AIR 650 W reconciliation (A9.43)": "PASS",
+  "Xe 25 mN allocation arithmetic (P-XE, 0.850725, RF trade line)": "PASS",
+  "RFP / RVM requirement trace": "PASS",
+  "DCR-register consistency (dcr_register_v5: DCR-DBF1-001 APPROVED_OWNER_WITH_MASS_RISK)": "PASS",
+  "MR-DCR001-01 present and OPEN": "PASS",
+  "DBF-1.2 test tests/test_dbf1_2.py (8 passed)": "PASS",
+  "DBF-1 and DBF-1.1 byte-for-byte unchanged (git diff HEAD empty; both builders --check OK)": "PASS"
+ },
+ "affected_validation": {
+  "tests/test_mass_power_a9_v4.py, v5, test_electrical_closure.py, test_feed_state_closure.py": "97 passed",
+  "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py --check": "OK",
+  "docs/requirements/rvm_a9/build_rvm_a9.py --check": "OK",
+  "docs/closure/power/build_power_closure_docs.py --check inputs / md": "OK / OK",
+  "python -m abep_sim.golden check": "OK"
+ },
+ "repository_python_suite": {
+  "command": "python3 -m pytest -q tests -p no:cacheprovider (with the DBF-1.2 package present)",
+  "summary": "2 failed, 4238 passed, 5 skipped, 1 xfailed, 1 warning in 502.23s (0:08:22)",
+  "failed": [
+   "tests/test_a9_23_dependency_rule.py::test_only_the_builder_writes_the_engineering_constraints",
+   "tests/test_ci_required_contexts.py::test_no_other_workflows_unaccounted_for"
+  ],
+  "invalid_earlier_run": "an earlier run aborted mid-suite on ENOSPC (session disk allowance exhausted by the Rust target dir); discarded and rerun after freeing space"
+ },
+ "pre_existing_failure_dispositions": [
+  {
+   "classification": "PRE_EXISTING_UNRELATED_REPOSITORY_TEST_FAILURE",
+   "test": "tests/test_a9_23_dependency_rule.py::test_only_the_builder_writes_the_engineering_constraints",
+   "clean_tree_reproduction": "fails identically in a clean worktree of 79ffe549ff325fd651a30e1b29a338617f244ee1 with no docs/baseline/DBF-1.2 present: 'Extra items in the left set: docs/baseline/DBF-1/build_dbf1.py, docs/closure/icd/build_host_drag_cda_envelope.py'",
+   "offending_preexisting_files": {
+    "docs/baseline/DBF-1/build_dbf1.py": {
+     "added_in": "8f7e33ad78fd6295b53aa6a91d3bc53372386ec8 (2026-10-08, DBF-1 freeze A9.37)",
+     "sha256": "86bcdb21828f8134b7a3dde36b733f9ec188742d27805af38ec9764f0ff6d294"
+    },
+    "docs/closure/icd/build_host_drag_cda_envelope.py": {
+     "added_in": "f7eac2f2dfa06d158a3c70a08229db722a52d517 (2026-10-08, A9.38 P9 IR-HOST-DRAG-01)",
+     "sha256": "6b9af3ef02b7eb88823925b488d8e6257e55a272152ef0acf5fb491f3e753530"
+    }
+   },
+   "mechanism": "the test flags any Python file that names the engineering-constraints file and contains a file-writing call; both builders name it (read-only use) and write their own outputs, so the allow-list check trips",
+   "why_not_dbf1_2": "DBF-1.2 adds only new files (docs/baseline/DBF-1.2/*, tests/test_dbf1_2.py); neither its builder nor its test names the engineering-constraints file; it modifies neither offending builder nor the constraints source; no DBF-1.2 value, pin, requirement interpretation or architecture item depends on the test",
+   "remediation": "deferred to a separate repository-integrity fix (allow-list or refactor of the two builders); not part of this freeze commit"
+  },
+  {
+   "classification": "PRE_EXISTING_UNRELATED_REPOSITORY_TEST_FAILURE",
+   "test": "tests/test_ci_required_contexts.py::test_no_other_workflows_unaccounted_for",
+   "clean_tree_reproduction": "fails identically in a clean worktree of 79ffe549ff325fd651a30e1b29a338617f244ee1 with no docs/baseline/DBF-1.2 present: 'new workflow(s) [ci.yml, h1-parametric-envelope.yml, julia-smoke.yml, rust-parity.yml, rust-workspace.yml]: decide (owner) whether they are required and update docs/ci/BRANCH_PROTECTION.md'",
+   "offending_preexisting_files": {
+    ".github/workflows/h1-parametric-envelope.yml": {
+     "added_in": "382c5c40425d8c2ae49702e2bb1962aef4211ef4 (2026-10-07, NP-HALL-PARAMETRIC-ENVELOPE v1)",
+     "sha256": "8209101ef112fad32380460a3b31666c80cebf1333794f1b6ec42b14da0c190e"
+    }
+   },
+   "mechanism": "the CI-contexts test requires every workflow to be accounted for in docs/ci/BRANCH_PROTECTION.md; the parametric-envelope workflow was added without that owner decision",
+   "why_not_dbf1_2": "DBF-1.2 adds no workflow and does not modify .github/ or docs/ci/; no DBF-1.2 value, pin, requirement interpretation or architecture item depends on CI branch protection",
+   "remediation": "deferred: owner decision on whether the workflow is a required context, then a separate BRANCH_PROTECTION.md update; not part of this freeze commit"
+  }
+ ],
+ "rust_workspace": {
+  "command": "cargo test --workspace --locked",
+  "suites": 145,
+  "passed": 720,
+  "failed": 0,
+  "ignored": 2,
+  "ignored_note": "2 ignored = registered platform tests PT-01 / PT-02 (REGISTERED_PLATFORM_TEST; guard test no_ignored_test_outside_the_platform_test_register passes)",
+  "relevance": "additional repository assurance; DBF-1.2 changes no Rust source"
+ },
+ "proposal_documents_regenerated": false,
+ "statement": "DBF-1.2-specific and affected validation passed. The repository-wide Python suite contains two independently reproduced pre-existing integrity-test failures unrelated to DBF-1.2 (the engineering-constraints writer allow-list and the CI required-contexts workflow list); they are recorded separately and does not alter the frozen baseline."
+}

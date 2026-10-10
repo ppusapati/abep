@@ -1,0 +1,199 @@
+{
+ "schema": "abep_dbf1_config_v1",
+ "id": "dbf1_config_v1",
+ "baseline": "DBF-1",
+ "authoritative_record": "docs/baseline/DBF-1/dbf1_v1.json",
+ "note": "machine-readable subset of dbf1_v1.json read by the closure harness (abep_config::baseline); every value is copied from an item of dbf1_v1.json (item ids given)",
+ "h1": {
+  "geometry_id": "G-RP1",
+  "d_mean_mm": 70.0,
+  "h_mm": 12.0,
+  "L_mm": 103.2,
+  "bz_shape_id": "BZ-P5B16",
+  "B_peak_band_G": [
+   69.93,
+   268.6
+  ],
+  "V_d_band_V": [
+   180.0,
+   350.0
+  ],
+  "items": [
+   "DBF1-H1-01",
+   "DBF1-H1-02",
+   "DBF1-H1-03",
+   "DBF1-BZ-02",
+   "DBF1-BZ-04",
+   "DBF1-H1-05"
+  ]
+ },
+ "rf": {
+  "f_rf_hz": 13560000.0,
+  "p_fwd_envelope_W": [
+   0.0,
+   500.0
+  ],
+  "match_colocated": true,
+  "items": [
+   "DBF1-RF-01",
+   "DBF1-RF-02",
+   "DBF1-RF-03"
+  ]
+ },
+ "icp": {
+  "topology": "OPEN_TUBE_COAXIAL_UNMAGNETIZED",
+  "volume_mode": "ASSUMED_GEOMETRIC_TUBE",
+  "radius_m": 0.06,
+  "length_m": 0.15,
+  "collector_axial_length_m": 0.1,
+  "L_standoff_m": 0.05,
+  "r_module_m": 0.09,
+  "vessel_material": "borosilicate glass (pyrex class)",
+  "collector_material": "INCONEL alloy 600 (chromia-forming Ni alloy)",
+  "gas_mode": "G-REUSE",
+  "items": [
+   "DBF1-ICP-01",
+   "DBF1-ICP-02",
+   "DBF1-ICP-03",
+   "DBF1-ICP-04",
+   "DBF1-ICP-05",
+   "DBF1-ICP-07",
+   "DBF1-MAT-03"
+  ]
+ },
+ "upstream": {
+  "design_id": "A0.25_Ld20_phi0.9|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.02",
+  "candidate": "A0.25_Ld20_phi0.9",
+  "area_m2": 0.25,
+  "L_over_d": 20.0,
+  "phi": 0.9,
+  "filter": "F4-FIL-T0.9",
+  "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.5",
+  "V_m3": 0.001,
+  "P_set_Pa": 0.02,
+  "wall": "WALL-G0",
+  "scenarios": [
+   "maxwell_a0",
+   "maxwell_a0.2",
+   "maxwell_a0.5",
+   "maxwell_a0.8",
+   "maxwell_a1",
+   "cll_a0",
+   "cll_a0.2",
+   "cll_a0.5",
+   "cll_a0.8",
+   "cll_a1"
+  ],
+  "controller": {
+   "Kp": 0.3,
+   "Ti_s": 3.0,
+   "f_valve_hz": 1.0,
+   "authority": 3.0
+  },
+  "items": [
+   "DBF1-IN-01",
+   "DBF1-IN-02",
+   "DBF1-IN-03",
+   "DBF1-IN-04",
+   "DBF1-IN-05",
+   "DBF1-IN-06",
+   "DBF1-IN-07"
+  ]
+ },
+ "power_mass": {
+  "design_allocation_W": 1350.0,
+  "common_allocation_W": 300.0,
+  "rfp_gate_source": "abep-config HC-03",
+  "mass_margin_fraction": 0.1,
+  "nominal_dry_target_kg": 34.0,
+  "xe_reference_load_kg": 2.0,
+  "wet_target_at_reference_kg": 39.4,
+  "planning_rollup": {
+   "nominal_dry_kg": 34.86273684,
+   "dry_kg": 38.34901052,
+   "wet_kg_at_2kg": 40.34901052
+  },
+  "slots_by_group": {
+   "hall": [
+    "hall_discharge",
+    "hall_magnet_inner",
+    "hall_magnet_outer",
+    "hall_magnet_trim"
+   ],
+   "icp": [
+    "icp_rf_source",
+    "icp_matching_network",
+    "icp_collector_bias"
+   ],
+   "common": [
+    "flow_control_atmospheric",
+    "flow_control_xe",
+    "compressor",
+    "thermal_control",
+    "housekeeping_controls"
+   ],
+   "reserved": [
+    "reserved_dc_port"
+   ]
+  },
+  "items": [
+   "DBF1-PWR-01",
+   "DBF1-PWR-02",
+   "DBF1-PWR-03",
+   "DBF1-PWR-04",
+   "DBF1-MASS-01",
+   "DBF1-MASS-02",
+   "DBF1-MASS-03"
+  ]
+ },
+ "thermal": {
+  "topology_item": "DBF1-TH-01",
+  "spacecraft_interface": "SCI-A (REFERENCE_PENDING_ICD)"
+ },
+ "materials": {
+  "anode_primary": "CAND-02A",
+  "anode_backup": "CAND-03A",
+  "collector_primary": "CAND-02A",
+  "collector_backup": "CAND-03A",
+  "anode_primary_name": "INCONEL alloy 600 (chromia-forming Ni alloy)",
+  "wall_primary": "BN-SiO2",
+  "wall_backup": "BN",
+  "items": [
+   "DBF1-MAT-01",
+   "DBF1-MAT-02",
+   "DBF1-MAT-03",
+   "DBF1-MAT-04"
+  ]
+ },
+ "host_drag": {
+  "case_id": "RC-DIAMANT",
+  "a_ref_m2": 0.5,
+  "cd": 2.2,
+  "intake_accounting": "separate_term",
+  "intake_area_m2": 0.25,
+  "intake_L_over_d": 20.0,
+  "intake_phi": 0.9,
+  "sensitivity_cases": [
+   "RC-DICARA-ESA",
+   "RC-DIAMANT",
+   "RC-SCHONHERR",
+   "RC-NISHIYAMA",
+   "RC-TISAEV-LOW",
+   "RC-TISAEV-HIGH"
+  ],
+  "items": [
+   "DBF1-DRAG-01",
+   "DBF1-DRAG-02",
+   "DBF1-DRAG-03"
+  ],
+  "label": "REFERENCE_PENDING_CUSTOMER_ICD"
+ },
+ "baseline_deficiencies": [
+  "DBF1-BD-01",
+  "DBF1-BD-02",
+  "DBF1-BD-03",
+  "DBF1-BD-04",
+  "DBF1-BD-05",
+  "DBF1-BD-06"
+ ]
+}

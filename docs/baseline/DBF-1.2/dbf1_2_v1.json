@@ -1,0 +1,3066 @@
+{
+ "schema": "abep_design_baseline_freeze_v1",
+ "id": "DBF-1.2",
+ "version": "1.2",
+ "status": "DBF-1.2 — RFP-CONFORMING PRELIMINARY DESIGN BASELINE / COMPLIANCE VERIFICATION ON EM/QM",
+ "title": "DBF-1.2 Design Baseline Freeze 1.2 - hall_icp_neutralizer (DCR-DBF1-001: intake / compressor / plenum-feed, mass and power closure)",
+ "date": "2026-10-10",
+ "architecture": "hall_icp_neutralizer",
+ "lineage": {
+  "parent": "DBF-1.1",
+  "parent_lock": {
+   "path": "docs/baseline/DBF-1.1/dbf1_1_lock_v1.json",
+   "sha256": "257e141ca252c3015b5bbd2fc953a1de688bc1606be36ebdf9fff8889307cfb8"
+  },
+  "parent_record": {
+   "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+   "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b"
+  },
+  "grandparent_lock": {
+   "path": "docs/baseline/DBF-1/dbf1_lock_v1.json",
+   "sha256": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907"
+  },
+  "change_authority": "DCR-DBF1-001 (approved)",
+  "dcr_approval": {
+   "path": "docs/baseline/DCR-001/dcr001_approval_v1.json",
+   "sha256": "b3d0c3074c4dee3228af98f417d8d005b71a835ce79df8190db1de70eff4ed29"
+  },
+  "dcr_register": {
+   "path": "docs/baseline/DBF-1/dcr_register_v5.json",
+   "sha256": "432bb04a981dac1e415ddd36a28e41d0b230edfa7f4cef34a2016a2d6d901368"
+  },
+  "approval": "A9.41",
+  "approval_record": {
+   "path": "docs/decisions/OD_2026_10_10_A9_41_dcr_dbf1_001_approval_mass_risk.json",
+   "sha256": "3482cd6e945a479233ed5374ebeeb74bdf87d61c8fb86967d0afe25c589d3c49"
+  },
+  "build_directions": [
+   {
+    "path": "docs/decisions/OD_2026_10_10_A9_42_build_and_freeze_dbf_1_2.json",
+    "sha256": "2928f44a66705708d75e6f56ad175536f41489e4c7437fd46f0e480415c65a24"
+   },
+   {
+    "path": "docs/decisions/OD_2026_10_10_A9_43_power_reconciliation_and_dbf_1_2_freeze.json",
+    "sha256": "79754cc5b7350c6e0ad82a055fa7ae5fefc7eb359860710fd5ae9da35a58312a"
+   }
+  ],
+  "operating_concept": {
+   "path": "docs/decisions/OD_2026_10_10_A9_40_dbf_1_2_freeze_gates_air_operating_concept_host_drag.json",
+   "sha256": "d915ad0a57ebde0975d4ddba1412937a78798d39a475a7ad72ab9ef54d20078a"
+  },
+  "source_checkpoint": "6f4e3bb7025ec387143865fb737cbaaa841404fa",
+  "engineering_records": [
+   {
+    "path": "docs/baseline/DCR-001/preliminary/dcr001_pressure_domain_closure_v4.json",
+    "sha256": "3872fa1869e4dd280c7a095ae00193b356f2b62015a0ad35c9374983d74737b6"
+   },
+   {
+    "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+    "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1"
+   },
+   {
+    "path": "docs/baseline/DCR-001/preliminary/dcr001_system_mass_closure_v6.json",
+    "sha256": "8074c0b72b3b8f187a2a348f7f761481de7d8645e563e3e5ae93361695303ab7"
+   }
+  ],
+  "approval_conditions": [
+   "MR-DCR001-01: the 0.052 kg wet-mass margin is an OPEN MASS RISK, not margin",
+   "F6 / B7 transitional compressor rows (not admitted above 0.1 Pa) are an EM-verification risk",
+   "1.33 mg/s AIR capability is not supported (Holweck Kn domain); 22 km/s case needs a 6.1 Pa setpoint",
+   "DBF-1 and DBF-1.1 stay immutable history; DBF-1.2 is built as new files with its own lock"
+  ],
+  "open_dcrs_not_applied": [
+   {
+    "id": "DCR-DBF1-003",
+    "status": "REQUESTED_EVALUATION_TO_BE_PREREGISTERED"
+   }
+  ],
+  "rule": "DBF-1 and DBF-1.1 stay immutable history; DBF-1.2 supersedes DBF-1.1 only as the active integrated preliminary-design baseline"
+ },
+ "status_semantics": {
+  "meaning": "architecture / design parameters frozen at preliminary-design level; measured compliance open to EM / QM testing; open verification items do not unfreeze the baseline",
+  "never_label_as": [
+   "fully RFP-qualified",
+   "demonstrated compliant",
+   "flight-qualified",
+   "performance validated",
+   "final flight design"
+  ]
+ },
+ "authority_rule": "this JSON is authoritative; DBF1_2_v1.md restates it; dbf1_2_config_v1.json is the machine-readable subset; all pinned by dbf1_2_lock_v1.json",
+ "source_rule": "only values or candidates already in the repository (A9.37); no invented physics; where evidence is incomplete the selected engineering assumption is frozen with its evidence class and uncertainty; DBF-1.2 values are read from pinned records by the builder, not retyped",
+ "status_vocabulary": {
+  "FROZEN": "the value is frozen as the design value; its evidence supports it at the stated class",
+  "FROZEN_ASSUMPTION": "the value is frozen as the selected engineering assumption; the evidence is incomplete and the class / uncertainty say how (A9.37: never left open)",
+  "REFERENCE_PENDING_ICD": "a frozen reference value standing in for a customer / host ICD that does not exist; replaced only by that ICD through a DCR",
+  "BASELINE_DEFICIENCY": "the value is frozen (it is the design) and a registered closure condition is known not to be met by it; the deficiency record gives the numbers. Not a reason to keep trading (A9.37)",
+  "SUPERSEDED_BY_DCR_DBF1_001": "a DBF-1.1 item replaced by its DBF-1.2 successor (kept for traceability)",
+  "INHERITED_UNCHANGED": "a DBF-1.1 item carried unchanged (value copied from the pinned DBF-1.1 record)"
+ },
+ "evidence_attributes": {
+  "evidence_class": "plain-language class (owner-fixed / literature / model-derived / engineering assumption / reference pending ICD)",
+  "quantity_type": "docs/EVIDENCE.md quantity type (measured, digitized, inferred, reconstructed, model-derived, assumed) or owner-allocation / as-reported",
+  "evidence_level": "docs/EVIDENCE.md hierarchy 1-7, OWNER_DECISION or DEFINITION"
+ },
+ "hardware_configuration": {
+  "geometry_id": "G-RP1",
+  "bz_shape_id": "BZ-H1FE-V1",
+  "meaning": "the envelope hardware configuration (geometry, bz_shape) of DBF-1.1; B_peak, V_d and mdot are operating variables",
+  "upstream": "DCR-DBF1-001 integrated intake / compressor / plenum-feed"
+ },
+ "operating_modes": {
+  "DBF12-OPS-01": "PRIMARY_NOMINAL: density-aware altitude scheduling within 180-230 km; 12 mN sizing point; only inside the admissible AIR density / thrust / drag window",
+  "DBF12-OPS-02": "REQUIRED_SECONDARY: contingency / off-nominal / upper-envelope (25 mN capability); atmospheric compressor OFF; used when AIR does not give adequate thrust / drag margin",
+  "DBF12-OPS-03": "CONSERVATIVE_VERIFICATION_DATASET (retained, not weakened; not 196 mandatory independent AIR propulsion points)"
+ },
+ "intake_compressor_feed": {
+  "DBF12-IN-01": {
+   "aperture_m2": 0.7,
+   "equivalent_diameter_m": 0.9440697438826297,
+   "collimator_L_over_D": 20.0,
+   "retention_design": "S_eff = 2 C_back (2/3 retention)",
+   "S_eff_inlet_m3_s": 11.253567441244025
+  },
+  "DBF12-IN-02": "ACTIVE_COMPRESSOR_RETENTION_CONTROL_WITH_DENSITY_AWARE_ALTITUDE_SCHEDULING",
+  "DBF12-CMP-01": {
+   "blade_rows": 7,
+   "rear_section": "shared Holweck (outer skin of the shaft-A drum, stationary grooved Al band)",
+   "shafts": "two coaxial counter-rotating",
+   "rpm": 8602.969896859207,
+   "tip_speed_m_s": 300.0,
+   "front_section": "full aperture (tip radius 0.333 m)",
+   "separate_finishing_pump": false,
+   "governing_mev_kg": 7.767,
+   "power_allowance_W": 77.0,
+   "power_estimate_W": 38.5
+  },
+  "DBF12-CMP-02": {
+   "rows": [
+    {
+     "row": "F1",
+     "shaft": "A",
+     "r_tip_m": 0.333,
+     "r_hub_m": 0.1332,
+     "blade_height_mm": 199.8,
+     "rpm": 8602.969896859207,
+     "u_tip_m_s": 300.0,
+     "u_rel_m_s": 210.0,
+     "p_in_Pa": 0.004135237259590124,
+     "p_out_Pa": 0.004355739470373424,
+     "K": 1.0533227471463527,
+     "Kn_out": 7.813606453169304,
+     "classification": "ADMITTED_FREE_MOLECULAR"
+    },
+    {
+     "row": "F2",
+     "shaft": "B",
+     "r_tip_m": 0.333,
+     "r_hub_m": 0.200264,
+     "blade_height_mm": 132.73600000000002,
+     "rpm": 8602.969896859207,
+     "u_tip_m_s": 300.0,
+     "u_rel_m_s": 450.209009009009,
+     "p_in_Pa": 0.004355739470373424,
+     "p_out_Pa": 0.008130607517275906,
+     "K": 1.866642294053197,
+     "Kn_out": 6.300821689876051,
+     "classification": "ADMITTED_FREE_MOLECULAR"
+    },
+    {
+     "row": "F3",
+     "shaft": "A",
+     "r_tip_m": 0.333,
+     "r_hub_m": 0.27902693000000006,
+     "blade_height_mm": 53.97306999999996,
+     "rpm": 8602.969896859207,
+     "u_tip_m_s": 300.0,
+     "u_rel_m_s": 515.8968153153153,
+     "p_in_Pa": 0.008130607517275906,
+     "p_out_Pa": 0.01695360603222179,
+     "K": 2.085158580856201,
+     "Kn_out": 7.431384022148875,
+     "classification": "ADMITTED_FREE_MOLECULAR"
+    },
+    {
+     "row": "F4",
+     "shaft": "B",
+     "r_tip_m": 0.333,
+     "r_hub_m": 0.3095239,
+     "blade_height_mm": 23.4761,
+     "rpm": 8602.969896859207,
+     "u_tip_m_s": 300.0,
+     "u_rel_m_s": 565.1129864864865,
+     "p_in_Pa": 0.01695360603222179,
+     "p_out_Pa": 0.03957113755093241,
+     "K": 2.3340838212073614,
+     "Kn_out": 7.319887844098101,
+     "classification": "ADMITTED_FREE_MOLECULAR"
+    },
+    {
+     "row": "F5",
+     "shaft": "A",
+     "r_tip_m": 0.333,
+     "r_hub_m": 0.32336957000000005,
+     "blade_height_mm": 9.630429999999969,
+     "rpm": 8602.969896859207,
+     "u_tip_m_s": 300.0,
+     "u_rel_m_s": 585.0871486486487,
+     "p_in_Pa": 0.03957113755093241,
+     "p_out_Pa": 0.09654153410893683,
+     "K": 2.439695699540536,
+     "Kn_out": 7.313900336267684,
+     "classification": "ADMITTED_FREE_MOLECULAR"
+    },
+    {
+     "row": "F6",
+     "shaft": "B",
+     "r_tip_m": 0.333,
+     "r_hub_m": 0.328,
+     "blade_height_mm": 5.000000000000004,
+     "rpm": 8602.969896859207,
+     "u_tip_m_s": 300.0,
+     "u_rel_m_s": 593.4097162162162,
+     "p_in_Pa": 0.09654153410893683,
+     "p_out_Pa": 0.272376694256768,
+     "K": 2.821342096650546,
+     "Kn_out": 4.993085049772776,
+     "classification": "EM_VERIFICATION_RISK_CROSSES_0.1_Pa"
+    },
+    {
+     "row": "B7",
+     "shaft": "A",
+     "r_tip_m": 0.333,
+     "r_hub_m": 0.328,
+     "blade_height_mm": 5.000000000000004,
+     "rpm": 8602.969896859207,
+     "u_tip_m_s": 300.0,
+     "u_rel_m_s": 595.4954954954954,
+     "p_in_Pa": 0.272376694256768,
+     "p_out_Pa": 0.7844125349143677,
+     "K": 2.8798812506877196,
+     "Kn_out": 1.733781574702228,
+     "classification": "EM_VERIFICATION_RISK_TRANSITIONAL"
+    }
+   ],
+   "holweck": {
+    "p_in_Pa": 0.7844125349143677,
+    "p_out_Pa": 5.026905185354923,
+    "Kn_out": 0.6763604791881397,
+    "groove_depth_mm": 2.0,
+    "classification": "PRELIMINARY_MOLECULAR_DRAG_DESIGN_WITHIN_Kn_CRITERION_COEFFICIENTS_REQUIRE_VERIFICATION"
+   }
+  },
+  "DBF12-FEED-01": {
+   "setpoint_Pa": 5.026905185354923,
+   "band_Pa": [
+    4.775559926087176,
+    5.278250444622669
+   ],
+   "volume_L": 9.257419758367076,
+   "sensitivity_setpoint_22kms_Pa": 6.123684498523269
+  },
+  "DBF12-FEED-02": {
+   "outlet_holes": 186,
+   "hole_d_mm": 3.0,
+   "open_fraction": 0.49821428571428555,
+   "ring_mm": [
+    12.0,
+    20.0
+   ],
+   "inlets": 8,
+   "uniformity_requirement": "+/-5 % azimuthal flow (preliminary H1 interface / design requirement, not demonstrated)"
+  }
+ },
+ "air_design_point": {
+  "DBF12-AIR-01": {
+   "thrust_mN": 12.0,
+   "v_eff_km_s": 26.8,
+   "hall_feed_mg_s": 0.44776119402985076,
+   "icp_dedicated_flow_mg_s": 0.0,
+   "P_d_W": 650.0,
+   "window": "only inside the approved AIR density / altitude window (A9.40)"
+  },
+  "DBF12-AIR-02": {
+   "v_eff_km_s": 22.0,
+   "hall_feed_mg_s": 0.5454545454545455,
+   "plenum_setpoint_required_Pa": 6.123684498523269
+  },
+  "DBF12-AIR-03": "NOT_SUPPORTED_BY_DBF-1.2"
+ },
+ "mass_rollup": {
+  "convention": "mass_power_a9_v5 / A9.26: harness = 0.05/0.95 x non-harness; nominal = non-harness + harness; dry = 1.10 x nominal; wet = dry + 2 kg Xe (planning reference)",
+  "lines_mev_kg": {
+   "AL-01 intake": 4.269,
+   "AL-02 compressor": 7.8431,
+   "AL-03 plenum/feed": 1.734,
+   "AL-04 Hall head + magnets": 4.205,
+   "AL-05 ICP neutralizer": 1.343,
+   "AL-06 RF generator / match": 1.5,
+   "AL-07 PPU": 5.46,
+   "AL-08 Xe hardware (single branch, 2 kg Xe)": 2.9193,
+   "AL-09 controls / FDIR": 1.0,
+   "AL-10 structure / thermal": 2.5
+  },
+  "nonharness_kg": 32.773399999999995,
+  "harness_kg": 1.7249157894736842,
+  "nominal_dry_kg": 34.49831578947368,
+  "system_margin_kg": 3.449831578947368,
+  "dry_10pct_kg": 37.94814736842105,
+  "xe_reference_kg": 2.0,
+  "wet_kg": 39.94814736842105,
+  "numerical_headroom_to_40_kg": 0.051852631578952924,
+  "gap_to_39_4_target_kg": -0.5481473684210485,
+  "nominal_dry_target_34_gap_kg": -0.49831578947367916,
+  "headroom_status": "OPEN MASS RISK MR-DCR001-01: not usable design margin (A9.41)",
+  "bid_wording": "Preliminary roll-up ≈39.95 kg wet (<40 kg); approximately 0.05 kg numerical headroom is carried as open mass risk MR-DCR001-01 and shall not be consumed as design margin.",
+  "ppu": {
+   "AL-07_governing_mev_kg": 5.46,
+   "cbe_kg": 4.55,
+   "status": "PRELIMINARY CBE / NOT MEASURED / REQUIRES EARLY CONFIRMATION",
+   "historical_floor": {
+    "mev_kg": 6.0,
+    "record": {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/lines/hall_icp_neutralizer/6"
+    },
+    "status": "preserved history; superseded for the active DBF-1.2 baseline only (A9.41)"
+   }
+  },
+  "icp_mount_correction": "ICP open-frame support / spacer counted once (AL-10, MQ-02); duplicate removed from AL-05 (v6)",
+  "compressor_booking": {
+   "compressor_governing_mev_kg": 7.767,
+   "AL-02_line_mev_kg": 7.8431,
+   "AL-01_line_mev_kg": 4.269,
+   "note": "7.767 kg is the governing compressor-design mass (v5 machine). The AL-02 line of the approved v6 roll-up is 7.843 kg because the v6 intake-compressor integration books the shared joint, assembly mount feet and reinforcement in AL-02 and removes the bolted flange pair and duplicate mounts from AL-01 / AL-02 (net -0.284 kg on AL-01 + AL-02 = 12.112 kg); bookkeeping between lines, totals unchanged"
+  }
+ },
+ "power_rollup": {
+  "basis": {
+   "ledger": {
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   },
+   "discharge_chain_eta": 0.850725,
+   "bus_per_W_discharge": 1.175467983190808,
+   "bus_per_W_compressor": 1.0579211848717271,
+   "P12_non_discharge_W": 427.88025339717365,
+   "P12_compressor_bus_W_replaced": 10.327836208103676,
+   "PXE_non_discharge_W": 420.1881534822762,
+   "rf_plus_100W_bus_W": 151.1315978388182,
+   "superseded_dcr001_v4_terms": {
+    "xe_non_discharge_W": 412.5176470588235,
+    "chain_eta": 0.855,
+    "rf_plus_100W_bus_W": 129.0
+   },
+   "superseded_dcr001_v5_air_P_d_W": {
+    "reference_prediction": 595.5555555555555,
+    "conservative_prediction": 600.0,
+    "status": "historical model predictions; not governing (A9.43 item 2)"
+   }
+  },
+  "air_12mN": {
+   "reference": {
+    "P_d_W": 650.0,
+    "compressor_load_W": 38.5,
+    "P_bus_discharge_W": 764.0541890740252,
+    "P_bus_non_discharge_excl_compressor_W": 417.55241718906996,
+    "P_bus_compressor_W": 40.7299656175615,
+    "P_bus_W": 1222.3365718806567,
+    "margin_to_1350_W": 127.66342811934328,
+    "margin_to_1500_W": 277.6634281193433
+   },
+   "conservative": {
+    "P_d_W": 650.0,
+    "compressor_load_W": 77.0,
+    "P_bus_discharge_W": 764.0541890740252,
+    "P_bus_non_discharge_excl_compressor_W": 417.55241718906996,
+    "P_bus_compressor_W": 81.459931235123,
+    "P_bus_W": 1263.0665374982182,
+    "margin_to_1350_W": 86.93346250178183,
+    "margin_to_1500_W": 236.93346250178183
+   }
+  },
+  "air_12mN_p6_conservative_corner": {
+   "P_bus_W": 1469.9022384245832,
+   "basis": "P6 P-12 conservative non-discharge corner (all non-discharge loads at their conservative values) with the old compressor bus term replaced by the 77 W allowance (approximation: the corner's compressor term is taken at the reference bus conversion)"
+  },
+  "air_12mN_model_thrust_at_650W": {
+   "value_mN": 12.536513833776821,
+   "label": "MODEL-DERIVED / NOT VALIDATED (T = sqrt(2 eta m_dot P_d), eta 0.27, m_dot 0.448 mg/s); never demonstrated thrust"
+  },
+  "xe_25mN": {
+   "1450W_design_ceiling_le": {
+    "nominal_ICP_P_d_max_W": 876.0866831287905,
+    "RF_plus_100W_P_d_max_W": 747.5152545573619
+   },
+   "1500W_rfp_supremum_lt": {
+    "nominal_ICP_P_d_max_W": 918.6229331287905,
+    "RF_plus_100W_P_d_max_W": 790.0515045573619
+   }
+  },
+  "xe_25mN_statement": "Xe 25 mN is a design capability requirement. The Hall discharge-power allocation is <= 876 W at the 1,450 W design ceiling under the nominal ICP case and <= 748 W under the +100 W RF sensitivity case. Performance is to be verified on EM/QM hardware.",
+  "xe_25mN_parametric": {
+   "P_d_W": 658.0,
+   "label": "PARAMETRIC / NOT_VALIDATED (RP-1 Xe A7 runs; feasibility support only, never demonstration)",
+   "source": {
+    "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/hall_numerics_diagnosis_v1.json",
+    "sha256": "519a7063e6680e920e0b79bdebe2e10b767272cef78a7d5319d1d076f010997d"
+   }
+  },
+  "compressor_off_in_xe": true
+ },
+ "items": [
+  {
+   "id": "DBF1-H1-01",
+   "group": "H1_GEOMETRY",
+   "name": "channel mean diameter d_mean",
+   "value": 70.0,
+   "units": "mm",
+   "sources": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/x_hall_design_space/probe_evaluations/16"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters/10",
+     "note": "H1F-CH-11 note: RP-1 is the H2-1 coil-sizing anchor"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json",
+     "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d",
+     "pointer": "/case_grid/geometry/points/6",
+     "note": "envelope configuration G-RP1"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md",
+     "sha256": "fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43",
+     "note": "owner-fixed: d_mean 70 mm, h 12 mm, L/h 8.6 (~103 mm)"
+    }
+   ],
+   "evidence_class": "owner-fixed design value",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "design value (owner-fixed); manufacturing tolerance TBD with the design release (H1F-CH-11 'tolerance TBD')",
+   "status": "FROZEN",
+   "rationale": "A9.37 fixes the RP-1 engineering point; inside the H1F-CH-05 window [45.37, 100.6] mm",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/0"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-H1-02",
+   "group": "H1_GEOMETRY",
+   "name": "channel width h",
+   "value": 12.0,
+   "units": "mm",
+   "sources": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/x_hall_design_space/probe_evaluations/16"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters/10",
+     "note": "H1F-CH-11 note: RP-1 is the H2-1 coil-sizing anchor"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json",
+     "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d",
+     "pointer": "/case_grid/geometry/points/6",
+     "note": "envelope configuration G-RP1"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md",
+     "sha256": "fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43",
+     "note": "owner-fixed: d_mean 70 mm, h 12 mm, L/h 8.6 (~103 mm)"
+    }
+   ],
+   "evidence_class": "owner-fixed design value",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "design value (owner-fixed); manufacturing tolerance TBD with the design release (H1F-CH-11 'tolerance TBD')",
+   "status": "FROZEN",
+   "rationale": "A9.37 RP-1; inside the H1F-CH-04 window [7.758, 17.21] mm",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/1"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-H1-03",
+   "group": "H1_GEOMETRY",
+   "name": "channel length L (HALL_INLET_Z0 to IP-EXIT)",
+   "value": 103.2,
+   "units": "mm",
+   "sources": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/x_hall_design_space/probe_evaluations/16"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters/10",
+     "note": "H1F-CH-11 note: RP-1 is the H2-1 coil-sizing anchor"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json",
+     "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d",
+     "pointer": "/case_grid/geometry/points/6",
+     "note": "envelope configuration G-RP1"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md",
+     "sha256": "fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43",
+     "note": "owner-fixed: d_mean 70 mm, h 12 mm, L/h 8.6 (~103 mm)"
+    }
+   ],
+   "evidence_class": "owner-fixed design value",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "design value (owner-fixed); manufacturing tolerance TBD with the design release (H1F-CH-11 'tolerance TBD')",
+   "status": "FROZEN",
+   "rationale": "A9.37 'L/h 8.6 (~103 mm)': the G-RP1 / RP-1 probe length 103.2 mm, L/h = 8.6 (inside the H1F-CH-08 / CH-09 window [8.603, 12])",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/2"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-H1-04",
+   "group": "H1_GEOMETRY",
+   "name": "derived radii r_in = (d_mean - h) / 2, r_out = (d_mean + h) / 2",
+   "value": {
+    "r_in_mm": 29.0,
+    "r_out_mm": 41.0,
+    "A_channel_mm2": 2638.937829
+   },
+   "units": "mm; mm^2",
+   "sources": [
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json",
+     "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d",
+     "pointer": "/case_grid/geometry/rule"
+    }
+   ],
+   "evidence_class": "derived arithmetic",
+   "quantity_type": "model-derived",
+   "evidence_level": "DEFINITION",
+   "uncertainty": "exact arithmetic on DBF1-H1-01 / 02",
+   "status": "FROZEN",
+   "rationale": "the envelope rule r = (d_mean -/+ h) / 2 (no new number)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/3"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-H1-05",
+   "group": "H1_GEOMETRY",
+   "name": "discharge-voltage operating band (operating variable, not a design value)",
+   "value": [
+    180.0,
+    350.0
+   ],
+   "units": "V",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+     "pointer": "/channel/V_d_band_V"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters/22"
+    }
+   ],
+   "evidence_class": "owner allocation",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "band ends as registered",
+   "status": "FROZEN",
+   "rationale": "H2-1 V_d band (H1F-AN-10 350 V rating basis); used by the envelope grid VD-180..VD-350",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/4"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-H1-06",
+   "group": "H1_GEOMETRY",
+   "name": "discharge-power band (H2-1)",
+   "value": [
+    650.0,
+    1350.0
+   ],
+   "units": "W",
+   "sources": [
+    {
+     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+     "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+     "pointer": "/channel/P_d_band_W"
+    }
+   ],
+   "evidence_class": "owner allocation",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "band ends as registered",
+   "status": "FROZEN",
+   "rationale": "the registered H-1 P_d band; its upper end equals the 1,350 W design allocation (DBF1-PWR-01)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/5"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-BZ-01",
+   "group": "MAGNETIC_TARGET",
+   "name": "B_r(z) shape target (design target)",
+   "value": "monotonic rise toward the exit, peak at or just downstream of z = L; field near the anode as low as the circuit allows (numeric B_anode/B_peak TBD)",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters/35"
+    }
+   ],
+   "evidence_class": "inferred design target",
+   "quantity_type": "inferred",
+   "evidence_level": "5",
+   "uncertainty": "shape tolerance TBD (FEMM + owner tolerance, H1F-BZ-05)",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "H1F-BZ-02 (published xenon practice): monotonic rise, peak at or just downstream of z = L, field near the anode as low as the circuit allows",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/6"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-BZ-02",
+   "group": "MAGNETIC_TARGET",
+   "name": "peak centreline B_r target band at / near IP-EXIT",
+   "value": [
+    69.93,
+    268.6
+   ],
+   "units": "G",
+   "sources": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters/36"
+    }
+   ],
+   "evidence_class": "model-derived design target",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "a window, not a point (r_Le <= 0.1 h over T_e 10-30 eV); point tolerance set at design release",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "H1F-BZ-03 (A9.14 F5-OQ-05 ACCEPT_EXISTING_FEMM_FIELD_TARGET_BAND); B_peak inside the band is an operating variable (coil current), not a hardware variable (envelope prereg hall_specific_closure)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/7"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-BZ-03",
+   "group": "MAGNETIC_TARGET",
+   "name": "B_peak operating levels used by the simulation",
+   "value": {
+    "BP-LO": 69.93,
+    "BP-HI": 268.6
+   },
+   "units": "G",
+   "sources": [
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json",
+     "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d",
+     "pointer": "/case_grid/B_peak_G"
+    }
+   ],
+   "evidence_class": "model-derived design target",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "the two band ends; no interior level registered",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "the envelope's registered levels BP-LO / BP-HI (the H1F-BZ-03 band ends)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/8"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-BZ-04",
+   "group": "MAGNETIC_TARGET",
+   "name": "simulation B(z) shape (H-1 FE-derived field)",
+   "value": "BZ-H1FE-V1",
+   "units": "-",
+   "profiles": {
+    "nominal": {
+     "BP-LO": {
+      "file": "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-LO.csv",
+      "sha256": "1d3930d78921986f9acb6132de09f08bbe435b3df3b7216cd17dc2ddc8f996cc",
+      "variant": "NOM",
+      "level": "BP-LO",
+      "NI_total_A": 153.68879629516994,
+      "B_peak_G": 69.91038556485663,
+      "mesh_level": "L3"
+     },
+     "BP-HI": {
+      "file": "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-HI.csv",
+      "sha256": "ab86134579ce64d1802d85230376be17b613e1e48e8b2306d3ff94ab67690e62",
+      "variant": "NOM",
+      "level": "BP-HI",
+      "NI_total_A": 587.0966999118853,
+      "B_peak_G": 268.60732227849013,
+      "mesh_level": "L3"
+     }
+    },
+    "envelope": {
+     "CORNER-A": {
+      "file": "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_envelope_maxFWHM_CORNER-A_BP-HI.csv",
+      "sha256": "8fb762c381446fe2b9f614bdcac403a9b18e76dfd92401a64edb0786e1ef8702",
+      "variant": "CORNER-A",
+      "level": "BP-HI",
+      "NI_total_A": 783.4224530728288,
+      "B_peak_G": 268.599990876889,
+      "mesh_level": "L2"
+     },
+     "CORNER-B": {
+      "file": "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_envelope_minFWHM_CORNER-B_BP-HI.csv",
+      "sha256": "c6bcf7beabfb80ee3a9867c0e5fab37c778282551ed19bad0f94097f676b2b84",
+      "variant": "CORNER-B",
+      "level": "BP-HI",
+      "NI_total_A": 497.5063173744757,
+      "B_peak_G": 268.6010602540919,
+      "mesh_level": "L2"
+     }
+    }
+   },
+   "sources": [
+    {
+     "path": "docs/hardware/h1_bz/h1_bz_fe_v1.json",
+     "sha256": "4da00b551e6d0776cd31d6ccdfba383fd7bfb9ffc9def21bcf8a59b92a4cfd42"
+    },
+    {
+     "path": "docs/hardware/h1_bz/h1_bz_fe_prereg_v4.json",
+     "sha256": "98fab01d030918e9385fce417a085e580e7c355973e9adf4bcab0e05b5434e9e"
+    },
+    {
+     "path": "hallthruster_bridge/bfield/h1_fe_v1/MANIFEST.json",
+     "sha256": "c797e679613e20948f0f24174db0c95bf0645592e6969363cc661bf1ab2be946"
+    },
+    {
+     "path": "docs/baseline/DCR-002/dcr002_request_v1.json",
+     "sha256": "ab55635ac29e2900e4baa459bfbaae9e4334412066bebc1cc03f77f765fcfca9"
+    },
+    {
+     "path": "docs/baseline/DCR-002/dcr002_approval_v1.json",
+     "sha256": "1718ac8061720959ea52e66e18723c23c3ece8d8c44fcfa41249d4f852c9bb55"
+    }
+   ],
+   "evidence_class": "FE-derived (scikit-fem 10.0.2 axisymmetric nonlinear magnetostatics of the registered MC-1 circuit; FEMM-class per A9.14 F5-OQ-01); not measured, not FEMM",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "shape envelope over the registered assumption ranges (wall thickness, pole thickness, coil placement, B-H bracket; prereg v4): FWHM 31.96-54.74 mm (nominal 36.79), z_peak - L -5.5 to -2.57 mm, B_anode/B_peak -0.0043 to -0.00065; shape bounds = CORNER-A / CORNER-B profiles; not covered: shielded pole contour (H1F-MC-05), hot B-H, procured-lot B-H; measured B(z) = EM verification item",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "DCR-DBF1-002 approved (coordinator ruling, A9.34): the verified, mesh-converged H-1 FE field replaces the P5-shape surrogate (evidence-class upgrade, BD-05); nominal profiles at the DBF1-BZ-03 levels BP-LO (153.7 A-turns) and BP-HI (587.1 A-turns)",
+   "label": "H1_FE_DERIVED_NOT_MEASURED",
+   "registration": "rigid, no shift: B_profile = {file, align: 'anode', z_ref_in_file_mm: 0.0, scale_to: 'max'}, B_ref_T = B_peak_G x 1e-4; the file z is the H-1 z (z = 0 anode face, IP-EXIT at 103.2 mm)",
+   "use_condition": "a Hall run citing this field needs a new NP-HALL-PARAMETRIC-ENVELOPE addendum committed before the run (approval condition)",
+   "superseded_value": {
+    "value": "BZ-P5B16",
+    "evidence_class": "digitized literature shape (surrogate)",
+    "quantity_type": "digitized",
+    "evidence_level": "3",
+    "uncertainty": "P5 shape, not an H-1 field: SOURCED_SURROGATE_P5_SHAPE_NOT_H1_BZ (H1F-BZ-01 TBD); gradient, width and anode-to-peak ratio are P5 properties",
+    "status": "FROZEN_ASSUMPTION",
+    "label": "SOURCED_SURROGATE_P5_SHAPE_NOT_H1_BZ",
+    "baseline": "DBF-1"
+   },
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/9"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-BZ-05",
+   "group": "MAGNETIC_TARGET",
+   "name": "MC-1 field capability (necessary design capability)",
+   "value": 403.0,
+   "units": "G",
+   "sources": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters/37"
+    }
+   ],
+   "evidence_class": "model-derived",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "B headroom 1.5 x the band upper end; FEMM pending",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "H1F-BZ-04",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/10"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-RF-01",
+   "group": "RF",
+   "name": "RF frequency",
+   "value": 13.56,
+   "units": "MHz",
+   "sources": [
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/0"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md",
+     "sha256": "fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43"
+    }
+   ],
+   "evidence_class": "owner-fixed",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "exact (ISM frequency)",
+   "status": "FROZEN",
+   "rationale": "A9.37 'Freeze 13.56 MHz RF'",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/11"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-RF-02",
+   "group": "RF",
+   "name": "RF forward-power operating envelope at the generator / 50-ohm reference plane",
+   "value": [
+    0.0,
+    500.0
+   ],
+   "units": "W",
+   "sources": [
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/1"
+    },
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/3"
+    }
+   ],
+   "evidence_class": "owner allocation (investigation capability)",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "envelope ends as registered; P_fwd is never P_plasma (A9.2; Takahashi eta_p ~ 0.1, TK-26)",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "P1-IT-02 investigation capability adopted as the design operating envelope; the flight bus bound is P_ICP,available = 1350 W - P_common - P_Hall - P_other,active (DBF1-PWR-04)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/12"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-RF-03",
+   "group": "RF",
+   "name": "matching architecture",
+   "value": "adjustable local match, on / immediately adjacent to the ICP module (match_colocated = true)",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/21"
+    },
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/current_statuses"
+    }
+   ],
+   "evidence_class": "owner decision",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "categorical",
+   "status": "FROZEN",
+   "rationale": "status LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT (A9.2)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/13"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-RF-04",
+   "group": "RF",
+   "name": "RF component ratings (generator, coupler, coax, match, feedthrough)",
+   "value": ">= the DBF1-RF-02 envelope upper end (500 W forward)",
+   "units": "W",
+   "sources": [
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/2"
+    },
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/1"
+    }
+   ],
+   "evidence_class": "engineering assumption",
+   "quantity_type": "assumed",
+   "evidence_level": "7",
+   "uncertainty": "ratings TBD_AFTER_IMPEDANCE_MAP (P2); RF peak voltage / current not registered (ICD ICP-44)",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "rating basis tied to the frozen envelope until the P2 impedance map sets ratings",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/14"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-ICP-01",
+   "group": "ICP_GEOMETRY",
+   "name": "ICP topology",
+   "value": "open-tube coaxial downstream ICP, unmagnetized, CFG-CAP-OFF electron extraction topology per P1-IT-36 when registered",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/15"
+    },
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/scope"
+    }
+   ],
+   "evidence_class": "owner decision",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "categorical",
+   "status": "FROZEN",
+   "rationale": "A9.3 OQ-VI-03 first build (Takahashi et al. 2024 topology precedent)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/15"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-ICP-02",
+   "group": "ICP_GEOMETRY",
+   "name": "module geometry vector (L_standoff, r_aperture, r_module, L_module, tau_support)",
+   "value": {
+    "L_standoff": 0.05,
+    "r_aperture": 0.06,
+    "r_module": 0.09,
+    "L_module": 0.15,
+    "tau_support": 0.0
+   },
+   "units": "m; -",
+   "sources": [
+    {
+     "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450",
+     "pointer": "/current_objective_state/probe_vector"
+    }
+   ],
+   "evidence_class": "engineering assumption",
+   "quantity_type": "assumed",
+   "evidence_level": "7",
+   "uncertainty": "a P3 grid point registered as the F6 state probe; F6 search not run (P1 / P2 evidence absent)",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "the only complete registered flight-module geometry vector; geometrically consistent with RP-1: r_aperture 60 mm > H-1 channel outer radius 41 mm (plume passage). The Takahashi 65 mm ID tube (TK-10) is rejected as the flight bore because its 32.5 mm radius is inside the RP-1 channel outer radius",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/16"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-ICP-03",
+   "group": "ICP_GEOMETRY",
+   "name": "NP-ICP v2 volume model",
+   "value": "ASSUMED_GEOMETRIC_TUBE (V = pi R^2 L with R = r_aperture 0.06 m, L = L_module 0.15 m)",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_v2.json",
+     "sha256": "3f0df5b85286bfc82ce99ec9bfafb81ec785021b1668d5bc95fe0d29679631e9"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_lock_v2.json",
+     "sha256": "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287"
+    },
+    {
+     "path": "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json",
+     "sha256": "eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450",
+     "pointer": "/current_objective_state/probe_vector"
+    }
+   ],
+   "evidence_class": "declared unvalidated modelling assumption",
+   "quantity_type": "assumed",
+   "evidence_level": "7",
+   "uncertainty": "A9.31 sec. 10: not bench validation; a REGISTERED_EFFECTIVE volume supersedes it",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "every NP-ICP v2 output at DBF-1 carries flag ASSUMED_GEOMETRIC_TUBE",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/17"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-ICP-04",
+   "group": "ICP_GEOMETRY",
+   "name": "ion-collecting electrode (collector)",
+   "value": "C-type electrode on the inner wall of the bore, 0.10 m axial length, axial slit for RF penetration; separately biased and metered, ICP body floating",
+   "units": "m",
+   "sources": [
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/anchor_check/11"
+    },
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/16"
+    }
+   ],
+   "evidence_class": "literature topology precedent",
+   "quantity_type": "as-reported",
+   "evidence_level": "3",
+   "uncertainty": "anchor axial length as reported (Takahashi Fig. 1b); the flight collector (ICD ICP-21) is TBD",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "the registered topology anchor; within L_module 0.15 m the collector covers 0.10 m of the bore wall and the dielectric vessel the remaining 0.05 m",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/18"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-ICP-05",
+   "group": "ICP_GEOMETRY",
+   "name": "ICP neutral source / gas routing",
+   "value": "G-REUSE (Hall exhaust -> ICP; mdot_ICP,dedicated = 0); capped dedicated port retained; declared variant G-XE",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/11"
+    },
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/12"
+    }
+   ],
+   "evidence_class": "owner decision",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "categorical",
+   "status": "FROZEN",
+   "rationale": "A9.1 HIQ-06 icp_feed_gas_baseline G-REUSE (config/architecture icp_feed_gas_baseline)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/19"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-ICP-06",
+   "group": "ICP_GEOMETRY",
+   "name": "ICP body / collector isolation class",
+   "value": 350.0,
+   "units": "V",
+   "sources": [
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/20"
+    },
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/42"
+    }
+   ],
+   "evidence_class": "owner decision",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "design withstand >= 525 V (P1-IT-43)",
+   "status": "FROZEN",
+   "rationale": "A9.4 P1Q-14 ICP_350V_CLASS",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/20"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-ICP-07",
+   "group": "ICP_GEOMETRY",
+   "name": "dielectric bore (vessel) material",
+   "value": "borosilicate glass (pyrex class)",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/anchor_check/10"
+    }
+   ],
+   "evidence_class": "literature topology precedent",
+   "quantity_type": "as-reported",
+   "evidence_level": "3",
+   "uncertainty": "flight dielectric not selected (P3-R-03 emittance TBD); AO / sputter compatibility not evidenced",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "the only registered ICP bore material (Takahashi anchor TK-10)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/21"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-IN-01",
+   "group": "INTAKE_COMPRESSOR",
+   "name": "upstream design vector (intake, filter, compressor, plenum, P_set)",
+   "value": "A0.25_Ld20_phi0.9|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.02",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/reference_outputs/f7_pareto_blocks_v1.json.gz",
+     "sha256": "de6ee69f21d4e5b4daba6e1b8bed263598b950b19cae9da49d309ec4d7664f00",
+     "note": "decompressed json sha256 07d5335d4f020fa1fa9e2d91796669b2790383c74a486aa84d7e4de37889af3c; contexts cll_a0.5, cll_a0.8, cll_a1, maxwell_a0.5, maxwell_a0.8, maxwell_a1"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/intake_closure_a5_v1.json",
+     "sha256": "f971eecef6d7a5891aaced5880eeadd66dc796bbd07af619d12be46856546d89",
+     "pointer": "/summary/design_identification"
+    }
+   ],
+   "evidence_class": "model-derived (F7 chain, PARAMETRIC_SENSITIVITY inputs)",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "compressor coefficients code-default (PARAMETRIC_SENSITIVITY); surface accommodation TBD (10-scenario set); see DBF1-BD-01 / BD-02",
+   "status": "BASELINE_DEFICIENCY",
+   "rationale": "selected by SR-INTAKE-01 on registered candidates; no registered candidate closes both flow and drag (A9.37: frozen anyway, deficiency recorded)",
+   "selection_rule_ref": "SR-INTAKE-01",
+   "deficiencies": [
+    "DBF1-BD-01",
+    "DBF1-BD-02",
+    "DBF1-BD-03"
+   ],
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/22"
+   },
+   "status_dbf1_2": "SUPERSEDED_BY_DCR-DBF1-001",
+   "successor": "DBF12-IN-01"
+  },
+  {
+   "id": "DBF1-IN-02",
+   "group": "INTAKE_COMPRESSOR",
+   "name": "intake geometry (F1 candidate, d collapsed)",
+   "value": {
+    "area_m2": 0.25,
+    "L_over_d": 20.0,
+    "phi": 0.9,
+    "candidate": "A0.25_Ld20_phi0.9",
+    "channel_diameter": "collapsed: every TPMC output is d-invariant at fixed L/d (F1-02); d is set with the mechanical design inside the F1 grid",
+    "intake_wall_area_m2": 9.0
+   },
+   "units": "m^2; -; -",
+   "sources": [
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/intake_closure_a5_v1.json",
+     "sha256": "f971eecef6d7a5891aaced5880eeadd66dc796bbd07af619d12be46856546d89",
+     "pointer": "/summary/design_identification/DS-F1-GRID"
+    },
+    {
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
+    }
+   ],
+   "evidence_class": "model-derived (F1 TPMC synthesis)",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "TPMC statistical SE per state (F1); surface scenario TBD",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "A = 0.25 m^2 is the only F1 area passing C-DRAG-RFP at every required state in every scenario (DS-F1-ADMISSIBLE)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/23"
+   },
+   "status_dbf1_2": "SUPERSEDED_BY_DCR-DBF1-001",
+   "successor": "DBF12-IN-01"
+  },
+  {
+   "id": "DBF1-IN-03",
+   "group": "INTAKE_COMPRESSOR",
+   "name": "TPMC surface-scenario basis",
+   "value": [
+    "maxwell_a0",
+    "maxwell_a0.2",
+    "maxwell_a0.5",
+    "maxwell_a0.8",
+    "maxwell_a1",
+    "cll_a0",
+    "cll_a0.2",
+    "cll_a0.5",
+    "cll_a0.8",
+    "cll_a1"
+   ],
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/intake_closure_a5_v1.json",
+     "sha256": "f971eecef6d7a5891aaced5880eeadd66dc796bbd07af619d12be46856546d89",
+     "pointer": "/summary/design_identification/DS-F1-GRID/scenarios"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+     "sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf"
+    }
+   ],
+   "evidence_class": "model-derived scenario set",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "accommodation unmeasured (DI-1.3); every admitted scenario is carried, none chosen (A9.13 S6.16)",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "Maxwell and CLL, alpha in {0, 0.2, 0.5, 0.8, 1}; narrowing only by a preregistered DI-1.3 record",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/24"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-IN-04",
+   "group": "INTAKE_COMPRESSOR",
+   "name": "filter case",
+   "value": "F4-FIL-T0.9",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/reference_outputs/f7_pareto_blocks_v1.json.gz",
+     "sha256": "de6ee69f21d4e5b4daba6e1b8bed263598b950b19cae9da49d309ec4d7664f00",
+     "note": "decompressed json sha256 07d5335d4f020fa1fa9e2d91796669b2790383c74a486aa84d7e4de37889af3c; contexts cll_a0.5, cll_a0.8, cll_a1, maxwell_a0.5, maxwell_a0.8, maxwell_a1"
+    }
+   ],
+   "evidence_class": "parametric sensitivity (loss-free species-independent screen, tau = 0.9)",
+   "quantity_type": "assumed",
+   "evidence_level": "7",
+   "uncertainty": "filter material / geometry undefined (F2-IF-08); tau 0.7 / 0.5 and the placeholder law are the registered alternatives",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "selected with the design vector (SR-INTAKE-01 key 2); baseline role INERT_LOW_RECOMBINATION (A9.13 S6.3)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/25"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-IN-05",
+   "group": "INTAKE_COMPRESSOR",
+   "name": "compressor design (F3 design grid)",
+   "value": {
+    "id": "T6-A1-U2-D0-Ti6Al4V-H0.5",
+    "N_turbo": 6,
+    "A_turbo_m2": 0.1963495408,
+    "R_turbo_m": 0.2886751346,
+    "u_tip_turbo_mps": 290.6899682,
+    "rpm": 9615.946745,
+    "N_drag": 0,
+    "rotor_material": "Ti6Al4V",
+    "hub_ratio": 0.5,
+    "R_hub_m": 0.1443375673,
+    "blade_span_m": 0.1443375673,
+    "hub_geometry_status": "PARAMETRIC_SENSITIVITY_HUB_RATIO_BOUNDS_TBD"
+   },
+   "units": "-; m^2; m; m/s; rpm",
+   "sources": [
+    {
+     "path": "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json",
+     "sha256": "74a52aa749e1d071f76957e4f9ef4929c9d8ab302b183da3c5a5d9ba8d6d6923",
+     "pointer": "/design_grid/1165"
+    }
+   ],
+   "evidence_class": "model-derived (F3)",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "turbo-row coefficients code-default (T-1 / T-2 open); hub geometry PARAMETRIC_SENSITIVITY",
+   "status": "BASELINE_DEFICIENCY",
+   "rationale": "selected with the design vector; F3 model mass exceeds the AL-02 line allocation (DBF1-BD-03)",
+   "deficiencies": [
+    "DBF1-BD-03"
+   ],
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/26"
+   },
+   "status_dbf1_2": "SUPERSEDED_BY_DCR-DBF1-001",
+   "successor": "DBF12-CMP-01"
+  },
+  {
+   "id": "DBF1-IN-06",
+   "group": "INTAKE_COMPRESSOR",
+   "name": "plenum volume / wall / target pressure",
+   "value": {
+    "V_m3": 0.001,
+    "wall_case": "WALL-G0",
+    "P_set_Pa": 0.02
+   },
+   "units": "m^3; -; Pa",
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/reference_outputs/f7_pareto_blocks_v1.json.gz",
+     "sha256": "de6ee69f21d4e5b4daba6e1b8bed263598b950b19cae9da49d309ec4d7664f00",
+     "note": "decompressed json sha256 07d5335d4f020fa1fa9e2d91796669b2790383c74a486aa84d7e4de37889af3c; contexts cll_a0.5, cll_a0.8, cll_a1, maxwell_a0.5, maxwell_a0.8, maxwell_a1"
+    }
+   ],
+   "evidence_class": "parametric design value",
+   "quantity_type": "assumed",
+   "evidence_level": "7",
+   "uncertainty": "V from the F4 decade grid; WALL-G0 = inert lining bound (gamma = 0, owner H1F-IN-02)",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "selected with the design vector (SR-INTAKE-01)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/27"
+   },
+   "status_dbf1_2": "SUPERSEDED_BY_DCR-DBF1-001",
+   "successor": "DBF12-FEED-01"
+  },
+  {
+   "id": "DBF1-IN-07",
+   "group": "INTAKE_COMPRESSOR",
+   "name": "feed-loop controller (normalized PI on plenum pressure)",
+   "value": {
+    "Kp": 0.3,
+    "Ti_s": 3.0,
+    "f_valve_hz": 1.0,
+    "authority": 3.0
+   },
+   "units": "-; s; Hz; -",
+   "sources": [
+    {
+     "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
+     "sha256": "fffb223023f944f166112acf017af277a50ede84695cb78f933dd5ca918fd3a9",
+     "pointer": "/search_variables"
+    },
+    {
+     "path": "docs/design_synthesis/f4_plenum/build_f4_plenum.py",
+     "sha256": "95767a26475ee95003a895da09f90e2562b4b514e2d16b50fbd02c102a978678",
+     "note": "KP / TI_S / F_VALVE_NOMINAL_HZ / AUTHORITY"
+    }
+   ],
+   "evidence_class": "definition / parametric",
+   "quantity_type": "assumed",
+   "evidence_level": "7",
+   "uncertainty": "Kp, Ti one-decade definition grid; f_valve, authority PARAMETRIC_SENSITIVITY (H2-3 H23-18 / H23-07)",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "selection rule SR-CTRL-01: the lowest registered proportional gain and the slowest registered integral time (Kp 0.3, Ti 3 s), nominal valve bandwidth 1 Hz and authority 3 (the only registered values); the low-gain choice is made before any stability evaluation and is not revisited after it (DCR only)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/28"
+   },
+   "status_dbf1_2": "SUPERSEDED_BY_DCR-DBF1-001",
+   "successor": "DBF12-IN-02"
+  },
+  {
+   "id": "DBF1-IN-08",
+   "group": "INTAKE_COMPRESSOR",
+   "name": "registered F7 performance of the frozen design (per covered scenario)",
+   "value": {
+    "cll_a0.5": {
+     "mdot_delivered_min_kg_s": 1.084126071518558e-08,
+     "mdot_captured_min_kg_s": 4.08271125e-08,
+     "P_compressor_el_max_W": 11.125100048512362,
+     "drag_intake_max_N": 0.016976548722738207,
+     "m_compressor_max_kg": 10.90721502347456,
+     "xO_flow_min": 0.04488342016187764,
+     "xO_flow_max": 0.858286360607629
+    },
+    "cll_a0.8": {
+     "mdot_delivered_min_kg_s": 1.2873682893339131e-08,
+     "mdot_captured_min_kg_s": 3.08379325e-08,
+     "P_compressor_el_max_W": 10.82992581220429,
+     "drag_intake_max_N": 0.017250103815731877,
+     "m_compressor_max_kg": 10.90721502347456,
+     "xO_flow_min": 0.04035353095793279,
+     "xO_flow_max": 0.8569973937385776
+    },
+    "cll_a1": {
+     "mdot_delivered_min_kg_s": 4.4022348149458855e-09,
+     "mdot_captured_min_kg_s": 1.5502572e-08,
+     "P_compressor_el_max_W": 10.000848881734072,
+     "drag_intake_max_N": 0.017591748982087926,
+     "m_compressor_max_kg": 10.90721502347456,
+     "xO_flow_min": 0.03678043839227976,
+     "xO_flow_max": 0.8346463123800469
+    },
+    "maxwell_a0.5": {
+     "mdot_delivered_min_kg_s": 1.4278718329612888e-09,
+     "mdot_captured_min_kg_s": 2.64674925e-08,
+     "P_compressor_el_max_W": 10.323575809362321,
+     "drag_intake_max_N": 0.017347113962959494,
+     "m_compressor_max_kg": 10.90721502347456,
+     "xO_flow_min": 0.040249681290587314,
+     "xO_flow_max": 0.8088682963947882
+    },
+    "maxwell_a0.8": {
+     "mdot_delivered_min_kg_s": 4.023537233131614e-09,
+     "mdot_captured_min_kg_s": 1.8984802500000002e-08,
+     "P_compressor_el_max_W": 10.103421850824521,
+     "drag_intake_max_N": 0.01753026123708184,
+     "m_compressor_max_kg": 10.90721502347456,
+     "xO_flow_min": 0.038823666251502034,
+     "xO_flow_max": 0.8338893921283944
+    },
+    "maxwell_a1": {
+     "mdot_delivered_min_kg_s": 4.561257297657657e-09,
+     "mdot_captured_min_kg_s": 1.547318875e-08,
+     "P_compressor_el_max_W": 9.947070060074756,
+     "drag_intake_max_N": 0.0175826458472022,
+     "m_compressor_max_kg": 10.90721502347456,
+     "xO_flow_min": 0.0379691471746627,
+     "xO_flow_max": 0.8275217357176735
+    }
+   },
+   "units": "kg/s; W; N; kg; -",
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/reference_outputs/f7_pareto_blocks_v1.json.gz",
+     "sha256": "de6ee69f21d4e5b4daba6e1b8bed263598b950b19cae9da49d309ec4d7664f00",
+     "note": "decompressed json sha256 07d5335d4f020fa1fa9e2d91796669b2790383c74a486aa84d7e4de37889af3c; contexts cll_a0.5, cll_a0.8, cll_a1, maxwell_a0.5, maxwell_a0.8, maxwell_a1"
+    }
+   ],
+   "evidence_class": "model-derived",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "PARAMETRIC_SENSITIVITY",
+   "status": "FROZEN",
+   "rationale": "registered values; M2 re-evaluates the design in every admitted scenario at every state",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/29"
+   },
+   "status_dbf1_2": "SUPERSEDED_BY_DCR-DBF1-001",
+   "successor": "DBF12-CMP-01 / DBF12-FEED-01 (F7 performance of the superseded DBF-1 upstream design)"
+  },
+  {
+   "id": "DBF1-PWR-01",
+   "group": "POWER",
+   "name": "design power allocation (all flight loads at the spacecraft-side DC boundary)",
+   "value": 1350.0,
+   "units": "W",
+   "sources": [
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/power/allocations/design_allocation_W"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md",
+     "sha256": "fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43"
+    }
+   ],
+   "evidence_class": "owner-fixed",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "allocation (not a gate, not a CBE)",
+   "status": "FROZEN",
+   "rationale": "A9.37; row 109: the ICP fits inside it; the 1350 -> 1500 W margin is not consumed nominally",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/30"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-PWR-02",
+   "group": "POWER",
+   "name": "RFP bus-power gate (assessment only)",
+   "value": 1500.0,
+   "units": "W",
+   "sources": [
+    {
+     "path": "config/constraints/engineering_constraints_v1.json",
+     "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+     "pointer": "/constraints/p_bus_max_W"
+    },
+    {
+     "path": "config/assessment/gate_thresholds_v1.json",
+     "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md",
+     "sha256": "fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43"
+    }
+   ],
+   "evidence_class": "frozen requirement",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "strict '<' on P_bus,1ms,max (bus_power_boundary_a9_v2 gate)",
+   "status": "FROZEN",
+   "rationale": "A9.37; read by the harness only through abep-config (HC-03 assessment threshold); never a physics input (A9.30)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/31"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-PWR-03",
+   "group": "POWER",
+   "name": "common-load allocation (compressor + flow control + filter/getter + thermal control + housekeeping)",
+   "value": 300.0,
+   "units": "W",
+   "sources": [
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/power/allocations/common_allocation_W"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md",
+     "sha256": "fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43"
+    }
+   ],
+   "evidence_class": "owner-fixed",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "upper design value (row 114); controls / thermal allowance 50 W inside it",
+   "status": "FROZEN",
+   "rationale": "A9.37 current 300 W common-load allocation",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/32"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-PWR-04",
+   "group": "POWER",
+   "name": "mapping to bus_power_boundary_a9_v2",
+   "value": {
+    "boundary": "bus_power_boundary_a9_v2 (flight configuration hall_icp_neutralizer; flight C1 loads NONE)",
+    "slots_by_group": {
+     "hall": [
+      "hall_discharge",
+      "hall_magnet_inner",
+      "hall_magnet_outer",
+      "hall_magnet_trim"
+     ],
+     "icp": [
+      "icp_rf_source",
+      "icp_matching_network",
+      "icp_collector_bias"
+     ],
+     "common": [
+      "flow_control_atmospheric",
+      "flow_control_xe",
+      "compressor",
+      "thermal_control",
+      "housekeeping_controls"
+     ],
+     "reserved": [
+      "reserved_dc_port"
+     ]
+    },
+    "HALL_AND_ELECTRON_SOURCE": "hall group + icp group inside 1350 W - P_common - P_other,active (no fixed Hall / ICP split, A9.1 OQ-A902-03); 1050 W at P_common = 300 W, P_other = 0",
+    "COMMON_300W": "common group <= 300 W",
+    "OTHER_ACTIVE": "reserved_dc_port, 0 W while unused",
+    "gate": "P_bus,1ms,max < 1500 W (assessment only)"
+   },
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/power/configurations/hall_icp_neutralizer/slots"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/power/allocations"
+    },
+    {
+     "path": "abep_sim/bus_boundary_a9_v2.py",
+     "sha256": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26"
+    }
+   ],
+   "evidence_class": "owner allocation arithmetic",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "exact arithmetic on owner allocations",
+   "status": "FROZEN",
+   "rationale": "A9.30 bus boundary; no C1 slot",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/33"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-MASS-01",
+   "group": "MASS",
+   "name": "system mass-margin policy",
+   "value": 0.1,
+   "units": "fraction of nominal dry",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_10_05_A9_26_mass_budget_owner_decisions.json",
+     "sha256": "18dada24a90fb1a5d17e903bf8eb9f77af622106f9ddfc59ea1f182054b80b76"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/proposal_design_target/system_margin_fraction"
+    }
+   ],
+   "evidence_class": "owner-fixed",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "policy",
+   "status": "FROZEN",
+   "rationale": "A9.26 (20 % kept as historical / conservative sensitivity); 20 % line uplift on AL-04 / AL-07 / AL-08 kept",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/34"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-MASS-02",
+   "group": "MASS",
+   "name": "nominal-dry mass target",
+   "value": 34.0,
+   "units": "kg (<=)",
+   "sources": [
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/proposal_design_target/nominal_dry_max_kg"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md",
+     "sha256": "fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43"
+    }
+   ],
+   "evidence_class": "owner-fixed design target",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "design target, not achieved evidence",
+   "status": "FROZEN",
+   "rationale": "A9.37 / A9.26 section 5 proposal design target",
+   "deficiencies": [
+    "DBF1-BD-04"
+   ],
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/35"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-MASS-03",
+   "group": "MASS",
+   "name": "reference Xe load",
+   "value": 2.0,
+   "units": "kg",
+   "sources": [
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/proposal_design_target/xe_reference_case_kg"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md",
+     "sha256": "fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43"
+    }
+   ],
+   "evidence_class": "owner-fixed reference",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "planning / reference case; 5 / 10 kg sensitivities carried; not the selected flight Xe load",
+   "status": "FROZEN",
+   "rationale": "A9.37 '2 kg reference Xe load'; never selected to force mass closure (A9.31 sec. 18 Q6)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/36"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-MASS-04",
+   "group": "MASS",
+   "name": "wet-mass target at the reference Xe load (arithmetic)",
+   "value": 39.4,
+   "units": "kg",
+   "sources": [
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/proposal_design_target"
+    }
+   ],
+   "evidence_class": "arithmetic on owner values",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "34 x 1.10 + 2 = 39.4 kg",
+   "status": "FROZEN",
+   "rationale": "below the 40 kg RFP wet-mass limit by 0.6 kg",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/37"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-TH-01",
+   "group": "THERMAL",
+   "name": "thermal network topology (NP-THERMAL-CATHODELESS 2.0.0)",
+   "value": {
+    "solved_nodes": [
+     "H1_ANODE",
+     "H1_WALL_IN",
+     "H1_WALL_OUT",
+     "H1_POLE_IN",
+     "H1_POLE_OUT",
+     "H1_BACKPLATE",
+     "H1_COIL_IN",
+     "H1_COIL_OUT",
+     "H1_COIL_TRIM",
+     "N_VESSEL",
+     "N_ANTENNA",
+     "N_COLLECTOR",
+     "N_HOUSING",
+     "N_MATCH",
+     "N_MOUNT",
+     "R_HALL"
+    ],
+    "absent_conditional_nodes": [
+     "R_ICP"
+    ],
+    "boundaries": [
+     "B_SC",
+     "B_PPU_RF",
+     "B_FEED",
+     "SPACE",
+     "ENV",
+     "B_FACILITY"
+    ],
+    "conditional_node_dispositions": {
+     "H1_COIL_TRIM": "PRESENT: H1F-MC-02 trim-coil provision (winding space + reserved supply channel); bus slot hall_magnet_trim installed",
+     "N_COLLECTOR": "PRESENT: Takahashi-type collector frozen (DBF1-ICP-04)",
+     "N_HOUSING": "PRESENT: module housing / RF shield / feedthrough body of the frozen module envelope r_module 0.09 m (DBF1-ICP-02)",
+     "N_MATCH": "PRESENT: match_colocated = true (DBF1-RF-03)",
+     "R_HALL": "PRESENT: A9.12 OQ-A907-06 thermally isolated H-1 mount + dedicated radiator / rejection path",
+     "R_ICP": "ABSENT: the ICP outward surfaces belong to N_HOUSING / N_VESSEL (no separate ICP radiator registered)"
+    },
+    "excluded": "C-1 nodes CB / CE / CK (AFI-03; no cathode node)"
+   },
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json",
+     "sha256": "e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c",
+     "pointer": "/nodes"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v2.json",
+     "sha256": "6828f3e257e38a588c9513f2531658035fa904b6c51e3b28831681d871adfa78"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_lock_v2.json",
+     "sha256": "727689fee6bd003295c53abfbc4185c93fab80620329c75062a956dbbb9742de"
+    },
+    {
+     "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+     "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083"
+    }
+   ],
+   "evidence_class": "registered model topology",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "lumped isothermal nodes (Biot check D-02); property / conductance / view-factor records TBD",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "the v1 node set inherited by 2.0.0, with the conditional nodes decided by the frozen H-1 / ICP design",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/38"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-TH-02",
+   "group": "THERMAL",
+   "name": "spacecraft interface form",
+   "value": "SCI-A conductance to a fixed spacecraft temperature at H1_BACKPLATE (isolated mount), N_MOUNT and R_HALL; values from the host thermal ICD",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json",
+     "sha256": "e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c",
+     "pointer": "/spacecraft_interface"
+    }
+   ],
+   "evidence_class": "reference pending ICD",
+   "quantity_type": "assumed",
+   "evidence_level": "7",
+   "uncertainty": "G_sc,a and T_sc not registered (OQ-NPT-01 open; no spacecraft thermal ICD)",
+   "status": "REFERENCE_PENDING_ICD",
+   "rationale": "the conductance form is the one the owner mount cases would use; FLIGHT_CONDITIONAL thermal stays NOT_EVALUATED until the ICD values exist",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/39"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-TH-03",
+   "group": "THERMAL",
+   "name": "thermal design margin rule",
+   "value": {
+    "margin_K": 50.0,
+    "heat_load_factor": 1.2
+   },
+   "units": "K; -",
+   "sources": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters/62"
+    }
+   ],
+   "evidence_class": "owner decision",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "rule",
+   "status": "FROZEN",
+   "rationale": "owner row 86 (H1F-TH-01): >= 50 K below each validated continuous-use limit + 20 % heat-load margin (HC-06 in the assessment config)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/40"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-MAT-01",
+   "group": "MATERIALS",
+   "name": "H-1 anode / gas distributor material (primary)",
+   "value": "INCONEL alloy 600 (chromia-forming Ni alloy)",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b",
+     "pointer": "/candidates/1"
+    },
+    {
+     "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b",
+     "pointer": "/a9_16_owner_rules/q0_matrix"
+    }
+   ],
+   "evidence_class": "datasheet bulk properties only",
+   "quantity_type": "as-reported",
+   "evidence_level": "5",
+   "uncertainty": "every P4 gate cell INCOMPLETE_EVIDENCE (no gate-admissible property; no plasma / O exposure evidence)",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "SR-MAT-01 primary (chromia-forming Ni alloy; R8 role 'higher-T metallic alternative')",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/41"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-MAT-02",
+   "group": "MATERIALS",
+   "name": "H-1 anode / gas distributor material (backup)",
+   "value": "INCONEL alloy 601 (alumina-forming Ni-Cr-Al alloy)",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b",
+     "pointer": "/candidates/6"
+    }
+   ],
+   "evidence_class": "datasheet bulk properties only",
+   "quantity_type": "as-reported",
+   "evidence_level": "5",
+   "uncertainty": "every P4 gate cell INCOMPLETE_EVIDENCE (no gate-admissible property; no plasma / O exposure evidence)",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "SR-MAT-01 backup (different family: alumina-forming alloy; alumina scale may insulate: Q0 hypothesis-control coupon decides)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/42"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-MAT-03",
+   "group": "MATERIALS",
+   "name": "ICP ion-collecting electrode material (primary / backup)",
+   "value": {
+    "primary": "INCONEL alloy 600 (chromia-forming Ni alloy)",
+    "backup": "INCONEL alloy 601 (alumina-forming Ni-Cr-Al alloy)"
+   },
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b",
+     "pointer": "/candidates/1"
+    },
+    {
+     "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b",
+     "pointer": "/candidates/6"
+    },
+    {
+     "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b",
+     "pointer": "/applications/APP-COLLECTOR"
+    },
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/items/18"
+    }
+   ],
+   "evidence_class": "datasheet bulk properties only",
+   "quantity_type": "as-reported",
+   "evidence_level": "5",
+   "uncertainty": "every P4 gate cell INCOMPLETE_EVIDENCE (no gate-admissible property; no plasma / O exposure evidence); 316L permitted only for the Ar engineering reproduction (P1-IT-19)",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "SR-MAT-01 applied to APP-COLLECTOR (same register; sputtering / deposition under negative bias, TK-71)",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/43"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-MAT-04",
+   "group": "MATERIALS",
+   "name": "H-1 channel wall ceramic (primary / backup)",
+   "value": {
+    "primary": "BN-SiO2 (borosil class)",
+    "backup": "BN"
+   },
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters/58"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json",
+     "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d",
+     "pointer": "/numerical_settings/wall_and_ions"
+    }
+   ],
+   "evidence_class": "flight practice (literature) / model setting",
+   "quantity_type": "as-reported",
+   "evidence_level": "5",
+   "uncertainty": "no N+/N2+/O+/O2+ sputter yield on BN or BN-SiO2 in open sources; BN inner wall thermal UNRESOLVED against the 850 degC ceiling",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "H1F-MA-05 flight practice is BN or BN-SiO2; BN-SiO2 primary because the envelope runs use WallSheath (BNSiO2) (one consistent wall model), BN backup",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/44"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-DRAG-01",
+   "group": "HOST_DRAG",
+   "name": "reference host-spacecraft body (drag case)",
+   "value": {
+    "case_id": "RC-DIAMANT",
+    "record_id": "REF-T1-DIAMANT",
+    "a_ref_m2": 0.5,
+    "cd": 2.2,
+    "cd_a_m2": 1.1,
+    "shape": "not stated by the source (body frontal area only)",
+    "source_spacecraft": {
+     "altitude_km": 200.0,
+     "power_kW": 1.0,
+     "mass_kg": 400.0
+    }
+   },
+   "units": "m^2; -",
+   "sources": [
+    {
+     "path": "docs/design_synthesis/spacecraft_reference_drag/spacecraft_reference_drag_v1.json",
+     "sha256": "5415f3f2cfdc403c7e23a80cde68eebc8f5bc66868793133094cf0670f9cb39f",
+     "pointer": "/cases/3"
+    },
+    {
+     "path": "docs/design_synthesis/spacecraft_reference_drag/spacecraft_reference_drag_v1.json",
+     "sha256": "5415f3f2cfdc403c7e23a80cde68eebc8f5bc66868793133094cf0670f9cb39f",
+     "pointer": "/records"
+    },
+    {
+     "path": "crates/abep-mission/data/spacecraft_reference_register_v1.json",
+     "sha256": "4952eb745b201a57406dc6fe0513f6217f654ddb6d2ad7300c5334112a42ffa3"
+    }
+   ],
+   "evidence_class": "reference pending customer ICD (secondary literature)",
+   "quantity_type": "as-reported",
+   "evidence_level": "5",
+   "uncertainty": "C_D as reported (secondary; GSI / accommodation basis not stated); SRD-03 spread C_D A 0.32-3.7 m^2 across declared cases; A_ref scope 'unstated' -> INTAKE_OVERLAP_UNRESOLVED flag",
+   "status": "REFERENCE_PENDING_ICD",
+   "rationale": "SR-DRAG-01; REFERENCE/PARAMETRIC, not the host spacecraft (A9.13 S6.18); replaced only by the host ICD",
+   "label": "REFERENCE_PENDING_CUSTOMER_ICD",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/45"
+   },
+   "status_dbf1_2": "SUPERSEDED_BY_DCR-DBF1-001",
+   "successor": "DBF12-HOST-01"
+  },
+  {
+   "id": "DBF1-DRAG-02",
+   "group": "HOST_DRAG",
+   "name": "drag model",
+   "value": "D(state) = q (C_D A_ref)_body + D_intake(state, scenario), q = 1/2 rho v^2 at the frozen orbit-resolved state (F1 envelope atmospheres); D_intake = F1 intake-face drag per unit frontal area (TPMC, theta 0, per surface scenario) x A_intake 0.25 m^2; intake_accounting separate_term",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/design_synthesis/spacecraft_reference_drag/spacecraft_reference_drag_v1.json",
+     "sha256": "5415f3f2cfdc403c7e23a80cde68eebc8f5bc66868793133094cf0670f9cb39f",
+     "pointer": "/scope"
+    },
+    {
+     "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
+     "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854"
+    }
+   ],
+   "evidence_class": "model-derived (Romano 2018 Eq. 1 form + F1 TPMC)",
+   "quantity_type": "model-derived",
+   "evidence_level": "5",
+   "uncertainty": "body term C_D constant (no GSI); intake term per scenario (10 admitted, none chosen); attitude: flow-aligned, arrays parallel to flight (not stated by the body source)",
+   "status": "REFERENCE_PENDING_ICD",
+   "rationale": "the admitted abep_mission::reference_drag function with the F1 drag table; T_required(state) = D(state) for T - D >= 0 (A9.13 S6.15)",
+   "label": "REFERENCE_PENDING_CUSTOMER_ICD",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/46"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF1-DRAG-03",
+   "group": "HOST_DRAG",
+   "name": "surface accommodation basis",
+   "value": "body: as stated by the case source (not stated: C_D 2.2 is a literature-typical value); intake: the 10 admitted TPMC scenarios (Maxwell / CLL, alpha 0-1), reported fav / unfav, never chosen",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/design_synthesis/spacecraft_reference_drag/spacecraft_reference_drag_v1.json",
+     "sha256": "5415f3f2cfdc403c7e23a80cde68eebc8f5bc66868793133094cf0670f9cb39f",
+     "pointer": "/findings"
+    },
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/intake_closure_a5_v1.json",
+     "sha256": "f971eecef6d7a5891aaced5880eeadd66dc796bbd07af619d12be46856546d89",
+     "pointer": "/summary/design_identification/DS-F1-GRID/scenarios"
+    }
+   ],
+   "evidence_class": "reference pending ICD",
+   "quantity_type": "assumed",
+   "evidence_level": "7",
+   "uncertainty": "accommodation unmeasured (DI-1.3)",
+   "status": "REFERENCE_PENDING_ICD",
+   "rationale": "A9.13 S6.18 lists the accommodation / surface state among the host ICD items",
+   "label": "REFERENCE_PENDING_CUSTOMER_ICD",
+   "inherited_from": {
+    "path": "docs/baseline/DBF-1.1/dbf1_1_v1.json",
+    "sha256": "b8daa5bd5bb18b4fc92d6f65b0d93d0e70b33cd80d0f222cb9957ced3075c22b",
+    "pointer": "/items/47"
+   },
+   "status_dbf1_2": "INHERITED_UNCHANGED"
+  },
+  {
+   "id": "DBF12-IN-01",
+   "group": "INTAKE",
+   "name": "intake physical aperture / collimator",
+   "value": {
+    "aperture_m2": 0.7,
+    "equivalent_diameter_m": 0.9440697438826297,
+    "collimator_L_over_D": 20.0,
+    "retention_design": "S_eff = 2 C_back (2/3 retention)",
+    "S_eff_inlet_m3_s": 11.253567441244025
+   },
+   "units": "m2; m; -; m3/s",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_10_10_A9_40_dbf_1_2_freeze_gates_air_operating_concept_host_drag.json",
+     "sha256": "d915ad0a57ebde0975d4ddba1412937a78798d39a475a7ad72ab9ef54d20078a"
+    },
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+     "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1",
+     "pointer": "/compressor/S_eff_inlet_m3_s"
+    },
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_system_mass_closure_v6.json",
+     "sha256": "8074c0b72b3b8f187a2a348f7f761481de7d8645e563e3e5ae93361695303ab7",
+     "pointer": "/subtotals_new_mev_kg"
+    }
+   ],
+   "evidence_class": "owner-fixed (A9.40: retain 0.70 m2) / model-derived retention",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "TPMC surface-scenario basis inherited (DBF1-IN-03); delivered flow verified on EM",
+   "status": "FROZEN",
+   "rationale": "A9.40 retains 0.70 m2; DCR-DBF1-001 approved (A9.41); supersedes DBF1-IN-02 (0.25 m2)",
+   "supersedes": [
+    "DBF1-IN-01",
+    "DBF1-IN-02"
+   ]
+  },
+  {
+   "id": "DBF12-IN-02",
+   "group": "INTAKE",
+   "name": "delivered-flow regulation concept",
+   "value": "ACTIVE_COMPRESSOR_RETENTION_CONTROL_WITH_DENSITY_AWARE_ALTITUDE_SCHEDULING",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_10_10_A9_40_dbf_1_2_freeze_gates_air_operating_concept_host_drag.json",
+     "sha256": "d915ad0a57ebde0975d4ddba1412937a78798d39a475a7ad72ab9ef54d20078a"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_10_A9_41_dcr_dbf1_001_approval_mass_risk.json",
+     "sha256": "3482cd6e945a479233ed5374ebeeb74bdf87d61c8fb86967d0afe25c589d3c49"
+    }
+   ],
+   "evidence_class": "owner decision",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "control gains TBD at EM design",
+   "status": "FROZEN",
+   "rationale": "delivered flow is regulated by compressor speed / retention control and the metering valve; exposed frontal drag is NOT controlled by compressor speed (never 'variable frontal area')",
+   "supersedes": [
+    "DBF1-IN-07"
+   ]
+  },
+  {
+   "id": "DBF12-AIR-01",
+   "group": "AIR_DESIGN_POINT",
+   "name": "guaranteed AIR proposal sizing point",
+   "value": {
+    "thrust_mN": 12.0,
+    "v_eff_km_s": 26.8,
+    "hall_feed_mg_s": 0.44776119402985076,
+    "icp_dedicated_flow_mg_s": 0.0,
+    "P_d_W": 650.0,
+    "window": "only inside the approved AIR density / altitude window (A9.40)"
+   },
+   "units": "mN; km/s; mg/s; mg/s; W",
+   "sources": [
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+     "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1",
+     "pointer": "/sizing"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_10_A9_43_power_reconciliation_and_dbf_1_2_freeze.json",
+     "sha256": "79754cc5b7350c6e0ad82a055fa7ae5fefc7eb359860710fd5ae9da35a58312a"
+    },
+    {
+     "path": "docs/closure/power/power_ledger_v1.json",
+     "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a",
+     "pointer": "/points/1"
+    }
+   ],
+   "evidence_class": "owner decision / model-derived flow",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "26.8 km/s is the design / reference air-Hall basis (not validated); 12 mN at 650 W is a design point pending EM verification; model thrust at 650 W 12.54 mN is MODEL-DERIVED / NOT VALIDATED",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "A9.40 / A9.41 / A9.43 item 1 (P_d = DBF1-H1-06 lower bound = P6 PD-LOW)"
+  },
+  {
+   "id": "DBF12-AIR-02",
+   "group": "AIR_DESIGN_POINT",
+   "name": "22 km/s sensitivity (carried, not guaranteed)",
+   "value": {
+    "v_eff_km_s": 22.0,
+    "hall_feed_mg_s": 0.5454545454545455,
+    "plenum_setpoint_required_Pa": 6.123684498523269
+   },
+   "units": "km/s; mg/s; Pa",
+   "sources": [
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+     "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1",
+     "pointer": "/compressor/recheck/AIR_12mN_22kms_sensitivity"
+    }
+   ],
+   "evidence_class": "model-derived",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "sensitivity / risk case (A9.40)",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "carried as sensitivity; needs the ~6.1 Pa setpoint inside the Holweck Kn domain (6.8 Pa)"
+  },
+  {
+   "id": "DBF12-AIR-03",
+   "group": "AIR_DESIGN_POINT",
+   "name": "1.33 mg/s AIR capability point",
+   "value": "NOT_SUPPORTED_BY_DBF-1.2",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+     "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1",
+     "pointer": "/compressor/recheck/AIR_high_capability_1.33"
+    }
+   ],
+   "evidence_class": "model-derived",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "requires ~14.2 Pa plenum, above the 6.8 Pa Holweck Kn >= 0.5 domain",
+   "status": "FROZEN",
+   "rationale": "no 25 mN atmospheric operation is claimed"
+  },
+  {
+   "id": "DBF12-CMP-01",
+   "group": "COMPRESSOR",
+   "name": "integrated contra-rotating molecular compressor",
+   "value": {
+    "blade_rows": 7,
+    "rear_section": "shared Holweck (outer skin of the shaft-A drum, stationary grooved Al band)",
+    "shafts": "two coaxial counter-rotating",
+    "rpm": 8602.969896859207,
+    "tip_speed_m_s": 300.0,
+    "front_section": "full aperture (tip radius 0.333 m)",
+    "separate_finishing_pump": false,
+    "governing_mev_kg": 7.767,
+    "power_allowance_W": 77.0,
+    "power_estimate_W": 38.5
+   },
+   "units": "-; rpm; m/s; kg; W",
+   "sources": [
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+     "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1",
+     "pointer": "/compressor"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_10_A9_41_dcr_dbf1_001_approval_mass_risk.json",
+     "sha256": "3482cd6e945a479233ed5374ebeeb74bdf87d61c8fb86967d0afe25c589d3c49"
+    }
+   ],
+   "evidence_class": "model-derived (repository row / drag model; coefficients T-1, uncited)",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "component masses partly assumed; actual mass and power verified on EM",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "DCR-DBF1-001 approved (A9.41); supersedes DBF1-IN-05",
+   "supersedes": [
+    "DBF1-IN-05"
+   ]
+  },
+  {
+   "id": "DBF12-CMP-02",
+   "group": "COMPRESSOR",
+   "name": "pressure-domain classification",
+   "value": {
+    "rows": [
+     {
+      "row": "F1",
+      "shaft": "A",
+      "r_tip_m": 0.333,
+      "r_hub_m": 0.1332,
+      "blade_height_mm": 199.8,
+      "rpm": 8602.969896859207,
+      "u_tip_m_s": 300.0,
+      "u_rel_m_s": 210.0,
+      "p_in_Pa": 0.004135237259590124,
+      "p_out_Pa": 0.004355739470373424,
+      "K": 1.0533227471463527,
+      "Kn_out": 7.813606453169304,
+      "classification": "ADMITTED_FREE_MOLECULAR"
+     },
+     {
+      "row": "F2",
+      "shaft": "B",
+      "r_tip_m": 0.333,
+      "r_hub_m": 0.200264,
+      "blade_height_mm": 132.73600000000002,
+      "rpm": 8602.969896859207,
+      "u_tip_m_s": 300.0,
+      "u_rel_m_s": 450.209009009009,
+      "p_in_Pa": 0.004355739470373424,
+      "p_out_Pa": 0.008130607517275906,
+      "K": 1.866642294053197,
+      "Kn_out": 6.300821689876051,
+      "classification": "ADMITTED_FREE_MOLECULAR"
+     },
+     {
+      "row": "F3",
+      "shaft": "A",
+      "r_tip_m": 0.333,
+      "r_hub_m": 0.27902693000000006,
+      "blade_height_mm": 53.97306999999996,
+      "rpm": 8602.969896859207,
+      "u_tip_m_s": 300.0,
+      "u_rel_m_s": 515.8968153153153,
+      "p_in_Pa": 0.008130607517275906,
+      "p_out_Pa": 0.01695360603222179,
+      "K": 2.085158580856201,
+      "Kn_out": 7.431384022148875,
+      "classification": "ADMITTED_FREE_MOLECULAR"
+     },
+     {
+      "row": "F4",
+      "shaft": "B",
+      "r_tip_m": 0.333,
+      "r_hub_m": 0.3095239,
+      "blade_height_mm": 23.4761,
+      "rpm": 8602.969896859207,
+      "u_tip_m_s": 300.0,
+      "u_rel_m_s": 565.1129864864865,
+      "p_in_Pa": 0.01695360603222179,
+      "p_out_Pa": 0.03957113755093241,
+      "K": 2.3340838212073614,
+      "Kn_out": 7.319887844098101,
+      "classification": "ADMITTED_FREE_MOLECULAR"
+     },
+     {
+      "row": "F5",
+      "shaft": "A",
+      "r_tip_m": 0.333,
+      "r_hub_m": 0.32336957000000005,
+      "blade_height_mm": 9.630429999999969,
+      "rpm": 8602.969896859207,
+      "u_tip_m_s": 300.0,
+      "u_rel_m_s": 585.0871486486487,
+      "p_in_Pa": 0.03957113755093241,
+      "p_out_Pa": 0.09654153410893683,
+      "K": 2.439695699540536,
+      "Kn_out": 7.313900336267684,
+      "classification": "ADMITTED_FREE_MOLECULAR"
+     },
+     {
+      "row": "F6",
+      "shaft": "B",
+      "r_tip_m": 0.333,
+      "r_hub_m": 0.328,
+      "blade_height_mm": 5.000000000000004,
+      "rpm": 8602.969896859207,
+      "u_tip_m_s": 300.0,
+      "u_rel_m_s": 593.4097162162162,
+      "p_in_Pa": 0.09654153410893683,
+      "p_out_Pa": 0.272376694256768,
+      "K": 2.821342096650546,
+      "Kn_out": 4.993085049772776,
+      "classification": "EM_VERIFICATION_RISK_CROSSES_0.1_Pa"
+     },
+     {
+      "row": "B7",
+      "shaft": "A",
+      "r_tip_m": 0.333,
+      "r_hub_m": 0.328,
+      "blade_height_mm": 5.000000000000004,
+      "rpm": 8602.969896859207,
+      "u_tip_m_s": 300.0,
+      "u_rel_m_s": 595.4954954954954,
+      "p_in_Pa": 0.272376694256768,
+      "p_out_Pa": 0.7844125349143677,
+      "K": 2.8798812506877196,
+      "Kn_out": 1.733781574702228,
+      "classification": "EM_VERIFICATION_RISK_TRANSITIONAL"
+     }
+    ],
+    "holweck": {
+     "p_in_Pa": 0.7844125349143677,
+     "p_out_Pa": 5.026905185354923,
+     "Kn_out": 0.6763604791881397,
+     "groove_depth_mm": 2.0,
+     "classification": "PRELIMINARY_MOLECULAR_DRAG_DESIGN_WITHIN_Kn_CRITERION_COEFFICIENTS_REQUIRE_VERIFICATION"
+    }
+   },
+   "units": "Pa; -",
+   "sources": [
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+     "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1",
+     "pointer": "/compressor/rows"
+    },
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+     "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1",
+     "pointer": "/compressor/holweck"
+    }
+   ],
+   "evidence_class": "model-derived",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "F6 / B7 are NOT admitted (transitional derating assumed); never upgraded to validated",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "F1-F5 inside the admitted 0.1 Pa free-molecular domain; F6 crosses 0.1 Pa and B7 is transitional: EM-verification risks"
+  },
+  {
+   "id": "DBF12-FEED-01",
+   "group": "PLENUM_FEED",
+   "name": "plenum setpoint / band / volume",
+   "value": {
+    "setpoint_Pa": 5.026905185354923,
+    "band_Pa": [
+     4.775559926087176,
+     5.278250444622669
+    ],
+    "volume_L": 9.257419758367076,
+    "sensitivity_setpoint_22kms_Pa": 6.123684498523269
+   },
+   "units": "Pa; Pa; L; Pa",
+   "sources": [
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+     "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1",
+     "pointer": "/plenum_setpoint_Pa"
+    },
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+     "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1",
+     "pointer": "/plenum_band_Pa"
+    },
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+     "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1",
+     "pointer": "/plenum_V_L"
+    }
+   ],
+   "evidence_class": "model-derived (molecular conductances)",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "conductances molecular lower bounds; controllability verified on EM",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "co-designed plenum -> isolation valve -> metering valve -> manifold -> 2/4/8 branch tree -> distributor -> H1; supersedes DBF1-IN-06",
+   "supersedes": [
+    "DBF1-IN-06"
+   ]
+  },
+  {
+   "id": "DBF12-FEED-02",
+   "group": "PLENUM_FEED",
+   "name": "H1 distributor / manifold concept",
+   "value": {
+    "outlet_holes": 186,
+    "hole_d_mm": 3.0,
+    "open_fraction": 0.49821428571428555,
+    "ring_mm": [
+     12.0,
+     20.0
+    ],
+    "inlets": 8,
+    "uniformity_requirement": "+/-5 % azimuthal flow (preliminary H1 interface / design requirement, not demonstrated)"
+   },
+   "units": "-; mm; -; mm; -",
+   "sources": [
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+     "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1",
+     "pointer": "/feed_design"
+    }
+   ],
+   "evidence_class": "model-derived / assumed requirement",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "uniformity rule and 50 % open-area cap are assumptions",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "high-conductance annular distributor compatible with the frozen H1 channel"
+  },
+  {
+   "id": "DBF12-MASS-05",
+   "group": "MASS",
+   "name": "preliminary system mass roll-up (A9.41)",
+   "value": {
+    "nonharness_kg": 32.773399999999995,
+    "harness_kg": 1.7249157894736842,
+    "nominal_dry_kg": 34.49831578947368,
+    "dry_10pct_kg": 37.94814736842105,
+    "xe_reference_kg": 2.0,
+    "wet_kg": 39.94814736842105
+   },
+   "units": "kg",
+   "sources": [
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_system_mass_closure_v6.json",
+     "sha256": "8074c0b72b3b8f187a2a348f7f761481de7d8645e563e3e5ae93361695303ab7",
+     "pointer": "/rollup_new"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_10_A9_41_dcr_dbf1_001_approval_mass_risk.json",
+     "sha256": "3482cd6e945a479233ed5374ebeeb74bdf87d61c8fb86967d0afe25c589d3c49"
+    }
+   ],
+   "evidence_class": "preliminary component BOM (mixed measured / model-derived / assumed)",
+   "quantity_type": "model-derived",
+   "evidence_level": "6",
+   "uncertainty": "MR-DCR001-01 OPEN: the ~0.05 kg numerical headroom to 40 kg is NOT design margin",
+   "status": "FROZEN_ASSUMPTION",
+   "rationale": "Preliminary roll-up ≈39.95 kg wet (<40 kg); approximately 0.05 kg numerical headroom is carried as open mass risk MR-DCR001-01 and shall not be consumed as design margin."
+  },
+  {
+   "id": "DBF12-PWR-05",
+   "group": "POWER",
+   "name": "AIR 12 mN bus power (P6 ledger + DBF-1.2 compressor)",
+   "value": {
+    "reference": 1222.3365718806567,
+    "conservative": 1263.0665374982182
+   },
+   "units": "W",
+   "sources": [
+    {
+     "path": "docs/closure/power/power_ledger_v1.json",
+     "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a",
+     "pointer": "/points/1"
+    },
+    {
+     "path": "docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.json",
+     "sha256": "97a69b6df496f6bce21ebfc21df4dd98f362d640993a4a559f78dff135150ef1",
+     "pointer": "/compressor/power_W"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_10_A9_43_power_reconciliation_and_dbf_1_2_freeze.json",
+     "sha256": "79754cc5b7350c6e0ad82a055fa7ae5fefc7eb359860710fd5ae9da35a58312a"
+    }
+   ],
+   "evidence_class": "design ledger (allocation-based)",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "P_d is a design allocation (DESIGN_ALLOCATION_NOT_PREDICTED); compressor estimate / 77 W allowance",
+   "status": "FROZEN",
+   "rationale": "A9.43: 650 W discharge (DBF1-H1-06 lower bound); both cases below 1,350 W and below 1,500 W"
+  },
+  {
+   "id": "DBF12-PWR-06",
+   "group": "POWER",
+   "name": "Xe 25 mN Hall discharge-power allocation (design capability requirement)",
+   "value": {
+    "1450W_design_ceiling_le": {
+     "nominal_ICP_P_d_max_W": 876.0866831287905,
+     "RF_plus_100W_P_d_max_W": 747.5152545573619
+    },
+    "1500W_rfp_supremum_lt": {
+     "nominal_ICP_P_d_max_W": 918.6229331287905,
+     "RF_plus_100W_P_d_max_W": 790.0515045573619
+    }
+   },
+   "units": "W",
+   "sources": [
+    {
+     "path": "docs/closure/power/power_ledger_v1.json",
+     "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a",
+     "pointer": "/points/4"
+    },
+    {
+     "path": "docs/closure/power/power_ledger_v1.json",
+     "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a",
+     "pointer": "/rf_trade_line"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_10_A9_43_power_reconciliation_and_dbf_1_2_freeze.json",
+     "sha256": "79754cc5b7350c6e0ad82a055fa7ae5fefc7eb359860710fd5ae9da35a58312a"
+    }
+   ],
+   "evidence_class": "design ledger (allocation-based)",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "allocation, not demonstrated performance; the ~658 W RP-1 Xe result is PARAMETRIC / NOT_VALIDATED",
+   "status": "FROZEN",
+   "rationale": "Xe 25 mN is a design capability requirement. The Hall discharge-power allocation is <= 876 W at the 1,450 W design ceiling under the nominal ICP case and <= 748 W under the +100 W RF sensitivity case. Performance is to be verified on EM/QM hardware."
+  },
+  {
+   "id": "DBF12-OPS-01",
+   "group": "OPERATING_CONCEPT",
+   "name": "AIR mode",
+   "value": "PRIMARY_NOMINAL: density-aware altitude scheduling within 180-230 km; 12 mN sizing point; only inside the admissible AIR density / thrust / drag window",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_10_10_A9_40_dbf_1_2_freeze_gates_air_operating_concept_host_drag.json",
+     "sha256": "d915ad0a57ebde0975d4ddba1412937a78798d39a475a7ad72ab9ef54d20078a"
+    }
+   ],
+   "evidence_class": "owner decision",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "-",
+   "status": "FROZEN",
+   "rationale": "A9.40 requirement interpretation"
+  },
+  {
+   "id": "DBF12-OPS-02",
+   "group": "OPERATING_CONCEPT",
+   "name": "Xe mode",
+   "value": "REQUIRED_SECONDARY: contingency / off-nominal / upper-envelope (25 mN capability); atmospheric compressor OFF; used when AIR does not give adequate thrust / drag margin",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_10_10_A9_40_dbf_1_2_freeze_gates_air_operating_concept_host_drag.json",
+     "sha256": "d915ad0a57ebde0975d4ddba1412937a78798d39a475a7ad72ab9ef54d20078a"
+    },
+    {
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "sha256": "c126be5eef7b9ec6340776ed035eeaa0ced1c4dd2ec585383f3d3a5977d174a0"
+    }
+   ],
+   "evidence_class": "owner decision / RFP-P17-05, P18-08",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "-",
+   "status": "FROZEN",
+   "rationale": "A9.40"
+  },
+  {
+   "id": "DBF12-OPS-03",
+   "group": "OPERATING_CONCEPT",
+   "name": "196-state set",
+   "value": "CONSERVATIVE_VERIFICATION_DATASET (retained, not weakened; not 196 mandatory independent AIR propulsion points)",
+   "units": "-",
+   "sources": [
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/conservation_bounds_v1.json",
+     "sha256": "5146fe583343bf5de090a8baeecb812640754b7e579f0df69c78e54dd642689f"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_10_A9_40_dbf_1_2_freeze_gates_air_operating_concept_host_drag.json",
+     "sha256": "d915ad0a57ebde0975d4ddba1412937a78798d39a475a7ad72ab9ef54d20078a"
+    }
+   ],
+   "evidence_class": "frozen dataset / owner interpretation",
+   "quantity_type": "model-derived",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "-",
+   "status": "FROZEN",
+   "rationale": "A9.40"
+  },
+  {
+   "id": "DBF12-HOST-01",
+   "group": "HOST_INTERFACE",
+   "name": "IR-HOST-DRAG-01",
+   "value": {
+    "requirement": "host spacecraft C_D*A supplied at PDR and within the propulsion drag-compensation envelope",
+    "reference_proposal_sizing_CdA_m2": 0.5,
+    "scope": "reference sizing only; not a universal spacecraft requirement"
+   },
+   "units": "m2",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_10_10_A9_40_dbf_1_2_freeze_gates_air_operating_concept_host_drag.json",
+     "sha256": "d915ad0a57ebde0975d4ddba1412937a78798d39a475a7ad72ab9ef54d20078a"
+    }
+   ],
+   "evidence_class": "owner decision",
+   "quantity_type": "owner-allocation",
+   "evidence_level": "OWNER_DECISION",
+   "uncertainty": "actual host C_D*A open until PDR",
+   "status": "REFERENCE_PENDING_ICD",
+   "rationale": "supersedes the DBF-1 RC-DIAMANT literature reference (DBF1-DRAG-01)",
+   "supersedes": [
+    "DBF1-DRAG-01"
+   ]
+  }
+ ],
+ "baseline_deficiencies": [
+  {
+   "id": "DBF1-BD-01",
+   "items": [
+    "DBF1-IN-01"
+   ],
+   "closure_condition": "flow (A9.35 / A4 carry-forward): worst-state 12 mN needs >= 0.251 m^2 effective collection area and >= 0.048 mg/s at the ideal 1.5 kW limit",
+   "numbers": {
+    "worst_state": "ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184",
+    "A_req_T12_m2": 0.25107649688752903,
+    "A_eff_m2": 0.25,
+    "k_area_T12": 1.0043059875501161,
+    "mdot_req_T12_kg_s": 4.795998065345164e-08,
+    "mdot_req_T25_kg_s": 2.0824995065440922e-07,
+    "mdot_delivered_worst_state_worst_covered_scenario_kg_s": 1.4278718329612888e-09,
+    "worst_covered_scenario": "maxwell_a0.5",
+    "mdot_delivered_worst_state_best_covered_scenario_kg_s": 1.2873682893339131e-08,
+    "best_covered_scenario": "cll_a0.8",
+    "k_del_T12 (required / delivered)": 33.58843528272883,
+    "k_del_T25": 145.8463889034886
+   },
+   "drag": {
+    "C-DRAG-RFP intake-face drag limit_mN": 25.0,
+    "drag_intake_max_mN": 17.591748982087925,
+    "status": "MET (generation filter)"
+   },
+   "finding": "drag closes (intake-face drag <= 17.59 mN <= 25 mN) but flow does not: the frozen design delivers 1.428e-09 kg/s at its worst state in its worst covered scenario, 33.59 x below the 12 mN necessary flow; A_eff 0.25 m^2 < A_req 0.2511 m^2",
+   "category": "DESIGN_VARIABLE_LIMIT (A9.35: A4-REG-01 open, no registered envelope bound)",
+   "sources": [
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/intake_closure_a5_v1.json",
+     "sha256": "f971eecef6d7a5891aaced5880eeadd66dc796bbd07af619d12be46856546d89",
+     "pointer": "/summary/a9_35/carry_forward"
+    },
+    {
+     "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/reference_outputs/f7_pareto_blocks_v1.json.gz",
+     "sha256": "de6ee69f21d4e5b4daba6e1b8bed263598b950b19cae9da49d309ec4d7664f00",
+     "note": "decompressed json sha256 07d5335d4f020fa1fa9e2d91796669b2790383c74a486aa84d7e4de37889af3c; contexts cll_a0.5, cll_a0.8, cll_a1, maxwell_a0.5, maxwell_a0.8, maxwell_a1"
+    }
+   ],
+   "status": "SUPERSEDED_BY_DCR-DBF1-001",
+   "note_dbf1_2": "the DBF-1 upstream design vector is replaced (DBF12-IN-01 / CMP-01 / FEED-01); the 196 states are a conservative verification set under A9.40; residual flow / compressor risks are in the DBF-1.2 risk register"
+  },
+  {
+   "id": "DBF1-BD-02",
+   "items": [
+    "DBF1-IN-01"
+   ],
+   "closure_condition": "robust feasibility in every admitted surface scenario (A2 NH-FLOW; A9.13 S6.16)",
+   "numbers": {
+    "covered_scenarios": [
+     "cll_a0.5",
+     "cll_a0.8",
+     "cll_a1",
+     "maxwell_a0.5",
+     "maxwell_a0.8",
+     "maxwell_a1"
+    ],
+    "not_covered": [
+     "maxwell_a0",
+     "maxwell_a0.2",
+     "cll_a0",
+     "cll_a0.2"
+    ],
+    "fc00_twin": "A0.25_Ld20_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.02",
+    "fc00_twin_f8_infeasible_in": [
+     "maxwell_a0",
+     "maxwell_a0.2",
+     "cll_a0",
+     "cll_a0.2"
+    ],
+    "fc00_twin_reasons": {
+     "maxwell_a0": [
+      "TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE"
+     ],
+     "maxwell_a0.2": [
+      "TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE"
+     ],
+     "cll_a0": [
+      "TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE"
+     ],
+     "cll_a0.2": [
+      "TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE"
+     ]
+    },
+    "F8_robust_set": "EMPTY"
+   },
+   "finding": "the design is an F7 Pareto member in 6 of 10 admitted scenarios; its FC00 twin is infeasible in the other four (compressor characteristic / dead-head); no registered candidate is robust (F8 robust set EMPTY)",
+   "category": "DESIGN_VARIABLE_LIMIT",
+   "sources": [
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/intake_closure_a5_v1.json",
+     "sha256": "f971eecef6d7a5891aaced5880eeadd66dc796bbd07af619d12be46856546d89",
+     "pointer": "/f8_survivors_carried_unchanged"
+    }
+   ],
+   "status": "SUPERSEDED_BY_DCR-DBF1-001",
+   "note_dbf1_2": "the DBF-1 upstream design vector is replaced (DBF12-IN-01 / CMP-01 / FEED-01); the 196 states are a conservative verification set under A9.40; residual flow / compressor risks are in the DBF-1.2 risk register"
+  },
+  {
+   "id": "DBF1-BD-03",
+   "items": [
+    "DBF1-IN-05"
+   ],
+   "closure_condition": "compressor + drive within its line allocation (AL-02, row 54)",
+   "numbers": {
+    "m_compressor_model_kg": 10.90721502347456,
+    "AL02_allocation_kg": 5.5,
+    "excess_kg": 5.40721502347456
+   },
+   "finding": "the F3 model mass of the selected compressor exceeds the AL-02 allocation; the registered candidates within 5.5 kg (T4 compressors) cover 2 scenarios at ~5x lower delivered flow",
+   "category": "DESIGN_VARIABLE_LIMIT",
+   "sources": [
+    {
+     "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/reference_outputs/f7_pareto_blocks_v1.json.gz",
+     "sha256": "de6ee69f21d4e5b4daba6e1b8bed263598b950b19cae9da49d309ec4d7664f00",
+     "note": "decompressed json sha256 07d5335d4f020fa1fa9e2d91796669b2790383c74a486aa84d7e4de37889af3c; contexts cll_a0.5, cll_a0.8, cll_a1, maxwell_a0.5, maxwell_a0.8, maxwell_a1"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/lines/hall_icp_neutralizer"
+    }
+   ],
+   "status": "SUPERSEDED_BY_DCR-DBF1-001",
+   "note_dbf1_2": "the DBF-1 upstream design vector is replaced (DBF12-IN-01 / CMP-01 / FEED-01); the 196 states are a conservative verification set under A9.40; residual flow / compressor risks are in the DBF-1.2 risk register"
+  },
+  {
+   "id": "DBF1-BD-04",
+   "items": [
+    "DBF1-MASS-02"
+   ],
+   "closure_condition": "nominal dry <= 34.0 kg; wet < 40 kg at the 2 kg reference Xe load",
+   "numbers": {
+    "nominal_dry_planning_kg": 34.86273684,
+    "dry_planning_kg": 38.34901052,
+    "wet_planning_kg_at_2kg": 40.34901052,
+    "nominal_dry_excess_kg": 0.8627368399999966
+   },
+   "finding": "the current provisional planning roll-up (owner MEV lines + evidence floors; not a CBE) is above the 34 kg nominal-dry target and the 40 kg wet limit at 2 kg Xe (MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED); planning values are never eligible for a non-closure (HR-07)",
+   "category": "MISSING_EVIDENCE (no CBE) / DESIGN_VARIABLE_LIMIT (mass-closure actions MCA)",
+   "sources": [
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/flight_rollup_vs_40kg/0"
+    },
+    {
+     "path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+     "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+     "pointer": "/closure_vs_40kg/0"
+    }
+   ],
+   "status": "OPEN_AS_MASS_RISK_MR-DCR001-01",
+   "note_dbf1_2": "wet 39.948 kg < 40 kg at the preliminary roll-up; the 34.0 kg nominal-dry target is missed by 0.498 kg and the 39.4 kg wet target by 0.548 kg"
+  },
+  {
+   "id": "DBF1-BD-05",
+   "items": [
+    "DBF1-BZ-04"
+   ],
+   "closure_condition": "an H-1 B(z) from FEMM of MC-1 or a measured map (H1F-BZ-01)",
+   "numbers": {
+    "H1F-BZ-01": "TBD_AFTER_EVIDENCE"
+   },
+   "finding": "the simulated field is a P5-shape surrogate scaled into the H1F-BZ-03 band: a Hall non-closure under it is never eligible (envelope prereg bz_family classification_effect)",
+   "category": "MISSING_EVIDENCE",
+   "sources": [
+    {
+     "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json",
+     "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d",
+     "pointer": "/bz_family"
+    },
+    {
+     "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+     "sha256": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+     "pointer": "/parameters/34"
+    }
+   ],
+   "status": "CLOSED_BY_DCR-DBF1-002",
+   "closure": {
+    "by": "DCR-DBF1-002 (DBF1-BZ-04 = BZ-H1FE-V1, FE-derived H-1 field)",
+    "evidence": [
+     {
+      "path": "docs/hardware/h1_bz/h1_bz_fe_v1.json",
+      "sha256": "4da00b551e6d0776cd31d6ccdfba383fd7bfb9ffc9def21bcf8a59b92a4cfd42"
+     },
+     {
+      "path": "docs/baseline/DCR-002/dcr002_approval_v1.json",
+      "sha256": "1718ac8061720959ea52e66e18723c23c3ece8d8c44fcfa41249d4f852c9bb55"
+     }
+    ],
+    "residual": "a measured H-1 map remains an engineering-model verification item (H1F-EX-08, H1F-MC-09); the FE field covers the pre-shielding flat-pole circuit only"
+   }
+  },
+  {
+   "id": "DBF1-BD-06",
+   "items": [
+    "DBF1-ICP-02",
+    "DBF1-ICP-04"
+   ],
+   "closure_condition": "ICP I_e,cap evaluable (NP-ICP v2 inputs registered and the AIR / Xe rate sets admitted)",
+   "numbers": {
+    "registered_by_DBF1": [
+     "f_RF",
+     "geometry (ASSUMED_GEOMETRIC_TUBE)",
+     "collector",
+     "gas routing"
+    ],
+    "not_registered": [
+     "absorbed RF power / P2 coupling evidence",
+     "electrode potentials and bias range (P1-IT-36 / P1-IT-18)",
+     "edge-factor source",
+     "NP-ICP-CHEM-AIR / Xe rate sets (not admitted)"
+    ]
+   },
+   "finding": "with the frozen geometry and RF, I_e,cap stays NOT_EVALUATED: the remaining inputs are operating points or evidence, not design values",
+   "category": "MISSING_EVIDENCE",
+   "sources": [
+    {
+     "path": "docs/rust_migration/new_physics/NP-ICP-NEUTRALIZER/prereg_lock_v2.json",
+     "sha256": "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287"
+    },
+    {
+     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "sha256": "d0a696c597c839802a405d6607abe03a1dc5e5bb917cd11405a86aa3be9e4f08",
+     "pointer": "/current_statuses"
+    }
+   ]
+  }
+ ],
+ "risk_register": {
+  "file": "dbf1_2_risk_register_v1.json",
+  "count": 17
+ },
+ "requirement_trace": {
+  "file": "dbf1_2_requirement_trace_v1.json"
+ },
+ "subsystem_references": {
+  "h1_bz": [
+   {
+    "path": "docs/closure/P3_h1_magnetic_field_closure_v1.json",
+    "sha256": "7cafce78307e0376fa3aacbdddeb083a1b671ddc97040a22affe540006735631"
+   }
+  ],
+  "icp": [
+   {
+    "path": "docs/closure/icp/icp_closure_v1.json",
+    "sha256": "3ddf55039b4f682983cfd728ded3bec6bb6e7e1cb73551ccee32521815b1016c"
+   }
+  ],
+  "materials": [
+   {
+    "path": "docs/closure/materials/materials_gates_v1.json",
+    "sha256": "f3b6e04507429db87b3f94a3a355bb6e87cb78d97ca9bd1f902a766ea667fee1"
+   }
+  ],
+  "thermal": [
+   {
+    "path": "docs/closure/thermal/thermal_closure_v2.json",
+    "sha256": "06b26333b265a706e0c9bfcdbee1567fe800dbd19b3a05d9f4922ef85eb9dc4d"
+   }
+  ],
+  "power": [
+   {
+    "path": "docs/closure/power/power_ledger_v1.json",
+    "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+   }
+  ],
+  "closure_board": [
+   {
+    "path": "docs/closure/closure_board_v1.json",
+    "sha256": "56bd9f12c4f613a131b4f12300770db509f88e964b7f8e5a6b04de9bb5e5be4b"
+   }
+  ],
+  "architecture_conclusion": [
+   {
+    "path": "docs/closure/conclusion/ARCHITECTURE_CLOSURE_CONCLUSION_v2.md",
+    "sha256": "4ef4573e346eac88ed87610b569f1eedb9f7107a6ebc9ebe56a42ac2080babf9"
+   }
+  ],
+  "xe_ledger": [
+   {
+    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
+    "sha256": "37c32cda9fb04200f6e9041b0e790ca700e270866f29e7c10f8a298034ddacfd"
+   }
+  ],
+  "rule": "inherited subsystems are governed by the DBF-1.1 items and these pinned records; values are not duplicated here"
+ },
+ "change_control": {
+  "process": "docs/baseline/DBF-1/DCR_PROCESS.md",
+  "register": "docs/baseline/DBF-1/dcr_register_v5.json",
+  "rule": "DBF-1.2 is immutable except through a new DCR (DCR_PROCESS.md); a new approved DCR creates a new baseline version"
+ },
+ "not": [
+  "not a performance prediction",
+  "not a PASS / qualification / flight baseline approval",
+  "not a change to any RFP requirement, owner decision or admitted / scored record",
+  "not an M2 or M3 result",
+  "not fully RFP-qualified, not demonstrated compliant, not flight-qualified, not performance validated, not a final flight design",
+  "not a proposal / technical-annexure / bid-package regeneration"
+ ],
+ "generated_by": "docs/baseline/DBF-1.2/build_dbf1_2.py"
+}

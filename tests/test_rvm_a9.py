@@ -207,7 +207,11 @@ def test_floor_fail_rule():
 REQUIRED_KEYS = ("ALTITUDE_ENVELOPE", "THRUST_12MN_SUSTAINED", "THRUST_25MN_CAPABILITY", "PBUS_LT_1500W_FULL_BUS",
                  "INTERNAL_1350W_ALLOCATION", "MASS_LT_40KG_WET", "ATMOSPHERIC_PROPELLANT", "XE_CAPABILITY",
                  "HALL_PREFERENCE", "FIRING_GT_15000H_PROVISIONAL", "MISSION_LIFE_GE_26280H", "STARTUP_RESTART",
-                 "NEUTRALIZATION", "AO_MATERIAL_COMPATIBILITY")
+                 "NEUTRALIZATION", "AO_MATERIAL_COMPATIBILITY",
+                 # AG-15 RFP re-base rows
+                 "ELECTRICAL_INTERFACE_MIL1553B", "ENVIRONMENTAL_QUALIFICATION_ENTEST", "RFP_TEST_APPROACH",
+                 "ISO_CERTIFICATION_ATP", "MILESTONE4_EXIT_QUALIFIED_THRUSTER_O_N2", "MILESTONE_SCHEDULE_DELIVERABLES",
+                 "THRUST_MEASUREMENT_AND_TEST_INFRASTRUCTURE", "MOUNT_HEAT_50W_ALLOCATION")
 
 
 def test_required_rows_present_for_both_configurations(doc):
@@ -226,11 +230,66 @@ def test_required_rows_present_for_both_configurations(doc):
                 assert a["id"]
 
 
-def test_rfp_rows_not_frozen_and_no_interpretation_frozen(doc):
+def test_rfp_rows_frozen_only_by_the_owner_ag15_closure(doc):
+    """A9.22 G3: the owner closed AG-15; exactly the RFP_CLAUSE rows are frozen, the closure record lists them, and the
+    freeze changes no status (statuses are computed on the frozen basis; no row is PASS)."""
+    rfp = [r["id"] for r in doc["rows"] if r["requirement_origin"] == "RFP_CLAUSE"]
+    assert len(rfp) == 22
     for r in doc["rows"]:
-        if r["category"] in ("rfp_recorded", "rfp_inferred_from_repo_text"):
-            assert r["requirement_frozen"] is False, r["id"]
+        if r["requirement_origin"] == "RFP_CLAUSE":
+            assert r["requirement_frozen"] is True, r["id"]
+            assert "A9.22 G3" in r["rfp_rebase"]["requirement_frozen_note"], r["id"]
+    cl = doc["rfp_rebase"]["ag15_closure"]
+    assert cl["frozen_rows"] == rfp and cl["decision_code"] == "AG15_CLOSED"
+    assert cl["decision"]["json_sha256"] == hashlib.sha256((REPO / cl["decision"]["json"]).read_bytes()).hexdigest()
+    assert cl["decision"]["md_sha256"] == hashlib.sha256((REPO / cl["decision"]["md"]).read_bytes()).hexdigest()
+    assert cl["requirements_snapshot"] == doc["rfp_rebase"]["requirements_snapshot"] == "FROZEN"
+    assert cl["accepted_rvm"]["requirements_basis_sha256"] == RB.requirements_basis_sha256(doc)
+    assert cl["unscreened_pages"]["disposition"] == "OWNER_REVIEWED_NO_ADDITIONAL_TECHNICAL_PERFORMANCE_REQUIREMENT"
+    assert set(cl["discrepancy_dispositions"]["dispositions"]) == {d["id"] for d in doc["rfp_rebase"]["discrepancies"]}
+    assert doc["rfp_rebase"]["ag_15_status"].startswith("CLOSED") and cl["decision"]["json_sha256"] in \
+        doc["rfp_rebase"]["ag_15_status"]
+    assert all(c["status"] != "PASS" for r in doc["rows"] for c in r["configurations"].values())
     assert doc["rfp_document_in_repository"] is False
+
+
+def test_ag15_closure_fails_closed():
+    """An RFP row frozen by the rows module, or a changed requirements basis, is refused (a basis change needs a new
+    owner decision)."""
+    import copy
+    rows = [{"id": "RVM-01", "requirement_frozen": True}]
+    with pytest.raises(RB.RebaseError):
+        RB.freeze_rfp_rows(rows, {"RVM-01": {"origin": "RFP_CLAUSE"}})
+    d = copy.deepcopy(_rvm())
+    d["rfp_rebase"].pop("ag15_closure")
+    d["rfp_rebase"]["ag_15_status"] = RB.PRE_CLOSURE_AG15_STATUS
+    ids = d["rfp_rebase"]["ag15_closure"]["frozen_rows"] if "ag15_closure" in d["rfp_rebase"] else \
+        [r["id"] for r in d["rows"] if r["requirement_origin"] == "RFP_CLAUSE"]
+    d2 = copy.deepcopy(d)
+    d2["rows"][0]["requirement_text"] += " (edited)"
+    with pytest.raises(RB.RebaseError):
+        RB.record_closure(d2, ids)
+    d3 = copy.deepcopy(d)
+    next(r for r in d3["rows"] if r["requirement_origin"] == "RFP_CLAUSE")["requirement_frozen"] = False
+    with pytest.raises(RB.RebaseError):
+        RB.record_closure(d3, ids)
+    assert RB.record_closure(copy.deepcopy(d), ids)["rfp_rebase"]["requirements_snapshot"] == "FROZEN"
+
+
+def _evaluated_cells(doc, key):
+    """(config, cell) of a row, leaving out a hall_c1_reference cell retired from the v3 flight budgets (A9.19 / A9.20):
+    such a cell must carry the NOT_APPLICABLE_GROUND_REFERENCE marker only (never compliance evidence, never PASS)."""
+    out = []
+    for c in B.CONFIGS:
+        cell = _row(doc, key)["configurations"][c]
+        if "applicability_marker" in cell:
+            assert c == "hall_c1_reference" and cell["applicability_marker"] == "NOT_APPLICABLE_GROUND_REFERENCE"
+            assert cell["counts_as_compliance_evidence"] is False and cell["status"] != "PASS"
+            assert [a["kind"] for a in cell["artifacts"]] == ["NOT_APPLICABLE_GROUND_REFERENCE"]
+            continue
+        out.append((c, cell))
+    assert any(c == "hall_icp_neutralizer" for c, _ in out)
+    return out
 
 
 def _row(doc, key):
@@ -245,8 +304,8 @@ def test_expected_statuses_today(doc):
         for c in B.CONFIGS:
             assert _row(doc, key)["configurations"][c]["status"] == "NOT_EVALUATED", (key, c)
     for key in ("MASS_LT_40KG_WET", "INTERNAL_34_36KG_ALLOCATION", "AO_MATERIAL_COMPATIBILITY"):
-        for c in B.CONFIGS:
-            assert _row(doc, key)["configurations"][c]["status"] == "INCOMPLETE_EVIDENCE", (key, c)
+        for c, cell in _evaluated_cells(doc, key):
+            assert cell["status"] == "INCOMPLETE_EVIDENCE", (key, c)
     # TH-05: every P3 heat term and the coupled network are refused (INCOMPLETE_EVIDENCE inputs): 0 evaluated terms,
     # so the thermal row is NOT_EVALUATED (R7), never an 'evaluation with evidenced terms'
     for c in B.CONFIGS:
@@ -257,8 +316,7 @@ def test_expected_statuses_today(doc):
 
 
 def test_mass_rows_report_per_reading_and_no_fail(doc):
-    for c in B.CONFIGS:
-        cell = _row(doc, "MASS_LT_40KG_WET")["configurations"][c]
+    for c, cell in _evaluated_cells(doc, "MASS_LT_40KG_WET"):
         det = [a for a in cell["artifacts"] if a["role"] == "DETERMINING"]
         assert len(det) == 1 and det[0]["kind"] == "BUDGET_EVALUATION"
         an = det[0]["detail"]["analyses"][0]
@@ -271,8 +329,8 @@ def test_mass_rows_report_per_reading_and_no_fail(doc):
 
 def test_hall_performance_rows_cite_empty_credible_set(doc):
     for key in ("THRUST_12MN_SUSTAINED", "THRUST_25MN_CAPABILITY"):
-        for c in B.CONFIGS:
-            arts = _row(doc, key)["configurations"][c]["artifacts"]
+        for c, cell in _evaluated_cells(doc, key):
+            arts = cell["artifacts"]
             hall = [a for a in arts if a["kind"] == "VALIDATED_ANALYSIS"]
             assert hall and not hall[0]["evaluated"] and "EMPTY" in hall[0]["evidence_state"]
 
@@ -304,9 +362,12 @@ def test_power_verdict_change_refused():
     refs["MP"]["power"]["configurations"]["hall_icp_neutralizer"]["rfp_gate_1ms"]["verdict"] = "PASS"
     with pytest.raises(B.BuildError):
         B.probe_power(B.Ctx(pins, refs), "hall_icp_neutralizer")
-    refs["MP"]["power"]["configurations"]["hall_c1_reference"]["slots"][0]["MEASURED_W"] = 100.0
-    with pytest.raises(B.BuildError):
-        B.probe_power(B.Ctx(pins, refs), "hall_c1_reference")
+    if "hall_c1_reference" in refs["MP"]["power"]["configurations"]:
+        refs["MP"]["power"]["configurations"]["hall_c1_reference"]["slots"][0]["MEASURED_W"] = 100.0
+        with pytest.raises(B.BuildError):
+            B.probe_power(B.Ctx(pins, refs), "hall_c1_reference")
+    else:   # retired from the v3 flight budgets (A9.19 / A9.20): the probe returns the retired sentinel, never a verdict
+        assert B.probe_power(B.Ctx(pins, B.load_refs()), "hall_c1_reference") == {B.RETIRED_KEY: "power"}
 
 
 def test_unknown_artifact_id_refused():
@@ -321,11 +382,15 @@ def test_open_questions_not_answered(doc):
     ctx = B.Ctx(B.load_pins(), B.load_refs())
     for r in doc["rows"]:
         for o in r["open_readings"]:
-            assert o["status"] in ("TBD_OWNER", "SUPERSEDED"), (r["id"], o["id"])
-            assert o["current_register"] == "docs/budgets/owner_decisions/owner_questions_state_v4.json"
-            if o["status"] == "TBD_OWNER":
-                assert "never answered" in o["handling"]
+            # A9.16 step 1: the owner answered every carried reading (A9.12 / A9.14, A9.15 amendments); the RVM records
+            # the decision and never answers anything itself
+            assert o["status"] in ("OWNER_DECIDED", "SUPERSEDED"), (r["id"], o["id"])
+            if o["status"] == "OWNER_DECIDED":
+                assert o["status_when_carried"] == "TBD_OWNER" and o["decision"]
+                assert o["current_register"] == "docs/budgets/owner_decisions/owner_questions_state_v5.json"
+                assert "answered by the owner" in o["handling"]
             else:                       # S-01: only an owner answer to the same question supersedes (OD13, row 3)
+                assert o["current_register"] == "docs/budgets/owner_decisions/owner_questions_state_v4.json"
                 assert (r["id"], o["id"]) == ("RVM-12", "OD13") and o["superseded_by"]["owner_row"] == 3
     demands = {d["id"]: d for d in doc["interface_demands"]}
     for dem in ("RVM-ID-08", "RVM-ID-10", "RVM-ID-11"):    # S-01 / PHYS-01: consumed downstream, never PENDING
@@ -334,7 +399,11 @@ def test_open_questions_not_answered(doc):
     with pytest.raises(B.BuildError):   # an ANSWERED question cannot be carried as open
         B.oq(ctx, "OD1")
     assert [q["id"] for q in doc["open_owner_questions"]] == ["RVMQ-01"]
+    # A9.14 RVMQ-01 (S9.13); A9.16 repair COR-01: 'status' keeps the as-raised value read back by the immutable
+    # state-v4 builder, status_current governs (updated test)
+    assert doc["open_owner_questions"][0]["status_current"] == "OWNER_DECIDED"
     assert doc["open_owner_questions"][0]["status"] == "TBD_OWNER"
+    assert doc["open_owner_questions"][0]["status_when_raised"] == "TBD_OWNER"
 
 
 # ------------------------------------------------------------------------------------------ sections / hygiene
@@ -371,3 +440,440 @@ def test_no_forbidden_substrings():
         assert "xe_" + "ledger" not in text, p
     for p in LANE.glob("*.py"):   # no screening candidate is used as a source (the JSON only cites the v1 release)
         assert "sgb-" + "screen" not in p.read_text(encoding="utf-8"), p
+
+
+
+def test_rvm14_od5_atmospheric_sequence_has_no_c1_dwell_number(doc):
+    """A9.16 repair F3: OD5 (S9.9) limits the ICP-first atmospheric start only by registered dwell / thermal limits
+    (values from the actual hardware, A9.10 P1Q-02); the 120 s / 360 s numbers are the C1 ignition-dwell Xe booking of
+    S9.1 XA9Q-02 / S8.15 OQ-A907-01 and appear only for the C1-selected variant."""
+    r = {x["id"]: x for x in doc["rows"]}["RVM-14"]["a9_16"]
+    assert "registered dwell / thermal limits" in r["attempts"] and "P1Q-02" in r["attempts"]
+    assert "120 s" not in r["attempts"] and "360 s" not in r["attempts"]
+    assert "120 s" in r["c1_variant"] and "360 s" in r["c1_variant"] and "C1 variant only" in r["c1_variant"]
+
+
+# ------------------------------------------------------------------------------------------ AG-15 RFP re-base
+RB = _load("rfp_rebase_t", LANE / "rfp_rebase.py")
+REG = json.loads((REPO / "docs/requirements/rfp_official/rfp_registration_v1.json").read_text(encoding="utf-8"))
+CLAUSE = {c["id"]: c for c in REG["clauses"]}
+
+
+def test_every_row_cites_rfp_clauses_or_is_labelled(doc):
+    for r in doc["rows"]:
+        assert r["requirement_origin"] in ("RFP_CLAUSE", "DERIVED_PROJECT_REQUIREMENT", "OWNER_ALLOCATION"), r["id"]
+        if r["requirement_origin"] == "RFP_CLAUSE":
+            assert r["rfp_clauses"], r["id"]
+            assert r["requirement_basis"].startswith("RFP_CLAUSE "), r["id"]
+            assert r["requirement_frozen"] is True, r["id"]           # AG-15 closed by the owner (A9.22 G3)
+            cited = {s["clause_id"]: s for s in r["sources"] if s["kind"] == "rfp_official_clause"}
+            assert set(cited) == set(r["rfp_clauses"]), r["id"]
+            for cid, s in cited.items():            # verbatim copy of the registered transcription
+                assert s["verbatim"] == CLAUSE[cid]["text"] and s["page"] == CLAUSE[cid]["page"]
+                assert s["pdf_sha256"] == REG["document"]["sha256"]
+        else:
+            assert r["rfp_clauses"] == [], r["id"]
+        assert set(r["related_rfp_clauses"]) <= set(CLAUSE), r["id"]
+    by = {r["id"]: r for r in doc["rows"]}
+    assert by["RVM-14"]["requirement_origin"] == "DERIVED_PROJECT_REQUIREMENT"          # A9.14 S9.12 OD14
+    assert by["RVM-14"]["requirement_basis"].startswith("DERIVED_PROJECT_REQUIREMENT")
+    for rid in ("RVM-05", "RVM-07", "RVM-27"):
+        assert by[rid]["requirement_origin"] == "OWNER_ALLOCATION", rid
+    for it in doc["items"]:
+        assert it["requirement_origin"] in RB.ORIGINS
+        if it["requirement_origin"] == "RFP_CLAUSE":
+            assert it["rfp_clauses"] and set(it["rfp_clauses"]) <= set(CLAUSE)
+
+
+def test_every_registered_clause_is_mapped(doc):
+    cov = doc["rfp_rebase"]["clause_coverage"]
+    assert [c["clause_id"] for c in cov] == [c["id"] for c in REG["clauses"]]
+    for c in cov:
+        assert c["rvm_rows"] or c["not_system_requirement"], c["clause_id"]
+    by = {c["clause_id"]: set(c["rvm_rows"]) for c in cov}
+    expected = {"RFP-P18-12": "RVM-20", "RFP-P19-04": "RVM-21", "RFP-P19-06": "RVM-22", "RFP-P20-01": "RVM-23",
+                "RFP-P20-03": "RVM-24", "RFP-P20-04": "RVM-25", "RFP-P20-05": "RVM-25", "RFP-P20-06": "RVM-25",
+                "RFP-P21-01": "RVM-25", "RFP-P21-02": "RVM-25", "RFP-P30-01": "RVM-26", "RFP-P18-02": "RVM-19",
+                "RFP-P18-09": "RVM-19", "RFP-P19-05": "RVM-18", "RFP-P18-03": "RVM-18", "RFP-P19-01": "RVM-12"}
+    for cid, rid in expected.items():
+        assert rid in by[cid], (cid, rid)
+    for x in REG["requirements_to_check_against_rvm"]:
+        assert by[x["clause_id"]], x["clause_id"]
+    gates = {g["id"]: g["rfp_clauses"] for g in doc["a9_16_compliance_gates"]}
+    assert gates == {"CG-IC": ["RFP-P19-05", "RFP-P18-03"], "CG-SPF": ["RFP-P18-09", "RFP-P18-02"],
+                     "CG-N2-AO": ["RFP-P17-05", "RFP-P17-02", "RFP-P20-03"]}
+
+
+def test_rebased_rows_keep_owner_readings(doc):
+    by = {r["id"]: r for r in doc["rows"]}
+    r12 = by["RVM-12"]
+    assert "Ignition Time: More than 15000 hrs" in r12["requirement_text"]          # A9.14 S8.5 literal preserved
+    assert ">= 15,000 h cumulative energized" in r12["requirement_text"]
+    r19 = by["RVM-19"]
+    assert r19["rfp_clauses"] == ["RFP-P18-09", "RFP-P18-02"]                      # A9.14 S9.13
+    assert "duplicate thrusters" in r19["requirement_text"] and "FMEA" in r19["requirement_text"]
+    r18 = by["RVM-18"]
+    assert ">60%" in CLAUSE["RFP-P18-03"]["text"] and ">60%" in r18["requirement_text"]
+    assert "DRDO" in r18["requirement_text"] and "75 %" in r18["requirement_text"]
+    assert by["RVM-26"]["rfp_clauses"][0] == "RFP-P30-01" and "micro-newton" in by["RVM-26"]["requirement_text"]
+    assert by["RVM-21"]["limit"] is None and "PSLV / SSLV" in by["RVM-21"]["requirement_text"]
+    assert [m["due"] for m in by["RVM-25"]["milestones"]] == ["T0+09 months", "T0+12 months", "T0+20 months",
+                                                              "T0+24 months", "T0+36 months"]
+    assert [m["share"] for m in by["RVM-25"]["milestones"]] == ["15%", "10%", "20%", "35%", "20%"]
+    assert [x["item"] for x in by["RVM-22"]["sub_requirements"]] == ["a", "b", "c", "d"]
+    for c in B.CONFIGS:
+        for rid in ("RVM-20", "RVM-21", "RVM-22", "RVM-23", "RVM-24", "RVM-25", "RVM-26", "RVM-27"):
+            assert by[rid]["configurations"][c]["status"] == "NOT_EVALUATED", (rid, c)   # no determining evidence
+    absent = [a for r in doc["rows"] for cell in r["configurations"].values() for a in cell["artifacts"]
+              if a["kind"] == "VERIFICATION_ARTIFACT_ABSENT"]
+    assert absent and all(not a["evaluated"] and a["meets"] is None
+                          and "NO VERIFICATION ARTIFACT" in a["evidence_state"] for a in absent)
+
+
+def test_discrepancies_recorded(doc):
+    d = {x["id"]: x for x in doc["rfp_rebase"]["discrepancies"]}
+    assert "05 Oct 2026" in d["DISC-01"]["repository"] and d["DISC-01"]["rfp_clauses"] == []
+    assert d["DISC-01"]["disposition"].startswith("UNVERIFIED_BY_RFP_DOCUMENT")
+    assert d["DISC-02"]["rfp_clauses"] == ["RFP-P18-11"] and "wet or dry not stated" in d["DISC-02"]["rfp"]
+    assert set(d["DISC-03"]["rfp_clauses"]) == {"RFP-P18-03", "RFP-P19-05"}
+    assert "AG-15" in doc["rfp_rebase"]["gate"] and doc["rfp_rebase"]["ag_15_status"].startswith("CLOSED")
+
+
+def test_absent_artifact_kind_never_passes():
+    assert R.assign_status([_a(kind="VERIFICATION_ARTIFACT_ABSENT")], True)[0] == "NOT_EVALUATED"
+    with pytest.raises(R.RvmError):
+        R.assign_status([_a(kind="VERIFICATION_ARTIFACT_ABSENT", evaluated=True, in_domain=True)], True)
+
+
+def test_changed_transcription_or_unmapped_clause_refused(tmp_path):
+    bad = copy.deepcopy(REG)
+    bad["clauses"][0]["text"] += " "
+    p = tmp_path / "reg.json"
+    p.write_text(json.dumps(bad), encoding="utf-8")
+    with pytest.raises(RB.RebaseError):
+        RB.load_registration(p)
+    extra = copy.deepcopy(REG)
+    extra["clauses"].append({"id": "RFP-P99-01", "page": 40, "section": "x", "text": "y"})
+    with pytest.raises(RB.RebaseError):
+        RB.coverage(extra, [{"id": "RVM-X", "rfp_clauses": ["RFP-P18-04"], "related_rfp_clauses": []}])
+    with pytest.raises(RB.RebaseError):
+        RB.clause_record(REG, "RFP-P18-11", "< 40 kg wet")      # token not in the verbatim clause
+
+
+# ------------------------------------------------------------------------------------------------ A9.16 repair lane
+def _rvm():
+    return json.loads(OUT_JSON.read_text(encoding="utf-8"))
+
+
+def test_rfp01_reads_a915_applied_v3_packages():
+    """RFP-01: the RVM evaluates the A9.15-applied v3 budgets (no retired XA9Q-07 / USABLE / CBE-level readings) and
+    records the v3 DOES_NOT_CLOSE as evidence state without turning it into a FAIL."""
+    # A9.26: the current mass / power package is the v5 successor of v4 (v4 = A9.24 AFI-01 successor of v3)
+    assert B.REFS["MP"][0].endswith("mass_power_a9_v5.json") and B.REFS["MP"][2] == "mass_power_a9_v5"
+    assert B.REFS["XE"][0].endswith("xe_accounting_a9_v3.json") and B.REFS["XE"][2] == "xe_accounting_a9_v3"
+    assert B.REFS["RFQ2"][2] == "RFQ_A9_V3"
+    d = _rvm()
+    text = json.dumps(d)
+    for retired in ("XA9Q07_NO_XE_IN_ICP_FLIGHT", "USABLE_MQ09", "MQ01_CBE_LEVEL", "COMPUTED_EXACT_ZERO"):
+        assert retired not in text, retired
+    by = {r["id"]: r for r in d["rows"]}
+    cell = by["RVM-06"]["configurations"]["hall_icp_neutralizer"]
+    assert cell["status"] == "INCOMPLETE_EVIDENCE"
+    assert "mass_power_a9_v5" in cell["current_evidence_state"]
+    assert "MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED" in cell["current_evidence_state"]      # A9.26
+    assert "DOES_NOT_CLOSE 3" in cell["current_evidence_state"]
+    an = next(a for a in cell["artifacts"] if a.get("detail", {}).get("analyses"))["detail"]["analyses"][0]
+    assert {m["state"] for m in an["mixed_basis_states"]} == {"DOES_NOT_CLOSE"}
+    assert [m["wet_known_kg"] > 40 for m in an["mixed_basis_states"]] == [True, True, True]
+    assert an["lower_bound_verified"] is False
+    assert all(r["reading"].startswith("MEV_LEVEL_EVIDENCE_BASED|LOADED|") for r in an["floor_only_readings"])
+    xe_states = [a["evidence_state"] for c in by["RVM-10"]["configurations"].values() for a in c["artifacts"]
+                 if a["path"].endswith("xe_accounting_a9_v3.json")]
+    assert xe_states and all("RA-FUNC APPLIES" in s for s in xe_states)
+    ids = {i["id"]: i for i in d["interface_demands"]}
+    assert "v4" in ids["RVM-ID-01"]["direction"] and "v3" in ids["RVM-ID-02"]["direction"]   # A9.24 AFI-01: MP v4
+    for rid in ("RVM-15", "RVM-18"):
+        paths = {a["path"] for c in by[rid]["configurations"].values() for a in c["artifacts"]}
+        assert "docs/procurement/rfq_a9_v2/rfq_a9_v2.json" not in paths
+
+
+def test_rfp03_rvf04_rfp_citation_status_follows_registration():
+    """RFP-03 / RVF-04: no step-1 'pending registration' citation status survives; registered clause ids cited; the
+    step-1 label is history; requirement_frozen = true on RFP_CLAUSE rows since the owner closed AG-15 (A9.22 G3)."""
+    d = _rvm()
+
+    def walk(o):
+        if isinstance(o, dict):
+            if "rfp_citation_status" in o:
+                yield o
+            for v in o.values():
+                yield from walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                yield from walk(v)
+
+    recs = list(walk({k: d[k] for k in ("rows", "a9_16_owner_answers_applied")}))
+    assert recs
+    for r in recs:
+        assert r["rfp_citation_status"] == "REGISTERED_CLAUSE", r
+        assert r["rfp_clause_ids"] and all(c.startswith("RFP-P") for c in r["rfp_clause_ids"])
+        assert r["rfp_citation_status_as_applied"] == "OWNER_STATED_PENDING_RFP_REGISTRATION"
+    by = {r["id"]: r for r in d["rows"]}
+    assert by["RVM-09"]["a9_16"]["rfp_clause_ids"] == ["RFP-P17-05", "RFP-P17-02"]
+    assert "pending" not in by["RVM-09"]["a9_16"]["note"]
+    assert "RFP-P18-09" in by["RVM-19"]["a9_16"]["rebased_on"] and "pending" not in by["RVM-19"]["a9_16"]["rebased_on"]
+    assert "not registered" not in d["a9_16_rfp_rule"] and "registered by hash" in d["a9_16_rfp_rule"]
+    assert "the owner closed AG-15 (A9.22 G3)" in d["a9_16_rfp_rule"]
+    assert all(r["requirement_frozen"] is True for r in d["rows"] if r["requirement_origin"] == "RFP_CLAUSE")
+
+
+def test_rfp04_items_rebased_on_registered_clauses():
+    d = _rvm()
+    for it in d["items"]:
+        assert it["status"] != "REQUIREMENT_AS_RECORDED (verify against the official RFP)", it["id"]
+        assert "official RFP is obtained" not in it["note"]
+        if it["requirement_origin"] != "RFP_CLAUSE":
+            continue
+        first = it["source"][0]
+        assert first["kind"] == "rfp_official_clause" and first["clause_id"] in it["rfp_clauses"], it["id"]
+        for s in it["source"]:
+            if s["kind"] in ("rfp_secondary_record", "repo_record"):
+                assert s["rebase_role"] == "HISTORICAL_CROSS_REFERENCE_SUPERSEDED_BY_RFP_REGISTRATION"
+    by = {i["id"]: i for i in d["items"]}
+    assert by["RVM-IT-09"]["owner_reading"].startswith("OWNER_READING (DISC-02)")
+    assert by["RVM-IT-17"]["subsystem_minima"] == {"space_qualified_thruster": "> 80 %", "intake_system": "> 80 %",
+                                                   "compressor_and_storage": "> 60 %",
+                                                   "power_supply_electronics": "> 70 %"}
+    assert "until the RFP is verified" not in by["RVM-IT-13"]["status"] and "DISC-04" in by["RVM-IT-13"]["status"]
+
+
+def test_rfp05_row_texts_reworded_against_registered_clauses():
+    d = _rvm()
+    by = {r["id"]: r for r in d["rows"]}
+    assert "RFP-P18-10" in by["RVM-04"]["requirement_text"]
+    assert "grants a transient" not in by["RVM-04"]["requirement_text"]
+    assert "DISC-02" in by["RVM-06"]["requirement_text"]
+    assert "DISC-04" in by["RVM-13"]["requirement_text"]
+    assert "until the official wording" not in by["RVM-13"]["requirement_text"]
+    q = d["open_owner_questions"][0]
+    assert q["question"].startswith("If the official RFP confirms")            # as raised, kept
+    assert "RFP-P18-09" in q["current_note"] and "RFP-P18-02" in q["current_note"]
+    ids = {i["id"]: i for i in d["interface_demands"]}
+    assert ids["RVM-ID-12"]["status"].startswith("REGISTERED_BY_HASH")
+
+
+# ------------------------------------------------------------------------------------------ A9.19 / A9.20
+A19 = _load("a9_19_rvm_t", LANE / "a9_19_rvm.py")
+
+
+def test_a919_a920_pinned_and_cited(doc):
+    pins = {p["path"]: p["sha256"] for p in doc["pins"]}
+    for d in A19.DECISIONS.values():
+        assert pins[d["json"]] == d["json_sha256"] == hashlib.sha256((REPO / d["json"]).read_bytes()).hexdigest()
+        assert pins[d["md"]] == d["md_sha256"] == hashlib.sha256((REPO / d["md"]).read_bytes()).hexdigest()
+    got = {(e["decision"], e["question_id"]) for e in doc["a9_19_owner_answers_applied"]}
+    assert {("A9.19", "architecture"), ("A9.19", "xenon_role"), ("A9.19", "amends"), ("A9.20", "answer")} <= got
+    for e in doc["a9_19_owner_answers_applied"]:
+        d = A19.DECISIONS[e["decision"]]
+        assert e["decision_json_sha256"] == d["json_sha256"] and e["decision_md_sha256"] == d["md_sha256"]
+        assert e["record_ids"] and e["tests"] == ["tests/test_rvm_a9.py"]
+
+
+def test_a919_new_rows_traced_and_never_pass(doc):
+    by = {r["id"]: r for r in doc["rows"]}
+    r28, r29, r30 = by["RVM-28"], by["RVM-29"], by["RVM-30"]
+    # architecture: owner decision, traced verbatim to RFP-P17-05 / RFP-P18-08 (not presented as an RFP gate)
+    assert r28["requirement_origin"] == "OWNER_ALLOCATION" and r28["rfp_clauses"] == []
+    assert {"RFP-P17-05", "RFP-P18-08"} <= set(r28["related_rfp_clauses"])
+    assert {t["clause_id"]: t["verbatim"] for t in r28["rfp_trace"]} == {
+        "RFP-P17-05": CLAUSE["RFP-P17-05"]["text"], "RFP-P18-08": CLAUSE["RFP-P18-08"]["text"]}
+    assert r28["limit"]["value"] == [1, 1, 0] and "NO conventional hollow cathode" in r28["requirement_text"]
+    assert r28["requirement_basis"].startswith("OWNER_ARCHITECTURE_DECISION A9.19")
+    # two supply modes: RFP clauses (verbatim sources) + the owner's Xe role
+    assert r29["requirement_origin"] == "RFP_CLAUSE" and r29["rfp_clauses"] == ["RFP-P18-08", "RFP-P17-05"]
+    assert r29["requirement_frozen"] is True and "contingency / emergency" in r29["requirement_text"]   # A9.22 G3
+    assert any(s["kind"] == "owner_decision" and s["key"] == "xenon_role" for s in r29["sources"])
+    # C1 ground-only, outside every flight budget
+    assert r30["requirement_origin"] == "OWNER_ALLOCATION" and r30["limit"]["value"] == 0
+    assert "S3.5" in r30["requirement_text"] and "bench control" in r30["requirement_text"]
+    cov = {c["clause_id"]: c for c in doc["rfp_rebase"]["clause_coverage"]}
+    assert "RVM-29" in cov["RFP-P18-08"]["rvm_rows"] and "RVM-29" in cov["RFP-P17-05"]["rvm_rows"]
+    assert "RVM-28" in cov["RFP-P17-05"]["related_rvm_rows"]
+    for r in (r28, r29, r30):
+        for c in B.CONFIGS:
+            assert r["configurations"][c]["status"] == "NOT_EVALUATED", (r["id"], c)   # no determining evidence
+        assert r["configuration_applicability"]["hall_c1_reference"].startswith("GROUND_ONLY_LABORATORY_REFERENCE")
+
+
+def test_a919_configuration_roles_and_row_records(doc):
+    assert doc["configurations"]["hall_icp_neutralizer"].startswith("FLIGHT ARCHITECTURE (A9.19)")
+    assert doc["configurations"]["hall_c1_reference"].startswith("GROUND_ONLY_LABORATORY_REFERENCE (A9.20)")
+    assert "CONTROL / FALLBACK" in doc["configurations_as_carried_a9_16"]["hall_c1_reference"]   # history kept
+    for r in doc["rows"]:
+        assert r["configurations"]["hall_c1_reference"]["applicability"].startswith("GROUND_ONLY_LABORATORY")
+    by = {r["id"]: r for r in doc["rows"]}
+    assert by["RVM-10"]["a9_19"]["xe_role"].startswith("CONTINGENCY_AND_EMERGENCY")
+    assert "never a contingency" in by["RVM-10"]["a9_16"]["air_plus_xe"]      # A9.16 record kept as history
+    assert "unchanged" in by["RVM-10"]["a9_19"]["icp_gas_mode"] and "G-REUSE primary" in by["RVM-10"]["a9_19"]["icp_gas_mode"]
+    assert by["RVM-14"]["a9_19"]["c1_variant"].startswith("NOT A FLIGHT VARIANT")
+    assert "NOT flight bus loads" in by["RVM-04"]["a9_19"]["c1_supplies"]
+    assert "not a flight fallback" in by["RVM-15"]["a9_19"]["hall_c1_reference"]
+
+
+def test_a919_recorder_proposal_is_not_a_requirement(doc):
+    props = doc["recorder_proposals_open_for_owner"]
+    assert [p["id"] for p in props] == ["RP-A919-01"]
+    p = props[0]
+    assert p["status"] == "RECORDER_PROPOSAL_OPEN_FOR_OWNER"
+    assert p["is_requirement"] is False and p["is_owner_decision"] is False
+    assert "I_e,cap >= I_d,max" in p["proposal"] and "W/A" in p["proposal"] and "N2 and on Xe" in p["proposal"]
+    assert "none proposed" in p["numbers"]
+    for r in doc["rows"]:                       # never carried as a row, limit or reading
+        assert "RP-A919-01" not in json.dumps({k: v for k, v in r.items() if k != "a9_19"}, ensure_ascii=False)
+        assert "go / no-go" not in r["requirement_text"]
+
+
+def test_a919_load_fails_closed(monkeypatch):
+    A19.load()
+    bad = {k: dict(v) for k, v in A19.VERBATIM.items()}
+    bad["A9.19"]["xenon_role"] = "xenon is a parallel co-equal propellant"
+    monkeypatch.setattr(A19, "VERBATIM", bad)
+    with pytest.raises(A19.A919Error):
+        A19.load()
+    monkeypatch.setattr(A19, "VERBATIM", {k: dict(v) for k, v in A19.VERBATIM.items()})
+    dec = {k: dict(v) for k, v in A19.DECISIONS.items()}
+    dec["A9.20"]["json_sha256"] = "0" * 64
+    monkeypatch.setattr(A19, "DECISIONS", dec)
+    with pytest.raises(A19.A919Error):
+        A19.load()
+
+
+def test_rv19_10_ground_reference_cells_not_applicable_and_v3_budget_evidence(doc):
+    """RV19-10: flight-architecture rows RVM-28..30 are never evaluated against the ground-only hall_c1_reference
+    (A9.19 / A9.20): the cell is the NOT_APPLICABLE_GROUND_REFERENCE marker only, never compliance evidence; RVM-30
+    evidence points at the v3 budgets, never at the immutable v2 budgets (which still book hall_c1_reference)."""
+    by = {r["id"]: r for r in doc["rows"]}
+    assert A19.NA_ROWS == ("RVM-28", "RVM-29", "RVM-30")
+    for rid in A19.NA_ROWS:
+        cell = by[rid]["configurations"]["hall_c1_reference"]
+        assert cell["applicability_marker"] == "NOT_APPLICABLE_GROUND_REFERENCE"
+        assert cell["counts_as_compliance_evidence"] is False
+        assert cell["status"] in R.STATUSES and cell["status"] != "PASS"
+        assert [a["kind"] for a in cell["artifacts"]] == ["NOT_APPLICABLE_GROUND_REFERENCE"]
+        assert not any(a["evaluated"] or a["meets"] is not None for a in cell["artifacts"])
+        assert "applicability_marker" not in by[rid]["configurations"]["hall_icp_neutralizer"]
+    # rows other than RVM-28..30 keep their (labelled ground-reference) C1 cells while the v3 flight budgets still
+    # carry the hall_c1_reference column; once those budgets retire it (A9.19 / A9.20 budgets refresh), exactly the
+    # rows whose C1 evidence was a flight-budget probe carry the marker, each with its retired-budget basis
+    others = [r for r in doc["rows"] if r["id"] not in A19.NA_ROWS]
+    retired = B.c1_retired_from_flight_budgets(_budget_ctx())
+    marked = [r["id"] for r in others if "applicability_marker" in r["configurations"]["hall_c1_reference"]]
+    if not retired:
+        assert marked == []
+    else:
+        assert marked
+    for rid in marked:
+        cell = by[rid]["configurations"]["hall_c1_reference"]
+        assert cell["not_applicable_basis"] == B.RETIRED_BASIS and cell["retired_flight_budget_probes"]
+        assert [a["kind"] for a in cell["artifacts"]] == ["NOT_APPLICABLE_GROUND_REFERENCE"]
+    assert [x["row"] for x in doc["a9_19_20"]["budget_retired_ground_reference_cells"]] == marked
+    na = doc["a9_19_20"]["not_applicable_ground_reference_cells"]
+    assert [x["row"] for x in na] == list(A19.NA_ROWS)
+    # RVM-30 determining evidence: v3 budgets, never the immutable v2 budgets
+    arts = by["RVM-30"]["configurations"]["hall_icp_neutralizer"]["artifacts"]
+    det = [a for a in arts if a["role"] == "DETERMINING"]
+    assert {a["path"] for a in det} == {"docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json",
+                                        "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json"}
+    assert not any("_a9_v2/" in a["path"] for a in arts)       # no v2 budget, no v2 RFQ cited on RVM-30
+    rfq = [a for a in arts if a["kind"] == "PROCUREMENT"]
+    assert [a["path"] for a in rfq] == ["docs/procurement/rfq_a9_v3/rfq_a9_v3.json"] and rfq[0]["role"] == "SUPPORTING"
+    assert any(e["decision"] == "A9.20" and e["question_id"] == "option" and "RVM-30" in e["record_ids"]
+               for e in doc["a9_19_owner_answers_applied"])
+
+
+def test_rv19_10_not_applicable_marker_never_mixed_with_evidence():
+    na = _a(kind="NOT_APPLICABLE_GROUND_REFERENCE")
+    assert R.assign_status([na], True)[0] == "NOT_EVALUATED"
+    assert R.is_not_applicable_cell([na]) and not R.is_not_applicable_cell([_a()])
+    with pytest.raises(R.RvmError):
+        R.assign_status([na, _a()], True)
+    with pytest.raises(R.RvmError):
+        R.assign_status([_a(kind="NOT_APPLICABLE_GROUND_REFERENCE", evaluated=True, in_domain=True)], True)
+
+
+def _budget_ctx(mp=None, xe=None):
+    import types
+    if mp is None:
+        mp = json.loads((REPO / B.REFS["MP"][0]).read_text(encoding="utf-8"))
+    if xe is None:
+        xe = json.loads((REPO / B.REFS["XE"][0]).read_text(encoding="utf-8"))
+    return types.SimpleNamespace(r={"MP": mp, "XE": xe})
+
+
+def test_a919_c1_retirement_from_v3_flight_budgets_detected_and_fail_closed():
+    """A9.19 / A9.20: the RVM follows the v3 flight budgets. While they carry hall_c1_reference the C1 cells stay the
+    labelled ground-reference evaluation; a retirement must be labelled in BOTH budgets (retired-history column in
+    mass/power, retired_flight_configuration in Xe, no flight C1 Xe scenario) or the build fails closed."""
+    assert B.REFS["MP"][0].endswith("mass_power_a9_v5.json") and B.REFS["XE"][0].endswith("xe_accounting_a9_v3.json")
+    ctx = _budget_ctx()
+    cur = B.c1_retired_from_flight_budgets(ctx)
+    mp, xe = copy.deepcopy(ctx.r["MP"]), copy.deepcopy(ctx.r["XE"])
+    c1 = "hall_c1_reference"
+    if cur:
+        assert c1 in mp["retired_flight_configuration_history"]["lines"]
+        assert B.xe_retired_flight_configuration(xe).startswith(c1)
+        mp_r, xe_r = mp, xe
+    else:
+        # synthesize a labelled retirement from the current budgets (structure only; no value is read from it)
+        mp_r, xe_r = copy.deepcopy(mp), copy.deepcopy(xe)
+        mp_r["retired_flight_configuration_history"] = {"lines": {c1: mp_r["lines"].pop(c1)}}
+        mp_r["power"]["configurations"].pop(c1)
+        mp_r["propellant_policy"]["per_configuration"] = [
+            p for p in mp_r["propellant_policy"]["per_configuration"] if p["configuration"] != c1]
+        xe_r["evaluations"] = [e for e in xe_r["evaluations"] if e["scenario"] != B.C1_FLIGHT_XE_SCENARIO]
+        xe_r["propellant_policy"].setdefault("architecture", {})["retired_flight_configuration"] = (
+            c1 + " (A9.19; history only)")
+        assert B.c1_retired_from_flight_budgets(_budget_ctx(mp_r, xe_r)) is True
+        with pytest.raises(B.BuildError):          # budgets disagree
+            B.c1_retired_from_flight_budgets(_budget_ctx(mp_r, xe))
+        with pytest.raises(B.BuildError):          # budgets disagree
+            B.c1_retired_from_flight_budgets(_budget_ctx(mp, xe_r))
+    unlabelled = copy.deepcopy(mp_r)
+    unlabelled.pop("retired_flight_configuration_history")
+    with pytest.raises(B.BuildError):              # dropped without a labelled history column
+        B.c1_retired_from_flight_budgets(_budget_ctx(unlabelled, xe_r))
+    xe_u = copy.deepcopy(xe_r)
+    xe_u["propellant_policy"]["architecture"].pop("retired_flight_configuration")
+    with pytest.raises(B.BuildError):              # Xe retirement not labelled
+        B.c1_retired_from_flight_budgets(_budget_ctx(mp_r, xe_u))
+    # the probes return the sentinel only for the retired ground reference
+    rctx = _budget_ctx(mp_r, xe_r)
+    assert B.probe_mass(rctx, c1, ("HARD_40_WET",)) == {B.RETIRED_KEY: "mass"}
+    assert B.probe_xe(rctx, c1) == {B.RETIRED_KEY: "xe"}
+    assert B.probe_power(rctx, c1) == {B.RETIRED_KEY: "power"}
+    assert B.RETIRED_KEY not in B.probe_xe(rctx, "hall_icp_neutralizer")
+
+
+def test_a9_24_afi05_rvm16_reading_outside_frozen_basis():
+    """A9.24 AFI-05: RVM-16 carries the current-architecture (no flight keeper) reading as a labelled record; its frozen
+    basis title / text (A9.22 G3) and the owner row-94 verbatim quote stay unchanged."""
+    d = _rvm()
+    r = {x["id"]: x for x in d["rows"]}["RVM-16"]
+    x = r["a9_24_current_architecture_reading"]
+    assert "keeper" not in x["title"] and "keeper" not in x["requirement_text"]
+    assert "RF/ICP electron-source / neutralizer" in x["title"]
+    k = x["keeper_reading"]
+    assert k["status"] == "OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING"            # A9.25 message 8 section 2
+    assert k["status_before"].startswith("RECORDER_INTERPRETATION_OWNER_MAY_REVERSE")
+    assert k["confirmed_by"]["decision"] == "A9.25" and k["confirmed_by"]["message"] == 8
+    c = k["owner_clarification"]
+    assert "no flight keeper" in c["keeper"] and "NOT a universal prohibition on graphite" in c["graphite"]
+    assert c["ao_o_exposed_components"][:2] == ["anode", "RF/ICP electron-source / neutralizer plasma-facing surfaces"]
+    assert c["compliance_status"].startswith("UNCHANGED")
+    assert x["keeper_reading"]["owner_row_94_verbatim"].startswith("Do not use graphite as the flight baseline for an "
+                                                                   "O/AO-exposed keeper")
+    assert "no graphite flight keeper" in r["requirement_text"]          # frozen basis (A9.22 G3) untouched
+    assert d["a9_24_afi05"]["stop_item"] is None
+    assert d["a9_24_afi05"]["resolved_stop_item"]["id"] == "AFI-05-S1"
+    assert d["a9_24_afi05"]["resolved_stop_item"]["state"] == "OWNER_CONFIRMED_CURRENT_ARCHITECTURE_READING"
+    assert "OWNER_MAY_REVERSE" not in json.dumps(r["a9_24_current_architecture_reading"]["requirement_text"])

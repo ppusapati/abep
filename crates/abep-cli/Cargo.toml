@@ -1,0 +1,28 @@
+[package]
+name = "abep-cli"
+description = "The deterministic `abep` CLI of the ABEP Rust simulator (SC-WP-13, NI-ABEP-CLI): a thin orchestration over the admitted crates with a run-record sidecar per command and registered exit codes. No physics."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "abep"
+path = "src/main.rs"
+
+[dependencies]
+abep-types.workspace = true
+abep-provenance.workspace = true
+abep-config.workspace = true
+abep-data.workspace = true
+abep-atmos.workspace = true
+abep-hall.workspace = true
+# Used by this crate only (not shared), so plain path dependencies.
+abep-intake = { path = "../abep-intake" }
+abep-mission = { path = "../abep-mission" }
+abep-subsystems = { path = "../abep-subsystems" }
+abep-julia-bridge = { path = "../abep-julia-bridge" }
+abep-icp = { path = "../abep-icp" }
+serde.workspace = true
+serde_json.workspace = true

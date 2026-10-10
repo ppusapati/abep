@@ -3,15 +3,53 @@
 ## What this is
 ABEP-VLEO physics simulator for Vyovrinda Aerospace's DRDO TDF bid (RFP DTDF/06/13516/DSP/ABEP/X/L/M/01; bid close
 05 Oct 2026). RFP envelope: 180–230 km, 12–25 mN, < 1.5 kW, < 40 kg, 26,000 h mission, > 15,000 h firing, Hall preferred,
-air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-discharge physics only.
+air + Xe.
+
+## Current phase and language direction (A9.28 / A9.29, 2026-10-05; CA-02, CA-03)
+- **The bid is frozen.** Technical source `5eee4b8c82a9403b6bb82d5f8d324526f5d6399b`. Terminal package / freeze record
+  `2de86abefacbd36ce7516d3cf017f6258bd7e7a2`, lineage `b5849af` → `2de86ab`. Both are immutable evidence. Never rewrite them, and
+  never present a later commit as the submitted source. Any later change to the historical bid package needs a new explicit owner
+  decision. No RFP document work in this phase unless the owner asks. The working RFP deadline is 12 Oct 2026.
+- **Current work is simulation completion** for the selected architecture `hall_icp_neutralizer`
+  (`docs/decisions/OD_2026_10_05_A9_28_*`, `OD_2026_10_05_A9_29_*`; plan `docs/rust_migration/`, v3.1). The chain is complete only
+  when the full A9.29 sec. 15 chain runs end to end under Rust + HallThruster.jl with zero Python production dependency.
+  The chain: atmosphere/orbit → TPMC intake → filter → compressor → plenum/feed → predictive 13.56 MHz RF/ICP neutralizer +
+  HallThruster.jl Hall → coupled thrust/neutralization → drag / T-D → power → cathodeless thermal → mass → materials/life →
+  mission → robust/UQ → separate assessment/gates.
+  - It covers AIR_PRIMARY and XE_CONTINGENCY.
+  - There is no flight hollow cathode. C1 is ground test / reference only.
+- **Language direction.**
+  - Target simulator = **Rust**. Hall solver = **HallThruster.jl** (pinned, rule 7). Rust owns orchestration across a deterministic,
+    pinned, provenance-recorded process boundary.
+  - Python = **migration reference** until each component is admitted, then **archive-only**.
+  - Existing physics: Python reference → preregistered parity → Rust → admission → Python retired.
+  - New physics (NP-ICP-NEUTRALIZER, NP-THERMAL-CATHODELESS): preregistered model → Rust → analytic/independent-evidence
+    verification → admission. No synthetic Python reference. No implementation before its preregistration is committed.
+  - End-state production stack: Rust simulator + HallThruster.jl + versioned configuration / evidence data. No production
+    dependency on python, python3, pip, virtualenv, PyO3 or maturin. The `abep_core` PyO3 interface is migration tooling; its Rust
+    TPMC becomes a normal Rust library.
+  - Python files stay at their current paths during migration. At cutover, archive them as tag `python-final-reference-<date>`
+    plus branch `archive/python-final-reference` and `docs/archive/PYTHON_FINAL_REFERENCE.md` / `python_final_reference.json`
+    (A9.29 sec. 8).
+- **Execution baseline is `integration/simulation-complete`** (CA-02).
+  - `main` is never modified directly; it receives this line only through a new owner-authorized PR.
+  - `claude/nifty-ramanujan-w68f9z` (`dcab602`) is the historical bid-era development branch.
+- Speed never weakens provenance, preregistration, conservation, determinism, model-domain checks, requirement/physics
+  separation, uncertainty handling or fail-closed evidence semantics (A9.29 sec. 14).
 
 ## Rules (do not break these)
 1. **Frozen data is the reference behaviour.** `abep_sim/data/atmosphere_msis21_v1.*`, `intake_surface_v1.*`,
-   `golden_v1.json`, `rates/` carry hashes/provenance. Never regenerate them casually. Rebuild only on an intentional model
+   `golden_v2.json` (canonical since A9.18; `golden_v1.json` kept as history), `rates/` carry hashes/provenance. Never regenerate them casually. Rebuild only on an intentional model
    change, via `python -m abep_sim.atmosphere build`, `python -m abep_sim.intake_tpmc build`, `python -m abep_sim.golden generate`,
    and record why in docs/HISTORY.md.
-2. **Golden benchmarks must reproduce** (`python -m abep_sim.golden check` → OK). If a change moves them, it is a model
-   change: justify it, regenerate, and log it.
+2. **Active canonical golden benchmarks must reproduce.** If a change moves them, it is a model change: justify it, regenerate,
+   and log it.
+   - Scope (CA-01, A9.28 RM-OQ-06): rule 2 applies to the ACTIVE canonical golden set. The active `hall_icp_neutralizer` golden is
+     generated only from the admitted active Rust chain.
+   - Historical goldens (`golden_v1.json`, `golden_v2.json`) are archive/regression history. They are immutable, never deleted and
+     never rewritten. They stay reproducible from their historical Python reference environment
+     (`python -m abep_sim.golden check` → OK, kept green while Python remains the migration reference). They are not Rust
+     end-state parity cases.
 3. **No silent fallbacks.** Atmosphere defaults to the frozen NRLMSIS dataset; live MSIS only when asked. Solvers must report
    non-convergence (`sustained=False`, `status=MODEL_ERROR/INFEASIBLE`), never return half-converged states.
 4. **Conservation is a gate.** Source mass/power balances close exactly; architecture energy ledger residual < 2 %.
@@ -21,8 +59,17 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 7. **HallThruster.jl is pinned** to v0.23.1, commit `bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5`
    (`hallthruster_bridge/PINNED.toml`). Every Hall map must carry that commit; `abep_sim/hall_map.py` rejects others.
 8. **No new propulsion families** until the physics baseline is frozen. Stabilise, don't expand.
-9. Tests: `python -m pytest -q tests`. Expected: all pass, 5 skipped (superseded 0-D Hall calibration — do not "fix" them by
-   re-tuning), 1 strict xfail (`test_v16_blind_validation_p5_nitrogen`, gate 3 — must turn green only via the new Hall solver).
+9. **Tests (CA-04, A9.29 RM-OQ-05).**
+   - **Active (Rust) CI:** `cargo test --workspace --locked`, and every active test passes. No active production test is silently
+     ignored or skipped.
+     - Missing physical evidence is not a skip. Tests assert the fail-closed result (`NOT_EVALUATED`, `INCOMPLETE_EVIDENCE`,
+       `OUT_OF_DOMAIN`, `MODEL_ERROR`).
+     - The empty Hall credible transport set is an expected governed state. It is asserted explicitly, not xfailed.
+     - Platform/hardware tests that cannot run in normal CI go in a separate registered test class with reason, owner/evidence
+       basis, execution environment and required trigger. They never drop out of the test inventory.
+   - **Python migration reference** (while it exists): `python -m pytest -q tests`. Expected: all pass, 5 skipped (superseded
+     0-D Hall calibration — do not "fix" them by re-tuning) and 1 strict xfail (`test_v16_blind_validation_p5_nitrogen`, gate 3).
+     These counts are archive-era reproduction metadata, not the active production rule.
 10. **Published data are evidence, not immutable truth** (docs/EVIDENCE.md is part of these baseline rules). Preserve reported values and provenance, but
    distinguish measured, digitized, inferred, reconstructed, model-derived and assumed quantities. Each input carries
    source, uncertainty, applicability domain and validation status. Don't tune the simulator merely to force agreement
@@ -182,8 +229,8 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    break-even surfaces, hard-gate eliminations). **Fan-out rule:** whenever a lane finishes, immediately ask whether its result lets
    another lane start, removes a dependency, or creates a new parallel branch; never fall back to a sequential queue.
    **O4 first stage:** Johnson-low trigger FIRED (scored 2026-09-26) → its three pre-registered escalations are running.
-   **Execution baseline (pinned until merged):** branch `claude/nifty-ramanujan-w68f9z` at `debce16` — `main` (daa0e75) does not
-   contain the orchestration governance; nobody works from `main` for execution until the merge (`runtime_state.json`).
+   **Execution baseline:** superseded by CA-02. It is now `integration/simulation-complete` (see "Current phase" above). The
+   2026-09-26 pin of `claude/nifty-ramanujan-w68f9z` at `debce16` is history (`runtime_state.json`).
    **Operating model (binding; owner decisions 2026-09-26): `docs/orchestration/OPERATING_MODEL.md`.** Machine ids in
    `lane_registry_v1.json` (lane_NN_*, ds_*, fo_*; break-even = lane_28_break_even); follow-on work launches ONLY from
    `trigger_registry_v1.json` (incl. T_O4_SCORE / T_O4_ESCALATE / T_O4_DISPOSITION_MATRIX / T_JOHNSONLOW_ESCALATION_ASSESSMENT /
@@ -200,7 +247,10 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    stability} is populated or explicitly unavailable, each with units, operating point, evidence/source, uncertainty/status and
    derivation (P_feed, T_feed = feed-state pressure and temperature). P_bus = all electrical power crossing the spacecraft-side DC
    boundary (discharge + pre-ionizer + cathode + magnets + PPU losses + gas path incl. compressor/flow control + controls/thermal);
-   never absorbed RF, ECR source or Hall discharge-only power. **v2 chemistry:** Question A (is a wider domain source-supported?)
+   never absorbed RF, ECR source or Hall discharge-only power. **A9.30:** for the ACTIVE `hall_icp_neutralizer`
+   architecture the bus boundary is `bus_power_boundary_a9_v2`. `bus_power_boundary_v1` is history, preserved and never
+   rewritten, and is superseded for active flight closure where it carries cathode heater/keeper loads. Flight C1 loads are
+   NONE; the C1 heater/keeper is GROUND_REFERENCE_ONLY. The 1.5 kW limit is assessment-only. **v2 chemistry:** Question A (is a wider domain source-supported?)
    and Question B (conditional on A, which excitation representation is supportable?) stay separate; Johnson-low remains a
    sensitivity until B supports it. **Execution provenance:** running jobs never altered; future campaigns record thread/BLAS
    environment, Julia version and HallThruster commit per run; orchestration runtime (daemon PID, Monitor, restart semantics,
@@ -227,6 +277,13 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    Blocked by the driver until every rate file in `propellants/n2_n.toml` exists. P5 B(z) shape is now available
    (`hallthruster_bridge/bfield/`, Peterson 2001; N₂ setpoints use 130 G). Still missing: ECHT B(z), B_max, per-point data.
 4. Only if 1–3 succeed: O₂/O chemistry, then intake-delivered mixtures.
+   **A9.30 (2026-10-05):** this sequencing no longer blocks the active `hall_icp_neutralizer` simulator.
+   - O/O₂ chemistry is authorized now for the active RF/ICP neutralizer model only, through the narrow preregistered
+     contract NP-ICP-CHEM-AIR. Atomic O is never replaced by an N₂-only surrogate. No coefficient is fabricated; missing
+     evidence is INCOMPLETE_EVIDENCE or an uncertainty envelope.
+   - AIR_PRIMARY predictive admission waits for that chemistry set to be admitted. Xe-contingency work may proceed on
+     sufficient evidence.
+   - It does not reopen the P5 Hall campaign, `plasma_chem.py` or multi-family plasma models.
 5. Interchange schema `hallthruster_bridge/hall_map_schema_v1.json` is defined and shared (driver emits it, `hall_map.py`
    derives `REQUIRED_FIELDS` from it, a test checks both). All fields now have producers: wall ion flux/energy are
    re-evaluated from the solver's WallSheath Bohm-flux model (`bridge_lib.jl`, checked against the solver's own
@@ -252,6 +309,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    table into `plasma_chem` is a model change (goldens move, log it).
 
 ## Key modules
+Python migration reference (`abep_sim/`; archive-only once the Rust replacement is admitted, CA-03):
 `atmosphere.py` (frozen NRLMSIS), `intake.py`/`intake_tpmc.py` (TPMC ROM, Maxwell + CLL), `compressor.py`, `reservoir.py`,
 `plasma_chem.py` (global source model; T_e-parameterised solver), `plasma_devices.py` (0-D Hall — superseded; cathodes),
 `archengine.py` (modular architecture engine, nested constrained search, energy ledger, mission envelope),
@@ -282,7 +340,7 @@ Hall family (rule 8: no model/archengine change implied). New Hall→ICP work go
 **A9 state (2026-09-30):** A9-01..A9-10 verified on the execution branch; A9.1 (`OD_2026_09_30_A9_1_*`) and A9.2 (`OD_2026_09_30_A9_2_*`)
 applied. Binding statuses: RF matching LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT, RF ratings TBD_AFTER_IMPEDANCE_MAP, 316L anode
 REJECTED_AS_CURRENT_BASELINE, anode material OPEN, anode and coupled H-1/ICP thermal closure UNRESOLVED (never report an ICP
-thermal result as PASS), ICP capacity PENDING_ICP45, C1 CONTROL_FALLBACK. Open owner questions: `docs/budgets/owner_decisions/owner_questions_state_v4.*` (v2/v3 immutable history).
+thermal result as PASS), ICP capacity PENDING_ICP45, C1 GROUND_ONLY_LAB_REFERENCE (A9.19/A9.20: flight architecture = one Hall + one RF/ICP neutralizer for air and Xe, two supply modes, Xe contingency/emergency, no hollow cathode). Open owner questions: `docs/budgets/owner_decisions/owner_questions_state_v4.*` (v2/v3 immutable history).
 **A9.3-A9.6 (2026-09-30, execution branch):** P1 ICP bench, P2 impedance framework, P3 coupled-thermal and P4 materials frameworks,
 mass/power v2, Xe accounting v2, RFQ v2, RVM (`docs/requirements/rvm_a9/`), M16 v4; implementation-first batch verified once
 (A9.6 sec. 18). ICP-45 capacity is discharge-OFF, I_e,cap = I_on - I_off signed; ICP45 = NOT_EVALUATED until I_d,max,H1 is registered.

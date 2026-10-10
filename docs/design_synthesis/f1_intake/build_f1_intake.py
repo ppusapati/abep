@@ -14,11 +14,19 @@ INVESTIGATION_HYPOTHESIS.
 Usage:
   python docs/design_synthesis/f1_intake/build_f1_intake.py          # (re)write outputs
   python docs/design_synthesis/f1_intake/build_f1_intake.py --check  # exit 1 unless the committed files are reproduced
+  python docs/design_synthesis/f1_intake/build_f1_intake.py --check-core  # fast (no TPMC): core view, MD, archive
+  python docs/design_synthesis/f1_intake/build_f1_intake.py --write-core  # core view from the local full JSON
+
+A9.22 item 9: the full JSON (36.7 MB) is an evidence archive (docs/evidence_archives/f1_intake/, built and verified by
+scripts/evidence/f1_archive.py) and is git-ignored; Git keeps the compact consumer view f1_intake_synthesis_v1_core.json
+(abep_sim/design/intake_synthesis.py core_from_full / load_f1_view), the Markdown and the archive manifest. A rebuild
+that changes the full output needs a new archive (new run id) before the changed core view is committed.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import sys
 import time
@@ -29,6 +37,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from abep_sim.design import intake_synthesis as F1  # noqa: E402
+from abep_sim.assessment import design_gates as ost  # noqa: E402  (owner-question state v5 reader; A9.22)
 from abep_sim.constants import RFP  # noqa: E402
 
 OUT_DIR_REL = "docs/design_synthesis/f1_intake"
@@ -43,11 +52,32 @@ PINNED = (
     "abep_sim/data/intake_surface_v1.json",
     "abep_sim/data/atmosphere_msis21_v1.csv",
     "abep_sim/data/atmosphere_msis21_v1.json",
+    F1.DESIGN_STATE_SET_REL,
+    F1.DESIGN_STATE_MANIFEST_REL,
     DIRECTIVE_REL,
 )
+# A9.14 S9.8 OD3 / A9.13 S6.14: the orbit-state set changed from five hand-picked orbit-averaged states to the frozen
+# design-state set v2. The builder keeps no output history, so the superseded run is recorded here (facts of the
+# committed output at 61eefc4, read from that file; never recomputed).
+STATE_SET_HISTORY = {
+    "superseded_state_set": F1.HISTORY_FIVE_STATE_SET,
+    "superseded_output": {"path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json", "commit": "61eefc4",
+                          "sha256": "85c79045047a6b09a10c8f199782b25defad2b5446386fa68496a16cf41c2ff2",
+                          "direct_runs": 503,
+                          "feasible_of_144_per_scenario": {
+                              "design_case": {"maxwell_a0": 120, "maxwell_a0.2": 120, "maxwell_a0.5": 120,
+                                              "maxwell_a0.8": 120, "maxwell_a1": 120, "cll_a0": 120, "cll_a0.2": 120,
+                                              "cll_a0.5": 120, "cll_a0.8": 120, "cll_a1": 120},
+                              "envelope": {"maxwell_a0": 48, "maxwell_a0.2": 48, "maxwell_a0.5": 48, "maxwell_a0.8": 48,
+                                           "maxwell_a1": 48, "cll_a0": 48, "cll_a0.2": 48, "cll_a0.5": 48,
+                                           "cll_a0.8": 48, "cll_a1": 48}}},
+    "reason": "A9.14 S9.8 OD3 (design states come from the versioned orbit-resolved dataset; no hand-picked F10.7 / "
+              "density points) and A9.13 S6.14 OQ-F4-05 (application-matrix residual RVF-03)",
+}
 REFERENCED_NOT_PINNED = (
     ("abep_sim/intake_tpmc.py", "called (intake_response, clausing_transmission, IntakeGeometry defaults); not modified"),
-    ("abep_sim/intake.py", "IntakeSurface recombination convention examined (finding F1-01); not modified, not called"),
+    ("abep_sim/intake.py", "IntakeSurface recombination convention examined (finding F1-01, since fixed in "
+                          "abep_sim/intake_tpmc.py by A9.9 S2.1); not modified, not called"),
     ("abep_sim/atmosphere.py", "frozen dataset lookups (atmosphere()); not modified"),
     ("abep_sim/constants.py", "species masses, RFP thrust envelope; not modified"),
     ("abep_sim/materials.py", "Al6061 density cross-check (2700, literature-class prior)"),
@@ -130,17 +160,19 @@ def build_items(spec):
         item("F1-P-11", "RFP thrust maximum (hard-constraint bound on intake-face drag)", RFP.thrust_max_mN, "mN",
              "intake-face drag above the top of the RFP thrust range cannot be compensated inside that range",
              "REF-RFP-CONSTANTS", "requirement-as-recorded", "REQUIREMENT_AS_RECORDED (verify against official RFP)"),
-        item("F1-P-12", "direct TPMC particles per point", spec.n_direct, "-", "bounded for the < 10 min CPU budget; "
-             "statistical SE reported per point", "this study", "numerical-setting", "STUDY_SETTING"),
+        item("F1-P-12", "direct TPMC particles per point", spec.n_direct, "-", "bounded per point (unchanged since A9.7); "
+             "statistical SE reported per point; with the full design-state set the direct runs are spread over a "
+             "seeded process pool (results independent of the worker count)", "this study", "numerical-setting",
+             "STUDY_SETTING"),
         item("F1-P-13", "frozen-surface particles per point", int(sm["n_per_point"]), "-", "surface metadata",
              "abep_sim/data/intake_surface_v1.json n_per_point", "numerical-setting", "FROZEN"),
         item("F1-P-14", "K_back (Clausing) particles per evaluation", F1.K_BACK_N, "-",
              "intake_response calls clausing_transmission with its default n; assumed unchanged since the surface build "
              "(not recorded in the surface metadata)", "abep_sim/intake_tpmc.py clausing_transmission signature",
              "numerical-setting", "CODE_DEFAULT"),
-        item("F1-P-15", "relative flow speed", "V_orbital", "m s^-1",
-             "atmosphere() returns no V_rel (co-rotation / winds), so V_rel = V_orb on every path", "docs/interfaces/"
-             "UPSTREAM_ICD.md IF-A0 V_mps (partial)", "model-derived", "KNOWN_LIMITATION"),
+        item("F1-P-15", "relative flow speed", "V_orbital", "m s^-1", F1.V_REL_BASIS,
+             "abep_sim/atmosphere.py orbital_velocity; docs/interfaces/UPSTREAM_ICD.md IF-A0 V_mps (partial)",
+             "model-derived", "KNOWN_LIMITATION (inclination / LTAN TBD, A9.21)"),
         item("F1-P-16", "frontal-area design grid", list(spec.areas_m2), "m^2",
              "design-grid sample points (no evidence claim); upper end equals the largest A_f in the literature concept "
              "table (context only)", "feed_state_closure_v1.json published_comparables LIT-01 (Andreussi 2022 Table 1)",
@@ -151,6 +183,13 @@ def build_items(spec):
         item("F1-P-18", "L/d and phi design grid", {"L_over_d": list(spec.L_over_d), "phi": list(spec.phi)}, "-",
              "frozen-surface nodes (exact coverage at the build state; direct TPMC elsewhere)",
              "intake_surface_v1.json grid", "model-derived", "DESIGN_GRID"),
+        item("F1-P-19", "orbit / atmosphere state set", F1.DESIGN_STATE_SET_ID, "-",
+             f"every required state of the frozen design-state set v2 ({len(F1.required_states())} states; nominal "
+             "median-density states and physical extrema of density, composition, temperature, local time and solar "
+             "activity per ECSS scenario x altitude node) plus the design-case reference point "
+             f"{F1.DESIGN_STATE.id}; orbit basis {F1.ORBIT_BASIS_LABEL}",
+             f"{F1.DESIGN_STATE_SET_REL} sha256 {F1.DESIGN_STATE_SET_SHA256}", "model-derived",
+             "FROZEN_DATASET (A9.14 S9.8 OD3; broad envelope, not a mission orbit)"),
     ]
 
 
@@ -161,13 +200,16 @@ def summarize(res, spec):
     out = []
     b = res["species_recombination_bias"]
     out.append({"id": "F1-01", "evidence_class": "model-derived",
-                "finding": f"abep_sim.intake.IntakeSurface recombines species rows by MASS fraction, but each species row's C_D is "
-                           f"normalised by the mixture dynamic pressure of the build atmosphere (C_D_row = (m_s/m_mean) C_D_s) "
-                           f"and CR_passive is a number-density ratio (mole weighting applies). At {b['node']} the IntakeSurface "
-                           f"convention gives C_D x{b['C_D_ratio']:.4f} and CR_passive x{b['CR_ratio']:.4f} relative to the "
-                           f"species-consistent recombination used here",
-                "handling": "not fixed (module change outside this lane; goldens would move); this lane recombines from the "
-                            "species rows directly; owner question F1Q-01"})
+                "finding": f"HISTORICAL (pre-fix production code, before owner decision A9.9 S2.1): "
+                           f"abep_sim.intake.IntakeSurface recombined species rows by MASS fraction, although each species "
+                           f"row's C_D is normalised by the mixture dynamic pressure of the build atmosphere (C_D_row = "
+                           f"(m_s/m_mean) C_D_s) and CR_passive is a number-density ratio (mole weighting applies). At "
+                           f"{b['node']} that pre-fix convention gives C_D x{b['C_D_ratio']:.4f} and CR_passive "
+                           f"x{b['CR_ratio']:.4f} relative to the species-consistent recombination (this lane's value; "
+                           f"the ratios quantify the superseded convention, re-evaluated from the species rows)",
+                "handling": f"FIXED in production: abep_sim/intake_tpmc.py IntakeSurface now recombines the species rows by "
+                            f"their physical definitions (F1Q-01 {ost.status_label('F1Q-01')}); this lane recombines "
+                            f"from the species rows directly, consistent with the fixed production code"})
     out.append({"id": "F1-02", "evidence_class": "model-derived",
                 "finding": "in the free-molecular TPMC every output (eta_c, C_D, K_back, CR_passive) is invariant to the channel "
                            "diameter d at fixed L/d (trajectories scale with R and L), and the geometric wall area 2 phi A L/d is "
@@ -204,15 +246,20 @@ def summarize(res, spec):
                            f"{chk['all_within_3sigma']} (z-scores in surface_reproduction_check)",
                 "handling": "diagnostic of build-state / normalisation consistency only"})
     sr = res["speed_ratio_bracket"]
+    ext = "; ".join(f"{k} {v['min']:.4g}..{v['max']:.4g} (max at {v['argmax_labels'][0] if v['argmax_labels'] else v['argmax']})"
+                    for k, v in sr["quantities"].items())
     out.append({"id": "F1-07", "evidence_class": "model-derived",
-                "finding": f"over all {sr['n_grid_states']} frozen-atmosphere grid states in 180-230 km (all F10.7), the "
-                           f"extremes of the species speed ratios, rho V and q occur at evaluated states: {sr['all_bracketed']}",
-                "handling": "basis for the corner-state envelope; interior states are not evaluated"})
+                "finding": f"over the {sr['n_states']} required states of {sr['state_set']} (every scenario x altitude "
+                           f"node with its density / composition / temperature / local-time extrema) the free-stream "
+                           f"ranges are: {ext}",
+                "handling": "every required state is evaluated (no corner bracketing, no subset); orbit basis "
+                            f"{F1.ORBIT_BASIS_LABEL}"})
     oa = [r["off_axis_rel_eta_loss_per_deg"] for rows in cr["design_case"].values() for r in rows]
     out.append({"id": "F1-08", "evidence_class": "model-derived",
                 "finding": f"relative collection loss per degree of pointing (secant 0-{spec.theta_hi_deg:g} deg, design case) "
                            f"spans {min(oa):.4f}-{max(oa):.4f} per deg across candidates and scenarios",
-                "handling": "objective; the pointing budget itself is TBD (F1Q-03)"})
+                "handling": "objective; the pointing budget is an AOCS-envelope requirement (F1Q-03 "
+                            f"{ost.status_label('F1Q-03')}); its value is not yet supplied"})
     dom = {vname: {sid: v["counts"]["DOMINATED"] + v["counts"]["NONDOMINATED_WITHIN_NOISE"] for sid, v in vw.items()}
            for vname, vw in views.items()}
     out.append({"id": "F1-10", "evidence_class": "model-derived",
@@ -227,7 +274,10 @@ def summarize(res, spec):
                 "finding": f"m_intake is TBD for every candidate (wall thickness, coating and support fraction have no evidence). "
                            f"Under the labelled PARAMETRIC_SENSITIVITY_CASE SC-CODE-DEFAULT it spans {min(m):.2f}-{max(m):.2f} kg "
                            f"over the grid. Mass dominance uses (wall area, frontal area), which implies mass dominance for ANY "
-                           f"positive structural parameters", "handling": "owner question F1Q-02"})
+                           f"positive structural parameters", "handling": f"F1Q-02 {ost.status_label('F1Q-02')}: "
+                                                       f"{F1.F1Q02_LABEL}, {F1.F1Q02_USE} (never "
+                                                       f"{', '.join(F1.F1Q02_FORBIDDEN_USES)}); {F1.F1Q02_LOCK1}",
+                "f1q02": F1.f1q02_label()})
     return out
 
 
@@ -296,9 +346,19 @@ def build(progress=None):
                            "pinned by a test), deterministic crc32 seeds, n per point = F1-P-12; converged iff unresolved "
                            "fraction <= 1e-3, else MODEL_ERROR (fail closed)",
             "orbit_states": [s.id for s in spec.states],
-            "orbit_state_basis": "RFP band corners 180/230 km x F10.7 70/230 (extremes present in the frozen dataset) plus "
-                                 "the surface build state 200 km / F10.7 150. Local-time states: NOT_IN_FROZEN_DATASET (the "
-                                 "dataset is orbit-averaged over local solar time); live MSIS not used (rule 3)",
+            "orbit_state_basis": f"index 0: design-case reference point {F1.DESIGN_STATE.id} (surface build state, "
+                                 "orbit-averaged atmosphere_msis21_v1); then every required state of the frozen "
+                                 f"design-state set v2 {F1.DESIGN_STATE_SET_ID} (sha256 {F1.DESIGN_STATE_SET_SHA256}): "
+                                 "nominal states and physical extrema of density / composition / temperature / local "
+                                 "time / solar activity of the frozen orbit-resolved dataset (A9.14 S9.8 OD3). No subset; "
+                                 "live MSIS not used (rule 3)",
+            "orbit_basis_label": F1.ORBIT_BASIS_LABEL,
+            "design_state_coverage": F1.SURFACE_COVERAGE_AT_DESIGN_STATES,
+            "design_state_set": F1.design_state_set_record(),
+            "design_states": table([s.record() for s in spec.states if s is not F1.DESIGN_STATE],
+                                   ("state_id", "scenario", "alt_km", "lat_deg", "lst_h", "lon_deg", "doy", "f107",
+                                    "ap", "labels", "evaluation", "interp_max_rel_err_rho",
+                                    "nominal_mission_scenario")),
             "species": list(F1.SPECIES),
             "theta": "0 deg at every state; 5 deg (largest frozen node) at the design state for the off-axis objective",
         },
@@ -398,7 +458,7 @@ def build(progress=None):
              "content": "intake area and geometry rows (VALUE | TOLERANCE | EVIDENCE_CLASS | SOURCE | FREEZE_STATUS): none "
                         "freezable from this lane (alpha, structure, pointing, p_ref TBD)", "status": "PROVIDED"},
         ],
-        "open_owner_questions": [
+        "open_owner_questions": ost.apply_to_questions([
             {"id": "F1Q-01", "question": "IntakeSurface recombines species rows by mass fraction although its C_D rows are "
                                          "normalised by the mixture q and CR_passive needs mole weighting (finding F1-01). "
                                          "Authorise a controlled model change (goldens move, HISTORY entry), or keep the "
@@ -418,7 +478,7 @@ def build(progress=None):
                                          "rebuild) to replace the bounded direct TPMC used here off the build state?",
              "why_new": "feed_state_closure listed FC-07 only as a to-reach-B item; this lane needs it for precision",
              "status": "TBD_OWNER"},
-        ],
+        ]),
         "m16_impact": [
             {"m16_row": 1, "key": "intake", "state_change": "none: design-synthesis screening, no measurement; provides the "
              "Pareto sets as input to the open DI-1.1 / DI-1.2 decisions (blocking item unchanged)"},
@@ -426,7 +486,10 @@ def build(progress=None):
         ],
         "limitations": [
             "single-channel TPMC (no edge / inter-channel effects), fixed T_wall, Maxwell or CLL with alpha_n = alpha_t",
-            "orbit-averaged atmosphere only (no local time, no winds, V_rel = V_orb)",
+            "V_rel = V_orb (inertial circular): Earth co-rotation and thermospheric winds not included (inclination / "
+            "LTAN TBD, A9.21; the design-state set carries no relative velocity)",
+            "the design-state set is a broad envelope (every inclination and LTAN), not a mission orbit: statewise "
+            "results are design-envelope results, never mission-ICD results (" + F1.ORBIT_BASIS_LABEL + ")",
             "off-axis objective evaluated at the design state only; theta > 5 deg not evaluated",
             "K_back unresolved fraction is not returned by intake_response (only the forward trace's)",
             "free-molecular validity inside the plenum is not checked here (p_passive is reported)",
@@ -439,6 +502,9 @@ def build(progress=None):
             "deterministic": True,
         },
         "direct_runs": res["direct_runs"],
+        "orbit_basis_label": F1.ORBIT_BASIS_LABEL,
+        "state_set_history": STATE_SET_HISTORY,
+        "intake_structural_mass_label": F1.f1q02_label(),
     }
     doc["findings"] = summarize(res, spec)
     doc = F1.rnd(doc, 6)
@@ -470,7 +536,33 @@ def render_md(doc) -> str:
     a("")
     a("## Coverage rule")
     for k, v in doc["coverage_rule"].items():
-        a(f"- **{k}**: {v}")
+        if k == "orbit_states":
+            a(f"- **{k}**: {len(v)} states (index 0 `{v[0]}` = design-case reference point; the rest = the required "
+              f"design states, ids in the JSON)")
+        elif k == "design_states":
+            a(f"- **{k}**: {len(v['rows'])} required-state records (scenario, altitude, latitude, local time, longitude, "
+              f"day of year, labels) in the JSON")
+        elif k == "design_state_set":
+            a(f"- **{k}**: `{v['design_state_set_id']}` (`{v['path']}`, sha256 `{v['sha256']}`), "
+              f"{v['n_required_states']} required states ({v['n_nominal_mission_scenario_states']} in the nominal "
+              f"mission scenario {v['nominal_scenario']}); scenarios {v['scenarios']}; altitudes {v['altitudes_km']} km; "
+              f"labels {v['label_counts']}; orbit basis **{v['orbit_basis_label']}**: {v['orbit_basis_note']} "
+              f"Speed: {v['v_rel_basis']}. Composition: {v['composition_basis']}. Subset used: {v['subset_used']} "
+              f"({v['subset_note']}).")
+        else:
+            a(f"- **{k}**: {v}")
+    a("")
+    h = doc["state_set_history"]
+    a("## State-set change (history)")
+    a(f"- Superseded: {h['superseded_state_set']['state_ids']} ({h['superseded_state_set']['basis']}; "
+      f"{h['superseded_state_set']['status']}). Reason: {h['reason']}.")
+    so = h["superseded_output"]
+    a(f"- Superseded output `{so['path']}` at {so['commit']} (sha256 `{so['sha256']}`, {so['direct_runs']} direct runs); "
+      f"feasible candidates of 144 per scenario: design case {so['feasible_of_144_per_scenario']['design_case']}, "
+      f"envelope {so['feasible_of_144_per_scenario']['envelope']}.")
+    lab = doc["intake_structural_mass_label"]
+    a(f"- Intake structural mass label ({lab['authority']}): {lab['label']}, {lab['use']}; never {', '.join(lab['not'])}; "
+      f"{lab['lock1_condition']}.")
     a("")
     a("## Parameters")
     a("| id | name | value | units | evidence class | status | source |")
@@ -515,7 +607,9 @@ def render_md(doc) -> str:
     cal = doc["uncertainty_calibration"]
     a(f"- C_D replicate calibration: rel SD {fmt(cal['rel_sd_max'])} at n = {cal['n_per_run']} ({cal['replicates']} seeds)")
     sr = doc["speed_ratio_bracket_check"]
-    a(f"- Envelope bracket over {sr['n_grid_states']} frozen grid states: {sr['all_bracketed']}")
+    for k, v in sr["quantities"].items():
+        a(f"- {k} over the {sr['n_states']} required design states: {fmt(v['min'])} ({', '.join(v['argmin_labels'])}) "
+          f"to {fmt(v['max'])} ({', '.join(v['argmax_labels'])})")
     a(f"- Direct TPMC runs in this build: {doc['direct_runs']}")
     sw = doc["compressor_burden_sweep"]
     a(f"- Compressor burden sweep p_ref = {sw['p_ref_Pa']} Pa: {sw['rule']}")
@@ -539,7 +633,9 @@ def render_md(doc) -> str:
     for d in doc["interface_demands"]:
         a(f"| {d['id']} | {d['direction']} | {d['counterpart']} | {d['status']} | {d['content']} |")
     a("")
-    a("## Open owner questions (new)")
+    a("## Owner questions raised by this lane")
+    a(f"Status from `{ost.OQ5_REL}` (as raised: TBD_OWNER).")
+    a("")
     for q in doc["open_owner_questions"]:
         a(f"- **{q['id']}** ({q['status']}): {q['question']} _Why new:_ {q['why_new']}.")
     a("")
@@ -595,19 +691,71 @@ def dump(doc) -> str:
     return text
 
 
+def check_core() -> int:
+    """Fast check (no TPMC; A9.22 item 9): the committed core view is the core view of the full output (when the full
+    JSON is present locally), the Markdown renders from the expanded core view, and the evidence-archive manifest agrees
+    with the core view, the full output and the archive (whichever are present locally)."""
+    out = REPO / OUT_DIR_REL
+    ok = True
+    core_txt = (REPO / F1.F1_CORE_REL).read_text()
+    full_p = out / JSON_NAME
+    if full_p.is_file():
+        if F1.core_text_from_full_bytes(full_p.read_bytes()) != core_txt:
+            print(f"MISMATCH {F1.F1_CORE_REL} (not the core view of {OUT_DIR_REL}/{JSON_NAME})", file=sys.stderr)
+            ok = False
+    else:
+        print(f"NOTE {OUT_DIR_REL}/{JSON_NAME} not present locally (archived): core view checked against the "
+              "archive manifest only", file=sys.stderr)
+    if (out / MD_NAME).read_text() != render_md(F1.expand_core(json.loads(core_txt))):
+        print(f"MISMATCH {OUT_DIR_REL}/{MD_NAME} (does not render from the core view)", file=sys.stderr)
+        ok = False
+    spec = importlib.util.spec_from_file_location("_f1_archive", REPO / "scripts/evidence/f1_archive.py")
+    arch = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(arch)
+    ok = (arch.verify() == 0) and ok
+    print("OK" if ok else "FAIL")
+    return 0 if ok else 1
+
+
+def write_core() -> int:
+    """Derive the committed core view from the local full output (no TPMC)."""
+    full_p = REPO / OUT_DIR_REL / JSON_NAME
+    if not full_p.is_file():
+        print(f"REFUSED: {OUT_DIR_REL}/{JSON_NAME} is not present (fetch the evidence archive first)", file=sys.stderr)
+        return 1
+    (REPO / F1.F1_CORE_REL).write_text(F1.core_text_from_full_bytes(full_p.read_bytes()))
+    print(f"wrote {F1.F1_CORE_REL}")
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="A9.7 F1 intake geometry synthesis study builder")
-    ap.add_argument("--check", action="store_true", help="verify the committed outputs are reproduced")
+    ap.add_argument("--check", action="store_true", help="full rebuild (slow); verify the committed core view and "
+                    "Markdown are reproduced (and the full JSON, when present locally)")
+    ap.add_argument("--check-core", action="store_true", help="fast, no TPMC: core view vs local full output, Markdown "
+                    "vs core view, evidence-archive manifest")
+    ap.add_argument("--write-core", action="store_true", help="derive the core view from the local full output")
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args(argv)
+    if args.check_core:
+        return check_core()
+    if args.write_core:
+        return write_core()
     prog = None if args.quiet else (lambda m: print(m, file=sys.stderr, flush=True))
     doc, cpu = build(progress=prog)
     js, md = dump(doc), render_md(doc)
+    core = F1.core_text_from_full_bytes(js.encode())
     out = REPO / OUT_DIR_REL
     print(f"cpu {cpu:.1f} s, direct runs {doc['direct_runs']}", file=sys.stderr)
     if args.check:
         ok = True
-        for name, text in ((JSON_NAME, js), (MD_NAME, md)):
+        targets = [(MD_NAME, md), (Path(F1.F1_CORE_REL).name, core)]
+        if (out / JSON_NAME).is_file():
+            targets.append((JSON_NAME, js))
+        else:
+            print(f"NOTE {OUT_DIR_REL}/{JSON_NAME} not present locally (archived): compared through the core view, "
+                  "whose full_output.sha256 pins the full output", file=sys.stderr)
+        for name, text in targets:
             p = out / name
             if not p.exists() or p.read_text() != text:
                 print(f"MISMATCH {OUT_DIR_REL}/{name}", file=sys.stderr)
@@ -615,9 +763,13 @@ def main(argv=None) -> int:
         print("OK" if ok else "FAIL")
         return 0 if ok else 1
     out.mkdir(parents=True, exist_ok=True)
+    # The full output is written to the working tree for local use and archiving only: it is git-ignored and is never
+    # committed as an ordinary Git blob (A9.22 item 9). A changed full output needs a new evidence archive
+    # (scripts/evidence/f1_archive.py build, new run id) before the core view that pins it is committed.
     (out / JSON_NAME).write_text(js)
     (out / MD_NAME).write_text(md)
-    print(f"wrote {OUT_DIR_REL}/{JSON_NAME}, {MD_NAME}")
+    (REPO / F1.F1_CORE_REL).write_text(core)
+    print(f"wrote {OUT_DIR_REL}/{JSON_NAME} (archive only, not committed), {MD_NAME}, {Path(F1.F1_CORE_REL).name}")
     return 0
 
 

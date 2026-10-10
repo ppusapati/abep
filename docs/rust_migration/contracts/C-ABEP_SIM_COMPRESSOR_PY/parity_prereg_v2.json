@@ -1,0 +1,592 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_COMPRESSOR_PY-V2",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "component": {
+  "inventory_id": "C-ABEP_SIM_COMPRESSOR_PY",
+  "inventory_ids_coupled_group": [
+   "C-ABEP_SIM_COMPRESSOR_PY",
+   "C-ABEP_SIM_DESIGN_COMPRESSOR_SYNTHESIS_PY",
+   "C-ABEP_SIM_ROTOR_STRENGTH_PY"
+  ],
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W2",
+  "scope": "coupled group (one contract, RM-R01): abep_sim/compressor.py DragCompressor (whole class), abep_sim/rotor_strength.py (whole module; the module-global REGISTRY becomes an explicit registry value) and the computational subset of abep_sim/design/compressor_synthesis.py (RM-R17); plus the SC-WP-02 gate 'compressor load (ICD row 22) not supplied -> NOT_EVALUATED' as the compressor slot of the A9-02 ledger (architecture_optimizer.official_ledger compressor branch)",
+  "functions_or_entry_points": [
+   "abep_sim/compressor.py::DragCompressor (fields and defaults, set_rotor_strength_basis, u, u_max_legacy_sensitivity, registered_basis, sizing_mode, u_max, u_max_basis, _cbar, RECIRC_MAX_ITER, RECIRC_RTOL, run, GAEDE_IN_DOMAIN, GAEDE_OUT_OF_DOMAIN, _gaede_record, _gaede_summary, _run_once, rpm_limit, size_for)",
+   "abep_sim/rotor_strength.py::(SIZING_*, Q_*, LEGACY_SENSITIVITY_LABEL, OWNER_DECISION_ID, AllowablePoint, RotorStrengthBasis, basis_problems, allowables_at, REGISTRY / register_basis / unregister_basis / get_registered, REFERENCE_RECORDS, tip_speed_allowable, qualify_rotor)",
+   "abep_sim/design/compressor_synthesis.py::(SPECIES, MODE_*, LABEL_*, INLET_LABELS, ST_*, R_* / REASONS / DOMAIN_REASONS / INLET_INDEPENDENT_REASONS, HUB_* , STRESS_CASE_*, AO_DISPOSITION_KEY, CFRP_EXTRA_BASIS_KEYS, READMITTED_MATERIALS, cited / labelled constants P_MOLECULAR_LIMIT_PA .. A_INLET_MIN_B025_RANGE_M2, CITED_ALLOWABLES_PA, MATERIALS_EXCLUDED, registered_bases_for, material_admission, SEARCHED / DERIVED / FIXED / FROM_INLET, FIELD_ROLES, SynthesisInputError, module_defaults, InletRecord, SearchGrid (tip_speeds, designs), r_turbo_from_area, hub_geometry, rpm_from_tip, strict_blockers, _basis_id, _not_evaluated_status, _positive_finite, stage_trace, drag_knudsen_upper, COEFFICIENT_DOMAIN, validate_coefficient, validate_design, build_compressor, evaluate_design, PRIMARY_OBJECTIVES, SECONDARY_OBJECTIVES, _dominates, pareto_front, is_dominated_by, synthesize, size_for_comparison)",
+   "abep_sim/design/architecture_optimizer.py::official_ledger, compressor slot only (loads['compressor'] branch: P_W / evidence_class / source of the compressor item and the ledger label)"
+  ],
+  "out_of_scope": [
+   "compressor_synthesis.py SOURCES, CITED_VALUES, coefficient_registry, search_variables: citation / documentation records without computation (their values are carried by the committed F3 synthesis record docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json); they stay PYTHON_REFERENCE and are proposed FROZEN_AS_REFERENCE_EVIDENCE at module retirement (ledger decision, not taken here)",
+   "the rest of architecture_optimizer.official_ledger (every other slot, front end, P_bus, efficiencies): SC-WP-10 power ledger, not this work package",
+   "abep_sim/materials.py DB: C-ABEP_SIM_MATERIALS_PY belongs to SC-WP-12; abep-gaspath takes the rotor material properties it uses (density, yield_MPa, T_max_K) as explicit plain-data inputs; the harness passes the Python materials.DB values verbatim (INV-C-05)",
+   "docs/design_synthesis/f3_compressor/build_f3_compressor.py and the HISTORICAL compressor down-select (docs/architecture_comparison/compressor_downselect/, A9.28 RETIRE_FROM_ACTIVE_GRAPH): not ported",
+   "abep_sim/compressor_transitional.py (CANDIDATE_NOT_ADMITTED; section E): not ported, never consumed"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE (K-GASPATH: NOT_EXTRACTED_NO_ACTIVE_CONSUMER, docs/rust_migration/contracts/K-GASPATH/extraction_decision_v1.json)",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "abep_sim/system.py card closure / evaluate() / engineering_physics branch and its hall_1stage card, Xe cathode and p_min_Pa default (SC-WP-02 excluded_legacy_not_ported)",
+   "compressor down-select (HISTORICAL, A9.28)"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-02 (element 'compressor (DragCompressor, F3 synthesis, rotor strength, extracted K-GASPATH)')",
+  "owner_disposition_a9_29": "NOT_APPLICABLE"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this version (lane B3, ES-3, SC-WP-02). The registration commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_COMPRESSOR_PY/parity_prereg_v1.json",
+  "sha256": "454bc47c2dbd5adf72d29ac0eccad8a32f68be93d67bdd430368908922376020",
+  "reason": "v1 (docs/rust_migration/contracts/C-ABEP_SIM_COMPRESSOR_PY/parity_report_v1.json) is NOT_ADMITTED: its single scoring execution (seed 731905302) aborted when the Rust CLI panicked in rotor_strength::basis_problems on a registered C03 mutation with a NaN allowable temperature (RUST_DEFECT). no_retuning follow-up: the code fix (commit c3a41fb) plus this version with fresh scoring seeds. Nothing scored is changed: observables, tolerances, generators, n, invariants, conservation checks and decision rules are those of v1; the only text corrections are the version-bound fields (id, seeds, report and reference-output paths) and the erratum 'all 30 dataclass fields' -> 'all 27 dataclass fields' (DragCompressor has 27 dataclass fields; the vectors always carried all of them)"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "lane": {
+  "id": "B3",
+  "execution_step": "ES-3",
+  "work_package": "SC-WP-02",
+  "branch": "lane-es3-gaspath",
+  "base_commit": "e3b7e6712d106b36dedec1115d9570e2be28f458",
+  "authority": "A9.29 secs. 13-15 (Lane B: ES-2 then ES-3); simulation_completion_programme_v1_1.json SC-WP-02 and first_execution_sequence ES-3"
+ },
+ "reference_implementation": {
+  "python_commit": "e3b7e6712d106b36dedec1115d9570e2be28f458",
+  "python_commit_note": "the pushed integration/simulation-complete head at lane start; the bid record 5eee4b8 / 2de86ab is never a reference commit for new work",
+  "files": [
+   {
+    "path": "abep_sim/compressor.py",
+    "sha256_at_registration": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75"
+   },
+   {
+    "path": "abep_sim/design/compressor_synthesis.py",
+    "sha256_at_registration": "b7b9ffd9f62e0343c7d4a7297c5106a5dcb70d7d9cbaef3ce96a4ce8f7894b7e"
+   },
+   {
+    "path": "abep_sim/rotor_strength.py",
+    "sha256_at_registration": "59f7ba95bf5d4268b184304defddb36bbfca219c79a0cc8fde91e5031bc61d9b"
+   },
+   {
+    "path": "abep_sim/constants.py",
+    "sha256_at_registration": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+   },
+   {
+    "path": "abep_sim/materials.py",
+    "sha256_at_registration": "08e2ddddfc9380780e71bc15957fa82a9e879fc36046c266c669b037c2194feb"
+   },
+   {
+    "path": "abep_sim/design/upstream_a9_13.py",
+    "sha256_at_registration": "384b24086c1cc779707d7cb958b9ccd8cb58edf337d629727d923ab659a30af5"
+   },
+   {
+    "path": "abep_sim/design/a9_19_architecture.py",
+    "sha256_at_registration": "8a4ccfb00fc2bb5a9f00b8a405e9c816e2d025d6d91c8bbef25f50300d4d226b"
+   },
+   {
+    "path": "abep_sim/design/architecture_optimizer.py",
+    "sha256_at_registration": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af"
+   },
+   {
+    "path": "abep_sim/bus_boundary_a9_v2.py",
+    "sha256_at_registration": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26"
+   }
+  ],
+  "files_note": "upstream_a9_13.py / a9_19_architecture.py: imported by compressor_synthesis (NOT_EVALUATED_OOD, DOMAIN_IN, classify_pressure_target, TRANSITIONAL_MODEL); architecture_optimizer.py / bus_boundary_a9_v2.py: the compressor slot of official_ledger (entry C22) only; materials.py: the DB values passed as explicit inputs",
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "scipy-openblas bundled with numpy (DYNAMIC_ARCH, USE64BITINT)",
+   "numpy_simd": "baseline X86_V2; AVX512 dispatch enabled on the registration host (Intel Xeon @ 2.10GHz): numpy float64 exp / log / sin / power on arrays may run SIMD loops, not glibc libm (ulp-level differences from the Rust libm calls are possible on the numpy paths only)",
+   "thread_env": {
+    "OMP_NUM_THREADS": "1 (set by the harness for every reference run)",
+    "OPENBLAS_NUM_THREADS": "1 (set by the harness for every reference run)"
+   },
+   "recorded_again_at_scoring": "python / numpy / scipy / pandas versions, numpy SIMD dispatch, CPU model and thread env are re-read and written into the report; a version change is INPUT_MISMATCH (not a verdict)"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-gaspath (flight-runtime physics crate; depends on abep-types and abep-provenance only)",
+  "functions_or_entry_points": [
+   "abep_gaspath::compressor::DragCompressor (run, size_for, rpm_limit, u_max, sizing_mode, ...)",
+   "abep_gaspath::rotor_strength::{RotorStrengthBasis, AllowablePoint, Registry, basis_problems, allowables_at, tip_speed_allowable, qualify_rotor, REFERENCE_RECORDS}",
+   "abep_gaspath::compressor_synthesis::{InletRecord, SearchGrid, material_admission, strict_blockers, validate_coefficient, validate_design, build_compressor, evaluate_design, stage_trace, drag_knudsen_upper, pareto_front, synthesize, size_for_comparison, compressor_ledger_slot}",
+   "abep_gaspath::materials::MaterialsView (explicit materials.DB inputs)",
+   "CLI: abep-gaspath-parity entries compressor.*"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml channel 1.94.1)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/src/**",
+   "crates/abep-provenance/src/**",
+   "crates/abep-gaspath/Cargo.toml",
+   "crates/abep-gaspath/src/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it (A9.14 S10.4 RUSTCI-1, generalised)"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE: architecture-independent gas-path physics of the selected hall_icp_neutralizer AIR_PRIMARY upstream chain (no architecture record is read)",
+  "model_set_hash": "NOT_APPLICABLE: no model-set entry is read by the scored functions",
+  "design_state_set_hash": "NOT_APPLICABLE unless stated in pinned_inputs_sha256",
+  "rule": "both implementations must report these exact values for every run; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/compressor.py": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75",
+  "abep_sim/design/compressor_synthesis.py": "b7b9ffd9f62e0343c7d4a7297c5106a5dcb70d7d9cbaef3ce96a4ce8f7894b7e",
+  "abep_sim/rotor_strength.py": "59f7ba95bf5d4268b184304defddb36bbfca219c79a0cc8fde91e5031bc61d9b",
+  "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+  "abep_sim/materials.py": "08e2ddddfc9380780e71bc15957fa82a9e879fc36046c266c669b037c2194feb",
+  "abep_sim/design/upstream_a9_13.py": "384b24086c1cc779707d7cb958b9ccd8cb58edf337d629727d923ab659a30af5",
+  "abep_sim/design/a9_19_architecture.py": "8a4ccfb00fc2bb5a9f00b8a405e9c816e2d025d6d91c8bbef25f50300d4d226b",
+  "abep_sim/design/architecture_optimizer.py": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af",
+  "abep_sim/bus_boundary_a9_v2.py": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26",
+  "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a"
+ },
+ "frozen_data_read_only": [
+  "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json (read by the Python official_ledger only, entry C22; never written)"
+ ],
+ "inputs": {
+  "harness": "scripts/rust_migration/es3_gaspath_parity.py (contract key 'compressor', CONTRACT_VERSION 2); committed after this contract and before the scoring run",
+  "transport": "one JSON request per vector {id, entry, args}; every request carries 'materials' = {name: {density, yield_MPa, T_max_K}} copied from the Python materials.DB and 'registry' = the list of registered rotor-strength bases of that vector (the harness registers the same records with rotor_strength.register_basis before the Python call and unregisters them after it)",
+  "spec_formats": {
+   "coeffs": "a full DragCompressor field dict (all 27 dataclass fields) plus rotor_strength_basis_id and rotor_stock_thickness_m",
+   "basis": "the RotorStrengthBasis fields; allowables = [[T_K, Fty_Pa, Ftu_Pa], ...]; section_thickness_range_m = [min, max]",
+   "inlet": "the InletRecord fields",
+   "design": "a design dict as SearchGrid.designs() produces it (optionally with rotor_strength_basis_id, rotor_stock_thickness_m, material_extra_basis)",
+   "coefficient_evidence": "null or {field: {value, evidence_class, source}, rotor_density: {...}, rotor_strength_basis_id: {value}, material_extra_basis: {...}}"
+  },
+  "golden_vectors": {
+   "source": "module defaults and the default search grid",
+   "count": "C01 1 + C19 4 + C21 1",
+   "list_or_generator": "C01: DragCompressor() defaults at p_in 0.01 Pa, mdot {O 4e-7, N2 3e-7, O2 2e-8} kg/s; C19: synthesize() with the default SearchGrid (2160 designs) in MODE_PARAMETRIC for four inlet records (p_total 0.001 / 0.01 / 0.05 / 0.2 Pa, T 350 K, mdot as C01 times 1 / 2 / 5 / 10) and once in MODE_STRICT (refusal); C21: module defaults, FIELD_ROLES, COEFFICIENT_DOMAIN, the reason vocabularies and every listed constant (EXACT_VALUE)"
+  },
+  "edge_cases": [
+   {
+    "id": "E-C-01",
+    "inputs": "C01 rotor_material 'Unobtainium' (not in materials.DB)",
+    "note": "KeyError (DB lookup)"
+   },
+   {
+    "id": "E-C-02",
+    "inputs": "C01 p_in 1e-6 Pa with mdot 1e-5 kg/s per species",
+    "note": "throughput above every stage capacity: OUT_OF_MODEL_DOMAIN_STAGE_CAPACITY with clipped diagnostics"
+   },
+   {
+    "id": "E-C-03",
+    "inputs": "C01 / C15 turbo_kK 1e3 at the default rpm",
+    "note": "math.exp overflow: OverflowError (run) / R_MODEL with the exception text (evaluate_design)"
+   },
+   {
+    "id": "E-C-04",
+    "inputs": "C06 qualify_rotor with tip speed NaN, -1, rpm NaN, T NaN, T above the design temperature, stock thickness null / 0 / outside the section range, material mismatch, unregistered id, null id",
+    "note": "NOT_EVALUATED_MATERIAL_BASIS / NOT_EVALUATED_OUT_OF_DOMAIN with the reasons (never PASS)"
+   },
+   {
+    "id": "E-C-05",
+    "inputs": "C07 register_basis of an incomplete record and of a duplicate id",
+    "note": "ValueError"
+   },
+   {
+    "id": "E-C-06",
+    "inputs": "C09 InletRecord refusals: label, species set, negative / NaN flow, zero total, p_total 0, T NaN, evidence_class, blank source, p_species not summing, p_species off the number-flow convention",
+    "note": "SynthesisInputError"
+   },
+   {
+    "id": "E-C-07",
+    "inputs": "C10 SearchGrid refusals: material Al6061 without a registered basis, hub ratio 1.0, n_tip_speeds 1, a_turbo 0",
+    "note": "SynthesisInputError"
+   },
+   {
+    "id": "E-C-08",
+    "inputs": "C13 validate_coefficient for every FIXED field with 0, -1, NaN, inf, 1.5, True, and a SEARCHED field name; validate_design with rpm 0, A_turbo NaN, R_turbo -1, N_turbo 1.5 / -1 / True, unknown material, hub 1.0, R_turbo inconsistent with A_turbo and hub",
+    "note": "SynthesisInputError"
+   },
+   {
+    "id": "E-C-09",
+    "inputs": "C12 material_admission('Unobtainium'); C15 / C19 mode 'turbo'",
+    "note": "SynthesisInputError"
+   }
+  ],
+  "randomized_domain": {
+   "count": "C01 300; C02 24; C03 200; C04 100; C05 60; C06 300; C09 100; C10 20; C11 100; C12 all DB keys x 3 registries x 3 extras; C13 100 valid designs; C14 60; C15 400; C16 100; C17 100; C18 50; C19 2 small grids; C20 4; C22 11",
+   "draw": "one numpy Generator per entry, default_rng(SeedSequence([master, entry_index])), entry_index = the number of the C-entry. coeffs: module defaults, then turbo_rows randint 1..6 (0 w.p. 0.05), turbo_area U(0.05, 0.5) m^2, hub ratio uniform over HUB_RATIO_PARAMETRIC and turbo_radius = sqrt(A / (pi (1 - nu^2))), n_stages randint 0..4, rotor_radius U(0.03, 0.1) m, rpm U(5e3, 9e4), h_mm U(1, 5), w_mm U(5, 20), L U(0.1, 0.5) m, xi U(0.3, 0.9), rotor_material Ti6Al4V 0.7 / Al6061 0.1 / CFRP 0.1 / SS316 0.1, T_gas U(250, 450) K, leak U(0, 5e-4) m^3/s, k_bear U(0, 1e-3), eta_motor U(0.5, 0.95), P_ctrl U(0, 20) W; every other FIXED field kept w.p. 0.5 else multiplied by U(0.8, 1.2) (fractions clipped to <= 1). mdot per species 10**U(-8, -5) kg/s; p_in 10**U(-4, -0.5) Pa. Synthetic basis 'SYN-BASIS-TI' (Ti6Al4V; 2 or 3 allowable points, T increasing in [250, 800] K, Fty U(5e8, 9e8) Pa, Ftu = Fty U(1, 1.2), design temperature inside the table, factors U(1, 2), max speed U(2e4, 1e5) rpm, density U(4000, 4600), section (0.01, 0.2) m, proof-spin text, source / registration texts 'SYNTHETIC_PARITY_VECTOR_NOT_EVIDENCE') registered w.p. 0.3; compressor basis id null 0.4 / 'SYN-BASIS-TI' 0.5 (when registered, else null) / 'UNREGISTERED-ID' 0.1; stock thickness U(0.005, 0.25) m w.p. 0.7 else null. C01 self_consistent w.p. 0.85. C02: CR_target 10**U(0.5, 3), rpm_max U(2e4, 9e4), max_turbo_rows randint 1..6, max_drag_stages randint 0..4, p_in 10**U(-4, -1.5). C03: the synthetic basis with one field mutated w.p. 0.8 (blank text, non-positive / NaN number, factor < 1, Fty > Ftu, unsorted or duplicate temperatures, design temperature outside the table, missing proof spin with or without a reason, malformed section range, empty allowables). C04: T in [T_min - 50, T_max + 50] (and every table point). C06: registry / id / material / tip speed U(0, 600) / rpm U(0, 1.2e5) / T U(200, 900) / stock as above. C15: design = a random member of the default SearchGrid designs w.p. 0.6, else a random design (N_turbo randint 1..6, A_turbo U(0.05, 0.5), hub ratio from HUB_RATIO_PARAMETRIC, u tip U(50, 600), N_drag randint 0..4, material Ti6Al4V 0.85 / Al6061 / CFRP / SS316 0.05 each); inlet mdot 10**U(-8, -5.5) per species, p_total 10**U(-4, -0.3) Pa, T U(250, 450), label PARAMETRIC_SENSITIVITY 0.8 / F1_F2_INTERFACE_RECORD 0.2, evidence_class assumed 0.7 / model-derived 0.3; mode parametric 0.85 / strict 0.15; coefficient_evidence null 0.6, else 1-4 FIXED fields with valid values and class measured, rotor_density, the registered basis id and / or material_extra_basis; design rotor_stock_thickness_m w.p. 0.3. C16 / C17 / C18 / C20 / C22: as the entry definitions in the harness, drawn from the same generator",
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim; the synthetic rotor-strength basis is test data labelled SYNTHETIC_PARITY_VECTOR_NOT_EVIDENCE and is never written into a repository registry"
+  },
+  "vector_totals": {
+   "C01 run": "300 + 3",
+   "C02 size_for": 24,
+   "C03 basis_problems": 200,
+   "C04 allowables_at": 100,
+   "C05 tip_speed_allowable": 60,
+   "C06 qualify_rotor": "300 + 10",
+   "C07 register_basis": 4,
+   "C09 inlet_record": "100 + 11",
+   "C10 search_grid": "1 + 20 + 4",
+   "C11 geometry": 100,
+   "C12 material_admission": "18 x 9 + 1",
+   "C13 validate": "100 valid designs + 20 FIXED fields x 6 values + 1 SEARCHED name + 9 design edges",
+   "C14 strict_blockers": 60,
+   "C15 evaluate_design": "400 + 2",
+   "C16 stage_trace": 100,
+   "C17 drag_knudsen": 100,
+   "C18 pareto_front": 50,
+   "C19 synthesize": "4 + 1 + 2",
+   "C20 size_for_comparison": 4,
+   "C21 constants": 1,
+   "C22 compressor_ledger_slot": 11
+  }
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 731905312,
+  "development_master_seed": 731905412,
+  "derivation": "numpy.random.default_rng(numpy.random.SeedSequence([master, entry_index]))",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: no design / UQ sampling in the scored functions",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: no TPMC call (intake outputs enter as explicit plain-data inputs)",
+   "other_streams": "NOT_APPLICABLE: neither implementation draws random numbers; the harness draws the input vectors once (numpy default_rng) and passes identical float values (JSON shortest round-trip repr) to both implementations",
+   "migration_parity_dataset": "seeds, draw order and captured reference outputs stay exactly reproducible (immutable)",
+   "after_rust_authority": "not applicable (no RNG in the component)"
+  },
+  "development_rule": "development comparisons use development_master_seed only and are never scored or reported as a verdict; the single execution with scoring_master_seed is recorded in campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "rule": "every entry compares the full JSON record of the Python result recursively; floats computed by the component are scored by the entry's float class, every other leaf EXACT_VALUE; a refused call compares the exception class (EXACT_VALUE) and reports the message (not scored); evaluate_design diagnostics.exception ('<class>: <message>') is EXACT_VALUE",
+  "closed_form (C03-C07, C09-C14, C16-C18, C21, C22)": {
+   "list": [
+    {
+     "name": "every computed float",
+     "units": "SI",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": {
+      "k_ulp": 4,
+      "r_rel": 1e-12
+     },
+     "definition": "closed-form evaluations (no iteration)"
+    }
+   ]
+  },
+  "iterative (C01 run, C02 size_for, C15 evaluate_design, C19 synthesize, C20 size_for_comparison)": {
+   "list": [
+    {
+     "name": "converged / solver_status / gaede_status / statuses / reasons / ids / pareto ids / counts",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "fixed-point convergence (G-03) and every gate"
+    },
+    {
+     "name": "iterations",
+     "units": "-",
+     "tolerance_class": "SOLVER_TOLERANCE",
+     "tolerance": "reported, not scored",
+     "definition": "machine evaluations of the recirculation fixed point"
+    },
+    {
+     "name": "every computed float",
+     "units": "SI",
+     "tolerance_class": "SOLVER_TOLERANCE",
+     "tolerance": {
+      "abs_tol": "0, except: leak / recirculated / delivered kg/s maps 1e-12 x the vector's total inlet mass flow; residual (dimensionless) 1e-12; recirculation_frac 1e-12",
+      "rel_tol": 1e-10,
+      "k_ulp": 4
+     },
+     "definition": "the identical damped fixed-point iteration (same update, damping 0.5, stopping test and iteration cap): iterates agree to rounding, so the solution bound is rounding-level, far below the solver's own RECIRC_RTOL 1e-4"
+    }
+   ]
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "not used",
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, reasons, ids, error classes, None / null, list lengths and orders, dict key SETS (Python dict insertion order carries no meaning in these records and is not compared), and floats that are copied (not computed): equal (floats by value, -0.0 == 0.0; non-finite floats are transported as the strings 'NaN', '+inf', '-inf' and compared as strings)",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp * ulp(py) OR |rust - py| <= r_rel * |py| OR |rust - py| <= a_abs, k_ulp / r_rel / a_abs fixed per observable group below (an absent clause is not applied); relative clause scaled by |py| (not max(1, |py|)): the observables span 1e-30 .. 1e9. ulp(py) = math.ulp(py)",
+  "SOLVER_TOLERANCE": "convergence / solver status EXACT_VALUE; solution |rust - py| <= abs_tol + rel_tol * |py| with abs_tol / rel_tol fixed per entry below and tied to the solver's own tolerance; iteration and function-evaluation counts reported, not scored",
+  "STATISTICAL": "not used (deterministic components)",
+  "EXACT_STREAM": "not used (no RNG in either implementation)"
+ },
+ "tolerance_basis": {
+  "independence": "fixed before any comparison",
+  "registered": "DragCompressor, rotor_strength and compressor_synthesis evaluate Python floats only (no numpy); the Rust port repeats every operation in the reference order with the same libm calls (exp, sqrt, pow) and the same Python exception semantics (ZeroDivisionError on a zero divisor, OverflowError on exp overflow, ValueError on a sqrt domain error), so bit-identical results are expected. k_ulp 4 / r_rel 1e-12 (closed form) and r_rel 1e-10 (40 fixed-point iterations, 60-step searches) bound a few-ulp libm difference amplified through the Gaede cascade"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-C-01",
+   "statement": "determinism: two Rust CLI runs over the full vector set give byte-identical stdout; the Python reference evaluated twice gives equal records",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-C-02",
+   "statement": "with an empty registry every rotor result is NOT_EVALUATED_MATERIAL_BASIS, rotor_ok false, sizing_mode PARAMETRIC_SENSITIVITY (A9.9 S2.3 / MCC-03); PASS is reachable only through a registered basis (synthetic in this campaign)",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-C-03",
+   "statement": "Rust status -> EvalStatus mapping (Rust unit tests; the reference has no EvalStatus): evaluate_design / synthesize NOT_EVALUATED and NOT_EVALUATED_MATERIAL_BASIS -> NOT_EVALUATED (the SC-WP-02 gate 'F3 coefficients code-default / rotor basis not registered'); NOT_EVALUATED_OUT_OF_DOMAIN -> OUT_OF_DOMAIN; REJECTED with R_MODEL or R_NONCONV -> MODEL_ERROR, other REJECTED and FEASIBLE_* -> EVALUATED; run MODEL_NOT_CONVERGED -> MODEL_ERROR; gaede OUT_OF_MODEL_DOMAIN_STAGE_CAPACITY -> OUT_OF_DOMAIN; qualify_rotor NOT_EVALUATED_MATERIAL_BASIS -> NOT_EVALUATED, NOT_EVALUATED_OUT_OF_DOMAIN -> OUT_OF_DOMAIN; the compressor ledger slot is NOT_EVALUATED (row 22 not supplied; a model-derived draw is a PARAMETRIC_SENSITIVITY ledger, never the official one)",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-C-04",
+   "statement": "MODE_STRICT refuses on the code defaults (NOT_EVALUATED_MATERIAL_BASIS with the full blocker list) and never returns outputs",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-C-05",
+   "statement": "the materials values sent to Rust equal materials.DB at python_commit (EXACT_VALUE, checked by the harness before each campaign)",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": true,
+  "checks": [
+   {
+    "id": "CONS-C-01",
+    "statement": "compressor mass balance: in steady state the delivered flow equals the captured inflow per species (run()['delivered_kgps'] == mdot_species) and the recirculated flow is internal (CLAUDE.md rule 4)",
+    "evaluated_on": "Rust outputs of every self-consistent C01 vector (Python recorded)",
+    "tolerance": "exact equality (copied values)"
+   },
+   {
+    "id": "CONS-C-02",
+    "statement": "power balance of the drive: P_el = (P_gas + P_bear) / eta_motor + P_ctrl and torque * omega = P_gas + P_bear",
+    "evaluated_on": "Rust outputs of every C01 vector",
+    "tolerance": "|residual| <= 1e-12 * P_el"
+   },
+   {
+    "id": "CONS-C-03",
+    "statement": "architecture energy ledger residual < 2 %",
+    "evaluated_on": "NOT_APPLICABLE",
+    "tolerance": "NOT_APPLICABLE: component level"
+   }
+  ]
+ },
+ "domain_and_error_parity": {
+  "cases": [
+   {
+    "id": "DE-C-01",
+    "inputs": "E-C-01",
+    "expected_python": "KeyError",
+    "expected_rust": "class KeyError",
+    "message_key": "material"
+   },
+   {
+    "id": "DE-C-02",
+    "inputs": "E-C-03 run",
+    "expected_python": "OverflowError (math range error)",
+    "expected_rust": "class OverflowError",
+    "message_key": "math range error"
+   },
+   {
+    "id": "DE-C-03",
+    "inputs": "E-C-05",
+    "expected_python": "ValueError",
+    "expected_rust": "class ValueError",
+    "message_key": "incomplete / already registered"
+   },
+   {
+    "id": "DE-C-04",
+    "inputs": "E-C-06 .. E-C-09",
+    "expected_python": "SynthesisInputError",
+    "expected_rust": "class SynthesisInputError",
+    "message_key": "reported, not scored"
+   },
+   {
+    "id": "DE-C-05",
+    "inputs": "a zero divisor reached by a reference expression (e.g. omega = 0)",
+    "expected_python": "ZeroDivisionError (float division by zero)",
+    "expected_rust": "class ZeroDivisionError",
+    "message_key": "float division by zero"
+   }
+  ],
+  "mapping": {
+   "SynthesisInputError": "OUT_OF_DOMAIN",
+   "ValueError": "OUT_OF_DOMAIN",
+   "KeyError": "OUT_OF_DOMAIN",
+   "OverflowError": "MODEL_ERROR",
+   "ZeroDivisionError": "MODEL_ERROR"
+  },
+  "mapping_rule": "every Python exception class maps to exactly one Rust error class (GasPathError.class carries the Python class name) and one EvalStatus; no Rust path may return a value where Python fails, or fail where Python returns (CLAUDE.md rule 3)",
+  "documented_divergence": [
+   {
+    "id": "DIV-C-01",
+    "statement": "the module-global rotor_strength.REGISTRY becomes an explicit Registry value passed to the Rust functions (no global mutable state); the registered set of every vector is identical in both implementations",
+    "disposition": "API shape only; outputs compared unchanged"
+   },
+   {
+    "id": "DIV-C-02",
+    "statement": "materials.DB values enter the Rust functions as explicit MaterialsView data until C-ABEP_SIM_MATERIALS_PY is admitted (SC-WP-12)",
+    "disposition": "API shape only; INV-C-05"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE: the records have no JSON schema file; the Python dict layout is the schema"
+  ],
+  "rules": [
+   "field names identical, dict key sets identical, list order identical",
+   "labels (PARAMETRIC_SENSITIVITY, LEGACY_CONSERVATIVE_SENSITIVITY, NOT_EVALUATED_MATERIAL_BASIS, OFFICIAL_A9_02_STATE) identical"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "abep_sim/compressor.py / design/compressor_synthesis.py / rotor_strength.py at python_commit"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11); a disagreement is investigated and classified (RUST_DEFECT | PYTHON_REFERENCE_DEFECT (own governance, new contract version) | CONTRACT_DEFECT (new contract version))",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_COMPRESSOR_PY/reference_outputs_v2/",
+   "captured_at_python_commit": "e3b7e6712d106b36dedec1115d9570e2be28f458",
+   "sha256_manifest": "reference_outputs_v2/MANIFEST.json, written by the scoring run",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: the golden_v2 gas_path case (DragCompressor.size_for through the class-H closure) is historical and not used"
+ },
+ "julia_bridge": {
+  "applicable": false,
+  "reason": "no HallThruster.jl path",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (recorded; not used)"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-C-01",
+    "description": "synthesize() with the default grid (2160 designs) for one inlet record (the F3 study inner loop)"
+   },
+   {
+    "id": "PERF-C-02",
+    "description": "the 24 C02 size_for vectors (PRE_RUST rank 6 compressor_size_for is the same search)"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation of 3 repeats in one session on one machine; speed-up = median_python / median_rust; the Rust figure is one CLI process including JSON parsing",
+  "machine_manifest": "recorded in the report (CPU, OS, toolchains, thread env)"
+ },
+ "decision_rules": {
+  "aggregate": "NOT_APPLICABLE (no STATISTICAL entry point)",
+  "exact_invariants_required": true,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "parity_vocabulary": [
+   "PARITY_PASS",
+   "PARITY_FAIL"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for the registered functions (within the registered domain); new production results for them come from Rust and carry implementation = rust, rust_commit and this contract id; the Python functions may then be retired from active execution. It is NOT physics validation.",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to retained selected-architecture physics; an observable that depends on an excluded legacy path is not registered (RM-R20)",
+  "scoring_once": "the scoring comparison runs once (scoring_master_seed); the harness refuses a second scoring run when parity_report_v2.json exists; development runs (development_master_seed) never write a report into the contract directory",
+  "per_test": "every scored leaf of every vector meets its tolerance class; every refusal has the same exception class in both implementations",
+  "conservation_required": true,
+  "verdict": "ADMITTED iff every per-test, invariant (INV-C-01, -02, -04, -05 compared; INV-C-03 by Rust tests), conservation, domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED, PARITY_FAIL <=> NOT_ADMITTED"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): every PARAMETRIC_SENSITIVITY / PLACEHOLDER / TBD label of the reference is reproduced, never upgraded",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)",
+  "not a rotor qualification: no rotor-strength basis is registered in the repository; the synthetic basis of this campaign is test data that exercises the registered-basis code path only"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_COMPRESSOR_PY/parity_report_v2.json (+ .md)",
+  "runner": "scripts/rust_migration/es3_gaspath_parity.py score compressor (CONTRACT_VERSION 2)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "aggregates",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS for every inventory id of the group (inventory v3.1 rows, classification_confidence_v3_1 PLAN_APPROVED_A9_29)",
+   "no observable, input or code path of the contract belongs to the excluded legacy vocabulary (LaB6Cathode, lab6_xe, Xe hollow-cathode heater / keeper, C1 flight fallback, hollow-cathode Hall cards, multi-family selection); the components have no not_ported_parts in the inventory",
+   "the Python harness traverses no legacy path to reach the scored functions (no abep_sim.system / archengine / Config card import)",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract: abep-gaspath is a flight-runtime crate and does not depend on abep-groundtest (cargo metadata check of abep-ci)"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {
+    "id": "F3-CODE-DEFAULTS",
+    "value": "DragCompressor dataclass defaults (FIXED_CODE_DEFAULT_UNCITED)",
+    "value_status": "assumed (compressor_downselect CD-01)",
+    "open_action": "compressor_downselect T-1..T-9",
+    "committed_labels": [
+     "PARAMETRIC_SENSITIVITY",
+     "FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS"
+    ]
+   },
+   {
+    "id": "P-OWNER-MASS-ALLOCATION",
+    "value": 5.5,
+    "value_status": "OWNER_ALLOCATION (not a CBE)",
+    "open_action": "none (allocation)",
+    "committed_labels": [
+     "mass_allocation_margin_kg"
+    ]
+   },
+   {
+    "id": "LEGACY-STRESS-CASE",
+    "value": "827 MPa x 2.0 thin-ring case",
+    "value_status": "LEGACY_PARAMETRIC_SENSITIVITY",
+    "open_action": "registered rotor-strength basis (A9.9 S2.3)",
+    "committed_labels": [
+     "LEGACY_CONSERVATIVE_SENSITIVITY: ..."
+    ]
+   }
+  ],
+  "check": "VS-C-01: the labels above are reproduced EXACT_VALUE in every record; no record is labelled FEASIBLE_UNDER_SUPPLIED_EVIDENCE without a registered basis and non-assumed evidence"
+ },
+ "new_physics_verification": {
+  "applies_when": "contract_kind = NEW_PHYSICS (otherwise NOT_APPLICABLE)",
+  "status": "NOT_APPLICABLE",
+  "reason": "EXISTING_PHYSICS_PARITY contract"
+ }
+}

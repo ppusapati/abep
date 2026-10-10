@@ -1,0 +1,81 @@
+{
+  "before": {
+    "timestamp": "2026-10-01T18:39:42.588912+05:30",
+    "cpu": {
+      "model": "11th Gen Intel(R) Core(TM) i7-11700K @ 3.60GHz",
+      "physical_cores": "8",
+      "logical_cores": "16",
+      "windows_cpu_load_percent": "7"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.29671-SP0",
+      "machine": "AMD64",
+      "release": "11",
+      "version": "10.0.29671"
+    },
+    "python": {
+      "version": "3.13.14",
+      "implementation": "CPython",
+      "executable": "D:\\Company\\Vyovrinda\\DRDO RFP\\2026_DRDO_788433_1\\brain stroming\\simulation code\\V2.5\\abep_repo\\abep-perf-baseline\\.venv\\Scripts\\python.exe"
+    },
+    "packages": {
+      "numpy": "2.4.4",
+      "scipy": "1.17.1"
+    },
+    "blas": {
+      "numpy": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-kstykkss/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/include\n    lib directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-kstykkss/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.31.188.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=24\n    pc file directory: D:/a/numpy-release/numpy-release/.openblas\n    version: 0.3.31.188.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-kstykkss/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/include\n    lib directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-kstykkss/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.31.188.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=24\n    pc file directory: D:/a/numpy-release/numpy-release/.openblas\n    version: 0.3.31.188.0\nCompilers:\n  c:\n    commands: cl\n    linker: link\n    name: msvc\n    version: 19.44.35225\n  c++:\n    commands: cl\n    linker: link\n    name: msvc\n    version: 19.44.35225\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.4\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: windows\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: windows\nPython Information:\n  path: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\build-env-xd03mtse\\Scripts\\python.exe\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3",
+      "scipy": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    has ilp64: false\n    include directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-z3menilo/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas32/include\n    lib directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-z3menilo/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas32/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.30 DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=24\n    pc file directory: D:/a/scipy/scipy\n    version: 0.3.30\n  lapack:\n    detection method: pkgconfig\n    found: true\n    has ilp64: false\n    include directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-z3menilo/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas32/include\n    lib directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-z3menilo/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas32/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.30 DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=24\n    pc file directory: D:/a/scipy/scipy\n    version: 0.3.30\n  pybind11:\n    detection method: config-tool\n    include directory: unknown\n    name: pybind11\n    version: 3.0.2\nCompilers:\n  c:\n    commands: C:\\Strawberry\\c\\bin\\ccache.EXE, cc\n    linker: ld.bfd\n    name: gcc\n    version: 10.3.0\n  c++:\n    commands: C:\\Strawberry\\c\\bin\\ccache.EXE, c++\n    linker: ld.bfd\n    name: gcc\n    version: 10.3.0\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.4\n  fortran:\n    commands: gfortran\n    linker: ld.bfd\n    name: gcc\n    version: 10.3.0\n  pythran:\n    include directory: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\build-env-o4e7s25s\\Lib\\site-packages/pythran\n    version: 0.18.1\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: windows\n  cross-compiled: false\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: windows\nPython Information:\n  path: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\build-env-o4e7s25s\\Scripts\\python.exe\n  version: '3.13'"
+    },
+    "thread_env": {
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    },
+    "load_average_1_5_15": [
+      -1.0,
+      -1.0,
+      -1.0
+    ],
+    "load_average_note": "OS 1/5/15-minute load averages"
+  },
+  "after": {
+    "timestamp": "2026-10-01T18:51:14.999100+05:30",
+    "cpu": {
+      "model": "11th Gen Intel(R) Core(TM) i7-11700K @ 3.60GHz",
+      "physical_cores": "8",
+      "logical_cores": "16",
+      "windows_cpu_load_percent": "1"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.29671-SP0",
+      "machine": "AMD64",
+      "release": "11",
+      "version": "10.0.29671"
+    },
+    "python": {
+      "version": "3.13.14",
+      "implementation": "CPython",
+      "executable": "D:\\Company\\Vyovrinda\\DRDO RFP\\2026_DRDO_788433_1\\brain stroming\\simulation code\\V2.5\\abep_repo\\abep-perf-baseline\\.venv\\Scripts\\python.exe"
+    },
+    "packages": {
+      "numpy": "2.4.4",
+      "scipy": "1.17.1"
+    },
+    "blas": {
+      "numpy": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-kstykkss/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/include\n    lib directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-kstykkss/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.31.188.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=24\n    pc file directory: D:/a/numpy-release/numpy-release/.openblas\n    version: 0.3.31.188.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-kstykkss/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/include\n    lib directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-kstykkss/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.31.188.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=24\n    pc file directory: D:/a/numpy-release/numpy-release/.openblas\n    version: 0.3.31.188.0\nCompilers:\n  c:\n    commands: cl\n    linker: link\n    name: msvc\n    version: 19.44.35225\n  c++:\n    commands: cl\n    linker: link\n    name: msvc\n    version: 19.44.35225\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.4\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: windows\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: windows\nPython Information:\n  path: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\build-env-xd03mtse\\Scripts\\python.exe\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3",
+      "scipy": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    has ilp64: false\n    include directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-z3menilo/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas32/include\n    lib directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-z3menilo/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas32/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.30 DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=24\n    pc file directory: D:/a/scipy/scipy\n    version: 0.3.30\n  lapack:\n    detection method: pkgconfig\n    found: true\n    has ilp64: false\n    include directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-z3menilo/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas32/include\n    lib directory: C:/Users/runneradmin/AppData/Local/Temp/cibw-run-z3menilo/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas32/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.30 DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=24\n    pc file directory: D:/a/scipy/scipy\n    version: 0.3.30\n  pybind11:\n    detection method: config-tool\n    include directory: unknown\n    name: pybind11\n    version: 3.0.2\nCompilers:\n  c:\n    commands: C:\\Strawberry\\c\\bin\\ccache.EXE, cc\n    linker: ld.bfd\n    name: gcc\n    version: 10.3.0\n  c++:\n    commands: C:\\Strawberry\\c\\bin\\ccache.EXE, c++\n    linker: ld.bfd\n    name: gcc\n    version: 10.3.0\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.4\n  fortran:\n    commands: gfortran\n    linker: ld.bfd\n    name: gcc\n    version: 10.3.0\n  pythran:\n    include directory: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\build-env-o4e7s25s\\Lib\\site-packages/pythran\n    version: 0.18.1\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: windows\n  cross-compiled: false\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: windows\nPython Information:\n  path: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\build-env-o4e7s25s\\Scripts\\python.exe\n  version: '3.13'"
+    },
+    "thread_env": {
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    },
+    "load_average_1_5_15": [
+      -1.0,
+      -1.0,
+      -1.0
+    ],
+    "load_average_note": "OS 1/5/15-minute load averages"
+  },
+  "benchmark_compatibility_note": "Native Windows Python does not provide os.getloadavg(). The repository benchmark script was left unmodified; a temporary sitecustomize shim outside the repository supplied (-1.0,-1.0,-1.0) as an explicit unavailable sentinel. Windows CPU load percentage is recorded in the before/after machine metadata."
+}

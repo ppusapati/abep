@@ -1,0 +1,14 @@
+{
+ "schema": "np_hall_parametric_envelope_air_stage_record_v1",
+ "id": "NP-HALL-PARAMETRIC-ENVELOPE/air_corner_stage_v1",
+ "date": "2026-10-08",
+ "lane": "lane-hall-envelope-runs",
+ "status": "RECORDED_BEFORE_ANY_AIR_RUN",
+ "basis": "addendum A1 execution.order: 'staging by composition corner (driver corner argument) is allowed and changes no rule' (OQ-HPE-AIR-01 open); coordinator instruction 2026-10-08: run only the AIR corner stage after XE, never the full AIR grid (the coordinator decides that after M2)",
+ "launch_path": "LP-BOUNDED (launch_manifest_air_v1.json, chemistry_mode BOUNDED_VARIANT, member BV-AIR-LL-NOM); information only under A1, never SELECT and never PHYSICALLY_NON_CLOSING",
+ "stage_1_corner": "CP-YHI-DIS",
+ "why_this_corner": "A1 has no registered corner order for staging. The corner is chosen here, before any AIR run, as the atomic-O-dominated corner (O mass fraction 0.849): the feed the Hall O / O2 chemistry exists for, and the corner farthest from N2_PROXY. Under the A1 composition rule a test closes only if it closes at every corner, so a single corner stage is a necessary-condition probe and can never complete an AIR closure; it records BOUNDED_INFORMATION for this corner only",
+ "cases": "every AIR case with composition_id CP-YHI-DIS (2268 = the v1 N2_PROXY rows), run as driver/run_local_air.sh does it: h1_envelope_air_driver.jl <out> <shard> 3 CP-YHI-DIS, threads / BLAS 1",
+ "preceded_by": "the A3 numerics check of the AIR scope (cases/h1_parametric_envelope_a3_numerics_air_cases_v1.json), as addendum A3 scope.AIR requires before AIR grid cases beyond smoke",
+ "not_run": "the other three corners (CP-YLO-REC, CP-YLO-DIS, CP-YHI-REC) and N2_PROXY"
+}

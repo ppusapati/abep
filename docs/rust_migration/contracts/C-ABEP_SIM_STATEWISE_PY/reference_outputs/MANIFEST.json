@@ -1,0 +1,8 @@
+{
+ "captured_at_python_commit": "9fe20c24c2d0fc77ae80c4830c6ad4fe704f74fb",
+ "files": {
+  "requests.json.gz": "675886185bbb96ad903607a7b64178f28163c654cd0b9727b2bd9e2a08224de8",
+  "python_outputs.json.gz": "5765b1e1600f8efbeb6443eabce9547edcef5802e081875da33935c3d047d696",
+  "rust_outputs_at_scoring.json.gz": "cd573bb5f5fca99a693f7e9d47103d7f35293dec70f9f313cd23a9bf34c14cfc"
+ }
+}

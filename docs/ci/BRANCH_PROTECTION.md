@@ -90,6 +90,21 @@ Everything else (signed commits, linear history, merge queue, code owners, conve
 * **The manual Julia smoke workflow is not a required check.** `.github/workflows/julia-smoke.yml` (job
   `HallThruster.jl pinned install + one smoke job`) runs on `workflow_dispatch` only. It never reports on a PR, so
   requiring it would block every merge forever ("Expected — Waiting for status to be reported").
+* **The optional Rust parity workflow is not a required check.** `.github/workflows/rust-parity.yml` (job
+  `abep_core build + parity (optional)`) runs only when abep_core-related paths change, or by hand. The owner made it
+  optional: A9.14 S10.4, RUST-OQ-02 = `OPTIONAL_RUST_CI_MANDATORY_PARITY_ON_RUST_CHANGES`
+  (`docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md`). Normal CI stays runnable without Rust;
+  `docs/ci/RUST_PARITY.md`.
+* **The Rust workspace workflow is not a required check yet.** `.github/workflows/rust-workspace.yml` (job
+  `Rust workspace (fmt, clippy, cargo test, bid guard, test register, groundtest isolation)`, ES-1) runs on every pull
+  request and on pushes to `main` / `integration/simulation-complete`. Under `docs/rust_migration/CI_PLAN.md` v3.1 § 1
+  principle 4 (plan structure approved by the owner, A9.29) the Rust jobs become required status checks only when the
+  first non-Kernel-1 component is admitted; that PR updates this file.
+* **The manual H-1 parametric envelope workflow is not a required check.** `.github/workflows/h1-parametric-envelope.yml`
+  (`H-1 parametric Hall envelope (manual, PARAMETRIC / NOT_VALIDATED)`, jobs prepare / shard / freeze; A9.32,
+  NP-HALL-PARAMETRIC-ENVELOPE v1) runs on `workflow_dispatch` only, so it never reports on a PR and requiring it would
+  block every merge forever. Its outputs are PARAMETRIC / NOT_VALIDATED and must never become a merge gate (same reason as
+  the scientific outcomes above). Accounted for 2026-10-10 (repository-integrity fix before the DBF-1.2 main promotion).
 * No other workflow exists today. Any future workflow becomes required only by a new owner decision, recorded here.
 
 ## 3. Preconditions (in this order)

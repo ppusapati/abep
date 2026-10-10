@@ -1,0 +1,860 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W1E",
+  "scope": "named function subset (kernel granularity, RM-R17): the active-architecture invariant of abep_sim/design/a9_19_architecture.py - the loaded A9.19 / A9.20 definition, the flight-configuration refusal, the hollow-cathode / C1 refusal, the ground-reference label and the decision-record check - plus the Rust sha256 pin of config/architecture/hall_icp_neutralizer_v1.json (A9.29 sec. 13 ES-1)",
+  "functions_or_entry_points": [
+   "abep_sim/design/a9_19_architecture.py module definition (import-time load through abep_sim.configuration.load_architecture + _check_loaded_architecture): DECISIONS, RFP_REGISTRATION, RFP_CLAUSES, VERBATIM_A9_19, FLIGHT_CONFIGURATION, FLIGHT_CONFIGURATIONS, GROUND_REFERENCE_CONFIGURATION, GROUND_REFERENCE_LABEL, GROUND_ONLY_LAB_EQUIPMENT, C1_ROLE, SUPPLY_MODE_AIR, SUPPLY_MODE_XE, SUPPLY_MODES, XE_PATH_ROLE, AIR_PATH_ROLE, SUPPLY_MODE_GASES, BENCH_ENGINEERING_GAS, BENCH_SUPPLY_MODE, ICP_FEED_GAS_BASELINE, FLIGHT_ARCHITECTURE, C1_BOOKING_CONDITIONAL, C1_BOOKING_EMBEDDED, C1_FLAGGED_BOOKINGS, C1_DECLARED_ABSENT, CHECK_CLEAN, CHECK_FLAGGED",
+   "abep_sim/design/a9_19_architecture.py::require_flight_configuration",
+   "abep_sim/design/a9_19_architecture.py::refuse_hollow_cathode_elements (with is_c1_absence_text, is_c1_absent_branch_state, _norm and cite, which it calls)",
+   "abep_sim/design/a9_19_architecture.py::hollow_cathode_elements",
+   "abep_sim/design/a9_19_architecture.py::ground_reference",
+   "abep_sim/design/a9_19_architecture.py::verify_decision_records"
+  ],
+  "out_of_scope": [
+   "require_decision_records, classify_gas, check_supply_mode, propellant_path_roles, applied_row, is_conditional_c1_text, cite as a public entry point: stay PYTHON_REFERENCE (later contract with their design-layer consumers)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "none: the component is the refusal guard itself; it recognises hollow-cathode / LaB6 / C1 text in order to refuse it (CI_PLAN.md sec. 1 principle 6 refusal-guard vocabulary) and ports no cathode model, start-up rule or C1 flight path"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-12",
+  "owner_disposition_a9_29": "A9.29 sec. 13 lane A: 'active architecture invariant'; sec. 15: 'Conventional flight hollow cathode: NONE. C1: GROUND_TEST / REFERENCE ONLY, never flight execution.'"
+ },
+ "date": "2026-10-05",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. No Rust code for the component exists at registration. The commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "invariants_registered": {
+  "flight_hollow_cathode": "NONE (A9.19 verbatim 'No conventional hollow cathode.'; FLIGHT_ARCHITECTURE.conventional_hollow_cathode == 'NONE')",
+  "c1": "GROUND_TEST / REFERENCE ONLY (A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE): hall_c1_reference is refused as a flight configuration and is returned only by ground_reference() under the label GROUND_REFERENCE with flight_candidate = false and in_flight_budgets = false",
+  "flight_configurations": [
+   "hall_icp_neutralizer"
+  ],
+  "architecture_file": {
+   "path": "config/architecture/hall_icp_neutralizer_v1.json",
+   "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3"
+  }
+ },
+ "reference_implementation": {
+  "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+  "files": [
+   {
+    "path": "abep_sim/design/a9_19_architecture.py",
+    "sha256_at_registration": "8a4ccfb00fc2bb5a9f00b8a405e9c816e2d025d6d91c8bbef25f50300d4d226b"
+   },
+   {
+    "path": "abep_sim/configuration.py",
+    "sha256_at_registration": "45900b79e3639ab382ec740bbd6b453d03e58ab7bd6368f93abdc17cabdacacc"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4 (not used by the component)",
+   "scipy": "1.17.1 (not used)",
+   "pandas": "3.0.2 (not used)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "NOT_APPLICABLE",
+   "thread_env": {
+    "OMP_NUM_THREADS": "NOT_APPLICABLE",
+    "OPENBLAS_NUM_THREADS": "NOT_APPLICABLE"
+   },
+   "stdlib": "re (str patterns: Unicode \\s, \\b, IGNORECASE), hashlib, str.lower / upper / strip"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-config",
+  "functions_or_entry_points": [
+   "abep_config::architecture::ArchitectureDefinition::load (load_architecture + ARCHITECTURE_SHA256 pin + the _check_loaded_architecture consistency rules) and its constants",
+   "abep_config::architecture::ArchitectureDefinition::{require_flight_configuration, ground_reference, refuse_hollow_cathode_elements, verify_decision_records, cite}",
+   "abep_config::architecture::hollow_cathode_elements",
+   "`abep-config eval` (harness interface)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/**",
+   "crates/abep-provenance/**",
+   "crates/abep-config/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it",
+  "text_semantics": "the C1 absence / conditional patterns are matched with Python str-pattern semantics, not a Rust regex engine's: \\s = str.isspace(), \\b over re word characters (str.isalnum() or '_', CPython 3.11 / Unicode 14.0.0 table in abep_types::pyjson), IGNORECASE as sre (simple lower-case equality plus the sre fixes i ~ U+0131 and s ~ U+017F); the hollow-cathode patterns run on the _norm()-ed ASCII text [a-z0-9_]",
+  "forbidden_identifier_note": "the module carries the refusal-guard vocabulary (hollow cathode, lab6, bao, cathode heater / keeper, c1 markers) as pattern text and nothing else; the principle-6 scan allow-list must name crates/abep-config/src/architecture.rs (CI_PLAN.md names the guard's crate as abep-design, which does not exist yet)"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "both implementations load the definition from this exact architecture file (the Rust pin enforces it); a mismatch on the reference tree voids the run (INPUT_MISMATCH)"
+ },
+ "pinned_inputs_sha256": {
+  "config/architecture/hall_icp_neutralizer_v1.json": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+  "config/MANIFEST.json": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+  "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+  "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+  "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+  "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+  "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+  "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+  "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+  "abep_sim/design/architecture_optimizer.py": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af",
+  "abep_sim/bus_boundary_a9_v2.py": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26",
+  "tests/test_design_a9_19_architecture.py": "a2ce7862b4280ce660b589c0f2b0de89a03adad065221acd7e166fa20e7dc24f"
+ },
+ "frozen_data_read_only": [
+  "config/architecture/hall_icp_neutralizer_v1.json (configuration, manifest-pinned)",
+  "the A9.19 / A9.20 / A9.15 owner decision records (immutable)"
+ ],
+ "inputs": {
+  "golden_vectors": {
+   "source": "registered texts and records below, plus element lists captured from the repository at the reference commit by the harness (Python helpers named here only produce inputs)",
+   "count": "see vector_totals",
+   "list_or_generator": {
+    "R-01": "abep_sim.design.architecture_optimizer.flight_configuration_elements('hall_icp_neutralizer') (the mass_power_a9_v5 flight lines, floor constituents, c1_branch records and power slots) as one list",
+    "R-02": "each element of R-01 alone",
+    "R-03": "abep_sim.bus_boundary_a9_v2.GROUND_REFERENCE_TEST_METADATA['hall_c1_reference']['base_slots_as_in_v1'] as one list, and each slot alone",
+    "R-04": "abep_sim.bus_boundary_a9_v2.installed_slots('hall_icp_neutralizer') as one list, and each slot alone",
+    "R-05": "R-01 + [m] for each marker m of tests/test_design_a9_19_architecture.py test_no_hollow_cathode_element_in_flight_configuration: 'c1_heater', 'c1_keeper', 'AL-C1', 'hollow cathode', 'LaB6 emitter', {'id': 'X', 'name': 'C1'}, {'id': 'C-1'}, 'cathode_heater', 'C1 Xe branch'",
+    "R-06": "architecture_optimizer._line_hc_elements(line, 'hall_icp_neutralizer') for the line records of tests/test_design_a9_19_architecture.py test_rv19_11_booked_c1_content_refused and test_c1_absence_statements_not_refused_but_booked_c1_still_refused (base, flag, the four bad lines, ok, clean; the absence ok line and its two bad lines)",
+    "R-07": "architecture_optimizer._line_hc_elements(line, 'hall_icp_neutralizer') for every line of architecture_optimizer.ground_reference_lines(mass_power_a9_v5, 'hall_c1_reference') (the retired C1-configuration lines: refusal vectors)",
+    "R-08": "each registered text alone (as a string, and as {'name': text} and {'id': text})",
+    "R-09": "each registered record alone",
+    "R-10": "each registered scalar alone (non-text elements: str() of the value)"
+   },
+   "registered_texts": [
+    "C1",
+    "c1",
+    "C-1",
+    "c-1",
+    "C 1",
+    "C_1",
+    "c_1",
+    "C1 heater",
+    "C1 keeper",
+    "C1 heater/keeper electronics",
+    "c1_heater",
+    "c1_keeper",
+    "c1_common_tie",
+    "C1 Xe branch",
+    "c1_xe_feed",
+    "AL-C1",
+    "al_c1",
+    "AL-C1-02",
+    "C1-vs-ICP bench control",
+    "C10 bracket",
+    "C12",
+    "c11",
+    "lc1",
+    "xc1_",
+    "ac1",
+    "C1A",
+    "c1a",
+    "1c",
+    "LaB6",
+    "lab6",
+    "LAB6 emitter",
+    "LaB6Cathode",
+    "BaO",
+    "bao dispenser",
+    "baobab",
+    "hollow cathode",
+    "Hollow-Cathode assembly",
+    "hollowcathode",
+    "HOLLOW_CATHODE",
+    "cathode heater",
+    "cathode_keeper",
+    "keeper",
+    "Keeper supply",
+    "heater",
+    "heater_keeper",
+    "trim heater",
+    "thermal heater",
+    "keeper_loop",
+    "conventional cathode",
+    "thermionic cathode",
+    "cathode",
+    "neutralizer cathode",
+    "RF/ICP neutralizer",
+    "icp_rf_source",
+    "icp_matching_network",
+    "icp_collector_bias",
+    "Hall PPU",
+    "hall_discharge",
+    "hall_magnet_inner",
+    "compressor",
+    "flow_control_xe",
+    "",
+    "No C1 electronics - C1 is ground-only",
+    "no C1 electronics; C1 heater/keeper supply",
+    "C1 is ground-only",
+    "c-1 is ground- only",
+    "C1 is ground only",
+    "no c-1",
+    "NO C1",
+    "nO c1 heater",
+    "no c1)",
+    "no c1,c1 heater",
+    "Hall PPU (no C1 electronics - C1 is ground-only, A9.19 / A9.20)",
+    "Hall PPU (C1 heater/keeper electronics if C1 selected)",
+    "if C1 selected",
+    "if c-1 is selected",
+    "no C10",
+    "no c12 parts",
+    "C1 is ground-only; LaB6 emitter",
+    "no c1",
+    "no\u001cc1",
+    "no c1",
+    "no c1²",
+    "no c1́",
+    "no c1é",
+    "NO Cİ",
+    "İf C1 selected",
+    "C1 ıs ground-only",
+    "C1 İS GROUND-ONLY",
+    "Keeper",
+    "KeeperK",
+    "İlab6",
+    "C₁",
+    "Ｃ１",
+    "ć 1",
+    "LaB₆",
+    "c1̇",
+    "Ç1"
+   ],
+   "registered_records": [
+    {
+     "id": "X",
+     "name": "C1"
+    },
+    {
+     "id": "C-1"
+    },
+    {
+     "name": "LaB6 emitter",
+     "kind": "mass_line"
+    },
+    {
+     "id": "AL-99",
+     "name": "Hall PPU",
+     "kind": "mass_line"
+    },
+    {
+     "slot": "c1_heater"
+    },
+    {
+     "line": "AL-C1"
+    },
+    {
+     "kind": "c1_branch",
+     "id": "AL-08.c1_branch",
+     "name": "C1 branch",
+     "state": "NO_C1_XE_BRANCH_IN_FLIGHT",
+     "in_line": false,
+     "booking": "DECLARED_ABSENT"
+    },
+    {
+     "kind": "c1_branch",
+     "id": "AL-08.c1_branch",
+     "name": "C1 branch",
+     "state": "NO_C1_XE_BRANCH_IN_FLIGHT",
+     "in_line": 0.285,
+     "booking": "DECLARED_ABSENT"
+    },
+    {
+     "kind": "c1_branch",
+     "id": "AL-08.c1_branch",
+     "name": "C1 branch",
+     "state": "no_c1 anything",
+     "in_line": null,
+     "booking": "DECLARED_ABSENT"
+    },
+    {
+     "kind": "c1_branch",
+     "id": "AL-08.c1_branch",
+     "name": "C1 branch",
+     "state": null,
+     "in_line": false,
+     "booking": "DECLARED_ABSENT"
+    },
+    {
+     "kind": "c1_branch",
+     "id": "AL-08.c1_branch",
+     "state": "PENDING_C1_NOT_SELECTED",
+     "booking": "CONDITIONAL_NOT_BOOKED"
+    },
+    {
+     "kind": "mass_line",
+     "id": "AL-07",
+     "name": "Hall PPU (C1 heater/keeper electronics if C1 selected)",
+     "booking": "CONDITIONAL_NOT_BOOKED"
+    },
+    {
+     "kind": "mass_line",
+     "id": "AL-08",
+     "name": "C1 cathode Xe branch 0.285 kg",
+     "booking": "EMBEDDED_IN_FLOOR"
+    },
+    {
+     "kind": "mass_line",
+     "id": "AL-07",
+     "name": "No C1 electronics - C1 is ground-only",
+     "booking": "DECLARED_ABSENT"
+    },
+    {
+     "kind": "mass_line",
+     "id": "X",
+     "name": "C1 heater",
+     "booking": "DECLARED_ABSENT"
+    },
+    {
+     "kind": "mass_line",
+     "id": "X",
+     "name": "no C1; C1 heater supply",
+     "booking": "DECLARED_ABSENT"
+    },
+    {
+     "kind": "mass_line",
+     "id": "X",
+     "name": 1,
+     "booking": "DECLARED_ABSENT"
+    },
+    {
+     "id": 1
+    },
+    {
+     "id": 1.0
+    },
+    {
+     "id": true
+    },
+    {
+     "id": 0
+    },
+    {
+     "id": null
+    },
+    {
+     "id": ""
+    },
+    {
+     "id": [
+      "c1"
+     ]
+    },
+    {
+     "id": {
+      "a": "lab6"
+     }
+    },
+    {
+     "name": [
+      "no",
+      "C1"
+     ]
+    },
+    {
+     "name": 0.285,
+     "id": "c-1"
+    },
+    {
+     "booking": [
+      "CONDITIONAL_NOT_BOOKED"
+     ],
+     "id": "c1"
+    },
+    {
+     "other": "c1_heater"
+    },
+    {}
+   ],
+   "registered_scalars": [
+    1,
+    1.0,
+    0,
+    true,
+    false,
+    null,
+    0.285,
+    1e-05,
+    [],
+    [
+     "c1"
+    ],
+    [
+     "no",
+     "C1"
+    ]
+   ]
+  },
+  "edge_cases": {
+   "require_flight_configuration": [
+    "hall_icp_neutralizer",
+    "hall_c1_reference",
+    "",
+    "HALL_ICP_NEUTRALIZER",
+    "hall_icp_neutralizer ",
+    " hall_icp_neutralizer",
+    "hall_icp",
+    "hall_c1",
+    "hall-icp-neutralizer",
+    "hall_icp_neutralizer\n",
+    "hall_İcp",
+    "x'y",
+    "x\"y",
+    "x'\"y",
+    "tab\there",
+    "é",
+    ""
+   ],
+   "refuse_hollow_cathode_elements_configurations": "every config of require_flight_configuration with elements R-01 (the refusal of the configuration precedes any element check)",
+   "ground_reference": [
+    [
+     "hall_c1_reference",
+     "C1-vs-ICP bench control"
+    ],
+    [
+     "hall_c1_reference",
+     "  H-1 I_d,max registration  "
+    ],
+    [
+     "hall_c1_reference",
+     " "
+    ],
+    [
+     "hall_c1_reference",
+     ""
+    ],
+    [
+     "hall_c1_reference",
+     "\u001c "
+    ],
+    [
+     "hall_c1_reference",
+     " x "
+    ],
+    [
+     "hall_c1_reference",
+     null
+    ],
+    [
+     "hall_c1_reference",
+     5
+    ],
+    [
+     "hall_c1_reference",
+     [
+      "x"
+     ]
+    ],
+    [
+     "hall_icp_neutralizer",
+     "x"
+    ],
+    [
+     "",
+     "x"
+    ],
+    [
+     "HALL_C1_REFERENCE",
+     "x"
+    ]
+   ],
+   "verify_decision_records": [
+    {
+     "id": "V-00",
+     "repo": "reference tree"
+    },
+    {
+     "id": "V-01",
+     "repo": "farm: A9.19 md + one trailing space"
+    },
+    {
+     "id": "V-02",
+     "repo": "farm: A9.20 json + one space before the final newline"
+    },
+    {
+     "id": "V-03",
+     "repo": "farm: A9.15 md deleted (Python FileNotFoundError; class scored)"
+    },
+    {
+     "id": "V-04",
+     "repo": "farm: A9.19 json deleted and A9.20 md edited (the first failure in DECISIONS order decides)"
+    },
+    {
+     "id": "V-05",
+     "repo": "farm: A9.15 json edited"
+    }
+   ],
+   "definition": [
+    {
+     "id": "A-00",
+     "tree": "reference tree: every listed constant EXACT_VALUE (tuples as lists)"
+    },
+    {
+     "id": "A-01",
+     "tree": "architecture file re-serialized with one extra trailing space and MANIFEST.json refreshed (content identical)",
+     "expected": "DIV-A01"
+    },
+    {
+     "id": "A-02",
+     "tree": "architecture title edited and MANIFEST.json refreshed",
+     "expected": "DIV-A01"
+    },
+    {
+     "id": "A-03",
+     "tree": "architecture file edited, MANIFEST.json not refreshed: both refuse (ConfigurationError sha256 message, scored)"
+    }
+   ]
+  },
+  "randomized_domain": {
+   "count": 400,
+   "draw": "random.Random(scoring_master_seed) (Python, input generation only; both implementations consume the same committed case file). Per case: n = rng.randint(1, 6) elements; each element: u = rng.random(); u < 0.45 -> text(); u < 0.90 -> record(); else rng.choice(REGISTERED_SCALARS). text(): k = rng.randint(1, 4) tokens rng.choice(TOKENS) joined by rng.choice(SEPARATORS) each, then with probability 0.2 .upper(), 0.2 .lower(), else unchanged. record(): for each key of ['id', 'name', 'kind', 'line', 'slot', 'booking', 'state', 'in_line', 'kg'] included with probability 0.4: id / name / line / slot -> text() (name: with probability 0.1 rng.choice(REGISTERED_SCALARS) instead); kind -> rng.choice(['mass_line', 'c1_branch', 'power_slot', 'floor_constituent', text()]); booking -> rng.choice(['CONDITIONAL_NOT_BOOKED', 'EMBEDDED_IN_FLOOR', 'DECLARED_ABSENT', 'NONE', text()]); state -> rng.choice(['NO_C1_XE_BRANCH_IN_FLIGHT', 'no_c1 hardware', 'C1_SELECTED', 'PENDING_C1_NOT_SELECTED', text()]); in_line -> rng.choice([False, True, 0, 0.285, None, '', 'x', []]); kg -> rng.choice([0.0, 0.285, 1.5]); each draw in the order written (choices whose list contains text() call text() only when chosen: rng.choice over the index first). Both hollow_cathode_elements(list) and refuse_hollow_cathode_elements('hall_icp_neutralizer', list) are evaluated per case",
+   "TOKENS": [
+    "C1",
+    "c1",
+    "C-1",
+    "c-1",
+    "C 1",
+    "C10",
+    "C12",
+    "AC1",
+    "C1A",
+    "LaB6",
+    "lab6",
+    "LAB6",
+    "BaO",
+    "bao",
+    "hollow cathode",
+    "Hollow-Cathode",
+    "hollowcathode",
+    "cathode heater",
+    "cathode_keeper",
+    "keeper",
+    "heater",
+    "heater/keeper",
+    "Keeper supply",
+    "AL-C1",
+    "al_c1",
+    "C1 Xe",
+    "c1_xe",
+    "c1 heater",
+    "C1_keeper",
+    "conventional cathode",
+    "thermionic cathode",
+    "ICP",
+    "RF/ICP neutralizer",
+    "Hall",
+    "PPU",
+    "magnet",
+    "anode",
+    "no C1",
+    "No C-1 electronics",
+    "C1 is ground-only",
+    "c1 is ground only",
+    "C-1 is ground- only",
+    "if C1 selected",
+    "if c-1 is selected",
+    "NOT_SELECTED",
+    "NO_C1_XE_BRANCH",
+    "no_c1",
+    "Xe",
+    "feed",
+    "valve",
+    "1",
+    "-",
+    "_",
+    " ",
+    "/",
+    ";",
+    ",",
+    "(",
+    ")",
+    "İ",
+    "ı",
+    "ſ",
+    "K",
+    "é",
+    " ",
+    " ",
+    "\u001c",
+    "ⅰ",
+    "²",
+    "́",
+    "Ｃ１"
+   ],
+   "SEPARATORS": [
+    "",
+    " ",
+    "_",
+    "-",
+    "/",
+    "; ",
+    ", ",
+    " (",
+    ") ",
+    "\t",
+    " "
+   ],
+   "domain_note": "numerical parity domain only; random element texts exercise the refusal vocabulary; not a design or evidence claim"
+  },
+  "vector_totals": {
+   "registered element cases": "R-01..R-10 (counted by the harness; recorded in the report)",
+   "random element cases": 400,
+   "require_flight_configuration": 17,
+   "refuse_hollow_cathode_elements configurations": 17,
+   "ground_reference": 12,
+   "verify_decision_records": 6,
+   "definition": 4
+  }
+ },
+ "campaign_seeds": {
+  "applicable": "true (input generation of the random element lists only; the component is deterministic)",
+  "scoring_master_seed": 3907715266,
+  "development_master_seed": 2200,
+  "derivation": "random.Random(seed) as in inputs.randomized_domain.draw",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE",
+   "other_streams": "NOT_APPLICABLE: the harness's random.Random only generates input cases",
+   "migration_parity_dataset": "seeds and the generated case file stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic component)",
+  "development_rule": "development comparisons use development_master_seed (and the registered deterministic cases) only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "every call": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED"
+    },
+    {
+     "name": "value",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "json.dumps(v, ensure_ascii=False) of the returned value (record dicts, hit lists, {decision: bool}, the definition constants with tuples as lists) equal to json.dumps(json.loads(rust_output), ensure_ascii=False)"
+    },
+    {
+     "name": "error_class",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "Python exception class name; Rust reports the mapped class name"
+    },
+    {
+     "name": "error_message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "for ArchitectureRuleError and ConfigurationError: str(exception) character for character (the registered hollow-cathode / C1 refusal texts); class only for built-in exceptions (FileNotFoundError)"
+    }
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "NOT_APPLICABLE (no file output)",
+  "EXACT_VALUE": "strings, booleans, records, error classes and refusal messages: equal",
+  "ULP_BOUNDED": "NOT_APPLICABLE",
+  "SOLVER_TOLERANCE": "NOT_APPLICABLE",
+  "STATISTICAL": "NOT_APPLICABLE",
+  "EXACT_STREAM": "NOT_APPLICABLE"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-A1",
+   "statement": "flight hollow cathode NONE: the loaded FLIGHT_ARCHITECTURE.conventional_hollow_cathode == 'NONE' and FLIGHT_CONFIGURATIONS == ['hall_icp_neutralizer'] in both implementations",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-A2",
+   "statement": "C1 ground only: require_flight_configuration('hall_c1_reference') is refused and ground_reference('hall_c1_reference', <purpose>) returns flight_candidate = false, in_flight_budgets = false, label GROUND_REFERENCE in both",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-A3",
+   "statement": "refuse_hollow_cathode_elements on R-01 returns check NO_HOLLOW_CATHODE_ELEMENT_LISTED with no flagged provisions in both (the current flight budget is clean); never 'PASS'",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-A4",
+   "statement": "determinism: every Rust call evaluated twice gives identical output",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-A5",
+   "statement": "the Rust code-side pins equal the definition: ARCHITECTURE_SHA256 == sha256 of the reference architecture file == its MANIFEST.json entry",
+   "required_in_both": false
+  }
+ ],
+ "conservation_checks": {
+  "applicable": "false: rule logic, no mass / power / energy balance",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "cases": "all cases above; refusal classes: hall_c1_reference / unknown configuration (ArchitectureRuleError), hollow-cathode element in a flight configuration (ArchitectureRuleError, MODEL_ERROR), ground reference misuse (ArchitectureRuleError), decision-record change (False per record) or absence (FileNotFoundError), altered architecture file (ConfigurationError)",
+  "mapping": {
+   "ArchitectureRuleError": "abep_config::ConfigError class 'ArchitectureRuleError' (MODEL_ERROR); message scored",
+   "ConfigurationError": "ConfigError class 'ConfigurationError' (MODEL_ERROR); message scored",
+   "FileNotFoundError": "ConfigError class 'FileNotFoundError' (MODEL_ERROR); class scored"
+  },
+  "mapping_rule": "every Python exception class maps to exactly one Rust ConfigError class name; no Rust path may return a value where Python fails, or fail where Python returns, except the registered divergence DIV-A01",
+  "documented_divergence": [
+   {
+    "id": "DIV-A01",
+    "statement": "architecture hash pin (A9.29 sec. 13 ES-1 deliverable 'the architecture hash pin of config/architecture/hall_icp_neutralizer_v1.json'): the Rust definition loader refuses an architecture file whose sha256 differs from ARCHITECTURE_SHA256 = 7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3 even when MANIFEST.json was refreshed; Python's import-time loader accepts any manifest-consistent file. Expected Rust outcome on A-01 / A-02: RAISED ConfigurationError with message 'config/architecture/hall_icp_neutralizer_v1.json sha256 <actual> != pinned 7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3 (A9.29 architecture hash pin: a changed architecture needs a new architecture version and pin)'",
+    "disposition": "scored against this registered Rust outcome (EXACT_VALUE class and message); the Python outcome on A-01 / A-02 is recorded, not compared"
+   },
+   {
+    "id": "DIV-A02",
+    "statement": "case mapping: str.lower / upper use Rust's Unicode tables (newer than CPython 3.11's 14.0.0); only results in [a-z0-9] (lower) or the 'NO_C1' prefix (upper) matter, and the characters that map into them are the same in both versions",
+    "disposition": "covered by the registered Unicode texts; no divergence expected"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "config/architecture/hall_icp_neutralizer_v1.json (abep_config_architecture_v1, read by both)"
+  ],
+  "rules": [
+   "record field names and order identical (refuse_hollow_cathode_elements / ground_reference records, cite records)",
+   "status labels identical: NO_HOLLOW_CATHODE_ELEMENT_LISTED, NO_HOLLOW_CATHODE_ELEMENT_LISTED_C1_PROVISIONS_FLAGGED_PENDING_BUDGET_REFRESH, GROUND_REFERENCE, GROUND_ONLY_LAB_EQUIPMENT; never PASS / SELECTED / WINNER / QUALIFIED"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "tests/test_design_a9_19_architecture.py vectors (R-05, R-06) and the mass_power_a9_v5 flight / retired lines (R-01, R-07) as captured at the reference commit"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY/reference_outputs/",
+   "captured_at_python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+   "sha256_manifest": "FILL at scoring",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: not applicable (no golden case involved)"
+ },
+ "julia_bridge": {
+  "applicable": "false",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "julia_version": "NOT_APPLICABLE",
+  "launch_equivalence": "NOT_APPLICABLE",
+  "record_comparison": "NOT_APPLICABLE",
+  "execution_provenance": "NOT_APPLICABLE"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-ARCH-01",
+    "description": "refuse_hollow_cathode_elements on R-01, 1000 repeats"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable meets its tolerance class",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": false,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED (= PARITY_PASS) iff every call of every case, every invariant and DIV-A01's registered Rust outcome pass and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for the active-architecture invariant (flight hollow cathode NONE, C1 ground test / reference only) within the registered domain; it is NOT physics validation and not a gate PASS",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays",
+  "disagreement_rule": "never rewrite a Python result, decision record, budget record or configuration file to make Rust pass (RM-R11)",
+  "observable_scope": "restricted to the retained refusal guard and the loaded definition (RM-R20)"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output may be cited by the bid package unless the owner re-freezes",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (terminal package state, A9.29 sec. 3)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation",
+  "not a change of the architecture, the decision records or any budget record",
+  "not authority before admission",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: the hollow-cathode check states NO_HOLLOW_CATHODE_ELEMENT_LISTED, never PASS (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_A9_19_ARCHITECTURE_PY/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_architecture_v1.py (Python harness calling `abep-config eval`)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance",
+   "environment",
+   "per-test results",
+   "invariants",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "case file sha256",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS: PASS",
+   "no observable, input or code path belongs to an excluded legacy path: PASS (the component refuses hollow-cathode content; it models none)",
+   "the Python harness traverses no legacy path to reach the component; the retired C1 lines of mass_power_a9_v5 enter only as refusal input text (R-07)",
+   "forbidden identifiers only inside the refusal-guard vocabulary (allow-listed, CI_PLAN.md sec. 1 principle 6)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27",
+  "inputs": [],
+  "check": "NOT_APPLICABLE: no provisional value is carried; statuses are labels"
+ },
+ "new_physics_verification": {
+  "applies_when": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY)"
+ }
+}

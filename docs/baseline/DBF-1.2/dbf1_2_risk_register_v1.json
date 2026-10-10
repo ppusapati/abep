@@ -1,0 +1,140 @@
+{
+ "id": "dbf1_2_risk_register_v1",
+ "baseline": "DBF-1.2",
+ "rule": "an open verification item does not unfreeze the preliminary baseline; it is verified during the funded EM / QM programme",
+ "risks": [
+  {
+   "id": "MR-DCR001-01",
+   "title": "mass closure: preliminary roll-up 39.948 kg wet; ~0.052 kg numerical headroom is NOT design margin",
+   "basis": "A9.41 mass risk",
+   "verification": "CBE / quotation / EM mass measurement; any mass growth needs a DCR before acceptance",
+   "status": "OPEN",
+   "drivers": [
+    "AL-07 PPU preliminary CBE 4.55 kg (5.46 kg MEV) largely assumed; reverting to the 6.0 kg floor gives 40.57 kg wet",
+    "AL-08 tank / plumbing / thermal estimates (assumed / model-derived) and Xe MEOP / burst factor TBD (XA9-28 / XA9-29)",
+    "AL-01 / AL-02 integration itemization assumed; compressor component estimates (bearings, motors, drive, lock) assumed",
+    "AL-09 1.0 kg and AL-10 2.5 kg owner allocations not yet CBEs; harness by the 5/95 rule until routed",
+    "the 39.4 kg preferred target is missed by 0.548 kg"
+   ],
+   "mitigation": [
+    "early AL-07 PPU design / quotation (RFQ3-HALLEL) replacing the preliminary CBE",
+    "AL-08 tank quotation with MEOP at 323 K and burst factor fixed",
+    "compressor EM mass measurement (rotor rows, drums, Holweck band, bearings, motors, drive)",
+    "routed harness replacing the 5/95 rule",
+    "any mass growth triggers a DCR before acceptance; the ranked closure levers stay PPU, Xe hardware, intake structure, structure / thermal"
+   ]
+  },
+  {
+   "id": "VR-PPU-01",
+   "title": "AL-07 PPU preliminary CBE 4.55 kg (5.46 kg MEV) confirmation",
+   "basis": "v6 component estimate, mostly assumed",
+   "verification": "early PPU design / quotation (RFQ3-HALLEL); revert to 6.0 kg floor gives ~40.57 kg wet",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-XE-01",
+   "title": "Xe tank MEOP / burst factor / quotation",
+   "basis": "XA9-28 / XA9-29 TBD; 1.25 L Ti sphere sized at 150 bar, burst factor 2",
+   "verification": "tank quotation with MEOP at 323 K",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-CMP-01",
+   "title": "compressor actual mass (7.767 kg MEV governing)",
+   "basis": "component estimates partly assumed",
+   "verification": "EM mass measurement",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-CMP-02",
+   "title": "compressor F6 / B7 transitional performance",
+   "basis": "F6 crosses 0.1 Pa, B7 transitional; not admitted",
+   "verification": "EM compressor characterisation",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-CMP-03",
+   "title": "Holweck coefficients",
+   "basis": "drag-channel form, coefficients uncited",
+   "verification": "EM test",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-CMP-04",
+   "title": "rotor growth / running clearance",
+   "basis": "drum growth 0.34-0.36 mm vs 0.3 mm running clearance",
+   "verification": "EM spin test, clearance design",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-FEED-01",
+   "title": "H1 distributor flow uniformity (+/-5 %)",
+   "basis": "preliminary interface requirement",
+   "verification": "EM flow-uniformity test",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-HALL-01",
+   "title": "air-Hall 26.8 km/s design-performance basis",
+   "basis": "PARAMETRIC / NOT_VALIDATED; Hall credible set empty",
+   "verification": "EM thrust measurement on N2 / air",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-HALL-02",
+   "title": "22 km/s sensitivity (0.545 mg/s, ~6.1 Pa setpoint)",
+   "basis": "sensitivity case",
+   "verification": "EM verification",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-XE-02",
+   "title": "Xe 25 mN power / performance",
+   "basis": "allocation <= 876.1 W (nominal ICP) / <= 747.5 W (+100 W RF) at 1,450 W; ~658 W RP-1 Xe result PARAMETRIC / NOT_VALIDATED",
+   "verification": "EM / QM thrust and power measurement",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-PWR-01",
+   "title": "AIR 12 mN bus under the P6 conservative non-discharge corner",
+   "basis": "P-12 conservative corner + 77 W compressor allowance = 1469.9 W (below the 1,500 W RFP limit; reference / conservative design values 1222.3 / 1263.1 W)",
+   "verification": "measured non-discharge loads (RF generator efficiency, ICP, magnets, housekeeping) on EM; corner exceedance managed by RF / altitude schedule",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-HAR-01",
+   "title": "routed harness mass",
+   "basis": "5/95 rule until routed",
+   "verification": "routed harness design",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-AL09-01",
+   "title": "AL-09 control-electronics CBE",
+   "basis": "1.0 kg owner allocation",
+   "verification": "controller design CBE",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-AL10-01",
+   "title": "AL-10 structural / thermal CBE",
+   "basis": "2.5 kg owner allocation",
+   "verification": "structural / thermal design CBE",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-HOST-01",
+   "title": "actual host C_D*A",
+   "basis": "IR-HOST-DRAG-01 reference 0.50 m2",
+   "verification": "host ICD at PDR",
+   "status": "OPEN"
+  },
+  {
+   "id": "VR-EMQM-01",
+   "title": "EM / QM AO, thermal, life and qualification tests",
+   "basis": "RFP-P19-04 / P19-06",
+   "verification": "EM / QM programme",
+   "status": "OPEN"
+  }
+ ]
+}

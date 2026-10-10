@@ -1,0 +1,31 @@
+{
+ "schema": "np_hall_parametric_envelope_a6_raw_manifest_v1",
+ "kind": "CONVERGENCE_STUDY",
+ "layer": "PARAMETRIC / NOT_VALIDATED",
+ "addendum_lock_sha256": "e0a97161f8599ab0c11770751d95fac9cbd68a50b24de3bc6201d9ab6d2b089a",
+ "prereg_lock_sha256": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3",
+ "cases_file_sha256": "6306b37040f3490cf7b23dca4902a29351ab3153ff1ed3d886b53feef88d592f",
+ "driver_sha256": "079d7c4d10bb44a147e881de39794cb314b6296766819eb49479ab593475329c",
+ "name": "h1_parametric_envelope_a6_study_v1",
+ "n_records": 154,
+ "raw_file": "h1_parametric_envelope_a6_study_v1_raw.jsonl.gz",
+ "raw_sha256": "b7f3adc30176f531a5a9c79353be3cb6b6e43fe9f40c6a5bd0f5cb57801fe868",
+ "shards": [
+  {
+   "file": "a6_s00.jsonl",
+   "sha256": "2b03393cd257c8ff59004c3b272ef9a2c081bcbc28bdfe46461da7de0261a42e",
+   "n_records": 52
+  },
+  {
+   "file": "a6_s01.jsonl",
+   "sha256": "37f7e5ab4ead93978bfd511813a1d17574442a4d66907609230f4fdb85bab811",
+   "n_records": 51
+  },
+  {
+   "file": "a6_s02.jsonl",
+   "sha256": "0059433f44763cb8e587bd8127ad87343c0d582d2ffff8a0f959e85efe894016",
+   "n_records": 51
+  }
+ ],
+ "frozen_by": "abep-h1-envelope-a6 freeze"
+}

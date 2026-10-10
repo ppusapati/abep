@@ -159,7 +159,8 @@ def run_mission(mp: MissionParams) -> tuple[pd.DataFrame, dict]:
         "mean_bus_power_W": float((df.P_bus_W * df.duty).mean()), "peak_bus_power_W": float(df.P_bus_W.max()),
         "energy_kWh": energy_Wh / 1000.0, "ao_fluence_m2": fluence,
         "hours_TD_ge_1": float((df.T_over_D >= 1.0).sum() * mp.dt_h),
-        "ignition_req_met": fired_h <= RFP.ignition_hours * 1.0 or True,   # firing hours are a capability, not a cap
+        # (A9.22 item 7: the always-true "ignition_req_met" flag was removed; no consumer used it. Firing hours are
+        #  reported raw as fired_hours; any ignition-requirement assessment belongs to abep_sim.assessment.)
     }
     return df, summary
 

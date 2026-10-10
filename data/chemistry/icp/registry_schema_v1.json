@@ -1,0 +1,126 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "data/chemistry/icp/registry_schema_v1.json",
+ "title": "IF-CHEM-REG-v1 registry (registry_air.toml / registry_xe.toml, as parsed TOML)",
+ "description": "NP-ICP-CHEM-AIR v1 interface_to_parent IF-CHEM-REG-v1 (provider abep-chem, consumer abep-icp), build plan BP-S1. abep_chem::registry derives its required-field lists from this file (crates/abep-chem/tests/icp_registry.rs checks both). Units: energies eV (threshold = header energy E_r), masses amu, pressures Pa. A missing optional field means 'not registered', never a default.",
+ "type": "object",
+ "required": ["schema", "mode", "label", "contract", "contract_lock", "contract_lock_sha256", "evidence_modes", "domain", "admission", "completeness_audit", "species", "process"],
+ "properties": {
+  "schema": {"const": "IF-CHEM-REG-v1"},
+  "mode": {"enum": ["AIR", "XE"]},
+  "label": {"type": "string", "description": "reaction-set label (abep-icp-air-0.x / abep-icp-xe-0.x); one label never names two chemistry definitions (AD-AIR-09, AD-XE-04)"},
+  "contract": {"const": "NP-ICP-CHEM-AIR"},
+  "contract_lock": {"type": "string"},
+  "contract_lock_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+  "evidence_modes": {"type": "array", "items": {"enum": ["AIR_PRIMARY", "EM-O2B", "EM-N2", "XE_CONTINGENCY", "EM-XE"]}},
+  "domain": {
+   "type": "object",
+   "required": ["id", "t_e_eV", "mean_energy_eV", "low_threshold_window_t_e_eV", "low_threshold_kinds", "p_icp_max_Pa", "eedf"],
+   "properties": {
+    "id": {"const": "D-CHEM"},
+    "t_e_eV": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+    "mean_energy_eV": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+    "low_threshold_window_t_e_eV": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+    "low_threshold_kinds": {"type": "array", "items": {"type": "string"}},
+    "p_icp_max_Pa": {"type": "number"},
+    "eedf": {"const": "MAXWELLIAN"}
+   }
+  },
+  "admission": {
+   "type": "object",
+   "required": ["status", "gate", "reason_code", "today"],
+   "properties": {"status": {"enum": ["NOT_ADMITTED", "ADMITTED"]}}
+  },
+  "completeness_audit": {
+   "type": "object",
+   "required": ["id", "status"],
+   "properties": {"status": {"enum": ["NOT_RUN", "PROVISIONAL", "FINAL"]}}
+  },
+  "neg_crit": {
+   "type": "object",
+   "required": ["status", "scope"],
+   "properties": {"status": {"enum": ["NOT_EVALUABLE", "NOT_EVALUATED", "PASSED", "FAILED"]}}
+  },
+  "species_bound": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["id", "species", "status", "x_screen", "scope"],
+    "properties": {
+     "status": {"enum": ["UNRESOLVED", "EXCLUDED_BY_BOUND", "SPECIES_ADDED_V2"]},
+     "scope": {"enum": ["COMPOSITION_ABOVE_SCREEN", "EVERY_AIR_COMPOSITION"]}
+    }
+   }
+  },
+  "species": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["id", "charge", "elements", "role", "status", "retention", "mass_source"],
+    "properties": {
+     "charge": {"type": "integer"},
+     "elements": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}},
+     "role": {"enum": ["feed", "product", "ion"]},
+     "status": {"enum": ["RETAINED", "CONDITIONAL_ON_CA", "MATERIALITY_BOUND_REQUIRED", "EXCLUDED_BY_SCREEN"]},
+     "mass_amu": {"type": "number", "exclusiveMinimum": 0},
+     "mass_source": {"type": "string"}
+    }
+   }
+  },
+  "process": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["id", "class", "reaction", "tier", "status", "ca_verdict"],
+    "properties": {
+     "status": {"enum": ["IN_REPO_VERIFIED", "SOURCE_IDENTIFIED_TO_ACQUIRE", "INCOMPLETE_EVIDENCE"]},
+     "target": {"type": "string", "description": "the single electron-impact target species, where the contract reaction has one"},
+     "ca_verdict": {"type": "string", "description": "CA-ICP-v1 verdict id, or NOT_EVALUATED"}
+    }
+   }
+  },
+  "channel": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["id", "process", "kind", "target", "data_target", "products", "electrons_out", "threshold_eV", "table", "table_sha256", "validity_entry", "representation_kind", "representation_status", "variant_role"],
+    "properties": {
+     "kind": {"enum": ["IONIZATION", "DISSOCIATIVE_IONIZATION", "DISSOCIATION", "EXCITATION_ELECTRONIC", "EXCITATION_VIBRATIONAL", "EXCITATION_ROTATIONAL", "ELASTIC_MOMENTUM_TRANSFER"]},
+     "data_target": {"type": "string", "description": "the species the source data were measured / computed for; must equal target (FC-CHEM-05: no surrogate)"},
+     "products": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}},
+     "electrons_out": {"type": "integer", "minimum": 1},
+     "threshold_eV": {"type": "number", "minimum": 0, "description": "header energy E_r; equals the .dat header"},
+     "table": {"type": "string", "description": "HallThruster-format .dat cross-check (NV-06 / UQ-06), pinned in reuse_pins.json or under tables/"},
+     "validity_entry": {"type": "string", "description": "key in rate_validity_icp.toml (missing entry: MODEL_ERROR, FC-CHEM-01)"},
+     "representation_kind": {"enum": ["CROSS_SECTION", "RATE_FIT"]},
+     "representation_status": {"enum": ["REGISTERED", "INCOMPLETE_EVIDENCE"]},
+     "representation": {"type": "string", "description": "required when REGISTERED: file under xs/"},
+     "representation_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+     "representation_gap": {"type": "string", "description": "required when not REGISTERED: why no direct rate exists"},
+     "variant_role": {"enum": ["NOMINAL", "VARIANT", "SENSITIVITY", "UNCERTAINTY_VARIANT"]},
+     "variant_group": {"type": "string"}
+    }
+   }
+  },
+  "variant_group": {
+   "type": "array",
+   "items": {"type": "object", "required": ["id", "process", "members", "note"]}
+  },
+  "scenario": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["id", "evidence_mode", "channels"],
+    "properties": {
+     "hall_config": {"type": "string", "description": "a Hall propellant configuration whose rate files must equal the scenario's tables (NP-ICP-NEUTRALIZER addendum_02: IDENTICAL)"},
+     "hall_config_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    }
+   }
+  },
+  "envelope": {
+   "type": "array",
+   "description": "UE-02 envelopes (member channel lists); none registered at BP-S1",
+   "items": {"type": "object", "required": ["id", "process", "members", "bound_basis"]}
+  }
+ }
+}

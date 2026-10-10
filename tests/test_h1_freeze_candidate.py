@@ -274,7 +274,9 @@ def test_consistency_checks(committed):
 def test_design_point_not_selected(committed):
     by_id = {p["id"]: p for p in committed["parameters"]}
     cp = by_id["H1F-CH-11"]
-    assert cp["freeze_status"] == "TBD_OWNER" and cp["value"].startswith("TBD")
+    # A9.14 F5-OQ-02 (owner decision): the selection rule is owner-given, the point itself is not selected yet
+    assert cp["freeze_status"] == "TBD_AFTER_EVIDENCE" and cp["value"].startswith("TBD")
+    assert cp["a9_16"]["point_status"] == "NOT_SELECTED_PENDING_FEMM"
     assert "NOT a design selection" in cp["note"]
     for pid in ("H1F-CH-02", "H1F-CH-03", "H1F-CH-04", "H1F-CH-05", "H1F-CH-10"):
         assert by_id[pid]["freeze_status"] == "OPEN"
@@ -324,3 +326,21 @@ def test_no_freeze_candidate_depends_on_open_row(committed):
     assert "trim" in co14["value"] and "H1F-MC-02" in co14["value"]
     co01 = by_id["H1F-CO-01"]
     assert co01["freeze_status"] == "FREEZE_CANDIDATE" and "trim" not in co01["value"]
+
+
+def test_a9_19_a9_20_applied(doc):
+    """A9.19: H-1 is the single Hall of one Hall + one ICP neutralizer (two supply modes, no hollow cathode); A9.20: C1
+    ground-only (no CONTROL_FALLBACK status in the standing facts; IP-C1 a ground-bench quantity)."""
+    from abep_sim.design import a9_19_architecture as a919
+    assert "CONTROL_FALLBACK" not in doc["standing_facts"]["a9"].replace("(was CONTROL_FALLBACK)", "")
+    assert "GROUND_ONLY_LAB_EQUIPMENT" in doc["standing_facts"]["a9"]
+    fa = doc["flight_architecture"]
+    assert fa["hall_accelerators"] == 1 and fa["conventional_hollow_cathode"] == "NONE"
+    assert [m["mode"] for m in fa["supply_modes"]] == ["AIR_PRIMARY", "XE_CONTINGENCY"]
+    by = {p["id"]: p for p in doc["parameters"]}
+    assert by["H1F-EX-05"]["a9_19"]["ip_c1_scope"] == "GROUND_BENCH_ONLY"
+    rows = doc["a9_19_owner_answers_applied"]
+    assert {r["decision"] for r in rows} == {"A9.19", "A9.20"}
+    for r in rows:
+        assert r["decision_json_sha256"] == a919.DECISIONS[r["decision"]]["json_sha256"]
+    assert "PASS" not in json.dumps(rows)

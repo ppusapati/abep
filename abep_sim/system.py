@@ -1,13 +1,36 @@
-"""Close one ABEP configuration against every RFP constraint."""
+"""Close one ABEP configuration: raw physics / design closure, then (separately) its assessment.
+
+Owner decision A9.22 items 6-7 (docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json):
+  * ``physics_closure(cfg)`` returns raw physical / design quantities and model labels only (schema
+    ``raw_closure_v2``, an explicit increment over the pre-split merged dict, implicitly v1). It carries no
+    requirement check, IC metric, architecture-preference flag or RFP / compliance classification.
+  * ``abep_sim.assessment.assess(raw, constraints, priors)`` compares a raw closure with the constraints.
+  * the pre-split merged dict: programme layer ``abep_sim.programme.closure.evaluate`` (``evaluate`` here delegates).
+Engineering inputs (T_req floor, thrust cap, mission-duration basis, subsystem firing-life assumption) come only
+from the operating-inputs seam ``abep_sim.operating_inputs`` (frozen configuration config/mission/), never from the
+RFP / RVM. A9.22 G1 governed baseline change (docs/HISTORY.md 'A9.22 G1 governed baseline change (system.py
+completion)'): mission-integrated quantities (AO fluence / erosion depths, cathode start count, mission reliability
+horizon) use the 26,280 h mission-duration basis; firing-integrated quantities (cathode Xe, Xe-for-T_req, the
+O-exposed life margin) use the labelled 15,000 h SUBSYSTEM_FIRING_LIFE_ASSUMPTION.
+"""
 from __future__ import annotations
 import math
 from dataclasses import dataclass, asdict
 from typing import Optional
-from .constants import RFP, G0
+from .constants import G0
+from . import operating_inputs as OI
 from .atmosphere import atmosphere
 from .intake import IntakeParams, CompressorParams, collection, compress
 from .thruster import CARDS, performance, xe_for_thrust
 from .aochem import AOParams, inlet_composition, ao_flux, fluence, erosion_depth_um
+
+# A9.13 S6.8 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json): production/design
+# evidence above the 0.1 Pa free-molecular domain stays NOT_EVALUATED_OUT_OF_DOMAIN. Same value as
+# abep_sim.design.compressor_synthesis.P_MOLECULAR_LIMIT_PA and upstream_a9_13.P_FREE_MOLECULAR_LIMIT_PA (F3
+# P-MOLECULAR-LIMIT, Chiggiato 2013 Sec. 4.1.2; a test checks they agree).
+P_FREE_MOLECULAR_LIMIT_PA = 0.1
+NOT_EVALUATED_OUT_OF_DOMAIN = "NOT_EVALUATED_OUT_OF_DOMAIN"
+PRESSURE_DOMAIN_TAG = "free_molecular_pressure_limit_0.1Pa"
 
 
 @dataclass
@@ -24,12 +47,13 @@ class Budgets:
     mga_new_design: float = 0.30         # mass growth allowance, new/low-TRL items (intake, compressor, stage1)
     mga_modified: float = 0.15           # modified heritage (thruster, PPU)
     mga_existing: float = 0.05           # existing (tanks, structure)
+    # Assessment-only fields (A9.22 item 6): kept on Budgets for compatibility (sweep YAML `budgets`, UQ priors), but
+    # read only by abep_sim.assessment, never by physics_closure.
     m_cbe_target_kg: float = 32.0        # internal target for current best estimate
     ic_intake: float = 0.90
     ic_compressor: float = 0.65
     ic_pse: float = 0.80
     ic_structure: float = 0.95
-    duty_cycle: float = RFP.ignition_hours / RFP.mission_hours   # ~0.58
     xe_aug_hours: float = 1500.0         # hours of Xe-augmented (peak) operation budgeted
 
 
@@ -42,7 +66,7 @@ class Config:
     compressor: CompressorParams = None
     vd_V: Optional[float] = None
     accommodation: Optional[float] = None
-    T_required_mN: Optional[float] = None   # if None, use RFP 12 mN floor
+    T_required_mN: Optional[float] = None   # if None, use the 12 mN floor (operating_inputs.THRUST_MIN_mN)
     body_area_m2: float = 0.0               # spacecraft frontal area beyond the intake (DRDO input, unknown)
     gaspath_physics: bool = False           # Phase 2: drag-compressor + reservoir network instead of parametric
     plasma_physics: bool = False            # Phase 3: global chemistry + source coupling + interstage + Hall channel + cathode
@@ -76,7 +100,12 @@ class Config:
             self.budgets.xe_aug_hours = self.xe_aug_hours
 
 
-def evaluate(cfg: Config) -> dict:
+RAW_CLOSURE_SCHEMA_VERSION = "raw_closure_v2"
+
+
+def physics_closure(cfg: Config) -> dict:
+    """Raw physics / design closure of one configuration (schema raw_closure_v2): physical and design quantities and
+    model labels only. Requirement checks, IC metrics, preference flags and compliance classes: abep_sim.assessment."""
     card = CARDS[cfg.architecture]
     b = cfg.budgets
     atm = atmosphere(cfg.alt_km, cfg.solar)
@@ -84,16 +113,31 @@ def evaluate(cfg: Config) -> dict:
     cmp_ = compress(cfg.compressor, atm, col["mdot_collected"], col["eta_c"], col["passive_override"])
     mdot_air = cmp_["mdot_net"]
     p_in = cmp_["p_out_Pa"]
+    # Collected composition (owner decision A9.9 S2.1, review fix D-04/N3 2026-10-01): on the TPMC path the collected
+    # species flow comes from the species-resolved collection efficiencies (intake.collection mdot_collected_species),
+    # not from the free-stream mass fractions times one mass-weighted efficiency. The parametric intake path (no
+    # species rows) keeps the free-stream split. The total collected flow is unchanged (sum_s mdot_c,s = mdot_collected).
+    col_sp = col.get("mdot_collected_species")
+    if col_sp:
+        tot_sp = sum(col_sp.values())
+        if not (math.isfinite(tot_sp) and tot_sp > 0):
+            raise ValueError(f"species-resolved collected flow is not positive/finite: {col_sp}")
+        w_col = {s: col_sp.get(s, 0.0) / tot_sp for s in ("O", "N2", "O2")}
+        collected_composition_basis = "species_resolved_collection_A9.9_S2.1"
+    else:
+        w_col = {"O": atm["fO"], "N2": atm["fN2"], "O2": atm["fO2"]}
+        collected_composition_basis = "free_stream_mass_fractions_parametric_intake"
+    atm_col = {**atm, "fO": w_col["O"], "fN2": w_col["N2"], "fO2": w_col["O2"]}
 
     # AO chemistry: what the thruster actually receives after wall recombination
-    inlet = inlet_composition(atm, cfg.ao)
+    inlet = inlet_composition(atm_col, cfg.ao)
     gas = {}
     if cfg.gaspath_physics:
         from .compressor import DragCompressor
         from .reservoir import Reservoir, size_orifice_for_pressure
         p_min = card.p_min_Pa if card.stage1 is None else max(card.p_min_Pa, card.stage1.p_min_Pa)
         p_target = cfg.p_target_Pa if cfg.p_target_Pa is not None else cfg.p_margin_over_pmin * p_min
-        md_in = {"O": mdot_air * atm["fO"], "N2": mdot_air * atm["fN2"], "O2": mdot_air * atm["fO2"]}
+        md_in = {s: mdot_air * w_col[s] for s in ("O", "N2", "O2")}     # collected composition (S2.1, see above)
         comp = DragCompressor(turbo_area_m2=min(0.45, 0.9 * cfg.intake.area_m2 * cfg.intake.phi),
                               turbo_radius_m=min(0.45, math.sqrt(cfg.intake.area_m2 / math.pi)),
                               rotor_material=cfg.rotor_material)
@@ -101,8 +145,37 @@ def evaluate(cfg: Config) -> dict:
         cres = comp.size_for(cmp_["p_passive_Pa"], md_in, CR_target=cr_needed)
         res = Reservoir(wall_material=cfg.reservoir_material, upstream_material=cfg.rotor_material if cfg.rotor_material in ("Ti6Al4V", "Al6061") else "Al2O3_anodised",
                         upstream_collisions=10.0 * cres["turbo_rows"] + 50.0 * cres["n_stages"], T_K=min(max(cres["T_comp_K"], 300.0), 500.0))
-        size_orifice_for_pressure(res, cres["delivered_kgps"], min(p_target, cres["p_out_Pa"]))
+        orf = size_orifice_for_pressure(res, cres["delivered_kgps"], min(p_target, cres["p_out_Pa"]), report=True)
         rs = res.steady_state(cres["delivered_kgps"])
+        # G-03..G-05 (owner decision A9.9 S2.4): every gas-path solver must converge (and the orifice target must be
+        # bracketed) for the record to be admissible; otherwise the raw state is kept but flagged MODEL_NOT_CONVERGED
+        # and the compressor branch is not feasible (fail closed). Converged numerics are untouched.
+        nc = [n for n, ok in (("compressor_recirculation", cres["converged"]), ("orifice_sizing", orf["converged"]),
+                              ("reservoir_steady_state", rs["converged"])) if not ok]
+        gaspath_converged = not nc
+        # MCC-02 (owner decision A9.9 S2.5): a compressor state with any stage/species outside the Gaede
+        # stage-capacity domain (unclipped K < 1) is outside the admitted model; its clipped values are diagnostics
+        # only and the compressor branch is not feasible (fail closed). Reported separately from convergence.
+        ood = ["compressor_gaede_stage_capacity"] if not cres["gaede_domain_ok"] else []
+        # A9.13 S6.8 (owner decision; PHY-02 repair): the admitted compressor / feed model is free-molecular and ends at
+        # 0.1 Pa. A state whose target (compressor-outlet / valve setpoint) or operating reservoir pressure (the
+        # compressor discharges into the reservoir) exceeds that limit is NOT_EVALUATED_OUT_OF_DOMAIN: its values are
+        # extrapolations, never a valid architecture point (fail closed; a non-finite pressure is out of domain).
+        # The free-discharge outlet of the compressor sizing search (cres p_out, before the orifice throttles the
+        # reservoir to p_target) is reported explicitly next to it (comp_sizing_p_out_Pa / ..._above_limit), never
+        # silently: whether that sizing-search state is itself production evidence is an owner question.
+        # The setpoint is compared exactly; the reservoir pressure reaches the orifice target only to the orifice
+        # solver's own declared tolerance (reservoir.ORIFICE_P_RTOL), so it is compared within that tolerance (a
+        # converged 0.1 Pa setpoint is not pushed out of domain by rounding).
+        from .reservoir import ORIFICE_P_RTOL
+        p_res = float(rs["p_total_Pa"])
+        p_domain_max = max(float(p_target), p_res)
+        pressure_ood = not (math.isfinite(float(p_target)) and math.isfinite(p_res)
+                            and float(p_target) <= P_FREE_MOLECULAR_LIMIT_PA
+                            and p_res <= P_FREE_MOLECULAR_LIMIT_PA * (1.0 + ORIFICE_P_RTOL))
+        if pressure_ood:
+            ood = ood + [PRESSURE_DOMAIN_TAG]
+        gaspath_in_domain = not ood
         mdot_air = sum(rs["mdot_anode"].values())
         p_in = rs["p_total_Pa"]
         comp_mass = cres["mass_kg"]; comp_power = cres["P_el_W"]
@@ -114,13 +187,42 @@ def evaluate(cfg: Config) -> dict:
                "comp_CR_O": cres["CR_by_species"].get("O", 1.0), "comp_CR_N2": cres["CR_by_species"].get("N2", 1.0),
                "comp_T_K": cres["T_comp_K"], "res_p_Pa": rs["p_total_Pa"], "res_tau_ms": rs["residence_time_s"] * 1e3,
                "res_wall_collisions": rs["wall_collisions_reservoir"], "gamma_wall": rs["gamma_wall"],
-               "p_target_Pa": p_target, "cr_needed": cr_needed}
+               "p_target_Pa": p_target, "cr_needed": cr_needed,
+               "comp_converged": cres["converged"], "comp_iterations": cres["iterations"], "comp_residual": cres["residual"],
+               "res_converged": rs["converged"], "res_iterations": rs["iterations"], "res_residual": rs["residual"],
+               "res_balance_residual_rel": rs["balance_residual_rel"],
+               "orifice_converged": orf["converged"], "orifice_bracketed": orf["bracketed"],
+               "orifice_p_residual_rel": orf["p_residual_rel"],
+               "gaspath_converged": gaspath_converged,
+               "gaspath_status": "CONVERGED" if gaspath_converged else "MODEL_NOT_CONVERGED",
+               "gaspath_not_converged": nc,
+               "comp_gaede_status": cres["gaede_status"], "comp_gaede_domain_ok": cres["gaede_domain_ok"],
+               "comp_gaede_out_of_domain": cres["gaede_out_of_domain"],
+               "comp_gaede_K_unclipped_min": cres["gaede_K_unclipped_min"],
+               "comp_gaede_K_unclipped": cres["gaede_K_unclipped"],
+               "comp_n_rejected_out_of_gaede_domain": cres["n_rejected_out_of_gaede_domain"],
+               "gaspath_in_domain": gaspath_in_domain,
+               "gaspath_domain_status": ("IN_DOMAIN" if gaspath_in_domain else
+                                         NOT_EVALUATED_OUT_OF_DOMAIN if pressure_ood else "OUT_OF_MODEL_DOMAIN"),
+               "gaspath_p_domain_max_Pa": p_domain_max, "gaspath_p_domain_limit_Pa": P_FREE_MOLECULAR_LIMIT_PA,
+               "comp_sizing_p_out_Pa": float(cres["p_out_Pa"]),
+               "comp_sizing_p_out_above_limit": not (float(cres["p_out_Pa"]) <= P_FREE_MOLECULAR_LIMIT_PA),
+               "gaspath_out_of_domain": ood,
+               # A9.9 S2.3 / MCC-03: rotor structural acceptance needs a registered rotor-strength basis. Without one
+               # the compressor is a PARAMETRIC_SENSITIVITY result (mass/power from the labelled legacy tip-speed cap)
+               # and the compressor branch is not feasible (fail closed).
+               "comp_sizing_mode": cres["sizing_mode"], "comp_u_max_basis": cres["u_max_basis"],
+               "comp_rotor_qualification": cres["rotor_qualification"], "comp_rotor_ok": cres["rotor_ok"],
+               "comp_rotor_within_legacy_sensitivity_cap": cres["rotor_within_legacy_sensitivity_cap"]}
         cmp_ = {**cmp_, "p_out_Pa": p_in, "comp_power_W": comp_power, "comp_mass_kg": comp_mass,
-                "active_ratio": cres["CR_active"], "comp_feasible": cres["sized"] and cres["rotor_ok"], "mdot_net": mdot_air}
+                "active_ratio": cres["CR_active"], "comp_feasible": cres["sized"] and cres["rotor_ok"] and gaspath_converged and gaspath_in_domain, "mdot_net": mdot_air}
     atm_in = {**atm, "fO": inlet["fO"], "fN2": inlet["fN2"], "fO2": inlet["fO2"],
               "diss_sink_J_per_kg": inlet["diss_sink_J_per_kg"]}
     ao = ao_flux(atm)
-    fl = fluence(atm, RFP.mission_hours)
+    # A9.22 G1: AO fluence / life exposure is mission-integrated -> mission-duration basis (26,280 h)
+    mission_h = OI.MISSION_HOURS
+    firing_h = OI.FIRING_HOURS          # SUBSYSTEM_FIRING_LIFE_ASSUMPTION (OI.FIRING_HOURS_LABEL), firing-integrated only
+    fl = fluence(atm, mission_h)
 
     air = performance(card, atm_in, mdot_air, p_in, cfg.vd_V)
     plasma = {}
@@ -177,14 +279,14 @@ def evaluate(cfg: Config) -> dict:
                   "pl_cath_life_h": cath["life_h_evaporation"], "pl_sustained": hr["I_beam_A"] > 0.05}
     T_air = air["T_N"]
 
-    # Sustained thrust requirement: RFP floor (12 mN) unless overridden. Drag of the
+    # Sustained thrust requirement: 12 mN floor (operating_inputs) unless overridden. Drag of the
     # ram face is reported separately as T/D so closure is visible, not hidden in Xe.
     drag = col["drag_N"]
-    T_req = (cfg.T_required_mN * 1e-3) if cfg.T_required_mN else RFP.thrust_min_mN * 1e-3
-    T_req = min(T_req, RFP.thrust_max_mN * 1e-3)
+    T_req = (cfg.T_required_mN * 1e-3) if cfg.T_required_mN else OI.THRUST_MIN_mN * 1e-3
+    T_req = min(T_req, OI.THRUST_MAX_mN * 1e-3)
 
     # Xe augmentation to reach the 25 mN peak point (and to reach T_req if air is short)
-    xe_peak = xe_for_thrust(card, atm_in, mdot_air, p_in, RFP.thrust_max_mN * 1e-3, cfg.vd_V)
+    xe_peak = xe_for_thrust(card, atm_in, mdot_air, p_in, OI.THRUST_MAX_mN * 1e-3, cfg.vd_V)
     peak = performance(card, atm_in, mdot_air, p_in, cfg.vd_V, mdot_xe_anode=xe_peak)
     xe_req = xe_for_thrust(card, atm_in, mdot_air, p_in, T_req, cfg.vd_V)
 
@@ -194,12 +296,13 @@ def evaluate(cfg: Config) -> dict:
         return bus
     P_air = total_power(air)
     P_peak = total_power(peak)
-    P_cap = RFP.power_max_W * (1 - b.p_margin_frac)
+    # (the 1.5 kW x (1 - p_margin_frac) power cap is an assessment constraint: abep_sim.assessment)
 
-    # Xe mass over mission
-    xe_cath_kg = card.cathode.xe_flow_mgps * 1e-6 * RFP.ignition_hours * 3600
+    # Xe mass: cathode flow and Xe-for-T_req are firing-integrated (they flow only while firing), so they use the
+    # labelled SUBSYSTEM_FIRING_LIFE_ASSUMPTION (15,000 h; A9.22 G1), not the mission duration
+    xe_cath_kg = card.cathode.xe_flow_mgps * 1e-6 * firing_h * 3600
     xe_aug_kg = xe_peak * b.xe_aug_hours * 3600
-    xe_req_kg = xe_req * RFP.ignition_hours * 3600       # if air alone can't meet T_req all the time
+    xe_req_kg = xe_req * firing_h * 3600       # if air alone can't meet T_req all the time
     xe_total_kg = xe_cath_kg + xe_aug_kg + xe_req_kg
 
     # Mass
@@ -218,16 +321,8 @@ def evaluate(cfg: Config) -> dict:
              + b.mga_modified * (card.mass_kg + m_ppu) + b.mga_existing * (m_tank + m_struct))
     m_mev = m_cbe + m_mga
 
-    # Indigenous content (mass-weighted, dry)
-    ic_thr = card.ic_thruster
-    if card.stage1:
-        ic_thr = (card.mass_kg * card.ic_thruster + card.stage1.mass_kg * card.stage1.ic) / m_thr
-    ic_num = (m_thr * ic_thr + m_intake * b.ic_intake + m_comp * b.ic_compressor
-              + m_ppu * b.ic_pse + m_struct * b.ic_structure)
-    ic_total = ic_num / (m_thr + m_intake + m_comp + m_ppu + m_struct)
-
     # Life: O-exposed component lives scaled by air-operation hours; cathode as separate item
-    air_hours = RFP.ignition_hours
+    air_hours = firing_h                 # air-operation (firing) hours: SUBSYSTEM_FIRING_LIFE_ASSUMPTION
     life_items = dict(card.o_life_h)
     if card.cathode.kind == "mw_air":
         life_items["cathode"] = card.cathode.o_life_h
@@ -235,29 +330,6 @@ def evaluate(cfg: Config) -> dict:
     life_margin = life_h / air_hours
 
     T_over_D = T_air / drag if drag > 0 else float("inf")
-
-
-    checks = {
-        "thrust_air_ge_req": T_air >= T_req,
-        "thrust_peak_25mN": peak["T_N"] >= RFP.thrust_max_mN * 1e-3 * 0.999,
-        "power_air": P_air <= P_cap,
-        "power_peak": P_peak <= P_cap,
-        "mass": m_total <= RFP.mass_max_kg,
-        "life": life_margin >= 1.0,
-        "ic_total": ic_total >= RFP.ic_total_min,
-        "ic_thruster": ic_thr >= RFP.ic_subsystem_min["thruster"],
-        "compressor_feasible": cmp_["comp_feasible"],
-        "hall_preferred": card.hall,
-        "net_drag_comp_air": T_over_D >= 1.0,
-    }
-    hard = ["thrust_air_ge_req", "thrust_peak_25mN", "power_air", "power_peak", "mass", "life",
-            "ic_total", "ic_thruster", "compressor_feasible"]
-    rfp_compliant = all(checks[k] for k in hard)          # meets every stated RFP limit
-    abep_closed = rfp_compliant and checks["net_drag_comp_air"]   # AND physically does the job: T > D on air
-    technical = [k for k in hard if k not in ("ic_total", "ic_thruster")]
-    technical_compliant = all(checks[k] for k in technical)        # physics/engineering only, no IC
-    technical_closed = technical_compliant and checks["net_drag_comp_air"]
-    feasible = rfp_compliant
 
     eng = {}
     if cfg.engineering_physics:
@@ -294,7 +366,8 @@ def evaluate(cfg: Config) -> dict:
                         blade_tip_mps=gas.get("comp_tip_mps", 350.0), V_rel_mps=atm.get("V_rel", atm["V"]),
                         blade_coating_um=cfg.blade_coating_um,
                         magnet_T_K=rad["hot"]["T"]["magnets"], cathode_T_K=plasma.get("pl_cath_T_K", 1750.0),
-                        cathode_starts=int(RFP.mission_hours / 24 * 0.5))
+                        cathode_starts=int(mission_h / 24 * 0.5),   # A9.22 G1: starts over the mission duration
+                        mission_h=mission_h, firing_h=firing_h)
         L_hall = hall_channel_life(li); L_int = intake_life(li); L_bl = blade_life(li); L_mag = magnet_life(li)
         L_cat = cathode_life(li); L_cmp = compressor_life(li)
         rel = reliability(li, {"hall_channel": L_hall["life_h"], "cathode": L_cat["life_evaporation_h"],
@@ -326,16 +399,11 @@ def evaluate(cfg: Config) -> dict:
         P_air = P_bus_steady
         P_peak = P_bus_peak
         m_cbe = bom["cbe_kg"]; m_mev = bom["mev_kg"]; m_mga = bom["mga_kg"]; m_total = m_mev
-        checks["power_air"] = P_air <= P_cap; checks["power_peak"] = P_peak <= P_cap
-        checks["mass"] = m_mev <= RFP.mass_max_kg
-        checks["life"] = all(x["ok"] for x in (L_hall, L_bl, L_mag, L_cat, L_cmp)) and L_int["coating_ok"]
-        checks["thermal"] = rad["feasible"]
-        hard.append("thermal")
-        rfp_compliant = all(checks[k] for k in hard)
-        abep_closed = rfp_compliant and checks["net_drag_comp_air"]
-        technical_compliant = all(checks[k] for k in technical + ["thermal"])
-        technical_closed = technical_compliant and checks["net_drag_comp_air"]
-        feasible = rfp_compliant
+        # Model-emitted pass flags (abep_sim.life against its LifeInputs hours; abep_sim.thermal radiator-area
+        # feasibility). Raw-only inputs to the assessment layer; not part of the legacy evaluate() dict.
+        eng_life_model_ok_flags = {"hall_channel": L_hall["ok"], "blade_coating": L_bl["ok"], "magnet": L_mag["ok"],
+                                   "cathode": L_cat["ok"], "compressor": L_cmp["ok"], "intake_coating": L_int["coating_ok"]}
+        eng_thermal_radiator_feasible = rad["feasible"]
         eng = {"eng_P_bus_steady_W": P_bus_steady, "eng_P_bus_startup_W": P_bus_start, "eng_P_bus_peak_W": P_bus_peak,
                "eng_ppu_eta": modes["steady"]["eta_overall"], "eng_ppu_loss_W": modes["steady"]["P_loss_W"],
                "eng_ppu_mass_kg": pm["m_ppu_total_kg"], "eng_T_ppu_K": T_ppu, "eng_T_thruster_K": rad["hot"]["T"]["thruster"],
@@ -347,7 +415,11 @@ def evaluate(cfg: Config) -> dict:
                "eng_intake_coating_erosion_um": L_int["coating_erosion_um"], "eng_intake_alpha_end": L_int["alpha_end"],
                "eng_blade_coating_life_h": L_bl["coating_life_h"], "eng_blade_impact_eV": L_bl["impact_E_eV"],
                "eng_magnet_ok": L_mag["ok"], "eng_cathode_life_h": L_cat["life_evaporation_h"], "eng_cathode_starts": L_cat["starts"],
-               "eng_R_15000h": rel["R_15000h"], "eng_R_26000h": rel["R_26000h"], "eng_marginal_items": ",".join(rel["single_point_or_marginal"]),
+               # A9.22 G1: eng_R_mission = R at the mission-duration basis (life.reliability R_mission) is the
+               # mission-reliability output; eng_R_26000h keeps its honest meaning (R at the historical 26,000 h horizon,
+               # life.LEGACY_RELIABILITY_HORIZON_H) for existing readers only and is no longer the mission value.
+               "eng_R_15000h": rel["R_firing"], "eng_R_26000h": rel["R_26000h"],
+               "eng_R_mission": rel["R_mission"], "eng_R_mission_h": mission_h, "eng_marginal_items": ",".join(rel["single_point_or_marginal"]),
                "eng_m_cbe_kg": m_cbe, "eng_m_mga_kg": m_mga, "eng_m_mev_kg": m_mev, "eng_structure_t_mm": st["panel_t_mm"],
                "eng_deck_if_own_kg": st["deck_if_own_kg"],
                "eng_xe_tank_kg": tank["mass_kg"], "eng_hall_magnetics_kg": m_mag["mass_kg"], "eng_hall_channel_kg": m_ch,
@@ -363,7 +435,9 @@ def evaluate(cfg: Config) -> dict:
         "p_passive_Pa": cmp_["p_passive_Pa"], "passive_ratio": cmp_["passive_ratio"],
         "active_ratio": cmp_["active_ratio"],
         "fO_inlet": inlet["fO"], "fO2_inlet": inlet["fO2"], "O_survival": inlet["O_survival"],
-        "ao_flux_m2s": ao["ao_flux"], "ao_fluence_mission_m2": fl,
+        "fO_collected": w_col["O"], "fN2_collected": w_col["N2"], "fO2_collected": w_col["O2"],
+        "collected_composition_basis": collected_composition_basis,
+        "ao_flux_m2s": ao["ao_flux"], "ao_fluence_mission_m2": fl, "ao_fluence_basis_h": mission_h,
         "erosion_kapton_um": erosion_depth_um("kapton_HN", fl),
         "erosion_graphite_um": erosion_depth_um("graphite", fl),
         "erosion_silver_um": erosion_depth_um("silver", fl),
@@ -381,13 +455,22 @@ def evaluate(cfg: Config) -> dict:
         "m_thruster_kg": m_thr, "m_ppu_kg": m_ppu, "m_intake_kg": m_intake, "m_comp_kg": m_comp,
         "m_xe_sys_kg": m_xe_sys, "m_struct_kg": m_struct, "m_total_kg": m_total,
         "m_cbe_kg": m_cbe, "m_mga_kg": m_mga, "m_mev_kg": m_mev,
-        "chk_mass_mev": m_mev <= RFP.mass_max_kg, "chk_mass_cbe_target": m_cbe <= b.m_cbe_target_kg,
-        "ic_thruster": ic_thr, "ic_total": ic_total,
         "life_limit_h": life_h, "life_margin": life_margin,
         "life_limiting": min(life_items, key=life_items.get) if life_items else "none",
         "comp_ratio_effective": cmp_["ratio_effective"],
-        "feasible": feasible, "rfp_compliant": rfp_compliant, "abep_closed": abep_closed,
-        "technical_compliant": technical_compliant, "technical_closed": technical_closed,
         "engineering_model": "physics" if cfg.engineering_physics else "parametric", **eng,
-        **{f"chk_{k}": v for k, v in checks.items()},
+        # raw-only (abep_sim.assessment.RAW_ONLY_KEYS): schema label, exact SI thrusts, model feasibility flags
+        "raw_schema_version": RAW_CLOSURE_SCHEMA_VERSION,
+        "T_air_N": T_air, "T_req_N": T_req, "T_peak_N": peak["T_N"], "comp_feasible": cmp_["comp_feasible"],
+        **({"eng_life_model_ok_flags": eng_life_model_ok_flags,
+            "eng_thermal_radiator_feasible": eng_thermal_radiator_feasible} if cfg.engineering_physics else {}),
     }
+
+
+def evaluate(cfg: Config) -> dict:
+    """COMPATIBILITY ENTRY (A9.22 layer separation): the legacy merged record (raw closure + assessment) is built by the
+    programme layer, abep_sim.programme.closure.evaluate (identical keys / order / values). This name is kept only
+    because immutable records reference it by path (upstream ICD v1 producers/consumers, RTM v1 model reference);
+    in-repo code imports the programme layer. The raw physics entry is physics_closure."""
+    from .programme.closure import evaluate as _merged_record
+    return _merged_record(cfg)

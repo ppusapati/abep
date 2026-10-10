@@ -11,7 +11,8 @@ import numpy as np
 import pandas as pd
 from .uncertainty import DEFAULT_PRIORS, _apply, _relevant, _sample_tri, _JOINT
 from .intake import IntakeParams, CompressorParams
-from .system import Config, Budgets, evaluate
+from .system import Config, Budgets
+from .programme.closure import evaluate      # legacy merged record (uses its assessment flags; A9.22 programme layer)
 from .transient import MissionParams, run_mission
 from .thruster import CARDS
 from .aochem import AOParams
@@ -79,7 +80,7 @@ def mission_closure(architecture="hall_ecr", alt_km=200.0, area_m2=0.5, cr=2000.
                      "min_TD": float(df.T_over_D.min()), "peak_P_W": float(df.P_bus_W.max()),
                      "mean_P_W": float((df.P_bus_W * df.duty).mean()), "xe_used_kg": s["xe_used_total_kg"],
                      "m_mev_kg": m_mev, "m_cbe_kg": m_cbe, "life_margin": static["life_margin"],
-                     "rfp_12mN_on_air_at_mean_solar": bool(static["chk_thrust_air_ge_req"]),
+                     "rfp_12mN_on_air_at_mean_solar": bool(static["chk_thrust_air_ge_sustained_min"]),  # A9.24 item 3
                      "hours_TD_ge_1": s["hours_TD_ge_1"], "reentry_h": s["reentry_time_h"] or 0.0})
     CARDS[architecture] = base; aochem.RECOMB_GAMMA["stainless_steel"] = g0
     out = pd.DataFrame(rows)

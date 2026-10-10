@@ -1,0 +1,53 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_09_A9_39_architecture_closed_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-09",
+ "decision": "A9_39_ARCHITECTURE_CLOSED_OWNER_DECISIONS",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_09_A9_39_ARCHITECTURE_CLOSED_OWNER_DECISIONS.md",
+  "sha256": "7c3880c3f2b5dedefcd66c0c8fbe0362b3aa199099183ec3d65c020bf48f2949",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "ARCHITECTURE_CLOSED",
+   "utc": "2026-10-09T17:36:26.270Z",
+   "text_sha256": "7f1e35d3b3999f955bb58ea3b73d9a6189b3b2063fe6324fc2a53de66da13459",
+   "chars": 5769
+  }
+ ],
+ "checkpoint_at_decision": "f6bcd3c",
+ "architecture_status": "PHYSICS ARCHITECTURE CLOSED — DETAILED DESIGN / EM VERIFICATION OPEN",
+ "frozen_architecture": "atmospheric variable-effective-capture intake -> active compressor / plenum / feed -> H1 Hall accelerator -> 13.56 MHz RF/ICP neutralizer -> thrust; ambient O/N2 primary; Xe required secondary / contingency",
+ "system_requirements": {
+  "functional_orbit_km": [
+   180,
+   230
+  ],
+  "thrust_capability_mN": [
+   12,
+   25
+  ],
+  "full_system_power_W": "< 1500",
+  "internal_design_power_W": 1350,
+  "total_system_mass_kg": "< 40",
+  "internal_nominal_dry_target_kg": 34
+ },
+ "owner_decision_summary": {
+  "1_DCR_DBF1_002": "APPROVED (owner ratification of the coordinator approval): FE-derived H1 B(z) replaces the P5 surrogate; DBF-1 immutable history; DBF-1.1 governing analysis baseline; FE-DERIVED / NOT MEASURED; EM B(z) measurement is the verification-by-test item; no retuning of the FE field",
+  "2_operating_concept": "APPROVED WITH CLARIFICATION: ambient-air primary propulsion with atmospheric-density-aware altitude scheduling inside 180-230 km; the 196-state set is a conservative verification / design-state set, not a requirement to operate at every state with one operating point; define an AIR operating density / flux window; Xe is the RFP-required secondary capability (commissioning, restart, contingency, off-nominal), not routine consumption outside an arbitrary fixed window",
+  "3_intake": "VARIABLE EFFECTIVE CAPTURE: DCR-001 evaluates a density-adaptive / variable-effective-capture intake + active compressor / plenum / feed (aperture, bypass / spillage, variable throat / conductance, shutters / vanes or equivalent; no unnecessary complexity); outputs physical maximum aperture, capture-area modulation range, geometry, capture efficiency, drag, compressor point, pressure ratio, plenum, delivered flow, mass, power, and the admissible flux window; sizing requirement is a defensible operating window + altitude schedule over 180-230 km, not one fixed geometry over all x46 states",
+  "4_hall_air": "NOT AN ARCHITECTURE BLOCKER: closure accepted from conservation analysis + operating concept; atmospheric Hall performance verified on the EM; literature never represented as measured / demonstrated H1 performance; prepare one small reproducible local-run package (6-12 RP-1 atmospheric cases on DBF-1.1 with FE B(z)) with one command and one result file",
+  "5_status": "PHYSICS ARCHITECTURE CLOSED — DETAILED DESIGN / EM VERIFICATION OPEN; do not reopen unless evidence shows a fundamental physical impossibility",
+  "6_documentation": "update the Architecture Closure Conclusion with the qualified wording; separate RFP requirement / internal 196-state verification set / design operating window / EM verification items",
+  "scope_now": [
+   "DCR-001 intake / compressor finalization",
+   "minimal local Hall AIR run package",
+   "ICP bench-design closure",
+   "mass / power / thermal roll-up",
+   "submission documents"
+  ]
+ }
+}

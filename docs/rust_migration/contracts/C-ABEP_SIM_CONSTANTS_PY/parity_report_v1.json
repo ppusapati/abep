@@ -1,0 +1,295 @@
+{
+ "schema": [],
+ "contract": {
+  "id": "PARITY-C-ABEP_SIM_CONSTANTS_PY-V1",
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/parity_prereg_v1.json",
+  "sha256": "1f7bef49973b985fad3fd9dcb86e63e272e3c438765f89c7e137bbfe479492c0",
+  "registration_commit": "12df46135339f6559f99eac5222f50c50017c523"
+ },
+ "date_utc": "2026-10-05T13:37:47Z",
+ "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc",
+ "reference_sha256": {
+  "abep_sim/constants.py": {
+   "registered": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+   "at_scoring": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+  }
+ },
+ "rust_commit": "7f43b4f2407d6af40013951b1228d6d5f1451f78",
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "cargo_lock_sha256": "25ffa86730d04f18769444e4fc7262305e640d2887d2c7b0eb91df4f0eafc805",
+  "source_sha256": {
+   "Cargo.lock": "25ffa86730d04f18769444e4fc7262305e640d2887d2c7b0eb91df4f0eafc805",
+   "Cargo.toml": "2ba9b186b90dc2fdced410198d52703ecd061b38cad83f7186d0aaa4c7bfcf5e",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "1ba60bca0d0c78a64c121111233f48b60a21caa132d2d8292c81d0f898ccf2af",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499"
+  },
+  "harness": {
+   "path": "scripts/rust_migration/es2_env_parity.py",
+   "sha256": "9def17b8a6d22acb4538a9bfcb8f17cfc9ec4b40dbf5dc3e39a276eed25e5fbb"
+  },
+  "binary": "target/release/abep-env-parity (cargo build --release --locked)"
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "pandas": "3.0.2",
+  "numpy_simd_baseline": [
+   "X86_V2"
+  ],
+  "numpy_simd_dispatch": [
+   "X86_V3",
+   "X86_V4",
+   "AVX512_ICL",
+   "AVX512_SPR"
+  ],
+  "numpy_simd_avx512f_enabled": true,
+  "blas": "scipy-openblas 0.3.31.188.0",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+  "thread_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1"
+  },
+  "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312"
+ },
+ "mode": "scoring",
+ "scoring_master_seed": 0,
+ "n_vectors": 1,
+ "per_test": {
+  "observables": [
+   {
+    "entry": "constants",
+    "observable": "status",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "constants",
+    "observable": "G0 (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "constants",
+    "observable": "E_CHARGE (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "constants",
+    "observable": "AMU (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "constants",
+    "observable": "K_B (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "constants",
+    "observable": "MU_EARTH (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "constants",
+    "observable": "R_EARTH (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "constants",
+    "observable": "M_O (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "constants",
+    "observable": "M_N2 (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "constants",
+    "observable": "M_O2 (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "constants",
+    "observable": "M_XE (bits)",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "constants",
+    "observable": "DE-B-01 species He",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   },
+   {
+    "entry": "constants",
+    "observable": "INV-B-02 species keys",
+    "tolerance_class": "EXACT_VALUE",
+    "n": 1,
+    "n_fail": 0,
+    "n_bit_identical": 1,
+    "max_abs_diff": 0.0,
+    "max_rel_diff": 0.0,
+    "max_ulp": 0.0
+   }
+  ],
+  "n_failures": 0,
+  "failures_first_50": []
+ },
+ "aggregates": "NOT_APPLICABLE (no STATISTICAL entry point)",
+ "domain_error": {
+  "vectors": [],
+  "refusal_trees": []
+ },
+ "invariants": {
+  "determinism": {
+   "rust_two_processes_byte_identical": true,
+   "rust_stdout_sha256": "f4acf50378e2b4b823aa4a91ac961151a149c2b1a0909b02217ac7c68616cf00",
+   "python_two_evaluations_equal": true
+  },
+  "governing_hashes": {
+   "python": {
+    "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+    "model_set_sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+    "design_state_set_ref_sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+    "design_state_set_sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+   },
+   "rust": {
+    "config_manifest_sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883",
+    "design_state_set_ref_sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+    "design_state_set_sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+    "model_set_sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1"
+   },
+   "equal_and_registered": true
+  }
+ },
+ "conservation": [],
+ "performance": {
+  "status": "reported, never a decision criterion",
+  "workloads": [],
+  "campaign_timing": {
+   "python_reference_s": 3.269199987698812e-05,
+   "rust_cli_wall_s": 0.0023605899996255175,
+   "rust_per_request_s_sum": 1.3497e-05
+  },
+  "rust_per_request_timing_top10": [
+   {
+    "id": "G-B-01",
+    "elapsed_s": 1.3497e-05
+   }
+  ]
+ },
+ "checks": {
+  "per_test": true,
+  "refusal_trees": true,
+  "determinism": true,
+  "governing": true,
+  "all": true
+ },
+ "verdict": "ADMITTED",
+ "parity_verdict": "PARITY_PASS",
+ "campaign_history": [
+  {
+   "date_utc": "2026-10-05T13:37:47Z",
+   "mode": "scoring",
+   "seed": 0,
+   "verdict": "PARITY_PASS",
+   "executions": 1
+  }
+ ],
+ "reference_outputs": {
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_CONSTANTS_PY/reference_outputs",
+  "manifest_sha256": "c1b83e53545c0caa1059db200f11e5ad18d644fdc9648401984f1ceb8ffc4542"
+ },
+ "ledger_update_requested": [
+  {
+   "component": "C-ABEP_SIM_CONSTANTS_PY",
+   "requested_status": "ADMITTED",
+   "scope": "G0, E_CHARGE, AMU, K_B, MU_EARTH, R_EARTH, M_SPECIES",
+   "not_ported": "RFPConstraints / RFP: requirement data, assessment layer (RM-R14); stays with its assessment-layer successor",
+   "authoritative_implementation": "rust: abep_types::constants"
+  }
+ ],
+ "notes": [
+  "harness: the contracts say the harness is committed 'after this contract and before any comparison'. It was developed with development-seed comparisons (never scored, no report) and committed before the single scoring run; every scored generator, tolerance and decision rule is the registered one. Recorded as a disclosure, not a change of the contract"
+ ],
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31)"
+ ]
+}

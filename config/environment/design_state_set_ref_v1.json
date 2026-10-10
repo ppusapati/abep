@@ -1,0 +1,22 @@
+{
+ "schema": "abep_config_design_state_set_ref_v1",
+ "id": "atmosphere_msis21_orbit_v1_design_states_v2",
+ "layer": "FROZEN_ENGINEERING_CONFIGURATION",
+ "kind": "REFERENCE (never a copy)",
+ "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+ "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+ "n_states": 196,
+ "version": "v2",
+ "dataset_id": "atmosphere_msis21_orbit_v1",
+ "dataset_sha256": "c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164",
+ "manifest": {
+  "path": "abep_sim/data/atmosphere_msis21_orbit_v1.json",
+  "sha256": "f06416b1e11f07ec32434515b616935ed5eeaae1faac75586bce0961b6bcf97b",
+  "design_states_file_v2_sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+  "dataset_sha256": "c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164"
+ },
+ "producer": "python -m abep_sim.atmosphere_orbit design-states-v2",
+ "loader": "abep_sim/design/intake_synthesis.py::load_design_state_set (DESIGN_STATE_SET_SHA256)",
+ "altitude_domain_source": "config/constraints/engineering_constraints_v1.json constraints.altitude_band_km",
+ "generated_by": "scripts/config/build_config.py"
+}

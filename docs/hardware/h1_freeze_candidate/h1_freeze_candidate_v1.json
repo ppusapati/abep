@@ -12,6 +12,242 @@
  "status": "DRAFT_IMPLEMENTATION_FIRST_PENDING_CONSOLIDATED_VERIFICATION",
  "architecture_status": "INVESTIGATION_HYPOTHESIS",
  "article_freeze_state": "NOT_FROZEN (OPEN / TBD items remain; FREEZE_CANDIDATE items are candidates only)",
+ "lock1_release": {
+  "status": "RELEASE_BLOCKED",
+  "decision": "A9.14 F5-OQ-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+  "decision_code": "ACCEPT_FREEZE_CANDIDATE_WITH_EXPLICIT_BLOCKERS",
+  "release_basis": "FREEZE_CANDIDATE items of this definition",
+  "drawing": {
+   "drawing_id": null,
+   "revision": null,
+   "content_sha256": null
+  },
+  "missing_drawing_fields": [
+   "drawing_id",
+   "revision",
+   "content_sha256"
+  ],
+  "blocker_count": 54,
+  "blockers": [
+   {
+    "id": "H1F-CH-02",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CH-03",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CH-04",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CH-05",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CH-06",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CH-07",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CH-09",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CH-10",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CH-11",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-AN-03",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-AN-05",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-AN-06",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-AN-07",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-AN-08",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-AN-09",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-AN-11",
+    "freeze_status": "TBD_OWNER"
+   },
+   {
+    "id": "H1F-MC-02",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-MC-04",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-MC-05",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-MC-06",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-MC-08",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-BZ-01",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-BZ-02",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-BZ-03",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-BZ-04",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-BZ-05",
+    "freeze_status": "TBD_OWNER"
+   },
+   {
+    "id": "H1F-BZ-06",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-CO-02",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CO-03",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CO-04",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CO-05",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CO-06",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CO-07",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-CO-11",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CO-12",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CO-13",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-CO-14",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-MA-03",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-MA-04",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-MA-05",
+    "freeze_status": "TBD_OWNER"
+   },
+   {
+    "id": "H1F-MA-06",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-MA-07",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-MA-08",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-TH-02",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-TH-03",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-IN-03",
+    "freeze_status": "OPEN"
+   },
+   {
+    "id": "H1F-IN-04",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-IN-05",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-EX-03",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-EX-04",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-EX-05",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-EX-06",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-EX-07",
+    "freeze_status": "TBD_AFTER_EVIDENCE"
+   },
+   {
+    "id": "H1F-EX-08",
+    "freeze_status": "TBD_OWNER"
+   }
+  ],
+  "rule": "no OPEN / TBD item is promoted because surrounding geometry is frozen; the release itself is an owner act with the released drawing id, revision and content hash"
+ },
  "configuration_items": [
   "H-1",
   "MC-1"
@@ -27,7 +263,7 @@
   "hall_response_maps": "no admitted domain exists; none is used",
   "icp45": "NOT_EVALUATED (I_d,max,H1 not registered; no P1 data)",
   "p1_p2": "no data",
-  "a9": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; C1 CONTROL_FALLBACK",
+  "a9": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; A9.19 flight: one Hall + one RF/ICP neutralizer for AIR_PRIMARY and XE_CONTINGENCY, no conventional hollow cathode; A9.20: C1 GROUND_ONLY_LAB_EQUIPMENT (was CONTROL_FALLBACK)",
   "a9_2_statuses": {
    "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
    "ICP electron-current capacity": "PENDING_ICP45",
@@ -39,6 +275,19 @@
    "anode thermal closure": "UNRESOLVED",
    "coupled H-1/ICP thermal closure": "UNRESOLVED",
    "C1 conventional reference": "CONTROL_FALLBACK"
+  },
+  "a9_2_statuses_label": "HISTORICAL_QUOTE (A9.2 / A9-10 table, verbatim); current statuses: current_statuses",
+  "current_statuses": {
+   "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+   "ICP electron-current capacity": "PENDING_ICP45",
+   "ICP RF power closure": "PENDING_HARDWARE",
+   "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+   "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+   "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+   "final anode material": "OPEN",
+   "anode thermal closure": "UNRESOLVED",
+   "coupled H-1/ICP thermal closure": "UNRESOLVED",
+   "C1 conventional reference": "GROUND_REFERENCE_ONLY (A9.20 ground-only laboratory reference; A9.19 / A9.24 item 13: no C1 flight fallback; never in flight architecture, mass, power, Xe or thermal closure)"
   }
  },
  "what_this_is_not": [
@@ -117,6 +366,46 @@
    "path": "docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json",
    "sha256": "d1813e153af37ebd45cb2ead964ead6c53c756d1a82f93ea89346a83168d0630"
   },
+  "A912": {
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d"
+  },
+  "A912_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62"
+  },
+  "A914": {
+   "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
+  },
+  "A914_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07"
+  },
+  "A915": {
+   "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309"
+  },
+  "A915_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903"
+  },
+  "A919": {
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16"
+  },
+  "A919_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749"
+  },
+  "A920": {
+   "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
+  },
+  "A920_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"
+  },
   "P5B16": {
    "path": "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
    "sha256": "65216f4d713be929b9c59f101711301d933df7b2ae1ed3478b36aa3772926625"
@@ -140,12 +429,12 @@
    "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0"
   },
   "P3": {
-   "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
-   "sha256": "43910a675a82d00b977768b0e31606e9c98fca2eaf7e8e0bffe47b3f42f20ce8"
+   "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+   "sha256": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a"
   },
   "P4": {
    "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
-   "sha256": "42ef3a3e2e3aea09bbf852520fc9c21c9d6c9c8a5c134d7e5360b429ee8afa06"
+   "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
   },
   "MP2": {
    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -153,11 +442,15 @@
   },
   "M16": {
    "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
-   "sha256": "2bfed6ea9efaad075157ff3a4f757dd07bece7d6f71d78fddc67de989b882db4"
+   "sha256": "fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae"
   },
   "OQ4": {
    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
    "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+  },
+  "OQ5": {
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+   "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
   },
   "PREREG": {
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
@@ -524,6 +817,20 @@
      "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
      "pointer": "/revision_register/0/new/value",
      "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "pointer": "/",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "pinned": true,
+     "note": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY (verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "pointer": "/",
+     "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "pinned": true,
+     "note": "A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE (verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
     }
    ],
    "basis": "H2-1 H21-04 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -534,7 +841,13 @@
     "owner selection of the channel design point (h, d_mean, L) inside the windows (M16 row 9 blocking item)",
     "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)"
    ],
-   "note": "the v1 central-cathode floor is removed (external C1, row 79, REV-01); the remaining floor is the solid-core inner-coil build (H1F-MC-04), binding only under worst-case assumptions"
+   "note": "the v1 central-cathode floor is removed (external C1, row 79, REV-01); the remaining floor is the solid-core inner-coil build (H1F-MC-04), binding only under worst-case assumptions; A9.19 / A9.20: the external C1 is a ground-only laboratory reference, flight has no hollow cathode, so the floor removal stands",
+   "a9_19": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ]
+   }
   },
   {
    "id": "H1F-CH-06",
@@ -682,7 +995,7 @@
    "id": "H1F-CH-11",
    "group": "CH",
    "name": "channel design point (h, d_mean, L)",
-   "value": "TBD - requires owner selection inside H1F-CH-02..CH-10 after FEMM and the coupled thermal closure",
+   "value": "TBD - engineering point to be selected on non-performance criteria (FEMM feasibility, thermal margin, packaging, mass, manufacturability, adjustable-anode / insert capability) after the authorised FEMM analysis points are run; not selected yet",
    "units": "mm",
    "tolerance": "TBD",
    "evidence_class": null,
@@ -690,23 +1003,56 @@
     {
      "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
      "pointer": "/rows/8/blocking_item",
-     "sha256": "2bfed6ea9efaad075157ff3a4f757dd07bece7d6f71d78fddc67de989b882db4"
+     "sha256": "fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae"
     },
     {
      "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
      "pointer": "/design_parameters/0/value",
      "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/F5-OQ-01",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "note": "A9.14 F5-OQ-01 (S7.1); verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/F5-OQ-02",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "note": "A9.14 F5-OQ-02 (S7.2); verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md"
     }
    ],
-   "basis": "M16 v4 row 9 blocking item; no Hall performance criterion is available (credible set empty)",
-   "freeze_status": "TBD_OWNER",
+   "basis": "M16 v4 row 9 blocking item; no Hall performance criterion is available (credible set empty); A9.14 F5-OQ-01 / F5-OQ-02 (selection rule owner-given, point not yet selected)",
+   "freeze_status": "TBD_AFTER_EVIDENCE",
    "freeze_point": "LOCK-1",
    "evidence_to_freeze_candidate": [
-    "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item) at candidate points (new owner question F5-OQ-01)",
+    "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item) at the authorised ANALYSIS_POINTS (femm_analysis_points)",
     "coupled H-1 / ICP thermal closure (A9.2 ICP_COUPLED_THERMAL; P3 framework inputs: ICP geometry, view factors, conductances; >= 50 K + 20 % rule, row 86)",
-    "owner selection on non-performance criteria (new owner question F5-OQ-02)"
+    "engineering-point selection record on the owner's non-performance criteria"
    ],
-   "note": "RP-1 (d_mean 70.0 mm, h 12.0 mm, L/h 8.6) is the H2-1 coil-sizing calculation anchor, explicitly NOT a design selection"
+   "note": "RP-1 (d_mean 70.0 mm, h 12.0 mm, L/h 8.6) is the H2-1 coil-sizing calculation anchor, explicitly NOT a design selection",
+   "a9_16": {
+    "decisions": [
+     "A9.14 F5-OQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+     "A9.14 F5-OQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ],
+    "decision_codes": {
+     "F5-OQ-01": "YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION",
+     "F5-OQ-02": "SELECT_ENGINEERING_POINT_NONPERFORMANCE"
+    },
+    "point_status": "NOT_SELECTED_PENDING_FEMM",
+    "status_when_selected": "ENGINEERING_FREEZE_CANDIDATE",
+    "selection_criteria": [
+     "FEMM feasibility",
+     "thermal margin",
+     "packaging",
+     "mass",
+     "manufacturability",
+     "existing adjustable-anode / insert capability"
+    ],
+    "thrust": "determined by Phase-1 / Phase-3 measurement, never a selection input"
+   }
   },
   {
    "id": "H1F-CH-12",
@@ -842,7 +1188,7 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/interface_demands/2/status",
-     "sha256": "42ef3a3e2e3aea09bbf852520fc9c21c9d6c9c8a5c134d7e5360b429ee8afa06"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     }
    ],
    "basis": "row 75 / GD-02; H2-1 interface demand to H2-3 (annulus = channel h, d_mean); P4 ID-03 PENDING",
@@ -871,7 +1217,7 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/fixed_statuses/316L_FLIGHT_ANODE",
-     "sha256": "42ef3a3e2e3aea09bbf852520fc9c21c9d6c9c8a5c134d7e5360b429ee8afa06"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     }
    ],
    "basis": "A9.2 sec. 3: 316L allowed only as engineering / shakedown material, coupon candidate or low-temperature development component",
@@ -892,12 +1238,12 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/fixed_statuses/FINAL_ANODE_MATERIAL",
-     "sha256": "42ef3a3e2e3aea09bbf852520fc9c21c9d6c9c8a5c134d7e5360b429ee8afa06"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     },
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/final_material_status",
-     "sha256": "42ef3a3e2e3aea09bbf852520fc9c21c9d6c9c8a5c134d7e5360b429ee8afa06"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     },
     {
      "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
@@ -943,9 +1289,9 @@
      "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
     },
     {
-     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses/ANODE_THERMAL_CLOSURE",
-     "sha256": "43910a675a82d00b977768b0e31606e9c98fca2eaf7e8e0bffe47b3f42f20ce8"
+     "sha256": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -1004,12 +1350,12 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/findings",
-     "sha256": "42ef3a3e2e3aea09bbf852520fc9c21c9d6c9c8a5c134d7e5360b429ee8afa06"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     },
     {
-     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses",
-     "sha256": "43910a675a82d00b977768b0e31606e9c98fca2eaf7e8e0bffe47b3f42f20ce8"
+     "sha256": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a"
     }
    ],
    "basis": "P4 findings; P3 closure statuses UNRESOLVED",
@@ -1380,6 +1726,12 @@
      "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "pointer": "/rows/243/question",
      "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/MQ-03",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "note": "A9.14 MQ-03 (S8.8); verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md"
     }
    ],
    "basis": "H2-1 H21-24; mass_power v2 A9B-16 evidence floor",
@@ -1388,7 +1740,7 @@
    "evidence_to_freeze_candidate": [
     "owner selection of the channel design point (h, d_mean, L) inside the windows (M16 row 9 blocking item)",
     "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)",
-    "owner re-allocation of AL-04 (existing MQ-03: 3.0 kg allocation below the 3.504 kg floor)",
+    "AL-04 rebased by the owner (A9.14 MQ-03): AL-04 >= 1.20 x the actual H-1 CBE; 4.2048 kg MEV is today's incomplete planning floor (channel / anode / body / fasteners not yet included)",
     "weighed MC-1"
    ],
    "note": "excludes channel ceramics, anode, body and structure (A9B-15 CBE TBD)"
@@ -1453,7 +1805,7 @@
     {
      "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
      "pointer": "/rows/9/blocking_item",
-     "sha256": "2bfed6ea9efaad075157ff3a4f757dd07bece7d6f71d78fddc67de989b882db4"
+     "sha256": "fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae"
     },
     {
      "path": "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
@@ -1531,6 +1883,12 @@
      "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
      "pointer": "/bz_target_envelope/rLe_rule_table_G",
      "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/F5-OQ-05",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "note": "A9.14 F5-OQ-05 (S7.5); verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md"
     }
    ],
    "basis": "H2-1 H21-14",
@@ -1538,9 +1896,18 @@
    "freeze_point": "LOCK-1",
    "evidence_to_freeze_candidate": [
     "owner selection of the channel design point (h, d_mean, L) inside the windows (M16 row 9 blocking item) (the criterion depends on h)",
-    "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)",
-    "owner acceptance of the criterion band (new owner question F5-OQ-05)"
-   ]
+    "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.14 F5-OQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ],
+    "decision_codes": {
+     "F5-OQ-05": "ACCEPT_EXISTING_FEMM_FIELD_TARGET_BAND"
+    },
+    "role": "FEMM_MAGNETIC_DESIGN_TARGET_BAND_NOT_TRANSPORT_OPTIMUM",
+    "narrowing": "only after measured H-1 magnetic / performance evidence exists"
+   }
   },
   {
    "id": "H1F-BZ-04",
@@ -1853,30 +2220,42 @@
    "id": "H1F-CO-08",
    "group": "CO",
    "name": "coil conductor: plain copper or Ni-clad copper (both ceramic-insulated)",
-   "value": "TBD - owner decision (existing OQ-A907-04); a Ni-clad conductor needs a measured magnetic perturbation",
+   "value": "plain ceramic-insulated copper (baseline); Ni-clad / Kulgrid copper only as a contingency variant if oxidation, supplier availability or manufacturing demands it, then with measured resistance and magnetic-perturbation evidence",
    "units": "-",
-   "tolerance": "TBD",
-   "evidence_class": null,
+   "tolerance": "n/a (decision / rule)",
+   "evidence_class": "owner-allocation",
    "source": [
-    {
-     "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
-     "pointer": "/rows/254/status",
-     "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
-    },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
      "pointer": "/answers/76/owner_answer_verbatim",
      "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
      "note": "owner row 77"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/OQ-A907-04",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "note": "A9.14 OQ-A907-04 (S8.16); verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md"
     }
    ],
-   "basis": "row 77; OQ-A907-04 (TBD_OWNER)",
-   "freeze_status": "TBD_OWNER",
+   "basis": "row 77; A9.14 OQ-A907-04 (S8.16)",
+   "freeze_status": "FREEZE_CANDIDATE",
    "freeze_point": "LOCK-1",
-   "evidence_to_freeze_candidate": [
-    "owner answer OQ-A907-04",
-    "wire quotation; measured perturbation if Ni-clad (HW-MC-12)"
-   ]
+   "evidence_to_freeze_candidate": [],
+   "a9_16": {
+    "decisions": [
+     "A9.14 OQ-A907-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ],
+    "decision_codes": {
+     "OQ-A907-04": "PLAIN_COPPER_BASELINE_NICLAD_CONTINGENCY"
+    },
+    "baseline": "PLAIN_CERAMIC_INSULATED_COPPER",
+    "contingency_variant": "NI_CLAD_KULGRID_ON_TRIGGER_ONLY",
+    "contingency_requires": [
+     "measured resistance",
+     "magnetic-perturbation evidence (HW-MC-12)"
+    ]
+   }
   },
   {
    "id": "H1F-CO-09",
@@ -1948,6 +2327,12 @@
      "pointer": "/answers/85/owner_answer_verbatim",
      "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
      "note": "owner row 86"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+     "pointer": "/decisions/OQ-A907-05",
+     "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+     "note": "A9.12 OQ-A907-05 (S5.3); verbatim docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md"
     }
    ],
    "basis": "REV-04; row 86",
@@ -1956,7 +2341,23 @@
    "evidence_to_freeze_candidate": [
     "coil EIS thermal-endurance qualification (HW-MC-07) and the sacrificial-coil cycle (HW-MC-16)",
     "hot-spot offset measurement (HW-MC-14)"
-   ]
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.12 OQ-A907-05 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+    ],
+    "decision_codes": {
+     "OQ-A907-05": "PROVISIONAL_ONLY"
+    },
+    "limit_class": "SUPPLIER_PROVISIONAL",
+    "admissible_uses": [
+     "preliminary thermal screening",
+     "equipment protection",
+     "design sensitivity",
+     "procurement down-selection"
+    ],
+    "dependent_margin_status": "UNRESOLVED_CONDITIONAL_ON_PROVISIONAL_LIMIT"
+   }
   },
   {
    "id": "H1F-CO-12",
@@ -1974,9 +2375,9 @@
      "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
     },
     {
-     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses/ICP_COUPLED_THERMAL",
-     "sha256": "43910a675a82d00b977768b0e31606e9c98fca2eaf7e8e0bffe47b3f42f20ce8"
+     "sha256": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a"
     }
    ],
    "basis": "A9-07 K4; A9.2 ICP_COUPLED_THERMAL",
@@ -2161,15 +2562,31 @@
      "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
      "pointer": "/materials/candidates/ARMCO_pure_iron/curie_C",
      "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+     "pointer": "/decisions/F5-OQ-03",
+     "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+     "note": "A9.14 F5-OQ-03 (S7.3); verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md"
     }
    ],
    "basis": "row 76 + row 86",
    "freeze_status": "TBD_AFTER_EVIDENCE",
    "freeze_point": "LOCK-1",
    "evidence_to_freeze_candidate": [
-    "sourced B_sat(T) of the pure-iron grade (HW-MC-13)",
-    "resolution of the iron Curie value discrepancy CC-07 (F5-OQ-03)"
-   ]
+    "sourced B_sat(T) of the pure-iron grade (HW-MC-13)"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.14 F5-OQ-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
+    ],
+    "decision_codes": {
+     "F5-OQ-03": "USE_754C_NECESSARY_CEILING_PENDING_GRADE_DATA"
+    },
+    "necessary_curie_ceiling_C": 754,
+    "role": "NECESSARY_CEILING_NOT_USABLE_LIMIT",
+    "rule": "754 degC is used until the exact iron grade has sourced temperature-dependent magnetic data; B_sat(T), permeability and validated material behaviour govern the usable limit"
+   }
   },
   {
    "id": "H1F-MA-05",
@@ -2214,6 +2631,12 @@
      "pointer": "/answers/83/owner_answer_verbatim",
      "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
      "note": "owner row 84"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+     "pointer": "/decisions/OQ-A907-08",
+     "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+     "note": "A9.12 OQ-A907-08 (S5.5); verbatim docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md"
     }
    ],
    "basis": "row 84; OQ-A907-08",
@@ -2221,7 +2644,17 @@
    "freeze_point": "LOCK-1",
    "evidence_to_freeze_candidate": [
     "coating datasheet or coupon qualification (vacuum / AO / electrical)"
-   ]
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.12 OQ-A907-08 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+    ],
+    "decision_codes": {
+     "OQ-A907-08": "YES_COATING_NODE_LIMIT"
+    },
+    "coating_limit_status": "OPEN_COATING_LIMIT_NOT_SOURCED",
+    "rule": "T_operating <= T_validated,continuous - 50 K for the actual coating / substrate / application system once sourced; no thermal closure relying on the coating before that"
+   }
   },
   {
    "id": "H1F-MA-07",
@@ -2287,12 +2720,12 @@
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/candidates",
-     "sha256": "42ef3a3e2e3aea09bbf852520fc9c21c9d6c9c8a5c134d7e5360b429ee8afa06"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     },
     {
      "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
      "pointer": "/candidate_screening_states",
-     "sha256": "42ef3a3e2e3aea09bbf852520fc9c21c9d6c9c8a5c134d7e5360b429ee8afa06"
+     "sha256": "f0d8bbfa6d3ec59a30910ef2ae1fd61f96fc3f725e6859dc8c6617b1cf6dd96b"
     }
    ],
    "basis": "P4 framework (APP-ANODE)",
@@ -2335,7 +2768,7 @@
    "id": "H1F-TH-02",
    "group": "TH",
    "name": "spacecraft mounting-interface temperature and allowable conducted heat",
-   "value": "TBD - carried as cases 20/40/60 degC and 25/50/100 W; frozen at the spacecraft / PDR interface definition",
+   "value": "TBD - spacecraft thermal ICD; until it exists the owner allocation governs provisionally for steady heat conducted into the mount: 50 W governing, 100 W contingency / sensitivity ceiling only, 25 W stretch (a design meeting only 100 W is not thermally closed); 20 / 40 / 60 degC interface cases carried",
    "units": "degC; W",
    "tolerance": "TBD",
    "evidence_class": null,
@@ -2350,15 +2783,34 @@
      "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "pointer": "/rows/256/status",
      "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+     "pointer": "/decisions/OQ-A907-06",
+     "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+     "note": "A9.12 OQ-A907-06 (S5.4); verbatim docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md"
     }
    ],
-   "basis": "owner row 85; existing OQ-A907-06",
-   "freeze_status": "TBD_OWNER",
+   "basis": "owner row 85; A9.12 OQ-A907-06 (S5.4): isolated mount + dedicated radiator",
+   "freeze_status": "TBD_AFTER_EVIDENCE",
    "freeze_point": "after-evidence",
    "evidence_to_freeze_candidate": [
-    "spacecraft / PDR thermal ICD",
-    "owner answer OQ-A907-06"
-   ]
+    "spacecraft / PDR thermal ICD (replaces the owner allocation)"
+   ],
+   "a9_16": {
+    "decisions": [
+     "A9.12 OQ-A907-06 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+    ],
+    "decision_codes": {
+     "OQ-A907-06": "ISOLATED_MOUNT_RADIATOR_50W_PROVISIONAL"
+    },
+    "mount_heat_allocation_W": {
+     "governing_provisional": 50,
+     "contingency_sensitivity_ceiling": 100,
+     "stretch": 25
+    },
+    "label": "owner design allocation, not a spacecraft requirement"
+   }
   },
   {
    "id": "H1F-TH-03",
@@ -2375,9 +2827,9 @@
      "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03"
     },
     {
-     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "pointer": "/closure_statuses",
-     "sha256": "43910a675a82d00b977768b0e31606e9c98fca2eaf7e8e0bffe47b3f42f20ce8"
+     "sha256": "1db2b13e82389fc824acc24f6b6b9aafb11b950b9c5546347cc8037b2bdb132a"
     }
    ],
    "basis": "A9.2 sec. 5-7 (no thermal PASS from a negligible-coupling calculation)",
@@ -2574,12 +3026,32 @@
      "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
      "pointer": "/revision_register/2/new/requirement",
      "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "pointer": "/",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "pinned": true,
+     "note": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY (verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "pointer": "/",
+     "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "pinned": true,
+     "note": "A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE (verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
     }
    ],
-   "basis": "owner row 79",
+   "basis": "owner row 79; A9.19 (no conventional hollow cathode in flight: the ICP neutralizer is the only electron source); A9.20 (C1 ground-only, mounted off H-1 on the bench)",
    "freeze_status": "FREEZE_CANDIDATE",
    "freeze_point": "NOW",
-   "evidence_to_freeze_candidate": []
+   "evidence_to_freeze_candidate": [],
+   "a9_19": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ]
+   }
   },
   {
    "id": "H1F-EX-03",
@@ -2649,6 +3121,20 @@
      "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
      "pointer": "/interface_demands/12/status",
      "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "pointer": "/",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "pinned": true,
+     "note": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY (verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "pointer": "/",
+     "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "pinned": true,
+     "note": "A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE (verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
     }
    ],
    "basis": "REV-17; ICD ICP-32 (unmagnetized ICP, no dedicated ICP magnet, v1)",
@@ -2657,7 +3143,15 @@
    "evidence_to_freeze_candidate": [
     "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)",
     "measured fringe-field map downstream of IP-EXIT"
-   ]
+   ],
+   "note": "IP-C1 is a GROUND-BENCH quantity only (C1 = GROUND_ONLY_LAB_EQUIPMENT in the C1-vs-ICP bench comparison and the I_d,max,H1,Ar characterization, A9.20); the flight configuration has no C1 (A9.19)",
+   "a9_19": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ],
+    "ip_c1_scope": "GROUND_BENCH_ONLY"
+   }
   },
   {
    "id": "H1F-EX-06",
@@ -2742,17 +3236,17 @@
  ],
  "freeze_rollup": {
   "counts": {
-   "FREEZE_CANDIDATE": 23,
+   "FREEZE_CANDIDATE": 24,
    "OPEN": 28,
-   "TBD_AFTER_EVIDENCE": 20,
-   "TBD_OWNER": 7
+   "TBD_AFTER_EVIDENCE": 22,
+   "TBD_OWNER": 4
   },
   "by_group": {
    "CH": {
     "FREEZE_CANDIDATE": 4,
     "OPEN": 8,
-    "TBD_AFTER_EVIDENCE": 0,
-    "TBD_OWNER": 1
+    "TBD_AFTER_EVIDENCE": 1,
+    "TBD_OWNER": 0
    },
    "AN": {
     "FREEZE_CANDIDATE": 4,
@@ -2773,10 +3267,10 @@
     "TBD_OWNER": 1
    },
    "CO": {
-    "FREEZE_CANDIDATE": 3,
+    "FREEZE_CANDIDATE": 4,
     "OPEN": 9,
     "TBD_AFTER_EVIDENCE": 1,
-    "TBD_OWNER": 1
+    "TBD_OWNER": 0
    },
    "MA": {
     "FREEZE_CANDIDATE": 2,
@@ -2787,8 +3281,8 @@
    "TH": {
     "FREEZE_CANDIDATE": 1,
     "OPEN": 1,
-    "TBD_AFTER_EVIDENCE": 0,
-    "TBD_OWNER": 1
+    "TBD_AFTER_EVIDENCE": 1,
+    "TBD_OWNER": 0
    },
    "IN": {
     "FREEZE_CANDIDATE": 2,
@@ -3513,6 +4007,111 @@
    ]
   }
  ],
+ "femm_analysis_points": {
+  "status": "FEMM_AUTHORISED_NOT_RUN",
+  "role": "ANALYSIS_POINTS_NOT_SELECTION",
+  "decision": "A9.14 F5-OQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+  "decision_code": "YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION",
+  "rules": [
+   "FEMM-class axisymmetric magnetostatics at the RP-1 anchor and the admissible window corners",
+   "use actual / sourced B-H data when available; preserve geometry ids and solver configuration",
+   "do not infer Hall performance from magnetic feasibility alone"
+  ],
+  "target_band": "H1F-BZ-03 r_Le <= 0.1 h over T_e 10-30 eV (A9.14 F5-OQ-05)",
+  "points": [
+   {
+    "probe": "A_min_dh_min L/h 8.603",
+    "geometric_status": {
+     "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+     "worst_case_assumptions": "OUTSIDE_DECLARED_GEOMETRIC_WINDOWS"
+    },
+    "authorised_analysis_point": false,
+    "note": "the solid-core inner-coil floor does not admit this corner under worst-case assumptions; not in the authorised set (owner may add)",
+    "femm_status": "NOT_AUTHORISED"
+   },
+   {
+    "probe": "A_min_dh_min L/h 12.0",
+    "geometric_status": {
+     "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+     "worst_case_assumptions": "OUTSIDE_DECLARED_GEOMETRIC_WINDOWS"
+    },
+    "authorised_analysis_point": false,
+    "note": "the solid-core inner-coil floor does not admit this corner under worst-case assumptions; not in the authorised set (owner may add)",
+    "femm_status": "NOT_AUTHORISED"
+   },
+   {
+    "probe": "A_min_dh_max L/h 8.603",
+    "geometric_status": {
+     "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+     "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+    },
+    "authorised_analysis_point": true,
+    "note": null,
+    "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+   },
+   {
+    "probe": "A_min_dh_max L/h 12.0",
+    "geometric_status": {
+     "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+     "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+    },
+    "authorised_analysis_point": true,
+    "note": null,
+    "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+   },
+   {
+    "probe": "A_max_dh_min L/h 8.603",
+    "geometric_status": {
+     "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+     "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+    },
+    "authorised_analysis_point": true,
+    "note": null,
+    "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+   },
+   {
+    "probe": "A_max_dh_min L/h 12.0",
+    "geometric_status": {
+     "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+     "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+    },
+    "authorised_analysis_point": true,
+    "note": null,
+    "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+   },
+   {
+    "probe": "A_max_dh_max L/h 8.603",
+    "geometric_status": {
+     "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+     "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+    },
+    "authorised_analysis_point": true,
+    "note": null,
+    "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+   },
+   {
+    "probe": "A_max_dh_max L/h 12.0",
+    "geometric_status": {
+     "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+     "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+    },
+    "authorised_analysis_point": true,
+    "note": null,
+    "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+   },
+   {
+    "probe": "RP-1 anchor (not a selection)",
+    "geometric_status": {
+     "nominal_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS",
+     "worst_case_assumptions": "WITHIN_DECLARED_GEOMETRIC_WINDOWS"
+    },
+    "authorised_analysis_point": true,
+    "note": null,
+    "femm_status": "FEMM_AUTHORISED_NOT_RUN"
+   }
+  ],
+  "results": []
+ },
  "interface_demands": [
   {
    "id": "IFD-F4-01",
@@ -3782,7 +4381,7 @@
   {
    "id": "IFS-P3-01",
    "direction": "H-1 -> P3",
-   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (P3-IF-N07)",
+   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (P3-IF-N07)",
    "quantity": "frozen H-1 geometry, surface-node map, conductances, emittances",
    "value": "TBD - design point TBD_OWNER (H1F-CH-11)",
    "units": "m; W/K; -",
@@ -3792,7 +4391,7 @@
   {
    "id": "IFD-P3-01",
    "direction": "H-1 <- P3",
-   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (P3-IF-S07 / S04)",
+   "counterpart": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json (P3-IF-S07 / S04)",
    "quantity": "coupled T_operating of anode, coils, poles, walls; equivalent ICP heat into PO / BP",
    "value": "TBD_AFTER_EVIDENCE (ICP_COUPLED_THERMAL, ANODE_THERMAL_CLOSURE UNRESOLVED)",
    "units": "K; W",
@@ -3851,7 +4450,12 @@
     "H1F-BZ-01..05",
     "H1F-CO-02..07",
     "H1F-EX-05"
-   ]
+   ],
+   "status_when_raised": "TBD_OWNER",
+   "status": "OWNER_DECIDED",
+   "decision": "A9.14 F5-OQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "decision_code": "YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION",
+   "answer_verbatim": "1. S7.1 — F5-OQ-01 — YES: AUTHORISE FEMM ANALYSIS POINTS.\nRun FEMM-class axisymmetric magnetostatics at the RP-1 anchor and admissible window corners. These are `ANALYSIS_POINTS`, not selected designs. Use actual/sourced B-H data when available, preserve geometry IDs and solver configuration, and do not infer Hall performance from magnetic feasibility alone.\nDecision code: `YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION`."
   },
   {
    "id": "F5-OQ-02",
@@ -3859,7 +4463,12 @@
    "proposed_answer": "select on non-performance criteria (thrust is the T_measured gate, not a sizing input, as H2-1 channel.thrust_bound already states); the pre-S1 insert (row 75) remains the only L adjustment",
    "blocks": [
     "H1F-CH-11"
-   ]
+   ],
+   "status_when_raised": "TBD_OWNER",
+   "status": "OWNER_DECIDED",
+   "decision": "A9.14 F5-OQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "decision_code": "SELECT_ENGINEERING_POINT_NONPERFORMANCE",
+   "answer_verbatim": "2. S7.2 — F5-OQ-02 — SELECT AN ENGINEERING CHANNEL POINT NOW ON NON-PERFORMANCE CRITERIA.\nDo not wait for a Hall transport model that is presently not admitted. Select a buildable engineering point using FEMM feasibility, thermal margin, packaging, mass, manufacturability and the existing adjustable-anode/insert capability. Keep it `ENGINEERING_FREEZE_CANDIDATE`; thrust remains determined by Phase-1/Phase-3 measurement.\nDecision code: `SELECT_ENGINEERING_POINT_NONPERFORMANCE`."
   },
   {
    "id": "F5-OQ-03",
@@ -3867,7 +4476,12 @@
    "proposed_answer": "yes (conservative); it stays a necessary ceiling, never the use limit (B_sat(T) governs)",
    "blocks": [
     "H1F-MA-04"
-   ]
+   ],
+   "status_when_raised": "TBD_OWNER",
+   "status": "OWNER_DECIDED",
+   "decision": "A9.14 F5-OQ-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "decision_code": "USE_754C_NECESSARY_CEILING_PENDING_GRADE_DATA",
+   "answer_verbatim": "3. S7.3 — F5-OQ-03 — USE 754 °C AS THE CONSERVATIVE NECESSARY CEILING FOR NOW.\nUse the lower 754 °C value until the exact iron grade has sourced temperature-dependent magnetic data. This is only a necessary ceiling, not the usable operating-temperature limit; `B_sat(T)`, permeability and validated material behavior govern the actual design limit.\nDecision code: `USE_754C_NECESSARY_CEILING_PENDING_GRADE_DATA`."
   },
   {
    "id": "F5-OQ-04",
@@ -3875,7 +4489,12 @@
    "proposed_answer": "owner call",
    "blocks": [
     "H-1 design release"
-   ]
+   ],
+   "status_when_raised": "TBD_OWNER",
+   "status": "OWNER_DECIDED",
+   "decision": "A9.14 F5-OQ-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "decision_code": "ACCEPT_FREEZE_CANDIDATE_WITH_EXPLICIT_BLOCKERS",
+   "answer_verbatim": "4. S7.4 — F5-OQ-04 — ACCEPT THE FREEZE_CANDIDATE DEFINITION AS THE LOCK-1 RELEASE BASIS.\nEvery item marked `OPEN`, `TBD`, `TBD_AFTER_EVIDENCE` or equivalent remains an explicit release blocker. The released H-1 design must have drawing ID, revision and content hash. No OPEN item is silently promoted merely because surrounding geometry is frozen.\nDecision code: `ACCEPT_FREEZE_CANDIDATE_WITH_EXPLICIT_BLOCKERS`."
   },
   {
    "id": "F5-OQ-05",
@@ -3884,98 +4503,588 @@
    "blocks": [
     "H1F-BZ-03",
     "H1F-BZ-04"
+   ],
+   "status_when_raised": "TBD_OWNER",
+   "status": "OWNER_DECIDED",
+   "decision": "A9.14 F5-OQ-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "decision_code": "ACCEPT_EXISTING_FEMM_FIELD_TARGET_BAND",
+   "answer_verbatim": "5. S7.5 — F5-OQ-05 — ACCEPT THE EXISTING `r_Le <= 0.1 h` TARGET BAND FOR FEMM.\nUse the present model-derived field target over the registered 10–30 eV electron-temperature sensitivity range as a magnetic-design target, not a transport optimum. Narrow it only after measured H-1 magnetic/performance evidence exists.\nDecision code: `ACCEPT_EXISTING_FEMM_FIELD_TARGET_BAND`."
+  }
+ ],
+ "a9_16_owner_answers_applied": [
+  {
+   "decision": "A9.14",
+   "question_id": "F5-OQ-01",
+   "sequenced_no": "S7.1",
+   "decision_code": "YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "femm_analysis_points",
+    "H1F-CH-11"
+   ],
+   "how_applied": "FEMM analysis points recorded as ANALYSIS_POINTS_NOT_SELECTION, status FEMM_AUTHORISED_NOT_RUN (no FEMM run here; results empty)",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "F5-OQ-02",
+   "sequenced_no": "S7.2",
+   "decision_code": "SELECT_ENGINEERING_POINT_NONPERFORMANCE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "H1F-CH-11"
+   ],
+   "how_applied": "selection rule on non-performance criteria recorded; point NOT_SELECTED_PENDING_FEMM, status when selected ENGINEERING_FREEZE_CANDIDATE; freeze_status TBD_OWNER -> TBD_AFTER_EVIDENCE",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "F5-OQ-03",
+   "sequenced_no": "S7.3",
+   "decision_code": "USE_754C_NECESSARY_CEILING_PENDING_GRADE_DATA",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "H1F-MA-04",
+    "CC-07"
+   ],
+   "how_applied": "754 degC necessary Curie ceiling (not the usable limit); the CC-07 discrepancy stays recorded, its resolution is the owner's conservative choice",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "F5-OQ-04",
+   "sequenced_no": "S7.4",
+   "decision_code": "ACCEPT_FREEZE_CANDIDATE_WITH_EXPLICIT_BLOCKERS",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "lock1_release"
+   ],
+   "how_applied": "lock1_release_status: FREEZE_CANDIDATE set is the release basis, every other item a blocker, drawing id / revision / content hash required; status RELEASE_BLOCKED",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "F5-OQ-05",
+   "sequenced_no": "S7.5",
+   "decision_code": "ACCEPT_EXISTING_FEMM_FIELD_TARGET_BAND",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "H1F-BZ-03"
+   ],
+   "how_applied": "r_Le <= 0.1 h band accepted as FEMM target band",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "OQ-A907-04",
+   "sequenced_no": "S8.16",
+   "decision_code": "PLAIN_COPPER_BASELINE_NICLAD_CONTINGENCY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "H1F-CO-08"
+   ],
+   "how_applied": "plain ceramic-insulated copper baseline (FREEZE_CANDIDATE); Ni-clad contingency on trigger only",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py"
+   ]
+  },
+  {
+   "decision": "A9.14",
+   "question_id": "MQ-03",
+   "sequenced_no": "S8.8",
+   "decision_code": "REBASE_AL04_FROM_H1_CBE_NO_RESERVE_PATCH",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "H1F-MC-08"
+   ],
+   "how_applied": "AL-04 >= 1.20 x H-1 CBE; 4.2048 kg incomplete MEV floor cited",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py"
+   ]
+  },
+  {
+   "decision": "A9.12",
+   "question_id": "OQ-A907-05",
+   "sequenced_no": "S5.3",
+   "decision_code": "PROVISIONAL_ONLY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "decision_json_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "decision_md_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "H1F-CO-11"
+   ],
+   "how_applied": "supplier coil rating labelled SUPPLIER_PROVISIONAL",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py"
+   ]
+  },
+  {
+   "decision": "A9.12",
+   "question_id": "OQ-A907-06",
+   "sequenced_no": "S5.4",
+   "decision_code": "ISOLATED_MOUNT_RADIATOR_50W_PROVISIONAL",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "decision_json_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "decision_md_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "H1F-TH-02"
+   ],
+   "how_applied": "50 W governing / 100 W contingency / 25 W stretch owner allocation until the spacecraft thermal ICD; TBD_OWNER -> TBD_AFTER_EVIDENCE",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py"
+   ]
+  },
+  {
+   "decision": "A9.12",
+   "question_id": "OQ-A907-08",
+   "sequenced_no": "S5.5",
+   "decision_code": "YES_COATING_NODE_LIMIT",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "decision_json_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "decision_md_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "H1F-MA-06"
+   ],
+   "how_applied": "coating limit OPEN_COATING_LIMIT_NOT_SOURCED",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py"
+   ]
+  },
+  {
+   "decision": "A9.15",
+   "question_id": "A9.15 governing_rule",
+   "decision_code": "A9_15_RFP_COMPLIANT_PROPELLANT_POLICY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "decision_json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "decision_md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "(review)"
+   ],
+   "how_applied": "reviewed: the H-1 record has no 'Xe contingency-only for C1' wording; nothing to amend",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py"
+   ],
+   "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+  }
+ ],
+ "a9_16_touched_parameters": [
+  "H1F-CH-11",
+  "H1F-MA-04",
+  "H1F-BZ-03",
+  "H1F-CO-08",
+  "H1F-MC-08",
+  "H1F-TH-02",
+  "H1F-MA-06",
+  "H1F-CO-11"
+ ],
+ "flight_architecture": {
+  "configuration": "hall_icp_neutralizer",
+  "hall_accelerators": 1,
+  "electron_source_neutralizer": {
+   "count": 1,
+   "kind": "RF/ICP (13.56 MHz) electron source / neutralizer, cathodeless / electrodeless",
+   "serves_supply_modes": [
+    "AIR_PRIMARY",
+    "XE_CONTINGENCY"
+   ]
+  },
+  "supply_modes": [
+   {
+    "mode": "AIR_PRIMARY",
+    "role": "PRIMARY",
+    "propellant": "ambient atmospheric propellant (180-230 km)",
+    "path": [
+     "intake",
+     "filter",
+     "compressor",
+     "atmospheric_gas_chamber",
+     "valve"
+    ]
+   },
+   {
+    "mode": "XE_CONTINGENCY",
+    "role": "CONTINGENCY_EMERGENCY",
+    "propellant": "xenon",
+    "path": [
+     "xe_tank",
+     "valve"
+    ],
+    "note": "capability required by the RFP (RFP-P17-05 extra input system; RFP-P18-08 separate tank); role contingency / emergency, not a parallel co-equal propellant (A9.19)"
+   }
+  ],
+  "separate_tanks": true,
+  "conventional_hollow_cathode": "NONE",
+  "icp_feed_gas_baseline": {
+   "primary": "G-REUSE",
+   "declared_variant": "G-XE",
+   "status": "UNCHANGED (A9.1; A9.19 does not alter the ICP feed-gas baseline)"
+  },
+  "c1": {
+   "status": "GROUND_ONLY_LAB_EQUIPMENT",
+   "uses": [
+    "H-1 I_d,max,H1,Ar characterization (A9.10 S3.5, independent of the ICP)",
+    "bench control in the C1-vs-ICP comparison"
+   ],
+   "never": [
+    "flight hardware",
+    "flight mass budget",
+    "flight power budget",
+    "flight Xe budget",
+    "flight fallback / candidate flight configuration"
+   ],
+   "authority": "A9.20 (C1_GROUND_ONLY_LABORATORY_REFERENCE); A9.19 amends 'A9 C1 CONTROL_FALLBACK'"
+  },
+  "verbatim": [
+   "One Hall accelerator.",
+   "One RF/ICP electron-source/neutralizer.",
+   "Two propellant supply modes.",
+   "No conventional hollow cathode."
+  ],
+  "status": "OWNER_DECIDED_ARCHITECTURE_DEFINITION (A9 investigation; not a flight baseline, not a PASS)"
+ },
+ "a9_19_owner_answers_applied": [
+  {
+   "decision": "A9.19",
+   "question_id": "architecture",
+   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "standing_facts.a9",
+    "flight_architecture",
+    "H1F-EX-02"
+   ],
+   "how_applied": "H-1 is the single Hall accelerator of the flight architecture (one Hall + one RF/ICP neutralizer, supply modes AIR_PRIMARY / XE_CONTINGENCY, no hollow cathode); no geometry value changed",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py",
+    "tests/test_design_a9_19_architecture.py"
+   ]
+  },
+  {
+   "decision": "A9.20",
+   "question_id": "c1_role",
+   "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "standing_facts.a9",
+    "H1F-EX-05",
+    "H1F-CH-05"
+   ],
+   "how_applied": "C1 GROUND_ONLY_LAB_EQUIPMENT: IP-C1 stray field is a ground-bench quantity; C1 not CONTROL_FALLBACK",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py",
+    "tests/test_design_a9_19_architecture.py"
    ]
   }
  ],
+ "a9_19_touched_parameters": [
+  "H1F-EX-02",
+  "H1F-EX-05",
+  "H1F-CH-05"
+ ],
+ "a9_21_programme": {
+  "programme_record": "docs/experiments/hall_icp/programme/hw_programme_a9_21_v1.json",
+  "programme_record_sha256": "135ebf82d5d716256be0b5f0066aeaa48b82231624d6aefc027a6b64a8eb921a",
+  "library": "docs/experiments/hall_icp/programme/hw_programme_a9_21.py",
+  "decision": "A9.21 HW_PROGRAMME (docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json sha256 78766d3adaaa6d38730ce82607a1cd0a03ae34186c911d4189e2fd9251db6549; verbatim docs/decisions/OD_2026_10_02_A9_21_OPEN_ITEMS_AND_HARDWARE_PROGRAMME_OWNER_DECISIONS.md sha256 01f7796aa2ae03d7bc0319b191f004e0a1ba0214c2c982f34554ca52cf531440)",
+  "order": [
+   "H1-S7.1",
+   "H1-S7.2",
+   "C1-REF",
+   "ICP-AR-REF",
+   "ICP-45A-P1-S7",
+   "ICP-45N",
+   "ICP-XE-MODE",
+   "P2-MAP",
+   "COUPLED-H1-ICP",
+   "P3-THERMAL",
+   "P4-ACCEPTANCE-EXPOSURE",
+   "H1-THRUST-FEED-MAP",
+   "AG-12",
+   "AG-13"
+  ],
+  "steps": [
+   {
+    "id": "H1-S7.1",
+    "order_index": 1,
+    "owner_item": 6,
+    "title": "H-1 S7.1 FEMM analysis points (FEMM-class axisymmetric magnetostatics of MC-1 at the authorised ANALYSIS_POINTS; not a selection)",
+    "kind": "ANALYSIS",
+    "predecessors": [],
+    "successors": [
+     "H1-S7.2"
+    ],
+    "entry_preconditions": [
+     {
+      "id": "H1-S7.1-PRE-01",
+      "what": "authorised analysis-point set and geometry ids registered (femm_analysis_points, worst-case geometric admissibility)",
+      "validator": "registered",
+      "enforced_by": "docs/hardware/h1_freeze_candidate/a9_16_h1.py:femm_analysis_points",
+      "sources": [
+       {
+        "question_id": "F5-OQ-01",
+        "cite": "A9.14 F5-OQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+        "decision_code": "YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION"
+       }
+      ],
+      "freeze_before": "the step's first record",
+      "gates": "STEP_START"
+     }
+    ],
+    "outputs": [
+     "FEMM result record per authorised point (result_id, sha256, geometry_id, solver_configuration_id)"
+    ],
+    "note": "FEMM_AUTHORISED_NOT_RUN today; no Hall performance is inferred from magnetic feasibility",
+    "entry_status_now": "NOT_STARTABLE_PRECONDITION_MISSING"
+   },
+   {
+    "id": "H1-S7.2",
+    "order_index": 2,
+    "owner_item": 6,
+    "title": "H-1 S7.2 engineering channel-point selection on magnetic feasibility, thermal margin, mass, packaging and manufacturability",
+    "kind": "SELECTION",
+    "predecessors": [
+     {
+      "step": "H1-S7.1",
+      "basis": "EXPLICIT_A9_21"
+     }
+    ],
+    "successors": [
+     "C1-REF"
+    ],
+    "entry_preconditions": [
+     {
+      "id": "H1-S7.2-PRE-01",
+      "what": "S7.1 FEMM results registered for EVERY authorised analysis point",
+      "validator": "femm_points",
+      "enforced_by": "docs/experiments/hall_icp/programme/hw_programme_a9_21.py:s7_1_results_cover_points",
+      "sources": [
+       {
+        "question_id": "F5-OQ-01",
+        "cite": "A9.14 F5-OQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+        "decision_code": "YES_FEMM_ANALYSIS_POINTS_NOT_SELECTION"
+       },
+       {
+        "question_id": "F5-OQ-02",
+        "cite": "A9.14 F5-OQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+        "decision_code": "SELECT_ENGINEERING_POINT_NONPERFORMANCE"
+       }
+      ],
+      "freeze_before": "the step's first record",
+      "gates": "STEP_START"
+     }
+    ],
+    "outputs": [
+     "selected engineering point, status ENGINEERING_FREEZE_CANDIDATE (NOT_THRUST_OPTIMISED); checked by s7_2_selection_check"
+    ],
+    "note": "the point stays an engineering freeze candidate; thrust is measured later (H1-THRUST-FEED-MAP), never a selection input",
+    "entry_status_now": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE"
+   },
+   {
+    "id": "H1-THRUST-FEED-MAP",
+    "order_index": 12,
+    "owner_item": 11,
+    "title": "measured H-1 thrust / feed map (mandatory)",
+    "kind": "CAMPAIGN",
+    "predecessors": [],
+    "successors": [
+     "AG-12"
+    ],
+    "entry_preconditions": [],
+    "outputs": [
+     "measured thrust-versus-feed map of H-1 for the actual composition (evidence_class measured)"
+    ],
+    "note": "A9.21 item 11 names no predecessor; A9.13 F9-OQ-02",
+    "entry_status_now": "NO_A9_21_ENTRY_PRECONDITION_LISTED"
+   }
+  ],
+  "owner_items_verbatim": {
+   "6": "6. H-1 engineering build — approved. S7.1 FEMM analysis points first, then S7.2 engineering channel-point selection using magnetic feasibility, thermal margin, mass, packaging and manufacturability. It remains an engineering freeze candidate, not a thrust-optimized design.",
+   "11": "11. Measured H-1 thrust/feed map — approved and mandatory. This is what should drive the performance-derived feed requirement for AG-12, followed by the statewise AG-13 `T-D >= 0` check."
+  },
+  "rule": "fail closed (hw_programme_a9_21.entry_status): a step is NOT_STARTABLE while a predecessor completion or a listed precondition registration is missing; never PASS / GO / START_AUTHORISED",
+  "ag12_ag13_dependency": {
+   "AG-12": {
+    "programme_input": "NOT_EVALUATED",
+    "reasons": [
+     "H1-THRUST-FEED-MAP: not registered"
+    ],
+    "gate_location": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json"
+   },
+   "AG-13": {
+    "programme_input": "NOT_EVALUATED",
+    "after": "AG-12",
+    "gate_location": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+    "also_needs": "host-spacecraft drag ICD (A9.21 EXTERNAL_INPUTS; stays TBD)"
+   }
+  },
+  "h1f_ch_11": {
+   "point_status": "NOT_SELECTED_PENDING_FEMM",
+   "s7_2_entry": "NOT_STARTABLE_PREDECESSOR_INCOMPLETE",
+   "status_when_selected": "ENGINEERING_FREEZE_CANDIDATE",
+   "optimisation_basis": "NOT_THRUST_OPTIMISED",
+   "selection_criteria_a9_21": [
+    "magnetic_feasibility",
+    "thermal_margin",
+    "mass",
+    "packaging",
+    "manufacturability"
+   ],
+   "selection_check": "hw_programme_a9_21.s7_2_selection_check (refuses before S7.1 covers every authorised point, and refuses any thrust / performance criterion)"
+  }
+ },
  "existing_owner_questions_touched": [
   {
    "id": "MQ-03",
-   "status": "TBD_OWNER",
+   "status": "ANSWERED_BY_A9_14",
+   "v4_status": "TBD_OWNER",
    "source": {
-    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/243",
-    "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
    "id": "OQ-A907-04",
-   "status": "TBD_OWNER",
+   "status": "ANSWERED_BY_A9_14",
+   "v4_status": "TBD_OWNER",
    "source": {
-    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/254",
-    "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
    "id": "OQ-A907-05",
-   "status": "TBD_OWNER",
+   "status": "ANSWERED_BY_A9_12",
+   "v4_status": "TBD_OWNER",
    "source": {
-    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/255",
-    "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
    "id": "OQ-A907-06",
-   "status": "TBD_OWNER",
+   "status": "ANSWERED_BY_A9_12",
+   "v4_status": "TBD_OWNER",
    "source": {
-    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/256",
-    "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
    "id": "OQ-A907-08",
-   "status": "TBD_OWNER",
+   "status": "ANSWERED_BY_A9_12",
+   "v4_status": "TBD_OWNER",
    "source": {
-    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/257",
-    "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
    "id": "P1Q-06",
-   "status": "TBD_OWNER",
+   "status": "ANSWERED_BY_A9_10",
+   "v4_status": "TBD_OWNER",
    "source": {
-    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/299",
-    "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
    "id": "OQ-RFQV2-10",
-   "status": "TBD_OWNER",
+   "status": "ANSWERED_BY_A9_10",
+   "v4_status": "TBD_OWNER",
    "source": {
-    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/343",
-    "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
    "id": "P4-OQ-01",
-   "status": "TBD_OWNER",
+   "status": "ANSWERED_BY_A9_12",
+   "v4_status": "TBD_OWNER",
    "source": {
-    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/327",
-    "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
    "id": "P4-OQ-02",
-   "status": "TBD_OWNER",
+   "status": "ANSWERED_BY_A9_12",
+   "v4_status": "TBD_OWNER",
    "source": {
-    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/328",
-    "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   },
   {
    "id": "P4-OQ-04",
-   "status": "TBD_OWNER",
+   "status": "ANSWERED_BY_A9_12",
+   "v4_status": "TBD_OWNER",
    "source": {
-    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
     "pointer": "/rows/330",
-    "sha256": "6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67"
+    "sha256": "8a29c4180f4387afb6168986442ddb1c08b1f9a692ad85cdf0630799de3cd4fd"
    }
   }
  ],
@@ -3991,7 +5100,7 @@
    "source": {
     "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "pointer": "/rows/8",
-    "sha256": "2bfed6ea9efaad075157ff3a4f757dd07bece7d6f71d78fddc67de989b882db4"
+    "sha256": "fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae"
    }
   },
   {
@@ -4005,7 +5114,7 @@
    "source": {
     "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "pointer": "/rows/9",
-    "sha256": "2bfed6ea9efaad075157ff3a4f757dd07bece7d6f71d78fddc67de989b882db4"
+    "sha256": "fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae"
    }
   },
   {
@@ -4019,7 +5128,7 @@
    "source": {
     "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "pointer": "/rows/12",
-    "sha256": "2bfed6ea9efaad075157ff3a4f757dd07bece7d6f71d78fddc67de989b882db4"
+    "sha256": "fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae"
    }
   },
   {
@@ -4033,7 +5142,7 @@
    "source": {
     "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "pointer": "/rows/19",
-    "sha256": "2bfed6ea9efaad075157ff3a4f757dd07bece7d6f71d78fddc67de989b882db4"
+    "sha256": "fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae"
    }
   },
   {
@@ -4047,19 +5156,20 @@
    "source": {
     "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
     "pointer": "/rows/20",
-    "sha256": "2bfed6ea9efaad075157ff3a4f757dd07bece7d6f71d78fddc67de989b882db4"
+    "sha256": "fde0ddac723b62ab9bdc9789fa738c74198de23b8d150fd67b1b89d9e9d2d2ae"
    }
   }
  ],
  "key_findings": [
-  "F5-K1 H-1 definition: 78 parameters; FREEZE_CANDIDATE 23, OPEN 28, TBD_AFTER_EVIDENCE 20, TBD_OWNER 7. The article is NOT frozen; every FREEZE_CANDIDATE is an owner-given decision, convention or rule.",
-  "F5-K2 the channel design point (h, d_mean, L) is TBD_OWNER: windows exist (xenon-derived rules, hypotheses for air species), but no Hall performance can discriminate inside them (credible set empty, P5-N2 v1 INCONCLUSIVE); selection needs FEMM + coupled thermal + owner (F5-OQ-01 / F5-OQ-02).",
+  "F5-K1 H-1 definition: 78 parameters; FREEZE_CANDIDATE 24, OPEN 28, TBD_AFTER_EVIDENCE 22, TBD_OWNER 4. The article is NOT frozen; every FREEZE_CANDIDATE is an owner-given decision, convention or rule.",
+  "F5-K2 the channel design point (h, d_mean, L) is not selected: windows exist (xenon-derived rules, hypotheses for air species), but no Hall performance can discriminate inside them (credible set empty, P5-N2 v1 INCONCLUSIVE); the owner rule (A9.14 F5-OQ-01 / F5-OQ-02) selects an ENGINEERING_FREEZE_CANDIDATE point on non-performance criteria after the authorised FEMM analysis points (FEMM_AUTHORISED_NOT_RUN).",
   "F5-K3 magnetic circuit decided at topology level only (T2 shielded, EM-only, FeCo-2V inner / pure-iron outer, ceramic-insulated copper coils); all dimensions, ampere-turns, coil currents and B(z) are lumped-circuit values at the RP-1 calculation anchor or TBD pending FEMM.",
   "F5-K4 B(z): no Vyovrinda-specific evidence exists; the H-1 target is the H2-1 model-derived envelope and an inferred shape (OPEN); the P5 Peterson 2001 profile is a reference for P5 only and no P5 value is used.",
   "F5-K5 anode: 316L REJECTED_AS_CURRENT_BASELINE; FINAL_ANODE_MATERIAL OPEN (22 P4 candidates, all INCOMPLETE_EVIDENCE); heat-removal path UNRESOLVED with the eight A9.2 sec. 4 investigation items carried; no anode temperature target is set (row 87).",
   "F5-K6 coil envelope carried with the A9.2 sec. 8 correction: 1.579 kg is the complete-coil copper estimate at RP-1 f_NI 2 (booked), 0.136 kg is the 60 W fixed-NI sensitivity basis and never the coil mass.",
   "F5-K7 inlet interface: H-1 needs mdot_s, P, T, x_s and transient quality from F4, all TBD; transient tolerances cannot be derived by H-1 today (no admitted Hall map) and need Phase-1 sensitivity data.",
-  "F5-K8 iron Curie discrepancy recorded (770 vs 754 degC between H2-1 and A9-07); not resolved here (F5-OQ-03)."
+  "F5-K8 iron Curie discrepancy recorded (770 vs 754 degC between H2-1 and A9-07); the owner uses 754 degC as the conservative necessary ceiling, never the usable limit (A9.14 F5-OQ-03).",
+  "F5-K9 LOCK-1 release (A9.14 F5-OQ-04): RELEASE_BLOCKED - every non-FREEZE_CANDIDATE item is an explicit blocker and the release needs the drawing id, revision and content hash."
  ],
  "compliance": {
   "no_hall_performance": true,

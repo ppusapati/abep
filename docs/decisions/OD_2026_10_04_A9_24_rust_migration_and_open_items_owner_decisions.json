@@ -1,0 +1,83 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-04",
+ "decision": "A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_RECORDED",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+  "sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7"
+ },
+ "supersedes": [
+  {
+   "record": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
+   "section": "Computational-language decision (\"Do not rewrite the simulator in Rust\")",
+   "status": "SUPERSEDED_BY_A9_24_ITEM_1"
+  },
+  {
+   "record": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "section": "S10.3 PYTHON_CANONICAL_FOR_FROZEN_AND_SCORE_BEARING",
+   "status": "SUPERSEDED_PER_COMPONENT_ON_ADMISSION (A9_24 item 1: after a component is admitted, new production results for it come from Rust; until then Python remains the migration reference)"
+  }
+ ],
+ "items": {
+  "1_rust_direction": "TARGET_ZERO_PYTHON_EXECUTION_DEPENDENCY; Rust authoritative for all components except HallThruster.jl; per-component preregistered parity -> admission -> Python retired from active execution; Python not deleted; never rewrite Python results/goldens to make Rust pass; Kernel 1 TPMC stays ADMITTED (v2); no big-bang rewrite",
+  "2_bid_vs_rust": "bid uses the last completely verified pre-migration implementation; Rust migration is post-freeze; no mixed implementation may silently become the bid source",
+  "3_thrust_floor": "physics consumes thrust_target_mN = 12 as an operating input where physically required; T_available >= thrust_sustained_min_mN is assessment only; physics emits no requirement PASS/FAIL; numerical results preserved",
+  "4_operating_choices": "DECOUPLE: xe_sizing_thrust_target_mN 12, commanded_thrust_cap_mN 25, p_bus_throttling_cap_W 1500, mission_hours 26280 are explicit independently versioned scenario values with initial_basis provenance; never copied from constraints on regeneration; threshold change -> assessment only; scenario change -> new scenario version",
+  "5_hard_gates": {
+   "HC-05": "ASSESSMENT_ONLY, M_n,LB > 0",
+   "HC-06": "ASSESSMENT_PROTECTION_POLICY, 50 K margin applied by assessment against hardware-bound limits, never in thermal equations",
+   "HC-07": "ASSESSMENT_ONLY, 15000 h subsystem firing-life basis; mission 26280 h separate",
+   "HC-08": "ASSESSMENT_ONLY, T_available - D_spacecraft >= 0",
+   "HC-09": "DESIGN_GENERATION_FILTER (Option 1, 25 mN, from frozen engineering configuration) and reported in assessment",
+   "HC-10": "ASSESSMENT_ONLY capability evidence",
+   "HC-11": "ASSESSMENT_ONLY, feed_available - feed_required >= 0 (or registered equivalent); requirement from measured H-1 basis when available; never reduced to match achievable feed",
+   "HC-12": "ASSESSMENT_ONLY, threshold TBD, NOT_EVALUATED until measured H-1 ripple basis; no default invented"
+  },
+  "6_perf_rerun": "APPROVED on the final verified pre-Rust-migration reference commit; new directory; old baseline never overwritten; env manifest before/after; wall-clock and per-stage profiles; CPU/RAM; deterministic inputs; evidence hashes; used to ORDER the migration, not to gate it",
+  "7_order": [
+   "TPMC intake (admitted)",
+   "intake/design-state geometry sweep",
+   "compressor design search / gaspath",
+   "mission propagation",
+   "UQ / Monte Carlo driver",
+   "P3 ray sampling",
+   "then every remaining active Python execution path"
+  ],
+  "8_rust_ci": "v1 -> v2 re-point (done 6e5465a); extend per admitted subsystem; final CI: cargo build/test, determinism, Python parity while reference active, Julia bridge, conservation, config/hash, schema, golden/reference, no forbidden Python runtime dependency; Kernel 1 physics unchanged",
+  "9_bid_basis": "B: new bid freeze at the latest commit with the no-numeric-change programme/config separation work passing full tests, rule 9, golden/reference, CI integrity, config/hash checks; before substantive Rust migration; not bbc480c; record exact SHA",
+  "10_rfq": {
+   "AUTHORIZED_FOR_QUOTATION_ONLY": [
+    "RFQ3-RF",
+    "RFQ3-GAS",
+    "RFQ3-VAC",
+    "RFQ3-HALLEL",
+    "RFQ3-MECH",
+    "RFQ3-RFMET"
+   ],
+   "permits": [
+    "quotation",
+    "technical clarification",
+    "datasheets",
+    "capability information",
+    "mass/power information",
+    "lead time"
+   ],
+   "not_authorized": [
+    "purchase order",
+    "advance payment",
+    "supplier selection",
+    "binding commitment"
+   ],
+   "DO_NOT_DISPATCH": {
+    "RFQ3-THRUST": "until its blocking quantity issue is resolved",
+    "RFQ3-H1FAB": "until controlled H-1 drawings exist"
+   }
+  },
+  "11_f1_archive": "AUTHORIZED TO KEEP AND UPLOAD as a GitHub Release asset or equivalent controlled store; never an ordinary Git blob; repository keeps filename, sha256, size, manifest, per-file hashes, generating commit, config/design-state/model-set hashes, command, classification, release reference; verify downloaded hash before authoritative",
+  "12_c_drag_option_2": "NOT_APPROVED_NOW; Option 1 during bid baseline",
+  "13_cathode": "hall_icp_neutralizer is cathodeless; no LaB6 flight cathode, no hollow cathode, no C1 flight fallback; C1 ground reference only; audit every active path instantiating LaB6Cathode and classify HISTORICAL_REGRESSION / GROUND_REFERENCE / ACTIVE_FLIGHT_INCONSISTENCY; report ACTIVE_FLIGHT_INCONSISTENCY to owner before altering numbers; never fix silently inside the Rust migration",
+  "14_end_state": "Python eliminated only when simulator, sweeps, config, assessment/gates, evidence builders and normal CI need no Python; every active Python implementation admitted-replaced or formally retired; HallThruster.jl integration works; provenance intact; historical evidence never deleted"
+ }
+}

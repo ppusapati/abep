@@ -1,0 +1,40 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_08_A9_37_dbf_1_design_baseline_freeze",
+ "decided_by": "owner",
+ "date": "2026-10-08",
+ "decision": "A9_37_DBF_1_DESIGN_BASELINE_FREEZE",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md",
+  "sha256": "fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "DBF_1",
+   "utc": "2026-10-08T12:16:51.967Z",
+   "text_sha256": "1eac915af54976a1c3aa4cbac3e8e6a099a127025dec53d528b99cb770905155",
+   "chars": 1593
+  }
+ ],
+ "checkpoint_at_decision": "29e42a7",
+ "owner_decision_summary": {
+  "dbf_1": "freeze one specific current design for hall_icp_neutralizer today, before M2: intake, compressor, H1 geometry, magnetic target, ICP geometry, RF operating envelope, power allocation, mass policy / Xe reference load, thermal topology, primary / backup materials, reference host-drag model",
+  "source_rule": "only values or candidates already in the repository; no invented physics; where evidence is incomplete, freeze the selected engineering assumption with its evidence class and uncertainty instead of leaving the variable open",
+  "fixed_values": {
+   "H1": "RP-1: d_mean 70 mm, h 12 mm, L/h 8.6 (~103 mm length)",
+   "RF": "13.56 MHz",
+   "power": "1,350 W design allocation / 1,500 W RFP gate; 300 W common-load allocation",
+   "mass": "10 % system mass-margin policy; <= 34 kg nominal-dry target; 2 kg reference Xe load"
+  },
+  "intake_compressor": "select and freeze one baseline from existing registered candidates; if none closes both flow and drag, record a BASELINE_DEFICIENCY, not a reason to continue trading",
+  "materials": "select and freeze primary + backup Hall / ICP electrode materials from the existing candidate register",
+  "host_drag": "freeze a proposal / reference host-spacecraft drag geometry so M2 can calculate T-D, labelled reference pending customer ICD",
+  "change_control": "after DBF-1 no design value changes merely to improve M2 performance; any change needs a formal DCR identifying the physical / evidence reason before rerun",
+  "then": "execute M2 against DBF-1"
+ },
+ "recorder_notes": [
+  "A9.36 still applies: no Hall thrust values enter M2 while A6 remains STOP_NO_LEVEL_CONVERGED. M2 against DBF-1 evaluates all non-Hall paths at the frozen design; Hall thrust fields read HALL_NUMERICS_NOT_CONVERGED until a converged envelope from the A9.36 investigation exists. Supplying a converged Hall envelope later is an input completion, not a design change, and needs no DCR."
+ ]
+}

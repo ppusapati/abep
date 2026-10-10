@@ -28,17 +28,16 @@ What is here
     the derived ceiling "AL-05 allocation / envelope shell area" is reported.
 
 What it is not: an ICP design, a selection, a ranking, a PASS, an ICP-45 evaluation, a thermal result, a Hall
-prediction. It imports the P1 / P2 / P3 code by file path (they are not packages) and modifies none of them; it is not
+prediction. It uses verbatim library copies of the P1 / P2 / P3 helpers it needs (abep_sim/icp_bench_lib.py,
+abep_sim/icp_thermal_lib.py; A9.22: no docs code is imported by path) and modifies none of the originals; it is not
 wired into abep_sim/archengine.py (goldens cannot move).
 """
 from __future__ import annotations
 
 import hashlib
-import importlib.util
 import itertools
 import json
 import math
-import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
@@ -95,31 +94,28 @@ def _finite(x, what):
     return float(x)
 
 
-# ------------------------------------------------------------------------------------------------ path imports
-_MODS = {}
-
-
-def _load(name, rel):
-    """Import a non-package module by file path (read-only; registered under an F6-private name)."""
-    if name not in _MODS:
-        spec = importlib.util.spec_from_file_location(name, str(REPO / rel))
-        mod = importlib.util.module_from_spec(spec)
-        sys.modules[name] = mod          # dataclasses resolve annotations through sys.modules
-        spec.loader.exec_module(mod)
-        _MODS[name] = mod
-    return _MODS[name]
+# ------------------------------------------------------------------------------------------------ helper libraries
+# A9.22 (layer separation): the P1 / P2 / P3 helpers this module needs are verbatim library copies under abep_sim/
+# (abep_sim/icp_thermal_lib.py, abep_sim/icp_bench_lib.py); the design layer no longer imports docs code by path.
+# P3_LIB_REL / P1_REDUCER_REL / P2_FRAMEWORK_REL above stay as provenance strings of the copied originals.
+from .. import icp_bench_lib as _bench  # noqa: E402
+from .. import icp_thermal_lib as _thermal  # noqa: E402
 
 
 def p3_lib():
-    return _load("abep_f6_p3_thermal_lib", P3_LIB_REL)
+    """P3 thermal-geometry helpers (abep_sim/icp_thermal_lib.py, verbatim subset of P3_LIB_REL)."""
+    return _thermal
 
 
 def p1_reducer():
-    return _load("abep_f6_p1_reducer", P1_REDUCER_REL)
+    """DEPRECATED (A9.22) compatibility accessor for builders / tests: the complete P1 reducer (experiment code), loaded
+    by abep_sim/icp_bench_lib.py. Design computations here use only icp_bench_lib.ICP45A_STATUSES."""
+    return _bench.experiment_p1_reducer(REPO)
 
 
 def p2_framework():
-    return _load("abep_f6_p2_framework", P2_FRAMEWORK_REL)
+    """P2 impedance-map validation helpers (abep_sim/icp_bench_lib.py, verbatim subset of P2_FRAMEWORK_REL)."""
+    return _bench
 
 
 def _read_json(rel):
@@ -338,7 +334,7 @@ def capacity_objective(p1_result, binding, geometry_id):
     if p1_result is None:
         return _result(name, NOT_EVALUATED, reason="no P1 ICP45 capacity result (P1 has no data; ICP45 NOT_EVALUATED "
                        "until I_d,max,H1 is registered - A9.4 / A9.5)")
-    if not isinstance(p1_result, dict) or p1_result.get("status") not in p1_reducer().ICP45A_STATUSES:
+    if not isinstance(p1_result, dict) or p1_result.get("status") not in _bench.ICP45A_STATUSES:
         raise F6Error("capacity: not a P1 icp45a_evaluate() result")
     st = p1_result["status"]
     if st == "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE":

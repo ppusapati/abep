@@ -1,0 +1,305 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_INTAKE_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_INTAKE_PY",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W1",
+  "scope": "whole module abep_sim/intake.py (it holds exactly the entry points below and their parameter records)",
+  "functions_or_entry_points": [
+   "abep_sim/intake.py::collection",
+   "abep_sim/intake.py::compress",
+   "abep_sim/intake.py::passive_compression",
+   "abep_sim/intake.py::IntakeParams (defaults)",
+   "abep_sim/intake.py::CompressorParams (defaults)",
+   "abep_sim/intake.py::_tpmc_surface (frozen surface per scattering; m_mean_build from frozen_surface_build_atmosphere)"
+  ],
+  "out_of_scope": [
+   "abep_sim/intake_tpmc.py (IntakeSurface, intake_response, ...): PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1; collection's TPMC branch evaluates IntakeSurface, so its observables here depend on that implementation too",
+   "abep_sim/intake.py::_SURF_CACHE mechanics: the Rust collection receives the loaded frozen surfaces explicitly (no hidden module cache; CLAUDE.md rule 5)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "the inventory row lists no not_ported_parts; intake.py reaches no LaB6 / hollow-cathode / C1 / multi-family path"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE (the inventory row carries no owner_disposition_a9_28)",
+  "simulation_completion_wp": "SC-WP-02 (element 'intake TPMC'; intake.py collection / compress / passive_compression), ES-3",
+  "owner_disposition_a9_29": "NOT_APPLICABLE (the inventory row carries no owner_disposition_a9_29)"
+ },
+ "date": "2026-10-05",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. At registration collection / compress / passive_compression are not implemented in Rust, no vector of this contract has been evaluated by either implementation, and no development comparison has run. Every tolerance, observable, vector rule, seed and decision rule below is fixed; a change is a new contract version with fresh scoring seeds.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "reference_implementation": {
+  "python_commit": "96db5524ec917e99e507def24f3ee0b263c78ebc (integration/simulation-complete HEAD the lane branched from; the reference files below are byte-identical at the branch commits)",
+  "files": [
+   {"path": "abep_sim/intake.py", "sha256_at_registration": "d46c23af40d413094babbe9d2121238c7b6f768341ffb3789d3d50c1d0f66687"},
+   {"path": "abep_sim/intake_tpmc.py", "sha256_at_registration": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"},
+   {"path": "abep_sim/constants.py", "sha256_at_registration": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"},
+   {"path": "abep_sim/atmosphere.py", "sha256_at_registration": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b"}
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1 (bundled Qhull: qhull_r 8.0.2 (2020.2.r 2020/08/31))",
+   "pandas": "3.0.2",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "scipy-openblas 0.3.31.188.0 (numpy build configuration)",
+   "thread_env": {"OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "NUMEXPR_NUM_THREADS": "1"}
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-intake",
+  "functions_or_entry_points": [
+   "abep_intake::collection::collection",
+   "abep_intake::collection::compress",
+   "abep_intake::collection::passive_compression",
+   "abep_intake::collection::{IntakeParams, CompressorParams} (Default = the Python dataclass defaults)",
+   "abep_intake::surface::FrozenIntakeSurfaces::load (both scattering tables of the frozen v1, m_mean_build_kg explicit)",
+   "harness CLI: crates/abep-intake/examples/intake_parity.rs, driven by scripts/rust_migration/parity_intake.py"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (e408947bf 2026-03-25), rust-toolchain.toml",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-intake/Cargo.toml",
+   "crates/abep-intake/src/**",
+   "crates/abep-intake/data/intake_surface_v1_delaunay_v1.json",
+   "crates/abep-intake/examples/intake_parity.rs"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it (A9.14 S10.4 RUSTCI-1, generalised)"
+ },
+ "governing_hashes": {
+  "config_manifest": {"path": "config/MANIFEST.json", "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"},
+  "architecture_hash": "NOT_APPLICABLE (collection / compress take explicit parameter records, no architecture configuration)",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE (free-stream states are the nine frozen NRLMSIS states named in inputs, passed to Rust as explicit numbers)",
+  "rule": "both implementations must report these exact values for every run; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/data/intake_surface_v1.csv": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a",
+  "abep_sim/data/intake_surface_v1.json": "5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425",
+  "abep_sim/data/atmosphere_msis21_v1.csv": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7",
+  "abep_sim/data/atmosphere_msis21_v1.json": "38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160",
+  "crates/abep-intake/data/intake_surface_v1_delaunay_v1.json": "247601cf51cff450759a2148179242e8085eb8fb0b878d87e44ea86e644faf7b"
+ },
+ "frozen_data_read_only": [
+  "abep_sim/data/intake_surface_v1.csv / .json (collection TPMC branch; never regenerated, CLAUDE.md rule 1)",
+  "abep_sim/data/atmosphere_msis21_v1.csv (read by the Python reference only, to produce the explicit free-stream inputs)"
+ ],
+ "inputs": {
+  "free_stream_states": "the nine frozen states abep_sim.atmosphere.atmosphere(alt, solar, use_msis=False), alt in (180, 200, 230) km, solar in (low, mean, high), given to Rust as explicit numbers (n, rho, V, T, m_mean, fO, fN2, fO2, flux_kg_m2_s; V_rel only where a vector sets it); 'atm 200 mean' = alt 200, solar mean; 'atm random' = one of the nine drawn as (180, 200, 230)[integers(0, 3)], (low, mean, high)[integers(0, 3)]",
+  "m_mean_build_kg": "abep_sim.intake_tpmc.frozen_surface_build_atmosphere()['m_mean'] (the value intake._tpmc_surface passes)",
+  "golden_vectors": {
+   "source": "registered list below",
+   "count": "F1 18, F2 10, F3 6 parametric + 18 TPMC",
+   "list_or_generator": {
+    "F1_passive_compression": "CompressorParams() defaults x the 9 states in order (180, 200, 230) x (low, mean, high) x eta_c in (0.25, 0.45)",
+    "F2_compress": "atm 200 mean, CompressorParams() unless set: C-01 mdot_col 1e-6, eta_c 0.35, override None; C-02 override 60.0; C-03 ratio 10.0 (active ratio 1); C-04 anode_conductance_m3_s 1e-4; C-05 anode_conductance_m3_s 1e-2, mdot_col 1e-8; C-06 backflow_frac 0.3; C-07 max_ratio 10.0; C-08 atm 180 low, T_out_K 300.0, area_ratio 20.0; C-09 override 1e6; C-10 mdot_col 0.0 (mdot_col 1e-6, eta_c 0.35, override None unless set)",
+    "F3_collection_parametric": "use_tpmc False, atm 200 mean unless set: P-01 IntakeParams(); P-02 accommodation 0.0, off_axis_deg 3.0; P-03 accommodation 1.0, off_axis_deg 10.0, body_area_m2 0.3; P-04 area_m2 2.0, accommodation 0.8; P-05 V_rel = 1.01 x V; P-06 atm 230 high",
+    "F3_collection_tpmc": "use_tpmc True: T-01..T-06 = abep_sim/golden.py case_intake exactly (area_m2 0.7, (accommodation, L_over_d) in ((0.8, 5.0), (0.95, 10.0), (0.5, 3.0)) x scattering (maxwell, cll), atm 200 mean); T-07..T-15 = area_m2 0.7, accommodation 0.8, L_over_d 5.0, maxwell over the 9 states in order; T-16 area_m2 0.7, accommodation 0.5, L_over_d 10.0, phi 0.85, cll, filter True; T-17 off_axis_deg 4.0 (otherwise T-07 at 200 mean); T-18 phi 0.9, L_over_d 20.0, accommodation 1.0, maxwell, atm 200 mean"
+   }
+  },
+  "edge_cases": [
+   {"id": "E-01", "entry": "F3", "inputs": {"use_tpmc": false, "off_axis_deg": 30.0}, "note": "parametric branch has no domain: a value in both"},
+   {"id": "E-02", "entry": "F3", "inputs": {"use_tpmc": true, "accommodation": 0.0, "off_axis_deg": 5.0, "L_over_d": 3.0, "phi": 0.8}, "note": "surface corner"},
+   {"id": "E-03", "entry": "F2", "inputs": {"ratio": 1000000.0}, "note": "active ratio above the default max_ratio 5000 (comp_feasible False with defaults)"}
+  ],
+  "randomized_domain": {
+   "count": "F1 40, F2 60, F3 30 parametric + 60 TPMC",
+   "draw": "one numpy Generator per entry point: default_rng(SeedSequence([master, j, 0, 3])), j = F1 1, F2 2, F3 parametric 3, F3 TPMC 4; fields drawn in this order per vector. F1: T_out_K U[250, 450]; area_ratio U[1, 50]; eta_c U[0, 1]; atm random. F2: ratio = exp(U[ln 1, ln 1e4]); area_ratio U[1, 50]; T_out_K U[250, 450]; p_base_W U[0, 100]; p_per_mgps_per_ln U[0, 30]; max_ratio = exp(U[ln 10, ln 1e4]); conductance: U < 0.5 -> None else exp(U[ln 1e-5, ln 1e-1]); backflow: U < 0.5 -> 0.0 else U[0, 0.5]; mass_base_kg U[1, 5]; mass_per_ln U[0, 1]; mdot_col = exp(U[ln 1e-8, ln 1e-5]); eta_c U[0.05, 0.9]; override: U < 0.5 -> None else exp(U[ln 1, ln 1000]); atm random. F3 parametric: area_m2 U[0.2, 1.5]; body_area_m2 U[0, 0.5]; accommodation U[0, 1]; off_axis_deg U[0, 20]; eta_c_specular U[0.3, 0.6]; eta_c_diffuse U[0.1, 0.3]; cd U[2.0, 2.6]; mass_per_m2 U[1, 4]; mass_fixed U[0, 2]; atm random. F3 TPMC: area_m2 U[0.2, 1.5]; body_area_m2 U[0, 0.5]; accommodation U[0, 1]; off_axis_deg U[0, 5]; scattering U < 0.5 -> maxwell else cll; L_over_d U[3, 20]; phi U[0.8, 0.9]; filter U < 0.25; atm random; V_rel: U < 0.3 -> V x U[0.98, 1.02] else absent (the U[0.98, 1.02] draw is made only when used)",
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim"
+  },
+  "vector_totals": {
+   "F1_passive_compression": 58,
+   "F2_compress": 71,
+   "F3_collection": "37 parametric + 79 TPMC (incl. edge cases E-01, E-02)",
+   "domain_and_error": "the cases in domain_and_error_parity"
+  }
+ },
+ "campaign_seeds": {
+  "applicable": "true for the randomized-domain draws only (deterministic component)",
+  "scoring_master_seed": 2026100522,
+  "development_master_seed": 8,
+  "derivation": "numpy.random.default_rng(numpy.random.SeedSequence([master, j, 0, 3])) per entry point as in inputs.randomized_domain",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE: no design / UQ sampling",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE: collection reads the frozen TPMC surface; it traces no particle",
+   "other_streams": "NOT_APPLICABLE: the vector draws choose parity inputs only",
+   "migration_parity_dataset": "seeds and captured reference outputs of the migration parity campaign stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic component)",
+  "development_rule": "development comparisons use development_master_seed only and evaluate only the randomized-domain draws made from it; golden vectors, edge cases and domain / error cases are evaluated by the Python-vs-Rust comparison only in the scoring execution. Every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "F1_passive_compression": {
+   "list": [
+    {"name": "passive ratio", "units": "-", "tolerance_class": "ULP_BOUNDED", "tolerance": "k_ulp 4 or r_rel 1e-12", "definition": "returned float"}
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  },
+  "F2_compress": {
+   "list": [
+    {"name": "p_out_Pa, p_passive_Pa, passive_ratio, active_ratio, ratio_effective, mdot_net, n_out, comp_power_W, comp_mass_kg", "units": "Pa, Pa, -, -, -, kg/s, m^-3, W, kg", "tolerance_class": "ULP_BOUNDED", "tolerance": "k_ulp 4 or r_rel 1e-12", "definition": "returned dict values"},
+    {"name": "comp_feasible", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "returned bool"},
+    {"name": "output key set", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "p_out_Pa, p_passive_Pa, passive_ratio, active_ratio, ratio_effective, mdot_net, n_out, comp_power_W, comp_mass_kg, comp_feasible"}
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  },
+  "F3_collection": {
+   "list": [
+    {"name": "eta_c, mdot_incident, mdot_collected, C_D, drag_N, intake_mass_kg (parametric branch)", "units": "-, kg/s, kg/s, -, N, kg", "tolerance_class": "ULP_BOUNDED", "tolerance": "k_ulp 4 or r_rel 1e-12", "definition": "returned dict values"},
+    {"name": "eta_c, mdot_incident, mdot_collected, C_D, drag_N, intake_mass_kg, passive_override, mdot_collected_species.<s> (TPMC branch)", "units": "as above; passive_override -", "tolerance_class": "ULP_BOUNDED", "tolerance": "k_ulp 4 or r_rel 1e-11 (the IntakeSurface basis of PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1); mdot_incident 1e-12", "definition": "returned dict values"},
+    {"name": "passive_override and mdot_collected_species presence (None in the parametric branch), species key set", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "returned dict"},
+    {"name": "output key set", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal", "definition": "eta_c, mdot_incident, mdot_collected, C_D, drag_N, intake_mass_kg, passive_override, mdot_collected_species"}
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "NOT_USED by this contract",
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, error codes, schema shape: equal",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp ulp(py) OR <= r_rel * max(1, |py|); per observable above. Closed forms (F1, F2, F3 parametric) use the template proposal k_ulp 4 / r_rel 1e-12 (a few correctly rounded operations and glibc libm calls shared by both sides)",
+  "SOLVER_TOLERANCE": "NOT_USED (no iterative solver)",
+  "STATISTICAL": "NOT_USED (no RNG)",
+  "EXACT_STREAM": "NOT_APPLICABLE"
+ },
+ "exact_invariants": [
+  {"id": "INV-01", "statement": "determinism: re-evaluating the first 10 vectors of every entry point gives identical outputs (bitwise) in each implementation", "required_in_both": true},
+  {"id": "INV-02", "statement": "parametric branch returns passive_override None and mdot_collected_species None; TPMC branch returns a float passive_override and a species dict whose keys are the species with nonzero free-stream mass fraction, in frozen table order (N2, O, O2)", "required_in_both": true},
+  {"id": "INV-03", "statement": "compress: active_ratio >= 1; ratio_effective >= passive_ratio; comp_feasible == (active_ratio <= max_ratio)", "required_in_both": true},
+  {"id": "INV-04", "statement": "frozen data unchanged: sha256 of abep_sim/data/intake_surface_v1.{csv,json} before and after the campaign equal pinned_inputs_sha256", "required_in_both": true},
+  {"id": "INV-05", "statement": "IntakeParams() and CompressorParams() defaults equal field by field (EXACT_VALUE)", "required_in_both": true}
+ ],
+ "conservation_checks": {
+  "applicable": true,
+  "checks": [
+   {"id": "CONS-01", "statement": "intake source mass balance: mdot_collected = eta_c x mdot_incident, and in the TPMC branch sum_s mdot_collected_species = mdot_collected (CLAUDE.md rule 4)", "evaluated_on": "Rust outputs (and Python outputs, recorded) for every F3 vector", "tolerance": "relative 1e-12 (rounding of the same sums; the balance has no physical residual)"},
+   {"id": "CONS-02", "statement": "compress mass bookkeeping: mdot_net + mdot_col x backflow_frac = mdot_col", "evaluated_on": "Rust outputs (and Python outputs, recorded) for every F2 vector", "tolerance": "relative 1e-12"},
+   {"id": "CONS-03", "statement": "source power balance / architecture energy ledger", "evaluated_on": "NOT_APPLICABLE: comp_power_W is a parametric demand model, not a balance; no ledger in this component", "tolerance": "NOT_APPLICABLE"}
+  ]
+ },
+ "domain_and_error_parity": {
+  "cases": [
+   {"id": "DE-01", "entry": "F3", "inputs": {"use_tpmc": true, "off_axis_deg": 6.0}, "expected_python": "ValueError (intake ROM extrapolation; no clamp, FE-01)", "expected_rust": "OutOfDomain", "message_key": "OUT_OF_BOUNDS"},
+   {"id": "DE-02", "entry": "F3", "inputs": {"use_tpmc": true, "accommodation": 1.2}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "OUT_OF_BOUNDS"},
+   {"id": "DE-03", "entry": "F3", "inputs": {"use_tpmc": true, "L_over_d": 2.5}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "OUT_OF_BOUNDS"},
+   {"id": "DE-04", "entry": "F3", "inputs": {"use_tpmc": true, "scattering": "specular"}, "expected_python": "ValueError: the frozen table filtered to 'specular' is empty, so IntakeSurface bounds are NaN and the call is refused as an extrapolation", "expected_rust": "OutOfDomain at surface selection", "message_key": "python OUT_OF_BOUNDS <-> rust UNKNOWN_SCATTERING (registered mapping; same failure class OUT_OF_DOMAIN)"},
+   {"id": "DE-05", "entry": "F3", "inputs": {"use_tpmc": true, "atm_fractions": {"fO": 0.0, "fN2": 0.0, "fO2": 0.0}}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "ALL_ZERO"},
+   {"id": "DE-06", "entry": "F3", "inputs": {"use_tpmc": true, "atm_fractions": {"fO": 0.5, "fN2": -0.1, "fO2": 0.6}}, "expected_python": "ValueError", "expected_rust": "OutOfDomain", "message_key": "FRACTION_INVALID"},
+   {"id": "DE-07", "entry": "F2", "inputs": {"eta_c": 0.0, "passive_override": null}, "expected_python": "ZeroDivisionError (ratio / passive with passive = 0)", "expected_rust": "OutOfDomain", "message_key": "PASSIVE_ZERO"},
+   {"id": "DE-08", "entry": "F2", "inputs": {"eta_c": 0.0, "passive_override": null, "anode_conductance_m3_s": 1e-4}, "expected_python": "ZeroDivisionError (ratio_eff / passive)", "expected_rust": "OutOfDomain", "message_key": "PASSIVE_ZERO"}
+  ],
+  "defaults": "unspecified inputs: F3 = T-07 (TPMC) at atm 200 mean; F2 = C-01",
+  "message_key_rule": "Python ValueError messages are classified with the substrings of PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1 (intake ROM extrapolation -> OUT_OF_BOUNDS, all mass fractions are zero -> ALL_ZERO, mass fractions must be finite and >= 0 -> FRACTION_INVALID); ZeroDivisionError -> PASSIVE_ZERO. Rust messages start with the key followed by ': '",
+  "mapping_rule": "ValueError and ZeroDivisionError -> AbepError::OutOfDomain (status OUT_OF_DOMAIN) with the registered message key; no other Python exception is raised by the scored inputs. No Rust path returns a value where Python fails or fails where Python returns, except the documented divergences (CLAUDE.md rule 3)",
+  "documented_divergence": [
+   {"id": "DIV-01", "statement": "compress passive_override that is not finite and > 0: the reference treats 0.0 as 'not given' (truthiness of `passive_override if passive_override else ...`) and computes the passive ratio, uses a negative value as given, and propagates NaN; Rust takes Option<f64>, None = computed, and refuses Some(x) unless x is finite and > 0 (OutOfDomain PASSIVE_OVERRIDE_INVALID)", "disposition": "outside the comparison set; no silent substitution in Rust"},
+   {"id": "DIV-02", "statement": "compress anode_conductance_m3_s that is not finite and > 0: the reference treats 0.0 as unset (truthiness) and uses negative values (negative pressure); Rust takes Option<f64> and refuses Some(c) unless c is finite and > 0 (OutOfDomain CONDUCTANCE_INVALID)", "disposition": "outside the comparison set"},
+   {"id": "DIV-03", "statement": "unknown scattering in the TPMC branch: same failure class, different key and stage (DE-04)", "disposition": "scored as DE-04 with the registered key mapping"},
+   {"id": "DIV-04", "statement": "the Rust collection receives the frozen surfaces (both scattering tables, m_mean_build_kg explicit) as an argument; the reference loads them lazily into the module cache _SURF_CACHE keyed by scattering, with m_mean_build from frozen_surface_build_atmosphere()", "disposition": "interface difference only; the harness passes the reference m_mean_build value"},
+   {"id": "DIV-05", "statement": "the reference reads the frozen CSV with pandas' default float converter (17 cells 1 ulp off correctly rounded, see PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1 DIV-05); Rust parses correctly rounded", "disposition": "inside the comparison set, within the TPMC-branch tolerance"}
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE: no committed JSON schema covers these outputs; the dict key sets above are the schema"
+  ],
+  "rules": [
+   "field names, units, types identical (F2 / F3 key sets)",
+   "species dict key order identical (frozen table order)",
+   "evidence_status / raw-vs-assessment labels (A9.22): none emitted; no PASS / FAIL or threshold in either output (comp_feasible is the reference's raw flag active <= max_ratio, reproduced as is)"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "the Python reference outputs of the registered vectors, computed by the harness at scoring; golden_v2.json 'intake' key is historical (RM-R28) and is not used, although T-01..T-06 reuse its six input sets"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11); a disagreement is investigated and classified (RUST_DEFECT | PYTHON_REFERENCE_DEFECT (own governance, new contract version) | CONTRACT_DEFECT (new contract version))",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_PY/reference_outputs/",
+   "captured_at_python_commit": "recorded in the report (the scoring commit)",
+   "sha256_manifest": "recorded in the report",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution (cargo test replay with the tolerances above)"
+  },
+  "historical_golden_rule": "RM-R28: golden_v1 / golden_v2 cases are historical and are never scored end-state parity cases"
+ },
+ "julia_bridge": {"applicable": false},
+ "performance_measurement": {
+  "status": "reported, not a decision criterion",
+  "workloads": [
+   {"id": "NONE", "description": "collection / compress are microsecond closed forms; no active PRE_RUST workload is dominated by them (the intake response surface workload is reported under PARITY-C-ABEP_SIM_INTAKE_TPMC_PY-V1)"}
+  ],
+  "repeats": 0,
+  "statistic": "NOT_APPLICABLE",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable meets its tolerance class",
+  "aggregate": "NOT_APPLICABLE (no STATISTICAL entry point)",
+  "exact_invariants_required": true,
+  "conservation_required": "true (CONS-01, CONS-02)",
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "entry_point_result": "PARITY_PASS or PARITY_FAIL per entry point F1..F3: PARITY_PASS iff all its per-test, invariant, conservation, domain / error and schema checks pass",
+  "verdict": "ADMITTED iff every entry point is PARITY_PASS, every required invariant holds, and every reference file and pinned input matches its registered sha256; otherwise NOT_ADMITTED (or REFUSED_REFERENCE_CHANGED / INPUT_MISMATCH / NOT_RUN_RUST_UNAVAILABLE)",
+  "verdict_vocabulary": ["ADMITTED", "NOT_ADMITTED", "REFUSED_REFERENCE_CHANGED", "INPUT_MISMATCH", "NOT_RUN_RUST_UNAVAILABLE", "REFUSED_CLASSIFICATION"],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for intake.collection / compress / passive_compression (within the registered domain); new production results for them come from Rust and carry implementation = rust, rust_commit and this contract id. It is NOT physics validation; the parametric eta_c / C_D / compressor-power coefficients keep their committed status",
+  "no_retuning": "tolerances, observables, inputs, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays; no execution is discarded",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "observables are restricted to retained selected-architecture physics (RM-R20)"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, A9.28; lineage b5849affae22a6709ad217a184f6fe896d15410a -> 2de86ab); A9.29 sec. 3: 2de86ab is the terminal owner-authorized package state",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): the parametric defaults (eta_c_specular 0.45, eta_c_diffuse 0.25, cd 2.2, compressor power / mass coefficients) are reproduced with their committed status, never re-labelled",
+  "not a gate PASS: comp_feasible is the reference's raw flag, not an assessment (RM-R31)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_PY/parity_report_v1.json (+ .md generated from it)",
+  "runner": "scripts/rust_migration/parity_intake.py --contract intake --mode score (Python harness calling the Rust CLI example intake_parity); records campaign_history",
+  "report_fields": ["contract_sha256", "python_commit", "reference_sha256", "rust_commit", "build_provenance (rustc, Cargo.lock sha256, source sha256)", "environment", "per-test results", "invariants", "conservation", "domain/error", "schema", "verdicts", "campaign_history", "ledger_update_requested"]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS: holds",
+   "no observable, input or code path belongs to an excluded legacy path: holds",
+   "no legacy harness path: the reference functions are called directly (not through system.physics_closure / Config('hall_1stage'))",
+   "the Rust implementation contains none of the forbidden identifiers (CI_PLAN.md sec. 1 principle 6)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict): the contract cannot be registered"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [],
+  "check": "NOT_APPLICABLE: the parametric defaults are model parameters with no registered value-status label in intake.py; they are reproduced unchanged (INV-05) and never re-labelled"
+ },
+ "new_physics_verification": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY)"
+}

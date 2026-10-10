@@ -1,0 +1,1247 @@
+{
+ "schema": "abep_new_physics_prereg_v1",
+ "kind": "chemistry contract of the Hall AIR_PRIMARY family (HallThruster.jl reaction set), not a new plasma model",
+ "id": "NP-HALL-CHEM-AIR",
+ "title": "Narrow sourced Hall O / O2 air-chemistry contract for AIR_PRIMARY (HallThruster.jl v0.23.1 reaction set abep-air-0.x)",
+ "prereg_version": 1,
+ "status": "PREREGISTERED_NOT_IMPLEMENTED",
+ "status_meaning": "docs only: no O / O2 Hall table built under this contract, no audit metric computed, no AIR Hall run; nothing admitted",
+ "lane": "lane-hall-chem-air",
+ "registered": "2026-10-08",
+ "base_commit": "b730764 (origin/integration/simulation-complete) + 14c16d1 (capability audit)",
+ "drafted_by": "agent session (lane NP-HALL-CHEM-AIR); not reviewed by the owner; nothing here is an owner decision",
+ "mandate": "A9.33 Q2 (owner, 2026-10-08): 'Preregister a narrow, sourced Hall O/O2 chemistry contract (like NP-ICP-CHEM-AIR), no fabricated coefficients; air stays NOT_EVALUATED until admitted.'",
+ "registered_before": "any O / O2 rate table is built into the Hall set, any omitted-process metric is computed and any AIR Hall run. No Hall run of any O-bearing feed exists in the repository. The free-stream composition statistics below were computed in this session from the frozen design states before the composition rule was written; no Hall result informed any choice.",
+ "change_rule": "the lock (prereg_lock_v1.json) freezes prereg_v1.json, PREREG.md and the capability audit; later changes are dated addenda or a v2, never edits. A change to the domain, a threshold, a tier, the composition rule, the status vocabulary or the admission rule after any table is built is a v2.",
+ "governing_records": {
+  "A9.33_verbatim": {
+   "path": "docs/decisions/OD_2026_10_08_A9_33_HALL_RUN_LOCATION_HALL_AIR_CHEMISTRY_PLENUM_V8.md",
+   "sha256": "2a14ce4b6ffa28da6009be18e155bc63d3a48b18ecd5a6256f7e1ec09ff35d6f"
+  },
+  "A9.33_json": {
+   "path": "docs/decisions/OD_2026_10_08_A9_33_hall_run_location_hall_air_chemistry_plenum_v8.json",
+   "sha256": "8799ee1069a0916d611738fff29b8c03af1e25d74fbd602114475d2f7454602b"
+  },
+  "A9.32_verbatim": {
+   "path": "docs/decisions/OD_2026_10_07_A9_32_HALL_THRUST_CRITICAL_PATH_PARAMETRIC_ENVELOPE.md",
+   "sha256": "69e9a00d77a7c51717a1d9cf6738c238090b23812195c8b37bfab560f33a0e6f"
+  },
+  "A9.32_json": {
+   "path": "docs/decisions/OD_2026_10_07_A9_32_hall_thrust_critical_path_parametric_envelope.json",
+   "sha256": "b3deaf25c9db25ed7fe349d28b8c4b7585d434c9e90f952d9757ee725473ddde"
+  },
+  "A9.30_verbatim": {
+   "path": "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md",
+   "sha256": "17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f"
+  },
+  "A9.30_json": {
+   "path": "docs/decisions/OD_2026_10_05_A9_30_push_authorization_o_o2_chemistry_and_bus_boundary_rulings.json",
+   "sha256": "1f61b11e01cbadef6822c2ef40fa6092f2f772a1f9d7601dff38f5aa72e075a4"
+  },
+  "CLAUDE.md": {
+   "path": "CLAUDE.md",
+   "sha256": "38b244197b68830cf4c605bae49eb8c4f6a1f92fd6d7d33c4485a4c988c691d3"
+  },
+  "EVIDENCE.md": {
+   "path": "docs/EVIDENCE.md",
+   "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61"
+  },
+  "capability_audit": {
+   "path": "docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/capability_audit_v1.json",
+   "sha256": "4be3ba8be204c433a691da1c54bb1fcf172579c0ea913f4224372255eac408cb"
+  }
+ },
+ "evidence_records_used": {
+  "design_states_v2": {
+   "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+   "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+  },
+  "dataset_manifest": {
+   "path": "abep_sim/data/atmosphere_msis21_orbit_v1.json",
+   "sha256": "f06416b1e11f07ec32434515b616935ed5eeaae1faac75586bce0961b6bcf97b"
+  },
+  "hall_pin": {
+   "path": "hallthruster_bridge/PINNED.toml",
+   "sha256": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280"
+  },
+  "hall_manifest": {
+   "path": "hallthruster_bridge/Manifest.toml",
+   "sha256": "a98c1a6e9cdf491ef602ef7cd1d08371b2bbe3da4e1df74e45a1c9d84f6c5634"
+  },
+  "bridge_lib": {
+   "path": "hallthruster_bridge/bridge_lib.jl",
+   "sha256": "cf26aab8607b640ebb78be9715f2c7c5d957f145ac17f52c1b23db2e980e21ab"
+  },
+  "n2_n_nominal": {
+   "path": "hallthruster_bridge/propellants/n2_n.toml",
+   "sha256": "4f10db747cfb11cfefb8080a9cad52e502c2ab11f0e485ac644a532b929607de"
+  },
+  "n2_rate_validity": {
+   "path": "hallthruster_bridge/propellants/rate_validity.toml",
+   "sha256": "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a"
+  },
+  "n2_provenance": {
+   "path": "hallthruster_bridge/propellants/PROVENANCE.md",
+   "sha256": "75a9833303c674257db2124c928e7324e6a5b09c1141517a79327b11ed6607e4"
+  },
+  "n2_completeness_rule": {
+   "path": "hallthruster_bridge/prereg/n2_completeness_audit_v1.json",
+   "sha256": "f8353f09a51beb251a74623695e66022b4bc2b0258b746be0f6d146b0b6b4a2b"
+  },
+  "n2_rule_addendum1": {
+   "path": "hallthruster_bridge/prereg/n2_completeness_audit_v1_addendum1_ambiguity.json",
+   "sha256": "cec43b09ffdb5e994c83dff7e97f10abe756e8f339e882e77b7733c262f587a8"
+  },
+  "n2_rule_addendum2": {
+   "path": "hallthruster_bridge/prereg/n2_completeness_audit_v1_addendum2_crosscheck.json",
+   "sha256": "8b5add9728885900b3422f8d394ba672ba6f6895e1bfe6dae3931d4fd10f23fa"
+  },
+  "n2_audit_snapshots": {
+   "path": "hallthruster_bridge/audit/configs/MANIFEST.json",
+   "sha256": "19e833c902aa9f62f9418105b7540318a9c3d88bd7e4dc07c9f377bcc4dcdcf2"
+  },
+  "n2_closure_verdicts": {
+   "path": "hallthruster_bridge/audit/n2_closure_verdicts_v1.json",
+   "sha256": "40ff596c44c83ebfacb49407f6c99ef05bb7941f5f52e66fcb62939e87d1ac5c"
+  },
+  "n2_final_audit": {
+   "path": "hallthruster_bridge/audit/n2_completeness_final_v1.json",
+   "sha256": "9dea5ac9d34f64d98027c764ade6082387488f40c824fa0c027bec8f5712d6a3"
+  },
+  "o_o2_source_matrix": {
+   "path": "docs/chemistry/o_o2/o_o2_source_matrix_v1.json",
+   "sha256": "28d3bf895e13518f61a7f365d5b79c57562fae194b38e9e04dc2d8b82858e92c"
+  },
+  "o_o2_completeness_DRAFT": {
+   "path": "docs/chemistry/o_o2/o_o2_completeness_prereg_DRAFT.json",
+   "sha256": "dacdb161d66f81143ec1b852ebdea9fddbc55e640afdac64410c08a7029b1fec"
+  },
+  "o_o2_v0_song2026_builder": {
+   "path": "docs/chemistry/o_o2/v0/build_tables_song2026.py",
+   "sha256": "c9ff001987371f4ca2ab5e79a0d097c770a846da5ea71dae358832734078d3ac"
+  },
+  "o_o2_v0_song2026_manifest": {
+   "path": "docs/chemistry/o_o2/v0/manifest_song2026_v0.json",
+   "sha256": "655a95c4a08b245000d7ed981c49d33968868f844249aba6e8851d1a8273369b"
+  },
+  "o_o2_v0_nist_builder": {
+   "path": "docs/chemistry/o_o2/v0/build_tables_nist107_o.py",
+   "sha256": "5183535a0938bafde03551780ebe781645b208fbd5a311d727af20c6d4822a3b"
+  },
+  "o_o2_v0_nist_manifest": {
+   "path": "docs/chemistry/o_o2/v0/manifest_nist107_o_v0.json",
+   "sha256": "425b126ee21804f73cbe72d04c414f78cf77d65a1ad3e35c66fe838c2dddcf44"
+  },
+  "o_o2_v0_channel_status": {
+   "path": "docs/chemistry/o_o2/v0/channel_status_v0.json",
+   "sha256": "162544f109211ad67c15a5f64a124a3d49853051aa6cb20d53d3cdf922d61a18"
+  },
+  "icp_chem_prereg": {
+   "path": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_v1.json",
+   "sha256": "24b74bc6e485e9156059b132c8f5ccb4b854b971a58b879eb34a960b76f70e9a"
+  },
+  "icp_chem_lock": {
+   "path": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json",
+   "sha256": "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef"
+  },
+  "hall_envelope_prereg_v1": {
+   "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json",
+   "sha256": "3275f85752fae258e4e4124cbe43d8756e8dfede70f560f8b2e7d66a40164b4d"
+  },
+  "hall_envelope_lock_v1": {
+   "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_lock_v1.json",
+   "sha256": "25ecfa880e9d115800821bcb2dfe5bab333323b214c3668a6fb8a9a54d53ebd3"
+  },
+  "hall_envelope_input_audit_v1": {
+   "path": "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/input_audit_v1.json",
+   "sha256": "d84d59ca3cd0fd3dd61939c7392214ff63c20e4fe204ddcba0f6b8b7583e64b0"
+  },
+  "transport_ensemble": {
+   "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+   "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
+  },
+  "physics_model_set": {
+   "path": "config/model_set/physics_model_set_v1.json",
+   "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1"
+  }
+ },
+ "hard_rules": [
+  "HR-01 no change to hallthruster_bridge/propellants/n2_n.toml, any N2 variant, rate_validity.toml, PROVENANCE.md, PINNED.toml (abep-n2n-0.11, COMPLETE_FOR_P5_N2_VALIDATION), audit/configs/** (immutable snapshots), the P5-N2 records, bridge_lib.jl, HallMap admission, the credible-set rule (EMPTY) or the HallThruster.jl pin (v0.23.1, bfb3019f); a Rust test asserts their sha256",
+  "HR-02 new reaction-set label abep-air-0.x in a new file hallthruster_bridge/propellants_air/AIR_PINNED.toml; one label never names two chemistry definitions; never abep-n2n-*, never abep-icp-air-*",
+  "HR-03 every rate table has a citable source recorded in its .source file and in propellants_air/PROVENANCE.md; no fabricated, fitted-to-close or memory-quoted coefficient; anything quoted from memory is labelled 'verify'",
+  "HR-04 atomic O is never replaced by N2, N or O2 data, and no O-target process points to a non-O table (load-time MODEL_ERROR)",
+  "HR-05 every rate file named by an AIR configuration has an entry in propellants_air/rate_validity.toml: verified with a mean-energy limit, or unresolved; a missing entry is a driver / loader error",
+  "HR-06 published sources only, LXCat-distributed data excluded, no contact with authors or laboratories, no paywall or network-policy bypass; every needed source that cannot be reached is listed (sources_not_reachable)",
+  "HR-07 AIR Hall stays NOT_EVALUATED (AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED) until the reaction set is COMPLETE_FOR_PARAMETRIC_ENVELOPE; admission is never a validation claim",
+  "HR-08 never extend a validity limit because a solver state reached a higher T_e; an extension needs independent published evidence and a new preregistration"
+ ],
+ "capability_audit": {
+  "verdict": "CAPABLE_WITH_LIMITATIONS",
+  "limitations": [
+   "L-01",
+   "L-02",
+   "L-03",
+   "L-04",
+   "L-05",
+   "L-06",
+   "L-07"
+  ],
+  "consequence": "processes outside the pinned solver's expressivity are omitted processes with a bound or UNBOUNDED_OMISSION; a promoted or variant-carrying process the solver cannot represent makes the set NOT_REPRESENTABLE_IN_PINNED_SOLVER"
+ },
+ "species_set": {
+  "rule": "the NP-ICP-CHEM-AIR v1 materiality rule MR-0..MR-6 is adopted by reference (icp_chem_prereg /species_set/materiality_rule; same frozen design states, same 1 % screen copied from the frozen F_ion / F_P thresholds) so the Hall and ICP air sets are judged by one standard; its application (icp_chem_prereg /species_set/application) is reused unchanged: O, O2, N2, N retained; He (> 1 % in 14 ECSS_LT_LOW states) and Ar (> 1 % in 6 ECSS_ST_HIGH states) MATERIALITY_BOUND_REQUIRED; NO MATERIALITY_BOUND_REQUIRED for F_ion (MR-5, lowest ionization energy); H and anomalous O excluded by the screen",
+  "hall_configured": {
+   "neutrals": [
+    "N2",
+    "N",
+    "O2",
+    "O"
+   ],
+   "ions": [
+    "N2(+)",
+    "N(+)",
+    "N(2+)",
+    "O2(+)",
+    "O(+)"
+   ],
+   "not_configured": {
+    "O(2+)": "L-06 (no one-to-one link source)",
+    "N2(2+)": "abep-n2n-0.11 uncertainty variant only; re-assessed (HA-N2N-R2/R3)",
+    "O(-)": "L-05",
+    "NO, NO(+)": "L-01; SB-NO",
+    "He, Ar": "SB-He, SB-Ar"
+   },
+   "charges": "N max_charge 2 (as abep-n2n-0.11), N2 1, O2 1, O 1"
+  },
+  "species_bounds": [
+   {
+    "id": "SB-He",
+    "until_resolved": "AIR Hall results for the 14 states with x_He > 0.01 are INCOMPLETE_EVIDENCE (state-resolved)",
+    "states": [
+     "ds2:ECSS_LT_LOW:alt195:lat-57.0000:lst6:lon300:doy138",
+     "ds2:ECSS_LT_LOW:alt195:lat-80.0000:lst21:lon0:doy184",
+     "ds2:ECSS_LT_LOW:alt195:lat-81.0000:lst21:lon0:doy138",
+     "ds2:ECSS_LT_LOW:alt195:lat-84.0000:lst0:lon60:doy184",
+     "ds2:ECSS_LT_LOW:alt215:lat-57.0000:lst6:lon300:doy138",
+     "ds2:ECSS_LT_LOW:alt215:lat-79.0000:lst21:lon0:doy138",
+     "ds2:ECSS_LT_LOW:alt215:lat-80.0000:lst21:lon0:doy184",
+     "ds2:ECSS_LT_LOW:alt215:lat-81.0000:lst21:lon0:doy138",
+     "ds2:ECSS_LT_LOW:alt215:lat-84.0000:lst0:lon60:doy184",
+     "ds2:ECSS_LT_LOW:alt230:lat-70.0000:lst0:lon0:doy229",
+     "ds2:ECSS_LT_LOW:alt230:lat-79.0000:lst21:lon0:doy184",
+     "ds2:ECSS_LT_LOW:alt230:lat-80.0000:lst21:lon0:doy184",
+     "ds2:ECSS_LT_LOW:alt230:lat-81.0000:lst21:lon0:doy138",
+     "ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184"
+    ]
+   },
+   {
+    "id": "SB-Ar",
+    "until_resolved": "AIR Hall results for the 6 states with x_Ar > 0.01 are INCOMPLETE_EVIDENCE (state-resolved)",
+    "states": [
+     "ds2:ECSS_ST_HIGH:alt180:lat+79.0000:lst6:lon60:doy47",
+     "ds2:ECSS_ST_HIGH:alt180:lat-86.0000:lst3:lon240:doy184",
+     "ds2:ECSS_ST_HIGH:alt195:lat-86.0000:lst3:lon240:doy184",
+     "ds2:ECSS_ST_HIGH:alt215:lat+37.0000:lst6:lon240:doy184",
+     "ds2:ECSS_ST_HIGH:alt215:lat+71.0000:lst3:lon0:doy184",
+     "ds2:ECSS_ST_HIGH:alt230:lat+37.0000:lst6:lon240:doy184"
+    ]
+   },
+   {
+    "id": "SB-NO",
+    "until_resolved": "blocks AIR admission for every state (NO is not resolved per design state)",
+    "data_needed": "NO ionization (Itikawa JPCRD 45, 033106 (2016); NIST SRD 107 NO entry; verify)"
+   },
+   {
+    "rule": "exclude a species if every metric's upper bound <= threshold; add it (v2) if a lower bound exceeds; between -> uncertainty-variant species (v2); the metrics are the audit metrics below evaluated on the AIR state envelope"
+   }
+  ]
+ },
+ "domain": {
+  "id": "D-HALL-AIR",
+  "T_e_eV": [
+   2.0,
+   30.0
+  ],
+  "mean_energy_eV": [
+   3.0,
+   45.0
+  ],
+  "low_threshold_window_T_e_eV": [
+   0.2,
+   30.0
+  ],
+  "low_threshold_processes": [
+   "N2 and O2 vibrational",
+   "N2 and O2 rotational",
+   "O2 a1Delta_g (0.98 eV) and b1Sigma_g+ (1.63 eV)",
+   "O fine structure",
+   "O(1D) (1.967 eV)"
+  ],
+  "justification": "the upper limit is the tightest verified table limit of the set: the N2 dissociation, electronic, vibrational and rotational tables (45 eV mean energy, rate_validity.toml) are configured in every AIR composition because N2 is present in every registered state (O-nuclei share y_O <= 0.84); the O2 dissociation table supports 47 eV (held-tail share 0.70 % at 45 eV, v0 manifest); the O, O2 ionization, DI and elastic tables support 255 eV. It is also the frozen N2 completeness domain (n2_completeness_audit_v1) and the NP-ICP-CHEM-AIR D-CHEM limit, so one domain governs every air set. The 2 eV lower limit is inherited from the N2 audit, not derived from O / O2 evidence. No limit is widened because the solver reaches higher T_e (HR-08).",
+  "eedf": "Maxwellian (every table is a Maxwellian integral over mean energy 3/2 T_e; MAXWELLIAN_ASSUMED)",
+  "run_domain_rule": [
+   "DOM-AIR-01 per table: activity n_e n_target k_r beyond the table's validity limit, summed over every saved frame of the averaging window and every cell, has share <= 1e-12 (bridge_lib.jl chemistry_validity, unchanged), and no table is unresolved",
+   "DOM-AIR-02 audited domain: for every configured reaction, the activity share at 3/2 T_e > 45 eV is <= 1e-12 (the same reaction-weighted, per-frame computation with the limit set to 45 eV)",
+   "a run failing DOM-AIR-01 or DOM-AIR-02 is OUT_OF_DOMAIN (not scoreable, not a failure)"
+  ],
+  "validity_vs_domain": "table validity (max_mean_energy_eV, source-supported, capped at 255 eV) and the audited domain (45 eV) are separate checks; both must pass"
+ },
+ "composition": {
+  "id": "CE-AIR",
+  "what_is_registered": "the free-stream composition of the 196 frozen design states (all required); the delivered (valve-outlet) composition after intake / filter / compressor / plenum is NOT registered (no admitted upstream producer; docs/architecture_comparison/feed_state_closure/feed_state_closure_v2.json is PROPOSED and not consumed)",
+  "per_state_quantities": "y_O = (n_O + 2 n_O2) / (n_O + 2 n_O2 + n_N + 2 n_N2) (O-nuclei share), f_O = n_O / (n_O + 2 n_O2), f_N = n_N / (n_N + 2 n_N2); He and Ar are not carried in the Hall feed (SB-He, SB-Ar)",
+  "delivered_envelope_rule": [
+   "CE-01 element ratio: the state's free-stream y_O (species-selective collection, ICD G-02, is not modelled: evidence condition EC-COMP)",
+   "CE-02 dissociation: f_O in [0, f_O,fs], f_N in [0, f_N,fs]: the passive gas path can recombine atoms on walls but has no energy source to dissociate molecules (physical argument; verify VER-HA-05; owner question OQ-HA-04)",
+   "CE-03 hull over the 196 states: y_O in [y_O,min, y_O,max], f_O in [0, max f_O,fs], f_N in [0, max f_N,fs]"
+  ],
+  "hall_composition_points": {
+   "rule": "the four corners {y_O,min, y_O,max} x {RECOMBINED: f_O = f_N = 0; DISSOCIATED: f_O = max f_O,fs, f_N = max f_N,fs}; mass fractions from nuclei with the solver's own masses (HallThruster.jl elements.jl: O 15.999, N 14.007); delivered mass flow split by mass fraction; computed by the Rust case generator from the hash-verified frozen file and required to equal the values below exactly",
+   "label": "COMPOSITION_HULL_CORNERS_NOT_INTERIOR_BOUNDS",
+   "hull": {
+    "y_O_min": 0.07942586082268627,
+    "y_O_min_state": "ds2:ECSS_ST_HIGH:alt180:lat+71.0000:lst0:lon0:doy184",
+    "y_O_max": 0.8399245094855884,
+    "y_O_max_state": "ds2:ECSS_LT_LOW:alt230:lat-81.0000:lst21:lon0:doy138",
+    "f_O_max": 0.9904933990644372,
+    "f_O_max_state": "ds2:ECSS_LT_HIGH:alt230:lat-10.0000:lst6:lon120:doy92",
+    "f_N_max": 0.06325077551679062,
+    "f_N_max_state": "ds2:ECSS_ST_HIGH:alt230:lat-66.0000:lst12:lon240:doy1"
+   },
+   "points": [
+    {
+     "id": "CP-YLO-REC",
+     "y_O": 0.07942586082268627,
+     "f_O": 0.0,
+     "f_N": 0.0,
+     "mass_fractions": {
+      "O": 0.0,
+      "O2": 0.08970807921783552,
+      "N": 0.0,
+      "N2": 0.9102919207821645
+     }
+    },
+    {
+     "id": "CP-YLO-DIS",
+     "y_O": 0.07942586082268627,
+     "f_O": 0.9904933990644372,
+     "f_N": 0.06325077551679062,
+     "mass_fractions": {
+      "O": 0.0888552603080157,
+      "O2": 0.0008528189098198142,
+      "N": 0.05757666993614083,
+      "N2": 0.8527152508460237
+     }
+    },
+    {
+     "id": "CP-YHI-REC",
+     "y_O": 0.8399245094855884,
+     "f_O": 0.0,
+     "f_N": 0.0,
+     "mass_fractions": {
+      "O": 0.0,
+      "O2": 0.8570051747300956,
+      "N": 0.0,
+      "N2": 0.14299482526990434
+     }
+    },
+    {
+     "id": "CP-YHI-DIS",
+     "y_O": 0.8399245094855884,
+     "f_O": 0.9904933990644372,
+     "f_N": 0.06325077551679062,
+     "mass_fractions": {
+      "O": 0.8488579685342243,
+      "O2": 0.008147206195871263,
+      "N": 0.009044533593209418,
+      "N2": 0.13395029167669492
+     }
+    }
+   ],
+   "why_corners_do_not_bound": "the Hall response to composition is not shown to be monotonic (O is lighter, which lowers thrust per power at equal efficiency; O has no molecular losses, which raises ionization efficiency): corner results do not bound interior compositions; closure claims therefore need every corner (robustness over the uncontrolled composition) plus the evidence condition EC-COMP, and non-closure under the corners is never eligible for PHYSICALLY_NON_CLOSING (fixed in the AIR family addendum)"
+  },
+  "state_scope": "AIR Hall results are state-independent vacuum runs; a state inherits them only if it is not under SB-He / SB-Ar (state-resolved INCOMPLETE_EVIDENCE) and SB-NO is resolved",
+  "computation": {
+   "script_sha256": "fc188edd2501bd0831158e54cef510640d2dd662b70d14f9d2561df9b03578e1",
+   "script": "\"\"\"Scratch generator of docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/prereg_v1.json (not committed; its text and\nsha256 are embedded in the JSON). Reads the frozen design-state file (sha256-checked) for the composition hull; every\nother value is a citation, a copied frozen rule or a declared choice.\"\"\"\nimport hashlib, json, os, sys\n\nREPO = sys.argv[1]\nOUT = sys.argv[2]\n\n\ndef sha(rel):\n    with open(os.path.join(REPO, rel), \"rb\") as f:\n        return hashlib.sha256(f.read()).hexdigest()\n\n\nDS = \"abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json\"\nDS_SHA = \"60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049\"\nassert sha(DS) == DS_SHA\nstates = json.load(open(os.path.join(REPO, DS)))[\"states\"]\nassert len(states) == 196 and all(s[\"required\"] for s in states)\n\n# composition per state (free stream): nuclei shares and dissociation fractions (same operation order as the Rust generator)\nrows = []\nfor s in states:\n    o_nuc = s[\"n_O_m3\"] + 2.0 * s[\"n_O2_m3\"]\n    n_nuc = s[\"n_N_m3\"] + 2.0 * s[\"n_N2_m3\"]\n    rows.append({\"state_id\": s[\"state_id\"], \"y_O\": o_nuc / (o_nuc + n_nuc), \"f_O\": s[\"n_O_m3\"] / o_nuc,\n                 \"f_N\": s[\"n_N_m3\"] / n_nuc, \"x_He\": s[\"x_He\"], \"x_Ar\": s[\"x_Ar\"]})\nymin = min(rows, key=lambda r: r[\"y_O\"]); ymax = max(rows, key=lambda r: r[\"y_O\"])\nfomax = max(rows, key=lambda r: r[\"f_O\"]); fnmax = max(rows, key=lambda r: r[\"f_N\"])\nhe = sorted(r[\"state_id\"] for r in rows if r[\"x_He\"] > 0.01); ar = sorted(r[\"state_id\"] for r in rows if r[\"x_Ar\"] > 0.01)\nM_O, M_N = 15.999, 14.007   # HallThruster.jl v0.23.1 src/physics/elements.jl (the solver's own masses)\n\n\ndef corner(cid, y, fo, fn):\n    m = y * M_O + (1.0 - y) * M_N\n    w = {\"O\": fo * y * M_O / m, \"O2\": (1.0 - fo) * y * M_O / m, \"N\": fn * (1.0 - y) * M_N / m,\n         \"N2\": (1.0 - fn) * (1.0 - y) * M_N / m}\n    return {\"id\": cid, \"y_O\": y, \"f_O\": fo, \"f_N\": fn, \"mass_fractions\": w}\n\n\nCORNERS = [corner(\"CP-YLO-REC\", ymin[\"y_O\"], 0.0, 0.0), corner(\"CP-YLO-DIS\", ymin[\"y_O\"], fomax[\"f_O\"], fnmax[\"f_N\"]),\n           corner(\"CP-YHI-REC\", ymax[\"y_O\"], 0.0, 0.0), corner(\"CP-YHI-DIS\", ymax[\"y_O\"], fomax[\"f_O\"], fnmax[\"f_N\"])]\n\nG = {  # governing records\n    \"A9.33_verbatim\": \"docs/decisions/OD_2026_10_08_A9_33_HALL_RUN_LOCATION_HALL_AIR_CHEMISTRY_PLENUM_V8.md\",\n    \"A9.33_json\": \"docs/decisions/OD_2026_10_08_A9_33_hall_run_location_hall_air_chemistry_plenum_v8.json\",\n    \"A9.32_verbatim\": \"docs/decisions/OD_2026_10_07_A9_32_HALL_THRUST_CRITICAL_PATH_PARAMETRIC_ENVELOPE.md\",\n    \"A9.32_json\": \"docs/decisions/OD_2026_10_07_A9_32_hall_thrust_critical_path_parametric_envelope.json\",\n    \"A9.30_verbatim\": \"docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md\",\n    \"A9.30_json\": \"docs/decisions/OD_2026_10_05_A9_30_push_authorization_o_o2_chemistry_and_bus_boundary_rulings.json\",\n    \"CLAUDE.md\": \"CLAUDE.md\",\n    \"EVIDENCE.md\": \"docs/EVIDENCE.md\",\n    \"capability_audit\": \"docs/rust_migration/new_physics/NP-HALL-CHEM-AIR/capability_audit_v1.json\",\n}\nE = {  # evidence records used\n    \"design_states_v2\": DS,\n    \"dataset_manifest\": \"abep_sim/data/atmosphere_msis21_orbit_v1.json\",\n    \"hall_pin\": \"hallthruster_bridge/PINNED.toml\",\n    \"hall_manifest\": \"hallthruster_bridge/Manifest.toml\",\n    \"bridge_lib\": \"hallthruster_bridge/bridge_lib.jl\",\n    \"n2_n_nominal\": \"hallthruster_bridge/propellants/n2_n.toml\",\n    \"n2_rate_validity\": \"hallthruster_bridge/propellants/rate_validity.toml\",\n    \"n2_provenance\": \"hallthruster_bridge/propellants/PROVENANCE.md\",\n    \"n2_completeness_rule\": \"hallthruster_bridge/prereg/n2_completeness_audit_v1.json\",\n    \"n2_rule_addendum1\": \"hallthruster_bridge/prereg/n2_completeness_audit_v1_addendum1_ambiguity.json\",\n    \"n2_rule_addendum2\": \"hallthruster_bridge/prereg/n2_completeness_audit_v1_addendum2_crosscheck.json\",\n    \"n2_audit_snapshots\": \"hallthruster_bridge/audit/configs/MANIFEST.json\",\n    \"n2_closure_verdicts\": \"hallthruster_bridge/audit/n2_closure_verdicts_v1.json\",\n    \"n2_final_audit\": \"hallthruster_bridge/audit/n2_completeness_final_v1.json\",\n    \"o_o2_source_matrix\": \"docs/chemistry/o_o2/o_o2_source_matrix_v1.json\",\n    \"o_o2_completeness_DRAFT\": \"docs/chemistry/o_o2/o_o2_completeness_prereg_DRAFT.json\",\n    \"o_o2_v0_song2026_builder\": \"docs/chemistry/o_o2/v0/build_tables_song2026.py\",\n    \"o_o2_v0_song2026_manifest\": \"docs/chemistry/o_o2/v0/manifest_song2026_v0.json\",\n    \"o_o2_v0_nist_builder\": \"docs/chemistry/o_o2/v0/build_tables_nist107_o.py\",\n    \"o_o2_v0_nist_manifest\": \"docs/chemistry/o_o2/v0/manifest_nist107_o_v0.json\",\n    \"o_o2_v0_channel_status\": \"docs/chemistry/o_o2/v0/channel_status_v0.json\",\n    \"icp_chem_prereg\": \"docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_v1.json\",\n    \"icp_chem_lock\": \"docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json\",\n    \"hall_envelope_prereg_v1\": \"docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_v1.json\",\n    \"hall_envelope_lock_v1\": \"docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_lock_v1.json\",\n    \"hall_envelope_input_audit_v1\": \"docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/input_audit_v1.json\",\n    \"transport_ensemble\": \"hallthruster_bridge/ensemble/transport_ensemble_v0.json\",\n    \"physics_model_set\": \"config/model_set/physics_model_set_v1.json\",\n}\nV0 = \"docs/chemistry/o_o2/v0/tables/\"\n\n\ndef pin(rel):\n    return {\"path\": rel, \"sha256\": sha(rel)}\n\n\ndef v0(name):\n    return {\"path\": V0 + name, \"sha256\": sha(V0 + name), \"source_file_sha256\": sha(V0 + name + \".source\")}\n\n\nSONG = (\"M.-Y. Song, H. Cho, G. P. Karwasz, V. Kokoouline, J. Tennyson, K. Bartschat, 'Cross Sections for Electron \"\n        \"Collisions with Molecular and Atomic Oxygen', J. Phys. Chem. Ref. Data 55, 013102 (2026), doi 10.1063/5.0287254; \"\n        \"accepted manuscript (UCL Discovery, sha256 32d163a3af584ce48b672a4dd49d3eafa182ae234161773b1e9fa44376d9f88b, \"\n        \"fetched 2026-09-27 by lane fo_o_o2_chemistry_v0); version of record and supplement NOT accessed\")\nSONG_VOR = \"IN_REPO_PENDING_VERSION_OF_RECORD\"\nN2REUSE = \"reused unchanged by reference from abep-n2n-0.11 (hallthruster_bridge/propellants, sha256-pinned)\"\n\nP = []\n\n\ndef proc(**kw):\n    P.append(kw)\n\n\n# ---------------------------------------------------------------- reused N2 / N block (abep-n2n-0.11 nominal + variants)\nproc(id=\"HA-N2N-01\", block=\"N2/N\", reaction=\"the 27 reactions of hallthruster_bridge/propellants/n2_n.toml (abep-n2n-0.11 nominal): N2 elastic, N2 ionization, N2 DI upper, N2 -> N^2+ + N, N2 dissociation, 8 N2 electronic, 10 N2 vibrational, 2 N2 rotational, N elastic (OPM), N ionization, N+ -> N^2+, N -> N^2+ (HMS)\",\n     solver=\"CONFIGURED (as in n2_n.toml; rate files referenced as ../propellants/<file>)\",\n     source=N2REUSE + \"; citations: each .source file and hallthruster_bridge/propellants/PROVENANCE.md\",\n     repo=pin(\"hallthruster_bridge/propellants/n2_n.toml\"),\n     evidence=\"as recorded per table (evidence level 4; quantity types per PROVENANCE.md)\",\n     validity=\"mirrored from hallthruster_bridge/propellants/rate_validity.toml (45 eV mean energy for dissociation, electronic, vibrational and rotational N2 tables; 255 eV otherwise); a mirrored entry differing from its source entry is a load error\",\n     tier=\"1 (tier-1 / tier-2 / tier-3 inclusions of the N2/N set as decided under n2_completeness_audit_v1)\",\n     status=\"IN_REPO_VERIFIED\",\n     reuse_check={\"provenance_valid\": \"yes (abep-n2n-0.11 COMPLETE_FOR_P5_N2_VALIDATION, sha256-pinned)\",\n                  \"domain_matches\": \"yes for T_e 2-30 eV (the same audited domain)\",\n                  \"applicable_to_hall_air\": \"yes: the same solver and channel; the N2-domain completeness verdicts were made on pure-N2 feeds and do not transfer automatically: the N2/N exclusions are re-assessed on the AIR state envelope (HA-N2N-R1..R3)\"},\n     variants=\"DI upper / lower (dissociative_ionization_N2_lower.dat); N elastic OPM / Wang (elastic_N_wang2014_bsr.dat); unweighted\")\nproc(id=\"HA-N2N-R1\", block=\"N2/N\", reaction=\"e + N^2+ -> N^3+ + 2e (re-assessment on air states)\", solver=\"NOT CONFIGURED (would need N max_charge 3)\",\n     source=\"Bell et al., JPCRD 12, 891 (1983) Eq. (1), N III row, as the existing bound table\", repo=pin(\"hallthruster_bridge/audit/bound_tables/ionization_N_Z2plus_to_N_Z3plus_bell1983.dat\"),\n     evidence=\"level 4; analytic fit (+-10 %)\", validity=\"bound table (audit input only)\", tier=\"3\", status=\"IN_REPO_VERIFIED (bound table)\",\n     reuse_check={\"provenance_valid\": \"yes\", \"domain_matches\": \"yes\", \"applicable_to_hall_air\": \"bound only; N2-domain EXCLUDE verdict re-evaluated on air states\"})\nproc(id=\"HA-N2N-R2\", block=\"N2/N\", reaction=\"e + N2 -> N2^2+ + 3e (direct; nominal 1 %-of-total and upper envelope)\", solver=\"NOT CONFIGURED in nominal (abep-n2n-0.11 carries it only in the N2^2+ uncertainty variant)\",\n     source=\"JPCRD 2023 Sec. 2.8 statement (nominal) / flat 0.14e-16 cm^2 envelope (upper), as the existing tables\", repo=pin(\"hallthruster_bridge/audit/bound_tables/ionization_N2_to_N2_Z2plus_nominal.dat\"),\n     evidence=\"level 4; statement-derived envelope\", validity=\"bound tables (audit input only)\", tier=\"3\", status=\"IN_REPO_VERIFIED (bound tables)\",\n     reuse_check={\"provenance_valid\": \"yes\", \"domain_matches\": \"yes\", \"applicable_to_hall_air\": \"bound only; N2-domain UNCERTAINTY VARIANT verdict re-evaluated on air states\"})\nproc(id=\"HA-N2N-R3\", block=\"N2/N\", reaction=\"e + N2+ -> N2^2+ + 2e (sequential)\", solver=\"NOT CONFIGURED in nominal\",\n     source=\"Tabata et al. 2006 n2-69 fit to Bahati et al. 2001, as the existing bound table\", repo=pin(\"hallthruster_bridge/audit/bound_tables/ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat\"),\n     evidence=\"level 4; analytic fit (fit/data 0.86-1.11)\", validity=\"bound table (audit input only)\", tier=\"3\", status=\"IN_REPO_VERIFIED (bound table)\",\n     reuse_check={\"provenance_valid\": \"yes\", \"domain_matches\": \"yes\", \"applicable_to_hall_air\": \"bound only\"})\n\n# ---------------------------------------------------------------- atomic O\nproc(id=\"HA-O-ION-01\", block=\"O\", reaction=\"e + O -> O(+) + 2e\", solver=\"CONFIGURED (electron_impact; one-to-one link for O(+) energy)\",\n     threshold={\"value_eV\": 13.618, \"basis\": \"O ionization energy, Itikawa & Ichimura, JPCRD 19, 637 (1990) Table 2.1 (as recorded in manifest_nist107_o_v0.json); NIST SRD 107 atom page 13.6181 eV\", \"type\": \"cited level energy\"},\n     source=\"scenario pair: (nominal) Kim & Desclaux, Phys. Rev. A 66, 012708 (2002) BEB via NIST SRD 107 (O table raw sha256 76df7f7a223a803ab5902eeae0b557ffb2d3317ba692a37676851781a1d225d8, not committed; same route and model as the in-use ionization_N.dat); (variant) Thompson, Shah & Gilbody, J. Phys. B 28, 1321 (1995) measured points as tabulated by NIST SRD 107 (recommended by SONG2026 Sec. III.D)\",\n     repo={\"nominal\": v0(\"ionization_O_beb_kd2002.dat\"), \"variant\": v0(\"ionization_O_thompson1995.dat\"), \"builder\": pin(\"docs/chemistry/o_o2/v0/build_tables_nist107_o.py\")},\n     evidence=\"level 4; model-derived (BEB) / measured as tabulated (Thompson, ramp 13.618 -> 14.1 eV assumed)\",\n     uncertainty=\"none stated in the NIST table; SONG2026: recommended O data 'accurate to at least 20 %' where they matter; Thompson / BEB 0.868-1.064 over 20-200 eV (v0 manifest)\",\n     validity=\"support limit 255 eV mean energy (held-tail share 0 / 2.8e-5 at 255 eV, v0 manifest)\",\n     interpolation=\"sigma = 0 at 13.618 eV prepended (BEB starts there; Thompson ramp to 14.1 eV), held above the last point (5000 / 2000 eV)\",\n     conservation=\"O -> O(+) + e: charge, nuclei balanced; header = IE(O)\", tier=\"1\", status=\"IN_REPO_VERIFIED\",\n     reuse_check={\"provenance_valid\": \"yes (v0 DRAFT table, NIST raw sha256 pinned in its builder, byte-identical copy into the Hall set)\", \"domain_matches\": \"yes (255 eV support)\", \"applicable_to_hall_air\": \"yes: electron-impact ionization of ground-state O, Maxwellian table, the solver's own reaction type\"},\n     variants=\"BEB nominal / Thompson variant: unweighted scenario pair (owner question OQ-HA-02)\")\nproc(id=\"HA-O-EL-01\", block=\"O\", reaction=\"e + O -> e + O (momentum transfer)\", solver=\"CONFIGURABLE (elastic, target O)\",\n     source=\"to acquire: BSR-1116, Tayal & Zatsarinny, PRA 94, 042707 (2016) (recommended by SONG2026; supplement paywalled, author manuscript 403); Itikawa & Ichimura 1990 (open NIST reprint; host blocked here, not in the repository); Williams & Allen 1989 (5 energies)\",\n     repo=None, evidence=\"none in the repository\", tier=\"1\", status=\"INCOMPLETE_EVIDENCE\",\n     note=\"atomic O is 5-86 % of the free-stream inflow; no N2, N or O2 table may stand in for it (HR-04)\")\nproc(id=\"HA-O-EXC-01\", block=\"O\", reaction=\"e + O(3P) -> e + O(1D), O(1S), O(3s 5S), O(3s 3S), higher states (state list: owner OD-3 of the O/O2 DRAFT)\",\n     solver=\"CONFIGURABLE (lumped excitation per state, header = state energy)\",\n     source=\"to acquire: BSR-1116 (TZ2016, recommended; paywalled supplement); Laher & Gilmore, JPCRD 19, 277 (1990) (open NIST reprint; host blocked here, not in the repository)\",\n     repo=None, evidence=\"none in the repository\", tier=\"1\", status=\"INCOMPLETE_EVIDENCE\")\nproc(id=\"HA-O-EXC-02\", block=\"O\", reaction=\"e + O(3P_2) -> e + O(3P_1, 3P_0) (fine structure)\", solver=\"CONFIGURABLE (lumped excitation)\",\n     source=\"Itikawa & Ichimura 1990 Sec. 5.1 (Berrington R-matrix; open NIST reprint; not in the repository)\", repo=None,\n     evidence=\"none in the repository\", tier=\"3\", status=\"INCOMPLETE_EVIDENCE\")\nproc(id=\"HA-O-ION-02\", block=\"O\", reaction=\"e + O -> O(2+) + 3e (direct double ionization)\", solver=\"NOT CONFIGURED (L-06: needs O max_charge 2)\",\n     source=\"to acquire: Thompson, Shah & Gilbody 1995 double-ionization data (paywalled); Laher & Gilmore 1990 Sec. 3.2\", repo=None,\n     evidence=\"none in the repository\", tier=\"3\", status=\"INCOMPLETE_EVIDENCE\")\nproc(id=\"HA-O-ION-03\", block=\"O\", reaction=\"e + O(+) -> O(2+) + 2e (sequential; also the energy link L-06 needs)\", solver=\"NOT CONFIGURED (L-06)\",\n     source=\"to acquire: Bell, Gilbody, Hughes, Kingston & Smith, JPCRD 12, 891 (1983) Eq. (1) O II row (open NIST reprint, the same document as the N II row in use; not in the repository, host blocked)\",\n     repo=None, evidence=\"none in the repository\", tier=\"3\", status=\"SOURCE_IDENTIFIED_TO_ACQUIRE\")\n\n# ---------------------------------------------------------------- O2\nproc(id=\"HA-O2-ION-01\", block=\"O2\", reaction=\"e + O2 -> O2(+) + 2e\", solver=\"CONFIGURED (electron_impact; one-to-one link for O2(+) energy)\",\n     threshold={\"value_eV\": 12.2, \"basis\": \"O2+(X) threshold, SONG2026 Sec. II.H (text layer; verify VER-HA-01)\", \"type\": \"cited threshold\"},\n     source=SONG + \"; Table VII column sigma(O2+) (Straub et al. 1996 via Lindsay & Mangan 2003)\", repo={\"v0\": v0(\"ionization_O2_song2026.dat\"), \"builder\": pin(\"docs/chemistry/o_o2/v0/build_tables_song2026.py\")},\n     evidence=\"level 4; measured (evaluated), transcribed\", uncertainty=\"5 % (Table VII caption)\", validity=\"support 255 eV (held-tail share 0.998 % at 255 eV)\",\n     interpolation=\"sigma = 0 below 13.0 eV (first point), held above 998 eV\", conservation=\"charge, nuclei balanced; header = threshold\",\n     tier=\"1\", status=SONG_VOR)\nproc(id=\"HA-O2-DI-01\", block=\"O2\", reaction=\"e + O2 -> O(+) + O + 2e\", solver=\"CONFIGURED (electron_impact, two products)\",\n     threshold={\"value_eV\": 18.738, \"basis\": \"D0(O2) 5.12 eV (SONG2026 Sec. II.G) + IE(O) 13.618 eV (Itikawa & Ichimura 1990): inferred thermochemical minimum, mirrors the owner-decided N2 DI header convention (abep-n2n-0.4)\", \"type\": \"inferred\"},\n     source=SONG + \"; Table VII column sigma(O+ (+O2^2+)); variants upper (as published) / lower (column / 1.1: SONG2026 statement 'O2^2+ roughly 10 % of the O+ signal' at 100 eV)\",\n     repo={\"upper\": v0(\"dissociative_ionization_O2_upper_song2026.dat\"), \"lower\": v0(\"dissociative_ionization_O2_lower_song2026.dat\")},\n     evidence=\"level 4; measured (evaluated), transcribed; threshold ramp assumed; lower variant statement-derived\", uncertainty=\"7 % (Table VII caption) + O+ / O2^2+ ambiguity (upper / lower pair)\",\n     validity=\"support 255 eV\", interpolation=\"linear ramp from 0 at 18.738 eV to the 23 eV point (same convention as N2 DI); held above 998 eV\",\n     conservation=\"charge, nuclei balanced; header >= formation change (fragment kinetic energy not added; energy-loss uncertainty)\", tier=\"1\", status=SONG_VOR,\n     variants=\"upper nominal / lower variant, unweighted\")\nproc(id=\"HA-O2-DI-02\", block=\"O2\", reaction=\"e + O2 -> O(2+) + O + 3e\", solver=\"NOT CONFIGURED (L-06)\",\n     threshold={\"value_eV\": 53.888, \"basis\": \"5.12 + 48.77 eV (O^2+ above O ground, Itikawa & Ichimura 1990 Table 2.1 OCR text layer; verify VER-HA-02); inferred\", \"type\": \"inferred\"},\n     source=SONG + \"; Table VII column sigma(O^2+)\", repo={\"bound_table_v0\": v0(\"dissociative_ionization_O2_to_O_Z2plus_song2026.dat\")},\n     evidence=\"level 4; measured (evaluated), transcribed\", uncertainty=\"10 % (Table VII caption)\", validity=\"bound table (audit input only)\", tier=\"3\",\n     status=SONG_VOR + \" (bound table)\")\nproc(id=\"HA-O2-ION-02\", block=\"O2\", reaction=\"e + O2 -> O2(2+) + 3e; e + O2(+) -> O2(2+) + 2e\", solver=\"NOT CONFIGURED\",\n     source=\"SONG2026: 'unable to recommend' (large spread among Maerk 1975, Sigaud 2013, Bull 2015, Jia 2023); the O2^2+ yield sits inside the O+ column and is carried by the DI upper / lower pair\",\n     repo=None, evidence=\"no recommended value\", tier=\"3\", status=\"INCOMPLETE_EVIDENCE\")\nproc(id=\"HA-O2-DIS-01\", block=\"O2\", reaction=\"e + O2 -> O + O + e (dissociation into neutrals)\", solver=\"CONFIGURED (electron_impact, header 5.12 eV)\",\n     threshold={\"value_eV\": 5.12, \"basis\": \"D0(O2), SONG2026 Sec. II.G; O(1D)+O(3P) 7.087 eV bounds the representative loss (energy-loss uncertainty)\", \"type\": \"cited\"},\n     source=SONG + \"; Table VI (Cosby 1993), >= 13.5 eV only\", repo={\"v0\": v0(\"dissociation_O2_song2026.dat\")},\n     evidence=\"level 4; measured (evaluated), transcribed\", uncertainty=\"about +-35 % (Table VI caption)\", validity=\"support 47 eV mean energy (held-tail share 0.70 % at 45 eV)\",\n     interpolation=\"sigma = 0 below 13.5 eV (first point), held above 198.5 eV\",\n     conservation=\"charge, nuclei balanced; header = D0\", tier=\"1\",\n     status=SONG_VOR + \" (>= 13.5 eV) + INCOMPLETE_EVIDENCE (dissociation through the Herzberg ~5-7 eV and Schumann-Runge ~7-9.5 eV states below 13.5 eV is MISSING; the table is a lower member only; double counting with any dissociative-excitation table above 13.5 eV, owner OD-4)\")\nproc(id=\"HA-O2-EL-01\", block=\"O2\", reaction=\"e + O2 -> e + O2 (momentum transfer)\", solver=\"CONFIGURED (elastic, target O2)\",\n     source=SONG + \"; Table V (beam DCS + Jeon 2003 swarm)\", repo={\"v0\": v0(\"elastic_O2_song2026.dat\")},\n     evidence=\"level 4; measured / inferred (swarm below 0.8 eV), transcribed\", uncertainty=\"about 20 % (1-10 eV), 10-15 % (10-1000 eV), none below 1 eV\",\n     validity=\"support 255 eV\", interpolation=\"held above 1000 eV; out-of-order manuscript row '0.008 eV 2.30' omitted (rate effect <= 1.3e-5 at T_e >= 0.2 eV)\",\n     conservation=\"no inelastic loss (header 0)\", tier=\"1\", status=SONG_VOR)\nproc(id=\"HA-O2-EXC-01\", block=\"O2\", reaction=\"e + O2(X) -> e + O2(a1Delta_g), O2(b1Sigma_g+)\", solver=\"CONFIGURABLE (lumped excitation, headers 0.98 / 1.63 eV)\",\n     source=\"to acquire: Huang, Zhang & Cheng, J. Phys. Chem. A 126, 2061 (2022) (recommended R-matrix; paywalled); Tashiro, Morokuma & Tennyson, PRA 73, 052707 (2006) (arXiv open; host blocked, not in the repository); extension above 20 eV: owner OD-6\",\n     repo=None, evidence=\"none in the repository\", tier=\"1\", status=\"INCOMPLETE_EVIDENCE\")\nproc(id=\"HA-O2-EXC-02\", block=\"O2\", reaction=\"e + O2(X) -> e + O2(c1Sigma_u-, A'3Delta_u, A3Sigma_u+) (Herzberg)\", solver=\"CONFIGURABLE (lumped excitation)\",\n     source=\"to acquire: Huang 2022; Tashiro 2006; Teillet-Billy et al. 1989 (measured sum)\", repo=None, evidence=\"none in the repository\", tier=\"1\", status=\"INCOMPLETE_EVIDENCE\")\nproc(id=\"HA-O2-EXC-03\", block=\"O2\", reaction=\"e + O2(X) -> e + O2(B3Sigma_u-) (Schumann-Runge) and higher\", solver=\"CONFIGURABLE (lumped excitation)\",\n     source=\"to acquire: Huang 2022; Shyn et al. 1994 (paywalled)\", repo=None, evidence=\"none in the repository\", tier=\"2\", status=\"INCOMPLETE_EVIDENCE\")\nproc(id=\"HA-O2-VIB-01\", block=\"O2\", reaction=\"e + O2(v=0) -> e + O2(v_f)\", solver=\"CONFIGURABLE (lumped excitation per v_f)\",\n     source=\"to acquire: Laporta, Celiberto & Tennyson, PSST 22, 025001 (2013) (recommended; arXiv preprint open, host blocked, not in the repository)\", repo=None,\n     evidence=\"none in the repository\", tier=\"2\", status=\"SOURCE_IDENTIFIED_TO_ACQUIRE\")\nproc(id=\"HA-O2-ROT-01\", block=\"O2\", reaction=\"e + O2(N) -> e + O2(N')\", solver=\"CONFIGURABLE (lumped excitation)\",\n     source=\"Born / Gerjuoy-Stein form, SONG2026 Eq. (1) with B0, Q0 (model only; parameters not transcribed in the repository)\", repo=None,\n     evidence=\"model only\", tier=\"3\", status=\"SOURCE_IDENTIFIED_TO_ACQUIRE\")\nproc(id=\"HA-O2-ATT-01\", block=\"O2\", reaction=\"e + O2 -> O(-) + O (dissociative attachment)\", solver=\"NOT REPRESENTABLE (L-04, L-05)\",\n     source=SONG + \"; Table VIII (Rapp & Briglia 1965)\", repo={\"bound_table_v0\": v0(\"attachment_O2_song2026.dat\")},\n     evidence=\"level 4; measured (evaluated), transcribed; zero tail above 9.9 eV assumed\", uncertainty=\"'no more than 20 %'\",\n     validity=\"bound table (audit input only); zero tail\", tier=\"2\", status=SONG_VOR + \" (bound table)\",\n     metric=\"F_e_loss (electron loss / electron production by ionization) and F_S(O2 destruction)\")\n\n# ---------------------------------------------------------------- ion-target, recombination, heavy particle, surface, excited\nproc(id=\"HA-O2P-DIS-01\", block=\"ion\", reaction=\"e + O2(+) -> O(+) + O + e (dissociative excitation)\", solver=\"CONFIGURABLE (electron_impact on an ion reactant)\",\n     source=\"to acquire: Cherkani-Hassani et al., J. Phys. B 39, 5105 (2006) (crossed beam; paywalled)\", repo=None, evidence=\"none in the repository\", tier=\"2\", status=\"SOURCE_IDENTIFIED_TO_ACQUIRE\")\nproc(id=\"HA-N2P-DIS-01\", block=\"ion\", reaction=\"e + N2(+) -> N(+) + N + e (dissociative excitation)\", solver=\"CONFIGURABLE\",\n     source=\"no source registered in the repository (verify whether Bahati et al. 2001 / Tabata et al. 2006 tabulate it)\", repo=None, evidence=\"none\", tier=\"3\", status=\"INCOMPLETE_EVIDENCE\")\nproc(id=\"HA-DR-01\", block=\"recombination\", reaction=\"e + O2(+) -> O + O; e + N2(+) -> N + N (dissociative recombination)\", solver=\"NOT REPRESENTABLE (L-04)\",\n     source=\"to acquire: Peverall et al. 2001 (O2+, paywalled); Peterson et al., J. Chem. Phys. 108, 1978 (1998) (N2+, verify)\", repo=None, evidence=\"none in the repository\", tier=\"2\",\n     status=\"INCOMPLETE_EVIDENCE\", metric=\"F_e_loss, F_S(ion destruction)\")\nproc(id=\"HA-REC-02\", block=\"recombination\", reaction=\"radiative and three-body recombination of O(+), N(+)\", solver=\"NOT REPRESENTABLE (L-04)\", source=\"none surveyed\", repo=None,\n     evidence=\"none\", tier=\"3\", status=\"INCOMPLETE_EVIDENCE\")\nproc(id=\"HA-IM-01\", block=\"heavy particle\", reaction=\"O(+) + N2 -> NO(+) + N; O(+) + O2 -> O2(+) + O; N2(+) + O -> NO(+) + N; N2(+) + O -> O(+) + N2; N2(+) + O2 -> O2(+) + N2; N(+) + O2 -> O2(+) + N / NO(+) + O / O(+) + NO; O2(+) + N -> NO(+) + O; O2(+) + N2 -> NO(+) + NO\",\n     solver=\"NOT REPRESENTABLE (L-01)\", source=\"to acquire / verify: Anicich, JPL Publication 03-19 (2003); Kossyi et al., PSST 1, 207 (1992)\", repo=None,\n     evidence=\"none in the repository\", tier=\"2\", status=\"INCOMPLETE_EVIDENCE\", metric=\"F_S(ion destruction / production), F_ion (charge transfer changes the ion mass, not the ion count)\")\nproc(id=\"HA-HN-01\", block=\"heavy particle\", reaction=\"N + O2 -> NO + O; O + N2 -> NO + N; O + O + M -> O2 + M; N + N + M -> N2 + M\", solver=\"NOT REPRESENTABLE (L-01)\",\n     source=\"to acquire / verify: Baulch et al., JPCRD 34, 757 (2005)\", repo=None, evidence=\"none in the repository\", tier=\"3\", status=\"INCOMPLETE_EVIDENCE\")\nproc(id=\"HA-WALL-01\", block=\"surface\", reaction=\"X(+) + wall / anode -> parent neutral of the same gas (O2(+) -> O2, O(+) -> O, N2(+) -> N2, N(+), N(2+) -> N)\", solver=\"STRUCTURAL (C-05; dissociative branching not representable, L-03)\",\n     source=\"solver structure\", repo=None, evidence=\"structural\", tier=\"1 (structural)\", status=\"IN_REPO_VERIFIED (structural; L-03 recorded)\")\nproc(id=\"HA-WALL-02\", block=\"surface\", reaction=\"O + wall -> 1/2 O2 in the channel (probability gamma_O)\", solver=\"NOT REPRESENTABLE (L-02)\",\n     source=\"physical bound gamma in [0, 1] (UE-02 envelope); channel wall material OPEN (BN-SiO2 is the solver's wall-sheath material only); sourced gamma only after a material selection\",\n     repo=None, evidence=\"physical bound\", tier=\"2\", status=\"BOUND_EVALUABLE (physical envelope)\",\n     metric=\"F_S(O destruction): wall flux n_O vbar_O / 4 x wall area per volume 2 / (r_out - r_in) over the channel (z <= L), gamma = 1 upper, 0 lower; vbar from the registered inlet temperature (500 K)\")\nproc(id=\"HA-WALL-03\", block=\"surface\", reaction=\"N + wall -> 1/2 N2 in the channel (probability gamma_N)\", solver=\"NOT REPRESENTABLE (L-02)\",\n     source=\"physical bound gamma in [0, 1]\", repo=None, evidence=\"physical bound\", tier=\"2\", status=\"BOUND_EVALUABLE (physical envelope)\", metric=\"F_S(N destruction), as HA-WALL-02\")\nproc(id=\"HA-MS-01\", block=\"excited\", reaction=\"e + X* -> X(+) + 2e (stepwise ionization from O(1D), O(1S), O(5S), O2(a), O2(b), N2(A), N(2D), N(2P))\", solver=\"NOT CONFIGURED (excited states not tracked)\",\n     source=\"to acquire (BSR-1116 metastable data; Huang 2022)\", repo=None, evidence=\"none in the repository\", tier=\"2\", status=\"INCOMPLETE_EVIDENCE\")\nproc(id=\"HA-SUP-01\", block=\"excited\", reaction=\"superelastic e + N2(v>0) / O2(v>0) / X* -> e (gains energy)\", solver=\"NOT CONFIGURED (closure limitation inherited from abep-n2n-0.7)\",\n     source=\"no state-resolved relaxation set registered\", repo=None, evidence=\"none\", tier=\"3\", status=\"INCOMPLETE_EVIDENCE\")\n\nTIERS = {\n    \"1\": [\"HA-N2N-01 (N2/N tier-1 set)\", \"HA-O-ION-01\", \"HA-O-EL-01\", \"HA-O-EXC-01\", \"HA-O2-ION-01\", \"HA-O2-DI-01\", \"HA-O2-DIS-01 (including below 13.5 eV, or an admissible envelope)\", \"HA-O2-EL-01\", \"HA-O2-EXC-01\", \"HA-O2-EXC-02\", \"HA-WALL-01 (structural)\"],\n    \"2\": [\"HA-O2-EXC-03\", \"HA-O2-VIB-01\", \"HA-O2-ATT-01\", \"HA-O2P-DIS-01\", \"HA-DR-01\", \"HA-IM-01\", \"HA-WALL-02\", \"HA-WALL-03\", \"HA-MS-01\"],\n    \"3\": [\"HA-N2N-R1\", \"HA-N2N-R2\", \"HA-N2N-R3\", \"HA-O-EXC-02\", \"HA-O-ION-02\", \"HA-O-ION-03\", \"HA-O2-DI-02\", \"HA-O2-ION-02\", \"HA-O2-ROT-01\", \"HA-N2P-DIS-01\", \"HA-REC-02\", \"HA-HN-01\", \"HA-SUP-01\"],\n}\nids = [p[\"id\"] for p in P]\nflat = [t.split(\" \")[0] for v in TIERS.values() for t in v]\nassert sorted(flat) == sorted(ids), (set(ids) ^ set(flat))\n\ndoc = {\n    \"schema\": \"abep_new_physics_prereg_v1\",\n    \"kind\": \"chemistry contract of the Hall AIR_PRIMARY family (HallThruster.jl reaction set), not a new plasma model\",\n    \"id\": \"NP-HALL-CHEM-AIR\",\n    \"title\": \"Narrow sourced Hall O / O2 air-chemistry contract for AIR_PRIMARY (HallThruster.jl v0.23.1 reaction set abep-air-0.x)\",\n    \"prereg_version\": 1,\n    \"status\": \"PREREGISTERED_NOT_IMPLEMENTED\",\n    \"status_meaning\": \"docs only: no O / O2 Hall table built under this contract, no audit metric computed, no AIR Hall run; nothing admitted\",\n    \"lane\": \"lane-hall-chem-air\",\n    \"registered\": \"2026-10-08\",\n    \"base_commit\": \"b730764 (origin/integration/simulation-complete) + 14c16d1 (capability audit)\",\n    \"drafted_by\": \"agent session (lane NP-HALL-CHEM-AIR); not reviewed by the owner; nothing here is an owner decision\",\n    \"mandate\": \"A9.33 Q2 (owner, 2026-10-08): 'Preregister a narrow, sourced Hall O/O2 chemistry contract (like NP-ICP-CHEM-AIR), no fabricated coefficients; air stays NOT_EVALUATED until admitted.'\",\n    \"registered_before\": \"any O / O2 rate table is built into the Hall set, any omitted-process metric is computed and any AIR Hall run. No Hall run of any O-bearing feed exists in the repository. The free-stream composition statistics below were computed in this session from the frozen design states before the composition rule was written; no Hall result informed any choice.\",\n    \"change_rule\": \"the lock (prereg_lock_v1.json) freezes prereg_v1.json, PREREG.md and the capability audit; later changes are dated addenda or a v2, never edits. A change to the domain, a threshold, a tier, the composition rule, the status vocabulary or the admission rule after any table is built is a v2.\",\n    \"governing_records\": {k: pin(v) for k, v in G.items() if k != \"capability_audit\"} | {\"capability_audit\": {\"path\": G[\"capability_audit\"], \"sha256\": sha(G[\"capability_audit\"])}},\n    \"evidence_records_used\": {k: pin(v) for k, v in E.items()},\n    \"hard_rules\": [\n        \"HR-01 no change to hallthruster_bridge/propellants/n2_n.toml, any N2 variant, rate_validity.toml, PROVENANCE.md, PINNED.toml (abep-n2n-0.11, COMPLETE_FOR_P5_N2_VALIDATION), audit/configs/** (immutable snapshots), the P5-N2 records, bridge_lib.jl, HallMap admission, the credible-set rule (EMPTY) or the HallThruster.jl pin (v0.23.1, bfb3019f); a Rust test asserts their sha256\",\n        \"HR-02 new reaction-set label abep-air-0.x in a new file hallthruster_bridge/propellants_air/AIR_PINNED.toml; one label never names two chemistry definitions; never abep-n2n-*, never abep-icp-air-*\",\n        \"HR-03 every rate table has a citable source recorded in its .source file and in propellants_air/PROVENANCE.md; no fabricated, fitted-to-close or memory-quoted coefficient; anything quoted from memory is labelled 'verify'\",\n        \"HR-04 atomic O is never replaced by N2, N or O2 data, and no O-target process points to a non-O table (load-time MODEL_ERROR)\",\n        \"HR-05 every rate file named by an AIR configuration has an entry in propellants_air/rate_validity.toml: verified with a mean-energy limit, or unresolved; a missing entry is a driver / loader error\",\n        \"HR-06 published sources only, LXCat-distributed data excluded, no contact with authors or laboratories, no paywall or network-policy bypass; every needed source that cannot be reached is listed (sources_not_reachable)\",\n        \"HR-07 AIR Hall stays NOT_EVALUATED (AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED) until the reaction set is COMPLETE_FOR_PARAMETRIC_ENVELOPE; admission is never a validation claim\",\n        \"HR-08 never extend a validity limit because a solver state reached a higher T_e; an extension needs independent published evidence and a new preregistration\",\n    ],\n    \"capability_audit\": {\"verdict\": \"CAPABLE_WITH_LIMITATIONS\", \"limitations\": [\"L-01\", \"L-02\", \"L-03\", \"L-04\", \"L-05\", \"L-06\", \"L-07\"],\n                         \"consequence\": \"processes outside the pinned solver's expressivity are omitted processes with a bound or UNBOUNDED_OMISSION; a promoted or variant-carrying process the solver cannot represent makes the set NOT_REPRESENTABLE_IN_PINNED_SOLVER\"},\n    \"species_set\": {\n        \"rule\": \"the NP-ICP-CHEM-AIR v1 materiality rule MR-0..MR-6 is adopted by reference (icp_chem_prereg /species_set/materiality_rule; same frozen design states, same 1 % screen copied from the frozen F_ion / F_P thresholds) so the Hall and ICP air sets are judged by one standard; its application (icp_chem_prereg /species_set/application) is reused unchanged: O, O2, N2, N retained; He (> 1 % in 14 ECSS_LT_LOW states) and Ar (> 1 % in 6 ECSS_ST_HIGH states) MATERIALITY_BOUND_REQUIRED; NO MATERIALITY_BOUND_REQUIRED for F_ion (MR-5, lowest ionization energy); H and anomalous O excluded by the screen\",\n        \"hall_configured\": {\"neutrals\": [\"N2\", \"N\", \"O2\", \"O\"], \"ions\": [\"N2(+)\", \"N(+)\", \"N(2+)\", \"O2(+)\", \"O(+)\"],\n                            \"not_configured\": {\"O(2+)\": \"L-06 (no one-to-one link source)\", \"N2(2+)\": \"abep-n2n-0.11 uncertainty variant only; re-assessed (HA-N2N-R2/R3)\", \"O(-)\": \"L-05\", \"NO, NO(+)\": \"L-01; SB-NO\", \"He, Ar\": \"SB-He, SB-Ar\"},\n                            \"charges\": \"N max_charge 2 (as abep-n2n-0.11), N2 1, O2 1, O 1\"},\n        \"species_bounds\": [\n            {\"id\": \"SB-He\", \"until_resolved\": \"AIR Hall results for the 14 states with x_He > 0.01 are INCOMPLETE_EVIDENCE (state-resolved)\", \"states\": he},\n            {\"id\": \"SB-Ar\", \"until_resolved\": \"AIR Hall results for the 6 states with x_Ar > 0.01 are INCOMPLETE_EVIDENCE (state-resolved)\", \"states\": ar},\n            {\"id\": \"SB-NO\", \"until_resolved\": \"blocks AIR admission for every state (NO is not resolved per design state)\", \"data_needed\": \"NO ionization (Itikawa JPCRD 45, 033106 (2016); NIST SRD 107 NO entry; verify)\"},\n            {\"rule\": \"exclude a species if every metric's upper bound <= threshold; add it (v2) if a lower bound exceeds; between -> uncertainty-variant species (v2); the metrics are the audit metrics below evaluated on the AIR state envelope\"}],\n    },\n    \"domain\": {\n        \"id\": \"D-HALL-AIR\",\n        \"T_e_eV\": [2.0, 30.0], \"mean_energy_eV\": [3.0, 45.0],\n        \"low_threshold_window_T_e_eV\": [0.2, 30.0],\n        \"low_threshold_processes\": [\"N2 and O2 vibrational\", \"N2 and O2 rotational\", \"O2 a1Delta_g (0.98 eV) and b1Sigma_g+ (1.63 eV)\", \"O fine structure\", \"O(1D) (1.967 eV)\"],\n        \"justification\": \"the upper limit is the tightest verified table limit of the set: the N2 dissociation, electronic, vibrational and rotational tables (45 eV mean energy, rate_validity.toml) are configured in every AIR composition because N2 is present in every registered state (O-nuclei share y_O <= 0.84); the O2 dissociation table supports 47 eV (held-tail share 0.70 % at 45 eV, v0 manifest); the O, O2 ionization, DI and elastic tables support 255 eV. It is also the frozen N2 completeness domain (n2_completeness_audit_v1) and the NP-ICP-CHEM-AIR D-CHEM limit, so one domain governs every air set. The 2 eV lower limit is inherited from the N2 audit, not derived from O / O2 evidence. No limit is widened because the solver reaches higher T_e (HR-08).\",\n        \"eedf\": \"Maxwellian (every table is a Maxwellian integral over mean energy 3/2 T_e; MAXWELLIAN_ASSUMED)\",\n        \"run_domain_rule\": [\n            \"DOM-AIR-01 per table: activity n_e n_target k_r beyond the table's validity limit, summed over every saved frame of the averaging window and every cell, has share <= 1e-12 (bridge_lib.jl chemistry_validity, unchanged), and no table is unresolved\",\n            \"DOM-AIR-02 audited domain: for every configured reaction, the activity share at 3/2 T_e > 45 eV is <= 1e-12 (the same reaction-weighted, per-frame computation with the limit set to 45 eV)\",\n            \"a run failing DOM-AIR-01 or DOM-AIR-02 is OUT_OF_DOMAIN (not scoreable, not a failure)\"],\n        \"validity_vs_domain\": \"table validity (max_mean_energy_eV, source-supported, capped at 255 eV) and the audited domain (45 eV) are separate checks; both must pass\",\n    },\n    \"composition\": {\n        \"id\": \"CE-AIR\",\n        \"what_is_registered\": \"the free-stream composition of the 196 frozen design states (all required); the delivered (valve-outlet) composition after intake / filter / compressor / plenum is NOT registered (no admitted upstream producer; docs/architecture_comparison/feed_state_closure/feed_state_closure_v2.json is PROPOSED and not consumed)\",\n        \"per_state_quantities\": \"y_O = (n_O + 2 n_O2) / (n_O + 2 n_O2 + n_N + 2 n_N2) (O-nuclei share), f_O = n_O / (n_O + 2 n_O2), f_N = n_N / (n_N + 2 n_N2); He and Ar are not carried in the Hall feed (SB-He, SB-Ar)\",\n        \"delivered_envelope_rule\": [\n            \"CE-01 element ratio: the state's free-stream y_O (species-selective collection, ICD G-02, is not modelled: evidence condition EC-COMP)\",\n            \"CE-02 dissociation: f_O in [0, f_O,fs], f_N in [0, f_N,fs]: the passive gas path can recombine atoms on walls but has no energy source to dissociate molecules (physical argument; verify VER-HA-05; owner question OQ-HA-04)\",\n            \"CE-03 hull over the 196 states: y_O in [y_O,min, y_O,max], f_O in [0, max f_O,fs], f_N in [0, max f_N,fs]\"],\n        \"hall_composition_points\": {\n            \"rule\": \"the four corners {y_O,min, y_O,max} x {RECOMBINED: f_O = f_N = 0; DISSOCIATED: f_O = max f_O,fs, f_N = max f_N,fs}; mass fractions from nuclei with the solver's own masses (HallThruster.jl elements.jl: O 15.999, N 14.007); delivered mass flow split by mass fraction; computed by the Rust case generator from the hash-verified frozen file and required to equal the values below exactly\",\n            \"label\": \"COMPOSITION_HULL_CORNERS_NOT_INTERIOR_BOUNDS\",\n            \"hull\": {\"y_O_min\": ymin[\"y_O\"], \"y_O_min_state\": ymin[\"state_id\"], \"y_O_max\": ymax[\"y_O\"], \"y_O_max_state\": ymax[\"state_id\"],\n                     \"f_O_max\": fomax[\"f_O\"], \"f_O_max_state\": fomax[\"state_id\"], \"f_N_max\": fnmax[\"f_N\"], \"f_N_max_state\": fnmax[\"state_id\"]},\n            \"points\": CORNERS,\n            \"why_corners_do_not_bound\": \"the Hall response to composition is not shown to be monotonic (O is lighter, which lowers thrust per power at equal efficiency; O has no molecular losses, which raises ionization efficiency): corner results do not bound interior compositions; closure claims therefore need every corner (robustness over the uncontrolled composition) plus the evidence condition EC-COMP, and non-closure under the corners is never eligible for PHYSICALLY_NON_CLOSING (fixed in the AIR family addendum)\",\n        },\n        \"state_scope\": \"AIR Hall results are state-independent vacuum runs; a state inherits them only if it is not under SB-He / SB-Ar (state-resolved INCOMPLETE_EVIDENCE) and SB-NO is resolved\",\n        \"computation\": {\"script_sha256\": None, \"note\": \"this generator (scratch, not committed) embeds its own text below\"},\n    },\n    \"processes\": P,\n    \"process_status_vocabulary\": {\n        \"IN_REPO_VERIFIED\": \"data in the repository, sha256-pinned, provenance read, validity computed, Hall applicability checked\",\n        \"IN_REPO_PENDING_VERSION_OF_RECORD\": \"data transcribed in the repository from a citable accepted manuscript (SONG2026); buildable into the Hall set now; admission needs the version-of-record check (E2) or an owner acceptance of the accepted-manuscript values (OQ-HA-01)\",\n        \"SOURCE_IDENTIFIED_TO_ACQUIRE\": \"a published source is identified but its data are not in the repository\",\n        \"INCOMPLETE_EVIDENCE\": \"no usable published source in the repository over the domain, or a known gap the build cannot close without an owner decision\",\n        \"BOUND_EVALUABLE\": \"no rate needed: a physical bound gives the audit's upper and lower values\",\n    },\n    \"set_status_vocabulary\": {\n        \"INCOMPLETE_EVIDENCE\": \"a tier-1 process is missing or pending, a species bound is unresolved, an UNBOUNDED_OMISSION is undisposed or a verdict is provisional\",\n        \"NOT_REPRESENTABLE_IN_PINNED_SOLVER\": \"the audit promotes (lower bound > threshold) or keeps as an uncertainty variant (lower < threshold < upper) a process the pinned solver cannot represent (L-01..L-06); AIR Hall stays NOT_EVALUATED; options O-A..O-C of the capability audit (owner)\",\n        \"COMPLETE_FOR_PARAMETRIC_ENVELOPE\": \"admitted under AD-HA-01..07 for the NP-HALL-PARAMETRIC-ENVELOPE AIR family only; not a validation, not experimental confirmation, not general air-chemistry completeness\",\n    },\n    \"tiers\": {\n        \"1_required_as_configured_tables_before_final_verdicts\": TIERS[\"1\"],\n        \"2_assess_before_complete\": TIERS[\"2\"],\n        \"3_assessed_not_included_unless_a_bound_exceeds\": TIERS[\"3\"],\n    },\n    \"common_rules\": {\n        \"interpolation_extrapolation\": [\n            \"IX-01 tables are Maxwellian integrals of the registered cross-section representation on the HallThruster.jl grid (mean energy 0-300 eV, 1 eV step), written by the admitted Rust integrator (abep_chem::reference, contract C-ABEP_SIM_RATE_TABLES_PY) or byte-identical to an existing builder's output\",\n            \"IX-02 inside the tabulated range sigma is linearly interpolated\",\n            \"IX-03 below the first point sigma = 0, or a declared ramp from the cited threshold (DI convention); the choice is recorded in the .source\",\n            \"IX-04 above the last point a declared hold (or zero for a resonance bound table); the validity limit is the highest mean energy at which the held tail carries < 1 % of the Maxwellian rate, capped at 255 eV (rate_validity.toml convention)\",\n            \"IX-05 no silent extrapolation: DOM-AIR-01 / DOM-AIR-02\",\n            \"IX-06 variant members (O ionization BEB / Thompson, O2 DI upper / lower, N2 DI upper / lower, N elastic OPM / Wang) form unweighted scenario sets; never averaged, never narrowed\"],\n        \"conservation\": [\n            \"CV-01 every configured equation balances charge (solver check) and nuclei per element (Rust load check)\",\n            \"CV-02 the header energy of an ionizing / dissociating channel is >= the formation-energy change of its products (ground-state reference); excess fragment energy is not added and is recorded as energy-loss uncertainty (N2 DI convention)\",\n            \"CV-03 ion wall / anode neutralization returns the parent neutral (structural, L-03)\"],\n        \"evidence_class\": \"docs/EVIDENCE.md level 1-7 and quantity type per table; header energies from cited level or thermochemical data, inferred sums labelled\",\n    },\n    \"uncertainty_envelope_rule\": [\n        \"UE-01 no fabricated coefficient; a missing required quantity yields INCOMPLETE_EVIDENCE\",\n        \"UE-02 an envelope is admissible only when every bound is sourced or physical ([0, 1] probabilities, zero-vs-hold tails, published channel-ambiguity columns, Cosby-only lower member)\",\n        \"UE-03 envelope members are unweighted, never averaged and never narrowed\",\n        \"UE-04 an envelope never stands in for a tier-1 process with no sourced data (O momentum transfer, O excitation, O2 a / b / Herzberg excitation stay INCOMPLETE_EVIDENCE)\",\n        \"UE-05 stated source uncertainties are recorded per table; 'none stated' is NOT_STATED\"],\n    \"reuse_rule\": [\n        \"RU-01 repository data are reused only where provenance is valid, the domain matches and the process applies to the Hall air model (each reused process carries reuse_check)\",\n        \"RU-02 the N2 / N tables are referenced in place (../propellants/<file>), never copied or edited; their validity entries are mirrored and must equal the source entry\",\n        \"RU-03 the O / O2 v0 DRAFT tables (docs/chemistry/o_o2/v0/) stay immutable; the Hall set holds its own copies, each byte-identical to the v0 table it is rebuilt from (or copied from, for the NIST tables whose raw source is not committed), with the v0 sha256 recorded\",\n        \"RU-04 no value from abep_sim/plasma_chem.py or abep_sim/aochem.py is used\"],\n    \"completeness_audit\": {\n        \"id\": \"CA-HALL-AIR-v1\",\n        \"metrics\": {\n            \"F_P\": \"k_omit dE_omit n_t,omit / sum_j k_j dE_j n_t,j: share of total electron inelastic power (frozen N2 definition)\",\n            \"F_ion\": \"nu_ions,omit k_omit n_t,omit / sum_j nu_ions,j k_j n_t,j: share of total positive-ion production (frozen N2 definition)\",\n            \"F_S_s\": \"share of the production or destruction of modeled species s due to the omitted channel (frozen N2 definition; extended to surface and heavy-particle channels)\",\n            \"F_e_loss\": \"electron loss by the omitted channel / electron production by ionization (added for attachment and recombination; threshold copied from F_ion, as NP-ICP-CHEM-AIR)\"},\n        \"thresholds\": {\"F_P\": 0.01, \"F_ion\": 0.01, \"F_S_s\": 0.05, \"F_e_loss\": 0.01},\n        \"threshold_basis\": \"F_P, F_ion, F_S_s copied from hallthruster_bridge/prereg/n2_completeness_audit_v1.json; F_e_loss copies the F_ion value; no rate or Hall result was consulted\",\n        \"rule\": \"promote an omitted process if any metric exceeds its threshold anywhere in its domain over the evaluated states\",\n        \"ambiguity_rule\": \"adopted verbatim from n2_completeness_audit_v1_addendum1_ambiguity: U < T -> EXCLUDE; L > T -> PROMOTE (nominal); L < T < U -> PROMOTE AS AN UNCERTAINTY VARIANT; bounds over every evaluated nuisance choice (operating point, composition corner, transport candidate, chemistry configuration)\",\n        \"cross_check_rule\": \"adopted verbatim from n2_completeness_audit_v1_addendum2_crosscheck\",\n        \"not_representable_rule\": \"a process the pinned solver cannot represent (solver field NOT REPRESENTABLE / NOT CONFIGURED for lack of a link) whose verdict is PROMOTE or UNCERTAINTY VARIANT makes the set NOT_REPRESENTABLE_IN_PINNED_SOLVER\",\n        \"unbounded_rule\": \"a tier-2 / tier-3 process with no evaluable bound is UNBOUNDED_OMISSION and blocks completeness unless the owner disposes it explicitly (OQ-HA-06)\",\n        \"denominators\": \"the best available configured set; any verdict before every tier-1 process is configured is PROVISIONAL and is repeated once they exist (today every verdict would be PROVISIONAL: HA-O-EL-01, HA-O-EXC-01, HA-O2-EXC-01/02 are missing)\",\n        \"state_basis\": {\n            \"kind\": \"blind HallThruster.jl state envelope (precedent: hallthruster_bridge/checks/blind_state_envelope.jl); no thrust, I_d, efficiency or closure quantity is computed or used\",\n            \"geometry\": \"G-RP1 (RP-1 anchor, NP-HALL-PARAMETRIC-ENVELOPE v1 case_grid; not a selection)\",\n            \"bz_shape\": \"BZ-P5B16 (v1 registration rule)\",\n            \"B_peak\": [\"BP-LO\", \"BP-HI\"], \"V_d\": [\"VD-180\", \"VD-350\"], \"mdot\": [\"MF-LO\", \"MF-HI\"],\n            \"composition\": [\"CP-YLO-REC\", \"CP-YLO-DIS\", \"CP-YHI-REC\", \"CP-YHI-DIS\"],\n            \"transport\": \"the nine screening candidates sgb-screen-01..09 as recorded\",\n            \"chemistry\": [\"AIR-NOM (nominal members)\", \"AIR-ALT (O ionization Thompson, O2 DI lower, N2 DI lower, N elastic Wang)\"],\n            \"numerics\": \"the v1 envelope rule (0.5 mm cells, dt 5 ns, duration 2 ms x max(1, domain / 0.1 m), averaging over the second half), vacuum, ion_wall_losses = false\",\n            \"n_runs\": 576,\n            \"eligible_runs\": \"converged, finite and in domain (DOM-AIR-01, DOM-AIR-02); others are recorded with their status and excluded from the bounds; a composition corner with no eligible run makes every verdict NOT_EVALUABLE\",\n            \"snapshots\": \"the envelope reads sha256-pinned snapshot configurations (hallthruster_bridge/audit_air/configs/MANIFEST.json); an assessed process is never in the configuration that generates the state\",\n            \"status_today\": \"PREPARED_NOT_RUN (no Julia in this container)\"},\n        \"recording\": \"one row per process: criterion, lower / nominal / upper, worst case and where, nuisance sensitivity, verdict; literal application; written under hallthruster_bridge/audit_air/\",\n        \"independence\": \"no fit quality, thrust, current, closure or validation outcome decides a verdict\",\n    },\n    \"admission_criteria\": {\n        \"meaning\": \"software / evidence admission of the reaction set for the NP-HALL-PARAMETRIC-ENVELOPE AIR family; NOT a validation claim; AIR Hall results stay PARAMETRIC / NOT_VALIDATED; the credible transport set and HallMap admission are unaffected\",\n        \"label_status\": \"COMPLETE_FOR_PARAMETRIC_ENVELOPE\",\n        \"requirements\": [\n            \"AD-HA-01 this preregistration and its lock committed\",\n            \"AD-HA-02 every tier-1 process configured in the AIR nominal configuration with a verified validity entry; SONG2026-derived tables version-of-record checked, or the owner's acceptance of the accepted-manuscript values recorded (OQ-HA-01)\",\n            \"AD-HA-03 atomic O has its own ionization (HA-O-ION-01), momentum-transfer (HA-O-EL-01) and electronic-excitation (HA-O-EXC-01) tables; no O-target process points to non-O data\",\n            \"AD-HA-04 final (non-provisional) CA-HALL-AIR verdicts for every tier-2 and tier-3 process on the complete tier-1 denominator; no undisposed UNBOUNDED_OMISSION; no NOT_REPRESENTABLE_IN_PINNED_SOLVER outcome\",\n            \"AD-HA-05 SB-NO resolved; SB-He and SB-Ar resolved or carried as state-resolved INCOMPLETE_EVIDENCE with the owner's acceptance\",\n            \"AD-HA-06 the label abep-air-0.x carries status COMPLETE_FOR_PARAMETRIC_ENVELOPE in AIR_PINNED.toml with a history line; variants registered\",\n            \"AD-HA-07 the Rust validators pass under cargo test --workspace --locked\"],\n        \"today\": \"NOT ADMITTED: INCOMPLETE_EVIDENCE (tier-1 gaps HA-O-EL-01, HA-O-EXC-01, HA-O2-EXC-01, HA-O2-EXC-02, HA-O2-DIS-01 below 13.5 eV; SONG2026 version-of-record check; SB-NO, SB-He, SB-Ar; audit PREPARED_NOT_RUN)\",\n    },\n    \"build_plan\": {\n        \"location\": \"hallthruster_bridge/propellants_air/ (new): AIR_PINNED.toml (labels, status, history, file pins), rate_validity.toml (one entry per file used, mirrored entries for the referenced N2 / N tables keyed ../propellants/<file>), PROVENANCE.md, xs/ (cross-section representations of rebuilt tables), the tables and their .source files, air_nominal.toml and air_alt.toml; hallthruster_bridge/audit_air/ (snapshot configurations + MANIFEST, bound tables, the Julia state-envelope script, a local run script)\",\n        \"why_not_propellants\": \"propellants/rate_validity.toml, n2_n.toml and PINNED.toml are pinned by config/model_set/physics_model_set_v1.json, the NP-HALL-PARAMETRIC-ENVELOPE v1 preregistration and the P5-N2 records; abep-n2n-0.11 is frozen; the bridge reads rate_validity.toml from each case's rate_dir, so a separate directory needs no bridge change\",\n        \"per_table\": \"one table per commit where practical: representation (xs/*.json) or copy record, .dat, .source, rate_validity.toml entry, PROVENANCE row, configuration line, AIR_PINNED label bump with a history line, and a Rust test pinning its sha256 and validity\",\n        \"rust\": \"additive: abep-hall module for the AIR set (label / configuration / validity / provenance loader, conservation and O-target guards, Hall-isolation pins) and an abep-chem example that renders the tables from xs/ with the admitted integrator\",\n        \"audit\": \"Julia script + local run script + Rust verdict reader; marked PREPARED_NOT_RUN\",\n        \"air_family\": \"a new NP-HALL-PARAMETRIC-ENVELOPE addendum (never an edit of v1) adds the AIR family; committed with its lock before any AIR run; its case set is generated by Rust byte-reproducibly; its launch manifest is generated only when this set is COMPLETE_FOR_PARAMETRIC_ENVELOPE\",\n    },\n    \"sources_not_reachable\": [\n        {\"source\": \"Tayal & Zatsarinny, PRA 94, 042707 (2016) (BSR-1116 O data) and supplement\", \"needed_for\": \"HA-O-EL-01, HA-O-EXC-01, HA-MS-01\", \"why\": \"paywalled; author manuscript 403 (source matrix)\"},\n        {\"source\": \"Itikawa & Ichimura, JPCRD 19, 637 (1990) (NIST open reprint)\", \"needed_for\": \"HA-O-EL-01 (alternative), HA-O-EXC-02; verify of 48.77 eV\", \"why\": \"srd.nist.gov blocked by the network policy here; the PDF is not in the repository\"},\n        {\"source\": \"Laher & Gilmore, JPCRD 19, 277 (1990) (NIST open reprint)\", \"needed_for\": \"HA-O-EXC-01 (open route), HA-O-ION-02\", \"why\": \"srd.nist.gov blocked; not in the repository\"},\n        {\"source\": \"Bell et al., JPCRD 12, 891 (1983) O II row (NIST open reprint)\", \"needed_for\": \"HA-O-ION-03 and the O(2+) link (L-06)\", \"why\": \"srd.nist.gov blocked; only the N rows are transcribed in the repository\"},\n        {\"source\": \"SONG2026 version of record and supplement\", \"needed_for\": \"E2 check of HA-O2-ION-01, HA-O2-DI-01, HA-O2-DIS-01, HA-O2-EL-01, HA-O2-ATT-01, HA-O2-DI-02\", \"why\": \"pubs.aip.org blocked; not accessed\"},\n        {\"source\": \"Huang, Zhang & Cheng, J. Phys. Chem. A 126, 2061 (2022)\", \"needed_for\": \"HA-O2-EXC-01/02/03\", \"why\": \"paywalled\"},\n        {\"source\": \"Tashiro, Morokuma & Tennyson, PRA 73, 052707 (2006) (arXiv:physics/0604098)\", \"needed_for\": \"HA-O2-EXC-01/02 (open route)\", \"why\": \"arxiv.org blocked here; not in the repository\"},\n        {\"source\": \"Laporta, Celiberto & Tennyson, PSST 22, 025001 (2013) (arXiv preprint)\", \"needed_for\": \"HA-O2-VIB-01\", \"why\": \"arxiv.org blocked here; not in the repository\"},\n        {\"source\": \"Cherkani-Hassani et al., J. Phys. B 39, 5105 (2006)\", \"needed_for\": \"HA-O2P-DIS-01\", \"why\": \"paywalled\"},\n        {\"source\": \"Peverall et al. 2001; Peterson et al. 1998 (verify)\", \"needed_for\": \"HA-DR-01\", \"why\": \"paywalled / not verified\"},\n        {\"source\": \"Anicich, JPL Publication 03-19 (2003); Kossyi et al. 1992 (verify)\", \"needed_for\": \"HA-IM-01\", \"why\": \"not in the repository; hosts blocked\"},\n        {\"source\": \"Baulch et al., JPCRD 34, 757 (2005) (verify)\", \"needed_for\": \"HA-HN-01\", \"why\": \"not in the repository\"},\n        {\"source\": \"NIST SRD 107 NO, He, Ar entries; Itikawa JPCRD 45, 033106 (2016)\", \"needed_for\": \"SB-NO, SB-He, SB-Ar\", \"why\": \"physics.nist.gov blocked; not in the repository\"},\n        {\"source\": \"Thompson, Shah & Gilbody 1995 (double ionization)\", \"needed_for\": \"HA-O-ION-02\", \"why\": \"paywalled\"},\n    ],\n    \"verify_items\": [\n        {\"id\": \"VER-HA-01\", \"item\": \"O2+(X) threshold 12.2 eV as read from the SONG2026 text layer (v0 header)\", \"used_by\": \"HA-O2-ION-01\"},\n        {\"id\": \"VER-HA-02\", \"item\": \"O^2+ 48.77 eV above O ground (OCR text layer of Itikawa & Ichimura 1990 Table 2.1)\", \"used_by\": \"HA-O2-DI-02\"},\n        {\"id\": \"VER-HA-03\", \"item\": \"whether the NIST SRD 107 Thompson column is the O+ partial or the counting total\", \"used_by\": \"HA-O-ION-01 variant\"},\n        {\"id\": \"VER-HA-04\", \"item\": \"IE(NO) 9.26 eV (memory, as in NP-ICP-CHEM-AIR VER-CHEM-11)\", \"used_by\": \"SB-NO\"},\n        {\"id\": \"VER-HA-05\", \"item\": \"the passive gas path (intake, filter, compressor, plenum, valve) does not dissociate O2 or N2 at its wall temperatures (physical argument, no source registered)\", \"used_by\": \"CE-02\"},\n        {\"id\": \"VER-HA-06\", \"item\": \"HallThruster.jl element masses (O 15.999, N 14.007) agree with standard atomic weights\", \"used_by\": \"composition mass fractions\"},\n    ],\n    \"open_owner_questions\": [\n        {\"id\": \"OQ-HA-01\", \"question\": \"SONG2026 tables come from the accepted manuscript; the version of record was not accessed. Require the version-of-record check through fo_closed_access_acquisition before admission (drafted), or accept the accepted-manuscript values?\", \"blocks\": \"AD-HA-02\"},\n        {\"id\": \"OQ-HA-02\", \"question\": \"O ionization nominal: BEB (Kim & Desclaux 2002, the same model and route as the in-use N ionization; drafted) or Thompson 1995 (measured, recommended by SONG2026)? Both are carried as an unweighted pair.\", \"blocks\": \"nominal choice only\"},\n        {\"id\": \"OQ-HA-03\", \"question\": \"Species bounds: accept SB-He / SB-Ar as state-resolved INCOMPLETE_EVIDENCE and SB-NO as blocking every AIR state until an NO ionization bound exists (drafted, as NP-ICP-CHEM-AIR OQ-CHEM-01 / -02), or rule otherwise?\", \"blocks\": \"AD-HA-05\"},\n        {\"id\": \"OQ-HA-04\", \"question\": \"Composition: accept the delivered-envelope rule (element ratio at the free-stream value; dissociation between fully recombined and the free-stream value; four hull corners) with evidence condition EC-COMP, until a delivered composition is registered?\", \"blocks\": \"the AIR family case set\"},\n        {\"id\": \"OQ-HA-05\", \"question\": \"Lawful acquisition (fo_closed_access_acquisition or an owner-supplied file, as Johnson 2005 was) of the tier-1 sources: BSR-1116 or Laher & Gilmore 1990 (O excitation), BSR-1116 / Itikawa & Ichimura 1990 (O momentum transfer), Huang 2022 or Tashiro 2006 (O2 a, b, Herzberg), plus Bell 1983 O II, Laporta 2013, NIST NO / He / Ar.\", \"blocks\": \"every tier-1 gap\"},\n        {\"id\": \"OQ-HA-06\", \"question\": \"Disposition of processes with no evaluable bound (UNBOUNDED_OMISSION: heavy-particle chemistry, dissociative recombination, metastable stepwise ionization, ...): block admission (drafted) or accept as recorded omissions?\", \"blocks\": \"AD-HA-04\"},\n        {\"id\": \"OQ-HA-07\", \"question\": \"Label: abep-air-0.x for the Hall set (drafted), separate from abep-icp-air-0.x and the earlier proposed abep-oo2-0.x; the O / O2 tables built here may later be referenced by the ICP registry. Confirm.\", \"blocks\": \"naming only\"},\n    ],\n    \"repository_conflicts\": [\n        {\"id\": \"CONF-HA-01\", \"where\": \"CLAUDE.md next-work item 4 ('Only if 1-3 succeed: O2/O chemistry'; A9.30 note limits O/O2 to the ICP)\", \"against\": \"this contract\", \"handling\": \"A9.33 Q2 authorizes the narrow Hall O / O2 contract (recorder note: it does not reopen the P5 campaign, plasma_chem.py, the credible-set rule or HallMap admission)\"},\n        {\"id\": \"CONF-HA-02\", \"where\": \"docs/chemistry/o_o2/o_o2_completeness_prereg_DRAFT.json (DRAFT_PENDING_OWNER, 'freeze under hallthruster_bridge/prereg/')\", \"against\": \"this contract reuses its thresholds and tiers\", \"handling\": \"the DRAFT is not frozen or changed; this contract is the Hall air rule\"},\n        {\"id\": \"CONF-HA-03\", \"where\": \"docs/chemistry/o_o2/v0/README.md ('moving a table into hallthruster_bridge/propellants/ is a later owner-approved model change')\", \"against\": \"the Hall set holds O / O2 tables\", \"handling\": \"A9.33 Q2 is that authorization; the tables go to a separate directory under a separate label; v0 stays immutable\"},\n        {\"id\": \"CONF-HA-04\", \"where\": \"hallthruster_bridge/bridge_lib.jl run_case feeds N2 only (L-07); the file is pinned by NP-HALL-PARAMETRIC-ENVELOPE v1\", \"against\": \"a multi-species feed\", \"handling\": \"additive driver function in a new file; bridge_lib.jl unchanged\"},\n        {\"id\": \"CONF-HA-05\", \"where\": \"NP-ICP-CHEM-AIR OQ-CHEM-06 (proposed Hall label abep-oo2-0.x)\", \"against\": \"abep-air-0.x\", \"handling\": \"OQ-HA-07\"},\n        {\"id\": \"CONF-HA-06\", \"where\": \"NP-HALL-PARAMETRIC-ENVELOPE v1 (AIR layer (a) NOT_EVALUATED; N2_PROXY diagnostic only)\", \"against\": \"an AIR family\", \"handling\": \"a new addendum; v1 and its case file stay unchanged\"},\n    ],\n    \"references\": [\n        SONG,\n        \"Song et al., J. Phys. Chem. Ref. Data 52, 023104 (2023) (N2; registered)\",\n        \"Kim & Desclaux, Phys. Rev. A 66, 012708 (2002) via NIST SRD 107\",\n        \"Thompson, Shah & Gilbody, J. Phys. B 28, 1321 (1995) via NIST SRD 107\",\n        \"Itikawa & Ichimura, JPCRD 19, 637 (1990); Laher & Gilmore, JPCRD 19, 277 (1990); Bell et al., JPCRD 12, 891 (1983)\",\n        \"Tayal & Zatsarinny, PRA 94, 042707 (2016); Huang, Zhang & Cheng, J. Phys. Chem. A 126, 2061 (2022); Tashiro et al., PRA 73, 052707 (2006); Laporta et al., PSST 22, 025001 (2013)\",\n        \"Rapp & Briglia, J. Chem. Phys. 43, 1480 (1965) via SONG2026 Table VIII; Cosby, J. Chem. Phys. 98, 9560 (1993) via SONG2026 Table VI\",\n        \"HallThruster.jl v0.23.1 (Marks et al.), commit bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5\",\n    ],\n}\nwith open(__file__, \"rb\") as f:\n    src = f.read()\ndoc[\"composition\"][\"computation\"] = {\"script_sha256\": hashlib.sha256(src).hexdigest(), \"script\": src.decode(\"utf-8\"),\n                                     \"input\": {\"path\": DS, \"sha256\": DS_SHA}}\nwith open(OUT, \"w\", encoding=\"utf-8\") as f:\n    json.dump(doc, f, indent=1, ensure_ascii=False)\n    f.write(\"\\n\")\nprint(\"processes\", len(P)); print(json.dumps(doc[\"composition\"][\"hall_composition_points\"][\"hull\"], indent=1))\nfor c in CORNERS: print(c)\nprint(\"He states\", len(he), \"Ar states\", len(ar))\n",
+   "input": {
+    "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+    "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+   }
+  }
+ },
+ "processes": [
+  {
+   "id": "HA-N2N-01",
+   "block": "N2/N",
+   "reaction": "the 27 reactions of hallthruster_bridge/propellants/n2_n.toml (abep-n2n-0.11 nominal): N2 elastic, N2 ionization, N2 DI upper, N2 -> N^2+ + N, N2 dissociation, 8 N2 electronic, 10 N2 vibrational, 2 N2 rotational, N elastic (OPM), N ionization, N+ -> N^2+, N -> N^2+ (HMS)",
+   "solver": "CONFIGURED (as in n2_n.toml; rate files referenced as ../propellants/<file>)",
+   "source": "reused unchanged by reference from abep-n2n-0.11 (hallthruster_bridge/propellants, sha256-pinned); citations: each .source file and hallthruster_bridge/propellants/PROVENANCE.md",
+   "repo": {
+    "path": "hallthruster_bridge/propellants/n2_n.toml",
+    "sha256": "4f10db747cfb11cfefb8080a9cad52e502c2ab11f0e485ac644a532b929607de"
+   },
+   "evidence": "as recorded per table (evidence level 4; quantity types per PROVENANCE.md)",
+   "validity": "mirrored from hallthruster_bridge/propellants/rate_validity.toml (45 eV mean energy for dissociation, electronic, vibrational and rotational N2 tables; 255 eV otherwise); a mirrored entry differing from its source entry is a load error",
+   "tier": "1 (tier-1 / tier-2 / tier-3 inclusions of the N2/N set as decided under n2_completeness_audit_v1)",
+   "status": "IN_REPO_VERIFIED",
+   "reuse_check": {
+    "provenance_valid": "yes (abep-n2n-0.11 COMPLETE_FOR_P5_N2_VALIDATION, sha256-pinned)",
+    "domain_matches": "yes for T_e 2-30 eV (the same audited domain)",
+    "applicable_to_hall_air": "yes: the same solver and channel; the N2-domain completeness verdicts were made on pure-N2 feeds and do not transfer automatically: the N2/N exclusions are re-assessed on the AIR state envelope (HA-N2N-R1..R3)"
+   },
+   "variants": "DI upper / lower (dissociative_ionization_N2_lower.dat); N elastic OPM / Wang (elastic_N_wang2014_bsr.dat); unweighted"
+  },
+  {
+   "id": "HA-N2N-R1",
+   "block": "N2/N",
+   "reaction": "e + N^2+ -> N^3+ + 2e (re-assessment on air states)",
+   "solver": "NOT CONFIGURED (would need N max_charge 3)",
+   "source": "Bell et al., JPCRD 12, 891 (1983) Eq. (1), N III row, as the existing bound table",
+   "repo": {
+    "path": "hallthruster_bridge/audit/bound_tables/ionization_N_Z2plus_to_N_Z3plus_bell1983.dat",
+    "sha256": "c71fac943a1000996b2e1cd4a82925257d5aeb10b510ebb55fe8f5a330d48125"
+   },
+   "evidence": "level 4; analytic fit (+-10 %)",
+   "validity": "bound table (audit input only)",
+   "tier": "3",
+   "status": "IN_REPO_VERIFIED (bound table)",
+   "reuse_check": {
+    "provenance_valid": "yes",
+    "domain_matches": "yes",
+    "applicable_to_hall_air": "bound only; N2-domain EXCLUDE verdict re-evaluated on air states"
+   }
+  },
+  {
+   "id": "HA-N2N-R2",
+   "block": "N2/N",
+   "reaction": "e + N2 -> N2^2+ + 3e (direct; nominal 1 %-of-total and upper envelope)",
+   "solver": "NOT CONFIGURED in nominal (abep-n2n-0.11 carries it only in the N2^2+ uncertainty variant)",
+   "source": "JPCRD 2023 Sec. 2.8 statement (nominal) / flat 0.14e-16 cm^2 envelope (upper), as the existing tables",
+   "repo": {
+    "path": "hallthruster_bridge/audit/bound_tables/ionization_N2_to_N2_Z2plus_nominal.dat",
+    "sha256": "78f4bd159d339c8cfe91dba9cf594920ff0a0ba8143b1939a7ce6feadeec00fd"
+   },
+   "evidence": "level 4; statement-derived envelope",
+   "validity": "bound tables (audit input only)",
+   "tier": "3",
+   "status": "IN_REPO_VERIFIED (bound tables)",
+   "reuse_check": {
+    "provenance_valid": "yes",
+    "domain_matches": "yes",
+    "applicable_to_hall_air": "bound only; N2-domain UNCERTAINTY VARIANT verdict re-evaluated on air states"
+   }
+  },
+  {
+   "id": "HA-N2N-R3",
+   "block": "N2/N",
+   "reaction": "e + N2+ -> N2^2+ + 2e (sequential)",
+   "solver": "NOT CONFIGURED in nominal",
+   "source": "Tabata et al. 2006 n2-69 fit to Bahati et al. 2001, as the existing bound table",
+   "repo": {
+    "path": "hallthruster_bridge/audit/bound_tables/ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat",
+    "sha256": "13c23172a23e83dd6025b7da05cddea623d7bd6ad505019836cad893e4de2258"
+   },
+   "evidence": "level 4; analytic fit (fit/data 0.86-1.11)",
+   "validity": "bound table (audit input only)",
+   "tier": "3",
+   "status": "IN_REPO_VERIFIED (bound table)",
+   "reuse_check": {
+    "provenance_valid": "yes",
+    "domain_matches": "yes",
+    "applicable_to_hall_air": "bound only"
+   }
+  },
+  {
+   "id": "HA-O-ION-01",
+   "block": "O",
+   "reaction": "e + O -> O(+) + 2e",
+   "solver": "CONFIGURED (electron_impact; one-to-one link for O(+) energy)",
+   "threshold": {
+    "value_eV": 13.618,
+    "basis": "O ionization energy, Itikawa & Ichimura, JPCRD 19, 637 (1990) Table 2.1 (as recorded in manifest_nist107_o_v0.json); NIST SRD 107 atom page 13.6181 eV",
+    "type": "cited level energy"
+   },
+   "source": "scenario pair: (nominal) Kim & Desclaux, Phys. Rev. A 66, 012708 (2002) BEB via NIST SRD 107 (O table raw sha256 76df7f7a223a803ab5902eeae0b557ffb2d3317ba692a37676851781a1d225d8, not committed; same route and model as the in-use ionization_N.dat); (variant) Thompson, Shah & Gilbody, J. Phys. B 28, 1321 (1995) measured points as tabulated by NIST SRD 107 (recommended by SONG2026 Sec. III.D)",
+   "repo": {
+    "nominal": {
+     "path": "docs/chemistry/o_o2/v0/tables/ionization_O_beb_kd2002.dat",
+     "sha256": "1e3a377ede12d2fb20a9f4384c001b04e0d4ec260c4723cea5e1e261103e134e",
+     "source_file_sha256": "a92c2f9ded0f494909c83cb4b7c690e7d6faba7e82caf642b47220f897532c89"
+    },
+    "variant": {
+     "path": "docs/chemistry/o_o2/v0/tables/ionization_O_thompson1995.dat",
+     "sha256": "a1fe0dcdf786ee84a5de58ac996bac8130318298103575b383450fcd1e40e6b4",
+     "source_file_sha256": "9d844006aa7df990e6ebb1b938430b23adf0ce4806dc2f9cd192dd19193eb484"
+    },
+    "builder": {
+     "path": "docs/chemistry/o_o2/v0/build_tables_nist107_o.py",
+     "sha256": "5183535a0938bafde03551780ebe781645b208fbd5a311d727af20c6d4822a3b"
+    }
+   },
+   "evidence": "level 4; model-derived (BEB) / measured as tabulated (Thompson, ramp 13.618 -> 14.1 eV assumed)",
+   "uncertainty": "none stated in the NIST table; SONG2026: recommended O data 'accurate to at least 20 %' where they matter; Thompson / BEB 0.868-1.064 over 20-200 eV (v0 manifest)",
+   "validity": "support limit 255 eV mean energy (held-tail share 0 / 2.8e-5 at 255 eV, v0 manifest)",
+   "interpolation": "sigma = 0 at 13.618 eV prepended (BEB starts there; Thompson ramp to 14.1 eV), held above the last point (5000 / 2000 eV)",
+   "conservation": "O -> O(+) + e: charge, nuclei balanced; header = IE(O)",
+   "tier": "1",
+   "status": "IN_REPO_VERIFIED",
+   "reuse_check": {
+    "provenance_valid": "yes (v0 DRAFT table, NIST raw sha256 pinned in its builder, byte-identical copy into the Hall set)",
+    "domain_matches": "yes (255 eV support)",
+    "applicable_to_hall_air": "yes: electron-impact ionization of ground-state O, Maxwellian table, the solver's own reaction type"
+   },
+   "variants": "BEB nominal / Thompson variant: unweighted scenario pair (owner question OQ-HA-02)"
+  },
+  {
+   "id": "HA-O-EL-01",
+   "block": "O",
+   "reaction": "e + O -> e + O (momentum transfer)",
+   "solver": "CONFIGURABLE (elastic, target O)",
+   "source": "to acquire: BSR-1116, Tayal & Zatsarinny, PRA 94, 042707 (2016) (recommended by SONG2026; supplement paywalled, author manuscript 403); Itikawa & Ichimura 1990 (open NIST reprint; host blocked here, not in the repository); Williams & Allen 1989 (5 energies)",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "1",
+   "status": "INCOMPLETE_EVIDENCE",
+   "note": "atomic O is 5-86 % of the free-stream inflow; no N2, N or O2 table may stand in for it (HR-04)"
+  },
+  {
+   "id": "HA-O-EXC-01",
+   "block": "O",
+   "reaction": "e + O(3P) -> e + O(1D), O(1S), O(3s 5S), O(3s 3S), higher states (state list: owner OD-3 of the O/O2 DRAFT)",
+   "solver": "CONFIGURABLE (lumped excitation per state, header = state energy)",
+   "source": "to acquire: BSR-1116 (TZ2016, recommended; paywalled supplement); Laher & Gilmore, JPCRD 19, 277 (1990) (open NIST reprint; host blocked here, not in the repository)",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "1",
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "HA-O-EXC-02",
+   "block": "O",
+   "reaction": "e + O(3P_2) -> e + O(3P_1, 3P_0) (fine structure)",
+   "solver": "CONFIGURABLE (lumped excitation)",
+   "source": "Itikawa & Ichimura 1990 Sec. 5.1 (Berrington R-matrix; open NIST reprint; not in the repository)",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "3",
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "HA-O-ION-02",
+   "block": "O",
+   "reaction": "e + O -> O(2+) + 3e (direct double ionization)",
+   "solver": "NOT CONFIGURED (L-06: needs O max_charge 2)",
+   "source": "to acquire: Thompson, Shah & Gilbody 1995 double-ionization data (paywalled); Laher & Gilmore 1990 Sec. 3.2",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "3",
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "HA-O-ION-03",
+   "block": "O",
+   "reaction": "e + O(+) -> O(2+) + 2e (sequential; also the energy link L-06 needs)",
+   "solver": "NOT CONFIGURED (L-06)",
+   "source": "to acquire: Bell, Gilbody, Hughes, Kingston & Smith, JPCRD 12, 891 (1983) Eq. (1) O II row (open NIST reprint, the same document as the N II row in use; not in the repository, host blocked)",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "3",
+   "status": "SOURCE_IDENTIFIED_TO_ACQUIRE"
+  },
+  {
+   "id": "HA-O2-ION-01",
+   "block": "O2",
+   "reaction": "e + O2 -> O2(+) + 2e",
+   "solver": "CONFIGURED (electron_impact; one-to-one link for O2(+) energy)",
+   "threshold": {
+    "value_eV": 12.2,
+    "basis": "O2+(X) threshold, SONG2026 Sec. II.H (text layer; verify VER-HA-01)",
+    "type": "cited threshold"
+   },
+   "source": "M.-Y. Song, H. Cho, G. P. Karwasz, V. Kokoouline, J. Tennyson, K. Bartschat, 'Cross Sections for Electron Collisions with Molecular and Atomic Oxygen', J. Phys. Chem. Ref. Data 55, 013102 (2026), doi 10.1063/5.0287254; accepted manuscript (UCL Discovery, sha256 32d163a3af584ce48b672a4dd49d3eafa182ae234161773b1e9fa44376d9f88b, fetched 2026-09-27 by lane fo_o_o2_chemistry_v0); version of record and supplement NOT accessed; Table VII column sigma(O2+) (Straub et al. 1996 via Lindsay & Mangan 2003)",
+   "repo": {
+    "v0": {
+     "path": "docs/chemistry/o_o2/v0/tables/ionization_O2_song2026.dat",
+     "sha256": "fa6fca7a8192c0d1ccea8776f78e341a50187c28c632173047b4d8164f1e1d31",
+     "source_file_sha256": "5a5f43ec1dc278dac482bddefc7afeb326961ac8e0023a8510aa7705e273d3c8"
+    },
+    "builder": {
+     "path": "docs/chemistry/o_o2/v0/build_tables_song2026.py",
+     "sha256": "c9ff001987371f4ca2ab5e79a0d097c770a846da5ea71dae358832734078d3ac"
+    }
+   },
+   "evidence": "level 4; measured (evaluated), transcribed",
+   "uncertainty": "5 % (Table VII caption)",
+   "validity": "support 255 eV (held-tail share 0.998 % at 255 eV)",
+   "interpolation": "sigma = 0 below 13.0 eV (first point), held above 998 eV",
+   "conservation": "charge, nuclei balanced; header = threshold",
+   "tier": "1",
+   "status": "IN_REPO_PENDING_VERSION_OF_RECORD"
+  },
+  {
+   "id": "HA-O2-DI-01",
+   "block": "O2",
+   "reaction": "e + O2 -> O(+) + O + 2e",
+   "solver": "CONFIGURED (electron_impact, two products)",
+   "threshold": {
+    "value_eV": 18.738,
+    "basis": "D0(O2) 5.12 eV (SONG2026 Sec. II.G) + IE(O) 13.618 eV (Itikawa & Ichimura 1990): inferred thermochemical minimum, mirrors the owner-decided N2 DI header convention (abep-n2n-0.4)",
+    "type": "inferred"
+   },
+   "source": "M.-Y. Song, H. Cho, G. P. Karwasz, V. Kokoouline, J. Tennyson, K. Bartschat, 'Cross Sections for Electron Collisions with Molecular and Atomic Oxygen', J. Phys. Chem. Ref. Data 55, 013102 (2026), doi 10.1063/5.0287254; accepted manuscript (UCL Discovery, sha256 32d163a3af584ce48b672a4dd49d3eafa182ae234161773b1e9fa44376d9f88b, fetched 2026-09-27 by lane fo_o_o2_chemistry_v0); version of record and supplement NOT accessed; Table VII column sigma(O+ (+O2^2+)); variants upper (as published) / lower (column / 1.1: SONG2026 statement 'O2^2+ roughly 10 % of the O+ signal' at 100 eV)",
+   "repo": {
+    "upper": {
+     "path": "docs/chemistry/o_o2/v0/tables/dissociative_ionization_O2_upper_song2026.dat",
+     "sha256": "1657e407cef90ba8a951ef7a862a93788afe20906057a924ab5c5470db749c04",
+     "source_file_sha256": "1508f7ed6167d1be53b630337138cda9e8668686b367c5a716f91b942aa16dd3"
+    },
+    "lower": {
+     "path": "docs/chemistry/o_o2/v0/tables/dissociative_ionization_O2_lower_song2026.dat",
+     "sha256": "7559f280516ffdde81854f62fee442693dfadc92987bacf0bb07ba9d896e83f0",
+     "source_file_sha256": "0a13b284549af08b771c8b1b084b8f2aae1153109643b1461f974e7650dbade7"
+    }
+   },
+   "evidence": "level 4; measured (evaluated), transcribed; threshold ramp assumed; lower variant statement-derived",
+   "uncertainty": "7 % (Table VII caption) + O+ / O2^2+ ambiguity (upper / lower pair)",
+   "validity": "support 255 eV",
+   "interpolation": "linear ramp from 0 at 18.738 eV to the 23 eV point (same convention as N2 DI); held above 998 eV",
+   "conservation": "charge, nuclei balanced; header >= formation change (fragment kinetic energy not added; energy-loss uncertainty)",
+   "tier": "1",
+   "status": "IN_REPO_PENDING_VERSION_OF_RECORD",
+   "variants": "upper nominal / lower variant, unweighted"
+  },
+  {
+   "id": "HA-O2-DI-02",
+   "block": "O2",
+   "reaction": "e + O2 -> O(2+) + O + 3e",
+   "solver": "NOT CONFIGURED (L-06)",
+   "threshold": {
+    "value_eV": 53.888,
+    "basis": "5.12 + 48.77 eV (O^2+ above O ground, Itikawa & Ichimura 1990 Table 2.1 OCR text layer; verify VER-HA-02); inferred",
+    "type": "inferred"
+   },
+   "source": "M.-Y. Song, H. Cho, G. P. Karwasz, V. Kokoouline, J. Tennyson, K. Bartschat, 'Cross Sections for Electron Collisions with Molecular and Atomic Oxygen', J. Phys. Chem. Ref. Data 55, 013102 (2026), doi 10.1063/5.0287254; accepted manuscript (UCL Discovery, sha256 32d163a3af584ce48b672a4dd49d3eafa182ae234161773b1e9fa44376d9f88b, fetched 2026-09-27 by lane fo_o_o2_chemistry_v0); version of record and supplement NOT accessed; Table VII column sigma(O^2+)",
+   "repo": {
+    "bound_table_v0": {
+     "path": "docs/chemistry/o_o2/v0/tables/dissociative_ionization_O2_to_O_Z2plus_song2026.dat",
+     "sha256": "c9868d1a4d3bfc1c6e0aba9be4e6b963238cdb5cbc0816c4f011c2c4a2c79b5e",
+     "source_file_sha256": "0c9a19695688dd7a2d9dfcc0976483d0aa021909631ca6f22575a490ef3159a7"
+    }
+   },
+   "evidence": "level 4; measured (evaluated), transcribed",
+   "uncertainty": "10 % (Table VII caption)",
+   "validity": "bound table (audit input only)",
+   "tier": "3",
+   "status": "IN_REPO_PENDING_VERSION_OF_RECORD (bound table)"
+  },
+  {
+   "id": "HA-O2-ION-02",
+   "block": "O2",
+   "reaction": "e + O2 -> O2(2+) + 3e; e + O2(+) -> O2(2+) + 2e",
+   "solver": "NOT CONFIGURED",
+   "source": "SONG2026: 'unable to recommend' (large spread among Maerk 1975, Sigaud 2013, Bull 2015, Jia 2023); the O2^2+ yield sits inside the O+ column and is carried by the DI upper / lower pair",
+   "repo": null,
+   "evidence": "no recommended value",
+   "tier": "3",
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "HA-O2-DIS-01",
+   "block": "O2",
+   "reaction": "e + O2 -> O + O + e (dissociation into neutrals)",
+   "solver": "CONFIGURED (electron_impact, header 5.12 eV)",
+   "threshold": {
+    "value_eV": 5.12,
+    "basis": "D0(O2), SONG2026 Sec. II.G; O(1D)+O(3P) 7.087 eV bounds the representative loss (energy-loss uncertainty)",
+    "type": "cited"
+   },
+   "source": "M.-Y. Song, H. Cho, G. P. Karwasz, V. Kokoouline, J. Tennyson, K. Bartschat, 'Cross Sections for Electron Collisions with Molecular and Atomic Oxygen', J. Phys. Chem. Ref. Data 55, 013102 (2026), doi 10.1063/5.0287254; accepted manuscript (UCL Discovery, sha256 32d163a3af584ce48b672a4dd49d3eafa182ae234161773b1e9fa44376d9f88b, fetched 2026-09-27 by lane fo_o_o2_chemistry_v0); version of record and supplement NOT accessed; Table VI (Cosby 1993), >= 13.5 eV only",
+   "repo": {
+    "v0": {
+     "path": "docs/chemistry/o_o2/v0/tables/dissociation_O2_song2026.dat",
+     "sha256": "e908da8e19ea0d5e9364fea28332ef685602048fe3c023eaf41eb048eda5984b",
+     "source_file_sha256": "54b4213547234dfaee4a9265309c1b7dc48dfd1b7ba6dcf3bec5e6f6a6dfeefc"
+    }
+   },
+   "evidence": "level 4; measured (evaluated), transcribed",
+   "uncertainty": "about +-35 % (Table VI caption)",
+   "validity": "support 47 eV mean energy (held-tail share 0.70 % at 45 eV)",
+   "interpolation": "sigma = 0 below 13.5 eV (first point), held above 198.5 eV",
+   "conservation": "charge, nuclei balanced; header = D0",
+   "tier": "1",
+   "status": "IN_REPO_PENDING_VERSION_OF_RECORD (>= 13.5 eV) + INCOMPLETE_EVIDENCE (dissociation through the Herzberg ~5-7 eV and Schumann-Runge ~7-9.5 eV states below 13.5 eV is MISSING; the table is a lower member only; double counting with any dissociative-excitation table above 13.5 eV, owner OD-4)"
+  },
+  {
+   "id": "HA-O2-EL-01",
+   "block": "O2",
+   "reaction": "e + O2 -> e + O2 (momentum transfer)",
+   "solver": "CONFIGURED (elastic, target O2)",
+   "source": "M.-Y. Song, H. Cho, G. P. Karwasz, V. Kokoouline, J. Tennyson, K. Bartschat, 'Cross Sections for Electron Collisions with Molecular and Atomic Oxygen', J. Phys. Chem. Ref. Data 55, 013102 (2026), doi 10.1063/5.0287254; accepted manuscript (UCL Discovery, sha256 32d163a3af584ce48b672a4dd49d3eafa182ae234161773b1e9fa44376d9f88b, fetched 2026-09-27 by lane fo_o_o2_chemistry_v0); version of record and supplement NOT accessed; Table V (beam DCS + Jeon 2003 swarm)",
+   "repo": {
+    "v0": {
+     "path": "docs/chemistry/o_o2/v0/tables/elastic_O2_song2026.dat",
+     "sha256": "b66353da4be23ff8534dadf1d69036b89c224cd4b96942e91568b6b19b81df64",
+     "source_file_sha256": "8d07b167013a35164dcca9ba2d34d214aac93590f5eaa2e49928f17858278fd7"
+    }
+   },
+   "evidence": "level 4; measured / inferred (swarm below 0.8 eV), transcribed",
+   "uncertainty": "about 20 % (1-10 eV), 10-15 % (10-1000 eV), none below 1 eV",
+   "validity": "support 255 eV",
+   "interpolation": "held above 1000 eV; out-of-order manuscript row '0.008 eV 2.30' omitted (rate effect <= 1.3e-5 at T_e >= 0.2 eV)",
+   "conservation": "no inelastic loss (header 0)",
+   "tier": "1",
+   "status": "IN_REPO_PENDING_VERSION_OF_RECORD"
+  },
+  {
+   "id": "HA-O2-EXC-01",
+   "block": "O2",
+   "reaction": "e + O2(X) -> e + O2(a1Delta_g), O2(b1Sigma_g+)",
+   "solver": "CONFIGURABLE (lumped excitation, headers 0.98 / 1.63 eV)",
+   "source": "to acquire: Huang, Zhang & Cheng, J. Phys. Chem. A 126, 2061 (2022) (recommended R-matrix; paywalled); Tashiro, Morokuma & Tennyson, PRA 73, 052707 (2006) (arXiv open; host blocked, not in the repository); extension above 20 eV: owner OD-6",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "1",
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "HA-O2-EXC-02",
+   "block": "O2",
+   "reaction": "e + O2(X) -> e + O2(c1Sigma_u-, A'3Delta_u, A3Sigma_u+) (Herzberg)",
+   "solver": "CONFIGURABLE (lumped excitation)",
+   "source": "to acquire: Huang 2022; Tashiro 2006; Teillet-Billy et al. 1989 (measured sum)",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "1",
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "HA-O2-EXC-03",
+   "block": "O2",
+   "reaction": "e + O2(X) -> e + O2(B3Sigma_u-) (Schumann-Runge) and higher",
+   "solver": "CONFIGURABLE (lumped excitation)",
+   "source": "to acquire: Huang 2022; Shyn et al. 1994 (paywalled)",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "2",
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "HA-O2-VIB-01",
+   "block": "O2",
+   "reaction": "e + O2(v=0) -> e + O2(v_f)",
+   "solver": "CONFIGURABLE (lumped excitation per v_f)",
+   "source": "to acquire: Laporta, Celiberto & Tennyson, PSST 22, 025001 (2013) (recommended; arXiv preprint open, host blocked, not in the repository)",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "2",
+   "status": "SOURCE_IDENTIFIED_TO_ACQUIRE"
+  },
+  {
+   "id": "HA-O2-ROT-01",
+   "block": "O2",
+   "reaction": "e + O2(N) -> e + O2(N')",
+   "solver": "CONFIGURABLE (lumped excitation)",
+   "source": "Born / Gerjuoy-Stein form, SONG2026 Eq. (1) with B0, Q0 (model only; parameters not transcribed in the repository)",
+   "repo": null,
+   "evidence": "model only",
+   "tier": "3",
+   "status": "SOURCE_IDENTIFIED_TO_ACQUIRE"
+  },
+  {
+   "id": "HA-O2-ATT-01",
+   "block": "O2",
+   "reaction": "e + O2 -> O(-) + O (dissociative attachment)",
+   "solver": "NOT REPRESENTABLE (L-04, L-05)",
+   "source": "M.-Y. Song, H. Cho, G. P. Karwasz, V. Kokoouline, J. Tennyson, K. Bartschat, 'Cross Sections for Electron Collisions with Molecular and Atomic Oxygen', J. Phys. Chem. Ref. Data 55, 013102 (2026), doi 10.1063/5.0287254; accepted manuscript (UCL Discovery, sha256 32d163a3af584ce48b672a4dd49d3eafa182ae234161773b1e9fa44376d9f88b, fetched 2026-09-27 by lane fo_o_o2_chemistry_v0); version of record and supplement NOT accessed; Table VIII (Rapp & Briglia 1965)",
+   "repo": {
+    "bound_table_v0": {
+     "path": "docs/chemistry/o_o2/v0/tables/attachment_O2_song2026.dat",
+     "sha256": "dd5841d5294935400bb4c7d08e4085ae7981ca1b35dc9e2338abd20ffa367149",
+     "source_file_sha256": "ae66ebfe900948e2e99a846cf92c1251921872f488220cf9f3063effb6ede344"
+    }
+   },
+   "evidence": "level 4; measured (evaluated), transcribed; zero tail above 9.9 eV assumed",
+   "uncertainty": "'no more than 20 %'",
+   "validity": "bound table (audit input only); zero tail",
+   "tier": "2",
+   "status": "IN_REPO_PENDING_VERSION_OF_RECORD (bound table)",
+   "metric": "F_e_loss (electron loss / electron production by ionization) and F_S(O2 destruction)"
+  },
+  {
+   "id": "HA-O2P-DIS-01",
+   "block": "ion",
+   "reaction": "e + O2(+) -> O(+) + O + e (dissociative excitation)",
+   "solver": "CONFIGURABLE (electron_impact on an ion reactant)",
+   "source": "to acquire: Cherkani-Hassani et al., J. Phys. B 39, 5105 (2006) (crossed beam; paywalled)",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "2",
+   "status": "SOURCE_IDENTIFIED_TO_ACQUIRE"
+  },
+  {
+   "id": "HA-N2P-DIS-01",
+   "block": "ion",
+   "reaction": "e + N2(+) -> N(+) + N + e (dissociative excitation)",
+   "solver": "CONFIGURABLE",
+   "source": "no source registered in the repository (verify whether Bahati et al. 2001 / Tabata et al. 2006 tabulate it)",
+   "repo": null,
+   "evidence": "none",
+   "tier": "3",
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "HA-DR-01",
+   "block": "recombination",
+   "reaction": "e + O2(+) -> O + O; e + N2(+) -> N + N (dissociative recombination)",
+   "solver": "NOT REPRESENTABLE (L-04)",
+   "source": "to acquire: Peverall et al. 2001 (O2+, paywalled); Peterson et al., J. Chem. Phys. 108, 1978 (1998) (N2+, verify)",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "2",
+   "status": "INCOMPLETE_EVIDENCE",
+   "metric": "F_e_loss, F_S(ion destruction)"
+  },
+  {
+   "id": "HA-REC-02",
+   "block": "recombination",
+   "reaction": "radiative and three-body recombination of O(+), N(+)",
+   "solver": "NOT REPRESENTABLE (L-04)",
+   "source": "none surveyed",
+   "repo": null,
+   "evidence": "none",
+   "tier": "3",
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "HA-IM-01",
+   "block": "heavy particle",
+   "reaction": "O(+) + N2 -> NO(+) + N; O(+) + O2 -> O2(+) + O; N2(+) + O -> NO(+) + N; N2(+) + O -> O(+) + N2; N2(+) + O2 -> O2(+) + N2; N(+) + O2 -> O2(+) + N / NO(+) + O / O(+) + NO; O2(+) + N -> NO(+) + O; O2(+) + N2 -> NO(+) + NO",
+   "solver": "NOT REPRESENTABLE (L-01)",
+   "source": "to acquire / verify: Anicich, JPL Publication 03-19 (2003); Kossyi et al., PSST 1, 207 (1992)",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "2",
+   "status": "INCOMPLETE_EVIDENCE",
+   "metric": "F_S(ion destruction / production), F_ion (charge transfer changes the ion mass, not the ion count)"
+  },
+  {
+   "id": "HA-HN-01",
+   "block": "heavy particle",
+   "reaction": "N + O2 -> NO + O; O + N2 -> NO + N; O + O + M -> O2 + M; N + N + M -> N2 + M",
+   "solver": "NOT REPRESENTABLE (L-01)",
+   "source": "to acquire / verify: Baulch et al., JPCRD 34, 757 (2005)",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "3",
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "HA-WALL-01",
+   "block": "surface",
+   "reaction": "X(+) + wall / anode -> parent neutral of the same gas (O2(+) -> O2, O(+) -> O, N2(+) -> N2, N(+), N(2+) -> N)",
+   "solver": "STRUCTURAL (C-05; dissociative branching not representable, L-03)",
+   "source": "solver structure",
+   "repo": null,
+   "evidence": "structural",
+   "tier": "1 (structural)",
+   "status": "IN_REPO_VERIFIED (structural; L-03 recorded)"
+  },
+  {
+   "id": "HA-WALL-02",
+   "block": "surface",
+   "reaction": "O + wall -> 1/2 O2 in the channel (probability gamma_O)",
+   "solver": "NOT REPRESENTABLE (L-02)",
+   "source": "physical bound gamma in [0, 1] (UE-02 envelope); channel wall material OPEN (BN-SiO2 is the solver's wall-sheath material only); sourced gamma only after a material selection",
+   "repo": null,
+   "evidence": "physical bound",
+   "tier": "2",
+   "status": "BOUND_EVALUABLE (physical envelope)",
+   "metric": "F_S(O destruction): wall flux n_O vbar_O / 4 x wall area per volume 2 / (r_out - r_in) over the channel (z <= L), gamma = 1 upper, 0 lower; vbar from the registered inlet temperature (500 K)"
+  },
+  {
+   "id": "HA-WALL-03",
+   "block": "surface",
+   "reaction": "N + wall -> 1/2 N2 in the channel (probability gamma_N)",
+   "solver": "NOT REPRESENTABLE (L-02)",
+   "source": "physical bound gamma in [0, 1]",
+   "repo": null,
+   "evidence": "physical bound",
+   "tier": "2",
+   "status": "BOUND_EVALUABLE (physical envelope)",
+   "metric": "F_S(N destruction), as HA-WALL-02"
+  },
+  {
+   "id": "HA-MS-01",
+   "block": "excited",
+   "reaction": "e + X* -> X(+) + 2e (stepwise ionization from O(1D), O(1S), O(5S), O2(a), O2(b), N2(A), N(2D), N(2P))",
+   "solver": "NOT CONFIGURED (excited states not tracked)",
+   "source": "to acquire (BSR-1116 metastable data; Huang 2022)",
+   "repo": null,
+   "evidence": "none in the repository",
+   "tier": "2",
+   "status": "INCOMPLETE_EVIDENCE"
+  },
+  {
+   "id": "HA-SUP-01",
+   "block": "excited",
+   "reaction": "superelastic e + N2(v>0) / O2(v>0) / X* -> e (gains energy)",
+   "solver": "NOT CONFIGURED (closure limitation inherited from abep-n2n-0.7)",
+   "source": "no state-resolved relaxation set registered",
+   "repo": null,
+   "evidence": "none",
+   "tier": "3",
+   "status": "INCOMPLETE_EVIDENCE"
+  }
+ ],
+ "process_status_vocabulary": {
+  "IN_REPO_VERIFIED": "data in the repository, sha256-pinned, provenance read, validity computed, Hall applicability checked",
+  "IN_REPO_PENDING_VERSION_OF_RECORD": "data transcribed in the repository from a citable accepted manuscript (SONG2026); buildable into the Hall set now; admission needs the version-of-record check (E2) or an owner acceptance of the accepted-manuscript values (OQ-HA-01)",
+  "SOURCE_IDENTIFIED_TO_ACQUIRE": "a published source is identified but its data are not in the repository",
+  "INCOMPLETE_EVIDENCE": "no usable published source in the repository over the domain, or a known gap the build cannot close without an owner decision",
+  "BOUND_EVALUABLE": "no rate needed: a physical bound gives the audit's upper and lower values"
+ },
+ "set_status_vocabulary": {
+  "INCOMPLETE_EVIDENCE": "a tier-1 process is missing or pending, a species bound is unresolved, an UNBOUNDED_OMISSION is undisposed or a verdict is provisional",
+  "NOT_REPRESENTABLE_IN_PINNED_SOLVER": "the audit promotes (lower bound > threshold) or keeps as an uncertainty variant (lower < threshold < upper) a process the pinned solver cannot represent (L-01..L-06); AIR Hall stays NOT_EVALUATED; options O-A..O-C of the capability audit (owner)",
+  "COMPLETE_FOR_PARAMETRIC_ENVELOPE": "admitted under AD-HA-01..07 for the NP-HALL-PARAMETRIC-ENVELOPE AIR family only; not a validation, not experimental confirmation, not general air-chemistry completeness"
+ },
+ "tiers": {
+  "1_required_as_configured_tables_before_final_verdicts": [
+   "HA-N2N-01 (N2/N tier-1 set)",
+   "HA-O-ION-01",
+   "HA-O-EL-01",
+   "HA-O-EXC-01",
+   "HA-O2-ION-01",
+   "HA-O2-DI-01",
+   "HA-O2-DIS-01 (including below 13.5 eV, or an admissible envelope)",
+   "HA-O2-EL-01",
+   "HA-O2-EXC-01",
+   "HA-O2-EXC-02",
+   "HA-WALL-01 (structural)"
+  ],
+  "2_assess_before_complete": [
+   "HA-O2-EXC-03",
+   "HA-O2-VIB-01",
+   "HA-O2-ATT-01",
+   "HA-O2P-DIS-01",
+   "HA-DR-01",
+   "HA-IM-01",
+   "HA-WALL-02",
+   "HA-WALL-03",
+   "HA-MS-01"
+  ],
+  "3_assessed_not_included_unless_a_bound_exceeds": [
+   "HA-N2N-R1",
+   "HA-N2N-R2",
+   "HA-N2N-R3",
+   "HA-O-EXC-02",
+   "HA-O-ION-02",
+   "HA-O-ION-03",
+   "HA-O2-DI-02",
+   "HA-O2-ION-02",
+   "HA-O2-ROT-01",
+   "HA-N2P-DIS-01",
+   "HA-REC-02",
+   "HA-HN-01",
+   "HA-SUP-01"
+  ]
+ },
+ "common_rules": {
+  "interpolation_extrapolation": [
+   "IX-01 tables are Maxwellian integrals of the registered cross-section representation on the HallThruster.jl grid (mean energy 0-300 eV, 1 eV step), written by the admitted Rust integrator (abep_chem::reference, contract C-ABEP_SIM_RATE_TABLES_PY) or byte-identical to an existing builder's output",
+   "IX-02 inside the tabulated range sigma is linearly interpolated",
+   "IX-03 below the first point sigma = 0, or a declared ramp from the cited threshold (DI convention); the choice is recorded in the .source",
+   "IX-04 above the last point a declared hold (or zero for a resonance bound table); the validity limit is the highest mean energy at which the held tail carries < 1 % of the Maxwellian rate, capped at 255 eV (rate_validity.toml convention)",
+   "IX-05 no silent extrapolation: DOM-AIR-01 / DOM-AIR-02",
+   "IX-06 variant members (O ionization BEB / Thompson, O2 DI upper / lower, N2 DI upper / lower, N elastic OPM / Wang) form unweighted scenario sets; never averaged, never narrowed"
+  ],
+  "conservation": [
+   "CV-01 every configured equation balances charge (solver check) and nuclei per element (Rust load check)",
+   "CV-02 the header energy of an ionizing / dissociating channel is >= the formation-energy change of its products (ground-state reference); excess fragment energy is not added and is recorded as energy-loss uncertainty (N2 DI convention)",
+   "CV-03 ion wall / anode neutralization returns the parent neutral (structural, L-03)"
+  ],
+  "evidence_class": "docs/EVIDENCE.md level 1-7 and quantity type per table; header energies from cited level or thermochemical data, inferred sums labelled"
+ },
+ "uncertainty_envelope_rule": [
+  "UE-01 no fabricated coefficient; a missing required quantity yields INCOMPLETE_EVIDENCE",
+  "UE-02 an envelope is admissible only when every bound is sourced or physical ([0, 1] probabilities, zero-vs-hold tails, published channel-ambiguity columns, Cosby-only lower member)",
+  "UE-03 envelope members are unweighted, never averaged and never narrowed",
+  "UE-04 an envelope never stands in for a tier-1 process with no sourced data (O momentum transfer, O excitation, O2 a / b / Herzberg excitation stay INCOMPLETE_EVIDENCE)",
+  "UE-05 stated source uncertainties are recorded per table; 'none stated' is NOT_STATED"
+ ],
+ "reuse_rule": [
+  "RU-01 repository data are reused only where provenance is valid, the domain matches and the process applies to the Hall air model (each reused process carries reuse_check)",
+  "RU-02 the N2 / N tables are referenced in place (../propellants/<file>), never copied or edited; their validity entries are mirrored and must equal the source entry",
+  "RU-03 the O / O2 v0 DRAFT tables (docs/chemistry/o_o2/v0/) stay immutable; the Hall set holds its own copies, each byte-identical to the v0 table it is rebuilt from (or copied from, for the NIST tables whose raw source is not committed), with the v0 sha256 recorded",
+  "RU-04 no value from abep_sim/plasma_chem.py or abep_sim/aochem.py is used"
+ ],
+ "completeness_audit": {
+  "id": "CA-HALL-AIR-v1",
+  "metrics": {
+   "F_P": "k_omit dE_omit n_t,omit / sum_j k_j dE_j n_t,j: share of total electron inelastic power (frozen N2 definition)",
+   "F_ion": "nu_ions,omit k_omit n_t,omit / sum_j nu_ions,j k_j n_t,j: share of total positive-ion production (frozen N2 definition)",
+   "F_S_s": "share of the production or destruction of modeled species s due to the omitted channel (frozen N2 definition; extended to surface and heavy-particle channels)",
+   "F_e_loss": "electron loss by the omitted channel / electron production by ionization (added for attachment and recombination; threshold copied from F_ion, as NP-ICP-CHEM-AIR)"
+  },
+  "thresholds": {
+   "F_P": 0.01,
+   "F_ion": 0.01,
+   "F_S_s": 0.05,
+   "F_e_loss": 0.01
+  },
+  "threshold_basis": "F_P, F_ion, F_S_s copied from hallthruster_bridge/prereg/n2_completeness_audit_v1.json; F_e_loss copies the F_ion value; no rate or Hall result was consulted",
+  "rule": "promote an omitted process if any metric exceeds its threshold anywhere in its domain over the evaluated states",
+  "ambiguity_rule": "adopted verbatim from n2_completeness_audit_v1_addendum1_ambiguity: U < T -> EXCLUDE; L > T -> PROMOTE (nominal); L < T < U -> PROMOTE AS AN UNCERTAINTY VARIANT; bounds over every evaluated nuisance choice (operating point, composition corner, transport candidate, chemistry configuration)",
+  "cross_check_rule": "adopted verbatim from n2_completeness_audit_v1_addendum2_crosscheck",
+  "not_representable_rule": "a process the pinned solver cannot represent (solver field NOT REPRESENTABLE / NOT CONFIGURED for lack of a link) whose verdict is PROMOTE or UNCERTAINTY VARIANT makes the set NOT_REPRESENTABLE_IN_PINNED_SOLVER",
+  "unbounded_rule": "a tier-2 / tier-3 process with no evaluable bound is UNBOUNDED_OMISSION and blocks completeness unless the owner disposes it explicitly (OQ-HA-06)",
+  "denominators": "the best available configured set; any verdict before every tier-1 process is configured is PROVISIONAL and is repeated once they exist (today every verdict would be PROVISIONAL: HA-O-EL-01, HA-O-EXC-01, HA-O2-EXC-01/02 are missing)",
+  "state_basis": {
+   "kind": "blind HallThruster.jl state envelope (precedent: hallthruster_bridge/checks/blind_state_envelope.jl); no thrust, I_d, efficiency or closure quantity is computed or used",
+   "geometry": "G-RP1 (RP-1 anchor, NP-HALL-PARAMETRIC-ENVELOPE v1 case_grid; not a selection)",
+   "bz_shape": "BZ-P5B16 (v1 registration rule)",
+   "B_peak": [
+    "BP-LO",
+    "BP-HI"
+   ],
+   "V_d": [
+    "VD-180",
+    "VD-350"
+   ],
+   "mdot": [
+    "MF-LO",
+    "MF-HI"
+   ],
+   "composition": [
+    "CP-YLO-REC",
+    "CP-YLO-DIS",
+    "CP-YHI-REC",
+    "CP-YHI-DIS"
+   ],
+   "transport": "the nine screening candidates sgb-screen-01..09 as recorded",
+   "chemistry": [
+    "AIR-NOM (nominal members)",
+    "AIR-ALT (O ionization Thompson, O2 DI lower, N2 DI lower, N elastic Wang)"
+   ],
+   "numerics": "the v1 envelope rule (0.5 mm cells, dt 5 ns, duration 2 ms x max(1, domain / 0.1 m), averaging over the second half), vacuum, ion_wall_losses = false",
+   "n_runs": 576,
+   "eligible_runs": "converged, finite and in domain (DOM-AIR-01, DOM-AIR-02); others are recorded with their status and excluded from the bounds; a composition corner with no eligible run makes every verdict NOT_EVALUABLE",
+   "snapshots": "the envelope reads sha256-pinned snapshot configurations (hallthruster_bridge/audit_air/configs/MANIFEST.json); an assessed process is never in the configuration that generates the state",
+   "status_today": "PREPARED_NOT_RUN (no Julia in this container)"
+  },
+  "recording": "one row per process: criterion, lower / nominal / upper, worst case and where, nuisance sensitivity, verdict; literal application; written under hallthruster_bridge/audit_air/",
+  "independence": "no fit quality, thrust, current, closure or validation outcome decides a verdict"
+ },
+ "admission_criteria": {
+  "meaning": "software / evidence admission of the reaction set for the NP-HALL-PARAMETRIC-ENVELOPE AIR family; NOT a validation claim; AIR Hall results stay PARAMETRIC / NOT_VALIDATED; the credible transport set and HallMap admission are unaffected",
+  "label_status": "COMPLETE_FOR_PARAMETRIC_ENVELOPE",
+  "requirements": [
+   "AD-HA-01 this preregistration and its lock committed",
+   "AD-HA-02 every tier-1 process configured in the AIR nominal configuration with a verified validity entry; SONG2026-derived tables version-of-record checked, or the owner's acceptance of the accepted-manuscript values recorded (OQ-HA-01)",
+   "AD-HA-03 atomic O has its own ionization (HA-O-ION-01), momentum-transfer (HA-O-EL-01) and electronic-excitation (HA-O-EXC-01) tables; no O-target process points to non-O data",
+   "AD-HA-04 final (non-provisional) CA-HALL-AIR verdicts for every tier-2 and tier-3 process on the complete tier-1 denominator; no undisposed UNBOUNDED_OMISSION; no NOT_REPRESENTABLE_IN_PINNED_SOLVER outcome",
+   "AD-HA-05 SB-NO resolved; SB-He and SB-Ar resolved or carried as state-resolved INCOMPLETE_EVIDENCE with the owner's acceptance",
+   "AD-HA-06 the label abep-air-0.x carries status COMPLETE_FOR_PARAMETRIC_ENVELOPE in AIR_PINNED.toml with a history line; variants registered",
+   "AD-HA-07 the Rust validators pass under cargo test --workspace --locked"
+  ],
+  "today": "NOT ADMITTED: INCOMPLETE_EVIDENCE (tier-1 gaps HA-O-EL-01, HA-O-EXC-01, HA-O2-EXC-01, HA-O2-EXC-02, HA-O2-DIS-01 below 13.5 eV; SONG2026 version-of-record check; SB-NO, SB-He, SB-Ar; audit PREPARED_NOT_RUN)"
+ },
+ "build_plan": {
+  "location": "hallthruster_bridge/propellants_air/ (new): AIR_PINNED.toml (labels, status, history, file pins), rate_validity.toml (one entry per file used, mirrored entries for the referenced N2 / N tables keyed ../propellants/<file>), PROVENANCE.md, xs/ (cross-section representations of rebuilt tables), the tables and their .source files, air_nominal.toml and air_alt.toml; hallthruster_bridge/audit_air/ (snapshot configurations + MANIFEST, bound tables, the Julia state-envelope script, a local run script)",
+  "why_not_propellants": "propellants/rate_validity.toml, n2_n.toml and PINNED.toml are pinned by config/model_set/physics_model_set_v1.json, the NP-HALL-PARAMETRIC-ENVELOPE v1 preregistration and the P5-N2 records; abep-n2n-0.11 is frozen; the bridge reads rate_validity.toml from each case's rate_dir, so a separate directory needs no bridge change",
+  "per_table": "one table per commit where practical: representation (xs/*.json) or copy record, .dat, .source, rate_validity.toml entry, PROVENANCE row, configuration line, AIR_PINNED label bump with a history line, and a Rust test pinning its sha256 and validity",
+  "rust": "additive: abep-hall module for the AIR set (label / configuration / validity / provenance loader, conservation and O-target guards, Hall-isolation pins) and an abep-chem example that renders the tables from xs/ with the admitted integrator",
+  "audit": "Julia script + local run script + Rust verdict reader; marked PREPARED_NOT_RUN",
+  "air_family": "a new NP-HALL-PARAMETRIC-ENVELOPE addendum (never an edit of v1) adds the AIR family; committed with its lock before any AIR run; its case set is generated by Rust byte-reproducibly; its launch manifest is generated only when this set is COMPLETE_FOR_PARAMETRIC_ENVELOPE"
+ },
+ "sources_not_reachable": [
+  {
+   "source": "Tayal & Zatsarinny, PRA 94, 042707 (2016) (BSR-1116 O data) and supplement",
+   "needed_for": "HA-O-EL-01, HA-O-EXC-01, HA-MS-01",
+   "why": "paywalled; author manuscript 403 (source matrix)"
+  },
+  {
+   "source": "Itikawa & Ichimura, JPCRD 19, 637 (1990) (NIST open reprint)",
+   "needed_for": "HA-O-EL-01 (alternative), HA-O-EXC-02; verify of 48.77 eV",
+   "why": "srd.nist.gov blocked by the network policy here; the PDF is not in the repository"
+  },
+  {
+   "source": "Laher & Gilmore, JPCRD 19, 277 (1990) (NIST open reprint)",
+   "needed_for": "HA-O-EXC-01 (open route), HA-O-ION-02",
+   "why": "srd.nist.gov blocked; not in the repository"
+  },
+  {
+   "source": "Bell et al., JPCRD 12, 891 (1983) O II row (NIST open reprint)",
+   "needed_for": "HA-O-ION-03 and the O(2+) link (L-06)",
+   "why": "srd.nist.gov blocked; only the N rows are transcribed in the repository"
+  },
+  {
+   "source": "SONG2026 version of record and supplement",
+   "needed_for": "E2 check of HA-O2-ION-01, HA-O2-DI-01, HA-O2-DIS-01, HA-O2-EL-01, HA-O2-ATT-01, HA-O2-DI-02",
+   "why": "pubs.aip.org blocked; not accessed"
+  },
+  {
+   "source": "Huang, Zhang & Cheng, J. Phys. Chem. A 126, 2061 (2022)",
+   "needed_for": "HA-O2-EXC-01/02/03",
+   "why": "paywalled"
+  },
+  {
+   "source": "Tashiro, Morokuma & Tennyson, PRA 73, 052707 (2006) (arXiv:physics/0604098)",
+   "needed_for": "HA-O2-EXC-01/02 (open route)",
+   "why": "arxiv.org blocked here; not in the repository"
+  },
+  {
+   "source": "Laporta, Celiberto & Tennyson, PSST 22, 025001 (2013) (arXiv preprint)",
+   "needed_for": "HA-O2-VIB-01",
+   "why": "arxiv.org blocked here; not in the repository"
+  },
+  {
+   "source": "Cherkani-Hassani et al., J. Phys. B 39, 5105 (2006)",
+   "needed_for": "HA-O2P-DIS-01",
+   "why": "paywalled"
+  },
+  {
+   "source": "Peverall et al. 2001; Peterson et al. 1998 (verify)",
+   "needed_for": "HA-DR-01",
+   "why": "paywalled / not verified"
+  },
+  {
+   "source": "Anicich, JPL Publication 03-19 (2003); Kossyi et al. 1992 (verify)",
+   "needed_for": "HA-IM-01",
+   "why": "not in the repository; hosts blocked"
+  },
+  {
+   "source": "Baulch et al., JPCRD 34, 757 (2005) (verify)",
+   "needed_for": "HA-HN-01",
+   "why": "not in the repository"
+  },
+  {
+   "source": "NIST SRD 107 NO, He, Ar entries; Itikawa JPCRD 45, 033106 (2016)",
+   "needed_for": "SB-NO, SB-He, SB-Ar",
+   "why": "physics.nist.gov blocked; not in the repository"
+  },
+  {
+   "source": "Thompson, Shah & Gilbody 1995 (double ionization)",
+   "needed_for": "HA-O-ION-02",
+   "why": "paywalled"
+  }
+ ],
+ "verify_items": [
+  {
+   "id": "VER-HA-01",
+   "item": "O2+(X) threshold 12.2 eV as read from the SONG2026 text layer (v0 header)",
+   "used_by": "HA-O2-ION-01"
+  },
+  {
+   "id": "VER-HA-02",
+   "item": "O^2+ 48.77 eV above O ground (OCR text layer of Itikawa & Ichimura 1990 Table 2.1)",
+   "used_by": "HA-O2-DI-02"
+  },
+  {
+   "id": "VER-HA-03",
+   "item": "whether the NIST SRD 107 Thompson column is the O+ partial or the counting total",
+   "used_by": "HA-O-ION-01 variant"
+  },
+  {
+   "id": "VER-HA-04",
+   "item": "IE(NO) 9.26 eV (memory, as in NP-ICP-CHEM-AIR VER-CHEM-11)",
+   "used_by": "SB-NO"
+  },
+  {
+   "id": "VER-HA-05",
+   "item": "the passive gas path (intake, filter, compressor, plenum, valve) does not dissociate O2 or N2 at its wall temperatures (physical argument, no source registered)",
+   "used_by": "CE-02"
+  },
+  {
+   "id": "VER-HA-06",
+   "item": "HallThruster.jl element masses (O 15.999, N 14.007) agree with standard atomic weights",
+   "used_by": "composition mass fractions"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "OQ-HA-01",
+   "question": "SONG2026 tables come from the accepted manuscript; the version of record was not accessed. Require the version-of-record check through fo_closed_access_acquisition before admission (drafted), or accept the accepted-manuscript values?",
+   "blocks": "AD-HA-02"
+  },
+  {
+   "id": "OQ-HA-02",
+   "question": "O ionization nominal: BEB (Kim & Desclaux 2002, the same model and route as the in-use N ionization; drafted) or Thompson 1995 (measured, recommended by SONG2026)? Both are carried as an unweighted pair.",
+   "blocks": "nominal choice only"
+  },
+  {
+   "id": "OQ-HA-03",
+   "question": "Species bounds: accept SB-He / SB-Ar as state-resolved INCOMPLETE_EVIDENCE and SB-NO as blocking every AIR state until an NO ionization bound exists (drafted, as NP-ICP-CHEM-AIR OQ-CHEM-01 / -02), or rule otherwise?",
+   "blocks": "AD-HA-05"
+  },
+  {
+   "id": "OQ-HA-04",
+   "question": "Composition: accept the delivered-envelope rule (element ratio at the free-stream value; dissociation between fully recombined and the free-stream value; four hull corners) with evidence condition EC-COMP, until a delivered composition is registered?",
+   "blocks": "the AIR family case set"
+  },
+  {
+   "id": "OQ-HA-05",
+   "question": "Lawful acquisition (fo_closed_access_acquisition or an owner-supplied file, as Johnson 2005 was) of the tier-1 sources: BSR-1116 or Laher & Gilmore 1990 (O excitation), BSR-1116 / Itikawa & Ichimura 1990 (O momentum transfer), Huang 2022 or Tashiro 2006 (O2 a, b, Herzberg), plus Bell 1983 O II, Laporta 2013, NIST NO / He / Ar.",
+   "blocks": "every tier-1 gap"
+  },
+  {
+   "id": "OQ-HA-06",
+   "question": "Disposition of processes with no evaluable bound (UNBOUNDED_OMISSION: heavy-particle chemistry, dissociative recombination, metastable stepwise ionization, ...): block admission (drafted) or accept as recorded omissions?",
+   "blocks": "AD-HA-04"
+  },
+  {
+   "id": "OQ-HA-07",
+   "question": "Label: abep-air-0.x for the Hall set (drafted), separate from abep-icp-air-0.x and the earlier proposed abep-oo2-0.x; the O / O2 tables built here may later be referenced by the ICP registry. Confirm.",
+   "blocks": "naming only"
+  }
+ ],
+ "repository_conflicts": [
+  {
+   "id": "CONF-HA-01",
+   "where": "CLAUDE.md next-work item 4 ('Only if 1-3 succeed: O2/O chemistry'; A9.30 note limits O/O2 to the ICP)",
+   "against": "this contract",
+   "handling": "A9.33 Q2 authorizes the narrow Hall O / O2 contract (recorder note: it does not reopen the P5 campaign, plasma_chem.py, the credible-set rule or HallMap admission)"
+  },
+  {
+   "id": "CONF-HA-02",
+   "where": "docs/chemistry/o_o2/o_o2_completeness_prereg_DRAFT.json (DRAFT_PENDING_OWNER, 'freeze under hallthruster_bridge/prereg/')",
+   "against": "this contract reuses its thresholds and tiers",
+   "handling": "the DRAFT is not frozen or changed; this contract is the Hall air rule"
+  },
+  {
+   "id": "CONF-HA-03",
+   "where": "docs/chemistry/o_o2/v0/README.md ('moving a table into hallthruster_bridge/propellants/ is a later owner-approved model change')",
+   "against": "the Hall set holds O / O2 tables",
+   "handling": "A9.33 Q2 is that authorization; the tables go to a separate directory under a separate label; v0 stays immutable"
+  },
+  {
+   "id": "CONF-HA-04",
+   "where": "hallthruster_bridge/bridge_lib.jl run_case feeds N2 only (L-07); the file is pinned by NP-HALL-PARAMETRIC-ENVELOPE v1",
+   "against": "a multi-species feed",
+   "handling": "additive driver function in a new file; bridge_lib.jl unchanged"
+  },
+  {
+   "id": "CONF-HA-05",
+   "where": "NP-ICP-CHEM-AIR OQ-CHEM-06 (proposed Hall label abep-oo2-0.x)",
+   "against": "abep-air-0.x",
+   "handling": "OQ-HA-07"
+  },
+  {
+   "id": "CONF-HA-06",
+   "where": "NP-HALL-PARAMETRIC-ENVELOPE v1 (AIR layer (a) NOT_EVALUATED; N2_PROXY diagnostic only)",
+   "against": "an AIR family",
+   "handling": "a new addendum; v1 and its case file stay unchanged"
+  }
+ ],
+ "references": [
+  "M.-Y. Song, H. Cho, G. P. Karwasz, V. Kokoouline, J. Tennyson, K. Bartschat, 'Cross Sections for Electron Collisions with Molecular and Atomic Oxygen', J. Phys. Chem. Ref. Data 55, 013102 (2026), doi 10.1063/5.0287254; accepted manuscript (UCL Discovery, sha256 32d163a3af584ce48b672a4dd49d3eafa182ae234161773b1e9fa44376d9f88b, fetched 2026-09-27 by lane fo_o_o2_chemistry_v0); version of record and supplement NOT accessed",
+  "Song et al., J. Phys. Chem. Ref. Data 52, 023104 (2023) (N2; registered)",
+  "Kim & Desclaux, Phys. Rev. A 66, 012708 (2002) via NIST SRD 107",
+  "Thompson, Shah & Gilbody, J. Phys. B 28, 1321 (1995) via NIST SRD 107",
+  "Itikawa & Ichimura, JPCRD 19, 637 (1990); Laher & Gilmore, JPCRD 19, 277 (1990); Bell et al., JPCRD 12, 891 (1983)",
+  "Tayal & Zatsarinny, PRA 94, 042707 (2016); Huang, Zhang & Cheng, J. Phys. Chem. A 126, 2061 (2022); Tashiro et al., PRA 73, 052707 (2006); Laporta et al., PSST 22, 025001 (2013)",
+  "Rapp & Briglia, J. Chem. Phys. 43, 1480 (1965) via SONG2026 Table VIII; Cosby, J. Chem. Phys. 98, 9560 (1993) via SONG2026 Table VI",
+  "HallThruster.jl v0.23.1 (Marks et al.), commit bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5"
+ ]
+}

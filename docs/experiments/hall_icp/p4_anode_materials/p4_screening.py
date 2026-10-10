@@ -11,6 +11,10 @@ Rules implemented here (owner A9.2 sec. 3-4, A9.6 sec. 10, owner rows 86/87/106)
     T_operating is a quantity record in K with evidence class and source; while ANODE_THERMAL_CLOSURE (anode) or
     ICP_COUPLED_THERMAL (collector) is UNRESOLVED (or any other status) the gate is INCOMPLETE_EVIDENCE whatever numbers
     are supplied;
+  * a T_validated_continuous property is gate-admissible only at validation stage 2 or 3 (A9.12 P4-OQ-01, A9.16
+    step 1): a stage-1 coupon-supported provisional limit, a melting point or a supplier rating never closes CR-01;
+    the stage is proven by a referenced stage record (id + sha256) that p4_a9_16_rules.validation_stage_record
+    classifies to that stage, material and limit - a bare declaration is INCOMPLETE_EVIDENCE (A9.16 repair COR-06);
   * non-finite numbers are never evidence; applicability domains are non-empty lists of strings;
   * a satisfied gate is reported as GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN, never PASS; a candidate whose gates are all
     satisfied is NOT_SCREENED_OUT, never SELECTED;
@@ -42,6 +46,68 @@ RESOLVED_THERMAL_STATUSES = ("CLOSED_BY_EVIDENCE",)
 T_OPERATING_FIELDS = ("value_si", "unit_si", "evidence_class", "source")
 T_OPERATING_EVIDENCE_CLASSES = ("measured", "model-derived")
 FINAL_MATERIAL_STATUS = "OPEN"
+# A9.12 S5.10 P4-OQ-01 (A9.16 step 1): a T_validated_continuous record is gate-admissible only at validation stage 2
+# (integrated replaceable anode / collector confirmation on the H-1 / ICP article) or stage 3 (qualification / life);
+# a stage-1 coupon-supported provisional limit is design screening only (same strings as p4_a9_16_rules.STAGES)
+T_VALIDATED_PROPERTY = "T_validated_continuous"
+T_VALIDATED_GATE_STAGES = ("STAGE_2_INTEGRATED_REPLACEABLE_COMPONENT_CONFIRMATION",
+                           "STAGE_3_QUALIFICATION_LIFE_EVIDENCE")
+# A9.16 repair COR-06: a declared validation_stage string is not evidence. The property must reference its stage
+# record (validation_stage_record_id + validation_stage_record_sha256 = canonical sha256 of the attached
+# validation_stage_record), and that record must classify under p4_a9_16_rules.validation_stage_record (stage-1 record
+# linked, down-selected, replaceable H-1 / ICP configuration, ...) to the declared stage, material and limit value.
+T_VALIDATED_RECORD_KEYS = ("validation_stage_record", "validation_stage_record_id", "validation_stage_record_sha256")
+_STAGE_RULES = None
+
+
+def _stage_rules():
+    """p4_a9_16_rules (sibling module; it imports nothing from this module, so no cycle)."""
+    global _STAGE_RULES
+    if _STAGE_RULES is None:
+        import importlib.util
+        import os
+        p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "p4_a9_16_rules.py")
+        spec = importlib.util.spec_from_file_location("p4_a9_16_rules_for_screening", p)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _STAGE_RULES = mod
+    return _STAGE_RULES
+
+
+def stage_record_sha256(rec):
+    """Canonical sha256 of a validation-stage record (sorted keys, compact separators, UTF-8)."""
+    import hashlib
+    import json
+    return hashlib.sha256(json.dumps(rec, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+                          .encode("utf-8")).hexdigest()
+
+
+def t_validated_stage_refusal(prop):
+    """None when the T_validated_continuous property is backed by a classified stage-2 / stage-3 record; otherwise
+    the INCOMPLETE_EVIDENCE reason (fail closed: a bare stage declaration never passes)."""
+    miss = [k for k in T_VALIDATED_RECORD_KEYS if not prop.get(k)]
+    if miss:
+        return (f"property {prop['id']}: no validation-stage record reference ({', '.join(miss)} missing) - a declared "
+                f"validation_stage {prop.get('validation_stage')!r} alone is not evidence (A9.12 P4-OQ-01)")
+    rec = prop["validation_stage_record"]
+    if not isinstance(rec, dict) or stage_record_sha256(rec) != prop["validation_stage_record_sha256"]:
+        return f"property {prop['id']}: validation-stage record sha256 does not match the referenced record"
+    R = _stage_rules()
+    try:
+        c = R.validation_stage_record(rec)
+    except R.RuleRefusal as e:
+        return f"property {prop['id']}: validation-stage record {prop['validation_stage_record_id']} refused ({e.code})"
+    if c["stage"] not in T_VALIDATED_GATE_STAGES:
+        return (f"property {prop['id']}: record {prop['validation_stage_record_id']} classifies as {c['stage']} - only "
+                "stage 2 (integrated replaceable-component confirmation) or later gives T_validated,continuous "
+                "(A9.12 P4-OQ-01); stage 1 is screening only")
+    if prop.get("validation_stage") != c["stage"]:
+        return f"property {prop['id']}: declared stage {prop.get('validation_stage')!r} != record stage {c['stage']}"
+    if prop.get("material") is not None and prop["material"] != c["material"]:
+        return f"property {prop['id']}: material {prop['material']!r} != stage-record material {c['material']!r}"
+    if prop["value_si"] != c["T_limit_K"]:
+        return f"property {prop['id']}: value {prop['value_si']} K != stage-record limit {c['T_limit_K']} K"
+    return None
 PARETO_LABEL = "INFORMATIONAL_NOT_A_SELECTION"
 NOT_COMPARABLE = "NOT_COMPARABLE_INCOMPLETE_EVIDENCE"
 
@@ -155,6 +221,14 @@ def evaluate_gate(req, prop, thermal_closure_status=None, operating_temperature=
                                                                                       f"property {prop['id']}"):
         return "OUT_OF_DOMAIN", (f"property domain {sorted(prop['domain'])} does not cover requirement domain "
                                  f"{sorted(req['domain'])}")
+    if prop["property"] == T_VALIDATED_PROPERTY and prop.get("validation_stage") not in T_VALIDATED_GATE_STAGES:
+        return "INCOMPLETE_EVIDENCE", (f"property {prop['id']}: validation stage {prop.get('validation_stage')!r} - only "
+                                       "stage 2 (integrated replaceable-component confirmation) or later gives "
+                                       "T_validated,continuous (A9.12 P4-OQ-01); stage 1 is screening only")
+    if prop["property"] == T_VALIDATED_PROPERTY:
+        why = t_validated_stage_refusal(prop)
+        if why is not None:
+            return "INCOMPLETE_EVIDENCE", why
     if req["kind"] == "min_with_margin":
         if thermal_closure_status is None:
             raise ScreeningError(f"gate {req['id']}: thermal closure status must be supplied (no default)")

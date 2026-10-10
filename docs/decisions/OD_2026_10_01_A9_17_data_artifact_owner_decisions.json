@@ -1,0 +1,57 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_17_data_artifact_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "A9_17_DATA_ARTIFACT_DECISIONS_RECORDED",
+ "applies_to": "abep_sim/atmosphere_orbit.py + atmosphere_msis21_orbit_v1 (A9.16 ATM lane), docs/evidence/sputter_yields_v1, docs/requirements/rfp_official, F0 performance baseline (A9.14 S10.2)",
+ "parents": [
+  "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+  "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+  "sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13"
+ },
+ "decisions": {
+  "WINDS": {
+   "answer": "AUTHORIZE_HWM14_ATMOSPHERE_V2_KEEP_V1_IMMUTABLE",
+   "summary": "build atmosphere v2 with HWM14 neutral winds; carry both the Earth-corotating and the HWM14-corrected relative-flow result; record HWM14 version, Ap input, date/time, coordinates and provenance; v1 never overwritten; v2 is a design-envelope/parametric dataset until the real orbit is registered"
+  },
+  "ORBIT": {
+   "answer": "ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD",
+   "summary": "96.3 deg / dawn-dusk stays CODE_DEFAULT / PARAMETRIC, never a requirement input; envelope stays broad until DRDO / spacecraft ICD / PDR mission definition supplies inclination and LTAN; then a new dataset version"
+  },
+  "DATA_SIZE": {
+   "answer": "KEEP_DATA_ARTIFACT_EXCLUDE_FROM_INSTALL_WHERE_POSSIBLE",
+   "summary": "keep the frozen dataset as repository evidence (one canonical compressed copy, builder, manifest, sha256); not packaged in the installed wheel unless runtime code genuinely needs it; immutable external artifact if versions start bloating history"
+  },
+  "SPUTTER": {
+   "answer": "FREEZE_SPUTTER_SCREEN_1_10_AND_1_25_PROSPECTIVELY",
+   "summary": "E_screen = 1.10 x E_threshold and F_worst = 1.25 frozen now as owner-defined screening guardbands; the earlier results are not pre-registered evidence; regenerate the register from unchanged source data; screening/down-selection only, never P4 acceptance/lifetime/qualification (S5.12 governs); no later adjustment"
+  },
+  "RFP": {
+   "answer": "RFP_HASH_PROVENANCE_IN_PUBLIC_REPO_PDF_CONTROLLED_EXTERNALLY",
+   "summary": "official RFP is the authoritative requirement source; the public repository carries the provenance record (document identity, filename, retrieval source and date, sha256, page count, requirement extraction, RVM mapping); the PDF stays in the controlled project evidence store"
+  },
+  "PERF": {
+   "answer": "RUN_DEDICATED_PERFORMANCE_BASELINE_NOW",
+   "summary": "dedicated baseline on the owner's remote-control machine with nothing else CPU-intensive running, before/after machine metadata; it becomes the Rust performance-admission baseline; A9.7 shared-CPU numbers are historical only; S10.1 thresholds never changed after seeing the result"
+  }
+ },
+ "owner_supplied_values": {
+  "E_screen_factor": 1.1,
+  "F_worst": 1.25
+ },
+ "sequencing": [
+  "register these decisions",
+  "rebuild the atmosphere / sputter artifacts under the frozen rules",
+  "run the dedicated performance baseline",
+  "only then use those results for architecture or Rust-admission decisions"
+ ],
+ "execution": {
+  "instruction": "apply now (A9.17 workflow); dedicated baseline run by the owner's remote-control session",
+  "merge": "no merge to main is authorized by this addendum"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

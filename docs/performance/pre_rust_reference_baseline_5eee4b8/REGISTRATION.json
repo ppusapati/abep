@@ -1,0 +1,63 @@
+{
+ "schema": "pre_rust_reference_baseline_registration_v1",
+ "status": "PRE_RUST_REFERENCE_BASELINE",
+ "authority": {
+  "A9.24 item 6": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+  "A9.25 message 8 section 17 / message 2 section 14": "docs/decisions/OD_2026_10_04_A9_25_PRE_BID_OWNER_DECISIONS.md"
+ },
+ "source": {
+  "technical_source_commit": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b",
+  "checkout": "clean detached git worktree of exactly that commit (git_status_clean true before and after)",
+  "bid_package_commit": "b5849affae22a6709ad217a184f6fe896d15410a (pins the same technical source)"
+ },
+ "command": "OMP_NUM_THREADS=MKL_NUM_THREADS=OPENBLAS_NUM_THREADS=NUMEXPR_NUM_THREADS=1 MPLBACKEND=Agg python scripts/perf/profile_baseline.py --out-json <new folder>/baseline.json --out-md <new folder>/baseline.md (full mode, same workloads as the F0 / dedicated baselines; wrapped for wall / CPU / RSS and 15 s load / memory sampling)",
+ "run": {
+  "start_utc": "2026-10-05T04:53:28Z",
+  "end_utc": "2026-10-05T04:57:55Z",
+  "wall_s": 267.36,
+  "child_cpu_user_s": 262.49,
+  "child_cpu_sys_s": 3.83,
+  "peak_rss_kB": 297372,
+  "exit_code": 0,
+  "harness_total_wall_s": 266.2
+ },
+ "machine": {
+  "cpu": {
+   "model": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+   "logical_cpus": 4
+  },
+  "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+  "python": "3.11.15 (main, Mar  3 2026, 09:26:23) [GCC 13.3.0]",
+  "packages": {
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "matplotlib": "3.10.8",
+   "pymsis": "0.13.0",
+   "jsonschema": "4.26.0",
+   "zstandard": "0.25.0"
+  },
+  "thread_env": {
+   "OMP_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "NUMEXPR_NUM_THREADS": "1"
+  },
+  "kind": "Claude Code cloud execution container (fresh, otherwise idle; load ~1.0 = the single-threaded run itself)",
+  "comparability": "DIFFERENT_MACHINE from the 2026-10-01 dedicated baseline (owner Windows 11 i7-11700K, Python 3.13): absolute timings are not directly comparable; use this baseline's own relative ranking to order migration; the owner may repeat the identical command on the dedicated machine at 5eee4b8 into another new folder"
+ },
+ "files_sha256": {
+  "baseline.json": "23714fe933a57e396f95f6054b796f9a2a22b65897cf1f2c96d765995169ab63",
+  "baseline.md": "f1752816667f6ac91b50a7b6c6fd37d8c8b0a905abeb3641d861fe9a80262bc8",
+  "machine_before.json": "89317f3da1381fa8c9fdf63bc8417580d88f10393b68e05092c2791a6dce6fc2",
+  "machine_after.json": "4bc0fd2f0dba5bea9693d9c29edce3aafb203e89bb69ad80dea8c74581c1b8dc",
+  "resources.json": "15cb655fb80a9245e1d61fca0822e3d2b5bb72c84d18fedcad87b13f727f76b2"
+ },
+ "previous_baselines": "unchanged (docs/performance/PERFORMANCE_BASELINE_98fbbb9.*, docs/performance/dedicated_baseline_2026_10_01/**)",
+ "use": "orders the Rust migration (A9.24 item 6: profiling ORDERS, never gates; all active Python is scheduled for retirement). Several profiled workloads exercise legacy / historical paths (archengine close_architecture with card cathodes, uq_modular legacy UQ, uq6, the superseded 0-D Hall closure inside system evaluation): they are timed for continuity only and are NOT port targets under the owner four-class rule (LaB6 / conventional hollow-cathode and historical multi-family paths are not ported; only architecture-independent kernels retained by hall_icp_neutralizer are extracted)",
+ "what_this_is_not": [
+  "not physics evidence",
+  "not a verification of any requirement",
+  "timings are software runtime on the recorded machine only"
+ ]
+}

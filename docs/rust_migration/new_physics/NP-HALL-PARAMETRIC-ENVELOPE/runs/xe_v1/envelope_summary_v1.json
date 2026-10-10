@@ -1,0 +1,459 @@
+{
+ "schema": "abep_assess_hall_parametric_envelope_summary_v1",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "layer": "PARAMETRIC / NOT_VALIDATED",
+ "status_label": "PARAMETRIC / NOT_VALIDATED: raw envelope quantities, not a classification",
+ "manifest_sha256": "b9efec88fad40dcb34b3e600502ac5f35d80e214d24e991b98e31d7c2b0d17ea",
+ "raw_sha256": "40198e0f06bec8ff0ce6b483458ba8939b1ed4abc70a5ba0a49b0906ee79eedd",
+ "cases_sha256": "c4a73dbbc1f7cbf25add986211e2e4ad945a91b7328ab0b99663de35e6021b12",
+ "bz_family_kind": "SOURCED_SURROGATE",
+ "limits": {
+  "thrust_min_N_HC01": 0.012,
+  "thrust_capability_N_HC02": 0.025,
+  "p_bus_max_W_HC03": 1500.0,
+  "p_non_hall_lower_bound_W": 0.0
+ },
+ "tests": "XE_FUNC = PASS, T > 0, P_d + P_nonHall,LB < HC-03 (prereg); INFO_T_GE_HC01 / HC02_AT_PBUS = T >= HC-01 / HC-02 at the same power test, information only for XE (T12 / T25 are AIR tests)",
+ "families": {
+  "XE": {
+   "labels": [
+    "PARAMETRIC / NOT_VALIDATED",
+    "SOURCED_SURROGATE_P5_SHAPE_NOT_H1_BZ",
+    "TRANSPORT_EXTRAPOLATED",
+    "NUMERICAL_ADEQUACY_NOT_VERIFIED_FOR_H1",
+    "ANALYSIS_POINT_NOT_DESIGN_SELECTION",
+    "XE_CHEMISTRY_NO_VALIDITY_MANIFEST",
+    "XE_FLOW_FROM_H1_ATM_RANGE"
+   ],
+   "n_points": 2268,
+   "all": {
+    "NUMERICAL_FAILURE": 892,
+    "OUT_OF_DOMAIN": 0,
+    "NOT_SUSTAINED": 89,
+    "PASS": 1287,
+    "XE_FUNC": 1156,
+    "INFO_T_GE_HC01_AT_PBUS": 813,
+    "INFO_T_GE_HC02_AT_PBUS": 419
+   },
+   "pass_thrust_N": {
+    "min": 4.4216036756209535e-18,
+    "max": 0.07233983964316405
+   },
+   "pass_discharge_current_A": {
+    "min": 4.2499486999234686e-16,
+    "max": 7.596315626872585
+   },
+   "pass_discharge_power_W": {
+    "min": 7.649907659862243e-14,
+    "max": 2658.7104694054046
+   },
+   "pass_Te_max_eV": {
+    "min": 5.470381740543899,
+    "max": 83.74524404507413
+   },
+   "max_thrust_point_by_test": {
+    "XE_FUNC": {
+     "key": "XE|G-AMINDHMAX-LH12|BZ-P5B30|BP-HI|VD-350|MF-HI|sgb-screen-02",
+     "thrust_N": 0.07233983964316405,
+     "discharge_power_W": 1118.3655022239059,
+     "discharge_current_A": 3.1953300063540166
+    },
+    "INFO_T_GE_HC01_AT_PBUS": {
+     "key": "XE|G-AMINDHMAX-LH12|BZ-P5B30|BP-HI|VD-350|MF-HI|sgb-screen-02",
+     "thrust_N": 0.07233983964316405,
+     "discharge_power_W": 1118.3655022239059,
+     "discharge_current_A": 3.1953300063540166
+    },
+    "INFO_T_GE_HC02_AT_PBUS": {
+     "key": "XE|G-AMINDHMAX-LH12|BZ-P5B30|BP-HI|VD-350|MF-HI|sgb-screen-02",
+     "thrust_N": 0.07233983964316405,
+     "discharge_power_W": 1118.3655022239059,
+     "discharge_current_A": 3.1953300063540166
+    }
+   },
+   "by_geometry": {
+    "G-AMAXDHMAX-LH12": {
+     "NUMERICAL_FAILURE": 161,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 14,
+     "PASS": 149,
+     "XE_FUNC": 130,
+     "INFO_T_GE_HC01_AT_PBUS": 107,
+     "INFO_T_GE_HC02_AT_PBUS": 42
+    },
+    "G-AMAXDHMAX-LH8603": {
+     "NUMERICAL_FAILURE": 136,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 20,
+     "PASS": 168,
+     "XE_FUNC": 150,
+     "INFO_T_GE_HC01_AT_PBUS": 129,
+     "INFO_T_GE_HC02_AT_PBUS": 66
+    },
+    "G-AMAXDHMIN-LH12": {
+     "NUMERICAL_FAILURE": 188,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 13,
+     "PASS": 123,
+     "XE_FUNC": 112,
+     "INFO_T_GE_HC01_AT_PBUS": 84,
+     "INFO_T_GE_HC02_AT_PBUS": 44
+    },
+    "G-AMAXDHMIN-LH8603": {
+     "NUMERICAL_FAILURE": 169,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 22,
+     "PASS": 133,
+     "XE_FUNC": 116,
+     "INFO_T_GE_HC01_AT_PBUS": 101,
+     "INFO_T_GE_HC02_AT_PBUS": 51
+    },
+    "G-AMINDHMAX-LH12": {
+     "NUMERICAL_FAILURE": 82,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 4,
+     "PASS": 238,
+     "XE_FUNC": 214,
+     "INFO_T_GE_HC01_AT_PBUS": 125,
+     "INFO_T_GE_HC02_AT_PBUS": 64
+    },
+    "G-AMINDHMAX-LH8603": {
+     "NUMERICAL_FAILURE": 57,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 5,
+     "PASS": 262,
+     "XE_FUNC": 238,
+     "INFO_T_GE_HC01_AT_PBUS": 143,
+     "INFO_T_GE_HC02_AT_PBUS": 85
+    },
+    "G-RP1": {
+     "NUMERICAL_FAILURE": 99,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 11,
+     "PASS": 214,
+     "XE_FUNC": 196,
+     "INFO_T_GE_HC01_AT_PBUS": 124,
+     "INFO_T_GE_HC02_AT_PBUS": 67
+    }
+   },
+   "by_bz_shape": {
+    "BZ-P5B16": {
+     "NUMERICAL_FAILURE": 374,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 54,
+     "PASS": 706,
+     "XE_FUNC": 638,
+     "INFO_T_GE_HC01_AT_PBUS": 437,
+     "INFO_T_GE_HC02_AT_PBUS": 233
+    },
+    "BZ-P5B30": {
+     "NUMERICAL_FAILURE": 518,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 35,
+     "PASS": 581,
+     "XE_FUNC": 518,
+     "INFO_T_GE_HC01_AT_PBUS": 376,
+     "INFO_T_GE_HC02_AT_PBUS": 186
+    }
+   },
+   "by_transport": {
+    "sgb-screen-01": {
+     "NUMERICAL_FAILURE": 91,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 23,
+     "PASS": 138,
+     "XE_FUNC": 113,
+     "INFO_T_GE_HC01_AT_PBUS": 78,
+     "INFO_T_GE_HC02_AT_PBUS": 38
+    },
+    "sgb-screen-02": {
+     "NUMERICAL_FAILURE": 97,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 10,
+     "PASS": 145,
+     "XE_FUNC": 133,
+     "INFO_T_GE_HC01_AT_PBUS": 95,
+     "INFO_T_GE_HC02_AT_PBUS": 56
+    },
+    "sgb-screen-03": {
+     "NUMERICAL_FAILURE": 86,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 16,
+     "PASS": 150,
+     "XE_FUNC": 130,
+     "INFO_T_GE_HC01_AT_PBUS": 93,
+     "INFO_T_GE_HC02_AT_PBUS": 53
+    },
+    "sgb-screen-04": {
+     "NUMERICAL_FAILURE": 103,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 6,
+     "PASS": 143,
+     "XE_FUNC": 131,
+     "INFO_T_GE_HC01_AT_PBUS": 93,
+     "INFO_T_GE_HC02_AT_PBUS": 50
+    },
+    "sgb-screen-05": {
+     "NUMERICAL_FAILURE": 93,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 9,
+     "PASS": 150,
+     "XE_FUNC": 137,
+     "INFO_T_GE_HC01_AT_PBUS": 96,
+     "INFO_T_GE_HC02_AT_PBUS": 43
+    },
+    "sgb-screen-06": {
+     "NUMERICAL_FAILURE": 102,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 5,
+     "PASS": 145,
+     "XE_FUNC": 132,
+     "INFO_T_GE_HC01_AT_PBUS": 94,
+     "INFO_T_GE_HC02_AT_PBUS": 45
+    },
+    "sgb-screen-07": {
+     "NUMERICAL_FAILURE": 102,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 12,
+     "PASS": 138,
+     "XE_FUNC": 120,
+     "INFO_T_GE_HC01_AT_PBUS": 84,
+     "INFO_T_GE_HC02_AT_PBUS": 40
+    },
+    "sgb-screen-08": {
+     "NUMERICAL_FAILURE": 110,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 3,
+     "PASS": 139,
+     "XE_FUNC": 125,
+     "INFO_T_GE_HC01_AT_PBUS": 89,
+     "INFO_T_GE_HC02_AT_PBUS": 48
+    },
+    "sgb-screen-09": {
+     "NUMERICAL_FAILURE": 108,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 5,
+     "PASS": 139,
+     "XE_FUNC": 135,
+     "INFO_T_GE_HC01_AT_PBUS": 91,
+     "INFO_T_GE_HC02_AT_PBUS": 46
+    }
+   },
+   "by_B_peak": {
+    "BP-HI": {
+     "NUMERICAL_FAILURE": 752,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 37,
+     "PASS": 345,
+     "XE_FUNC": 345,
+     "INFO_T_GE_HC01_AT_PBUS": 214,
+     "INFO_T_GE_HC02_AT_PBUS": 88
+    },
+    "BP-LO": {
+     "NUMERICAL_FAILURE": 140,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 52,
+     "PASS": 942,
+     "XE_FUNC": 811,
+     "INFO_T_GE_HC01_AT_PBUS": 599,
+     "INFO_T_GE_HC02_AT_PBUS": 331
+    }
+   },
+   "by_V_d": {
+    "VD-180": {
+     "NUMERICAL_FAILURE": 342,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 26,
+     "PASS": 388,
+     "XE_FUNC": 388,
+     "INFO_T_GE_HC01_AT_PBUS": 283,
+     "INFO_T_GE_HC02_AT_PBUS": 137
+    },
+    "VD-265": {
+     "NUMERICAL_FAILURE": 283,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 42,
+     "PASS": 431,
+     "XE_FUNC": 410,
+     "INFO_T_GE_HC01_AT_PBUS": 304,
+     "INFO_T_GE_HC02_AT_PBUS": 136
+    },
+    "VD-350": {
+     "NUMERICAL_FAILURE": 267,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 21,
+     "PASS": 468,
+     "XE_FUNC": 358,
+     "INFO_T_GE_HC01_AT_PBUS": 226,
+     "INFO_T_GE_HC02_AT_PBUS": 146
+    }
+   },
+   "by_mdot": {
+    "MF-HI": {
+     "NUMERICAL_FAILURE": 141,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 6,
+     "PASS": 609,
+     "XE_FUNC": 478,
+     "INFO_T_GE_HC01_AT_PBUS": 450,
+     "INFO_T_GE_HC02_AT_PBUS": 335
+    },
+    "MF-LO": {
+     "NUMERICAL_FAILURE": 518,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 45,
+     "PASS": 193,
+     "XE_FUNC": 193,
+     "INFO_T_GE_HC01_AT_PBUS": 0,
+     "INFO_T_GE_HC02_AT_PBUS": 0
+    },
+    "MF-MID": {
+     "NUMERICAL_FAILURE": 233,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 38,
+     "PASS": 485,
+     "XE_FUNC": 485,
+     "INFO_T_GE_HC01_AT_PBUS": 363,
+     "INFO_T_GE_HC02_AT_PBUS": 84
+    }
+   },
+   "by_hardware": {
+    "G-AMAXDHMAX-LH12|BZ-P5B16": {
+     "NUMERICAL_FAILURE": 70,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 8,
+     "PASS": 84,
+     "XE_FUNC": 74,
+     "INFO_T_GE_HC01_AT_PBUS": 58,
+     "INFO_T_GE_HC02_AT_PBUS": 23
+    },
+    "G-AMAXDHMAX-LH12|BZ-P5B30": {
+     "NUMERICAL_FAILURE": 91,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 6,
+     "PASS": 65,
+     "XE_FUNC": 56,
+     "INFO_T_GE_HC01_AT_PBUS": 49,
+     "INFO_T_GE_HC02_AT_PBUS": 19
+    },
+    "G-AMAXDHMAX-LH8603|BZ-P5B16": {
+     "NUMERICAL_FAILURE": 54,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 15,
+     "PASS": 93,
+     "XE_FUNC": 84,
+     "INFO_T_GE_HC01_AT_PBUS": 67,
+     "INFO_T_GE_HC02_AT_PBUS": 36
+    },
+    "G-AMAXDHMAX-LH8603|BZ-P5B30": {
+     "NUMERICAL_FAILURE": 82,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 5,
+     "PASS": 75,
+     "XE_FUNC": 66,
+     "INFO_T_GE_HC01_AT_PBUS": 62,
+     "INFO_T_GE_HC02_AT_PBUS": 30
+    },
+    "G-AMAXDHMIN-LH12|BZ-P5B16": {
+     "NUMERICAL_FAILURE": 84,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 10,
+     "PASS": 68,
+     "XE_FUNC": 61,
+     "INFO_T_GE_HC01_AT_PBUS": 46,
+     "INFO_T_GE_HC02_AT_PBUS": 21
+    },
+    "G-AMAXDHMIN-LH12|BZ-P5B30": {
+     "NUMERICAL_FAILURE": 104,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 3,
+     "PASS": 55,
+     "XE_FUNC": 51,
+     "INFO_T_GE_HC01_AT_PBUS": 38,
+     "INFO_T_GE_HC02_AT_PBUS": 23
+    },
+    "G-AMAXDHMIN-LH8603|BZ-P5B16": {
+     "NUMERICAL_FAILURE": 69,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 13,
+     "PASS": 80,
+     "XE_FUNC": 71,
+     "INFO_T_GE_HC01_AT_PBUS": 60,
+     "INFO_T_GE_HC02_AT_PBUS": 30
+    },
+    "G-AMAXDHMIN-LH8603|BZ-P5B30": {
+     "NUMERICAL_FAILURE": 100,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 9,
+     "PASS": 53,
+     "XE_FUNC": 45,
+     "INFO_T_GE_HC01_AT_PBUS": 41,
+     "INFO_T_GE_HC02_AT_PBUS": 21
+    },
+    "G-AMINDHMAX-LH12|BZ-P5B16": {
+     "NUMERICAL_FAILURE": 33,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 1,
+     "PASS": 128,
+     "XE_FUNC": 116,
+     "INFO_T_GE_HC01_AT_PBUS": 68,
+     "INFO_T_GE_HC02_AT_PBUS": 37
+    },
+    "G-AMINDHMAX-LH12|BZ-P5B30": {
+     "NUMERICAL_FAILURE": 49,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 3,
+     "PASS": 110,
+     "XE_FUNC": 98,
+     "INFO_T_GE_HC01_AT_PBUS": 57,
+     "INFO_T_GE_HC02_AT_PBUS": 27
+    },
+    "G-AMINDHMAX-LH8603|BZ-P5B16": {
+     "NUMERICAL_FAILURE": 27,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 2,
+     "PASS": 133,
+     "XE_FUNC": 121,
+     "INFO_T_GE_HC01_AT_PBUS": 72,
+     "INFO_T_GE_HC02_AT_PBUS": 48
+    },
+    "G-AMINDHMAX-LH8603|BZ-P5B30": {
+     "NUMERICAL_FAILURE": 30,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 3,
+     "PASS": 129,
+     "XE_FUNC": 117,
+     "INFO_T_GE_HC01_AT_PBUS": 71,
+     "INFO_T_GE_HC02_AT_PBUS": 37
+    },
+    "G-RP1|BZ-P5B16": {
+     "NUMERICAL_FAILURE": 37,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 5,
+     "PASS": 120,
+     "XE_FUNC": 111,
+     "INFO_T_GE_HC01_AT_PBUS": 66,
+     "INFO_T_GE_HC02_AT_PBUS": 38
+    },
+    "G-RP1|BZ-P5B30": {
+     "NUMERICAL_FAILURE": 62,
+     "OUT_OF_DOMAIN": 0,
+     "NOT_SUSTAINED": 6,
+     "PASS": 94,
+     "XE_FUNC": 85,
+     "INFO_T_GE_HC01_AT_PBUS": 58,
+     "INFO_T_GE_HC02_AT_PBUS": 29
+    }
+   }
+  },
+  "N2_PROXY": {
+   "status": "NOT_RUN",
+   "n_points": 0
+  }
+ },
+ "numerics_a3": {
+  "XE": "A3_NOT_ADEQUATE",
+  "result_sha256": "285e7fe2b8cda483409be218a2615a23643d850607b32b766f4b7fbcd77b84bc",
+  "note": "XE point-test counts above are nominal raw counts; under A3_NOT_ADEQUATE every XE PASS / NOT_SUSTAINED point is NUMERICS_NOT_CONVERGED (unknown) for classification"
+ }
+}

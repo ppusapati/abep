@@ -1,0 +1,691 @@
+{
+ "dataset_id": "atmosphere_msis21_orbit_v1",
+ "file": "atmosphere_msis21_orbit_v1.csv.gz",
+ "sha256": "c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164",
+ "row_count": 116736,
+ "bytes": 17248377,
+ "columns": [
+  "scenario",
+  "f107",
+  "f107a",
+  "ap",
+  "doy",
+  "alt_km",
+  "lat_deg",
+  "lon_deg",
+  "lst_h",
+  "ut_h",
+  "rho_kg_m3",
+  "n_N2_m3",
+  "n_O2_m3",
+  "n_O_m3",
+  "n_He_m3",
+  "n_Ar_m3",
+  "n_N_m3",
+  "T_K"
+ ],
+ "units": {
+  "f107": "sfu (1e-22 W m-2 Hz-1)",
+  "f107a": "sfu, 81-day average",
+  "ap": "daily Ap",
+  "doy": "day of year",
+  "alt_km": "km, geodetic (WGS84)",
+  "lat_deg": "deg, geodetic (WGS84)",
+  "lon_deg": "deg east",
+  "lst_h": "h, local solar time = UT + lon/15",
+  "ut_h": "h, UT = (lst_h - lon_deg/15) mod 24",
+  "rho_kg_m3": "kg m-3 total mass density as output by pymsis/NRLMSIS 2.1 (Variable.MASS_DENSITY): mass-weighted sum of N2, O2, O, He, H, Ar, N and anomalous O; EXCLUDES NO (see rho_composition_check, erratum E1)",
+  "n_N2_m3": "m-3 number density",
+  "n_O2_m3": "m-3 number density",
+  "n_O_m3": "m-3 number density",
+  "n_He_m3": "m-3 number density",
+  "n_Ar_m3": "m-3 number density",
+  "n_N_m3": "m-3 number density",
+  "T_K": "K, local neutral temperature"
+ },
+ "row_order": "scenario (as in scenarios), then doy, alt_km, lat_deg, lon_deg, lst_h (lst fastest)",
+ "float_format": "%.6e",
+ "producer": {
+  "model": "NRLMSIS 2.1",
+  "msis_version_argument": 2.1,
+  "package": "pymsis",
+  "pymsis_version": "0.13.0",
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "call": "pymsis.calculate(dates, lons, lats, alts, f107s, f107as, aps, version=2.1) in fly-through mode; default model switches; geomagnetic_activity = 1 (pymsis default, msis.py: daily Ap mode, aps[1:] unused); aps given as [Ap]*7",
+  "reference": "Emmert, J. T., et al. (2022), NRLMSIS 2.1: An empirical model of nitric oxide incorporated into MSIS, J. Geophys. Res. Space Physics 127(10), e2022JA030896, doi:10.1029/2022JA030896 (DOI confirmed by web search 2026-10-01)"
+ },
+ "epoch": {
+  "year": 2027,
+  "role": "calendar mapping of doy only; MSIS uses doy + UT seconds",
+  "status": "model assumption"
+ },
+ "drivers": {
+  "source": {
+   "document": "ECSS-E-ST-10-04C Rev.1, Space engineering - Space environment, 15 June 2020",
+   "table": "Table 6-3: Reference fixed index values (clause 6.2.2b; NOTE 1: rounded numbers from solar cycle 23)",
+   "url": "https://ecss.nl/wp-content/uploads/2020/07/ECSS-E-ST-10-04C-Rev.1(15June2020).pdf",
+   "pdf_sha256_as_downloaded_2026_10_01": "c8bbbc139066eab8300665206b581a2d1b40a9b6ace6342831403078fc4204bc",
+   "access": "open download from ecss.nl",
+   "evidence_level": 4,
+   "quantity_type": "assumed (standardised reference index values; not a forecast of the mission epoch)"
+  },
+  "scenarios": {
+   "ECSS_LT_LOW": {
+    "f107": 65.0,
+    "f107a": 65.0,
+    "ap": 0.0,
+    "label": "long-term (27+ days) low",
+    "row_ref": "Table 6-3 long-term Low column"
+   },
+   "ECSS_LT_MODERATE": {
+    "f107": 140.0,
+    "f107a": 140.0,
+    "ap": 15.0,
+    "label": "long-term (27+ days) moderate",
+    "row_ref": "Table 6-3 long-term Moderate column"
+   },
+   "ECSS_LT_HIGH": {
+    "f107": 250.0,
+    "f107a": 250.0,
+    "ap": 45.0,
+    "label": "long-term (27+ days) high",
+    "row_ref": "Table 6-3 long-term High column"
+   },
+   "ECSS_ST_HIGH": {
+    "f107": 300.0,
+    "f107a": 250.0,
+    "ap": 240.0,
+    "label": "short-term (daily) high",
+    "row_ref": "Table 6-3 short-term High column (F10.7 300, Ap 240); F10.7avg 250 from Annex G high-short-term case / clause 7.2.1 NOTE 5"
+   }
+  },
+  "scenario_order": [
+   "ECSS_LT_LOW",
+   "ECSS_LT_MODERATE",
+   "ECSS_LT_HIGH",
+   "ECSS_ST_HIGH"
+  ],
+  "interpolation_between_scenarios": "NONE (discrete scenarios; accessor refuses other drivers)",
+  "not_included": "Table 6-4 3-hourly ap storm profile; F10.7 = 380 / ap = 400 extremes (ECSS Table 6-3 NOTE 3: models not developed for them); the project's earlier F10.7 70/150/230 set (atmosphere.py) carries no external citation and is not reused"
+ },
+ "grid": {
+  "alt_km": [
+   180.0,
+   195.0,
+   215.0,
+   230.0
+  ],
+  "lat_deg": [
+   -90.0,
+   -80.0,
+   -70.0,
+   -60.0,
+   -50.0,
+   -40.0,
+   -30.0,
+   -20.0,
+   -10.0,
+   0.0,
+   10.0,
+   20.0,
+   30.0,
+   40.0,
+   50.0,
+   60.0,
+   70.0,
+   80.0,
+   90.0
+  ],
+  "lst_h": [
+   0.0,
+   3.0,
+   6.0,
+   9.0,
+   12.0,
+   15.0,
+   18.0,
+   21.0
+  ],
+  "lon_deg": [
+   0.0,
+   60.0,
+   120.0,
+   180.0,
+   240.0,
+   300.0
+  ],
+  "doy": [
+   1.0,
+   47.0,
+   92.0,
+   138.0,
+   184.0,
+   229.0,
+   275.0,
+   320.0
+  ]
+ },
+ "grid_periodic": {
+  "lst_h": 24.0,
+  "lon_deg": 360.0,
+  "doy": 365.0
+ },
+ "grid_trade": "Size target < ~20 MB. A plain multilinear 5-D grid of that size (alt 10 km, lat 15 deg, LST 2 h, lon 90 deg, doy ~46 d) was built and validated first: joint max |rel. error| vs direct NRLMSIS was 6-8 % in rho and up to 27 % in n(O) (ECSS short-term high), so it was rejected. NRLMSIS log-densities are close to band-limited in LST, longitude and day of year (harmonic expansions) and smooth in latitude/altitude, so the grid stores fewer nodes and the accessor interpolates log quantities spectrally/cubically (see interpolation). One-axis studies vs direct NRLMSIS 2.1 (1500 random points; ECSS long-term low, moderate and short-term high; max |rel. error| over rho, n_N2, n_O2, n_O, T): LST 8 trig nodes <= 3.4 % (12 nodes <= 0.3 %; linear 12 nodes <= 13 %); lon 6 trig nodes <= 0.6 % (4 nodes <= 5.5 %; linear 4 nodes <= 15 %); doy 8 trig nodes (period 365) <= 1.4 % (cubic on 9 nodes <= 6.3 %); lat cubic 10 deg <= 1.1 % (15 deg <= 4.0 %); alt cubic 10 km <= 0.02 %, so 4 altitude nodes (180/195/215/230 km, both endpoints) suffice. LST is the binding axis (8 nodes); 12 LST nodes would need ~26 MB. Grid 4 alt x 19 lat x 8 LST x 6 lon x 8 doy x 4 scenarios = 116,736 rows. H, anomalous O and NO are not stored (dropped_species). The joint interpolation error is measured at build time for every scenario (interpolation_validation) and reported by the accessor with every interpolated state.",
+ "interpolation": {
+  "quantity": "natural log of every output column (densities, rho and T)",
+  "alt_km": "cubic Lagrange through the 4 altitude nodes",
+  "lat_deg": "local cubic Lagrange (4 nearest nodes, clipped at the ends)",
+  "lst_h": "trigonometric interpolation, 8 equispaced nodes, period 24 h",
+  "lon_deg": "trigonometric interpolation, 6 equispaced nodes, period 360 deg",
+  "doy": "trigonometric interpolation, period 365 d, 8 integer-day nodes nearest to 1 + k*365/8; doy is warped piecewise-linearly onto the equispaced positions (<= 0.5 d) so nodes are reproduced exactly",
+  "scenario": "none (discrete)"
+ },
+ "domain": {
+  "alt_km": [
+   180.0,
+   230.0
+  ],
+  "lat_deg": [
+   -90.0,
+   90.0
+  ],
+  "lst_h": [
+   0.0,
+   24.0
+  ],
+  "lon_deg": [
+   -180.0,
+   360.0
+  ],
+  "doy": [
+   1.0,
+   365.0
+  ],
+  "out_of_domain": "ValueError (no extrapolation); unknown scenario: ValueError"
+ },
+ "orbit_coverage": {
+  "inclination_ltan_status": "CODE_DEFAULT / PARAMETRIC",
+  "requirement_input": false,
+  "code_default": "abep_sim/mission_env.py sso_inclination_deg(alt) (J2 sun-synchronous condition; ~96.3 deg, 96.25-96.42 deg over 180-230 km) and Spacecraft.inc_deg = 96.33 / ltan_h = 6.0 (dawn-dusk); a parametric code default, never a requirement input",
+  "real_orbit": "TBD from the official mission definition (DRDO / spacecraft ICD / PDR mission definition); the RFP fixes only 180-230 km. Once supplied, a new orbit-resolved dataset version is built; this default is never reinterpreted as the real orbit",
+  "dataset_grid_coverage": "full geodetic latitude band -90..90 deg, all local solar times, all longitudes, all days of year: any inclination and any LTAN lie inside the dataset",
+  "design_state_envelope": {
+   "current_set": "atmosphere_msis21_orbit_v1_design_states_v2.json",
+   "v2": {
+    "file": "atmosphere_msis21_orbit_v1_design_states_v2.json",
+    "status": "BROAD_ENVELOPE (A9.17 ORBIT)",
+    "local_time": "all local times (LTAN-agnostic)",
+    "latitude": "every integer geodetic latitude -90..90 deg (all 19 nodes, poles included; off-node latitudes via the accessor interpolation); independent of mission_env.sso_inclination_deg and of any inclination / LTAN",
+    "covers": "every inclination 0-180 deg and every LTAN, at the dataset grid resolution"
+   },
+   "v1": {
+    "file": "atmosphere_msis21_orbit_v1_design_states.json",
+    "status": "IMMUTABLE_V1_PARAMETRIC_BOUND (kept for traceability; not the broad envelope)",
+    "local_time": "all local times (LTAN-agnostic)",
+    "latitude": "|lat| <= reachable_lat_max_deg(), the max |latitude| of the CODE_DEFAULT SSO family over 180-230 km (83.6-83.75 deg); does not cover inclinations strictly between ~83.75 and ~96.25 deg or polar orbits"
+   },
+   "latitude_status": "RESOLVED by the versioned v2 set (all latitudes); the v1 set keeps its PARAMETRIC 83.75 deg bound unchanged (rule 1)"
+  },
+  "sso_inclination_deg_at_grid_alt": {
+   "180": 96.25,
+   "195": 96.3005,
+   "215": 96.3682,
+   "230": 96.4193
+  },
+  "authority": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "decision_key": "ORBIT",
+   "answer": "ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD"
+  }
+ },
+ "not_provided": {
+  "winds": "NRLMSIS has no wind output; ECSS 7.2.2 names HWM07, which is not installed. The accessor reports the geometric co-rotating-atmosphere relative speed only (status: no thermospheric wind)."
+ },
+ "authority": {
+  "A9.13 S6.14 OQ-F4-05": {
+   "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23"
+  },
+  "A9.14 S9.7 OD2": {
+   "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
+  },
+  "A9.14 S9.8 OD3": {
+   "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
+  },
+  "A9.17 DATA_SIZE": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad"
+  },
+  "A9.17 ORBIT": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad"
+  },
+  "CLAUDE.md rule 1": "versioned rebuild; atmosphere_msis21_v1.* unchanged"
+ },
+ "evidence": {
+  "evidence_level": 4,
+  "quantity_type": "model-derived (empirical climatology model output)",
+  "uncertainty": "NRLMSIS climatological model uncertainty (not quantified here) + recorded grid interpolation error; ECSS 7.2.1 NOTE 1: models resolve ~1000 km / 3 h scales only; real density can deviate (e.g. +100 %/-50 % in 30 s)",
+  "applicability": "180-230 km geodetic, all latitudes / local times / longitudes / seasons, the four ECSS driver scenarios only",
+  "validation_status": "not independently validated by the project"
+ },
+ "build_command": "python -m abep_sim.atmosphere_orbit build",
+ "check_command": "python -m abep_sim.atmosphere_orbit check",
+ "dropped_species": {
+  "species": [
+   "H",
+   "ANOMALOUS_O",
+   "NO"
+  ],
+  "in_rho": {
+   "H": true,
+   "ANOMALOUS_O": true,
+   "NO": false
+  },
+  "reason": "not requested by the lane; keeps the CSV < 20 MB",
+  "max_number_density_share_over_grid": {
+   "ECSS_LT_LOW": {
+    "H": 0.0016388050245521142,
+    "ANOMALOUS_O": 2.0187049858783353e-13,
+    "NO": 0.0003533396204641151
+   },
+   "ECSS_LT_MODERATE": {
+    "H": 9.242470632589814e-05,
+    "ANOMALOUS_O": 2.562956905578831e-13,
+    "NO": 0.0018434877705955036
+   },
+   "ECSS_LT_HIGH": {
+    "H": 1.3540764926696454e-05,
+    "ANOMALOUS_O": 8.757767263107958e-13,
+    "NO": 0.0017176818336622276
+   },
+   "ECSS_ST_HIGH": {
+    "H": 6.473448275662588e-06,
+    "ANOMALOUS_O": 8.590384406017908e-13,
+    "NO": 0.0021061818000008585
+   }
+  }
+ },
+ "year_independence_check": {
+  "years_compared": [
+   2027,
+   2031
+  ],
+  "max_abs_rel_diff": 0.0
+ },
+ "interpolation_validation": {
+  "seed": 20261001,
+  "n_points_per_scenario": 1500,
+  "method": "random points uniform in alt 180-230, lat -90..90, LST 0-24, lon 0-360, integer doy 1-365; accessor interpolation vs direct pymsis NRLMSIS 2.1 at the same inputs",
+  "by_scenario": {
+   "ECSS_LT_LOW": {
+    "rho_kg_m3": {
+     "max_abs_rel": 0.02327121938863652,
+     "p95_abs_rel": 0.011444600875726331
+    },
+    "n_N2_m3": {
+     "max_abs_rel": 0.027756829759464252,
+     "p95_abs_rel": 0.01645164688825471
+    },
+    "n_O2_m3": {
+     "max_abs_rel": 0.03209406995914943,
+     "p95_abs_rel": 0.018610536373351548
+    },
+    "n_O_m3": {
+     "max_abs_rel": 0.017037002629759046,
+     "p95_abs_rel": 0.009967671623844352
+    },
+    "n_He_m3": {
+     "max_abs_rel": 0.007796022583794526,
+     "p95_abs_rel": 0.004300390630587924
+    },
+    "n_Ar_m3": {
+     "max_abs_rel": 0.03968105934252808,
+     "p95_abs_rel": 0.023009965795425153
+    },
+    "n_N_m3": {
+     "max_abs_rel": 0.011815988345819761,
+     "p95_abs_rel": 0.006059969867116306
+    },
+    "T_K": {
+     "max_abs_rel": 0.004936047415609379,
+     "p95_abs_rel": 0.0023745706522682315
+    }
+   },
+   "ECSS_LT_MODERATE": {
+    "rho_kg_m3": {
+     "max_abs_rel": 0.01343211485780238,
+     "p95_abs_rel": 0.007683893061886059
+    },
+    "n_N2_m3": {
+     "max_abs_rel": 0.01622204713656461,
+     "p95_abs_rel": 0.009938385203930549
+    },
+    "n_O2_m3": {
+     "max_abs_rel": 0.017816390481565136,
+     "p95_abs_rel": 0.011410266494275062
+    },
+    "n_O_m3": {
+     "max_abs_rel": 0.011127292154098578,
+     "p95_abs_rel": 0.006527507152166316
+    },
+    "n_He_m3": {
+     "max_abs_rel": 0.006911014414616945,
+     "p95_abs_rel": 0.003646283994221726
+    },
+    "n_Ar_m3": {
+     "max_abs_rel": 0.02124958988788206,
+     "p95_abs_rel": 0.013869334893044392
+    },
+    "n_N_m3": {
+     "max_abs_rel": 0.007720507964004586,
+     "p95_abs_rel": 0.004125594027911422
+    },
+    "T_K": {
+     "max_abs_rel": 0.004268203043623187,
+     "p95_abs_rel": 0.001930824579435347
+    }
+   },
+   "ECSS_LT_HIGH": {
+    "rho_kg_m3": {
+     "max_abs_rel": 0.012788987981959377,
+     "p95_abs_rel": 0.006907408335922337
+    },
+    "n_N2_m3": {
+     "max_abs_rel": 0.012487148682740923,
+     "p95_abs_rel": 0.008070930169679752
+    },
+    "n_O2_m3": {
+     "max_abs_rel": 0.014286487740904796,
+     "p95_abs_rel": 0.00923886983714384
+    },
+    "n_O_m3": {
+     "max_abs_rel": 0.008910043430228498,
+     "p95_abs_rel": 0.005535456686533745
+    },
+    "n_He_m3": {
+     "max_abs_rel": 0.006447420150558769,
+     "p95_abs_rel": 0.003543517899646919
+    },
+    "n_Ar_m3": {
+     "max_abs_rel": 0.020607583294182108,
+     "p95_abs_rel": 0.011941421213169367
+    },
+    "n_N_m3": {
+     "max_abs_rel": 0.009036141274275544,
+     "p95_abs_rel": 0.004032561588131666
+    },
+    "T_K": {
+     "max_abs_rel": 0.005381019398802422,
+     "p95_abs_rel": 0.0022696623464720234
+    }
+   },
+   "ECSS_ST_HIGH": {
+    "rho_kg_m3": {
+     "max_abs_rel": 0.009687951591266009,
+     "p95_abs_rel": 0.0054616517719415
+    },
+    "n_N2_m3": {
+     "max_abs_rel": 0.010541108995149484,
+     "p95_abs_rel": 0.0066071981710923875
+    },
+    "n_O2_m3": {
+     "max_abs_rel": 0.011855580479664951,
+     "p95_abs_rel": 0.007370238904695562
+    },
+    "n_O_m3": {
+     "max_abs_rel": 0.009444073912627138,
+     "p95_abs_rel": 0.005005154755698088
+    },
+    "n_He_m3": {
+     "max_abs_rel": 0.0073082842308448415,
+     "p95_abs_rel": 0.0038789128058994427
+    },
+    "n_Ar_m3": {
+     "max_abs_rel": 0.02624856402281006,
+     "p95_abs_rel": 0.013876949063620558
+    },
+    "n_N_m3": {
+     "max_abs_rel": 0.02250655697956483,
+     "p95_abs_rel": 0.007787991180684152
+    },
+    "T_K": {
+     "max_abs_rel": 0.0039431953210355974,
+     "p95_abs_rel": 0.0018307095343091605
+    }
+   }
+  }
+ },
+ "check_subset": {
+  "stride": 97,
+  "n_rows": 1204,
+  "sha256": "08f90cac3fa06f4f10fb34395f1fd4a52b22a432960ed1328dc2b604dc2c8f08"
+ },
+ "design_states_file": {
+  "file": "atmosphere_msis21_orbit_v1_design_states.json",
+  "sha256": "d8bd369bf4aa4ae321ecced094f2c02356be67e2c3f4acbe70264f700b419a40",
+  "producer": "design_states() on this dataset (A9.14 S9.8 OD3)"
+ },
+ "rho_composition_check": {
+  "method": "least squares rho = sum_i c_i n_i on rho-normalised rows (no mass table assumed)",
+  "points": {
+   "alt_km": [
+    100.0,
+    150.0,
+    200.0,
+    300.0,
+    450.0,
+    600.0,
+    800.0,
+    1000.0,
+    1500.0,
+    2000.0
+   ],
+   "lat_deg": [
+    -80.0,
+    -30.0,
+    0.0,
+    40.0,
+    75.0
+   ],
+   "lon_deg": [
+    0.0,
+    90.0,
+    180.0,
+    270.0
+   ],
+   "date": "2027-03-01T12:00",
+   "scenarios": [
+    "ECSS_LT_LOW",
+    "ECSS_LT_MODERATE",
+    "ECSS_LT_HIGH"
+   ]
+  },
+  "n_points": 600,
+  "max_abs_rel_residual": 1.413e-07,
+  "implied_mass_amu": {
+   "N2": 28.013,
+   "O2": 31.999,
+   "O": 15.999,
+   "He": 4.0,
+   "H": 1.0,
+   "Ar": 39.948,
+   "N": 14.007,
+   "ANOMALOUS_O": 15.999,
+   "NO": -0.001
+  },
+  "threshold_amu": 0.1,
+  "in_rho": {
+   "N2": true,
+   "O2": true,
+   "O": true,
+   "He": true,
+   "H": true,
+   "Ar": true,
+   "N": true,
+   "ANOMALOUS_O": true,
+   "NO": false
+  },
+  "evidence": "model-derived (pymsis NRLMSIS 2.1 output); amu values diagnostic, AMU from abep_sim/constants.py"
+ },
+ "open_items": [
+  {
+   "id": "ATM-OI-01",
+   "title": "thermospheric wind not provided",
+   "against": "A9.13 S6.14 OQ-F4-05 (dataset content 'relative flow/wind state'; json summary lists 'wind')",
+   "authority": {
+    "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+    "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+    "question_id": "OQ-F4-05"
+   },
+   "status": "OPEN_DEVIATION_FOR_OWNER_DISPOSITION",
+   "what_v1_provides": "geometric relative speed against a rigidly co-rotating atmosphere only (orbit_states v_rel_corot_m_s / flux_corot_kg_m2_s, each state flagged wind_included = False)",
+   "why": "NRLMSIS 2.1 has no wind output; ECSS-E-ST-10-04C Rev.1 clause 7.2.2 names HWM07 for winds, and no wind model is installed in the project environment",
+   "consequence": "downstream drag / captured-flux users must not treat v_rel_corot_m_s as wind-inclusive; any wind contribution is unquantified (TBD), not zero",
+   "candidate_resolution": "owner decision: a v2 dataset adding a horizontal wind model (e.g. HWM14 via an open package - verify availability and licence) under a new rule-1 version, or an explicit owner acceptance of the co-rotating-atmosphere approximation for v1 users"
+  }
+ ],
+ "errata": [
+  {
+   "id": "E1",
+   "date": "2026-10-01",
+   "review_finding": "ATM-2",
+   "fields": [
+    "units.rho_kg_m3",
+    "dropped_species.in_rho",
+    "rho_composition_check"
+   ],
+   "was": {
+    "units.rho_kg_m3": "kg m-3 total mass density (includes all MSIS species and anomalous O)",
+    "dropped_species.in_rho": true
+   },
+   "now": "rho_kg_m3 excludes NO; in_rho = {H: true, ANOMALOUS_O: true, NO: false}, derived by the rho composition regression recorded under rho_composition_check",
+   "data_file_changed": false,
+   "quantitative_effect": "descriptive only; the stored rho values are unchanged. NO's number-density share over the grid is recorded under dropped_species (<= 0.21 %)"
+  },
+  {
+   "id": "E2",
+   "date": "2026-10-01",
+   "review_finding": "ATM-4",
+   "fields": [
+    "open_items"
+   ],
+   "now": "wind omission against OQ-F4-05 tracked as open item ATM-OI-01 for owner disposition",
+   "data_file_changed": false
+  },
+  {
+   "id": "E3",
+   "date": "2026-10-01",
+   "decision": "A9.17 DATA_SIZE",
+   "authority": {
+    "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+    "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+    "decision_key": "DATA_SIZE"
+   },
+   "fields": [
+    "file",
+    "sha256_definition",
+    "bytes_definition",
+    "container",
+    "distribution"
+   ],
+   "was": {
+    "file": "atmosphere_msis21_orbit_v1.csv",
+    "storage": "uncompressed CSV, shipped as package data"
+   },
+   "now": "one canonical deterministic gzip copy (atmosphere_msis21_orbit_v1.csv.gz); manifest records the uncompressed-CSV sha256 (unchanged, c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164) and the container sha256; excluded from the installed wheel/sdist",
+   "data_file_changed": false,
+   "quantitative_effect": "storage only: the decompressed bytes are identical to the v1 CSV (same sha256, same rows)"
+  },
+  {
+   "id": "E4",
+   "date": "2026-10-01",
+   "decision": "A9.17 ORBIT",
+   "authority": {
+    "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+    "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+    "decision_key": "ORBIT"
+   },
+   "fields": [
+    "orbit_coverage",
+    "design_states_file (rule / orbit_basis / authority labels)"
+   ],
+   "was": {
+    "orbit_coverage.inclination_status": "MODEL_ASSUMPTION (not owner-registered)"
+   },
+   "now": "the mission_env 96.3 deg / dawn-dusk orbit is labelled CODE_DEFAULT / PARAMETRIC, never a requirement input; inclination / LTAN TBD from the official mission ICD. Design-states file regenerated with label changes only (top-level rule / orbit_basis / authority; the 179 per-state records kept verbatim)",
+   "data_file_changed": false,
+   "known_v1_defect_not_changed": "per-state interp_max_rel_err_rho is null for the 26 interpolated latitude-boundary design states (build() generated them before interpolation_validation was written to the JSON); physical values unaffected; left as frozen, open for the next design-state version"
+  },
+  {
+   "id": "E5",
+   "date": "2026-10-01",
+   "decision": "A9.17 ORBIT",
+   "review_finding": "PKG-1",
+   "authority": {
+    "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+    "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+    "decision_key": "ORBIT"
+   },
+   "fields": [
+    "design_states_file_v2",
+    "orbit_coverage.design_state_envelope"
+   ],
+   "was": {
+    "design_state_envelope": "v1 set only, bounded at |lat| <= ~83.75 deg by the CODE_DEFAULT SSO family"
+   },
+   "now": "versioned broad-envelope design-state set atmosphere_msis21_orbit_v1_design_states_v2.json added (candidate pool = every grid doy / longitude / local-time node x every integer latitude -90..90 deg; independent of mission_env.sso_inclination_deg); v1 design-state file kept byte-identical",
+   "data_file_changed": false,
+   "resolves": "E4 open item (latitude bound) and, for new use, the per-state interp_max_rel_err_rho null defect: v2 is generated after interpolation_validation is in the manifest, so every off-node v2 state carries its scenario's recorded interpolation error and grid-node states carry 0.0"
+  }
+ ],
+ "sha256_definition": "sha256 of the UNCOMPRESSED CSV bytes (dataset identity; unchanged by the A9.17 repack)",
+ "bytes_definition": "size of the uncompressed CSV in bytes",
+ "container": {
+  "file": "atmosphere_msis21_orbit_v1.csv.gz",
+  "format": "gzip (RFC 1952), single member",
+  "mtime": 0,
+  "fname_in_header": false,
+  "flags": 0,
+  "xfl": 2,
+  "os_byte": 255,
+  "compresslevel": 9,
+  "deflate": "zlib raw deflate, wbits -15, memLevel 8, Z_DEFAULT_STRATEGY",
+  "writer": "abep_sim.atmosphere_orbit._gzip_bytes",
+  "sha256": "71ce01c377a355a3e706d50e79fe08b2336d0e60b8b3e294f1d8e2c5b6a18ace",
+  "bytes": 4624714,
+  "zlib_version": "1.3",
+  "note": "container hash identifies the stored file; the dataset identity is the uncompressed-CSV sha256 (field sha256). Another zlib build may encode the same CSV to different container bytes."
+ },
+ "distribution": {
+  "installed_package": "EXCLUDED: the .csv.gz, this manifest and the design-states files are not shipped in the abep-sim wheel/sdist (pyproject exclude-package-data + MANIFEST.in exclude); no installed production module imports abep_sim.atmosphere_orbit",
+  "repository_path": "abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz",
+  "when_absent": "the accessor raises FileNotFoundError naming the repository path; no fallback",
+  "authority": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "decision_key": "DATA_SIZE",
+   "answer": "KEEP_DATA_ARTIFACT_EXCLUDE_FROM_INSTALL_WHERE_POSSIBLE",
+   "verbatim": {
+    "path": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+    "sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13"
+   }
+  }
+ },
+ "design_states_file_v2": {
+  "file": "atmosphere_msis21_orbit_v1_design_states_v2.json",
+  "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+  "producer": "design_states_v2() on this dataset (A9.14 S9.8 OD3; A9.17 ORBIT broad envelope)",
+  "command": "python -m abep_sim.atmosphere_orbit design-states-v2",
+  "status": "CURRENT design-state set (broad envelope)",
+  "authority": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "decision_key": "ORBIT"
+  }
+ }
+}

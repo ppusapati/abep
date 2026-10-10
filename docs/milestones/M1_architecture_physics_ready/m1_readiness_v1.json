@@ -1,0 +1,192 @@
+{
+ "schema": "abep_assess_closure_readiness_v1",
+ "addendum_a2_sha256": "0c9a6b7b00fff125c9338b32c6b0426f8331b290e903a0e1ba6e3a2364e21aa4",
+ "readiness": {
+  "rule": "A2 readiness: the M1 exit item holds iff no required path is BLOCKED",
+  "paths": [
+   {
+    "id": "P-ENV",
+    "title": "environment per design state",
+    "status": "CONSUMED",
+    "producer": "abep_mission::integration::today::run_admitted (abep_atmos::execution)",
+    "producer_status": "ADMITTED",
+    "codes": [],
+    "detail": "196 states, 196 EVALUATED"
+   },
+   {
+    "id": "P-FLOW",
+    "title": "intake / feed delivered flow and composition (F7 / F8 chain, robust set carried)",
+    "status": "CONSUMED",
+    "producer": "F7 / F8 admitted captured outputs (intake TPMC -> filter -> compressor -> plenum / feed steady)",
+    "producer_status": "ADMITTED (PARAMETRIC_SENSITIVITY inputs); plenum / feed group PYTHON_REFERENCE",
+    "codes": [
+     "GAS_PATH_ROBUST_SET_EMPTY"
+    ],
+    "detail": "F7 PARITY-C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-V1 / F8 PARITY-C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY-V1 (PARITY_PASS / ADMITTED); plenum / feed PARITY-C-ABEP_SIM_DESIGN_PLENUM_FEED_PY-V8 PARITY_FAIL"
+   },
+   {
+    "id": "P-FEED-STABILITY",
+    "title": "feed-loop stability (contract v8 typed UNSTABLE_EQUILIBRIUM)",
+    "status": "AWAITING_INPUT",
+    "producer": "abep_gaspath::transient stability class under the R2 cross-check rule",
+    "producer_status": "PYTHON_REFERENCE authoritative (v8 PARITY_FAIL stands)",
+    "codes": [
+     "FEED_CONTROLLER_NOT_REGISTERED",
+     "GAS_PATH_ROBUST_SET_EMPTY"
+    ],
+    "detail": "consumed per state for robust members when they exist; no admissible hardware today"
+   },
+   {
+    "id": "P-ICP",
+    "title": "NP-ICP v2: I_e,cap, IF-ICP-BUS-v2 loads, IF-ICP-FEED-v1",
+    "status": "CONSUMED",
+    "producer": "abep_icp::v2 (prereg lock v2 a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287), registered-today v2 case per mode",
+    "producer_status": "NP-ICP-NEUTRALIZER model_version 2: IMPLEMENTED_UNVERIFIED; ledger RUST_IMPL; NOT_VALIDATED",
+    "codes": [
+     "CHG-04_NO_XE_RATE_SET",
+     "DOM-06_B_ICP_NOT_REGISTERED",
+     "DOM-12_NO_NEGATIVE_ION_BALANCE",
+     "ICP_CAPACITY_NOT_EVALUATED",
+     "IN-05_DELIVERED_COMPOSITION_TBD",
+     "IN-08_RF_INPUT_NOT_REGISTERED",
+     "IN-10_GEOMETRY_NOT_REGISTERED",
+     "IN-11_ELECTRODES_NOT_REGISTERED",
+     "IN-12_NEUTRAL_SOURCE_NOT_REGISTERED",
+     "IN-16_NO_REGISTERED_RATE_SET:AIR",
+     "IN-16_NO_REGISTERED_RATE_SET:XE",
+     "IN-17_NO_EDGE_FACTOR_SOURCE",
+     "NP-ICP-CHEM-AIR:AIR-DIS-02",
+     "NP-ICP-CHEM-AIR:AIR-EL-03",
+     "NP-ICP-CHEM-AIR:AIR-EL-04",
+     "NP-ICP-CHEM-AIR:AIR-EXC-04",
+     "NP-ICP-CHEM-AIR:AIR-EXC-05",
+     "NP-ICP-CHEM-AIR:AIR-EXC-09",
+     "NP-ICP-CHEM-AIR:AIR-ION-02",
+     "NP-ICP-CHEM-AIR:AIR-ION-05",
+     "NP-ICP-CHEM-AIR:AIR-NL-02",
+     "NP-ICP-CHEM-AIR:AIR-WALL-01",
+     "NP-ICP-CHEM-AIR:AIR-WALL-02",
+     "NP-ICP-CHEM-AIR:AIR-WALL-03",
+     "NP-ICP-CHEM-AIR:XE-EL-01",
+     "NP-ICP-CHEM-AIR:XE-EXC-01",
+     "NP-ICP-CHEM-AIR:XE-ION-01",
+     "NP-ICP-CHEM-AIR:XE-WALL-01",
+     "NP_ICP_CHEM_AIR_NOT_ADMITTED",
+     "NP_ICP_CHEM_AIR_XE_NOT_ADMITTED",
+     "SP-04_SPECIES_BOUND_UNRESOLVED:SB-NO"
+    ],
+    "detail": "registered-today v2 case per mode; outputs labelled PARAMETRIC / NOT_VALIDATED"
+   },
+   {
+    "id": "P-CPL",
+    "title": "CPL-HALL-ON-v1 at parametric envelope points; M_n; HC-05",
+    "status": "CONSUMED",
+    "producer": "abep_icp::v2::cpl::cpl_hall_on; abep_assess::neutralization",
+    "producer_status": "NP-ICP-NEUTRALIZER model_version 2: IMPLEMENTED_UNVERIFIED; ledger RUST_IMPL; NOT_VALIDATED",
+    "codes": [],
+    "detail": "evaluated per mode (governed ensemble source without an envelope point); outputs NOT_EVALUATED (HI-04..HI-06 no producer, HI-07 / HI-08 not registered, VER-24)"
+   },
+   {
+    "id": "P-HALL-XE",
+    "title": "XE Hall parametric envelope (v1)",
+    "status": "CONSUMED",
+    "producer": "abep_hall::envelope::ingest (frozen, sha-pinned raw envelope)",
+    "producer_status": "PARAMETRIC / NOT_VALIDATED",
+    "codes": [],
+    "detail": "the 2268 XE cases run in this container once the Julia hosts are allowed (A9.33)"
+   },
+   {
+    "id": "P-HALL-AIR",
+    "title": "AIR Hall family (A1)",
+    "status": "AWAITING_INPUT",
+    "producer": "A1 AIR family; raw ingestion by A1 execution.ingestion",
+    "producer_status": "A1 on this line",
+    "codes": [
+     "AIR_HALL_O_O2_CHEMISTRY_NOT_ADMITTED"
+    ],
+    "detail": "consumed by the A1 composition rule once AIR points are ingested"
+   },
+   {
+    "id": "P-PBUS",
+    "title": "P_bus on bus_power_boundary_a9_v2 (layer (a) ledger)",
+    "status": "CONSUMED",
+    "producer": "abep_subsystems::power::official::ledger_with_loads -> ledger (ADMITTED)",
+    "producer_status": "ADMITTED ledger function; loads from the evaluated paths",
+    "codes": [
+     "BUS_LEDGER_NOT_COMPLETE"
+    ],
+    "detail": "TBD terms at the favorable lower bound, listed per (state, mode)"
+   },
+   {
+    "id": "P-THERMAL",
+    "title": "thermal 2.0.0 (cathodeless)",
+    "status": "AWAITING_INPUT",
+    "producer": "abep_subsystems::thermal::GovernedContextV2 (prereg lock v2 727689fee6bd003295c53abfbc4185c93fab80620329c75062a956dbbb9742de)",
+    "producer_status": "NP-THERMAL-CATHODELESS 2.0.0: VERIFIED, NOT_VALIDATED, not admitted (ADM-04)",
+    "codes": [
+     "CREDIBLE_HALL_TRANSPORT_SET_EMPTY",
+     "NP_ICP_NOT_ADMITTED",
+     "SPACECRAFT_THERMAL_ICD_ABSENT",
+     "THERMAL_FLIGHT_CASE_NOT_REGISTERED",
+     "THERMAL_LOADS_NOT_EVALUATED"
+    ],
+    "detail": "governed context read and its gates applied; no flight thermal case is registered"
+   },
+   {
+    "id": "P-MASS",
+    "title": "mass v5 wet-mass objective",
+    "status": "CONSUMED",
+    "producer": "abep_subsystems::mass::wet_mass; RFP matrix row",
+    "producer_status": "ADMITTED",
+    "codes": [
+     "MASS_INCOMPLETE_EVIDENCE",
+     "WET_MASS_OBJECTIVE_NOT_EVALUATED",
+     "XE_LOAD_NOT_FROZEN"
+    ],
+    "detail": "no current-best-estimate wet mass exists"
+   },
+   {
+    "id": "P-LIFE",
+    "title": "life (Hall wall flux, P4 material)",
+    "status": "CONSUMED",
+    "producer": "abep_subsystems::life",
+    "producer_status": "ADMITTED kernels",
+    "codes": [
+     "ANODE_MATERIAL_OPEN",
+     "HALL_WALL_LIFE_INPUTS_NOT_TRUSTWORTHY",
+     "LIFE_NOT_EVALUATED"
+    ],
+    "detail": "no evaluated firing life"
+   },
+   {
+    "id": "P-TD",
+    "title": "drag / T - D (HC-08)",
+    "status": "CONSUMED",
+    "producer": "mission run hook drag_body_N",
+    "producer_status": "ADMITTED hook; host-spacecraft drag ICD absent",
+    "codes": [
+     "HOST_SPACECRAFT_DRAG_ICD_ABSENT"
+    ],
+    "detail": "a T - D evaluation needs the host-spacecraft drag ICD and a new addendum; T12 / T25 are evaluable alone"
+   },
+   {
+    "id": "P-LAYER-B",
+    "title": "layer (b): admitted components only",
+    "status": "CONSUMED",
+    "producer": "HallGate, mission run hook, RFP constraint matrix, official ledger, mass record, HC-05",
+    "producer_status": "ADMITTED / ACCEPTED",
+    "codes": [
+     "CREDIBLE_HALL_TRANSPORT_SET_EMPTY"
+    ],
+    "detail": "unchanged from v1"
+   }
+  ],
+  "blocked": [],
+  "awaiting_input": [
+   "P-FEED-STABILITY",
+   "P-HALL-AIR",
+   "P-THERMAL"
+  ],
+  "m1_exit_item_harness_consumes_all_paths": true
+ }
+}

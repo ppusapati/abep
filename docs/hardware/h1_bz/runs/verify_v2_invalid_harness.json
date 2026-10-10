@@ -1,0 +1,129 @@
+{
+ "V1a_inner_coil_air": {
+  "status": "OK",
+  "dofs": 308805,
+  "seconds": 49.2,
+  "axis_Bz_rel_err": 0.001464554611592533,
+  "centreline_Br_rel_err": 0.0015604053003711788,
+  "centreline_Bz_rel_err": 0.0031971349255682526,
+  "reference_selfcheck_rel_err": 0.0003893856879616075,
+  "pass": false
+ },
+ "V1b_outer_coil_air": {
+  "status": "OK",
+  "dofs": 308805,
+  "seconds": 43.3,
+  "axis_Bz_rel_err": 0.004509387265954327,
+  "centreline_Br_rel_err": 0.0018071391242152676,
+  "centreline_Bz_rel_err": 0.0012618710216859635,
+  "reference_selfcheck_rel_err": 1.0966150209741252e-10,
+  "pass": true
+ },
+ "V2_halfspace_mu10": {
+  "status": "OK",
+  "dofs": 178857,
+  "seconds": 21.3,
+  "max_rel_err": 0.0007473960253222019,
+  "image_share": 0.31387380152788075,
+  "pass": true
+ },
+ "V2_halfspace_mu1000": {
+  "status": "OK",
+  "dofs": 178857,
+  "seconds": 22.4,
+  "max_rel_err": 0.0007312001522368512,
+  "image_share": 0.372829775935807,
+  "pass": true
+ },
+ "V3_hiperco_H300": {
+  "status": "OK",
+  "newton_iterations": 3,
+  "seconds": 0.4,
+  "B_core_exact_T": 1.5750000000000002,
+  "B_core_fe_T": 0.015749894557388615,
+  "rel_err_core": 0.9900000669476897,
+  "rel_err_gap": 0.9872462801055538,
+  "pass": false
+ },
+ "V3_hiperco_H3000": {
+  "status": "OK",
+  "newton_iterations": 3,
+  "seconds": 0.4,
+  "B_core_exact_T": 2.2533333333333334,
+  "B_core_fe_T": 0.15749894557388613,
+  "rel_err_core": 0.9301040182364411,
+  "rel_err_gap": 0.9872462801057941,
+  "pass": false
+ },
+ "V3_hiperco_H30000": {
+  "status": "OK",
+  "newton_iterations": 3,
+  "seconds": 0.4,
+  "B_core_exact_T": 2.3175929188601025,
+  "B_core_fe_T": 1.5749894557388595,
+  "rel_err_core": 0.3204201467298619,
+  "rel_err_gap": 0.9872462801058842,
+  "pass": false
+ },
+ "V3_hiperco_H300000": {
+  "status": "OK",
+  "newton_iterations": 8,
+  "seconds": 1.6,
+  "B_core_exact_T": 2.6568849254478004,
+  "B_core_fe_T": 2.253333285428625,
+  "rel_err_core": 0.1518890171546136,
+  "rel_err_gap": 0.9896065909830596,
+  "pass": false
+ },
+ "V3_iron_H300": {
+  "status": "OK",
+  "newton_iterations": 3,
+  "seconds": 0.4,
+  "B_core_exact_T": 1.5500584210277055,
+  "B_core_fe_T": 0.005420175786989603,
+  "rel_err_core": 0.9965032441916635,
+  "rel_err_gap": 0.9890527660000418,
+  "pass": false
+ },
+ "V3_iron_H3000": {
+  "status": "OK",
+  "newton_iterations": 6,
+  "seconds": 1.0,
+  "B_core_exact_T": 1.7178989278350514,
+  "B_core_fe_T": 0.6626855676697687,
+  "rel_err_core": 0.6142464746136693,
+  "rel_err_gap": 0.9784114557805906,
+  "pass": false
+ },
+ "V3_iron_H30000": {
+  "status": "OK",
+  "newton_iterations": 9,
+  "seconds": 1.7,
+  "B_core_exact_T": 2.069512700471698,
+  "B_core_fe_T": 1.550057657098699,
+  "rel_err_core": 0.2510035542447268,
+  "rel_err_gap": 0.9872898814314159,
+  "pass": false
+ },
+ "V3_iron_H300000": {
+  "status": "OK",
+  "newton_iterations": 9,
+  "seconds": 1.7,
+  "B_core_exact_T": 2.526549858296511,
+  "B_core_fe_T": 1.7178988646766857,
+  "rel_err_core": 0.320061363904786,
+  "rel_err_gap": 0.989700229032853,
+  "pass": false
+ },
+ "all_pass": false,
+ "_meta": {
+  "stage": "verify",
+  "seconds": 143.8,
+  "solver": "scikit-fem 10.0.2 (P2 Lagrange, axisymmetric A_phi, damped Newton, SuperLU / LU-preconditioned CG)",
+  "solver_sha256": "28834aeec0b3c38387925fdb2a7fb7d59383f8082ab5fbd9e9cb1db5e24cf742",
+  "build_sha256": "bc534e7df0263b093c444d965dfa180cf3131957ab9dce380fc05f306de01ece",
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1"
+ }
+}

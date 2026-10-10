@@ -1,0 +1,3603 @@
+{
+ "schema": "abep_plenum_transient_envelope_v7",
+ "mode": "REFINEMENT_FROZEN",
+ "contract": {
+  "id": "PARITY-C-ABEP_SIM_DESIGN_PLENUM_FEED_PY-V7",
+  "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_PLENUM_FEED_PY/parity_prereg_v7.json",
+  "sha256": "4f07529b88393291c737576a12d5dc3a2a401d919958fb5fd1c6ce8007e16083",
+  "registration_commit": "bd11e5c215aac3235c95b0dea4a68954b71c6ad7"
+ },
+ "procedure": "transient_convergence_procedure_v7 (A9.31 sec. 5 estimator per stratum): S: e = (|x_N - x_T2| + |x_T1 - x_T2|) / s_F per implementation, bound E_py^S + E_rust^S; U: E_rust^U (Rust estimator) + D_py^U (max |x_T1 - x_T2| / s_F of the Python reference) over leaves whose reference is convergent (rho < 1/2); no multiplier",
+ "date_utc": "2026-10-07T20:01:45Z",
+ "master_seed": 731905563,
+ "strata_sizes": {
+  "P42": {
+   "PROD": {
+    "S": 640,
+    "U": 192
+   },
+   "REF": {
+    "S": 192,
+    "U": 64
+   }
+  },
+  "P43": {
+   "PROD": {
+    "S": 640,
+    "U": 192
+   },
+   "REF": {
+    "S": 192,
+    "U": 64
+   }
+  },
+  "P45": {
+   "PROD": {
+    "S": 384,
+    "U": 192
+   }
+  }
+ },
+ "draw_statistics": {
+  "P42": {
+   "PROD": {
+    "candidates": 5349,
+    "classes_seen": {
+     "S": 4656,
+     "U": 192,
+     "R": 501
+    },
+    "accepted": {
+     "S": 640,
+     "U": 192
+    }
+   },
+   "REF": {
+    "candidates": 2028,
+    "classes_seen": {
+     "S": 1765,
+     "U": 64,
+     "R": 199
+    },
+    "accepted": {
+     "S": 192,
+     "U": 64
+    }
+   }
+  },
+  "P43": {
+   "PROD": {
+    "candidates": 6091,
+    "classes_seen": {
+     "S": 5310,
+     "U": 192,
+     "R": 589
+    },
+    "accepted": {
+     "S": 640,
+     "U": 192
+    }
+   },
+   "REF": {
+    "candidates": 1911,
+    "classes_seen": {
+     "S": 1655,
+     "U": 64,
+     "R": 192
+    },
+    "accepted": {
+     "S": 192,
+     "U": 64
+    }
+   }
+  },
+  "P45": {
+   "PROD": {
+    "candidates": 5985,
+    "classes_seen": {
+     "S": 4033,
+     "U": 192,
+     "R": 1760
+    },
+    "accepted": {
+     "S": 384,
+     "U": 192
+    }
+   }
+  }
+ },
+ "n_vectors": 2752,
+ "inputs_sha256": "e0ede5225970777e8a81fdf40eaef3e10ff27982ce4512e2be5e40ab85661078",
+ "python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+ "reference_sha256_at_run": {
+  "abep_sim/design/plenum_feed.py": "dbc28212e4c3d79a60c0cae7f875c62291ea3e90dbdc491b2bcfaa5f967d616b",
+  "abep_sim/reservoir.py": "9a7894a47169f1d77e8c66a196002c5456e955b9eb72d81bb9e1440c90ae29af",
+  "abep_sim/design/upstream_a9_13.py": "384b24086c1cc779707d7cb958b9ccd8cb58edf337d629727d923ab659a30af5",
+  "abep_sim/design/filter_stage.py": "69991f070ac5c0c8ea4b053359e116b34ff74cdc8349c87d61b24e42d8ba82b7",
+  "abep_sim/compressor.py": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75",
+  "abep_sim/design/compressor_synthesis.py": "b7b9ffd9f62e0343c7d4a7297c5106a5dcb70d7d9cbaef3ce96a4ce8f7894b7e",
+  "abep_sim/rotor_strength.py": "59f7ba95bf5d4268b184304defddb36bbfca219c79a0cc8fde91e5031bc61d9b",
+  "abep_sim/materials.py": "08e2ddddfc9380780e71bc15957fa82a9e879fc36046c266c669b037c2194feb",
+  "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+  "abep_sim/design/intake_synthesis.py": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191",
+  "abep_sim/design/a9_19_architecture.py": "8a4ccfb00fc2bb5a9f00b8a405e9c816e2d025d6d91c8bbef25f50300d4d226b",
+  "abep_sim/intake_tpmc.py": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"
+ },
+ "head_commit": "07ed905cc2568d0fafe0449ab0d1ae48b5cc2c34",
+ "build_provenance": {
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
+  "cargo_lock_sha256": "6e22a4aca9e4a5482db1932edefb1dab106a4ebe4a8f695e942e6bce262884e3",
+  "source_sha256": {
+   "Cargo.lock": "6e22a4aca9e4a5482db1932edefb1dab106a4ebe4a8f695e942e6bce262884e3",
+   "Cargo.toml": "ff8f4353a3e4313736de58204af2b36b147b75c826f19539551c997a93646fd0",
+   "crates/abep-gaspath/Cargo.toml": "7472978f5593b47c75e1b6921ad65e0d7e75835216db71ff08517578047a9fb5",
+   "crates/abep-gaspath/src/bin/abep_gaspath_parity.rs": "b3ede944b2e85c3902826e19ed0b88f315f20e4e4e139ea909a3630f78a0715e",
+   "crates/abep-gaspath/src/compressor.rs": "be1004378d16b3ef530a00a04384c1b14062a0e57a020c43c6621bfd70cbc734",
+   "crates/abep-gaspath/src/compressor_synthesis.rs": "02c4f923e55d75ce39456d1a3119fbfebf125d9c6e935624e30c67457819dc10",
+   "crates/abep-gaspath/src/error.rs": "d1f1afb4e024b97b89065100131420d6253360c2156e959c2753c7a1728b18eb",
+   "crates/abep-gaspath/src/filter.rs": "71beb5a77288a58716c22344105e8dbffa18d15b7df00324c18e885e46dcc338",
+   "crates/abep-gaspath/src/lib.rs": "07d6e477a9a9759692d3d9a0ea0bf24ef9be40fdb7924d3bdaab2e0004f32bef",
+   "crates/abep-gaspath/src/materials.rs": "2a4915a125d7d3fbebffc415da20114578675c9d98f34769456987309ec98377",
+   "crates/abep-gaspath/src/plenum_feed.rs": "6a17860c9e504fde292ac4975e10feae9f4a94625a745ab377b6e3b86251d2da",
+   "crates/abep-gaspath/src/pyops.rs": "9e350457a5ddd6ccd7089e3077a102795a7bbaff28c34933cd7e8f7d2844db38",
+   "crates/abep-gaspath/src/rec.rs": "80ec46981e10d3d1c7cd876d79e03c4fe5adf59c5d9ad1d93dfcf0278e467f29",
+   "crates/abep-gaspath/src/reservoir.rs": "4ef9cc5d40f631c6f8d69e2185d000d0cf2bcc4f574b39f5456c9b672e57f2f5",
+   "crates/abep-gaspath/src/rotor_strength.rs": "a6b6b1bf9f47721b992a99a05b7cc36b652ae36db1c9fb87bb53742bc3da196a",
+   "crates/abep-gaspath/src/transient.rs": "fc43e9ff97840ce2945fa6f619f7437d20de212a01142c5e93afd3a1a33ec592",
+   "crates/abep-gaspath/src/upstream.rs": "d91db34beaa06a536cf876ef219a00d56921574e1162df4d08e174f143a410b3",
+   "crates/abep-provenance/src/bid_guard.rs": "6f13a31a479deea38caafd78491be295c12f40a41dc39139a4af4e86a3553c7d",
+   "crates/abep-provenance/src/bid_guard/acceptance.rs": "187739f27b297b6183928a3f951dc68127708072cb915173539b4582118a6693",
+   "crates/abep-provenance/src/bin/abep-provenance-verify.rs": "99350805d9b01876b29b3e8cdcefe3c9f893c5bc0fd16d8f43b6327549d4cfbe",
+   "crates/abep-provenance/src/git.rs": "68fdacdf9514432ec890fcb153c6ba5d02fbb2e44e6accb0ff5e3d2b918ef69e",
+   "crates/abep-provenance/src/lib.rs": "0beec4429b0d6cc891389d6bc83584b693c7f1698700b03ffac4defe43919761",
+   "crates/abep-provenance/src/run_record.rs": "c36e400a38d411c6fdfad5cf26e962c4dbb074631b4d6e81d1688b3fec9a6a53",
+   "crates/abep-provenance/src/verifier/checks.rs": "8462b1704b9ca0091ade566217db5c77b34c3f074721e0d95c8b9b4e6ccfac1d",
+   "crates/abep-provenance/src/verifier/live_sources.rs": "bab4b17e1900dede61c23ce8bc0407ed021b2ab79458af2c3b6dd0747083d1b1",
+   "crates/abep-provenance/src/verifier/load.rs": "0b9ba7424fc2fe586218fffb66d3073a4ad26717e133364409fee2fcd10edab8",
+   "crates/abep-provenance/src/verifier/mod.rs": "7b7328197f8608d921aead7a0960611553a8b73e3d03bade01012c5cffdf0e25",
+   "crates/abep-provenance/src/verifier/pyliteral.rs": "6a5d3582cdbb41d96fea1cf0d87d8a8f6b1f45250a55892b784bc5c5a31a4537",
+   "crates/abep-provenance/src/verifier/pyvalue.rs": "acbd670dff4e9ea3b6cd5f893c9d001adc14d2883acfba7a66509fef878fc337",
+   "crates/abep-provenance/src/verifier/sha_map.rs": "d0589e3cc5269297407dc4f2f37930b362abe21a75481fb3430be9cc35812191",
+   "crates/abep-types/src/constants.rs": "c97e39931d145db143398e3d5de9eb4f9ba86943a75b3c1302df82c01b4efd1d",
+   "crates/abep-types/src/lib.rs": "0a067299e38d3dac702c3eb23ee3e34a55f844b389ec54b7463962c65d6a4b0e",
+   "crates/abep-types/src/pyjson.rs": "5ce15fdb06043a01ce8bd441a8e8f1906e74a0c4dd9fea2b9e4505f182a8d88e",
+   "crates/abep-types/src/pyjson_unicode.rs": "c6f59e0936c35051ef1f7d45a6611d3a7269a8d972c900805463f5f0bf6b2a75",
+   "rust-toolchain.toml": "7e44dbedb86596d94974ef8cb279f0e81496ea92b519c14940259661496f8499"
+  },
+  "harness": {
+   "path": "scripts/rust_migration/es3_gaspath_parity.py",
+   "sha256": "98e172656c0bdff13073bd879625d1e63a6fef2bcf47ee5910881a77c591a882"
+  },
+  "binary": "target/release/abep-gaspath-parity (cargo build --release --locked)"
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1",
+  "pandas": "3.0.2",
+  "numpy_simd_baseline": [
+   "X86_V2"
+  ],
+  "numpy_simd_dispatch": [
+   "X86_V3",
+   "X86_V4",
+   "AVX512_ICL",
+   "AVX512_SPR"
+  ],
+  "numpy_simd_avx512f_enabled": true,
+  "blas": "scipy-openblas 0.3.31.188.0",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "platform": "Linux-6.18.44-fc-v77-x86_64-with-glibc2.39",
+  "thread_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1"
+  },
+  "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+  "python_workers": 4
+ },
+ "tolerance_levels": {
+  "PROD": {
+   "nominal_rtol": 1e-05,
+   "python_method": "LSODA (module default INTEGRATOR_METHOD)",
+   "rust_method": "Radau IIA order 5 (DIV-P-01; v4 switching-point fix, v6 growing-mode guard)",
+   "T1_rtol": 1e-08,
+   "T2_rtol": 1e-10,
+   "vectors": "P42 / P43 PROD vectors (module defaults) and every P45 vector"
+  },
+  "REF": {
+   "nominal_rtol": 1e-08,
+   "python_method": "BDF (module INTEGRATOR_REFERENCE)",
+   "rust_method": "Radau IIA order 5 (DIV-P-01; v4 switching-point fix, v6 growing-mode guard)",
+   "T1_rtol": 1e-10,
+   "T2_rtol": 1e-12,
+   "vectors": "P42 / P43 REF vectors (rtol RTOL_REFERENCE, method INTEGRATOR_REFERENCE)"
+  },
+  "rule": "a tightened run changes rtol only: same implementation and method, same atol (ATOL_SCALED 1e-11 on the scaled states), same t_eval sample grid, same event sequence and inputs",
+  "override_mechanics": {
+   "python": "P42 / P43: the rtol / method arguments of TransientRun / transient_case; P45: orbit_simulated has no rtol argument, so the harness sets the default rtol of TransientRun.__init__ in its own process for the tightened P45 runs only (no reference file is changed; the nominal P45 runs use the unmodified default)",
+   "rust": "P42 / P43: the request 'rtol'; P45: a request carrying 'rtol' is evaluated by the parity CLI as TransientRun::new(rtol) + steady_start + run + the orbit_simulated record (library calls only); check COMP-P-01: at the nominal rtol this composed path equals the library orbit_simulated byte for byte on every P45 refinement vector (recorded in the envelope record; a mismatch voids the record)"
+  }
+ },
+ "envelopes": {
+  "S": {
+   "python": {
+    "PROD": {
+     "P42": {
+      "F42.p": {
+       "E": 0.00016450573672513458,
+       "n_leaves": 741712,
+       "argmax": {
+        "vector": "R42-PROD-S-291",
+        "path": "segments/1/p/150",
+        "N": 0.011305391528252946,
+        "T1": 0.011307024088862881,
+        "T2": 0.01130703033724154,
+        "scale": 0.01
+       },
+       "n_vectors": 614,
+       "status": "EVALUATED"
+      },
+      "F42.mdot": {
+       "E": 0.0004649416319305509,
+       "n_leaves": 741712,
+       "argmax": {
+        "vector": "R42-PROD-S-291",
+        "path": "segments/2/mdot/117",
+        "N": 1.1745869595512416e-09,
+        "T1": 1.1739771445733614e-09,
+        "T2": 1.1739755672555694e-09,
+        "scale": 1.318379709123794e-09
+       },
+       "n_vectors": 614,
+       "status": "EVALUATED"
+      },
+      "F42.u": {
+       "E": 0.000236584558252928,
+       "n_leaves": 741712,
+       "argmax": {
+        "vector": "R42-PROD-S-291",
+        "path": "segments/2/u/133",
+        "N": 0.5497230349843665,
+        "T1": 0.549487679661712,
+        "T2": 0.5494870650439128,
+        "scale": 1.0
+       },
+       "n_vectors": 614,
+       "status": "EVALUATED"
+      },
+      "F42.xO": {
+       "E": 8.84903824055483e-06,
+       "n_leaves": 741711,
+       "argmax": {
+        "vector": "R42-PROD-S-291",
+        "path": "segments/1/xO/150",
+        "N": 0.30943597804779616,
+        "T1": 0.3094447675737886,
+        "T2": 0.30944479732991265,
+        "scale": 1.0
+       },
+       "n_vectors": 614,
+       "status": "EVALUATED"
+      },
+      "F42.ucmd_end": {
+       "E": 0.0007962122764496593,
+       "n_leaves": 4912,
+       "argmax": {
+        "vector": "R42-PROD-S-291",
+        "path": "segments/1/_ucmd_end",
+        "N": 0.8296014885297429,
+        "T1": 0.8303897468141764,
+        "T2": 0.8303937238101845,
+        "scale": 1.0
+       },
+       "n_vectors": 614,
+       "status": "EVALUATED"
+      },
+      "F42.throughput": {
+       "E": 3.629344296318264e-09,
+       "n_leaves": 614,
+       "argmax": {
+        "vector": "R42-PROD-S-314",
+        "path": "throughput_kg",
+        "N": 2.1054294016898337e-05,
+        "T1": 2.1054293940485056e-05,
+        "T2": 2.1054293940702974e-05,
+        "scale": 2.1054293940702974e-05
+       },
+       "n_vectors": 614,
+       "status": "EVALUATED"
+      }
+     },
+     "P43": {
+      "F43.p": {
+       "E": 3.5709609792593244e-05,
+       "n_leaves": 16640,
+       "argmax": {
+        "vector": "R43-PROD-S-002",
+        "path": "metrics/6/P_max_Pa",
+        "N": 0.0059165376612051995,
+        "T1": 0.005916716209254162,
+        "T2": 0.005916715677460735,
+        "scale": 0.005
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.mdot": {
+       "E": 0.00104562141046304,
+       "n_leaves": 16640,
+       "argmax": {
+        "vector": "R43-PROD-S-470",
+        "path": "metrics/2/mdot_final_kgps",
+        "N": 8.253454050944033e-11,
+        "T1": 8.25927382397133e-11,
+        "T2": 8.259303794681167e-11,
+        "scale": 5.623177173052997e-11
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.xO": {
+       "E": 2.6438215643409535e-06,
+       "n_leaves": 11460,
+       "argmax": {
+        "vector": "R43-PROD-S-060",
+        "path": "metrics/4/xO_min",
+        "N": 0.568536212439592,
+        "T1": 0.5685335693320549,
+        "T2": 0.5685335689750413,
+        "scale": 1.0
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel": {
+       "E": 0.012164667191926881,
+       "n_leaves": 5120,
+       "argmax": {
+        "vector": "R43-PROD-S-470",
+        "path": "metrics/3/valve_travel",
+        "N": 3.002356502198645,
+        "T1": 3.014409256605603,
+        "T2": 3.0144652129980876,
+        "scale": 1.0
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.u": {
+       "E": 0.0003632433442707361,
+       "n_leaves": 10240,
+       "argmax": {
+        "vector": "R43-PROD-S-470",
+        "path": "metrics/3/u_min",
+        "N": 0.38140310978702074,
+        "T1": 0.3810433751283965,
+        "T2": 0.38104162078557324,
+        "scale": 1.0
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.setpoint_frac": {
+       "E": 3.570960979257243e-05,
+       "n_leaves": 9600,
+       "argmax": {
+        "vector": "R43-PROD-S-002",
+        "path": "metrics/6/peak_deviation_frac",
+        "N": 0.18330753224103988,
+        "T1": 0.18334324185083245,
+        "T2": 0.18334313549214706,
+        "scale": 1.0
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.overshoot": {
+       "E": 0.0002959056553391015,
+       "n_leaves": 1920,
+       "argmax": {
+        "vector": "R43-PROD-S-039",
+        "path": "metrics/1/overshoot_frac",
+        "N": 0.9904986099959927,
+        "T1": 0.990202772799379,
+        "T2": 0.9902027385700163,
+        "scale": 1.0
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel_total": {
+       "E": 0.02988172952032997,
+       "n_leaves": 640,
+       "argmax": {
+        "vector": "R43-PROD-S-470",
+        "path": "objectives/valve_travel",
+        "N": 30.03427380439182,
+        "T1": 30.0638814365496,
+        "T2": 30.064018485230875,
+        "scale": 1.0
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      }
+     },
+     "P45": {
+      "F45.P_dev": {
+       "E": 5.562525255964346e-06,
+       "n_leaves": 384,
+       "argmax": {
+        "vector": "R45-PROD-S-328",
+        "path": "P_dev_max_frac",
+        "N": 0.0002599842036263844,
+        "T1": 0.00025442167837042007,
+        "T2": 0.00025442200505998436,
+        "scale": 1.0
+       },
+       "n_vectors": 384,
+       "status": "EVALUATED"
+      },
+      "F45.mdot": {
+       "E": 2.064127126905318e-05,
+       "n_leaves": 768,
+       "argmax": {
+        "vector": "R45-PROD-S-205",
+        "path": "mdot_min_kgps",
+        "N": 3.8709964086133085e-10,
+        "T1": 3.870966232240377e-10,
+        "T2": 3.8709662324709214e-10,
+        "scale": 1.461943527522876e-10
+       },
+       "n_vectors": 384,
+       "status": "EVALUATED"
+      }
+     }
+    },
+    "REF": {
+     "P42": {
+      "F42.p": {
+       "E": 4.5439034132566114e-07,
+       "n_leaves": 221064,
+       "argmax": {
+        "vector": "R42-REF-S-164",
+        "path": "segments/5/p/149",
+        "N": 0.005217950889532943,
+        "T1": 0.005217953039437267,
+        "T2": 0.005217953100460958,
+        "scale": 0.005
+       },
+       "n_vectors": 183,
+       "status": "EVALUATED"
+      },
+      "F42.mdot": {
+       "E": 2.1309842632179045e-06,
+       "n_leaves": 221064,
+       "argmax": {
+        "vector": "R42-REF-S-164",
+        "path": "segments/6/mdot/119",
+        "N": 1.2167179165104497e-10,
+        "T1": 1.2167154033319242e-10,
+        "T2": 1.216715327846467e-10,
+        "scale": 1.2501966747073912e-10
+       },
+       "n_vectors": 183,
+       "status": "EVALUATED"
+      },
+      "F42.u": {
+       "E": 5.827503380406718e-07,
+       "n_leaves": 221064,
+       "argmax": {
+        "vector": "R42-REF-S-164",
+        "path": "segments/6/u/120",
+        "N": 0.2718156608345246,
+        "T1": 0.2718151114170942,
+        "T2": 0.27181509475064036,
+        "scale": 1.0
+       },
+       "n_vectors": 183,
+       "status": "EVALUATED"
+      },
+      "F42.xO": {
+       "E": 1.4368693124211518e-08,
+       "n_leaves": 221064,
+       "argmax": {
+        "vector": "R42-REF-S-049",
+        "path": "segments/6/xO/45",
+        "N": 0.557504123757194,
+        "T1": 0.5575041093885009,
+        "T2": 0.5575041093885922,
+        "scale": 1.0
+       },
+       "n_vectors": 183,
+       "status": "EVALUATED"
+      },
+      "F42.ucmd_end": {
+       "E": 5.456951655546938e-07,
+       "n_leaves": 1464,
+       "argmax": {
+        "vector": "R42-REF-S-164",
+        "path": "segments/6/_ucmd_end",
+        "N": 0.2715047366922264,
+        "T1": 0.271504228922364,
+        "T2": 0.2715042099597124,
+        "scale": 1.0
+       },
+       "n_vectors": 183,
+       "status": "EVALUATED"
+      },
+      "F42.throughput": {
+       "E": 2.4718682708345847e-11,
+       "n_leaves": 183,
+       "argmax": {
+        "vector": "R42-REF-S-019",
+        "path": "throughput_kg",
+        "N": 2.676149949704184e-05,
+        "T1": 2.6761499497703348e-05,
+        "T2": 2.6761499497695243e-05,
+        "scale": 2.6761499497695243e-05
+       },
+       "n_vectors": 183,
+       "status": "EVALUATED"
+      }
+     },
+     "P43": {
+      "F43.p": {
+       "E": 1.463648204372281e-07,
+       "n_leaves": 4992,
+       "argmax": {
+        "vector": "R43-REF-S-045",
+        "path": "metrics/6/P_max_Pa",
+        "N": 0.022234381266839836,
+        "T1": 0.022234383528957347,
+        "T2": 0.022234383861546796,
+        "scale": 0.02
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.mdot": {
+       "E": 3.992371780945561e-06,
+       "n_leaves": 4992,
+       "argmax": {
+        "vector": "R43-REF-S-017",
+        "path": "metrics/7/mdot_max_kgps",
+        "N": 3.5239317551056556e-11,
+        "T1": 3.523938215025965e-11,
+        "T2": 3.523938587900486e-11,
+        "scale": 1.8048593033923624e-11
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.xO": {
+       "E": 1.294319662559218e-08,
+       "n_leaves": 3446,
+       "argmax": {
+        "vector": "R43-REF-S-153",
+        "path": "metrics/4/xO_min",
+        "N": 0.5084953637013578,
+        "T1": 0.5084953766445545,
+        "T2": 0.508495376588931,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel": {
+       "E": 1.812824449798356e-05,
+       "n_leaves": 1536,
+       "argmax": {
+        "vector": "R43-REF-S-017",
+        "path": "metrics/7/valve_travel",
+        "N": 3.1573973645284963,
+        "T1": 3.1574136326583595,
+        "T2": 3.157414562715677,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.u": {
+       "E": 1.281586918810973e-06,
+       "n_leaves": 3072,
+       "argmax": {
+        "vector": "R43-REF-S-017",
+        "path": "metrics/7/u_max",
+        "N": 0.6243423975592319,
+        "T1": 0.6243435467689948,
+        "T2": 0.6243436129575728,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.setpoint_frac": {
+       "E": 1.463648204302892e-07,
+       "n_leaves": 2880,
+       "argmax": {
+        "vector": "R43-REF-S-045",
+        "path": "metrics/6/peak_deviation_frac",
+        "N": 0.11171906334199178,
+        "T1": 0.1117191764478673,
+        "T2": 0.11171919307733975,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.overshoot": {
+       "E": 1.353328986430924e-06,
+       "n_leaves": 576,
+       "argmax": {
+        "vector": "R43-REF-S-170",
+        "path": "metrics/2/overshoot_frac",
+        "N": 0.8476835166950482,
+        "T1": 0.8476847657855401,
+        "T2": 0.8476848179047873,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel_total": {
+       "E": 6.0700396986135274e-05,
+       "n_leaves": 192,
+       "argmax": {
+        "vector": "R43-REF-S-017",
+        "path": "objectives/valve_travel",
+        "N": 18.695561249057867,
+        "T1": 18.69561514379486,
+        "T2": 18.695618546624857,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      }
+     }
+    }
+   },
+   "rust": {
+    "PROD": {
+     "P42": {
+      "F42.ucmd_end": {
+       "E": 7.299875578747894e-05,
+       "n_leaves": 5024,
+       "argmax": {
+        "vector": "R42-PROD-S-291",
+        "path": "segments/1/_ucmd_end",
+        "N": 0.8303207755652863,
+        "T1": 0.8303936797264703,
+        "T2": 0.830393727023772,
+        "scale": 1.0
+       },
+       "n_vectors": 628,
+       "status": "EVALUATED"
+      },
+      "F42.mdot": {
+       "E": 3.497584350911615e-05,
+       "n_leaves": 758624,
+       "argmax": {
+        "vector": "R42-PROD-S-291",
+        "path": "segments/1/mdot/149",
+        "N": 1.4314671859009887e-09,
+        "T1": 1.4315132116335708e-09,
+        "T2": 1.4315132544884757e-09,
+        "scale": 1.318379709123794e-09
+       },
+       "n_vectors": 628,
+       "status": "EVALUATED"
+      },
+      "F42.p": {
+       "E": 1.3752148019484378e-05,
+       "n_leaves": 758624,
+       "argmax": {
+        "vector": "R42-PROD-S-291",
+        "path": "segments/1/p/150",
+        "N": 0.011306892916905509,
+        "T1": 0.01130703019208718,
+        "T2": 0.011307030315236442,
+        "scale": 0.01
+       },
+       "n_vectors": 628,
+       "status": "EVALUATED"
+      },
+      "F42.u": {
+       "E": 2.4722729073611838e-05,
+       "n_leaves": 758624,
+       "argmax": {
+        "vector": "R42-PROD-S-291",
+        "path": "segments/3/u/123",
+        "N": 0.7505777081881286,
+        "T1": 0.7505529896936075,
+        "T2": 0.7505529875763313,
+        "scale": 1.0
+       },
+       "n_vectors": 628,
+       "status": "EVALUATED"
+      },
+      "F42.xO": {
+       "E": 7.285599790685104e-07,
+       "n_leaves": 758547,
+       "argmax": {
+        "vector": "R42-PROD-S-291",
+        "path": "segments/3/xO/127",
+        "N": 0.31101552839253177,
+        "T1": 0.3110147999509933,
+        "T2": 0.311014799891773,
+        "scale": 1.0
+       },
+       "n_vectors": 628,
+       "status": "EVALUATED"
+      },
+      "F42.throughput": {
+       "E": 1.1729737634805699e-12,
+       "n_leaves": 628,
+       "argmax": {
+        "vector": "R42-PROD-S-291",
+        "path": "throughput_kg",
+        "N": 5.736375513445077e-07,
+        "T1": 5.736375513451802e-07,
+        "T2": 5.736375513451804e-07,
+        "scale": 5.736375513451804e-07
+       },
+       "n_vectors": 628,
+       "status": "EVALUATED"
+      }
+     },
+     "P43": {
+      "F43.p": {
+       "E": 5.088447531213791e-06,
+       "n_leaves": 16640,
+       "argmax": {
+        "vector": "R43-PROD-S-367",
+        "path": "metrics/5/P_final_Pa",
+        "N": 0.010000197826254997,
+        "T1": 0.01000024870916443,
+        "T2": 0.01000024870994737,
+        "scale": 0.01
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.setpoint_frac": {
+       "E": 5.088447531213791e-06,
+       "n_leaves": 9600,
+       "argmax": {
+        "vector": "R43-PROD-S-367",
+        "path": "metrics/5/final_setpoint_error_frac",
+        "N": 1.9782625499710493e-05,
+        "T1": 2.4870916442987223e-05,
+        "T2": 2.4870994736955754e-05,
+        "scale": 1.0
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.mdot": {
+       "E": 9.007085792821023e-05,
+       "n_leaves": 16640,
+       "argmax": {
+        "vector": "R43-PROD-S-470",
+        "path": "metrics/1/mdot_final_kgps",
+        "N": 1.9897439290456535e-11,
+        "T1": 1.989237656503938e-11,
+        "T2": 1.989237550578666e-11,
+        "scale": 5.623177173052997e-11
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.u": {
+       "E": 1.593380679631995e-05,
+       "n_leaves": 10240,
+       "argmax": {
+        "vector": "R43-PROD-S-470",
+        "path": "metrics/6/u_min",
+        "N": 0.34873404312769557,
+        "T1": 0.3487181099644095,
+        "T2": 0.3487181096426544,
+        "scale": 1.0
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel": {
+       "E": 0.0005138927395251791,
+       "n_leaves": 5120,
+       "argmax": {
+        "vector": "R43-PROD-S-470",
+        "path": "metrics/6/valve_travel",
+        "N": 2.5999759433391056,
+        "T1": 2.6004896270456026,
+        "T2": 2.6004897315621167,
+        "scale": 1.0
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.xO": {
+       "E": 1.2710796273550655e-06,
+       "n_leaves": 11460,
+       "argmax": {
+        "vector": "R43-PROD-S-065",
+        "path": "metrics/1/xO_min",
+        "N": 0.0002285290193582598,
+        "T1": 0.0002272579397309048,
+        "T2": 0.00022725793973090477,
+        "scale": 1.0
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.overshoot": {
+       "E": 2.6535015327122657e-05,
+       "n_leaves": 1920,
+       "argmax": {
+        "vector": "R43-PROD-S-426",
+        "path": "metrics/1/overshoot_frac",
+        "N": 0.8533291598425686,
+        "T1": 0.8533026378740611,
+        "T2": 0.8533026313506513,
+        "scale": 1.0
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel_total": {
+       "E": 0.0021861008282186845,
+       "n_leaves": 640,
+       "argmax": {
+        "vector": "R43-PROD-S-470",
+        "path": "objectives/valve_travel",
+        "N": 30.06184273261662,
+        "T1": 30.064027514759296,
+        "T2": 30.064028174102067,
+        "scale": 1.0
+       },
+       "n_vectors": 640,
+       "status": "EVALUATED"
+      }
+     },
+     "P45": {
+      "F45.P_dev": {
+       "E": 8.282066787934639e-08,
+       "n_leaves": 384,
+       "argmax": {
+        "vector": "R45-PROD-S-294",
+        "path": "P_dev_max_frac",
+        "N": 0.11257071512688599,
+        "T1": 0.11257063283017965,
+        "T2": 0.11257063256819888,
+        "scale": 1.0
+       },
+       "n_vectors": 384,
+       "status": "EVALUATED"
+      },
+      "F45.mdot": {
+       "E": 2.526902788765974e-07,
+       "n_leaves": 768,
+       "argmax": {
+        "vector": "R45-PROD-S-362",
+        "path": "mdot_min_kgps",
+        "N": 4.633906284731342e-12,
+        "T1": 4.633909127782849e-12,
+        "T2": 4.633909177331624e-12,
+        "scale": 1.1643301320183282e-11
+       },
+       "n_vectors": 384,
+       "status": "EVALUATED"
+      }
+     }
+    },
+    "REF": {
+     "P42": {
+      "F42.ucmd_end": {
+       "E": 5.299196637054138e-09,
+       "n_leaves": 1512,
+       "argmax": {
+        "vector": "R42-REF-S-067",
+        "path": "segments/3/_ucmd_end",
+        "N": 0.36419674867630386,
+        "T1": 0.364196743976339,
+        "T2": 0.3641967436767231,
+        "scale": 1.0
+       },
+       "n_vectors": 189,
+       "status": "EVALUATED"
+      },
+      "F42.mdot": {
+       "E": 1.6750468704965916e-08,
+       "n_leaves": 228312,
+       "argmax": {
+        "vector": "R42-REF-S-164",
+        "path": "segments/6/mdot/122",
+        "N": 1.4115641987354888e-10,
+        "T1": 1.4115641786835707e-10,
+        "T2": 1.4115641782388396e-10,
+        "scale": 1.2501966747073912e-10
+       },
+       "n_vectors": 189,
+       "status": "EVALUATED"
+      },
+      "F42.p": {
+       "E": 3.500704587322545e-09,
+       "n_leaves": 228312,
+       "argmax": {
+        "vector": "R42-REF-S-164",
+        "path": "segments/6/p/111",
+        "N": 0.005022964540130536,
+        "T1": 0.0050229645233620555,
+        "T2": 0.005022964522994534,
+        "scale": 0.005
+       },
+       "n_vectors": 189,
+       "status": "EVALUATED"
+      },
+      "F42.u": {
+       "E": 4.552134613700076e-09,
+       "n_leaves": 228312,
+       "argmax": {
+        "vector": "R42-REF-S-164",
+        "path": "segments/6/u/123",
+        "N": 0.31819509167803095,
+        "T1": 0.31819508732162677,
+        "T2": 0.31819508722376155,
+        "scale": 1.0
+       },
+       "n_vectors": 189,
+       "status": "EVALUATED"
+      },
+      "F42.xO": {
+       "E": 2.6738689040683994e-10,
+       "n_leaves": 228309,
+       "argmax": {
+        "vector": "R42-REF-S-059",
+        "path": "segments/5/xO/1",
+        "N": 0.5259916035119734,
+        "T1": 0.5259916032474502,
+        "T2": 0.5259916032460183,
+        "scale": 1.0
+       },
+       "n_vectors": 189,
+       "status": "EVALUATED"
+      },
+      "F42.throughput": {
+       "E": 2.86469208229333e-13,
+       "n_leaves": 189,
+       "argmax": {
+        "vector": "R42-REF-S-056",
+        "path": "throughput_kg",
+        "N": 3.1829981775530608e-06,
+        "T1": 3.1829981775536795e-06,
+        "T2": 3.182998177553826e-06,
+        "scale": 3.182998177553826e-06
+       },
+       "n_vectors": 189,
+       "status": "EVALUATED"
+      }
+     },
+     "P43": {
+      "F43.p": {
+       "E": 2.6444740841569114e-09,
+       "n_leaves": 4992,
+       "argmax": {
+        "vector": "R43-REF-S-119",
+        "path": "metrics/4/P_max_Pa",
+        "N": 0.05616540985569769,
+        "T1": 0.05616540972491489,
+        "T2": 0.05616540972419444,
+        "scale": 0.05
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.setpoint_frac": {
+       "E": 2.2972802479759302e-09,
+       "n_leaves": 2880,
+       "argmax": {
+        "vector": "R43-REF-S-045",
+        "path": "metrics/6/final_setpoint_error_frac",
+        "N": 1.8520143283545787e-07,
+        "T1": 1.8741287202694856e-07,
+        "T2": 1.8745579255519118e-07,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.mdot": {
+       "E": 2.0037208512020067e-08,
+       "n_leaves": 4992,
+       "argmax": {
+        "vector": "R43-REF-S-017",
+        "path": "metrics/4/mdot_final_kgps",
+        "N": 1.9125441993643245e-11,
+        "T1": 1.912544232925957e-11,
+        "T2": 1.912544234227312e-11,
+        "scale": 1.8048593033923624e-11
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.u": {
+       "E": 5.279988946060854e-09,
+       "n_leaves": 3072,
+       "argmax": {
+        "vector": "R43-REF-S-017",
+        "path": "metrics/5/u_max",
+        "N": 0.35296309234774054,
+        "T1": 0.35296309725382,
+        "T2": 0.35296309744077475,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel": {
+       "E": 6.449402389918646e-08,
+       "n_leaves": 1536,
+       "argmax": {
+        "vector": "R43-REF-S-017",
+        "path": "metrics/6/valve_travel",
+        "N": 3.4558833879694246,
+        "T1": 3.455883448197152,
+        "T2": 3.4558834503303,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.xO": {
+       "E": 1.6522083701175916e-10,
+       "n_leaves": 3446,
+       "argmax": {
+        "vector": "R43-REF-S-105",
+        "path": "metrics/4/xO_min",
+        "N": 0.5094535718110974,
+        "T1": 0.5094535716486552,
+        "T2": 0.5094535716472659,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.overshoot": {
+       "E": 1.0437726238876621e-08,
+       "n_leaves": 576,
+       "argmax": {
+        "vector": "R43-REF-S-045",
+        "path": "metrics/1/overshoot_frac",
+        "N": 0.9182683267420151,
+        "T1": 0.9182683350965095,
+        "T2": 0.9182683361381254,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel_total": {
+       "E": 1.7186297895932512e-07,
+       "n_leaves": 192,
+       "argmax": {
+        "vector": "R43-REF-S-017",
+        "path": "objectives/valve_travel",
+        "N": 18.69561900596334,
+        "T1": 18.69561916741257,
+        "T2": 18.695619172619445,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      }
+     }
+    }
+   }
+  },
+  "U": {
+   "rust": {
+    "PROD": {
+     "P42": {
+      "F42.p": {
+       "E": 0.0027523142073481235,
+       "n_leaves": 231335,
+       "argmax": {
+        "vector": "R42-PROD-U-015",
+        "path": "segments/7/p/148",
+        "N": 0.010698655894622378,
+        "T1": 0.010671132839215136,
+        "T2": 0.010671132795882016,
+        "python_T2": 0.010671132459508197,
+        "scale": 0.01
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.mdot": {
+       "E": 0.010311823595736272,
+       "n_leaves": 230796,
+       "argmax": {
+        "vector": "R42-PROD-U-140",
+        "path": "segments/7/mdot/146",
+        "N": 2.8246998660288856e-10,
+        "T1": 2.844116034248307e-10,
+        "T2": 2.8441164392516393e-10,
+        "python_T2": 2.844116671835383e-10,
+        "scale": 1.8829820007893354e-10
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.u": {
+       "E": 0.002881783862706544,
+       "n_leaves": 231070,
+       "argmax": {
+        "vector": "R42-PROD-U-140",
+        "path": "segments/7/u/146",
+        "N": 0.3999958518931504,
+        "T1": 0.40287751537345223,
+        "T2": 0.4028775755646546,
+        "python_T2": 0.4028776101207246,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.xO": {
+       "E": 9.810130098986125e-05,
+       "n_leaves": 230499,
+       "argmax": {
+        "vector": "R42-PROD-U-164",
+        "path": "segments/5/xO/144",
+        "N": 0.3802133613528853,
+        "T1": 0.38011526005189544,
+        "T2": 0.3801152608815664,
+        "python_T2": 0.38011525851790734,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.ucmd_end": {
+       "E": 0.0071142697328942794,
+       "n_leaves": 1530,
+       "argmax": {
+        "vector": "R42-PROD-U-140",
+        "path": "segments/6/_ucmd_end",
+        "N": 0.2398949928338587,
+        "T1": 0.2327810010699245,
+        "T2": 0.23278086208544446,
+        "python_T2": 0.23278078295282276,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.throughput": {
+       "E": 1.1948009408605012e-09,
+       "n_leaves": 192,
+       "argmax": {
+        "vector": "R42-PROD-U-030",
+        "path": "throughput_kg",
+        "N": 2.4564126682072295e-07,
+        "T1": 2.456412665273166e-07,
+        "T2": 2.4564126652727357e-07,
+        "python_T2": 2.4564126652738337e-07,
+        "scale": 2.4564126652738337e-07
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      }
+     },
+     "P43": {
+      "F43.p": {
+       "E": 0.0010465700028862435,
+       "n_leaves": 4976,
+       "argmax": {
+        "vector": "R43-PROD-U-131",
+        "path": "metrics/7/P_final_Pa",
+        "N": 0.01978720795904921,
+        "T1": 0.019808139359106934,
+        "T2": 0.019808138071197388,
+        "python_T2": 0.019808138442006313,
+        "scale": 0.02
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.mdot": {
+       "E": 0.0031399359179551827,
+       "n_leaves": 4979,
+       "argmax": {
+        "vector": "R43-PROD-U-102",
+        "path": "metrics/6/mdot_final_kgps",
+        "N": 6.677108902159354e-10,
+        "T1": 6.691331181401249e-10,
+        "T2": 6.691331387480858e-10,
+        "python_T2": 6.691331754683153e-10,
+        "scale": 4.5296119961502417e-10
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.xO": {
+       "E": 1.1045838282264242e-05,
+       "n_leaves": 3422,
+       "argmax": {
+        "vector": "R43-PROD-U-131",
+        "path": "metrics/7/xO_max",
+        "N": 0.3215926197343074,
+        "T1": 0.32158157389602515,
+        "T2": 0.32158157455446623,
+        "python_T2": 0.32158157434852397,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel": {
+       "E": 0.0067417256684887406,
+       "n_leaves": 1446,
+       "argmax": {
+        "vector": "R43-PROD-U-131",
+        "path": "metrics/7/valve_travel",
+        "N": 6.318067762171608,
+        "T1": 6.3248094878400964,
+        "T2": 6.324809106071258,
+        "python_T2": 6.324809209814003,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.u": {
+       "E": 0.0002234536719145641,
+       "n_leaves": 3064,
+       "argmax": {
+        "vector": "R43-PROD-U-090",
+        "path": "metrics/7/u_max",
+        "N": 0.5315072147857874,
+        "T1": 0.5317306388300699,
+        "T2": 0.5317306536438859,
+        "python_T2": 0.5317306041928065,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.setpoint_frac": {
+       "E": 0.0010465700028862435,
+       "n_leaves": 2677,
+       "argmax": {
+        "vector": "R43-PROD-U-131",
+        "path": "metrics/7/final_setpoint_error_frac",
+        "N": 0.01063960204753956,
+        "T1": 0.009593032044653317,
+        "T2": 0.009593096440130636,
+        "python_T2": 0.009593077899684374,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.overshoot": {
+       "E": 7.3033052945285135,
+       "n_leaves": 575,
+       "argmax": {
+        "vector": "R43-PROD-U-173",
+        "path": "metrics/2/overshoot_frac",
+        "N": 385.977991431835,
+        "T1": 393.2702441953014,
+        "T2": 393.27577046083246,
+        "python_T2": 393.2750754950911,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel_total": {
+       "E": 0.008110294007977359,
+       "n_leaves": 192,
+       "argmax": {
+        "vector": "R43-PROD-U-090",
+        "path": "objectives/valve_travel",
+        "N": 35.05611989574727,
+        "T1": 35.04801069709417,
+        "T2": 35.04801014941673,
+        "python_T2": 35.04801206234028,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      }
+     },
+     "P45": {
+      "F45.mdot": {
+       "E": 0.8740769158157327,
+       "n_leaves": 365,
+       "argmax": {
+        "vector": "R45-PROD-U-119",
+        "path": "mdot_min_kgps",
+        "N": 3.9122955986964255e-10,
+        "T1": 1.3436234282300194e-10,
+        "T2": 1.337672938997762e-10,
+        "python_T2": 1.3405694827409464e-10,
+        "scale": 2.9523410379996127e-10
+       },
+       "n_vectors": 187,
+       "status": "EVALUATED"
+      },
+      "F45.P_dev": {
+       "E": 86.39674483051611,
+       "n_leaves": 186,
+       "argmax": {
+        "vector": "R45-PROD-U-061",
+        "path": "P_dev_max_frac",
+        "N": 0.024454516158719963,
+        "T1": 0.01791929329161479,
+        "T2": 0.02165196141654735,
+        "python_T2": 7.564200341025895e-05,
+        "scale": 7.564200341025895e-05
+       },
+       "n_vectors": 186,
+       "status": "EVALUATED"
+      }
+     }
+    },
+    "REF": {
+     "P42": {
+      "F42.p": {
+       "E": 1.0949872751749024e-05,
+       "n_leaves": 75738,
+       "argmax": {
+        "vector": "R42-REF-U-026",
+        "path": "segments/5/p/101",
+        "N": 0.019929751105319107,
+        "T1": 0.01992953210786407,
+        "T2": 0.01992953213322001,
+        "python_T2": 0.019929531072381455,
+        "scale": 0.02
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.mdot": {
+       "E": 1.888674844954807e-05,
+       "n_leaves": 75487,
+       "argmax": {
+        "vector": "R42-REF-U-026",
+        "path": "segments/4/mdot/150",
+        "N": 3.411286717207584e-10,
+        "T1": 3.411349464822167e-10,
+        "T2": 3.4113494574729714e-10,
+        "python_T2": 3.4113497649633904e-10,
+        "scale": 3.322309012095313e-10
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.u": {
+       "E": 8.463915404155475e-06,
+       "n_leaves": 75496,
+       "argmax": {
+        "vector": "R42-REF-U-026",
+        "path": "segments/5/u/91",
+        "N": 0.4445248397275405,
+        "T1": 0.44453330364294463,
+        "T2": 0.4445333026489531,
+        "python_T2": 0.44453334423791147,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.xO": {
+       "E": 8.108991658359321e-08,
+       "n_leaves": 75363,
+       "argmax": {
+        "vector": "R42-REF-U-026",
+        "path": "segments/6/xO/117",
+        "N": 0.00828855657656387,
+        "T1": 0.008288637666480454,
+        "T2": 0.008288637655679167,
+        "python_T2": 0.008288638138880774,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.ucmd_end": {
+       "E": 1.9051112417706184e-05,
+       "n_leaves": 499,
+       "argmax": {
+        "vector": "R42-REF-U-026",
+        "path": "segments/5/_ucmd_end",
+        "N": 0.21872386530738416,
+        "T1": 0.21870481419496646,
+        "T2": 0.21870481670647612,
+        "python_T2": 0.2187047034035571,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.throughput": {
+       "E": 6.210982639232553e-12,
+       "n_leaves": 64,
+       "argmax": {
+        "vector": "R42-REF-U-026",
+        "path": "throughput_kg",
+        "N": 1.4967336307362303e-07,
+        "T1": 1.4967336307455244e-07,
+        "T2": 1.4967336307455254e-07,
+        "python_T2": 1.4967336307455223e-07,
+        "scale": 1.4967336307455223e-07
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      }
+     },
+     "P43": {
+      "F43.p": {
+       "E": 1.05921702485412e-07,
+       "n_leaves": 1646,
+       "argmax": {
+        "vector": "R43-REF-U-006",
+        "path": "metrics/2/P_final_Pa",
+        "N": 0.010564302518890274,
+        "T1": 0.0105643015306889,
+        "T2": 0.010564301495181075,
+        "python_T2": 0.010564302566071245,
+        "scale": 0.01
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.mdot": {
+       "E": 3.868703774031886e-07,
+       "n_leaves": 1634,
+       "argmax": {
+        "vector": "R43-REF-U-040",
+        "path": "metrics/2/mdot_final_kgps",
+        "N": 2.0348931807401847e-10,
+        "T1": 2.0348927631352263e-10,
+        "T2": 2.0348927541785883e-10,
+        "python_T2": 2.0348921836158307e-10,
+        "scale": 1.1257471747744359e-10
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.xO": {
+       "E": 1.8925276346060116e-09,
+       "n_leaves": 1139,
+       "argmax": {
+        "vector": "R43-REF-U-030",
+        "path": "metrics/5/xO_min",
+        "N": 0.47089962598480684,
+        "T1": 0.47089962778179567,
+        "T2": 0.47089962782956507,
+        "python_T2": 0.4708996338105226,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel": {
+       "E": 1.7263003728729132e-06,
+       "n_leaves": 494,
+       "argmax": {
+        "vector": "R43-REF-U-044",
+        "path": "metrics/6/valve_travel",
+        "N": 1.58968321002871,
+        "T1": 1.5896848614224113,
+        "T2": 1.589684898875747,
+        "python_T2": 1.5896826253983691,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.u": {
+       "E": 1.0167775088554265e-07,
+       "n_leaves": 1002,
+       "argmax": {
+        "vector": "R43-REF-U-039",
+        "path": "metrics/7/u_max",
+        "N": 0.6290149456137225,
+        "T1": 0.6290150420995805,
+        "T2": 0.6290150446955269,
+        "python_T2": 0.6290149892398479,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.setpoint_frac": {
+       "E": 1.05921702485412e-07,
+       "n_leaves": 942,
+       "argmax": {
+        "vector": "R43-REF-U-006",
+        "path": "metrics/2/final_setpoint_error_frac",
+        "N": 0.056430251889027366,
+        "T1": 0.05643015306889005,
+        "T2": 0.056430149518107466,
+        "python_T2": 0.05643025660712446,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.overshoot": {
+       "E": 0.0003264335123276396,
+       "n_leaves": 189,
+       "argmax": {
+        "vector": "R43-REF-U-011",
+        "path": "metrics/1/overshoot_frac",
+        "N": 269.6540614276145,
+        "T1": 269.6543817554721,
+        "T2": 269.6543848082995,
+        "python_T2": 269.65420788885757,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel_total": {
+       "E": 3.1022342312780893e-06,
+       "n_leaves": 63,
+       "argmax": {
+        "vector": "R43-REF-U-044",
+        "path": "objectives/valve_travel",
+        "N": 17.012558615448622,
+        "T1": 17.01256159134545,
+        "T2": 17.01256165451415,
+        "python_T2": 17.012556311917134,
+        "scale": 1.0
+       },
+       "n_vectors": 63,
+       "status": "EVALUATED"
+      }
+     }
+    }
+   },
+   "python_T1_T2": {
+    "PROD": {
+     "P42": {
+      "F42.p": {
+       "E": 3.206392324664464e-05,
+       "n_leaves": 231335,
+       "argmax": {
+        "vector": "R42-PROD-U-036",
+        "path": "segments/7/p/135",
+        "T1": 0.05016020347358246,
+        "T2": 0.05016180666974479,
+        "scale": 0.05
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.mdot": {
+       "E": 0.00013706971062832154,
+       "n_leaves": 230796,
+       "argmax": {
+        "vector": "R42-PROD-U-036",
+        "path": "segments/7/mdot/144",
+        "T1": 1.0856355116386736e-09,
+        "T2": 1.085494989438626e-09,
+        "scale": 1.025187836199356e-09
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.u": {
+       "E": 3.468356927344152e-05,
+       "n_leaves": 231070,
+       "argmax": {
+        "vector": "R42-PROD-U-036",
+        "path": "segments/7/u/149",
+        "T1": 0.31558625924426525,
+        "T2": 0.3155515756749918,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.xO": {
+       "E": 7.104025379622847e-07,
+       "n_leaves": 230499,
+       "argmax": {
+        "vector": "R42-PROD-U-065",
+        "path": "segments/7/xO/129",
+        "T1": 0.3663061985294235,
+        "T2": 0.36630690893196144,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.ucmd_end": {
+       "E": 5.5729908077672974e-05,
+       "n_leaves": 1530,
+       "argmax": {
+        "vector": "R42-PROD-U-030",
+        "path": "segments/3/_ucmd_end",
+        "T1": 0.4206105733124117,
+        "T2": 0.42066630322048937,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.throughput": {
+       "E": 1.5743424769293833e-11,
+       "n_leaves": 192,
+       "argmax": {
+        "vector": "R42-PROD-U-030",
+        "path": "throughput_kg",
+        "T1": 2.456412665312506e-07,
+        "T2": 2.4564126652738337e-07,
+        "scale": 2.4564126652738337e-07
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      }
+     },
+     "P43": {
+      "F43.p": {
+       "E": 6.408032980978473e-06,
+       "n_leaves": 4976,
+       "argmax": {
+        "vector": "R43-PROD-U-178",
+        "path": "metrics/6/P_final_Pa",
+        "T1": 0.021219866269406765,
+        "T2": 0.021219994430066384,
+        "scale": 0.02
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.mdot": {
+       "E": 6.057471249580357e-05,
+       "n_leaves": 4979,
+       "argmax": {
+        "vector": "R43-PROD-U-189",
+        "path": "metrics/6/mdot_final_kgps",
+        "T1": 1.4015670846888803e-10,
+        "T2": 1.401622552703447e-10,
+        "scale": 9.156958783847136e-11
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.xO": {
+       "E": 2.477022291724751e-07,
+       "n_leaves": 3422,
+       "argmax": {
+        "vector": "R43-PROD-U-189",
+        "path": "metrics/4/xO_min",
+        "T1": 0.45448892869541146,
+        "T2": 0.45448917639764064,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel": {
+       "E": 7.194131473919896e-05,
+       "n_leaves": 1446,
+       "argmax": {
+        "vector": "R43-PROD-U-177",
+        "path": "metrics/7/valve_travel",
+        "T1": 6.658164617833957,
+        "T2": 6.658236559148696,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.u": {
+       "E": 8.96943134842676e-06,
+       "n_leaves": 3064,
+       "argmax": {
+        "vector": "R43-PROD-U-189",
+        "path": "metrics/4/u_max",
+        "T1": 0.7074239294093814,
+        "T2": 0.7074149599780329,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.setpoint_frac": {
+       "E": 6.408032980978473e-06,
+       "n_leaves": 2677,
+       "argmax": {
+        "vector": "R43-PROD-U-178",
+        "path": "metrics/6/final_setpoint_error_frac",
+        "T1": 0.06099331347033821,
+        "T2": 0.06099972150331919,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.overshoot": {
+       "E": 0.12983649955839383,
+       "n_leaves": 575,
+       "argmax": {
+        "vector": "R43-PROD-U-173",
+        "path": "metrics/2/overshoot_frac",
+        "T1": 393.1452389955327,
+        "T2": 393.2750754950911,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel_total": {
+       "E": 0.00013301239117424757,
+       "n_leaves": 192,
+       "argmax": {
+        "vector": "R43-PROD-U-061",
+        "path": "objectives/valve_travel",
+        "T1": 24.138079360535116,
+        "T2": 24.13821237292629,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      }
+     },
+     "P45": {
+      "F45.mdot": {
+       "E": 0.17830309601973332,
+       "n_leaves": 365,
+       "argmax": {
+        "vector": "R45-PROD-U-000",
+        "path": "mdot_min_kgps",
+        "T1": 6.664382659746224e-10,
+        "T2": 7.855861806550632e-10,
+        "scale": 6.682324499135692e-10
+       },
+       "n_vectors": 187,
+       "status": "EVALUATED"
+      },
+      "F45.P_dev": {
+       "E": 12.415351960148234,
+       "n_leaves": 186,
+       "argmax": {
+        "vector": "R45-PROD-U-045",
+        "path": "P_dev_max_frac",
+        "T1": 0.00010240615235179718,
+        "T2": 7.633504708337568e-06,
+        "scale": 7.633504708337568e-06
+       },
+       "n_vectors": 186,
+       "status": "EVALUATED"
+      }
+     }
+    },
+    "REF": {
+     "P42": {
+      "F42.p": {
+       "E": 1.4427171543540673e-06,
+       "n_leaves": 75738,
+       "argmax": {
+        "vector": "R42-REF-U-046",
+        "path": "segments/5/p/99",
+        "T1": 0.048633896846345365,
+        "T2": 0.04863396898220308,
+        "scale": 0.05
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.mdot": {
+       "E": 3.4999739019001733e-06,
+       "n_leaves": 75487,
+       "argmax": {
+        "vector": "R42-REF-U-046",
+        "path": "segments/5/mdot/80",
+        "T1": 1.0425387807936313e-09,
+        "T2": 1.0425351315789985e-09,
+        "scale": 1.0426405268037478e-09
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.u": {
+       "E": 1.8790079040487129e-06,
+       "n_leaves": 75496,
+       "argmax": {
+        "vector": "R42-REF-U-036",
+        "path": "segments/7/u/148",
+        "T1": 0.6818095418711497,
+        "T2": 0.6818114208790538,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.xO": {
+       "E": 4.6146132526292405e-08,
+       "n_leaves": 75363,
+       "argmax": {
+        "vector": "R42-REF-U-056",
+        "path": "segments/5/xO/144",
+        "T1": 0.39146699328581785,
+        "T2": 0.3914670394319504,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.ucmd_end": {
+       "E": 4.4480918747202836e-06,
+       "n_leaves": 499,
+       "argmax": {
+        "vector": "R42-REF-U-036",
+        "path": "segments/7/_ucmd_end",
+        "T1": 0.8395607935428934,
+        "T2": 0.8395652416347681,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.throughput": {
+       "E": 2.1109287274259168e-13,
+       "n_leaves": 64,
+       "argmax": {
+        "vector": "R42-REF-U-005",
+        "path": "throughput_kg",
+        "T1": 4.0000685874598894e-07,
+        "T2": 4.000068587459045e-07,
+        "scale": 4.000068587459045e-07
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      }
+     },
+     "P43": {
+      "F43.p": {
+       "E": 7.860645951859868e-07,
+       "n_leaves": 1646,
+       "argmax": {
+        "vector": "R43-REF-U-058",
+        "path": "metrics/7/P_final_Pa",
+        "T1": 0.020524418024584018,
+        "T2": 0.02052443374587592,
+        "scale": 0.02
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.mdot": {
+       "E": 1.9712952745373476e-06,
+       "n_leaves": 1634,
+       "argmax": {
+        "vector": "R43-REF-U-000",
+        "path": "metrics/7/mdot_final_kgps",
+        "T1": 1.0136094703588388e-10,
+        "T2": 1.0136109797112575e-10,
+        "scale": 7.656653156830116e-11
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.xO": {
+       "E": 1.3498867079686505e-08,
+       "n_leaves": 1139,
+       "argmax": {
+        "vector": "R43-REF-U-032",
+        "path": "metrics/7/xO_max",
+        "T1": 0.48913914572653167,
+        "T2": 0.48913915922539875,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel": {
+       "E": 6.731621816413735e-06,
+       "n_leaves": 494,
+       "argmax": {
+        "vector": "R43-REF-U-024",
+        "path": "metrics/6/valve_travel",
+        "T1": 4.829275067934249,
+        "T2": 4.829281799556066,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.u": {
+       "E": 4.761415161036453e-07,
+       "n_leaves": 1002,
+       "argmax": {
+        "vector": "R43-REF-U-024",
+        "path": "metrics/7/u_max",
+        "T1": 0.6531705729384066,
+        "T2": 0.6531710490799227,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.setpoint_frac": {
+       "E": 7.860645951859868e-07,
+       "n_leaves": 942,
+       "argmax": {
+        "vector": "R43-REF-U-058",
+        "path": "metrics/7/final_setpoint_error_frac",
+        "T1": 0.02622090122920088,
+        "T2": 0.026221687293796064,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.overshoot": {
+       "E": 0.0015434213899538918,
+       "n_leaves": 189,
+       "argmax": {
+        "vector": "R43-REF-U-011",
+        "path": "metrics/1/overshoot_frac",
+        "T1": 269.6526644674676,
+        "T2": 269.65420788885757,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel_total": {
+       "E": 1.3622740702601277e-05,
+       "n_leaves": 63,
+       "argmax": {
+        "vector": "R43-REF-U-024",
+        "path": "objectives/valve_travel",
+        "T1": 33.50281229488845,
+        "T2": 33.50282591762915,
+        "scale": 1.0
+       },
+       "n_vectors": 63,
+       "status": "EVALUATED"
+      }
+     }
+    }
+   },
+   "python_nominal (DIV-P-REF-01 evidence, not used)": {
+    "PROD": {
+     "P42": {
+      "F42.p": {
+       "E": 0.0068708735462216786,
+       "n_leaves": 231335,
+       "argmax": {
+        "vector": "R42-PROD-U-036",
+        "path": "segments/7/p/135",
+        "N": 0.04981986618859604,
+        "T1": 0.05016020347358246,
+        "T2": 0.05016180666974479,
+        "scale": 0.05
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.mdot": {
+       "E": 0.02911812222079923,
+       "n_leaves": 230796,
+       "argmax": {
+        "vector": "R42-PROD-U-036",
+        "path": "segments/7/mdot/144",
+        "N": 1.115206011952308e-09,
+        "T1": 1.0856355116386736e-09,
+        "T2": 1.085494989438626e-09,
+        "scale": 1.025187836199356e-09
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.u": {
+       "E": 0.0073531688293717035,
+       "n_leaves": 231070,
+       "argmax": {
+        "vector": "R42-PROD-U-036",
+        "path": "segments/7/u/149",
+        "N": 0.3228700609350901,
+        "T1": 0.31558625924426525,
+        "T2": 0.3155515756749918,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.xO": {
+       "E": 0.00032456143936016035,
+       "n_leaves": 230499,
+       "argmax": {
+        "vector": "R42-PROD-U-065",
+        "path": "segments/7/xO/150",
+        "N": 0.36426654404318515,
+        "T1": 0.3645911054825453,
+        "T2": 0.36459039863462034,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.ucmd_end": {
+       "E": 0.02744369471738073,
+       "n_leaves": 1530,
+       "argmax": {
+        "vector": "R42-PROD-U-119",
+        "path": "segments/4/_ucmd_end",
+        "N": 0.7253173341060969,
+        "T1": 0.752759661873722,
+        "T2": 0.7527603453485998,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F42.throughput": {
+       "E": 3.8027446199571855e-09,
+       "n_leaves": 192,
+       "argmax": {
+        "vector": "R42-PROD-U-030",
+        "path": "throughput_kg",
+        "N": 2.456412655971396e-07,
+        "T1": 2.456412665312506e-07,
+        "T2": 2.4564126652738337e-07,
+        "scale": 2.4564126652738337e-07
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      }
+     },
+     "P43": {
+      "F43.p": {
+       "E": 0.0024769991617845655,
+       "n_leaves": 4976,
+       "argmax": {
+        "vector": "R43-PROD-U-179",
+        "path": "metrics/7/P_final_Pa",
+        "N": 0.04861021911616128,
+        "T1": 0.048734069074250506,
+        "T2": 0.04873400117423243,
+        "scale": 0.05
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.mdot": {
+       "E": 0.005653462528210446,
+       "n_leaves": 4979,
+       "argmax": {
+        "vector": "R43-PROD-U-058",
+        "path": "metrics/6/mdot_final_kgps",
+        "N": 7.03609461026011e-11,
+        "T1": 6.991020868519954e-11,
+        "T2": 6.990850296912423e-11,
+        "scale": 8.033109749750719e-11
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.xO": {
+       "E": 3.1423466885949214e-05,
+       "n_leaves": 3422,
+       "argmax": {
+        "vector": "R43-PROD-U-015",
+        "path": "metrics/6/xO_min",
+        "N": 0.3337051929386547,
+        "T1": 0.3336740145148881,
+        "T2": 0.3336738919933284,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel": {
+       "E": 0.013541273053837344,
+       "n_leaves": 1446,
+       "argmax": {
+        "vector": "R43-PROD-U-143",
+        "path": "metrics/7/valve_travel",
+        "N": 12.615531179457744,
+        "T1": 12.602110364485094,
+        "T2": 12.6020501354445,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.u": {
+       "E": 0.0016584716568492919,
+       "n_leaves": 3064,
+       "argmax": {
+        "vector": "R43-PROD-U-179",
+        "path": "metrics/7/u_max",
+        "N": 0.6099277049365301,
+        "T1": 0.6082692332796809,
+        "T2": 0.6082702784696936,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.setpoint_frac": {
+       "E": 0.0024769991617845655,
+       "n_leaves": 2677,
+       "argmax": {
+        "vector": "R43-PROD-U-179",
+        "path": "metrics/7/final_setpoint_error_frac",
+        "N": 0.027795617676774492,
+        "T1": 0.025318618514989927,
+        "T2": 0.025319976515351394,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.overshoot": {
+       "E": 25.165145386191824,
+       "n_leaves": 575,
+       "argmax": {
+        "vector": "R43-PROD-U-158",
+        "path": "metrics/1/overshoot_frac",
+        "N": 246.79855654625268,
+        "T1": 221.63341116006086,
+        "T2": 221.66675815933104,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel_total": {
+       "E": 0.03651250594378297,
+       "n_leaves": 192,
+       "argmax": {
+        "vector": "R43-PROD-U-061",
+        "path": "objectives/valve_travel",
+        "N": 24.10183287937368,
+        "T1": 24.138079360535116,
+        "T2": 24.13821237292629,
+        "scale": 1.0
+       },
+       "n_vectors": 192,
+       "status": "EVALUATED"
+      }
+     },
+     "P45": {
+      "F45.mdot": {
+       "E": 0.9157693665905808,
+       "n_leaves": 365,
+       "argmax": {
+        "vector": "R45-PROD-U-000",
+        "path": "mdot_min_kgps",
+        "N": 2.927872879428827e-10,
+        "T1": 6.664382659746224e-10,
+        "T2": 7.855861806550632e-10,
+        "scale": 6.682324499135692e-10
+       },
+       "n_vectors": 187,
+       "status": "EVALUATED"
+      },
+      "F45.P_dev": {
+       "E": 6330.636102328988,
+       "n_leaves": 186,
+       "argmax": {
+        "vector": "R45-PROD-U-045",
+        "path": "P_dev_max_frac",
+        "N": 0.048237801350965004,
+        "T1": 0.00010240615235179718,
+        "T2": 7.633504708337568e-06,
+        "scale": 7.633504708337568e-06
+       },
+       "n_vectors": 186,
+       "status": "EVALUATED"
+      }
+     }
+    },
+    "REF": {
+     "P42": {
+      "F42.p": {
+       "E": 3.484804317333001e-05,
+       "n_leaves": 75738,
+       "argmax": {
+        "vector": "R42-REF-U-046",
+        "path": "segments/5/p/99",
+        "N": 0.048632298715902134,
+        "T1": 0.048633896846345365,
+        "T2": 0.04863396898220308,
+        "scale": 0.05
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.mdot": {
+       "E": 8.453338516207053e-05,
+       "n_leaves": 75487,
+       "argmax": {
+        "vector": "R42-REF-U-046",
+        "path": "segments/5/mdot/80",
+        "N": 1.0426196202976035e-09,
+        "T1": 1.0425387807936313e-09,
+        "T2": 1.0425351315789985e-09,
+        "scale": 1.0426405268037478e-09
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.u": {
+       "E": 5.874446683018508e-05,
+       "n_leaves": 75496,
+       "argmax": {
+        "vector": "R42-REF-U-036",
+        "path": "segments/7/u/148",
+        "N": 0.6817545554201276,
+        "T1": 0.6818095418711497,
+        "T2": 0.6818114208790538,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.xO": {
+       "E": 1.2808636918881788e-06,
+       "n_leaves": 75363,
+       "argmax": {
+        "vector": "R42-REF-U-036",
+        "path": "segments/7/xO/150",
+        "N": 0.35839508817273363,
+        "T1": 0.35839628701455645,
+        "T2": 0.358396328025491,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.ucmd_end": {
+       "E": 0.00013708788498079105,
+       "n_leaves": 499,
+       "argmax": {
+        "vector": "R42-REF-U-036",
+        "path": "segments/7/_ucmd_end",
+        "N": 0.839432601841662,
+        "T1": 0.8395607935428934,
+        "T2": 0.8395652416347681,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F42.throughput": {
+       "E": 9.040201165158752e-12,
+       "n_leaves": 64,
+       "argmax": {
+        "vector": "R42-REF-U-005",
+        "path": "throughput_kg",
+        "N": 4.000068587494362e-07,
+        "T1": 4.0000685874598894e-07,
+        "T2": 4.000068587459045e-07,
+        "scale": 4.000068587459045e-07
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      }
+     },
+     "P43": {
+      "F43.p": {
+       "E": 2.121941664635918e-05,
+       "n_leaves": 1646,
+       "argmax": {
+        "vector": "R43-REF-U-058",
+        "path": "metrics/7/P_final_Pa",
+        "N": 0.020524025078834898,
+        "T1": 0.020524418024584018,
+        "T2": 0.02052443374587592,
+        "scale": 0.02
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.mdot": {
+       "E": 5.922068498632201e-05,
+       "n_leaves": 1634,
+       "argmax": {
+        "vector": "R43-REF-U-040",
+        "path": "metrics/2/mdot_final_kgps",
+        "N": 2.034827667318943e-10,
+        "T1": 2.0348900323939068e-10,
+        "T2": 2.0348921836158307e-10,
+        "scale": 1.1257471747744359e-10
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.xO": {
+       "E": 2.7861222762215476e-07,
+       "n_leaves": 1139,
+       "argmax": {
+        "vector": "R43-REF-U-032",
+        "path": "metrics/7/xO_max",
+        "N": 0.4891388941120382,
+        "T1": 0.48913914572653167,
+        "T2": 0.48913915922539875,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel": {
+       "E": 0.00012865202127265718,
+       "n_leaves": 494,
+       "argmax": {
+        "vector": "R43-REF-U-024",
+        "path": "metrics/6/valve_travel",
+        "N": 4.8291598791566095,
+        "T1": 4.829275067934249,
+        "T2": 4.829281799556066,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.u": {
+       "E": 9.031873937415114e-06,
+       "n_leaves": 1002,
+       "argmax": {
+        "vector": "R43-REF-U-024",
+        "path": "metrics/7/u_max",
+        "N": 0.6531624933475014,
+        "T1": 0.6531705729384066,
+        "T2": 0.6531710490799227,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.setpoint_frac": {
+       "E": 2.121941664635918e-05,
+       "n_leaves": 942,
+       "argmax": {
+        "vector": "R43-REF-U-058",
+        "path": "metrics/7/final_setpoint_error_frac",
+        "N": 0.02620125394174489,
+        "T1": 0.02622090122920088,
+        "T2": 0.026221687293796064,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.overshoot": {
+       "E": 0.04321441434115059,
+       "n_leaves": 189,
+       "argmax": {
+        "vector": "R43-REF-U-011",
+        "path": "metrics/1/overshoot_frac",
+        "N": 269.6125368959064,
+        "T1": 269.6526644674676,
+        "T2": 269.65420788885757,
+        "scale": 1.0
+       },
+       "n_vectors": 64,
+       "status": "EVALUATED"
+      },
+      "F43.valve_travel_total": {
+       "E": 0.00027279724463014077,
+       "n_leaves": 63,
+       "argmax": {
+        "vector": "R43-REF-U-044",
+        "path": "objectives/valve_travel",
+        "N": 17.012295363707498,
+        "T1": 17.01254446288214,
+        "T2": 17.012556311917134,
+        "scale": 1.0
+       },
+       "n_vectors": 63,
+       "status": "EVALUATED"
+      }
+     }
+    }
+   }
+  }
+ },
+ "bounds": {
+  "S": {
+   "PROD": {
+    "P42": {
+     "F42.p": 0.00017825788474461896,
+     "F42.u": 0.00026130728732653985,
+     "F42.mdot": 0.000499917475439667,
+     "F42.xO": 9.57759821962334e-06,
+     "F42.ucmd_end": 0.0008692110322371382,
+     "F42.throughput": 3.6305172700817445e-09
+    },
+    "P43": {
+     "F43.p": 4.0798057323807035e-05,
+     "F43.setpoint_frac": 4.079805732378622e-05,
+     "F43.overshoot": 0.00032244067066622417,
+     "F43.mdot": 0.0011356922683912502,
+     "F43.xO": 3.914901191696019e-06,
+     "F43.u": 0.0003791771510670561,
+     "F43.valve_travel": 0.01267855993145206,
+     "F43.valve_travel_total": 0.032067830348548654
+    },
+    "P45": {
+     "F45.P_dev": 5.645345923843692e-06,
+     "F45.mdot": 2.0893961547929778e-05
+    }
+   },
+   "REF": {
+    "P42": {
+     "F42.p": 4.578910459129837e-07,
+     "F42.u": 5.873024726543719e-07,
+     "F42.mdot": 2.1477347319228704e-06,
+     "F42.xO": 1.4636080014618358e-08,
+     "F42.ucmd_end": 5.509943621917479e-07,
+     "F42.throughput": 2.500515191657518e-11
+    },
+    "P43": {
+     "F43.p": 1.49009294521385e-07,
+     "F43.setpoint_frac": 1.4866210067826513e-07,
+     "F43.overshoot": 1.3637667126698005e-06,
+     "F43.mdot": 4.012408989457581e-06,
+     "F43.xO": 1.3108417462603938e-08,
+     "F43.u": 1.2868669077570338e-06,
+     "F43.valve_travel": 1.8192738521882745e-05,
+     "F43.valve_travel_total": 6.08722599650946e-05
+    }
+   }
+  },
+  "U": {
+   "PROD": {
+    "P42": {
+     "F42.p": 0.002784378130594768,
+     "F42.u": 0.0029164674319799855,
+     "F42.mdot": 0.010448893306364594,
+     "F42.xO": 9.881170352782354e-05,
+     "F42.ucmd_end": 0.007169999640971952,
+     "F42.throughput": 1.210544365629795e-09
+    },
+    "P43": {
+     "F43.p": 0.001052978035867222,
+     "F43.setpoint_frac": 0.001052978035867222,
+     "F43.overshoot": 7.433141794086907,
+     "F43.mdot": 0.0032005106304509863,
+     "F43.xO": 1.1293540511436717e-05,
+     "F43.u": 0.00023242310326299087,
+     "F43.valve_travel": 0.0068136669832279395,
+     "F43.valve_travel_total": 0.008243306399151606
+    },
+    "P45": {
+     "F45.P_dev": 98.81209679066434,
+     "F45.mdot": 1.052380011835466
+    }
+   },
+   "REF": {
+    "P42": {
+     "F42.p": 1.2392589906103091e-05,
+     "F42.u": 1.0342923308204188e-05,
+     "F42.mdot": 2.2386722351448245e-05,
+     "F42.xO": 1.2723604910988562e-07,
+     "F42.ucmd_end": 2.3499204292426468e-05,
+     "F42.throughput": 6.422075511975145e-12
+    },
+    "P43": {
+     "F43.p": 8.919862976713988e-07,
+     "F43.setpoint_frac": 8.919862976713988e-07,
+     "F43.overshoot": 0.0018698549022815314,
+     "F43.mdot": 2.3581656519405362e-06,
+     "F43.xO": 1.5391394714292517e-08,
+     "F43.u": 5.77819266989188e-07,
+     "F43.valve_travel": 8.457922189286649e-06,
+     "F43.valve_travel_total": 1.6724974933879366e-05
+    }
+   }
+  }
+ },
+ "missing_envelopes": [],
+ "not_convergent_reference_leaves": {
+  "PROD/P42/F42.p": {
+   "scored": 231335,
+   "not_convergent": 601
+  },
+  "PROD/P42/F42.mdot": {
+   "scored": 230796,
+   "not_convergent": 1140
+  },
+  "PROD/P42/F42.u": {
+   "scored": 231070,
+   "not_convergent": 866
+  },
+  "PROD/P42/F42.xO": {
+   "scored": 230499,
+   "not_convergent": 1431
+  },
+  "PROD/P42/F42.ucmd_end": {
+   "scored": 1530,
+   "not_convergent": 6
+  },
+  "PROD/P42/F42.throughput": {
+   "scored": 192,
+   "not_convergent": 0
+  },
+  "REF/P42/F42.p": {
+   "scored": 75738,
+   "not_convergent": 1574
+  },
+  "REF/P42/F42.mdot": {
+   "scored": 75487,
+   "not_convergent": 1825
+  },
+  "REF/P42/F42.u": {
+   "scored": 75496,
+   "not_convergent": 1816
+  },
+  "REF/P42/F42.xO": {
+   "scored": 75363,
+   "not_convergent": 1812
+  },
+  "REF/P42/F42.ucmd_end": {
+   "scored": 499,
+   "not_convergent": 13
+  },
+  "REF/P42/F42.throughput": {
+   "scored": 64,
+   "not_convergent": 0
+  },
+  "PROD/P43/F43.p": {
+   "scored": 4976,
+   "not_convergent": 16
+  },
+  "PROD/P43/F43.mdot": {
+   "scored": 4979,
+   "not_convergent": 13
+  },
+  "PROD/P43/F43.xO": {
+   "scored": 3422,
+   "not_convergent": 34
+  },
+  "PROD/P43/F43.valve_travel": {
+   "scored": 1446,
+   "not_convergent": 90
+  },
+  "PROD/P43/F43.u": {
+   "scored": 3064,
+   "not_convergent": 8
+  },
+  "PROD/P43/F43.setpoint_frac": {
+   "scored": 2677,
+   "not_convergent": 203
+  },
+  "PROD/P43/F43.overshoot": {
+   "scored": 575,
+   "not_convergent": 1
+  },
+  "PROD/P43/F43.valve_travel_total": {
+   "scored": 192,
+   "not_convergent": 0
+  },
+  "REF/P43/F43.p": {
+   "scored": 1646,
+   "not_convergent": 18
+  },
+  "REF/P43/F43.mdot": {
+   "scored": 1634,
+   "not_convergent": 30
+  },
+  "REF/P43/F43.xO": {
+   "scored": 1139,
+   "not_convergent": 13
+  },
+  "REF/P43/F43.valve_travel": {
+   "scored": 494,
+   "not_convergent": 18
+  },
+  "REF/P43/F43.u": {
+   "scored": 1002,
+   "not_convergent": 22
+  },
+  "REF/P43/F43.setpoint_frac": {
+   "scored": 942,
+   "not_convergent": 18
+  },
+  "REF/P43/F43.overshoot": {
+   "scored": 189,
+   "not_convergent": 3
+  },
+  "REF/P43/F43.valve_travel_total": {
+   "scored": 63,
+   "not_convergent": 1
+  },
+  "PROD/P45/F45.P_dev": {
+   "scored": 186,
+   "not_convergent": 6
+  },
+  "PROD/P45/F45.mdot": {
+   "scored": 365,
+   "not_convergent": 19
+  }
+ },
+ "closing_valve_xO (reported, not scored)": {
+  "per_level": {
+   "PROD": {
+    "n": 120,
+    "max_e": {
+     "python": 0.00011771589954689965,
+     "rust": 0.00048075772647415693
+    },
+    "max_cross_T2": 0.0007580760126988939,
+    "argmax": {
+     "vector": "R43-PROD-S-372",
+     "path": "metrics/6/xO_min",
+     "python_T2": 0.4399006205508398,
+     "rust_T2": 0.4391425445381409
+    }
+   },
+   "REF": {
+    "n": 20,
+    "max_e": {
+     "python": 0.0024579516889345343,
+     "rust": 0.0024579510114994263
+    },
+    "max_cross_T2": 0.0024579510236540925,
+    "argmax": {
+     "vector": "R43-REF-S-121",
+     "path": "metrics/6/xO_min",
+     "python_T2": 0.4493747458821647,
+     "rust_T2": 0.4469167948585106
+    }
+   }
+  },
+  "known_property": "converged cross-implementation disagreement of an ill-posed observable (the sign of a rounding-level valve opening decides which samples have a defined xO); not resolved by choosing one value; v6 grid instance R43-REF-809 segment 6 xO_min: Rust 0.51716, Python 0.51607 (refinement_v6_p4243_note.md)"
+ },
+ "excluded_vectors": {
+  "python": {
+   "n": 35,
+   "list": [
+    {
+     "vector": "R42-PROD-S-058",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-064",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-069",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-089",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-099",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-123",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-139",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-156",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-165",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-187",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-205",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-218",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-243",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-304",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-315",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-318",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-325",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-335",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-337",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-361",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-431",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-432",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-439",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-462",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-567",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-622",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-REF-S-013",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-REF-S-017",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-REF-S-056",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-REF-S-073",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-REF-S-074",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-REF-S-099",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-REF-S-112",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-REF-S-174",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-REF-S-183",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    }
+   ]
+  },
+  "rust": {
+   "n": 15,
+   "list": [
+    {
+     "vector": "R42-PROD-S-089",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-099",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-187",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-205",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-243",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-304",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-318",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-325",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-335",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-432",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-439",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-PROD-S-462",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-REF-S-074",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-REF-S-174",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    },
+    {
+     "vector": "R42-REF-S-183",
+     "stratum": "S",
+     "why": "structure differs from T2"
+    }
+   ]
+  }
+ },
+ "class_agreement_refinement (Python reference Jacobian vs Rust, recorded)": {
+  "n": 2752,
+  "disagreements": []
+ },
+ "checks": {
+  "COMP-P-01": {
+   "n": 576,
+   "ok": true,
+   "failures": []
+  },
+  "no_missing_envelope": true,
+  "NON_VACUITY": {
+   "ok": false,
+   "rows": [
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P42",
+     "family": "F42.p",
+     "bound": 0.00017825788474461896,
+     "comparison_scale": 0.20948400486617502,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 614
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P42",
+     "family": "F42.u",
+     "bound": 0.00026130728732653985,
+     "comparison_scale": 0.19087695728962278,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 614
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P42",
+     "family": "F42.mdot",
+     "bound": 0.000499917475439667,
+     "comparison_scale": 0.45000000000721124,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 614
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P42",
+     "family": "F42.xO",
+     "bound": 9.57759821962334e-06,
+     "comparison_scale": 0.007977387662327189,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 614
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P42",
+     "family": "F42.ucmd_end",
+     "bound": 0.0008692110322371382,
+     "comparison_scale": 0.13883893527048832,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 614
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P42",
+     "family": "F42.throughput",
+     "bound": 3.6305172700817445e-09,
+     "comparison_scale": 1.0,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": true,
+     "n_vectors": 614
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.p",
+     "bound": 4.0798057323807035e-05,
+     "comparison_scale": 0.20296843025039463,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 640
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.setpoint_frac",
+     "bound": 4.079805732378622e-05,
+     "comparison_scale": 0.07998980288072909,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 640
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.overshoot",
+     "bound": 0.00032244067066622417,
+     "comparison_scale": 0.05382960100384637,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": true,
+     "n_vectors": 640
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.mdot",
+     "bound": 0.0011356922683912502,
+     "comparison_scale": 0.45000000004593704,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 640
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.xO",
+     "bound": 3.914901191696019e-06,
+     "comparison_scale": 0.007911465351829156,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 640
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.u",
+     "bound": 0.0003791771510670561,
+     "comparison_scale": 0.19903444448944513,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 640
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.valve_travel",
+     "bound": 0.01267855993145206,
+     "comparison_scale": 0.17957656533634883,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 640
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.valve_travel_total",
+     "bound": 0.032067830348548654,
+     "comparison_scale": 0.7930984064907833,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": true,
+     "n_vectors": 640
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P45",
+     "family": "F45.P_dev",
+     "bound": 5.645345923843692e-06,
+     "comparison_scale": 5.288430984795589e-05,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": true,
+     "n_vectors": 384
+    },
+    {
+     "stratum": "S",
+     "level": "PROD",
+     "entry": "P45",
+     "family": "F45.mdot",
+     "bound": 2.0893961547929778e-05,
+     "comparison_scale": 0.25137664520522995,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 384
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P42",
+     "family": "F42.p",
+     "bound": 4.578910459129837e-07,
+     "comparison_scale": 0.21164360154912643,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 183
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P42",
+     "family": "F42.u",
+     "bound": 5.873024726543719e-07,
+     "comparison_scale": 0.2014661301975223,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 183
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P42",
+     "family": "F42.mdot",
+     "bound": 2.1477347319228704e-06,
+     "comparison_scale": 0.4500000000009673,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 183
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P42",
+     "family": "F42.xO",
+     "bound": 1.4636080014618358e-08,
+     "comparison_scale": 0.007960792621100277,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 183
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P42",
+     "family": "F42.ucmd_end",
+     "bound": 5.509943621917479e-07,
+     "comparison_scale": 0.13846736371783208,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 183
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P42",
+     "family": "F42.throughput",
+     "bound": 2.500515191657518e-11,
+     "comparison_scale": 1.0,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": true,
+     "n_vectors": 183
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.p",
+     "bound": 1.49009294521385e-07,
+     "comparison_scale": 0.1969913233920761,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.setpoint_frac",
+     "bound": 1.4866210067826513e-07,
+     "comparison_scale": 0.0723984130898701,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.overshoot",
+     "bound": 1.3637667126698005e-06,
+     "comparison_scale": 0.06877348502031404,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.mdot",
+     "bound": 4.012408989457581e-06,
+     "comparison_scale": 0.4666999757444532,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.xO",
+     "bound": 1.3108417462603938e-08,
+     "comparison_scale": 0.008406259639902464,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.u",
+     "bound": 1.2868669077570338e-06,
+     "comparison_scale": 0.21736373265912678,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.valve_travel",
+     "bound": 1.8192738521882745e-05,
+     "comparison_scale": 0.21990267932884355,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "S",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.valve_travel_total",
+     "bound": 6.08722599650946e-05,
+     "comparison_scale": 0.8906515437313978,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P42",
+     "family": "F42.p",
+     "bound": 0.002784378130594768,
+     "comparison_scale": 0.3572598799479821,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P42",
+     "family": "F42.u",
+     "bound": 0.0029164674319799855,
+     "comparison_scale": 0.6805414565822611,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P42",
+     "family": "F42.mdot",
+     "bound": 0.010448893306364594,
+     "comparison_scale": 1.6499112816785306,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P42",
+     "family": "F42.xO",
+     "bound": 9.881170352782354e-05,
+     "comparison_scale": 0.003215802721881731,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P42",
+     "family": "F42.ucmd_end",
+     "bound": 0.007169999640971952,
+     "comparison_scale": 0.9812212494420887,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P42",
+     "family": "F42.throughput",
+     "bound": 1.210544365629795e-09,
+     "comparison_scale": 1.0,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.p",
+     "bound": 0.001052978035867222,
+     "comparison_scale": 0.36567780620373674,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.setpoint_frac",
+     "bound": 0.001052978035867222,
+     "comparison_scale": 0.1526227233977599,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.overshoot",
+     "bound": 7.433141794086907,
+     "comparison_scale": 1.97626798082146,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": false,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.mdot",
+     "bound": 0.0032005106304509863,
+     "comparison_scale": 1.6647630360724035,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.xO",
+     "bound": 1.1293540511436717e-05,
+     "comparison_scale": 0.0015560853215576226,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.u",
+     "bound": 0.00023242310326299087,
+     "comparison_scale": 0.6965495613080553,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.valve_travel",
+     "bound": 0.0068136669832279395,
+     "comparison_scale": 4.224033819868689,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P43",
+     "family": "F43.valve_travel_total",
+     "bound": 0.008243306399151606,
+     "comparison_scale": 38.89826152785939,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": true,
+     "n_vectors": 192
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P45",
+     "family": "F45.P_dev",
+     "bound": 98.81209679066434,
+     "comparison_scale": 1.0,
+     "scale_kind": "relative: bound x |py_T2| < |py_T2| for every U refinement vector",
+     "ok": false,
+     "n_vectors": 186
+    },
+    {
+     "stratum": "U",
+     "level": "PROD",
+     "entry": "P45",
+     "family": "F45.mdot",
+     "bound": 1.052380011835466,
+     "comparison_scale": 0.8683683959405379,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": false,
+     "n_vectors": 187
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P42",
+     "family": "F42.p",
+     "bound": 1.2392589906103091e-05,
+     "comparison_scale": 0.36691795994708293,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P42",
+     "family": "F42.u",
+     "bound": 1.0342923308204188e-05,
+     "comparison_scale": 0.6365299122498249,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P42",
+     "family": "F42.mdot",
+     "bound": 2.2386722351448245e-05,
+     "comparison_scale": 1.4672736188692153,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P42",
+     "family": "F42.xO",
+     "bound": 1.2723604910988562e-07,
+     "comparison_scale": 0.002248583063486242,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P42",
+     "family": "F42.ucmd_end",
+     "bound": 2.3499204292426468e-05,
+     "comparison_scale": 0.9430188834931089,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P42",
+     "family": "F42.throughput",
+     "bound": 6.422075511975145e-12,
+     "comparison_scale": 1.0,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.p",
+     "bound": 8.919862976713988e-07,
+     "comparison_scale": 0.36801358252729266,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.setpoint_frac",
+     "bound": 8.919862976713988e-07,
+     "comparison_scale": 0.15890109796993643,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.overshoot",
+     "bound": 0.0018698549022815314,
+     "comparison_scale": 1.0439903325595286,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.mdot",
+     "bound": 2.3581656519405362e-06,
+     "comparison_scale": 1.4530706341733994,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.xO",
+     "bound": 1.5391394714292517e-08,
+     "comparison_scale": 0.0017053087638660529,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.u",
+     "bound": 5.77819266989188e-07,
+     "comparison_scale": 0.7210248398984419,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.valve_travel",
+     "bound": 8.457922189286649e-06,
+     "comparison_scale": 6.336596322189999,
+     "scale_kind": "median within-vector range of the converged values over the stratum's refinement vectors with >= 2 leaves",
+     "ok": true,
+     "n_vectors": 64
+    },
+    {
+     "stratum": "U",
+     "level": "REF",
+     "entry": "P43",
+     "family": "F43.valve_travel_total",
+     "bound": 1.6724974933879366e-05,
+     "comparison_scale": 40.57592272112122,
+     "scale_kind": "median |converged value| over the stratum's refinement leaves",
+     "ok": true,
+     "n_vectors": 63
+    }
+   ]
+  }
+ },
+ "timing_s": {
+  "draw_and_classify": 272.89487778199873,
+  "python": 1425.3390476600016,
+  "rust": 1263.4190167390007
+ },
+ "statement": "frozen before any held-out (scoring_master_seed) vector is generated or run; never edited after the scoring run"
+}

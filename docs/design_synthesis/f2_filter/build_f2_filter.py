@@ -33,6 +33,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from abep_sim.design import filter_stage as fs  # noqa: E402
+from abep_sim.assessment import design_gates as ost  # noqa: E402  (owner-question state v5 reader; A9.22)
 
 LANE_DIR = "docs/design_synthesis/f2_filter/"
 OUT_JSON = LANE_DIR + "f2_filter_stage_v1.json"
@@ -200,7 +201,8 @@ def concepts() -> list:
         {"id": "FC-00", "name": "no filter stage ('none')", "function": "trade-study reference: definitional identity "
          "(tau = 1, nothing lost, no pressure effect, zero mass)", "sources": [],
          "evidence": "definition", "interface_status": "NUMERIC by definition (FilterStage.none)",
-         "admissibility": "TBD_OWNER (F2-OQ-03): the RFP chain names a filter (RVM-08, secondary transcription)",
+         "admissibility": f"{ost.status_label('F2-OQ-03')} (F2-OQ-03): reference bound only, never an admissible "
+                          "architecture option (the RFP chain names a filter stage)",
          "ao_applicability": "not applicable (no element)", "candidate_status": "LISTED_ONLY_NO_SELECTION"},
         {"id": "FC-01", "name": "inlet grid system at the collector entrance",
          "function": "stated: 'to stop the particles at the entrance of the collector'. Whether 'particles' means "
@@ -263,7 +265,8 @@ def concepts() -> list:
                                          "in this lane; abep_sim/aochem.py RECOMB_GAMMA values carry no per-entry "
                                          "source and are not used",
          "evidence": "none", "interface_status": base_tbd, "ao_applicability": "INCOMPLETE_EVIDENCE",
-         "candidate_status": "LISTED_ONLY_NO_SELECTION (admissibility TBD_OWNER, F2-OQ-02)"},
+         "candidate_status": f"LISTED_ONLY_NO_SELECTION (admissibility {ost.status_label('F2-OQ-02')}, F2-OQ-02: not "
+                             "the baseline)"},
         {"id": "FC-07", "name": "Xe cathode-line filter / getter (owner row 51)",
          "function": "Xe purity for the C1 LaB6 branch - Xe path, NOT the atmospheric filter stage",
          "sources": [{"id": "owner row 51", "locator": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -395,7 +398,8 @@ def interface_demands() -> list:
          "counterpart": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
          "content": "an APP-FILTER application (O / AO exposure at filter temperature, recombination probability "
                     "and erosion yield criteria) would be needed; P4 today screens APP-ANODE and APP-COLLECTOR only",
-         "units": "-", "status": "TBD_OWNER (F2-OQ-04)"},
+         "units": "-", "status": f"{ost.status_label('F2-OQ-04')} (F2-OQ-04: filter at the compressor inlet; "
+                                  "P4 adds APP-FILTER)"},
         {"id": "F2-IF-09", "direction": "F2 -> AO / lifetime register",
          "counterpart": "docs/experiments/lifetime_ao/ao_lifetime_register_v5.json",
          "content": "no AOL mechanism covers a filter element (AOL-M01..M11); a future register revision would add "
@@ -413,6 +417,11 @@ def interface_demands() -> list:
 
 
 def open_owner_questions() -> list:
+    """As raised by the lane (status_as_raised TBD_OWNER) with the owner_questions_state_v5 answer applied (RVF-02)."""
+    return ost.apply_to_questions(_open_owner_questions_as_raised())
+
+
+def _open_owner_questions_as_raised() -> list:
     return [
         {"id": "F2-OQ-01", "question": "Which protection functions must the RFP filter stage provide (particulates / "
          "debris, compressor wear products, atomic O to downstream surfaces, ambient charged particles, backflow "
@@ -634,7 +643,9 @@ def render_md(doc: dict) -> str:
         a(f"| {d['id']} | {d['direction']} | {d['counterpart']} | {d['content'].replace('|', '/')} | "
           f"{d['status']} |")
     a("")
-    a("## Open owner questions (new)")
+    a("## Owner questions raised by this lane")
+    a("")
+    a(f"Status from `{ost.OQ5_REL}` (as raised: TBD_OWNER).")
     a("")
     for q in doc["open_owner_questions"]:
         a(f"- **{q['id']}** ({q['status']}): {q['question']} Why: {q['why']}")

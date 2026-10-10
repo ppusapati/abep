@@ -1,0 +1,36 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_07_A9_32_hall_thrust_critical_path_parametric_envelope",
+ "decided_by": "owner",
+ "date": "2026-10-07",
+ "decision": "A9_32_HALL_THRUST_CRITICAL_PATH_PARAMETRIC_ENVELOPE",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_07_A9_32_HALL_THRUST_CRITICAL_PATH_PARAMETRIC_ENVELOPE.md",
+  "sha256": "69e9a00d77a7c51717a1d9cf6738c238090b23812195c8b37bfab560f33a0e6f",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "HALL_THRUST_CRITICAL_PATH",
+   "utc": "2026-10-07T16:02:56.174Z",
+   "text_sha256": "2698c03a2dbee1570248ff59f9f053b429c9372857aca5300ee7347a2d48915b",
+   "chars": 942
+  }
+ ],
+ "checkpoint_at_decision": "18e56f6f60215be723eaa61410c28b6880e882cc",
+ "owner_decision_summary": {
+  "scope": "no new broad architecture work; complete SC-WP-09 mission (merged at 18e56f6), SC-WP-10 F7/F8, RF/ICP + thermal v2 implementation, plenum/feed v6",
+  "critical_path": "Hall thrust: preregister and run a HallThruster.jl parametric feasibility envelope for the selected H1 geometry, using only sourced / registered transport assumptions",
+  "status_label": "PARAMETRIC / NOT_VALIDATED, explicitly",
+  "closure_run": "the envelope feeds the decisive 196-state closure run",
+  "two_layer_reporting": "the decisive result reports (a) physics-feasible states and (b) evidence-qualified / admitted states separately",
+  "classification_rule_non_closing": "if even the favorable but defensible Hall envelope cannot close the RFP constraints -> Hall+RF PHYSICALLY_NON_CLOSING",
+  "classification_rule_feasible": "if a feasible region exists but the credible Hall set remains empty -> SELECT_WITH_EVIDENCE_CONDITIONS / physically feasible but not yet experimentally proven",
+  "not_gating": "final Python archival, golden and clean-install work do not gate reporting the architecture conclusion"
+ },
+ "recorder_notes": [
+  "Scope of the parametric layer (recorder reading, not an owner ruling): the credible Hall transport set stays EMPTY; HallMap admission and the admitted-member loader are unchanged; parametric envelope outputs never enter layer (b) evidence-qualified / admitted results and carry PARAMETRIC / NOT_VALIDATED on every field. Earlier rules that screening candidates never produce design Hall maps or enter the trade govern layer (b); this decision authorizes their use, and other registered transport assumptions, only in the separate parametric layer (a).",
+  "Execution environment: at decision time this session's network policy denies julialang-s3.julialang.org and pkg.julialang.org (HTTP 403), so HallThruster.jl cannot be installed in this container. Preregistration and the Rust-side harness proceed; score-bearing Hall runs wait for an environment with the pinned Julia stack (rule 7 pin unchanged)."
+ ]
+}

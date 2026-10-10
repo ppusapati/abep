@@ -1,0 +1,71 @@
+{
+ "schema": "abep_derived_data_provenance_v1",
+ "id": "ABEP-INTAKE-DERIVED-DATA-PROVENANCE-V1",
+ "status": "DERIVED_DATA_VERSIONED_SHA256_PINNED",
+ "what": "Derived data of the frozen intake surface v1 that the Rust intake (crates/abep-intake) reads instead of running scipy: the reference's own Qhull Delaunay triangulation of the v1 grid and scipy's search structures over it. Rust never needs scipy, Qhull or Python at runtime.",
+ "why": "abep_sim.intake_tpmc.IntakeSurface interpolates with scipy LinearNDInterpolator(rescale=True). The v1 grid is a full tensor product, so the Delaunay problem is degenerate and the reference interpolant is defined by the simplices Qhull returned, which are non-conforming across some interior grid faces (finding B2-OF-01, docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/finding_B2-OF-01_face_survey_v1.json). Parity therefore requires the reference triangulation and scipy's simplex search, not a re-triangulation.",
+ "artifacts": [
+  {
+   "path": "crates/abep-intake/data/intake_surface_v1_delaunay_v1.json",
+   "sha256": "247601cf51cff450759a2148179242e8085eb8fb0b878d87e44ea86e644faf7b",
+   "version": "v1 (schema abep_intake_surface_triangulation_v1)",
+   "content": "120 grid points (CSV order), rescale offset (mean) and scale (ptp), 830 simplices, 259 degenerate flags",
+   "first_committed_in": "9e1a302",
+   "pinned_by": [
+    "crates/abep-intake/src/frozen.rs TRIANGULATION_V1_SHA256",
+    "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/parity_prereg_v1.json pinned_inputs_sha256",
+    "docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_PY/parity_prereg_v1.json pinned_inputs_sha256"
+   ]
+  },
+  {
+   "path": "crates/abep-intake/data/intake_surface_v1_delaunay_v1_search.json",
+   "sha256": "e6f254b3f089123b2c8eadaac7adf66b6d64f823540a4ed8cb4d86cba301b3fd",
+   "version": "v1 (schema abep_intake_surface_delaunay_search_v1)",
+   "content": "per simplex barycentric transform (null = degenerate), neighbours, lifted facet equations; paraboloid scale / shift; min / max bound; bound to the triangulation artifact by its sha256",
+   "first_committed_in": "ed6b27a",
+   "pinned_by": [
+    "crates/abep-intake/src/frozen.rs SEARCH_V1_SHA256"
+   ]
+  }
+ ],
+ "derived_from": [
+  {
+   "path": "abep_sim/data/intake_surface_v1.csv",
+   "sha256": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a",
+   "status": "frozen (CLAUDE.md rule 1), read, never regenerated"
+  },
+  {
+   "path": "abep_sim/data/intake_surface_v1.json",
+   "sha256": "5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425",
+   "status": "frozen metadata of the CSV"
+  }
+ ],
+ "derivation": {
+  "reference_construction": "abep_sim.intake._tpmc_surface: pandas.read_csv(frozen CSV) -> rows of one scattering kernel -> abep_sim.intake_tpmc.IntakeSurface -> per species and column (eta_c, C_D, CR_passive, K_back, mass_kg) scipy.interpolate.LinearNDInterpolator(rows[L_over_d, phi, alpha, theta_deg], column, rescale=True)",
+  "identity_check": "all 30 interpolators (2 scattering x 3 species x 5 columns) have bitwise identical points, offset, scale, simplices, degenerate flags, transforms, neighbours, equations, paraboloid scale / shift and bounds; the capture is written only if they do",
+  "reference_code_sha256": {
+   "abep_sim/intake_tpmc.py": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433",
+   "abep_sim/intake.py": "d46c23af40d413094babbe9d2121238c7b6f768341ffb3789d3d50c1d0f66687"
+  },
+  "tools": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "pandas": "3.0.2 (default C-engine float converter; 17 CSV cells parse 1 ulp off correctly rounded, contract DIV-05; the captured point coordinates are exact grid values)",
+   "scipy": "1.17.1",
+   "qhull": "qhull_r 8.0.2 (2020.2.r 2020/08/31), bundled with scipy",
+   "qhull_options": "Delaunay mode ('d') with scipy.spatial.Delaunay's default options for ndim <= 4, 'Qbb Qc Qz Q12', plus the always-required 'Qt' (triangulated output)",
+   "blas_threads": "OMP_NUM_THREADS = OPENBLAS_NUM_THREADS = 1"
+  }
+ },
+ "generator": {
+  "path": "scripts/rust_migration/capture_intake_surface_triangulation.py",
+  "sha256": "2b78a7cefe8dd37fc144c2cd410fb4b9ac594a0428c6ac3449ec18ce58db38d9",
+  "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python3 scripts/rust_migration/capture_intake_surface_triangulation.py",
+  "run_from": "the repository root, in the Python reference environment above",
+  "history": "the triangulation artifact was first written by the script version committed in 9e1a302; the version above (committed in ed6b27a) also writes the search artifact and reproduces the triangulation artifact byte-identically",
+  "reproduction_check": "2026-10-05: re-running the command at 554bc94 rewrote both artifacts with unchanged sha256"
+ },
+ "consumer_rule": "crates/abep-intake/src/frozen.rs reads each artifact with abep_provenance::read_verified against the pinned sha256; any mismatch is AbepError::HashMismatch (status MODEL_ERROR) and the surface is not built; there is no fallback and no re-triangulation. The loader then checks the artifacts against the frozen CSV (points and order, rescale recomputed bitwise, cell tiling, degenerate flags, transform cross-check, neighbour symmetry, bounds).",
+ "change_rule": "never regenerated casually: a different frozen surface, scipy / Qhull version or option set is a new artifact version (v2) with its own provenance, new pinned sha256 and a new parity contract version; the end state keeps these files as versioned evidence data (A9.29 sec. 11) and needs no Python to read them",
+ "finding": "B2-OF-01 (property of the frozen Python reference, not of the Rust port): docs/rust_migration/contracts/C-ABEP_SIM_INTAKE_TPMC_PY/finding_B2-OF-01_face_survey_v1.json"
+}

@@ -1,0 +1,26 @@
+{
+ "schema": "abep_dcr_approval_v1",
+ "id": "DCR-DBF1-002-APPROVAL",
+ "dcr": "DCR-DBF1-002",
+ "date": "2026-10-09",
+ "approved_by": "coordinator",
+ "authority": "coordinator ruling under owner delegation A9.34 (lane-level calls between milestones; this DCR changes no architecture item, no RFP requirement and no admitted / scored result); the owner may overrule, in which case DBF-1.1 is withdrawn and DBF-1 stays governing",
+ "request": {
+  "path": "docs/baseline/DCR-002/dcr002_request_v1.json",
+  "sha256": "ab55635ac29e2900e4baa459bfbaae9e4334412066bebc1cc03f77f765fcfca9"
+ },
+ "change": "DBF1-BZ-04 simulation field shape: BZ-P5B16 (SOURCED_SURROGATE_P5_SHAPE_NOT_H1_BZ) -> BZ-H1FE-V1 (FE-DERIVED H1 field of the frozen electromagnet, hallthruster_bridge/bfield/h1_fe_v1/); DBF1-BZ-01/02/03/05 unchanged",
+ "reason": "evidence-class upgrade (BD-05): a registered, verified, mesh-converged H1-specific field replaces a P5-geometry surrogate; not motivated by any Hall performance result (no converged Hall result exists, A6 STOP)",
+ "results_seen_before_approval": [
+  "M2 v1 (Hall NOT_EVALUATED)",
+  "XE v1 envelope (all NUMERICS_NOT_CONVERGED)",
+  "FE vs surrogate shape comparison (informational)"
+ ],
+ "conditions": [
+  "DBF-1.1 is built as new files with its own lock; DBF-1 and every record computed on it stay immutable history",
+  "surrogate and FE-field Hall records are never pooled",
+  "a Hall run citing the FE field needs a new NP-HALL-PARAMETRIC-ENVELOPE addendum committed before the run",
+  "measured B(z) on the engineering model remains an EM verification item"
+ ],
+ "new_baseline": "DBF-1.1 (first approved successor; a later approved DCR-DBF1-001 resolution becomes DBF-1.2)"
+}

@@ -1,0 +1,16 @@
+[package]
+name = "abep-icp"
+description = "NP-ICP-NEUTRALIZER v1: predictive steady 0-D model of the downstream 13.56 MHz RF/ICP electron source / neutralizer (new physics, preregistered; no Python reference)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+abep-types.workspace = true
+abep-provenance.workspace = true
+abep-chem.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+toml.workspace = true

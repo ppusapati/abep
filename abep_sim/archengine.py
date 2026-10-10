@@ -22,7 +22,8 @@ from __future__ import annotations
 import math, itertools
 from dataclasses import dataclass, field
 import pandas as pd
-from .constants import E_CHARGE, K_B, AMU, G0, RFP
+from .constants import E_CHARGE, K_B, AMU, G0
+from . import operating_inputs as OI
 from .plasma_chem import Chamber, solve_global, M_ION, M_NEUT
 from .plasma_devices import HallChannel, ECRSource, RFSource, Interstage, LaB6Cathode
 from .materials import DB
@@ -160,6 +161,28 @@ def enumerate_architectures() -> list[dict]:
 
 def arch_name(a: dict) -> str:
     return f"{a['ionizer'].name}+{a['accelerator'].name}" + (f"+{a['neutralizer'].name}" if a["neutralizer"].name != "none" else "")
+
+
+# A9.22 G4 (owner decision 2026-10-03, CATHODELESS_ACTIVE_BASELINE): the flight architecture has no conventional hollow
+# cathode and no LaB6. Architectures with these neutralizers stay enumerable for historical research / regression, but a
+# flight-purpose closure, selection or budget refuses them (require_flight_eligible; close_architecture(flight=True);
+# run_all(flight=True)).
+FLIGHT_EXCLUDED_NEUTRALIZERS = {"lab6_xe": "HISTORICAL_NON_FLIGHT_REGRESSION (LaB6 Xe hollow cathode; A9.22 G4)"}
+
+
+class FlightIneligibleArchitectureError(ValueError):
+    """A historical non-flight architecture was requested for a flight-purpose closure / selection / budget."""
+
+
+def flight_eligible(a: dict) -> bool:
+    return a["neutralizer"].name not in FLIGHT_EXCLUDED_NEUTRALIZERS
+
+
+def require_flight_eligible(a: dict) -> None:
+    if not flight_eligible(a):
+        raise FlightIneligibleArchitectureError(
+            f"{arch_name(a)}: neutralizer {a['neutralizer'].name!r} is {FLIGHT_EXCLUDED_NEUTRALIZERS[a['neutralizer'].name]}; "
+            "it must not participate in architecture closure, selection, optimisation, compliance or flight budgets")
 
 
 # ------------------------------------------------------------------------------------------ accelerator physics
@@ -423,8 +446,9 @@ def calibration_status(family: str, point: dict) -> tuple[str, float]:
 # ------------------------------------------------------------------------------------------ closure of one architecture
 @dataclass
 class DesignConstraints:
-    """Physics limits are always enforced inside the models; these are *design* constraints, user-selectable.
-    The RFP is one preset (rfp_preset())."""
+    """Physics limits are always enforced inside the models; these are *design* constraints, supplied by the caller
+    (selection under owner-supplied constraints; A9.22: the search never reads RFP values itself). The owner-constraint
+    preset is rfp_preset(), built by the assessment layer from abep_sim.operating_inputs."""
     P_bus_max_W: float = 1500.0
     m_max_kg: float | None = None
     T_min_mN: float | None = None
@@ -435,8 +459,10 @@ class DesignConstraints:
 
 
 def rfp_preset() -> DesignConstraints:
-    return DesignConstraints(P_bus_max_W=RFP.power_max_W, m_max_kg=RFP.mass_max_kg, T_min_mN=RFP.thrust_min_mN,
-                             T_max_mN=RFP.thrust_max_mN, life_min_h=RFP.ignition_hours)
+    """Owner-constraint preset (P_bus cap, mass limit, thrust band, firing-life requirement) built by the caller-side
+    assessment layer from the single operating-inputs seam (abep_sim.operating_inputs); kept here for compatibility."""
+    from .assessment.arch_constraints import design_constraints
+    return design_constraints()
 
 
 def _propulsion(a: dict, gas: dict, x: dict) -> dict:
@@ -569,19 +595,58 @@ def _variables(a: dict) -> dict:
     return v
 
 
+# Evidence classes of a gas-path state (owner decision A9.9 S2.4 / S2.5 MCC-02 / S2.3 MCC-03; review fixes D-02/N2,
+# D-03/N4, 2026-10-01). Ordered best first: a state of a better class always wins the nested search over any state of
+# a worse class, whatever its objective, so a non-admissible state can never displace an admissible one. Only class
+# 'OK' gives result status 'OK' / feasible True; every other class keeps the raw numerical state for diagnostics but
+# is returned under its own status with feasible False (never propagated as a successful solution).
+GAS_EVIDENCE_CLASSES = ("OK", "PARAMETRIC_SENSITIVITY", "OUT_OF_MODEL_DOMAIN", "MODEL_NOT_CONVERGED",
+                        "GASPATH_STATUS_NOT_REPORTED")
+
+
+def gas_evidence_class(gas: dict) -> tuple:
+    """(class, reason) of one gas-path state. MODEL_NOT_CONVERGED: a gas-path solver (orifice sizing included) did
+    not converge / bracket its setpoint (G-03..G-05). OUT_OF_MODEL_DOMAIN: a compressor stage/species outside the
+    Gaede stage-capacity domain (MCC-02; clipped-K values are diagnostics). PARAMETRIC_SENSITIVITY: converged and in
+    domain, but the rotor is not qualified against a registered rotor-strength basis (S2.3/MCC-03: compressor mass
+    and power come from the labelled legacy tip-speed cap). GASPATH_STATUS_NOT_REPORTED: the state carries no
+    gas-path labels (synthetic input, not produced by the gas-path model). OK: none of these."""
+    st = gas.get("gaspath_status"); dst = gas.get("gaspath_domain_status"); rq = gas.get("comp_rotor_qualification")
+    if st is None or dst is None or rq is None:
+        return ("GASPATH_STATUS_NOT_REPORTED",
+                "gas state carries no gaspath_status / gaspath_domain_status / comp_rotor_qualification")
+    if st != "CONVERGED":
+        return "MODEL_NOT_CONVERGED", f"gaspath_status={st} (not converged: {gas.get('gaspath_not_converged', '')})"
+    if dst != "IN_DOMAIN":
+        return "OUT_OF_MODEL_DOMAIN", f"gaspath_domain_status={dst} (out of domain: {gas.get('gaspath_out_of_domain', '')})"
+    if rq != "PASS":
+        return ("PARAMETRIC_SENSITIVITY", f"comp_rotor_qualification={rq} (comp_sizing_mode="
+                                          f"{gas.get('comp_sizing_mode', '')}; u_max basis: {gas.get('comp_u_max_basis', '')})")
+    return "OK", ""
+
+
 def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None, k_margin: float = 1.3,
-                       gas_vars: dict | None = None, strict: bool = False, firing_hours: float = RFP.mission_hours,
+                       gas_vars: dict | None = None, strict: bool = False, firing_hours: float | None = None,
                        keep_candidates: bool = True, size_arrays: bool = False, mission_envelope: bool = False,
-                       envelope_margin: float = 1.1) -> dict:
+                       envelope_margin: float = 1.1, flight: bool = False) -> dict:
     """Nested constrained optimisation. gas_fn(area, p_level) -> gas state (gas path is part of the search, item 9).
     Every design constraint, converter rating and thermal feasibility is enforced *inside* the candidate loop
     (item 2, 6, 7). Model exceptions are recorded as MODEL_ERROR, never treated as infeasible (item 3);
-    strict=True re-raises them."""
+    strict=True re-raises them. firing_hours: hours over which the neutralizer Xe flow is integrated for xe_kg
+    (caller-supplied; default abep_sim.operating_inputs.MISSION_HOURS, the mission-integrated Xe basis: A9.22 G1,
+    26,280 h; archengine defines no separate duty/firing profile that would legitimately reduce the firing time, so the
+    15,000 h subsystem firing-life assumption is NOT used here). The evaluation-only closure constraint flags
+    (thrust_min_ok / thrust_max_ok / mass_ok / life_ok / all_constraints_ok) are an assessment and are not part of this
+    design record: the programme layer abep_sim.programme.closure.close_architecture adds them (A9.22)."""
     from .mission_env import spacecraft_drag
+    if firing_hours is None:
+        firing_hours = OI.MISSION_HOURS
     from .atmosphere import atmosphere
     from .ppu import default_ppu, load_modes, Converter
     from .thermal import default_nodes, size_radiator, ThermalParams
     from .mass_bom import xe_tank, hall_magnetic_circuit, hall_channel_mass, build_bom, structure_mass
+    if flight:                                   # A9.22 G4: flight-purpose closures refuse historical non-flight archs
+        require_flight_eligible(a)
     dc = dc or DesignConstraints()
     gas_vars = gas_vars or {"area": [0.6, 0.7, 0.85], "p_level": [0.02, 0.05, 0.1]}
     cands = []; runners = []; best_env = None
@@ -590,12 +655,23 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
     if not a["valid"]:
         return {"architecture": name, "valid": False, "status": "INCOMPATIBLE", "reason": a["reason"]}
     vars_ = _variables(a); keys = list(vars_)
-    best = None; n_eval = 0; n_model_err = 0; n_infeasible = 0; last_err = ""; reject = {}
+    best = None; n_eval = 0; n_model_err = 0; n_infeasible = 0; last_err = ""; reject = {}; n_gas_nc = 0; gas_classes = {}
     def rej(k):
         reject[k] = reject.get(k, 0) + 1
     for area in gas_vars["area"]:
         for p_level in gas_vars["p_level"]:
             gas = gas_fn(area, p_level)
+            # G-03..G-05 (A9.9 S2.4). States without the flag are synthetic (not produced by the gas-path model).
+            # A non-converged compressor-recirculation or reservoir fixed point is a half-converged state (rule 3):
+            # refused. An orifice sizing that did not reach / bracket its pressure setpoint leaves a converged
+            # reservoir state at the bracket-end area (p_in is that actual pressure, not the setpoint); it is
+            # carried, explicitly flagged, onto the result (gaspath_status / evidence_admissible), never silently.
+            gas_nc = {t for t in str(gas.get("gaspath_not_converged", "")).split(",") if t}
+            if gas.get("gaspath_status", "CONVERGED") != "CONVERGED" and (gas_nc - {"orifice_sizing"} or not gas_nc):
+                n_gas_nc += 1; rej("MODEL_NOT_CONVERGED"); continue
+            g_cls, _ = gas_evidence_class(gas)
+            g_rank = len(GAS_EVIDENCE_CLASSES) - GAS_EVIDENCE_CLASSES.index(g_cls)   # higher = better evidence
+            gas_classes[g_cls] = gas_classes.get(g_cls, 0) + 1
             atm = atmosphere(gas["alt"], gas["solar"])
             D_sc0 = spacecraft_drag(sc, atm["rho"], atm.get("V_rel", atm["V"]), gas["area"], gas["C_D"])["D_total_N"]
             D_sc = D_sc0
@@ -737,16 +813,21 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
                                   "closes": True})
                 if dc.no_extrapolation and cal == "extrapolation": rej("extrapolation"); continue
                 if dc.max_extrapolation is not None and cal != "uncalibrated" and cal_x > dc.max_extrapolation: rej("extrapolation"); continue
-                if best is None or J > best["J"]:
+                if best is None or (g_rank, J) > (best["rank"], best["J"]):     # evidence class first, then objective
                     if best is not None:
                         runners.append(best)
-                    best = {"J": J, "x": x, "pr": pr, "ppu": ppu, "loads": loads, "P_bus": P_bus, "gas": gas, "D_sc": D_sc, "rad": rad,
+                    best = {"rank": g_rank, "J": J, "x": x, "pr": pr, "ppu": ppu, "loads": loads, "P_bus": P_bus, "gas": gas, "D_sc": D_sc, "rad": rad,
                             "ledger": ledger, "resid": resid, "cal": cal, "cal_x": cal_x, "P_mag": P_mag, "A_arr": A_arr, "m_arr": m_arr,
                             "bom": bom, "life_items": life_items, "life_sys": life_sys, "xe_kg": xe_kg, "area": area, "p_level": p_level, "stm": stm}
     if best is None:
-        status = "MODEL_ERROR" if (n_eval == 0 and n_model_err > 0) else "INFEASIBLE"
+        n_gas = len(gas_vars["area"]) * len(gas_vars["p_level"])
+        if n_gas > 0 and n_gas_nc == n_gas:
+            status = "MODEL_NOT_CONVERGED"          # no admissible gas-path state at all: not evidence of infeasibility
+        else:
+            status = "MODEL_ERROR" if (n_eval == 0 and n_model_err > 0) else "INFEASIBLE"
         return {"architecture": name, "valid": True, "feasible": False, "status": status, "family": ac.family,
-                "reason": (f"model error: {last_err}" if status == "MODEL_ERROR" else "no candidate satisfies constraints: " + ", ".join(f"{k}={v}" for k, v in reject.items())),
+                "reason": (f"model error: {last_err}" if status == "MODEL_ERROR" else
+                           "gas-path solvers did not converge at any gas state (G-03..G-05)" if status == "MODEL_NOT_CONVERGED" else "no candidate satisfies constraints: " + ", ".join(f"{k}={v}" for k, v in reject.items())),
                 "n_eval": n_eval, "n_model_err": n_model_err,
                 "best_envelope_ratio": best_env[0] if best_env else None, "best_envelope_point": best_env[1] if best_env else None,
                 "_candidates": cands if keep_candidates else None}
@@ -756,7 +837,7 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
     tried = 0
     while not rad["feasible"] and runners and tried < 8:          # fall back to the next-best candidate
         tried += 1
-        best = max(runners, key=lambda b: b["J"]); runners.remove(best)
+        best = max(runners, key=lambda b: (b["rank"], b["J"])); runners.remove(best)
         pr, x, ppu, loads, gas, D_sc, rad, bom = best["pr"], best["x"], best["ppu"], best["loads"], best["gas"], best["D_sc"], best["rad"], best["bom"]
         atm = atmosphere(gas["alt"], gas["solar"])
         rad = size_radiator(rad["_nodes"], ThermalParams(), atm["rho"], atm.get("V_rel", atm["V"]))
@@ -783,11 +864,33 @@ def close_architecture(a: dict, gas_fn, sc, dc: DesignConstraints | None = None,
            "firing_hours_for_xe": firing_hours, "_candidates": cands if keep_candidates else None,
            "A_array_m2": best["A_arr"], "m_array_kg": best["m_arr"], "m_system_kg": bom["mev_kg"] + best["m_arr"],
            **{k: pr[k] for k in ("eta_b", "Te_eV", "sustained", "onset", "space_charge_limited", "eta_pit", "T0_K", "kind") if k in pr}}
-    out["thrust_min_ok"] = (dc.T_min_mN is None) or (T * 1e3 >= dc.T_min_mN)
-    out["thrust_max_ok"] = (dc.T_max_mN is None) or (T * 1e3 <= dc.T_max_mN)
-    out["mass_ok"] = (dc.m_max_kg is None) or (bom["mev_kg"] <= dc.m_max_kg)
-    out["life_ok"] = (dc.life_min_h is None) or (best["life_sys"] >= dc.life_min_h)
-    out["all_constraints_ok"] = out["thrust_min_ok"] and out["thrust_max_ok"] and out["mass_ok"] and out["life_ok"]
+    # G-05 carry (A9.9 S2.4): the winning gas state's solver status travels with the result; a result built on a
+    # non-converged gas-path record is not admissible as valid evidence.
+    out["gaspath_status"] = gas.get("gaspath_status", "NOT_REPORTED")
+    out["gaspath_not_converged"] = gas.get("gaspath_not_converged", "")
+    # MCC-02 carry (A9.9 S2.5): a result built on a gas state outside the Gaede stage-capacity domain uses clipped-K
+    # compressor values, which are labelled diagnostics only: it is never admissible as valid design evidence.
+    out["gaspath_domain_status"] = gas.get("gaspath_domain_status", "NOT_REPORTED")
+    out["gaspath_out_of_domain"] = gas.get("gaspath_out_of_domain", "")
+    # S2.3 / MCC-03 carry (review fix D-03/N4): the rotor qualification and sizing basis of the compressor whose
+    # mass and power the result uses.
+    out["comp_sizing_mode"] = gas.get("comp_sizing_mode", "NOT_REPORTED")
+    out["comp_rotor_qualification"] = gas.get("comp_rotor_qualification", "NOT_REPORTED")
+    out["comp_u_max_basis"] = gas.get("comp_u_max_basis", "NOT_REPORTED")
+    # Fail closed (S2.4 'shall not be ... silently propagated as a successful solution'; MCC-02 'exclude it from valid
+    # design evidence'; S2.3 'shall not return a qualified rotor_ok'; review fixes D-02/N2, D-03/N4): a result built on
+    # a non-admissible gas state keeps its raw numbers for diagnostics, but status is its evidence class and feasible
+    # is False. closes_constraints records that the raw state satisfied every in-loop constraint.
+    ev_cls, ev_reason = gas_evidence_class(gas)
+    out["evidence_class"] = ev_cls
+    out["evidence_reason"] = ev_reason
+    out["evidence_admissible"] = ev_cls == "OK"
+    out["closes_constraints"] = True
+    out["gas_states_by_evidence_class"] = ";".join(f"{k}={v}" for k, v in sorted(gas_classes.items()))
+    if ev_cls != "OK":
+        out["status"] = ev_cls
+        out["feasible"] = False
+    # evaluation-only flags against the caller's DesignConstraints: added here by abep_sim.programme.closure (A9.22)
     # degeneracy of the optimum: candidates within 1 % of the best objective (a small input change can flip the argmax)
     Js = [c["J"] for c in cands if c.get("closes", True) and "J" in c]
     if Js:
@@ -818,7 +921,10 @@ def propulsion_map(result: dict, gas_fn, scales=(0.3, 0.45, 0.6, 0.75, 0.9, 1.0,
             P_dev = d["P_mag"] + d["comp_power"] + 5.0 + 45.0          # dark channel: keeper/cathode + compressor
         T.append(T_s); P.append(P_dev / max(d["eta_ppu"], 0.5) + 12.0)
     HALL_OVERRIDES.pop("start", None)
-    return {"scale": list(scales), "T_N": T, "P_bus_W": P, "mdot0": gas0["mdot_air"]}
+    # evidence label of the design the map was built from travels with the map (review fix D-02)
+    return {"scale": list(scales), "T_N": T, "P_bus_W": P, "mdot0": gas0["mdot_air"],
+            "architecture_status": result.get("status"), "evidence_class": result.get("evidence_class", "NOT_REPORTED"),
+            "evidence_admissible": bool(result.get("evidence_admissible", False))}
 
 
 def pareto_front(cands: list[dict]) -> "pd.DataFrame":
@@ -868,9 +974,15 @@ def make_gas_fn(alpha=0.8, L_over_d=5, alt=200, solar="mean", blade_coating_um=5
 
 
 def run_all(gas_fn, sc, dc: DesignConstraints | None = None, k_margin: float = 1.3, gas_vars: dict | None = None,
-            strict: bool = False, archs=None) -> pd.DataFrame:
+            strict: bool = False, archs=None, flight: bool = False) -> pd.DataFrame:
+    """flight=True (A9.22 G4): historical non-flight architectures are not closed; they appear with status
+    EXCLUDED_HISTORICAL_NON_FLIGHT and feasible False, so they can never be selected."""
     rows = []
     for a in (archs or enumerate_architectures()):
+        if flight and not flight_eligible(a):
+            rows.append({"architecture": arch_name(a), "valid": a["valid"], "feasible": False,
+                         "status": "EXCLUDED_HISTORICAL_NON_FLIGHT", "reason": FLIGHT_EXCLUDED_NEUTRALIZERS[a["neutralizer"].name]})
+            continue
         rows.append(close_architecture(a, gas_fn, sc, dc, k_margin, gas_vars, strict))
     return pd.DataFrame(rows)
 
@@ -878,14 +990,25 @@ def run_all(gas_fn, sc, dc: DesignConstraints | None = None, k_margin: float = 1
 def gas_path_state(area_m2=0.7, alpha=0.8, L_over_d=5, alt=200, solar="mean", blade_coating_um=50.0, p_margin=3.0,
                    p_target: float | None = None) -> dict:
     """Run Phases 1-2 (+ intake/blade life) once; the spacecraft is passed separately to run_all (item 26)."""
-    from .system import Config, evaluate
+    from .system import Config, physics_closure
     from .intake import IntakeParams, CompressorParams
     from .life import LifeInputs, blade_life, intake_life
-    r = evaluate(Config("hall_1stage", alt, solar, IntakeParams(area_m2=area_m2, accommodation=alpha, use_tpmc=True, L_over_d=L_over_d),
+    # raw physics closure (A9.22): every key read below is a raw key, identical in value to the legacy merged record
+    r = physics_closure(Config("hall_1stage", alt, solar, IntakeParams(area_m2=area_m2, accommodation=alpha, use_tpmc=True, L_over_d=L_over_d),
                         CompressorParams(ratio=2000), vd_V=275, gaspath_physics=True, p_margin_over_pmin=p_margin, p_target_Pa=p_target))
     li = LifeInputs(blade_coating_um=blade_coating_um, blade_tip_mps=r.get("comp_tip_mps", 400.0), ao_flux_ram_m2_s=r["ao_flux_m2s"], intake_alpha0=alpha)
     return {"mdot_air": r["mdot_air_mgps"] * 1e-6, "p_in": r["p_in_Pa"], "fO": r["fO_inlet"], "fN2": 1 - r["fO_inlet"] - r["fO2_inlet"],
             "fO2": r["fO2_inlet"], "comp_power": r["P_comp_W"], "comp_mass": r["m_comp_kg"], "intake_mass": r["m_intake_kg"],
             "eta_c": r["eta_c"], "C_D": r["C_D"], "area": area_m2, "ao_flux": r["ao_flux_m2s"], "alt": alt, "solar": solar,
             "blade_life_h": blade_life(li)["coating_life_h"], "intake_life_h": 1e6 if intake_life(li)["coating_ok"] else 5000.0,
-            "atmosphere": r["atm_source"]}
+            "atmosphere": r["atm_source"],
+            # G-03..G-05 (A9.9 S2.4): convergence of the gas-path solvers travels with the state; close_architecture
+            # refuses a non-converged state (fail closed).
+            # (strings only: downstream consumers such as arch_compare accept numbers and labels)
+            "gaspath_status": r["gaspath_status"], "gaspath_not_converged": ",".join(r["gaspath_not_converged"]),
+            # MCC-02 (A9.9 S2.5): Gaede stage-capacity domain of the compressor state (strings only, as above)
+            "gaspath_domain_status": r["gaspath_domain_status"], "gaspath_out_of_domain": ",".join(r["gaspath_out_of_domain"]),
+            # S2.3 / MCC-03 (review fix D-03/N4): the compressor mass/power above are sized under this basis; without a
+            # registered rotor-strength basis they are PARAMETRIC_SENSITIVITY values (strings only, as above)
+            "comp_sizing_mode": str(r["comp_sizing_mode"]), "comp_rotor_qualification": str(r["comp_rotor_qualification"]),
+            "comp_u_max_basis": str(r["comp_u_max_basis"])}

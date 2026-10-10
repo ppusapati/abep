@@ -1,0 +1,90 @@
+# Rust workspace CI (A9.29 lane A / ES-1; docs/rust_migration/CI_PLAN.md v3.1 §§ 1, 3, 7, 8; A9.30 sec. 6).
+#   - Not a required status check yet: CI_PLAN.md § 1 principle 4 makes the Rust jobs required only when the first
+#     non-Kernel-1 component is admitted; that PR updates docs/ci/BRANCH_PROTECTION.md. ci.yml stays Rust-free (S10.4).
+#   - Full history (fetch-depth 0): the bid source guard verifies the lineage 5eee4b8 -> b5849af -> 2de86ab -> HEAD in git and
+#     reports NOT_EVALUATED (a failure here) in a shallow clone.
+#   - The toolchain is installed exactly as rust-parity.yml does, pinned to rust-toolchain.toml (rustc 1.94.1).
+name: Rust workspace
+
+on:
+  pull_request:
+  push:
+    branches: [main, integration/simulation-complete]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rust-workspace-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  RUST_TOOLCHAIN: "1.94.1"
+  CARGO_TERM_COLOR: never
+
+jobs:
+  workspace:
+    name: Rust workspace (fmt, clippy, cargo test, bid guard, test register, groundtest isolation)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install the pinned Rust toolchain (rustup)
+        run: |
+          rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal --component rustfmt --component clippy --no-self-update
+          rustup default "$RUST_TOOLCHAIN"
+          rustc --version
+          cargo --version
+
+      - name: Toolchain equals rust-toolchain.toml
+        run: |
+          grep -qx "channel = \"$RUST_TOOLCHAIN\"" rust-toolchain.toml
+          rustc --version | grep -q "^rustc $RUST_TOOLCHAIN "
+
+      - name: abep_core sources equal parity_report_v2 build_provenance (A9.30 sec. 6; fail closed)
+        # Same binding as rust-parity.yml "Sources vs the recorded build" (UNRECORDED_SOURCE_CHANGE), here on every push
+        # and pull request: every recorded abep_core file matches its sha256 and no unrecorded file sits in abep_core/src.
+        run: |
+          rec="$RUNNER_TEMP/abep_core.sha256"
+          jq -r '.build_provenance.source_sha256 | to_entries[] | select(.key | startswith("abep_core/")) | "\(.value)  \(.key)"' \
+            docs/performance/abep_core/parity_report_v2.json > "$rec"
+          for f in abep_core/Cargo.toml abep_core/Cargo.lock; do
+            grep -q "  $f\$" "$rec" || { echo "::error::$f is not bound by parity_report_v2"; exit 1; }
+          done
+          sha256sum --check --strict "$rec" || { echo "::error::UNRECORDED_SOURCE_CHANGE in abep_core"; exit 1; }
+          for f in $(find abep_core/src -type f | sort); do
+            grep -q "  $f\$" "$rec" || { echo "::error::UNRECORDED_SOURCE_CHANGE: $f is not bound by parity_report_v2"; exit 1; }
+          done
+
+      - name: Fetch every locked package (cargo fetch --locked)
+        # The ground-test isolation check runs `cargo metadata --locked --offline`, which needs every package in
+        # Cargo.lock, including other-target dependencies that `cargo build` / `cargo test` never download.
+        run: cargo fetch --locked
+
+      - name: Format (cargo fmt -- --check)
+        # Members only: --all would also format the abep_core path dependency, which is not rustfmt-clean under the root
+        # rustfmt.toml and whose bytes are sha256-bound by parity_report_v2.
+        run: cargo fmt -- --check
+
+      - name: Lint (cargo clippy -D warnings)
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+      - name: Tests (cargo test --workspace --locked)
+        run: cargo test --workspace --locked
+
+      - name: Bid source guard (A9.29 sec. 3; full history)
+        run: cargo run --locked -q -p abep-ci -- bid-source-guard
+
+      - name: "Rust-era test rule (no #[ignore] outside the platform-test register)"
+        run: cargo run --locked -q -p abep-ci -- test-register
+
+      - name: Ground-test isolation (cargo metadata)
+        run: cargo run --locked -q -p abep-ci -- groundtest-isolation
+
+      - name: Working tree unchanged
+        run: |
+          git status --porcelain
+          test -z "$(git status --porcelain)"

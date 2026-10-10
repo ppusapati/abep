@@ -1,0 +1,353 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1-YIELD_KERNELS-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1",
+  "migration_wave": "W15b",
+  "scope": "named function subset (kernel granularity, RM-R17): the two cited yield formulas of the register builder (SC-WP-08 element 'erosion')",
+  "functions_or_entry_points": [
+   "S1 yamamura_tawara(E, Z1, M1, Z2, M2, Us, Q, W, s) (NIFS-DATA-23 Eqs. (4), (15)-(22))",
+   "S2 apid_fit(E, lam, q, mu, epsL, Eth) (IAEA APID 7B p. 18 fit formula)"
+  ],
+  "out_of_scope": [
+   "the register build / render / check functions (load_inputs, validate_inputs, verify_guardbands, verify_decision_pins, build, render_md, render_all, check, main): the committed register outputs stay Python reference until a register-builder contract (W15 byte identity) is registered"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "owner_disposition_a9_29": "NOT_APPLICABLE",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "simulation_completion_wp": "SC-WP-08"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. No Rust code for the component exists at registration. The commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "reference_implementation": {
+  "python_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+  "files": [
+   {
+    "path": "docs/evidence/sputter_yields_v1/build_sputter_yields_v1.py",
+    "sha256_at_registration": "c7e75fa8b4a36d2bbb59aaf9629673a5a2f70fc76d1b44f06de09733104d5fe4"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4 (not used by the component)",
+   "scipy": "1.17.1 (not used)",
+   "pandas": "3.0.2 (not used by the scored functions)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "NOT_APPLICABLE",
+   "thread_env": {
+    "OMP_NUM_THREADS": "NOT_APPLICABLE",
+    "OPENBLAS_NUM_THREADS": "NOT_APPLICABLE"
+   },
+   "stdlib": "math (glibc libm: exp, log, sqrt, pow through float ** float), json, hashlib; CPython 3.11 float repr and format(x, '.Ng') correctly rounded"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-subsystems",
+  "functions_or_entry_points": [
+   "abep_subsystems::materials::sputter::{yamamura_tawara, apid_fit}",
+   "`life_eval <calls.json>` (harness interface; crates/abep-subsystems/examples/life_eval.rs)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/**",
+   "crates/abep-provenance/**",
+   "crates/abep-data/**",
+   "crates/abep-hall/**",
+   "crates/abep-subsystems/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it"
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "NOT_APPLICABLE (no configuration file is read; the single flight configuration is hall_icp_neutralizer, A9.19)",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "rule": "both implementations read the same pinned inputs (pinned_inputs_sha256); a mismatch voids the run (INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "docs/evidence/sputter_yields_v1/sputter_yield_inputs_v1.json": "c28fef6a4d8dc478ba551e8ca842b69943edcf9ab96151edb2c21a348aa3af8e",
+  "docs/evidence/sputter_yields_v1/sputter_yields_v1.json": "7bcf2b0761f41504601381c8f95db19b9c62f9b891c527edca667f788c0a3dfd"
+ },
+ "frozen_data_read_only": [
+  "the committed register inputs and outputs: read only"
+ ],
+ "inputs": {
+  "argument_encoding": "positional arguments as a JSON list in the Python signature order (ints stay ints)",
+  "golden_vectors": {
+   "source": "build(load_inputs()) at the reference commit and tests/test_sputter_yields_v1.py",
+   "count": "see vector_totals",
+   "list_or_generator": {
+    "R-S01": "every yamamura_tawara and apid_fit call made by build(load_inputs()) at the reference commit, captured by wrapping the two functions during the build (397 + 30 calls at registration)",
+    "R-S02": "the test-file vectors: (1000.0, He on Au with the Table 1 Au row), (100.0, 7, 14.007, 74, 183.84, 0.0, 0.72, 2.14, 2.8), (nan, ...), APID-2.1.3.6 at 100.0 and 40.0, (100.0, 0.0, ...)"
+   }
+  },
+  "edge_cases": [
+   {
+    "id": "E-S01",
+    "inputs": "each validated argument in turn replaced by 0, 0.0, -1.0, nan, inf, -inf, None, '1.0', False, True, an int",
+    "note": "ValueError with the argument repr; True passes"
+   },
+   {
+    "id": "E-S02",
+    "inputs": "Z1 = 0 and Z2 = 0",
+    "note": "ZeroDivisionError"
+   },
+   {
+    "id": "E-S03",
+    "inputs": "E exactly at Eth (apid) and at the computed Eth (Yamamura)",
+    "note": "below_threshold / 0.0"
+   },
+   {
+    "id": "E-S04",
+    "inputs": "M1 == M2, M1 > M2 (alpha / Eth branches)",
+    "note": "branch coverage"
+   }
+  ],
+  "randomized_domain": {
+   "count": 4000,
+   "generators": {
+    "0 yamamura_tawara": 3000,
+    "1 apid_fit": 1000
+   },
+   "draw": "Z1, Z2 ints 1..92; M1, M2 uniform 1..240 u; E log-uniform 1..1e5 eV (an int with probability 0.3); Us 1..10 eV; Q 0.1..3; W 0.5..5; s 2..3; lam 0.01..10; q 0.01..10; mu 0.5..3; epsL log-uniform 1e-7..1e-3 /eV; Eth 1..200 eV; each argument replaced by an invalid value (E-S01 pool) with probability 0.01",
+   "domain_note": "numerical parity domain only. Excluded: negative or non-integer Z (Python complex powers) and ints beyond 2**53"
+  },
+  "vector_totals": {
+   "R-S01..R-S02": "fixed",
+   "edge cases": "E-S01..E-S04",
+   "randomized": 4000
+  }
+ },
+ "campaign_seeds": {
+  "applicable": "true (input generation only; the component is deterministic)",
+  "scoring_master_seed": 2743347364,
+  "development_master_seed": 8102,
+  "derivation": "random.Random(master_seed * 1000 + k) per generator k (inputs.randomized_domain.generators)",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the admitted statistical contract; the roles are never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE",
+   "other_streams": "NOT_APPLICABLE: the harness's random.Random only generates input cases (the component is deterministic and draws no random numbers)",
+   "migration_parity_dataset": "seeds and the generated call file stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic component)",
+  "development_rule": "development comparisons use development_master_seed (and the registered deterministic vectors) only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "every call": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED"
+    },
+    {
+     "name": "value",
+     "units": "as the Python returns",
+     "tolerance_class": "EXACT_VALUE + ULP_BOUNDED (floats)",
+     "tolerance": "see tolerance_classes",
+     "definition": "the returned value (dicts in insertion order, tuples as lists)"
+    },
+    {
+     "name": "error_class",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "Python exception class name; Rust reports the mapped class name"
+    },
+    {
+     "name": "error_message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "str(exception) character for character for the message classes listed; class only otherwise"
+    }
+   ],
+   "message_classes": [
+    "ValueError"
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  }
+ },
+ "tolerance_classes": {
+  "EXACT_BYTES": "NOT_APPLICABLE",
+  "EXACT_VALUE": "strings, ints, booleans, None, statuses, dict key order, list lengths and the int-vs-float type of every value equal; error class equal; messages equal for the registered message classes",
+  "ULP_BOUNDED": "every float: |rust - py| <= 4 ulp(py) or <= 1e-12 * max(1, |py|); NaN matches NaN, +-inf exact",
+  "SOLVER_TOLERANCE": "NOT_APPLICABLE",
+  "STATISTICAL": "NOT_APPLICABLE",
+  "EXACT_STREAM": "NOT_APPLICABLE"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-DET",
+   "statement": "determinism: the Rust call list evaluated in two separate processes gives byte-identical output",
+   "required_in_both": true
+  },
+  {
+   "id": "INV-S01",
+   "statement": "yamamura_tawara returns {Y, Eth_eV, below_threshold} with Y == 0.0 exactly when below_threshold (both)",
+   "required_in_both": true
+  }
+ ],
+ "conservation_checks": {
+  "applicable": "false (closed-form yield formulas)",
+  "checks": []
+ },
+ "domain_and_error_parity": {
+  "cases": "E-S01..E-S04 and every randomized invalid value",
+  "mapping": {
+   "ValueError": "ValueError (OUT_OF_DOMAIN: non-positive / non-finite / non-numeric argument); message scored",
+   "ZeroDivisionError": "ZeroDivisionError (MODEL_ERROR); class scored"
+  },
+  "documented_divergence": [
+   {
+    "id": "DIV-S00",
+    "statement": "none",
+    "disposition": "NOT_APPLICABLE"
+   }
+  ],
+  "mapping_rule": "every Python exception class maps to exactly one Rust class name; no Rust path may return a value where Python fails, or fail where Python returns, except the registered divergences (CLAUDE.md rule 3)"
+ },
+ "schema_parity": {
+  "schemas": [
+   "NOT_APPLICABLE"
+  ],
+  "rules": [
+   "yamamura_tawara dict keys Y, Eth_eV, below_threshold in that order",
+   "apid_fit returns a float"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "R-S01 captured build calls; R-S02 test vectors"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1-YIELD_KERNELS/reference_outputs/",
+   "captured_at_python_commit": "e462e35ed0ce6092f47e1d1b05119501cf4d7eb6",
+   "sha256_manifest": "FILL at scoring",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: no golden_v1 / golden_v2 case is used"
+ },
+ "julia_bridge": {
+  "applicable": "false",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "julia_version": "NOT_APPLICABLE",
+  "launch_equivalence": "NOT_APPLICABLE",
+  "record_comparison": "NOT_APPLICABLE",
+  "execution_provenance": "NOT_APPLICABLE"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-S01",
+    "description": "yamamura_tawara(1000, He on Au), 20000 repeats"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine; speed-up = median_python / median_rust (Rust timed inside life_eval)",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every call meets its tolerance class",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": "true if conservation_checks.applicable",
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED (= PARITY_PASS) iff every call of every vector, every invariant, every conservation check and every registered divergence outcome passes and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays",
+  "disagreement_rule": "never rewrite a Python result, golden, evidence record or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "restricted to the retained selected-architecture functions listed (RM-R20)",
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust (abep_subsystems::materials::sputter) becomes authoritative for the two cited yield formulas within the registered domain; the register's evidence statuses are unchanged"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output of this contract may be cited by the bid package unless the owner re-freezes",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (terminal package state, A9.29 sec. 3)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, evidence record, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): literature-class priors stay priors",
+  "not a gate PASS and not a life verdict: absent determining evidence stays NOT_EVALUATED / INCOMPLETE_EVIDENCE / OUT_OF_DOMAIN / MODEL_ERROR (RM-R31); no 15,000 h / 26,280 h comparison is made in raw physics (SC-WP-11)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1-YIELD_KERNELS/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_life_v1.py (Python harness calling `life_eval`)",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance",
+   "environment",
+   "per-test results",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "captured reference outputs",
+   "ledger_update_requested"
+  ],
+  "ledger_scope_requested_on_admission": "partial admission (named kernels S1 / S2) of C-DOCS_EVIDENCE_SPUTTER_YIELDS_V1; the register builder stays Python reference"
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS in component_inventory_v3_1.json: PASS",
+   "the Rust implementation contains none of the principle-6 forbidden identifiers (crates/abep-subsystems/tests/prereg_binding.rs scan)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [],
+  "check": "NOT_APPLICABLE beyond the labels carried in the outputs"
+ },
+ "new_physics_verification": {
+  "applies_when": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY)"
+ }
+}

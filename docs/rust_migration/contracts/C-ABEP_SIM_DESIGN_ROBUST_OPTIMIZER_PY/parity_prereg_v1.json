@@ -1,0 +1,278 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY",
+  "inventory_path": "docs/rust_migration/component_inventory_v3_1.json",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W4",
+  "scope": "whole module except the items in out_of_scope; plus the registered numpy stream semantics it uses (abep-rng) and intake_synthesis.stable_seed (its seed derivation)",
+  "functions_or_entry_points": [
+   "abep_sim/design/robust_optimizer.py::survivors",
+   "abep_sim/design/robust_optimizer.py::scenario_robustness (with upstream_a9_13.require_all_admitted_scenarios, registered in the F7 contract and re-exercised here)",
+   "abep_sim/design/robust_optimizer.py::tpmc_monte_carlo (with record_se_index, perturbed, _state_eval, stable_seed, SEED_BASE, N_MC_DEFAULT)",
+   "abep_sim/design/robust_optimizer.py::robust_pareto (ROBUST_OBJECTIVES, ROBUST_SENSE)",
+   "abep_sim/design/robust_optimizer.py::carried_robust_set (with architecture_optimizer.robust_pareto_set and upstream_a9_13.RobustParetoSet)",
+   "abep_sim/design/robust_optimizer.py::pointing_sensitivity (with theta_ratio_index)",
+   "abep_sim/design/robust_optimizer.py::compressor_elasticities (with plant_with_overrides, fixed_coefficients, ELASTICITY_STEP)",
+   "abep_sim/design/robust_optimizer.py::design_gate_snapshot (rvm_snapshot=None)",
+   "abep_sim/design/robust_optimizer.py::UQ_AXES (_uq_axes)",
+   "abep_sim/design/intake_synthesis.py::stable_seed",
+   "numpy 2.4.4 numpy.random.default_rng(int) -> SeedSequence / PCG64 / Generator.standard_normal(size) and Generator.random() (the registered design / UQ stream semantics), numpy.percentile(a, q) (method 'linear')"
+  ],
+  "out_of_scope": [
+   "the assessment-layer gate_snapshot (design_gate_snapshot + design_gates.rvm_gate_snapshot): SC-WP-11",
+   "the F7 functions it calls (registered in PARITY-C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-V1; the F8 study runs on each implementation's own F7 contexts)",
+   "the TPMC particle-tracing kernel: never called by F8 (A9.29 sec. 7; see rng_stream_roles)",
+   "module __getattr__ shims (UQ_AXES / STATES resolution)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "abep_sim/uq6.py, abep_sim/uq_modular.py, abep_sim/programme/uq_modular.py, abep_sim/mission_uq.py, abep_sim/uncertainty.py, Sobol (SC-WP-10 excluded_legacy_not_ported; never ported)"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-10 (elements 'robust optimisation', 'UQ for the selected architecture')",
+  "owner_disposition_a9_29": "RM-OQ-03 OWNER_DECIDED_A9_29 (sec. 7): its design / UQ sampling (numpy default_rng / PCG64 from stable ids) is EXACT_STREAM with the registered PCG64 stream semantics (abep-rng); its tpmc_monte_carlo TPMC calls keep the admitted Kernel-1 statistical contract; the two stream roles are registered separately",
+  "owner_ruling_a9_31": "sec. 12: port active F7/F8 only; use the previously decided exact PCG64 reference stream for migration parity; an empty robust set is a valid output; do not retune inputs until a robust candidate appears. sec. 21: if the robust set is empty, decompose the binding constraint; never retune after seeing the result without registering a new design hypothesis"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of these functions or of the abep-rng stream was executed (lane SC-WP-10, branch lane-wp10-uq). A Rust draft exists at registration; no comparison of it with the Python reference or with numpy has been run. The registration commit is recorded in the report.",
+ "supersedes": {"path": null, "sha256": null, "reason": "first version"},
+ "reference_implementation": {
+  "python_commit": "0d8922cfe39b5bb7f90ddf290702342182eb5d7c",
+  "files": [
+   {"path": "abep_sim/design/robust_optimizer.py", "sha256_at_registration": "6675dc08e60dd9684567822de8c444ca1ef939f381933b8748af77d38e29f7b5"},
+   {"path": "abep_sim/design/architecture_optimizer.py", "sha256_at_registration": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af"},
+   {"path": "abep_sim/programme/design_synthesis.py", "sha256_at_registration": "a9ee90672ad99c352e4ce77f74a5078ec742119dfd347ebbd485f22894838455"},
+   {"path": "abep_sim/design/upstream_a9_13.py", "sha256_at_registration": "384b24086c1cc779707d7cb958b9ccd8cb58edf337d629727d923ab659a30af5"},
+   {"path": "abep_sim/design/plenum_feed.py", "sha256_at_registration": "dbc28212e4c3d79a60c0cae7f875c62291ea3e90dbdc491b2bcfaa5f967d616b"},
+   {"path": "abep_sim/design/intake_synthesis.py", "sha256_at_registration": "104ac561c05d8516c0571bc88339d69c4ab6abc78f8bfeeacea8696e557f2191"},
+   {"path": "abep_sim/design/compressor_synthesis.py", "sha256_at_registration": "b7b9ffd9f62e0343c7d4a7297c5106a5dcb70d7d9cbaef3ce96a4ce8f7894b7e"},
+   {"path": "abep_sim/compressor.py", "sha256_at_registration": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75"}
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration, or if the numpy version differs from 2.4.4; a changed reference requires a new contract version",
+  "numpy_rng_sources": {
+   "statement": "the stream semantics are numpy v2.4.4's (registered reference environment): numpy/random/bit_generator.pyx (SeedSequence: _coerce_to_uint32_array, hashmix, mix, mix_entropy, generate_state), numpy/random/_pcg64.pyx and src/pcg64/pcg64.{h,c} (pcg64_set_seed = pcg_setseq_128_srandom_r, XSL-RR 128/64 output, next_double = (next_uint64 >> 11) * 2^-53), src/distributions/distributions.c (random_standard_normal 256-layer ziggurat, random_standard_normal_fill), src/distributions/ziggurat_constants.h (ki_double, wi_double, fi_double, ziggurat_nor_r, ziggurat_nor_inv_r), numpy/lib/_function_base_impl.py (_quantile / _get_indexes / _get_gamma / _lerp, method 'linear')",
+   "sdist": "numpy-2.4.4.tar.gz sha256 2d390634c5182175533585cc89f3608a4682ccb173cc9bb940b2881c8d6f8fa0 (the ziggurat tables are copied verbatim from it into crates/abep-rng/src/ziggurat.rs)"
+  },
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4",
+   "scipy": "1.17.1",
+   "pandas": "3.0.2",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "scipy-openblas bundled with numpy 2.4.4 (no BLAS call on a scored path)",
+   "thread_env": {"OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1"}
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-uq (F8), abep-rng (numpy stream semantics)",
+  "functions_or_entry_points": [
+   "abep_rng::{SeedSequence, Pcg64, Generator::default_rng, Generator::standard_normal, Generator::standard_normal_fill, Generator::random, crc32, stable_seed}",
+   "abep_uq::robust::{survivors, scenario_robustness, robust_pareto, carried_robust_set, robust_objectives}",
+   "abep_uq::mc::{stable_seed, record_se_index, perturbed, draw, state_eval, np_percentile, tpmc_monte_carlo, p_feasible_min}",
+   "abep_uq::sens::{theta_ratio_index, pointing_sensitivity, fixed_coefficients, plant_with_overrides, compressor_elasticities, design_gate_snapshot}",
+   "abep_uq::axes::uq_axes",
+   "`abep-design-uq eval <calls.json>` and `abep-design-uq study <spec.json> <out_dir>` (harness interface)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": ["Cargo.toml", "Cargo.lock", "crates/abep-rng/**", "crates/abep-uq/**", "crates/abep-design/**", "crates/abep-gaspath/**", "crates/abep-mission/**", "crates/abep-subsystems/**", "crates/abep-config/**"],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it"
+ },
+ "governing_hashes": {
+  "config_manifest": {"path": "config/MANIFEST.json", "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"},
+  "architecture_hash": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+  "rule": "both implementations must report these exact values for every run; a mismatch voids the run (status INPUT_MISMATCH, not a verdict)"
+ },
+ "pinned_inputs_sha256": {
+  "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854",
+  "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json": "74a52aa749e1d071f76957e4f9ef4929c9d8ab302b183da3c5a5d9ba8d6d6923",
+  "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json": "fffb223023f944f166112acf017af277a50ede84695cb78f933dd5ca918fd3a9",
+  "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json": "36aca79c1e515f6828f120d4b90174815e888780f4070e08cd70dff31b9ab1a8",
+  "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+  "hallthruster_bridge/ensemble/transport_ensemble_v0.json": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
+  "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json": "0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+ },
+ "frozen_data_read_only": ["the F1 core view (committed TPMC records and SEs; F8 runs no TPMC) and the other pinned inputs above"],
+ "inputs": {
+  "golden_vectors": {
+   "source": "the registered F8 study of build_f7_f8_optimizer.py stage_f8 on the full F7 grid: survivors of every nominal (F4-FIL-NONE, WALL-G0) Pareto set, scenario_robustness over the 10 admitted scenarios (WALL-G0), tpmc_monte_carlo with n = N_MC = 100, robust_pareto, carried_robust_set (version 'parity', provenance 'parity'), the WALL-TI64-DB scenario robustness, pointing sensitivity and compressor elasticities of the robust members (whatever they are, including none), design_gate_snapshot before and after",
+   "count": "1 study (scoring only; development runs use the development sub-grid of the F7 contract, never the full grid)",
+   "list_or_generator": "stage_f8 (Python) and `abep-design-uq study` (Rust)"
+  },
+  "registered_sensitivity_vectors": "pointing_sensitivity (both walls) and compressor_elasticities (WALL-G0) of 6 survivors drawn by the master seed from the study's survivor list (they are computed even when the robust set is empty, so these functions are scored)",
+  "edge_cases": [
+   {"id": "E-01", "inputs": {"entry": "scenario_robustness", "scenarios": "a strict subset of the admitted scenarios"}, "note": "A913RuleError omits admitted scenarios (S6.16)"},
+   {"id": "E-02", "inputs": {"entry": "plant_with_overrides", "overrides": {"rpm": 1000.0}}, "note": "OptimizerError only FIXED compressor coefficients can be perturbed"},
+   {"id": "E-03", "inputs": {"entry": "plant_with_overrides", "overrides": {"eta_motor": 1.5}}, "note": "SynthesisInputError outside its domain"},
+   {"id": "E-04", "inputs": {"entry": "carried_robust_set", "robust": "empty"}, "note": "an EMPTY versioned set is returned (valid output); representative() refused"},
+   {"id": "E-05", "inputs": {"entry": "rng.standard_normal", "seed": 0}, "note": "seed 0 (entropy word [0])"},
+   {"id": "E-06", "inputs": {"entry": "rng.seed_sequence", "seed": "2^128 - 1"}, "note": "four-word entropy"},
+   {"id": "E-07", "inputs": {"entry": "rng.seed_sequence", "seed": "2^160 + 12345"}, "note": "entropy longer than the pool (the extra-word mixing branch)"},
+   {"id": "E-08", "inputs": {"entry": "np_percentile", "a": "with NaN"}, "note": "NaN"},
+   {"id": "E-09", "inputs": {"entry": "tpmc_monte_carlo", "n": 1}, "note": "single draw"}
+  ],
+  "randomized_domain": {
+   "count": "per master seed: 300 abep-rng streams (seed uniform in [0, 2^31 - 2] for 200 of them and in [0, 2^128) for 100; per stream: SeedSequence pool, generate_state(8, uint32), generate_state(4, uint64), the PCG64 state after seeding, 64 next_uint64, 64 random(), and standard_normal(size) with size uniform in [1, 20000]); 200 stable_seed part lists (1-4 parts of printable ASCII and non-ASCII text); every stable seed the study uses ('tpmc', candidate, scenario for the 48 x 10 pairs) with standard_normal(n x 197 x 3 x 3) for n = 100; 300 np_percentile vectors (length 1-400, q from {5, 50, 95} and uniform in [0, 100], values with ties); 2000 perturbed vectors (random record, area, SE and z including large negative z to hit the 1e-30 floor); 40 tpmc_monte_carlo vectors (random survivor subset of size 1-6 from the study survivors of the respective implementation's sub-grid, random scenario subset, n uniform in [1, 40], both walls); 40 state_eval vectors; 30 plant_with_overrides vectors (random FIXED coefficient, factor in [0.5, 1.5])",
+   "draw": "numpy.random.default_rng(numpy.random.SeedSequence([master_seed, entry_index])) per entry; written to the scratch work directory and fed to both implementations",
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim"
+  },
+  "vector_totals": {"study (scoring)": 1, "registered sensitivity vectors": 6, "randomized": "as randomized_domain", "fixed-input entries": "design_gate_snapshot 1, UQ_AXES 1, fixed_coefficients 1, theta_ratio_index 1, record_se_index summary 1"},
+  "fixed_input_entries_rule": "entries without a seed are the same vector in development and scoring; a development execution of them is recorded as development in campaign_history and never reported as a verdict"
+ },
+ "campaign_seeds": {
+  "applicable": true,
+  "scoring_master_seed": 1006202620,
+  "development_master_seed": 1006202621,
+  "derivation": "numpy.random.SeedSequence([master_seed, entry_index]) per randomized entry; the study's own generators are the reference algorithm's (default_rng(stable_seed('tpmc', candidate, scenario)) with SEED_BASE 20261001) and are not re-seeded",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "EXACT_STREAM - the registered numpy PCG64 / SeedSequence / Generator stream semantics (abep-rng) reproducing the Python reference samples of the active F8 sampling: tpmc_monte_carlo's z = default_rng(stable_seed('tpmc', candidate, scenario)).standard_normal((n, n_states, 3, 3)) (C order); every raw word and every normal draw bit-identical",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE in this contract: tpmc_monte_carlo traces no particle (it perturbs the committed F1 records by their binomial / replicate SEs; tpmc_backend_policy: tpmc_invoked_by_f7_f8 = false). Any future TPMC re-evaluation keeps the admitted Kernel-1 STATISTICAL contract (docs/performance/abep_core/parity_prereg_v2.json / parity_report_v2.json, Rust xoshiro256++) and is never re-registered on this stream",
+   "other_streams": "the harness vector generator only (numpy default_rng from the registered master seeds; it produces inputs, never a scored quantity)",
+   "migration_parity_dataset": "seeds, stream semantics and captured reference samples of the migration parity campaign stay exactly reproducible (immutable)",
+   "after_rust_authority": "new UQ campaigns may use the registered Rust RNG policy; this never changes the migration parity dataset"
+  },
+  "rng_streams_v3": "identical streams (EXACT_STREAM: numpy PCG64 + Generator ported in abep-rng)",
+  "development_rule": "development comparisons use development_master_seed and the development sub-grid only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "abep-rng stream": {
+   "list": [
+    {"name": "SeedSequence pool, generate_state words, PCG64 (state, inc), next_uint64 words", "units": "-", "tolerance_class": "EXACT_STREAM", "tolerance": "integers equal", "definition": "numpy bit_generator / PCG64"},
+    {"name": "random() doubles and standard_normal draws", "units": "-", "tolerance_class": "EXACT_STREAM", "tolerance": "bit-identical f64: EXACT_BYTES of the little-endian float64 buffers, compared by their sha256 (every draw of every registered stream) plus the first 16 values listed in the report", "definition": "numpy Generator"},
+    {"name": "stable_seed", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal integer", "definition": "(zlib.crc32('|'.join(map(str, parts)).encode()) + base) % (2^31 - 1)"}
+   ]
+  },
+  "tpmc_monte_carlo": {
+   "list": [
+    {"name": "draw stream z per (candidate, scenario)", "units": "-", "tolerance_class": "EXACT_STREAM", "tolerance": "bit-identical: sha256 of the little-endian float64 buffer equal for every (candidate, scenario) stream", "definition": "standard_normal((n, n_states, 3, 3))"},
+    {"name": "keys (candidate, filter, compressor, P_set), scenario order, n, k_feasible, P_feasible, reasons_in_draws, None-ness of the percentiles", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal, under the threshold_proximity_rule", "definition": "MC record"},
+    {"name": "mdot_delivered_min_p05_kgps, mdot_delivered_min_p50_kgps, P_compressor_el_max_p95_W, deadhead_margin_p05, drag_intake_max_p95_N", "units": "SI", "tolerance_class": "ULP_BOUNDED", "tolerance": {"k_ulp": 4, "r_rel": 1e-9}, "definition": "numpy.percentile (linear) of the gated draws"}
+   ]
+  },
+  "survivors / scenario_robustness / robust_pareto / carried_robust_set": {
+   "list": [
+    {"name": "survivor design ids, candidate, compressor, V, P_set, filter, pareto_in, filter_context_role; n_scenarios_feasible, n_scenarios, infeasible_in, per-scenario feasible and reasons; worst-case None-ness; robust Pareto member ids per P_set and n_all_scenario_feasible; carried set members / objectives / label / version / triggers", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal, under the threshold_proximity_rule and the dominance_proximity_rule of the F7 contract", "definition": "the robust filter"},
+    {"name": "worst-case objective values, per-scenario objective values, robust member rows", "units": "SI", "tolerance_class": "ULP_BOUNDED", "tolerance": {"k_ulp": 4, "r_rel": 1e-9}, "definition": "copied F7 context values and their min / max"}
+   ]
+  },
+  "pointing_sensitivity / compressor_elasticities / state_eval / perturbed / plant_with_overrides / np_percentile": {
+   "list": [
+    {"name": "statuses, flags, None-ness, keys", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal, under the threshold_proximity_rule", "definition": "records"},
+    {"name": "flows, ratios, elasticities, percentiles, perturbed record fields, plant characteristic (A_c, B_c per species)", "units": "SI", "tolerance_class": "ULP_BOUNDED", "tolerance": {"k_ulp": 4, "r_rel": 1e-9}, "definition": "elasticity = (ln hi - ln lo) / (ln(1 + h) - ln(1 - h)); perturbed: max(x + z se A, 1e-30)"}
+   ]
+  },
+  "design_gate_snapshot / UQ_AXES / fixed_coefficients / theta_ratio_index": {
+   "list": [{"name": "the record", "units": "-", "tolerance_class": "EXACT_VALUE", "tolerance": "equal parsed values (ratios ULP_BOUNDED k_ulp 4)", "definition": "fixed-input records"}]
+  }
+ },
+ "threshold_proximity_rule": "as registered in PARITY-C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-V1 (the same gas-path gates per state and draw); plus the elasticity STATUS_FLIP flag (a perturbed all-state feasibility vs the nominal one: same gates)",
+ "dominance_proximity_rule": "as registered in PARITY-C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY-V1, applied to the robust Pareto blocks (with P_feasible_tpmc_min EXACT_VALUE)",
+ "tolerance_classes": {
+  "EXACT_BYTES": "buffers byte-identical (sha256 equal)",
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, error codes, schema shape: equal",
+  "ULP_BOUNDED": "|rust - py| <= 4 ulp(py) OR <= 1e-9 * max(1, |py|); NaN only where the reference is NaN",
+  "SOLVER_TOLERANCE": "NOT_APPLICABLE",
+  "STATISTICAL": "NOT_APPLICABLE (no statistical entry: the F8 sampling stream is EXACT_STREAM)",
+  "EXACT_STREAM": "RNG streams identical by construction (ported bit generator and distribution algorithm); every word and draw bit-identical; derived quantities then ULP_BOUNDED / EXACT_VALUE as listed; A9.29 sec. 7: the design / UQ sampling stream only, never the TPMC particle-tracing kernel"
+ },
+ "exact_invariants": [
+  {"id": "INV-F8-01", "statement": "the evidence-gate snapshot is unchanged by the robust filter (gates before == after) in both implementations", "required_in_both": true},
+  {"id": "INV-F8-02", "statement": "a candidate enters the robust Pareto filter only if it is nominally feasible in EVERY admitted scenario (fail closed); the robust set may be EMPTY and an empty set is reported as such (count 0), never replaced by a relaxed subset", "required_in_both": true},
+  {"id": "INV-F8-03", "statement": "MC draws do not depend on batching: the z stream of a (candidate, scenario) is identical whether it is drawn in the study or alone", "required_in_both": true},
+  {"id": "INV-F8-04", "statement": "the carried robust set never yields a representative (RepresentativeSelectionRefused -> NOT_EVALUATED)", "required_in_both": true},
+  {"id": "INV-F8-05", "statement": "probabilities (P_feasible) are reported only per scenario-set member over the quantified TPMC statistics; no weight is attached to a scenario", "required_in_both": true},
+  {"id": "INV-F8-06", "statement": "determinism: two Rust executions of the study give bit-identical outputs", "required_in_both": false}
+ ],
+ "conservation_checks": {"applicable": false, "reason": "the F8 functions reduce gas-path operating points whose source mass balance is registered in the abep-gaspath contracts", "checks": []},
+ "domain_and_error_parity": {
+  "cases": "edge cases E-01 .. E-09 plus every refusal met by a randomized vector",
+  "mapping_rule": "every Python exception class maps to exactly one Rust DesignError class with the same name (OptimizerError, SynthesisInputError, ValueError, KeyError -> OUT_OF_DOMAIN; A913RuleError, RepresentativeSelectionRefused -> NOT_EVALUATED; RuntimeError, ZeroDivisionError -> MODEL_ERROR); messages compared for OptimizerError and A913RuleError",
+  "documented_divergence": [
+   {"id": "DIV-F8-01", "statement": "design_gate_snapshot reads the mass/power v5 and F5 records through sha256-pinned readers (the reference uses the mtime cache)", "disposition": "fail-closed hardening; not exercised (inputs at their registered hashes)"},
+   {"id": "DIV-F8-02", "statement": "the abep-rng seed interface takes non-negative integers only (default_rng(None) / sequences / arrays are not part of the active stream)", "disposition": "scope: the reference stream uses non-negative int seeds only"}
+  ]
+ },
+ "schema_parity": {"schemas": ["NOT_APPLICABLE"], "rules": ["field names, units, types identical", "list order identical", "labels identical"]},
+ "golden_and_reference_cases": {
+  "references": ["docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json robust section and f8_robust_candidates_v1.json (committed: read for orientation, e.g. survivors 90, all_scenario_feasible 0; not scored, the scored reference is the live Python execution)"],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY/reference_outputs/",
+   "captured_at_python_commit": "the scoring execution's Python commit",
+   "sha256_manifest": "reference_outputs/MANIFEST.json: numpy stream samples of registered seeds (raw words and normal draws), the F8 study record, gzip-compressed",
+   "purpose": "a cargo test replays the captured numpy stream samples (EXACT_STREAM without Python) and the empty robust set"
+  },
+  "historical_golden_rule": "RM-R28: golden_v1 / golden_v2 cases are not used"
+ },
+ "julia_bridge": {"applicable": false, "reason": "no Hall solver call"},
+ "performance_measurement": {
+  "status": "reported, not a decision criterion",
+  "workloads": [{"id": "F8-STUDY", "description": "stage_f8 on the full grid (after F7), one process, single thread"}],
+  "repeats": 1,
+  "statistic": "wall-clock and process CPU of the scoring execution",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable meets its tolerance class (proximity differences recorded as NOT_SCORED_AT_THRESHOLD)",
+  "aggregate": "NOT_APPLICABLE",
+  "proximity_limit": "if more than 1 % of the scored discrete outcomes of an entry are NOT_SCORED_AT_THRESHOLD the entry fails",
+  "exact_stream_rule": "any differing raw word or draw of a registered stream fails the contract (no proximity rule applies to EXACT_STREAM)",
+  "exact_invariants_required": true,
+  "conservation_required": false,
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "scoring_once": "the scoring comparison runs once (scoring_master_seed); the harness refuses a second scoring run when parity_report_v1.json exists",
+  "verdict": "ADMITTED iff every per-test, stream, invariant, domain/error and schema check passes and every reference file matches sha256_at_registration; PARITY_PASS <=> ADMITTED",
+  "verdict_vocabulary": ["ADMITTED", "NOT_ADMITTED", "REFUSED_REFERENCE_CHANGED", "INPUT_MISMATCH", "NOT_RUN_RUST_UNAVAILABLE", "REFUSED_CLASSIFICATION"],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for the registered functions and for the registered numpy stream semantics of the design / UQ sampling stream. It is NOT physics validation.",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays",
+  "disagreement_rule": "never rewrite a Python result, golden, fixture or frozen dataset to make Rust pass (RM-R11)",
+  "observable_scope": "restricted to the active F8 robust optimisation / UQ; no observable depends on uq6 / uq_modular / mission_uq / uncertainty (RM-R20)"
+ },
+ "bid_boundary": {
+  "statement": "post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission",
+  "not a promotion of any provisional input (RM-R27)",
+  "not a gate PASS; an EMPTY robust set is a result, not a failure of the software, and is never 'fixed' by retuning (A9.31 secs. 12, 21)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ROBUST_OPTIMIZER_PY/parity_report_v1.json (+ .md)",
+  "runner": "scripts/rust_migration/parity_sc_wp10.py score f8 (scored in the same execution as the F7 contract, which supplies the study contexts)",
+  "report_fields": ["contract_sha256", "python_commit", "reference_sha256", "rust_commit", "build_provenance", "environment", "per-test results", "stream checks", "invariants", "domain/error", "schema", "threshold-proximity record", "performance", "verdicts", "campaign_history", "ledger_update_requested"]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class is ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+   "no observable, input or code path belongs to excluded_legacy_paths (no uq6 / uq_modular / mission_uq / Sobol)",
+   "abep-uq and abep-rng depend on no assessment / evidence / groundtest crate (cargo metadata)"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration",
+  "inputs": [{"id": "TPMC SEs of the F1 records", "value": "as committed", "value_status": "1-sigma binomial / replicate SE (model-form uncertainty not included)", "open_action": "none", "committed_labels": ["SEEDED_MONTE_CARLO quantified axis"]}],
+  "check": "VS-F8-01: UQ_AXES and every F8 record carry the committed treatments and labels exactly"
+ },
+ "new_physics_verification": {"applies_when": "contract_kind = NEW_PHYSICS (otherwise NOT_APPLICABLE)", "status": "NOT_APPLICABLE"}
+}

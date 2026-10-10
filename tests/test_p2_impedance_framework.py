@@ -697,13 +697,16 @@ def test_z_uncertainty_holomorphic_and_deembed(fw, red, case):
 
 
 # ------------------------------------------------------------------------------------------------ E/H transitions
-CRIT = {"form": "absolute_step", "basis": "SYNTHETIC criteria", "frozen_before_p2_map": True,
-        "step_photodiode_V": 0.5, "step_P_reflected_W": 2.0, "step_I_ant_rms_A": 0.5}
+# A9.16 step 1 (owner A9.11 S4.7 P2Q-09): the criteria form is k x combined step uncertainty with k_transition = 2.0;
+# the absolute-step form formerly used here is refused. Step uncertainties chosen so that the classes are unchanged.
+CRIT = {"form": "k_times_uc", "basis": "SYNTHETIC criteria", "frozen_before_p2_map": True, "k": 2.0}
+U_STEP = {"u_photodiode_V": 0.05, "u_P_reflected_W": 0.2, "u_I_ant_rms_A": 0.05}
 
 
-def _sweep(direction, rows, ts=("TS1",) * 10, valid=(True,) * 10):
-    return [{"index": i, "direction": direction, "photodiode_valid": valid[i], "tuning_state_id": ts[i],
-             "photodiode_V": pdv, "P_reflected_W": prf, "I_ant_rms_A": ia, "P_forward_W": pf, "P_delivered_W": pdl}
+def _sweep(direction, rows, ts=("TS1",) * 10, valid=(True,) * 10, u=True):
+    return [dict({"index": i, "direction": direction, "photodiode_valid": valid[i], "tuning_state_id": ts[i],
+                  "photodiode_V": pdv, "P_reflected_W": prf, "I_ant_rms_A": ia, "P_forward_W": pf,
+                  "P_delivered_W": pdl}, **(U_STEP if u else {}))
             for i, (pdv, prf, ia, pf, pdl) in enumerate(rows)]
 
 
@@ -728,20 +731,21 @@ def test_eh_detection_classes(fw):
 
 
 def test_eh_criteria_never_defaulted(fw):
-    sw = _sweep("up", UP)
+    sw = _sweep("up", UP, u=False)
     with pytest.raises(fw.CriteriaMissingError):
         fw.detect_eh_transitions(sw, None)
+    # A9.16 step 1 (owner A9.11 P2Q-09): absolute-step form and any k other than 2.0 are refused
+    absolute = {"form": "absolute_step", "basis": "S", "frozen_before_p2_map": True, "step_photodiode_V": 0.5,
+                "step_P_reflected_W": 2.0, "step_I_ant_rms_A": 0.5}
     for bad in (dict(CRIT, frozen_before_p2_map=False), dict(CRIT, basis="TBD"), dict(CRIT, form="guess"),
-                {k: v for k, v in CRIT.items() if k != "step_I_ant_rms_A"},
-                {"form": "k_times_uc", "basis": "S", "frozen_before_p2_map": True}):
+                {k: v for k, v in CRIT.items() if k != "k"}, dict(CRIT, k=3.0), dict(CRIT, k=1.0), absolute):
         with pytest.raises(fw.CriteriaMissingError):
             fw.detect_eh_transitions(sw, bad)
-    k_crit = {"form": "k_times_uc", "basis": "SYNTHETIC", "frozen_before_p2_map": True, "k": 3.0}
     with pytest.raises(fw.UncertaintyMissingError):
-        fw.detect_eh_transitions(sw, k_crit)                        # step uncertainties missing
+        fw.detect_eh_transitions(sw, CRIT)                          # step uncertainties missing
     for p in sw:
-        p.update({"u_photodiode_V": 0.05, "u_P_reflected_W": 0.2, "u_I_ant_rms_A": 0.05})
-    assert fw.detect_eh_transitions(sw, k_crit)["events"][0]["class"] == "TRANSITION_CANDIDATE_CORROBORATED"
+        p.update(U_STEP)
+    assert fw.detect_eh_transitions(sw, CRIT)["events"][0]["class"] == "TRANSITION_CANDIDATE_CORROBORATED"
     with pytest.raises(fw.FrameworkError):
         fw.detect_eh_transitions(_sweep("up", UP[:1]), CRIT)
     mixed = _sweep("up", UP)
@@ -888,15 +892,23 @@ def test_rating_structure_never_rates(fw, red, case):
         assert isinstance(r["candidate_minimum"], str)               # synthetic envelope -> no candidate numbers
         assert r["candidate_minimum"].startswith(("TBD_AFTER_EVIDENCE", "TBD_OWNER"))
     # code path with a fabricated 'measured' complete envelope (not evidence; tests the gate logic only)
+    # A9.16 step 1 (owner A9.14 P2Q-10 / ICPQ-11): the stress-class factors are owner-given, so the P2Q-10 / ICPQ-11
+    # rows yield required-minimum candidates without extra inputs (formerly TBD_OWNER); RC-HEAT stays with ICPQ-10
     fake = dict(env, data_classes=["measured"])
     rs2 = fw.rating_structure(fake)
-    assert all(r["candidate_minimum"].startswith("TBD_OWNER") for r in rs2["rows"])
+    heat2 = next(r for r in rs2["rows"] if r["id"] == "RC-HEAT")
+    # A9.16 repair F1: ICPQ-10 decided (A9.12 S5.1 alternative A) -> TBD_AFTER_EVIDENCE until P_fwd,max / P_d,max are
+    # registered (updated test; formerly TBD_OWNER)
+    assert heat2["candidate_minimum"].startswith("TBD_AFTER_EVIDENCE") and heat2["bound_rule"].endswith(
+        "p3_a9_16_rules.py::icp43_total_module_bound")
+    gen2 = next(r for r in rs2["rows"] if r["id"] == "RC-GEN-PFWD")
+    assert gen2["candidate_minimum"]["value"] == pytest.approx(1.25 * env["P_forward_W_at_RP_CPL"]["max"])
     rs3 = fw.rating_structure(fake, component_margins={"RC-GEN-PFWD": 1.3})
     gen = next(r for r in rs3["rows"] if r["id"] == "RC-GEN-PFWD")
-    assert gen["candidate_minimum"]["status"] == "CANDIDATE_FOR_OWNER_SELECTION"
+    assert gen["candidate_minimum"]["status"] == "REQUIRED_MINIMUM_UNDER_OWNER_POLICY_NOT_A_RATING"
     assert gen["candidate_minimum"]["value"] == pytest.approx(1.3 * env["P_forward_W_at_RP_CPL"]["max"])
     heat = next(r for r in rs3["rows"] if r["id"] == "RC-HEAT")
-    assert heat["candidate_minimum"].startswith("TBD_OWNER") and heat["owner_input"] == "ICPQ-10"
+    assert heat["candidate_minimum"].startswith("TBD_AFTER_EVIDENCE") and heat["owner_input"] == "ICPQ-10"
     assert rs3["RF_COMPONENT_RATINGS"] == "TBD_AFTER_IMPEDANCE_MAP"
     with pytest.raises(fw.RatingInputError):
         fw.rating_structure(fake, component_margins={"RC-GEN-PFWD": 0.9})
@@ -940,7 +952,11 @@ def test_package_framework_section(d, fw):
                          "REF-JCGM102"}
     for r in refs.values():
         assert re.fullmatch(r"[0-9a-f]{64}", r["sha256"]) and r["url"].startswith("https://") and r["locators"]
-    assert f["heat_load_alternatives"]["status"] == "TBD_OWNER" and len(f["heat_load_alternatives"]["alternatives"]) == 2
+    # A9.16 repair F1: ICPQ-10 decided - alternative A selected, B only as rejected history (updated test)
+    h = f["heat_load_alternatives"]
+    assert h["status"] == "OWNER_DECIDED" and h["selected_alternative"] == "A" and "alternatives" not in h
+    assert [x["disposition"].split(" ")[0] for x in h["history_alternatives_as_raised"]] == ["OWNER_SELECTED",
+                                                                                            "OWNER_REJECTED"]
     assert "IMPLEMENTED_FRAMEWORK_NOT_RUN_ON_DATA" in f["status"]
 
 
@@ -951,24 +967,28 @@ def test_a96_pins_items_questions_and_statuses(d):
     assert pins["docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md"] == \
         "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634"
     items = {it["id"]: it for it in d["items"]}
-    for i in ("FW-09", "FW-10", "FW-11", "FW-12", "FW-15", "FW-18", "FW-19", "FW-20"):
+    for i in ("FW-11", "FW-15", "FW-19"):
         assert items[i]["value"].startswith("TBD - requires") and items[i]["evidence_class"] is None, i
-    for i, q in (("FW-18", "ICPQ-11"), ("FW-19", "ICPQ-10"), ("FW-20", "P2Q-10"), ("FW-10", "P2Q-09"),
-                 ("FW-12", "P2Q-03")):
-        assert q in items[i]["value"], i
+    assert "ICPQ-10" in items["FW-19"]["value"]
+    # A9.16 step 1: FW-09 (A9.10 P1Q-24), FW-10 / FW-12 (A9.11 P2Q-09 / P2Q-03), FW-18 / FW-20 (A9.14 ICPQ-11 / P2Q-10)
+    assert items["FW-09"]["value"] == 2.0 and items["FW-18"]["value"] == 1.5
+    for i, q in (("FW-09", "P1Q-24"), ("FW-10", "P2Q-09"), ("FW-12", "P2Q-03"), ("FW-18", "ICPQ-11"),
+                 ("FW-20", "P2Q-10")):
+        assert items[i]["status"] == "OWNER_GIVEN" and items[i]["evidence_class"] == "owner-stated", i
+        assert any(q in str(s_) for s_ in items[i]["source"]), i
     st = json.loads((REPO / "docs/budgets/owner_decisions/owner_questions_state_v3.json").read_text(encoding="utf-8"))
     rows = {r["id"]: r for r in st["rows"]}
     assert rows["ICPQ-10"]["status"] == rows["ICPQ-11"]["status"] == "OPEN"
     assert d["framework"]["heat_load_alternatives"]["question_text"] == rows["ICPQ-10"]["question"]
-    qs = {q["id"] for q in d["open_owner_questions"]}
-    assert "P2Q-10" in qs and "P2Q-10" not in rows
+    qs = {q["id"] for q in d["answered_owner_questions"]}
+    assert "P2Q-10" in qs and "P2Q-10" not in rows and d["owner_questions_open_now"] == []
     applied = {o["ref"]["decision"] for o in d["owner_answers_applied"]
                if isinstance(o["ref"], dict) and o["ref"].get("kind") == "A9.6"}
     assert {"sec. 9", "sec. 14", "sec. 5", "sec. 7"} <= applied
     ids = {x["id"]: x for x in d["interface_demands"]}
     for i in ("IDP2-19", "IDP2-20", "IDP2-21", "IDP2-22"):
         assert i in ids
-    assert "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-N04" in ids["IDP2-20"]["direction"]
+    assert "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json P3-IF-N04" in ids["IDP2-20"]["direction"]
     assert "PENDING docs/" not in ids["IDP2-20"]["direction"] + ids["IDP2-21"]["direction"]
     assert ids["IDP2-20"]["status"].startswith("TBD_AFTER_IMPEDANCE_MAP")
     assert d["a9_2_statuses_carried"]["RF component ratings"] == "TBD_AFTER_IMPEDANCE_MAP"
@@ -1091,16 +1111,18 @@ def test_sw09_sweep_index_type_checked(fw):
 def test_met07_r1_shifted_eta_pred_cannot_flip_inconsistent_to_verified(fw, red):
     """Consolidated verification MET-07-R1: u_eta_pred is used once (in u_c); a caller-shifted eta_pred is refused
     and a record carrying one is rejected by the reducer, so an INCONSISTENT check never becomes VERIFIED."""
-    cal = _proto(_cal_from_touchstone(fw, red, _line(30.0), fw.ladder_abcd(ELEMENTS)), k=1.0, u_eta_pred=0.06)
+    # A9.16 step 1: the registered protocol uses the owner k_loss = 2.0 (A9.10 P1Q-24); u_eta_pred 0.03 keeps the
+    # eta_meas = 0.9 check INCONSISTENT (formerly k = 1.0 with u_eta_pred 0.06)
+    cal = _proto(_cal_from_touchstone(fw, red, _line(30.0), fw.ladder_abcd(ELEMENTS)), k=2.0, u_eta_pred=0.03)
     eta_model = red.loss_model_prediction(cal, TS_MODEL)[0]
-    bad = _verify(fw, red, cal, TS_MODEL, "VX1", eta_meas=0.9, u_eta_pred=0.06, k=1.0)
+    bad = _verify(fw, red, cal, TS_MODEL, "VX1", eta_meas=0.9, u_eta_pred=0.03, k=2.0)
     assert bad["status"] == fw.LOSS_INCONSISTENT
     with pytest.raises(fw.FrameworkError):
-        _verify(fw, red, cal, TS_MODEL, "VX2", eta_meas=0.9, u_eta_pred=0.06, k=1.0, eta_pred=eta_model - 0.06)
-    forged = dict(_verify(fw, red, cal, TS_MODEL, "VX3", u_eta_pred=0.06, k=1.0))
+        _verify(fw, red, cal, TS_MODEL, "VX2", eta_meas=0.9, u_eta_pred=0.03, k=2.0, eta_pred=eta_model - 0.06)
+    forged = dict(_verify(fw, red, cal, TS_MODEL, "VX3", u_eta_pred=0.03, k=2.0))
     forged.update(eta_predicted=eta_model - 0.06)
     forged["normalized_statistic"] = red.loss_statistic(forged["comparison"], forged["eta_measured"],
-                                                        forged["u_eta_measured"], eta_model - 0.06, 0.06)
+                                                        forged["u_eta_measured"], eta_model - 0.06, 0.03)
     ok, why = red.loss_verification_status(forged, cal, tuning_state_id="TS1")
     assert not ok and "MET-07" in why
 
@@ -1109,12 +1131,12 @@ def test_met07_r2_r3_protocol_fixes_k_and_uncertainties(fw, red):
     """Consolidated verification MET-07-R2/R3: k, u_eta_pred, u_P_net_W and u_P_ref_load_W come from the ONE
     registered protocol per (method, loss model) - never free inputs and never chosen after the data; eta/u measured
     are recomputed from the carried powers; a declared bound carries u_p = 0; eta_meas > 1 + k u is unphysical."""
-    cal = _proto(_cal_from_touchstone(fw, red, _line(30.0), fw.ladder_abcd(ELEMENTS)), k=1.0, u_eta_pred=0.06)
-    bad = _verify(fw, red, cal, TS_MODEL, "VR0", eta_meas=0.9, u_eta_pred=0.06, k=1.0)
+    cal = _proto(_cal_from_touchstone(fw, red, _line(30.0), fw.ladder_abcd(ELEMENTS)), k=2.0, u_eta_pred=0.03)
+    bad = _verify(fw, red, cal, TS_MODEL, "VR0", eta_meas=0.9, u_eta_pred=0.03, k=2.0)
     assert bad["status"] == fw.LOSS_INCONSISTENT
-    for kw in (dict(k=100.0), dict(k=2.0), dict(k_reg="x"), dict(u_eta_pred=0.08), dict(u_P_ref_load_W=20.0),
+    for kw in (dict(k=100.0), dict(k=1.0), dict(k_reg="x"), dict(u_eta_pred=0.08), dict(u_P_ref_load_W=20.0),
                dict(u_P_net_W=5.0), dict(u_eta_pred_basis_id="OTHER")):
-        args = dict(eta_meas=0.9, u_eta_pred=0.06, k=1.0)
+        args = dict(eta_meas=0.9, u_eta_pred=0.03, k=2.0)
         args.update(kw)
         with pytest.raises(fw.CriteriaMissingError):
             _verify(fw, red, cal, TS_MODEL, "VR1", **args)
@@ -1122,7 +1144,7 @@ def test_met07_r2_r3_protocol_fixes_k_and_uncertainties(fw, red):
     two["loss_check_registrations"]["protocols"]["SYN-PROT-TS1-K2"] = dict(
         two["loss_check_registrations"]["protocols"]["SYN-PROT-TS1"], k=2.0)
     with pytest.raises(fw.CriteriaMissingError):
-        _verify(fw, red, two, TS_MODEL, "VR2", eta_meas=0.9, u_eta_pred=0.06, k=2.0, k_reg="SYN-PROT-TS1-K2")
+        _verify(fw, red, two, TS_MODEL, "VR2", eta_meas=0.9, u_eta_pred=0.03, k=2.0, k_reg="SYN-PROT-TS1-K2")
     ok, why = red.loss_verification_status(dict(bad, status=red.LOSS_VERIFIED, k=2.0, k_registration_id="SYN-PROT-TS1-K2"),
                                            two, tuning_state_id="TS1")
     assert not ok and "exactly one" in why
@@ -1131,7 +1153,7 @@ def test_met07_r2_r3_protocol_fixes_k_and_uncertainties(fw, red):
     pr = bad["P_ref_load_W"]
     um = bad["eta_measured"] * math.hypot(20.0 / pr, bad["u_P_net_W"] / bad["P_net_W"])
     forged = dict(bad, status=red.LOSS_VERIFIED, u_P_ref_load_W=20.0, u_eta_measured=um)
-    forged["normalized_statistic"] = red.loss_statistic("two_sided", bad["eta_measured"], um, bad["eta_predicted"], 0.06)
+    forged["normalized_statistic"] = red.loss_statistic("two_sided", bad["eta_measured"], um, bad["eta_predicted"], 0.03)
     ok, why = red.loss_verification_status(forged, cal, tuning_state_id="TS1")
     assert not ok and "u_P_ref_load_W" in why
     for forge in (dict(status=red.LOSS_VERIFIED, u_eta_predicted=0.2), dict(status=red.LOSS_VERIFIED, u_eta_measured=0.2),
@@ -1156,15 +1178,15 @@ def test_met07_r4_check_power_and_application_range_fixed(fw, red, case):
     the P_net range the verified model may be applied to; re-running / re-declaring the check at another power, or
     applying the verified loss outside its range, never reconstructs P_delivered."""
     cal0, rec = case
-    cal = _proto(cal0, k=1.0, u_eta_pred=0.06)
-    bad = _verify(fw, red, cal, TS_MODEL, "VP0", eta_meas=0.9, u_eta_pred=0.06, k=1.0)
+    cal = _proto(cal0, k=2.0, u_eta_pred=0.03)                          # A9.16: owner k_loss = 2.0
+    bad = _verify(fw, red, cal, TS_MODEL, "VP0", eta_meas=0.9, u_eta_pred=0.03, k=2.0)
     assert bad["status"] == fw.LOSS_INCONSISTENT
     with pytest.raises(fw.CriteriaMissingError):                        # power shopping in the framework
-        _verify(fw, red, cal, TS_MODEL, "VP1", eta_meas=0.9, u_eta_pred=0.06, k=1.0, P_net_W=10.0, P_ref_load_W=9.0)
+        _verify(fw, red, cal, TS_MODEL, "VP1", eta_meas=0.9, u_eta_pred=0.03, k=2.0, P_net_W=10.0, P_ref_load_W=9.0)
     pn, pr = 10.0, 9.0                                                  # forged record rescaled to 10 W / 9 W
     um = 0.9 * math.hypot(bad["u_P_ref_load_W"] / pr, bad["u_P_net_W"] / pn)
     f = dict(bad, status=red.LOSS_VERIFIED, P_net_W=pn, P_ref_load_W=pr, eta_measured=0.9, u_eta_measured=um,
-             normalized_statistic=red.loss_statistic("two_sided", 0.9, um, bad["eta_predicted"], 0.06))
+             normalized_statistic=red.loss_statistic("two_sided", 0.9, um, bad["eta_predicted"], 0.03))
     ok, why = red.loss_verification_status(f, cal, tuning_state_id="TS1")
     assert not ok and "check operating point" in why
     good = cal0["loss_verification"]                                    # genuine check at the registered point
@@ -1177,14 +1199,14 @@ def test_met07_r4_check_power_and_application_range_fixed(fw, red, case):
 def test_met07_r5_check_load_registered(fw, red):
     """Consolidated verification MET-07-R5: the two-port check's reference load is registered in the protocol; a
     load chosen after the data (for which the model happens to predict the measurement) is refused."""
-    cal = _proto(_cal_from_touchstone(fw, red, _line(30.0), fw.ladder_abcd(ELEMENTS)), k=1.0, u_eta_pred=0.06)
-    bad = _verify(fw, red, cal, TS_MODEL, "VZ0", eta_meas=0.9, u_eta_pred=0.06, k=1.0)
+    cal = _proto(_cal_from_touchstone(fw, red, _line(30.0), fw.ladder_abcd(ELEMENTS)), k=2.0, u_eta_pred=0.03)
+    bad = _verify(fw, red, cal, TS_MODEL, "VZ0", eta_meas=0.9, u_eta_pred=0.03, k=2.0)
     assert bad["status"] == fw.LOSS_INCONSISTENT
     other = dict(TS_MODEL, Z_load_ohm=[161.5, -174.0])
     with pytest.raises(fw.CriteriaMissingError):
-        _verify(fw, red, cal, other, "VZ1", eta_meas=0.9, u_eta_pred=0.06, k=1.0)
+        _verify(fw, red, cal, other, "VZ1", eta_meas=0.9, u_eta_pred=0.03, k=2.0)
     eta_o, ref_o = red.loss_model_prediction(cal, other)
     f = dict(bad, status=red.LOSS_VERIFIED, model_ref=ref_o, eta_predicted=eta_o,
-             normalized_statistic=red.loss_statistic("two_sided", 0.9, bad["u_eta_measured"], eta_o, 0.06))
+             normalized_statistic=red.loss_statistic("two_sided", 0.9, bad["u_eta_measured"], eta_o, 0.03))
     ok, why = red.loss_verification_status(f, cal, tuning_state_id="TS1")
     assert not ok and "reference load" in why

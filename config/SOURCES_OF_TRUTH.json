@@ -1,0 +1,138 @@
+{
+ "schema": "abep_sources_of_truth_v1",
+ "id": "sources_of_truth_v1",
+ "generated_by": "scripts/config/build_config.py",
+ "regenerate": "python scripts/config/build_config.py  (check: --check)",
+ "governing_directive_a9_23": {
+  "json": "docs/decisions/OD_2026_10_03_A9_23_simulation_architecture_owner_directive.json",
+  "json_sha256": "7ecf593a150bd8d80cad8cce3ba2db7b1c46704e7d5c0d70779b1bb9480a6775",
+  "md": "docs/decisions/OD_2026_10_03_A9_23_SIMULATION_ARCHITECTURE_OWNER_DIRECTIVE.md",
+  "md_sha256": "0c187b16cb25d853650ca1ddfe19b5404bf0c87835a753fa0167405cb33ec81d"
+ },
+ "dependency_rule": [
+  "requirements/provenance -> frozen engineering constraints (scripts/config/build_config.py only)",
+  "architecture + frozen constraints + design states + physics -> raw results",
+  "raw results + frozen constraints -> assessment / compliance"
+ ],
+ "rule": "exactly one authoritative artefact per role; no second file may claim a listed role (same schema id or artefact id); tests/test_a9_23_dependency_rule.py enforces it",
+ "supporting_inputs": {
+  "operating_scenario": {
+   "artefact": "config/mission/mission_scenario_v2.json",
+   "sha256": "885b1f70a1a44389e088837fd37bb79390b63132e3c81f17923103b2f9b5fc49",
+   "role": "frozen, independently versioned operating-scenario choices (A9.24 item 4; constraint-derived inputs referenced, not restated)",
+   "pinned_by": [
+    "abep_sim/configuration.py OPERATING_SCENARIO_PIN",
+    "config/MANIFEST.json"
+   ],
+   "supersedes": {
+    "artefact": "config/mission/mission_scenario_v1.json",
+    "sha256": "a01b56a6ec7a79cb3b37c6356542d093c618632388edefb150881bf03fbe7ba0",
+    "status": "HISTORICAL_SUPERSEDED_NOT_LOADED"
+   }
+  },
+  "assessment_gate_thresholds": {
+   "artefact": "config/assessment/gate_thresholds_v1.json",
+   "sha256": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+   "role": "HC-05..HC-12 assessment thresholds (A9.24 item 5)",
+   "loader": "abep_sim.configuration.load_gate_thresholds"
+  },
+  "hardware_bounds_index": {
+   "artefact": "config/hardware/hardware_bounds_v1.json",
+   "sha256": "952f70a5e850f94bb9d3de52eba492eaa62821b8e85102c51d4895a8887e64b6",
+   "role": "index of hardware-limit sources (no copied values)"
+  }
+ },
+ "sources": {
+  "frozen_architecture": {
+   "layer": "FROZEN_ARCHITECTURE",
+   "artefact": "config/architecture/hall_icp_neutralizer_v1.json",
+   "id": "hall_icp_neutralizer_v1",
+   "schema": "abep_config_architecture_v1",
+   "sha256": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+   "pinned_by": [
+    "config/MANIFEST.json"
+   ],
+   "role": "architecture_frozen_v1: the single flight architecture definition",
+   "loader": "abep_sim.configuration.load_architecture; abep_sim/design/a9_19_architecture.py"
+  },
+  "frozen_engineering_constraints": {
+   "layer": "FROZEN_ENGINEERING_CONSTRAINTS",
+   "artefact": "config/constraints/engineering_constraints_v1.json",
+   "id": "engineering_constraints_v1",
+   "schema": "abep_config_engineering_constraints_v1",
+   "sha256": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+   "pinned_by": [
+    "config/MANIFEST.json"
+   ],
+   "role": "engineering_constraints_v1: every frozen numerical / categorical constraint (values; provenance only for requirement ids)",
+   "loader": "abep_sim.configuration.load_engineering_constraints; abep_sim/design/engineering_constraints.py; abep_sim/operating_inputs.py; abep_sim/assessment"
+  },
+  "frozen_design_state_set": {
+   "layer": "FROZEN_DESIGN_STATE_SET",
+   "artefact": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+   "id": "atmosphere_msis21_orbit_v1_design_states_v2",
+   "alias": "vleo_design_states_v2",
+   "n_states": 196,
+   "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+   "reference": "config/environment/design_state_set_ref_v1.json",
+   "reference_sha256": "ad4618432c7d12b2e8e728be3765808f70c094cb281f819da39b3820c61db484",
+   "pinned_by": [
+    "abep_sim/data/atmosphere_msis21_orbit_v1.json (design_states_file_v2.sha256)",
+    "config/environment/design_state_set_ref_v1.json"
+   ],
+   "role": "the frozen environmental / orbital design states consumed by the design / physics runs",
+   "loader": "abep_sim.configuration.load_design_state_set_ref; abep_sim/design/intake_synthesis.py::load_design_state_set (DESIGN_STATE_SET_SHA256)"
+  },
+  "physics_model_set": {
+   "layer": "PHYSICS_MODELS",
+   "artefact": "config/model_set/physics_model_set_v1.json",
+   "id": "physics_model_set_v1",
+   "schema": "abep_config_physics_model_set_v1",
+   "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+   "pinned_by": [
+    "config/MANIFEST.json"
+   ],
+   "role": "physics_model_set_v1: physics module / data hashes and version labels",
+   "loader": "abep_sim.configuration.load_model_set / model_set_drift"
+  },
+  "raw_simulation_result": {
+   "layer": "RAW_RESULTS",
+   "artefact": "schemas/results/raw_closure_v2.json",
+   "id": "raw_closure_v2",
+   "schema": "https://json-schema.org/draft/2020-12/schema",
+   "sha256": "83d1f20055e97b318a9678fa2631b5da3e4328cfbc4e13cc2e2d516ffebb56f8",
+   "pinned_by": [
+    "config/SOURCES_OF_TRUTH.json"
+   ],
+   "role": "schema raw_closure_v2 of the raw physical result",
+   "producer": "abep_sim.system.physics_closure",
+   "generated_by": "scripts/config/build_result_schemas.py"
+  },
+  "assessment_result": {
+   "layer": "ASSESSMENT",
+   "artefact": "schemas/results/closure_assessment_v2.json",
+   "id": "closure_assessment_v2",
+   "schema": "https://json-schema.org/draft/2020-12/schema",
+   "sha256": "c31c453853fb62e65ccd958092616542c2111f9f9df321cf9cd4107e9d45971c",
+   "pinned_by": [
+    "config/SOURCES_OF_TRUTH.json"
+   ],
+   "role": "schema closure_assessment_v2 of the assessment / compliance result (raw result + frozen constraints)",
+   "producer": "abep_sim.assessment.assess",
+   "generated_by": "scripts/config/build_result_schemas.py"
+  },
+  "requirements_provenance": {
+   "layer": "PROVENANCE",
+   "artefact": "config/requirements/rfp_constraints_v1.json",
+   "id": "rfp_constraints_v1",
+   "schema": "abep_config_requirements_snapshot_v1",
+   "sha256": "76656e6a7010a39179c8af0c788609b00459f34d5198d3f0bc966da0ef840ef7",
+   "pinned_by": [
+    "config/MANIFEST.json"
+   ],
+   "role": "requirements-extraction snapshot (RVM / RFP clause provenance); the only input of the engineering constraints; never read by physics / design code",
+   "loader": "abep_sim.configuration.load_requirements_snapshot (assessment / compliance mapping only)",
+   "snapshot_status": "FROZEN"
+  }
+ }
+}

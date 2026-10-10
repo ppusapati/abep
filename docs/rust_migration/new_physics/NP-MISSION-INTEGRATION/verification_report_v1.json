@@ -1,0 +1,667 @@
+{
+ "schema": "abep_new_physics_verification_report_v1",
+ "model_id": "NP-MISSION-INTEGRATION",
+ "model_version": "1.0.0",
+ "report_version": 1,
+ "date": "2026-10-06",
+ "prereg": {
+  "path": "docs/rust_migration/new_physics/NP-MISSION-INTEGRATION/prereg_v1.json",
+  "sha256": "9d3a72022ecb236f71a30ead5c31023d166a31e05f6a4f4579c589f62a5d4f79",
+  "lock_sha256": "7c206ee3f72ad8922cea23edeca24740c8574595d094eb7b6f3ae1ddc82572ac",
+  "registered_in": "cd52b05",
+  "addendum_01": {
+   "sha256": "6d8d9ddd6cdf9f87eedf9dc50020dc686b13a70ca11ca655c5ee480f8e447a12",
+   "committed_in": "093568a",
+   "timing": "before any implementation code or verification run"
+  }
+ },
+ "implementation": {
+  "crate": "abep-mission",
+  "modules": [
+   "integration::{model, quantity, exact, today, testkit}"
+  ],
+  "commit": "b8f8fc4037cabcdf3a9480d60bbc16d0dbaf3f53",
+  "toolchain": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "implementation_commits": [
+   "eabfbf7"
+  ]
+ },
+ "run_rule": "The AL / CONS / FT / DET criteria are the preregistered ones, implemented as the tests of crates/abep-mission/tests/mission_integration.rs and the module unit tests. The suite also ran during implementation (it is the CI test set); no criterion, vector or tolerance was changed after any run. This report records the single formal verification run at the commit above, plus IV-01.",
+ "verdict": "VERIFIED",
+ "verdict_meaning": "software verification only (ADM-03): not physical validation, not a gate PASS, not a mission prediction; validation_status stays NOT_VALIDATED",
+ "analytic_limiting_cases": [
+  {
+   "id": "AL-01",
+   "test": "al01_constant_rate_and_time_totals",
+   "result": "ok"
+  },
+  {
+   "id": "AL-02",
+   "test": "al02_piecewise_integral_and_ledgers",
+   "result": "ok"
+  },
+  {
+   "id": "AL-03",
+   "test": "al03_xe_ledger_closes_exactly",
+   "result": "ok"
+  },
+  {
+   "id": "AL-04",
+   "test": "al04_time_accounting_and_schedule_refusals",
+   "result": "ok"
+  },
+  {
+   "id": "AL-05",
+   "test": "al05_status_propagation_and_parametric_layer",
+   "result": "ok"
+  },
+  {
+   "id": "AL-06",
+   "test": "integration::quantity::tests::al06_severity_table",
+   "result": "ok"
+  },
+  {
+   "id": "AL-07",
+   "test": "al07_routing_table",
+   "result": "ok"
+  },
+  {
+   "id": "AL-08",
+   "test": "al08_ao_fluence_is_bracketed_by_pb_ao_for_200_schedules",
+   "result": "ok"
+  },
+  {
+   "id": "AL-09",
+   "test": "al09_cancellation_is_exact",
+   "result": "ok"
+  },
+  {
+   "id": "AL-10",
+   "test": "al10_derived_quantities",
+   "result": "ok"
+  },
+  {
+   "id": "AL-11",
+   "test": "al11_planning_cases_are_parametric_and_none_is_selected",
+   "result": "ok"
+  }
+ ],
+ "conservation": [
+  {
+   "id": "CONS-T1",
+   "where": "AL-01, AL-02, AL-04 (exact expansion equality)",
+   "result": "ok"
+  },
+  {
+   "id": "CONS-M1",
+   "where": "AL-02, AL-03 (exact closure + 1 ulp on reported values); IV-01",
+   "result": "ok"
+  },
+  {
+   "id": "CONS-M2",
+   "where": "AL-02, AL-03",
+   "result": "ok"
+  },
+  {
+   "id": "CONS-F1",
+   "where": "AL-01, AL-02",
+   "result": "ok"
+  },
+  {
+   "id": "CONS-S1",
+   "where": "today's run: 196 states x 3 modes in file order",
+   "result": "ok"
+  },
+  {
+   "id": "CONS-I1",
+   "where": "AL-01 (q * (H * S) exact)",
+   "result": "ok"
+  }
+ ],
+ "fail_closed_and_determinism": [
+  {
+   "id": "FT-01..FT-05",
+   "test": "ft01_to_ft05_todays_run_fails_closed",
+   "result": "ok"
+  },
+  {
+   "id": "FT-06",
+   "test": "ft06_other_configuration_is_model_error",
+   "result": "ok"
+  },
+  {
+   "id": "FT-07",
+   "test": "al04_time_accounting_and_schedule_refusals (case d)",
+   "result": "ok"
+  },
+  {
+   "id": "FT-08",
+   "test": "al04_time_accounting_and_schedule_refusals (case f)",
+   "result": "ok"
+  },
+  {
+   "id": "FT-09 / FT-15",
+   "test": "ft09_ft15_vocabulary",
+   "result": "ok"
+  },
+  {
+   "id": "FT-10",
+   "test": "ft10_no_requirement_or_assessment_file_is_read (addendum 01)",
+   "result": "ok"
+  },
+  {
+   "id": "FT-11",
+   "test": "ft11_no_xe_from_duration",
+   "result": "ok"
+  },
+  {
+   "id": "FT-12",
+   "test": "ft12_parametric_values_never_reach_evidence",
+   "result": "ok"
+  },
+  {
+   "id": "FT-13",
+   "test": "al04_time_accounting_and_schedule_refusals (case b: exact residual 2^-30 h reported)",
+   "result": "ok"
+  },
+  {
+   "id": "FT-14",
+   "test": "ft14_malformed_input_quantity_is_model_error + integration::quantity::tests::ft14_malformed_quantities_are_model_errors",
+   "result": "ok"
+  },
+  {
+   "id": "DET-01 / DET-02 / CONS-S1",
+   "test": "det01_det02_cons_s1",
+   "result": "ok"
+  },
+  {
+   "id": "lock",
+   "test": "prereg_files_match_the_lock",
+   "result": "ok"
+  }
+ ],
+ "independent_verification": [
+  {
+   "id": "IV-01",
+   "authoritative": false,
+   "script": "docs/rust_migration/new_physics/NP-MISSION-INTEGRATION/verification/iv01_exact_rational_check.py",
+   "script_sha256": "047805acc1d2e60bbe3216d1eec068f5d85d21ec874b86d41de9b06dfe2140c2",
+   "input": "abep-mission-integration al-export at the implementation commit (AL-01, AL-02, AL-03, AL-09 and the 200 AL-08 schedules; planning-case ledgers of every case)",
+   "input_sha256": "b4dd06d2de2b0a48a5cefdd020aaa6545115853abf4d700bd105d99dc42258a6",
+   "result": {
+    "iv": "IV-01",
+    "authoritative": false,
+    "cases": 204,
+    "checks": 2853,
+    "failures": [],
+    "agree": true
+   }
+  }
+ ],
+ "today_run": {
+  "hook": "abep_mission::integration::today::run_admitted (IF-MIS-DECISIVE); CLI abep-mission-integration today | summary",
+  "record_sha256_double_run": "66dc749d0c716a3f355353b3d8c158ddc5d18a37f0ec216ef5105721d495421d",
+  "deterministic": true,
+  "horizons": {
+   "firing_hours_h": 15000.0,
+   "firing_hours_label": "SUBSYSTEM_FIRING_LIFE_ASSUMPTION",
+   "mission_hours_h": 26280.0,
+   "mission_hours_label": "MISSION_DURATION_BASIS",
+   "source": "config/mission/mission_scenario_v2.json"
+  },
+  "layers": [
+   {
+    "detail": "196 states, 196 EVALUATED, 0 OUT_OF_DOMAIN, 0 MODEL_ERROR",
+    "layer": "environment (abep_atmos::execution)",
+    "status": "EVALUATED"
+   },
+   {
+    "detail": "admitted members []; credible Hall transport set EMPTY (no admitted member, no Hall map)",
+    "layer": "Hall (abep_hall::status::HallGate)",
+    "status": "NOT_EVALUATED"
+   },
+   {
+    "detail": "NP-ICP-NEUTRALIZER ledger status RUST_IMPL (not ADMITTED); NP-ICP-NEUTRALIZER crate status INCOMPLETE_EVIDENCE for the registered-today AIR_PRIMARY case; reason codes DOM-06_B_ICP_NOT_REGISTERED, DOM-12_NO_NEGATIVE_ION_BALANCE, IN-05_DELIVERED_COMPOSITION_TBD, IN-08_RF_INPUT_NOT_REGISTERED, IN-10_GEOMETRY_NOT_REGISTERED, IN-11_ELECTRODES_NOT_REGISTERED, IN-12_NEUTRAL_SOURCE_NOT_REGISTERED, IN-16_NO_REGISTERED_RATE_SET:AIR, IN-17_NO_EDGE_FACTOR_SOURCE, NP-ICP-CHEM-AIR:AIR-DIS-02, NP-ICP-CHEM-AIR:AIR-EL-03, NP-ICP-CHEM-AIR:AIR-EL-04, NP-ICP-CHEM-AIR:AIR-EXC-04, NP-ICP-CHEM-AIR:AIR-EXC-05, NP-ICP-CHEM-AIR:AIR-EXC-09, NP-ICP-CHEM-AIR:AIR-ION-02, NP-ICP-CHEM-AIR:AIR-ION-05, NP-ICP-CHEM-AIR:AIR-NL-02, NP-ICP-CHEM-AIR:AIR-WALL-01, NP-ICP-CHEM-AIR:AIR-WALL-02, NP-ICP-CHEM-AIR:AIR-WALL-03, NP_ICP_CHEM_AIR_NOT_ADMITTED, SP-04_SPECIES_BOUND_UNRESOLVED:SB-NO",
+    "layer": "RF/ICP AIR_PRIMARY (abep_icp)",
+    "status": "NOT_EVALUATED"
+   },
+   {
+    "detail": "NP-ICP-NEUTRALIZER ledger status RUST_IMPL (not ADMITTED); NP-ICP-NEUTRALIZER crate status INCOMPLETE_EVIDENCE for the registered-today XE_CONTINGENCY case; reason codes CHG-04_NO_XE_RATE_SET, DOM-06_B_ICP_NOT_REGISTERED, IN-08_RF_INPUT_NOT_REGISTERED, IN-10_GEOMETRY_NOT_REGISTERED, IN-11_ELECTRODES_NOT_REGISTERED, IN-12_NEUTRAL_SOURCE_NOT_REGISTERED, IN-16_NO_REGISTERED_RATE_SET:XE, IN-17_NO_EDGE_FACTOR_SOURCE, NP-ICP-CHEM-AIR:XE-EL-01, NP-ICP-CHEM-AIR:XE-EXC-01, NP-ICP-CHEM-AIR:XE-ION-01, NP-ICP-CHEM-AIR:XE-WALL-01, NP_ICP_CHEM_AIR_XE_NOT_ADMITTED",
+    "layer": "RF/ICP XE_CONTINGENCY (abep_icp)",
+    "status": "NOT_EVALUATED"
+   },
+   {
+    "detail": "official flight ledger PARTIAL_BOUNDARY (24 TBD terms; bus_power_boundary_a9_v2)",
+    "layer": "electrical (official_flight_ledger)",
+    "status": "INCOMPLETE_EVIDENCE"
+   },
+   {
+    "detail": "m_wet objective NOT_EVALUATED: no CBE or measured mass exists for any BOM line (mass/power v3); the wet roll-ups of the owner reading 'MEV_LEVEL_EVIDENCE_BASED (the single owner reading; A9.26: 10 % system margin, active proposal / bid basis)' against the 40 kg wet limit are ['DOES_NOT_CLOSE'] for the Xe load cases [2.0, 5.0, 10.0] kg",
+    "layer": "mass (wet_mass objective)",
+    "status": "NOT_EVALUATED"
+   }
+  ],
+  "n_states": 196,
+  "worst_state_status": "NOT_EVALUATED",
+  "field_status_counts": {
+   "I_d_A": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "I_ecap_A": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "P_bus_W": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "T_K": {
+    "AIR_PRIMARY": {
+     "EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "EVALUATED": 196
+    }
+   },
+   "T_feed_K": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "ao_flux_m2_s": {
+    "AIR_PRIMARY": {
+     "EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "EVALUATED": 196
+    }
+   },
+   "drag_body_N": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "drag_intake_N": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "drag_total_N": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "fN2": {
+    "AIR_PRIMARY": {
+     "EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "EVALUATED": 196
+    }
+   },
+   "fO": {
+    "AIR_PRIMARY": {
+     "EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "EVALUATED": 196
+    }
+   },
+   "fO2": {
+    "AIR_PRIMARY": {
+     "EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "EVALUATED": 196
+    }
+   },
+   "feed_balance_kg_s": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "freestream_mass_flux_kg_m2_s": {
+    "AIR_PRIMARY": {
+     "EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "EVALUATED": 196
+    }
+   },
+   "hall_state": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "intake_capture_kg_s": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "mdot_atm_consumed_kg_s": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "EVALUATED": 196
+    }
+   },
+   "mdot_atm_delivered_kg_s": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "mdot_hall_anode_kg_s": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "mdot_icp_dedicated_kg_s": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "mdot_xe_tank_kg_s": {
+    "AIR_PRIMARY": {
+     "EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "n_O_m3": {
+    "AIR_PRIMARY": {
+     "EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "EVALUATED": 196
+    }
+   },
+   "p_feed_Pa": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "rho_kg_m3": {
+    "AIR_PRIMARY": {
+     "EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "EVALUATED": 196
+    }
+   },
+   "t_minus_d_N": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "thermal_t_max_K": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "NOT_EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "thrust_N": {
+    "AIR_PRIMARY": {
+     "NOT_EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "NOT_EVALUATED": 196
+    }
+   },
+   "v_orbital_m_s": {
+    "AIR_PRIMARY": {
+     "EVALUATED": 196
+    },
+    "NON_FIRING": {
+     "EVALUATED": 196
+    },
+    "XE_CONTINGENCY": {
+     "EVALUATED": 196
+    }
+   }
+  },
+  "reason_codes": [
+   "BUS_LEDGER_NOT_COMPLETE",
+   "CREDIBLE_HALL_TRANSPORT_SET_EMPTY",
+   "HOST_SPACECRAFT_DRAG_ICD_ABSENT",
+   "MISSION_SCHEDULE_NOT_REGISTERED",
+   "NON_FIRING_LOAD_NOT_REGISTERED",
+   "NO_FROZEN_DESIGN_POINT",
+   "NP_ICP_CRATE_STATUS",
+   "NP_ICP_NOT_ADMITTED",
+   "THERMAL_LOADS_NOT_EVALUATED"
+  ],
+  "environment_envelopes_air_primary": [
+   {
+    "field": "T_K",
+    "units": "K",
+    "min": 469.6486,
+    "min_state": "ds2:ECSS_LT_LOW:alt180:lat-80.0000:lst21:lon0:doy184",
+    "max": 1824.267916507808,
+    "max_state": "ds2:ECSS_ST_HIGH:alt230:lat-87.0000:lst0:lon180:doy184"
+   },
+   {
+    "field": "ao_flux_m2_s",
+    "units": "m-2 s-1",
+    "min": 2.5138952154597074e+18,
+    "min_state": "ds2:ECSS_ST_HIGH:alt230:lat-87.0000:lst3:lon240:doy184",
+    "max": 1.5784334869712526e+20,
+    "max_state": "ds2:ECSS_ST_HIGH:alt180:lat-4.0000:lst9:lon60:doy92"
+   },
+   {
+    "field": "fN2",
+    "units": "1",
+    "min": 0.13886955228194392,
+    "min_state": "ds2:ECSS_LT_LOW:alt230:lat-81.0000:lst21:lon0:doy138",
+    "max": 0.910233642532148,
+    "max_state": "ds2:ECSS_ST_HIGH:alt180:lat+71.0000:lst0:lon0:doy184"
+   },
+   {
+    "field": "fO",
+    "units": "1",
+    "min": 0.029543631861493665,
+    "min_state": "ds2:ECSS_ST_HIGH:alt180:lat-86.0000:lst3:lon240:doy184",
+    "max": 0.8494347091938756,
+    "max_state": "ds2:ECSS_LT_LOW:alt230:lat-81.0000:lst21:lon0:doy138"
+   },
+   {
+    "field": "fO2",
+    "units": "1",
+    "min": 0.005890205735662745,
+    "min_state": "ds2:ECSS_ST_HIGH:alt230:lat-1.0000:lst15:lon0:doy92",
+    "max": 0.09919391934567763,
+    "max_state": "ds2:ECSS_LT_LOW:alt180:lat+67.0000:lst6:lon240:doy229"
+   },
+   {
+    "field": "freestream_mass_flux_kg_m2_s",
+    "units": "kg m-2 s-1",
+    "min": 1.8573770943027164e-07,
+    "min_state": "ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184",
+    "max": 8.592515372718126e-06,
+    "max_state": "ds2:ECSS_ST_HIGH:alt180:lat-73.0000:lst15:lon240:doy1"
+   },
+   {
+    "field": "mdot_xe_tank_kg_s",
+    "units": "kg s-1",
+    "min": 0.0,
+    "min_state": "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47",
+    "max": 0.0,
+    "max_state": "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47"
+   },
+   {
+    "field": "n_O_m3",
+    "units": "m-3",
+    "min": 323506603417120.94,
+    "min_state": "ds2:ECSS_ST_HIGH:alt230:lat-87.0000:lst3:lon240:doy184",
+    "max": 2.023537224097124e+16,
+    "max_state": "ds2:ECSS_ST_HIGH:alt180:lat-4.0000:lst9:lon60:doy92"
+   },
+   {
+    "field": "rho_kg_m3",
+    "units": "kg m-3",
+    "min": 2.3902100268437544e-11,
+    "min_state": "ds2:ECSS_LT_LOW:alt230:lat-84.0000:lst0:lon60:doy184",
+    "max": 1.1015525740451153e-09,
+    "max_state": "ds2:ECSS_ST_HIGH:alt180:lat-73.0000:lst15:lon240:doy1"
+   },
+   {
+    "field": "v_orbital_m_s",
+    "units": "m s-1",
+    "min": 7770.769402868593,
+    "min_state": "ds2:ECSS_LT_HIGH:alt230:lat+2.0000:lst15:lon0:doy92",
+    "max": 7800.367930842138,
+    "max_state": "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47"
+   }
+  ],
+  "ao_fluence_bound": {
+   "basis": "PB-AO: [min_s, max_s] ao_flux_m2_s x (H_M x 3600 s/h); bounds the fluence of every schedule whose segments use states of the frozen set; the states carry no time weights (A9.14 S9.7)",
+   "evidence_status_of_fluence": "NOT_EVALUATED",
+   "label": "PARAMETRIC_BOUND",
+   "lower_m2": 2.3783459854421198e+26,
+   "max_flux_state": "ds2:ECSS_ST_HIGH:alt180:lat-4.0000:lst9:lon60:doy92",
+   "min_flux_state": "ds2:ECSS_ST_HIGH:alt230:lat-87.0000:lst3:lon240:doy184",
+   "reasons": [
+    {
+     "code": "MISSION_SCHEDULE_NOT_REGISTERED",
+     "detail": "the evidence-qualified fluence needs a registered schedule (SCH-05)",
+     "status": "NOT_EVALUATED"
+    }
+   ],
+   "status": "EVALUATED",
+   "upper_m2": 1.4933243533537626e+28
+  },
+  "schedule": {
+   "status": "NOT_EVALUATED",
+   "reasons": [
+    {
+     "code": "MISSION_SCHEDULE_NOT_REGISTERED",
+     "detail": "no mission mode / state schedule is registered (OQ-MI-01); the design states carry no time weights",
+     "status": "NOT_EVALUATED"
+    }
+   ]
+  },
+  "mass": {
+   "m_dry_kg": "NOT_EVALUATED",
+   "m_xe_loaded_kg": "NOT_EVALUATED",
+   "m_xe_end_kg": "NOT_EVALUATED",
+   "m_wet_start_kg": "NOT_EVALUATED",
+   "m_wet_end_kg": "NOT_EVALUATED"
+  },
+  "xe_planning_cases_kg": [
+   2.0,
+   5.0,
+   10.0
+  ]
+ },
+ "ledger_update_requested": {
+  "NP-MISSION-INTEGRATION": "VERIFIED (software verification; validation_status NOT_VALIDATED)",
+  "C-ABEP_SIM_MISSION_ENV_PY": "function subset ADMITTED under PARITY-C-ABEP_SIM_MISSION_ENV_PY-PROPAGATION-V1 (with the constants kernel already ADMITTED); spacecraft_drag NOT_PORTED (lane brief), pointing_factors AUDITED_NOT_PORTED (OQ-MI-03), plume_interaction / ARRAY_AREAL_KG_M2 not in scope (class-H callers)"
+ },
+ "open_owner_questions": [
+  "OQ-MI-01",
+  "OQ-MI-02",
+  "OQ-MI-03",
+  "OQ-MI-04",
+  "OQ-MI-05"
+ ]
+}

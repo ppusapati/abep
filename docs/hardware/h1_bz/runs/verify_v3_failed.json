@@ -1,0 +1,109 @@
+{
+ "V1a_inner_coil_air": {
+  "status": "OK",
+  "dofs": 308805,
+  "seconds": 43.2,
+  "axis_Bz_rel_err": 0.02456091030293978,
+  "centreline_Br_rel_err": 0.0016093349158848823,
+  "centreline_Bz_rel_err": 0.005519172935470095,
+  "reference_selfcheck_rel_err": 3.6397027187184634e-12,
+  "pass": false
+ },
+ "V1b_outer_coil_air": {
+  "status": "OK",
+  "dofs": 308805,
+  "seconds": 38.0,
+  "axis_Bz_rel_err": 0.04762989404723841,
+  "centreline_Br_rel_err": 0.0018839866674057472,
+  "centreline_Bz_rel_err": 0.0024715108254325757,
+  "reference_selfcheck_rel_err": 1.0482699116418523e-12,
+  "pass": false
+ },
+ "V2_halfspace_mu10": {
+  "status": "OK",
+  "dofs": 178857,
+  "seconds": 16.1,
+  "max_rel_err": NaN,
+  "image_share": 0.31387380152788075,
+  "pass": false
+ },
+ "V2_halfspace_mu1000": {
+  "status": "OK",
+  "dofs": 178857,
+  "seconds": 15.5,
+  "max_rel_err": NaN,
+  "image_share": 0.372829775935807,
+  "pass": false
+ },
+ "V3_hiperco_H300": {
+  "status": "OK",
+  "newton_iterations": 2,
+  "seconds": 0.2,
+  "B_core_exact_T": 1.5750000000000002,
+  "B_core_fe_T": 1.5750000000000004,
+  "rel_err_core": 1.409807015397024e-16,
+  "rel_err_gap": 4.309905826088723e-11,
+  "pass": true
+ },
+ "V3_hiperco_H3000": {
+  "status": "OK",
+  "newton_iterations": 7,
+  "seconds": 1.0,
+  "B_core_exact_T": 2.2533333333333334,
+  "B_core_fe_T": 2.2533333333333396,
+  "rel_err_core": 2.7591341440388507e-15,
+  "rel_err_gap": 6.9172002675203e-13,
+  "pass": true
+ },
+ "V3_hiperco_H30000": {
+  "status": "MODEL_ERROR",
+  "note": "Newton line search failed",
+  "pass": false
+ },
+ "V3_hiperco_H300000": {
+  "status": "MODEL_ERROR",
+  "note": "Newton line search failed",
+  "pass": false
+ },
+ "V3_iron_H300": {
+  "status": "OK",
+  "newton_iterations": 9,
+  "seconds": 1.0,
+  "B_core_exact_T": 1.5500584210277055,
+  "B_core_fe_T": 1.5500584210277075,
+  "rel_err_core": 1.289242661576794e-15,
+  "rel_err_gap": 5.113959896766141e-11,
+  "pass": true
+ },
+ "V3_iron_H3000": {
+  "status": "OK",
+  "newton_iterations": 11,
+  "seconds": 1.6,
+  "B_core_exact_T": 1.7178989278350514,
+  "B_core_fe_T": 1.7178989278350678,
+  "rel_err_core": 9.564765713638079e-15,
+  "rel_err_gap": 5.403652888179462e-12,
+  "pass": true
+ },
+ "V3_iron_H30000": {
+  "status": "MODEL_ERROR",
+  "note": "Newton line search failed",
+  "pass": false
+ },
+ "V3_iron_H300000": {
+  "status": "MODEL_ERROR",
+  "note": "Newton line search failed",
+  "pass": false
+ },
+ "all_pass": false,
+ "_meta": {
+  "stage": "verify",
+  "seconds": 120.2,
+  "solver": "scikit-fem 10.0.2 (P2 Lagrange, axisymmetric flux function psi = r A_phi, damped Newton, SuperLU / LU-preconditioned CG)",
+  "solver_sha256": "25ef3f7c1515b7a40b1f019a4b7b0eb0fce279989ee003bb18ed9d76299bbc57",
+  "build_sha256": "c2a51f7bfc76d7bef4f47fa365872e364f1d70ad066ee87af4a4d50a171235b8",
+  "python": "3.11.15",
+  "numpy": "2.4.4",
+  "scipy": "1.17.1"
+ }
+}

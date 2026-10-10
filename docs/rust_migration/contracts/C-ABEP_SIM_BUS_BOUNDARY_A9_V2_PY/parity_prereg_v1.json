@@ -1,0 +1,2839 @@
+{
+ "schema": "abep_rust_parity_contract_v3_1",
+ "id": "PARITY-C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY-V1",
+ "template": {
+  "path": "docs/rust_migration/parity_contract_template_v3_1.json",
+  "sha256": "002ae409ebe0fd32043163e8bc7455506de44dfe36adf27c4375f80f3c903171"
+ },
+ "contract_kind": "EXISTING_PHYSICS_PARITY",
+ "component": {
+  "inventory_id": "C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY",
+  "inventory_sha256": "18310f4e69be74e6045582b615d2d19bfab5c91397a5104347336722332bd119",
+  "migration_wave": "W4",
+  "scope": "coupled group (RM-R01) of SC-WP-05 elements 'PPU / load model', 'bus-power accounting', 'start-up / concurrent-load behaviour' and the bus-side part of 'RF generator / matching': the active bus_power_boundary_a9_v2 module (C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY, whole module except the GROUND_REFERENCE_ONLY metadata) together with the v1 function subset it rebinds (C-ABEP_SIM_BUS_BOUNDARY_A9_PY, kernel granularity RM-R17), the official A9-02 ledger builder (C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY::official_ledger) and the raw P_bus objective (C-ABEP_SIM_PROGRAMME_DESIGN_SYNTHESIS_PY::bus_power without its assessment field), all named by simulation_completion_programme_v1_1.json SC-WP-05",
+  "coupled_inventory_ids": [
+   "C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY",
+   "C-ABEP_SIM_BUS_BOUNDARY_A9_PY (function subset)",
+   "C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY (official_ledger only; row stays SC-WP-10)",
+   "C-ABEP_SIM_PROGRAMME_DESIGN_SYNTHESIS_PY (bus_power only; row stays SC-WP-10)"
+  ],
+  "functions_or_entry_points": [
+   "E1 abep_sim/bus_boundary_a9_v2.py::installed_slots (v1 code rebound to v2 globals)",
+   "E2 abep_sim/bus_boundary_a9_v2.py::ledger (with _load_record, _eff_record, _not_installed_ok, _gate_measurement, _keys, _nonempty, _real)",
+   "E3 abep_sim/bus_boundary_a9_v2.py::p_bus_1ms_max",
+   "E4 abep_sim/bus_boundary_a9_v2.py::rf_power_planes",
+   "E5 abep_sim/bus_boundary_a9_v2.py::allocation_checks (with _group_sum, _verdict_below)",
+   "E6 abep_sim/bus_boundary_a9_v2.py::icp_power_allocation_check",
+   "E7 abep_sim/bus_boundary_a9_v2.py::check_startup_sequence (with _peak_rises) without its transient_gate field",
+   "E8 abep_sim/design/architecture_optimizer.py::official_ledger (with _slot_texts, _eff_path)",
+   "E9 abep_sim/programme/design_synthesis.py::bus_power without its gate_verdict field"
+  ],
+  "out_of_scope": [
+   "abep_sim/bus_boundary_a9_v2.py::rfp_power_gate: the RFP 1.5 kW requirement check moves to abep-assess (SC-WP-11; plan SC-WP-05 element 3 note; A9.30 sec. 5 'ASSESSMENT ONLY'); stays PYTHON_REFERENCE here",
+   "the transient_gate field of check_startup_sequence and the gate_verdict field of design_synthesis.bus_power: outputs of rfp_power_gate (assessment, SC-WP-11)",
+   "abep_sim/bus_boundary_a9_v2.py::GROUND_REFERENCE_TEST_METADATA and every v1 hall_c1_reference table: GROUND_REFERENCE_ONLY (A9.20, A9.30 sec. 5)",
+   "abep_sim/bus_boundary_a9.py as the v1 boundary module (bus_power_boundary_a9_v1 ledgers, hall_c1_reference): immutable history, never ported for the active line (A9.30 sec. 5)",
+   "every other function of architecture_optimizer.py and design_synthesis.py (SC-WP-10)"
+  ],
+  "migration_class": "ACTIVE_SELECTED_ARCHITECTURE_PHYSICS",
+  "extract_kernel_id": "NOT_APPLICABLE",
+  "active_toolchain_requirement": "NOT_APPLICABLE",
+  "excluded_legacy_paths": [
+   "C1 ground-reference slots c1_heater / c1_keeper / c1_common_tie / filter_getter (group 'c1') and their SLOTS rows: GROUND_REFERENCE_ONLY, not ported into the flight crate (inventory ground_reference_parts; A9.30 sec. 5)",
+   "the C1 start-up rule _heater_rule, the C1 peak events c1_heater_preheat / c1_keeper_ignition and the A9.1 SEQ-heater booked-power branch of _load_record (booked_W): GROUND_REFERENCE_ONLY (plan: 'abep-subsystems::power excludes the C1 heater / keeper start-up rule')",
+   "hall_c1_reference ENFORCED_ORDER / SEQUENCE_TEMPLATES / BASE_SLOTS / VARIANT_OPTIONS",
+   "bus_power_boundary_v1 (abep_sim/arch_boundary.py) and bus_power_boundary_a9_v1 as an active boundary"
+  ],
+  "owner_disposition_a9_28": "NOT_APPLICABLE",
+  "simulation_completion_wp": "SC-WP-05",
+  "owner_disposition_a9_29": "NOT_APPLICABLE (no A9.29 owner text on this row); binding owner text A9.30 sec. 5: 'For the ACTIVE hall_icp_neutralizer architecture, use: bus_power_boundary_a9_v2 ... Flight C1 cathode loads: NONE. C1 heater / keeper: GROUND_REFERENCE_ONLY and must never enter active flight bus closure. The 1.5 kW RFP limit remains ASSESSMENT ONLY. Raw power physics produces the actual load ledger and bus demand.'"
+ },
+ "date": "2026-10-06",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison of this component was executed. No Rust code for the component exists at registration. The commit is recorded in the report, not here.",
+ "supersedes": {
+  "path": null,
+  "sha256": null,
+  "reason": null
+ },
+ "governing_records": [
+  "docs/decisions/OD_2026_10_05_A9_30_PUSH_AUTHORIZATION_O_O2_CHEMISTRY_AND_BUS_BOUNDARY_RULINGS.md sec. 5 (sha256 17401e982c1acc2b58847d919a75a473e981d2233d952153d8234e410578a42f)",
+  "docs/decisions/OD_2026_10_05_A9_29_RUST_PLAN_V3_1_RULINGS_AND_START_AUTHORIZATION.md secs. 4, 14, 15",
+  "docs/rust_migration/simulation_completion_programme_v1_1.json SC-WP-05 (sha256 5e672943892b0035f05562e68dae1ca279acd4a4bd625641a559e53711f4643a)",
+  "docs/rust_migration/programme_v3_1.json rules RM-R01..RM-R42 (sha256 b595c4fc740223cb8da10886c358410ffab2cfd38befbe97543237d1b4dee70f)",
+  "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json CONS-L1 / EB-05 (sha256 e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c)"
+ ],
+ "reference_implementation": {
+  "python_commit": "fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73",
+  "files": [
+   {
+    "path": "abep_sim/bus_boundary_a9.py",
+    "sha256_at_registration": "7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a"
+   },
+   {
+    "path": "abep_sim/bus_boundary_a9_v2.py",
+    "sha256_at_registration": "8964520ffb55d97eeb93c4b8cc45250026e0c6a0b3082ea58fcfd834ba661e26"
+   },
+   {
+    "path": "abep_sim/design/architecture_optimizer.py",
+    "sha256_at_registration": "fff94c1e09052b1a4064e72ea817a5e1c7a2f9245c68d33fd7c18ac2b99030af"
+   },
+   {
+    "path": "abep_sim/programme/design_synthesis.py",
+    "sha256_at_registration": "a9ee90672ad99c352e4ce77f74a5078ec742119dfd347ebbd485f22894838455"
+   },
+   {
+    "path": "abep_sim/assessment/design_gates.py",
+    "sha256_at_registration": "394c8d04e86bfc90a9c0fcfd5b1c0efffed3c0bb769fdeed023fd9bf4606dd93"
+   }
+  ],
+  "rule": "the campaign refuses to score (REFUSED_REFERENCE_CHANGED) if any reference file sha256 differs from sha256_at_registration; a changed reference requires a new contract version",
+  "environment": {
+   "python": "3.11.15",
+   "numpy": "2.4.4 (not used by the component)",
+   "scipy": "1.17.1 (not used)",
+   "pandas": "3.0.2 (not used)",
+   "requirements_lock_sha256": "2481d2c5f8fd19758fdff4a9e69f78a143427084b44ea96bd565010b472ef312",
+   "blas": "NOT_APPLICABLE",
+   "thread_env": {
+    "OMP_NUM_THREADS": "NOT_APPLICABLE",
+    "OPENBLAS_NUM_THREADS": "NOT_APPLICABLE"
+   },
+   "stdlib": "math.fsum (CPython msum, correctly rounded, OverflowError 'intermediate overflow in fsum'), math.sqrt / isfinite, round() (half to even), repr() of JSON-shaped values in refusal messages, str.strip, set / sorted"
+  },
+  "comparison_reference": {
+   "id": "FLIGHT_RESTRICTED_REFERENCE",
+   "definition": "every scored Python observation is produced by the reference code above, unchanged, with three module tables of abep_sim.bus_boundary_a9_v2 restricted for the duration of the call to their flight (non-GROUND_REFERENCE_ONLY) entries: SLOTS and ALL_SLOTS without the group-'c1' slots [\"c1_heater\", \"c1_keeper\", \"c1_common_tie\", \"filter_getter\"], PEAK_EVENTS without the events whose slot is in that group (c1_heater_preheat, c1_keeper_ignition). The v2 functions read these globals at call time (they are v1 code objects rebound to the v2 module globals), and architecture_optimizer / design_synthesis / design_gates use the same module object (import ... bus_boundary_a9_v2 as bb). No code object, constant, rule text or number changes",
+   "why": "the plan and A9.30 sec. 5 exclude the C1 slots, the C1 events and the C1 start-up rule from the flight crate (CI_PLAN principle 6 forbids heater / keeper load names in crates/**); the restriction removes exactly those table entries, and INV-A01 / INV-A02 show that it changes no flight quantity (RM-R20: a legacy path the harness traverses must not influence the scored observables)",
+   "flight_slots": [
+    "hall_discharge",
+    "hall_magnet_inner",
+    "hall_magnet_outer",
+    "hall_magnet_trim",
+    "icp_rf_source",
+    "icp_matching_network",
+    "icp_collector_bias",
+    "icp_assist_magnet",
+    "active_cooling",
+    "flow_control_atmospheric",
+    "flow_control_xe",
+    "flow_control_icp_feed",
+    "compressor",
+    "thermal_control",
+    "housekeeping_controls",
+    "reserved_dc_port"
+   ],
+   "flight_peak_events_sorted": [
+    "active_cooling_start",
+    "compressor_spinup",
+    "hall_discharge_ignition",
+    "icp_collector_bias_on",
+    "icp_rf_ignition",
+    "magnet_ramp"
+   ],
+   "unrestricted_outputs": "recorded for every call (INV-A01 / INV-A02 and the DIV records), never scored"
+  }
+ },
+ "rust_implementation": {
+  "crate": "abep-subsystems",
+  "module": "abep_subsystems::power (new module; the thermal module and its API are untouched)",
+  "functions_or_entry_points": [
+   "abep_subsystems::power::slots (Slot, Group, Configuration, VariantOption, installed_slots, the flight SLOTS / PEAK_EVENTS / DEPENDENT_RISES / ENFORCED_ORDER tables)",
+   "abep_subsystems::power::ledger (typed LoadRecord / EfficiencyRecord / FrontEnd / GateMeasurement / PowerBasis records and ledger())",
+   "abep_subsystems::power::record (Python-shaped JSON value -> typed records with the reference validation order and refusal texts)",
+   "abep_subsystems::power::sampling::p_bus_1ms_max",
+   "abep_subsystems::power::rf_planes::rf_power_planes",
+   "abep_subsystems::power::sequence::check_startup_sequence (sequence rules and step ledgers only)",
+   "abep_subsystems::power::allocation::{allocation_checks, icp_power_allocation_check} (owner-allocation arithmetic; consumes finished ledgers, never called by the ledger or sequence code)",
+   "abep_subsystems::power::official::{MassPowerA9V5, official_ledger}",
+   "abep_subsystems::power::objective::bus_power",
+   "abep_subsystems::power::system_ledger (CONS-L1, Rust-only, registered below)",
+   "abep_subsystems::power::icp_bus (IF-ICP-BUS-v1 consumer, Rust-only, registered below)",
+   "abep_subsystems::power::demand (typed upstream inputs -> flight ledger -> bus demand, Rust-only)",
+   "`cargo run --release --locked -p abep-subsystems --example power_eval -- <calls.json>` (harness interface; E7 output = sequence result + allocation_checks / icp_power_allocation_check of the steady ledger appended by the adapter in the reference key order)"
+  ],
+  "rust_commit": "FILL at scoring time (recorded in the report build_provenance, not here)",
+  "toolchain": "rustc 1.94.1 (rust-toolchain.toml)",
+  "provenance_sources": [
+   "Cargo.toml",
+   "Cargo.lock",
+   "rust-toolchain.toml",
+   "crates/abep-types/**",
+   "crates/abep-provenance/**",
+   "crates/abep-subsystems/**"
+  ],
+  "rule": "the report records the sha256 of every provenance source; any later change is UNRECORDED_SOURCE_CHANGE until a scoring execution records it",
+  "numerics": "math.fsum is ported as CPython's msum (partials, final half-way correction, the same OverflowError); P_bus = P_W / eta / eta_fe and every other arithmetic step in the reference order; round() half to even; -0.0 normalised by + 0.0 as _real does",
+  "layer_rules": [
+   "no 1500 W limit, no rfp_power_gate, no PASS / FAIL of the RFP gate anywhere in abep-subsystems (A9.30 sec. 5; RM-R14); the 1350 / 1300 / 300 / 50 W owner allocations live only in power::allocation, whose results are never fed back into a ledger, a sequence or a demand",
+   "no C1 slot, C1 event, C1 start-up rule or booked-power branch in the crate (CI_PLAN principle 6; the crate's existing forbidden_identifier_scan_of_this_crate test covers the new module)",
+   "abep-subsystems gains no dependency (abep-types, abep-provenance, serde, serde_json as today)"
+  ]
+ },
+ "governing_hashes": {
+  "config_manifest": {
+   "path": "config/MANIFEST.json",
+   "sha256": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+  },
+  "architecture_hash": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3 (config/architecture/hall_icp_neutralizer_v1.json; context only, not read by the component)",
+  "model_set_hash": "NOT_APPLICABLE",
+  "design_state_set_hash": "NOT_APPLICABLE",
+  "boundary_record": {
+   "path": "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json",
+   "sha256": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980"
+  },
+  "rule": "both implementations read the pinned mass/power record (E8 / E9); the Rust loader refuses any other bytes (DIV-A06); a mismatch on the reference tree voids the run (INPUT_MISMATCH)"
+ },
+ "pinned_inputs_sha256": {
+  "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+  "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json": "de346f86f77ae08c2e0cc4a5b945c21c9626bc5ad0f32f904acd4a929a08f980",
+  "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/prereg_v1.json": "e3e6859cf61703c27254e9c231ff4637f7d20ea743c8d881b9e55c8ba9d27c5c",
+  "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification/vs_net_v1.json": "64c4bf335354bd9ffc7e4de602156d3ca26b1b6ee614e30558ccc94c897ec9a9",
+  "config/MANIFEST.json": "3a85581eceded2279cf9a000cd858006937880f6bed745bc645c62bdddbab883"
+ },
+ "frozen_data_read_only": [
+  "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json (budget record; read, never rewritten)",
+  "docs/architecture_comparison/power_boundary_a9_v2/bus_power_boundary_a9_v2.json (boundary record; read by INV-A04)",
+  "docs/rust_migration/new_physics/NP-THERMAL-CATHODELESS/verification/vs_net_v1.json (registered synthetic network, CONS-L1 system cases)"
+ ],
+ "inputs": {
+  "golden_vectors": {
+   "source": "registered deterministic cases below (one call each) plus the randomized domain; Python reference outputs captured at scoring",
+   "count": "see vector_totals",
+   "list_or_generator": "registered_cases (bases FULL / FULLV / TPL defined in registered_bases); the harness decodes {'$float': 'nan' | 'inf' | '-inf' | '-0.0'} to the float value"
+  },
+  "registered_bases": {
+   "FULL": "args {config: 'hall_icp_neutralizer', variant: [], label: <case id>, power_basis: null, gate_measurement: null}; loads[s] = {P_W: 10.0, evidence_class: 'measured', source: 'src:' + s} for every s in installed_slots(config, variant) (icp_rf_source additionally plane 'generator_dc_input'); efficiencies[s] = {value: 0.9, evidence_class: 'measured', source: 'eff:' + s, path: 'internal_bus'}; front_end = {value: 0.95, evidence_class: 'measured', source: 'fe'}. A case's 'set' assigns dotted paths after the base is built (variant first, so the installed set follows it), 'del' deletes dotted paths. Pseudo-keys: '$all_paths' sets every efficiency path; '$all_loads_tbd' / '$all_effs_tbd' make every installed load / efficiency TBD (tbd_requires 'tbd:' + slot; rf keeps its plane; efficiency keeps path internal_bus); '$all_loads_value' sets every installed P_W",
+   "FULLV": "FULL with variant ['icp_assist_magnet', 'active_cooling', 'flow_control_icp_feed']",
+   "TPL": "check_startup_sequence args {config: 'hall_icp_neutralizer', variant: [], front_end: FULL front_end, steps: one step per SEQUENCE_TEMPLATES['hall_icp_neutralizer'] entry (I-S0..I-S6) with step_id, event and phase of the template; loads: every installed slot of every step, 10.0 W (FULL record) if the slot is in the union of the 'on' lists of this and the earlier steps, else 0.0 W (FULL record shape); efficiencies: the FULL efficiencies; power_basis 'p_bus_1ms_max' and gate_measurement GM_OK on every step}. Pseudo-keys: '$swap_events' [i, j] swaps the event of steps i and j; '$keep_steps' [k...] keeps only the listed steps (the steady step's phase is kept); '$cooling_step' (with variant ['active_cooling']: active_cooling is installed, 0.0 W in every template step, FULL efficiency) inserts after I-S1 a step 'I-S1c' (event active_cooling_start, loads of I-S1) and sets active_cooling to 10.0 W in it and in every later step; '$all_bases' sets power_basis on every step; '$all_loads_tbd_after' k makes every installed load TBD in every step after step k",
+   "GM_OK": {
+    "sample_rate_Sa_s": 100000.0,
+    "bandwidth_Hz": 20000.0,
+    "anti_alias_documented": true,
+    "synchronized": true,
+    "source": "DQ-HI-PBUS synthetic conformance record"
+   }
+  },
+  "registered_cases": [
+   {
+    "id": "IE-01",
+    "fn": "installed_slots",
+    "config": "hall_icp_neutralizer",
+    "variant": [],
+    "note": ""
+   },
+   {
+    "id": "IE-02",
+    "fn": "installed_slots",
+    "config": "hall_icp_neutralizer",
+    "variant": [
+     "flow_control_icp_feed",
+     "icp_assist_magnet",
+     "active_cooling"
+    ],
+    "note": ""
+   },
+   {
+    "id": "IE-03",
+    "fn": "installed_slots",
+    "config": "hall_c1_reference",
+    "variant": [],
+    "note": ""
+   },
+   {
+    "id": "IE-04",
+    "fn": "installed_slots",
+    "config": "hall_icp_neutralizer",
+    "variant": "active_cooling",
+    "note": ""
+   },
+   {
+    "id": "IE-05",
+    "fn": "installed_slots",
+    "config": "hall_icp_neutralizer",
+    "variant": [
+     "icp_assist_magnet",
+     "icp_assist_magnet"
+    ],
+    "note": ""
+   },
+   {
+    "id": "IE-06",
+    "fn": "installed_slots",
+    "config": "hall_icp_neutralizer",
+    "variant": [
+     "filter_getter"
+    ],
+    "note": ""
+   },
+   {
+    "id": "IE-07",
+    "fn": "installed_slots",
+    "config": null,
+    "variant": [],
+    "note": ""
+   },
+   {
+    "id": "LE-01",
+    "fn": "ledger",
+    "base": "FULL",
+    "note": "complete ledger, every installed slot 10 W / 0.9 internal_bus, front end 0.95"
+   },
+   {
+    "id": "LE-02",
+    "fn": "ledger",
+    "base": "FULLV",
+    "note": "complete ledger with the three declared variant options installed"
+   },
+   {
+    "id": "LE-03",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.compressor": {
+      "P_W": "TBD",
+      "tbd_requires": "compressor ICD row 22"
+     }
+    },
+    "note": "PARTIAL_BOUNDARY"
+   },
+   {
+    "id": "LE-04",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge": {
+      "P_W": "TBD",
+      "tbd_requires": "registered H-1 envelope"
+     }
+    },
+    "note": "INCOMPLETE_EVIDENCE"
+   },
+   {
+    "id": "LE-05",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.compressor": {
+      "value": "TBD",
+      "tbd_requires": "drive efficiency",
+      "path": "internal_bus"
+     }
+    },
+    "note": "known compressor load, TBD efficiency: INCOMPLETE_EVIDENCE"
+   },
+   {
+    "id": "LE-06",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "front_end": {
+      "value": "TBD",
+      "tbd_requires": "front-end converter (row 111)"
+     }
+    },
+    "note": "front end TBD with internal_bus loads"
+   },
+   {
+    "id": "LE-07",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_magnet_trim": {
+      "P_W": 0.0,
+      "evidence_class": "measured",
+      "source": "src"
+     },
+     "efficiencies.hall_magnet_trim": {
+      "value": "TBD",
+      "tbd_requires": "trim supply",
+      "path": "internal_bus"
+     }
+    },
+    "note": "OFF slot with TBD efficiency adds no TBD term"
+   },
+   {
+    "id": "LE-08",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.hall_discharge.path": "direct",
+     "efficiencies.icp_rf_source.path": "direct"
+    },
+    "note": "direct paths"
+   },
+   {
+    "id": "LE-09",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.icp_assist_magnet": {
+      "P_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "not installed"
+     },
+     "efficiencies.icp_assist_magnet": {
+      "value": 1.0,
+      "evidence_class": "assumed",
+      "source": "not installed",
+      "path": "direct"
+     }
+    },
+    "note": "not-installed variant slot passed as exactly 0 W / efficiency 1"
+   },
+   {
+    "id": "LE-10",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "power_basis": "p_bus_1ms_max",
+     "gate_measurement": {
+      "sample_rate_Sa_s": 100000.0,
+      "bandwidth_Hz": 20000.0,
+      "anti_alias_documented": true,
+      "synchronized": true,
+      "source": "DQ-HI-PBUS synthetic conformance record"
+     }
+    },
+    "note": "conformant gate measurement"
+   },
+   {
+    "id": "LE-11",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "power_basis": "peak_sampled",
+     "gate_measurement": {
+      "sample_rate_Sa_s": 50000.0,
+      "bandwidth_Hz": 20000.0,
+      "anti_alias_documented": true,
+      "synchronized": true,
+      "source": "DQ-HI-PBUS synthetic conformance record"
+     }
+    },
+    "note": "non-conformant gate measurement"
+   },
+   {
+    "id": "LE-12",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.evidence_class": "model-derived"
+    },
+    "note": "measured_only false"
+   },
+   {
+    "id": "LE-13",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.reserved_dc_port.P_W": {
+      "$float": "-0.0"
+     }
+    },
+    "note": "-0.0 W is OFF at +0.0"
+   },
+   {
+    "id": "LE-14",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.P_W": 1e+300,
+     "efficiencies.hall_discharge.value": 0.5
+    },
+    "note": "large finite draw"
+   },
+   {
+    "id": "LE-15",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.P_W": 1.7976931348623157e+308,
+     "efficiencies.hall_discharge.value": 0.5
+    },
+    "note": "per-slot overflow refusal"
+   },
+   {
+    "id": "LE-16",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.P_W": 1.6e+308,
+     "efficiencies.hall_discharge": {
+      "value": 1.0,
+      "evidence_class": "measured",
+      "source": "eff",
+      "path": "direct"
+     },
+     "loads.compressor.P_W": 1.6e+308,
+     "efficiencies.compressor": {
+      "value": 1.0,
+      "evidence_class": "measured",
+      "source": "eff",
+      "path": "direct"
+     }
+    },
+    "note": "math.fsum intermediate overflow (OverflowError)"
+   },
+   {
+    "id": "LE-17",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "power_basis": "average"
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-18",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "gate_measurement": []
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-19",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "gate_measurement": {
+      "sample_rate_Sa_s": 100000.0,
+      "bandwidth_Hz": 20000.0,
+      "anti_alias_documented": true,
+      "synchronized": true,
+      "source": "DQ-HI-PBUS synthetic conformance record",
+      "extra": 1
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-20",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "gate_measurement": {
+      "sample_rate_Sa_s": 100000.0,
+      "bandwidth_Hz": 20000.0,
+      "anti_alias_documented": true,
+      "synchronized": true,
+      "source": "DQ-HI-PBUS synthetic conformance record"
+     }
+    },
+    "del": [
+     "gate_measurement.source"
+    ],
+    "note": ""
+   },
+   {
+    "id": "LE-21",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "gate_measurement": {
+      "sample_rate_Sa_s": "fast",
+      "bandwidth_Hz": 20000.0,
+      "anti_alias_documented": true,
+      "synchronized": true,
+      "source": "DQ-HI-PBUS synthetic conformance record"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-22",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "gate_measurement": {
+      "sample_rate_Sa_s": 100000.0,
+      "bandwidth_Hz": {
+       "$float": "inf"
+      },
+      "anti_alias_documented": true,
+      "synchronized": true,
+      "source": "DQ-HI-PBUS synthetic conformance record"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-23",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "gate_measurement": {
+      "sample_rate_Sa_s": 100000.0,
+      "bandwidth_Hz": 20000.0,
+      "anti_alias_documented": 1,
+      "synchronized": true,
+      "source": "DQ-HI-PBUS synthetic conformance record"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-24",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "gate_measurement": {
+      "sample_rate_Sa_s": 100000.0,
+      "bandwidth_Hz": 20000.0,
+      "anti_alias_documented": true,
+      "synchronized": true,
+      "source": "  "
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-25",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "config": "hall_c1_reference"
+    },
+    "note": "refused: not a v2 flight configuration"
+   },
+   {
+    "id": "LE-26",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "config": 5
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-27",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "variant": "icp_assist_magnet"
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-28",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "variant": [
+      "active_cooling",
+      "active_cooling"
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-29",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "variant": [
+      "c1_heater"
+     ]
+    },
+    "note": "undeclared variant option"
+   },
+   {
+    "id": "LE-30",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "variant": {
+      "a": 1
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-31",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads": []
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-32",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies": "x"
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-33",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.bogus_slot": {
+      "P_W": 1.0,
+      "evidence_class": "measured",
+      "source": "src"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-34",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.c1_heater": {
+      "P_W": 0.0,
+      "evidence_class": "assumed",
+      "source": "n/i"
+     }
+    },
+    "note": "GROUND_REFERENCE_ONLY slot key (DIV-A02)"
+   },
+   {
+    "id": "LE-35",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.filter_getter": {
+      "value": 1.0,
+      "evidence_class": "assumed",
+      "source": "n/i",
+      "path": "direct"
+     }
+    },
+    "note": "GROUND_REFERENCE_ONLY slot key (DIV-A02)"
+   },
+   {
+    "id": "LE-36",
+    "fn": "ledger",
+    "base": "FULL",
+    "del": [
+     "loads.compressor"
+    ],
+    "note": ""
+   },
+   {
+    "id": "LE-37",
+    "fn": "ledger",
+    "base": "FULL",
+    "del": [
+     "efficiencies.hall_discharge",
+     "efficiencies.thermal_control"
+    ],
+    "note": ""
+   },
+   {
+    "id": "LE-38",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "front_end": []
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-39",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "front_end": {
+      "evidence_class": "measured",
+      "source": "fe"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-40",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "front_end": {
+      "value": "tbd",
+      "tbd_requires": "x"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-41",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "front_end": {
+      "value": 0.95,
+      "evidence_class": "measured",
+      "source": "fe",
+      "path": "direct"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-42",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "front_end.value": 0.0
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-43",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "front_end.value": 1.5
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-44",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "front_end.value": true
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-45",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "front_end.value": {
+      "$float": "nan"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-46",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge": 5
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-47",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge": {
+      "evidence_class": "measured",
+      "source": "s"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-48",
+    "fn": "ledger",
+    "base": "FULL",
+    "del": [
+     "loads.icp_rf_source.plane"
+    ],
+    "note": ""
+   },
+   {
+    "id": "LE-49",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.icp_rf_source.plane": "forward"
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-50",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.plane": "generator_dc_input"
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-51",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.P_W": "tbd"
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-52",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge": {
+      "P_W": "TBD",
+      "tbd_requires": "x",
+      "booked_W": 10.0,
+      "evidence_class": "assumed",
+      "source": "s"
+     }
+    },
+    "note": "TBD record with booked_W on a flight slot (DIV-A03)"
+   },
+   {
+    "id": "LE-53",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge": {
+      "P_W": "TBD"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-54",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge": {
+      "P_W": "TBD",
+      "tbd_requires": "x",
+      "evidence_class": "measured"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-55",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.extra": 1
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-56",
+    "fn": "ledger",
+    "base": "FULL",
+    "del": [
+     "loads.hall_discharge.evidence_class"
+    ],
+    "note": ""
+   },
+   {
+    "id": "LE-57",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.evidence_class": "cbe"
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-58",
+    "fn": "ledger",
+    "base": "FULL",
+    "del": [
+     "loads.hall_discharge.source"
+    ],
+    "note": ""
+   },
+   {
+    "id": "LE-59",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.P_W": -1.0
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-60",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.P_W": true
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-61",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.P_W": {
+      "$float": "nan"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-62",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.P_W": null
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-63",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.P_W": "10"
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-64",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.hall_discharge": 0.9
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-65",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.hall_discharge.path": "bus"
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-66",
+    "fn": "ledger",
+    "base": "FULL",
+    "del": [
+     "efficiencies.hall_discharge.path"
+    ],
+    "note": ""
+   },
+   {
+    "id": "LE-67",
+    "fn": "ledger",
+    "base": "FULL",
+    "del": [
+     "efficiencies.hall_discharge.value"
+    ],
+    "note": ""
+   },
+   {
+    "id": "LE-68",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.hall_discharge": {
+      "value": "TBD",
+      "path": "internal_bus"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-69",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.hall_discharge.value": 0.0
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-70",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.hall_discharge.value": 1.0000001
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-71",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.hall_discharge.value": -0.5
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-72",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.hall_discharge.extra": "x"
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-73",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.hall_discharge.evidence_class": "x"
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-74",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.active_cooling": {
+      "P_W": 5.0,
+      "evidence_class": "measured",
+      "source": "src"
+     }
+    },
+    "note": "hidden consumption refused"
+   },
+   {
+    "id": "LE-75",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.active_cooling": {
+      "P_W": "TBD",
+      "tbd_requires": "x"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-76",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.active_cooling": {
+      "P_W": 0.0,
+      "evidence_class": "assumed"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-77",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.active_cooling": {
+      "value": 0.9,
+      "evidence_class": "measured",
+      "source": "eff",
+      "path": "internal_bus"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-78",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "efficiencies.active_cooling": {
+      "value": 1.0,
+      "evidence_class": "measured",
+      "source": "eff",
+      "path": "x"
+     }
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-79",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.active_cooling": 0
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-80",
+    "fn": "ledger",
+    "base": "FULLV",
+    "set": {
+     "loads.flow_control_icp_feed": {
+      "P_W": 0.0,
+      "evidence_class": "measured",
+      "source": "src"
+     },
+     "efficiencies.flow_control_icp_feed": {
+      "value": "TBD",
+      "tbd_requires": "feed driver",
+      "path": "internal_bus"
+     }
+    },
+    "note": "OFF variant slot with TBD efficiency"
+   },
+   {
+    "id": "LE-81",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "front_end": {
+      "value": "TBD",
+      "tbd_requires": "front end"
+     },
+     "$all_paths": "direct"
+    },
+    "note": "front end TBD but every path direct: COMPLETE"
+   },
+   {
+    "id": "LE-82",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "label": ""
+    },
+    "note": ""
+   },
+   {
+    "id": "LE-83",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "$all_loads_tbd": true,
+     "$all_effs_tbd": true,
+     "front_end": {
+      "value": "TBD",
+      "tbd_requires": "front end"
+     }
+    },
+    "note": "every term TBD"
+   },
+   {
+    "id": "LE-84",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "$all_loads_value": 10
+    },
+    "note": "int loads"
+   },
+   {
+    "id": "LE-85",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.P_W": 1e-320,
+     "efficiencies.hall_discharge.value": 0.3
+    },
+    "note": "subnormal load"
+   },
+   {
+    "id": "LE-86",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "variant": [
+      "flow_control_icp_feed"
+     ],
+     "loads.flow_control_icp_feed": {
+      "P_W": "TBD",
+      "tbd_requires": "G-ATM feed driver"
+     },
+     "efficiencies.flow_control_icp_feed": {
+      "value": 0.9,
+      "evidence_class": "measured",
+      "source": "eff",
+      "path": "internal_bus"
+     }
+    },
+    "note": "installed variant slot TBD"
+   },
+   {
+    "id": "LE-87",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.P_W": 1300.0
+    },
+    "note": "allocation: exceeds design allocation"
+   },
+   {
+    "id": "LE-88",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.compressor.P_W": 280.0
+    },
+    "note": "allocation: common allocation exceeded"
+   },
+   {
+    "id": "LE-89",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.thermal_control.P_W": 40.0,
+     "loads.housekeeping_controls.P_W": 20.0
+    },
+    "note": "allocation: controls/thermal allowance exceeded"
+   },
+   {
+    "id": "LE-90",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.hall_discharge.P_W": 1400.0,
+     "loads.compressor": {
+      "P_W": "TBD",
+      "tbd_requires": "row 22"
+     }
+    },
+    "note": "allocation: lower bound already exceeds"
+   },
+   {
+    "id": "LE-91",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.icp_rf_source.P_W": 900.0
+    },
+    "note": "ICP exceeds the available residual"
+   },
+   {
+    "id": "LE-92",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.icp_rf_source": {
+      "P_W": "TBD",
+      "tbd_requires": "ICP-45 P_DC,in",
+      "plane": "generator_dc_input"
+     }
+    },
+    "note": "ICP TBD, others known: NOT_EVALUABLE"
+   },
+   {
+    "id": "LE-93",
+    "fn": "ledger",
+    "base": "FULL",
+    "set": {
+     "loads.icp_rf_source.P_W": 600.0,
+     "loads.compressor": {
+      "P_W": "TBD",
+      "tbd_requires": "row 22"
+     },
+     "loads.hall_discharge.P_W": 800.0
+    },
+    "note": "ICP lower bound exceeds the upper bound of the available residual"
+   },
+   {
+    "id": "LE-94",
+    "fn": "ledger",
+    "base": "FULLV",
+    "set": {
+     "loads.active_cooling.P_W": 30.0,
+     "loads.reserved_dc_port.P_W": 12.0
+    },
+    "note": "other-active terms in the ICP residual"
+   },
+   {
+    "id": "SE-01",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "note": "SEQUENCE_TEMPLATES['hall_icp_neutralizer'] loads"
+   },
+   {
+    "id": "SE-02",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.5.loads.icp_collector_bias.P_W": 20.0
+    },
+    "note": "collector bias rises with the Hall discharge at I-S5 (DEPENDENT_RISES)"
+   },
+   {
+    "id": "SE-03",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.2.event": [
+      "magnet_ramp",
+      "icp_rf_ignition"
+     ],
+     "steps.2.loads.icp_rf_source.P_W": 10.0,
+     "steps.2.loads.icp_matching_network.P_W": 10.0
+    },
+    "note": "two declared events and two rising peak loads in one step"
+   },
+   {
+    "id": "SE-04",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "$swap_events": [
+      3,
+      5
+     ]
+    },
+    "note": "enforced order violated"
+   },
+   {
+    "id": "SE-05",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.3.event": null
+    },
+    "note": "icp_rf_ignition missing"
+   },
+   {
+    "id": "SE-06",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.3.loads.compressor": {
+      "P_W": "TBD",
+      "tbd_requires": "row 22"
+     }
+    },
+    "note": "a known rise (RF) plus a TBD transition that may rise (compressor 10 W -> TBD, then TBD -> 10 W): not evaluable"
+   },
+   {
+    "id": "SE-07",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.1.loads.hall_magnet_inner.P_W": 10.0
+    },
+    "note": "undeclared simultaneous peak by load"
+   },
+   {
+    "id": "SE-08",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps": "abc"
+    },
+    "note": ""
+   },
+   {
+    "id": "SE-09",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps": {}
+    },
+    "note": ""
+   },
+   {
+    "id": "SE-10",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "$keep_steps": [
+      6
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "SE-11",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.1": 5
+    },
+    "note": ""
+   },
+   {
+    "id": "SE-12",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "del": [
+     "steps.2.step_id"
+    ],
+    "note": ""
+   },
+   {
+    "id": "SE-13",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.2.step_id": "I-S1"
+    },
+    "note": ""
+   },
+   {
+    "id": "SE-14",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.3.phase": "steady"
+    },
+    "note": ""
+   },
+   {
+    "id": "SE-15",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "del": [
+     "steps.6.phase"
+    ],
+    "note": ""
+   },
+   {
+    "id": "SE-16",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.1.event": "launch"
+    },
+    "note": ""
+   },
+   {
+    "id": "SE-17",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.1.event": "c1_heater_preheat"
+    },
+    "note": "GROUND_REFERENCE_ONLY event (DIV-A02)"
+   },
+   {
+    "id": "SE-18",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.1.event": "active_cooling_start"
+    },
+    "note": "event of a not-installed variant slot"
+   },
+   {
+    "id": "SE-19",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "variant": [
+      "active_cooling"
+     ],
+     "$cooling_step": true
+    },
+    "note": "declared cooling variant started in its own step"
+   },
+   {
+    "id": "SE-20",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "del": [
+     "steps.3.loads.compressor"
+    ],
+    "note": ""
+   },
+   {
+    "id": "SE-21",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "config": "hall_c1_reference"
+    },
+    "note": ""
+   },
+   {
+    "id": "SE-22",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.2.event": [
+      "magnet_ramp"
+     ]
+    },
+    "note": ""
+   },
+   {
+    "id": "SE-23",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "steps.1.event": 5
+    },
+    "note": ""
+   },
+   {
+    "id": "SE-24",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "$all_bases": null
+    },
+    "note": ""
+   },
+   {
+    "id": "SE-25",
+    "fn": "check_startup_sequence",
+    "base": "TPL",
+    "set": {
+     "$all_loads_tbd_after": 0
+    },
+    "note": ""
+   },
+   {
+    "id": "PE-01",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "const": [
+      1000.0,
+      100
+     ]
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-02",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "ramp": [
+      0.0,
+      10.0,
+      150
+     ]
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-03",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "const": [
+      1.0,
+      200
+     ]
+    },
+    "fs": 99999.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-04",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "const": [
+      1.0,
+      200
+     ]
+    },
+    "fs": 100000.0,
+    "bw": 19999.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-05",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "const": [
+      1.0,
+      200
+     ]
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": false,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-06",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "const": [
+      1.0,
+      200
+     ]
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": 1,
+    "note": ""
+   },
+   {
+    "id": "PE-07",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "raw": "abc"
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-08",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "raw": {
+      "a": 1
+     }
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-09",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "raw": 5
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-10",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "raw": [
+      1.0,
+      {
+       "$float": "nan"
+      }
+     ]
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-11",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "raw": [
+      true
+     ]
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-12",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "const": [
+      1.0,
+      200
+     ]
+    },
+    "fs": 100000.5,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-13",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "const": [
+      1.0,
+      99
+     ]
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-14",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "wave": [
+      10000
+     ]
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-15",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "wave": [
+      100000
+     ]
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-16",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "wave": [
+      1000
+     ]
+    },
+    "fs": 1000000.0,
+    "bw": 50000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-17",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "wave": [
+      300
+     ]
+    },
+    "fs": 100000,
+    "bw": 20000,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-18",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "const": [
+      1.0,
+      200
+     ]
+    },
+    "fs": "x",
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-19",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "const": [
+      1.0,
+      200
+     ]
+    },
+    "fs": 100000.0,
+    "bw": {
+     "$float": "nan"
+    },
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-20",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "ramp": [
+      -50.0,
+      1.0,
+      120
+     ]
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "PE-21",
+    "fn": "p_bus_1ms_max",
+    "samples": {
+     "raw": []
+    },
+    "fs": 100000.0,
+    "bw": 20000.0,
+    "aa": true,
+    "sync": true,
+    "note": ""
+   },
+   {
+    "id": "RE-01",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     400.0,
+     20.0,
+     350.0,
+     1.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-02",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     400.0,
+     20.0,
+     "TBD",
+     1.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-03",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-04",
+    "fn": "rf_power_planes",
+    "args": [
+     0.0,
+     0.0,
+     0.0,
+     "TBD",
+     0.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-05",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     400.0,
+     400.5,
+     0.0,
+     1.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-06",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     400.0,
+     402.0,
+     0.0,
+     1.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-07",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     502.0,
+     1.0,
+     0.0,
+     1.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-08",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     400.0,
+     20.0,
+     350.0,
+     -1.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-09",
+    "fn": "rf_power_planes",
+    "args": [
+     -1.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-10",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     400.0,
+     20.0,
+     "tbd",
+     1.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-11",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     400.0,
+     20.0,
+     381.0,
+     1.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-12",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     400.0,
+     20.0,
+     -1.0,
+     1.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-13",
+    "fn": "rf_power_planes",
+    "args": [
+     true,
+     400.0,
+     20.0,
+     350.0,
+     1.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-14",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     {
+      "$float": "nan"
+     },
+     20.0,
+     350.0,
+     1.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-15",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     400.0,
+     20.0,
+     null,
+     1.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "RE-16",
+    "fn": "rf_power_planes",
+    "args": [
+     500.0,
+     400.0,
+     400.0,
+     0.0,
+     0.0
+    ],
+    "note": ""
+   },
+   {
+    "id": "AE-01",
+    "fn": "allocation_checks",
+    "ledger_raw": "x",
+    "note": ""
+   },
+   {
+    "id": "AE-02",
+    "fn": "allocation_checks",
+    "ledger_raw": {
+     "boundary_version": "bus_power_boundary_a9_v1"
+    },
+    "note": ""
+   },
+   {
+    "id": "AE-03",
+    "fn": "icp_power_allocation_check",
+    "ledger_raw": [
+     1
+    ],
+    "note": ""
+   },
+   {
+    "id": "AE-04",
+    "fn": "icp_power_allocation_check",
+    "ledger_raw": {
+     "boundary_version": "bus_power_boundary_a9_v2",
+     "configuration": "hall_c1_reference"
+    },
+    "note": ""
+   },
+   {
+    "id": "AE-05",
+    "fn": "icp_power_allocation_check",
+    "ledger_raw": {
+     "boundary_version": "bus_power_boundary_a9_v2"
+    },
+    "note": ""
+   },
+   {
+    "id": "OE-01",
+    "fn": "official_ledger",
+    "config": "hall_icp_neutralizer",
+    "compressor_P_W": null,
+    "compressor_source": "",
+    "note": ""
+   },
+   {
+    "id": "OE-02",
+    "fn": "official_ledger",
+    "config": "hall_icp_neutralizer",
+    "compressor_P_W": 0.0,
+    "compressor_source": "",
+    "note": ""
+   },
+   {
+    "id": "OE-03",
+    "fn": "official_ledger",
+    "config": "hall_icp_neutralizer",
+    "compressor_P_W": 37.5,
+    "compressor_source": "",
+    "note": ""
+   },
+   {
+    "id": "OE-04",
+    "fn": "official_ledger",
+    "config": "hall_icp_neutralizer",
+    "compressor_P_W": 1234.5,
+    "compressor_source": "registered source text",
+    "note": ""
+   },
+   {
+    "id": "OE-05",
+    "fn": "official_ledger",
+    "config": "hall_icp_neutralizer",
+    "compressor_P_W": 1e-300,
+    "compressor_source": "",
+    "note": ""
+   },
+   {
+    "id": "OE-06",
+    "fn": "official_ledger",
+    "config": "hall_icp_neutralizer",
+    "compressor_P_W": -1.0,
+    "compressor_source": "",
+    "note": ""
+   },
+   {
+    "id": "OE-07",
+    "fn": "official_ledger",
+    "config": "hall_icp_neutralizer",
+    "compressor_P_W": {
+     "$float": "nan"
+    },
+    "compressor_source": "",
+    "note": ""
+   },
+   {
+    "id": "OE-08",
+    "fn": "official_ledger",
+    "config": "hall_icp_neutralizer",
+    "compressor_P_W": {
+     "$float": "inf"
+    },
+    "compressor_source": "",
+    "note": ""
+   },
+   {
+    "id": "OE-09",
+    "fn": "official_ledger",
+    "config": "hall_icp_neutralizer",
+    "compressor_P_W": 5,
+    "compressor_source": "",
+    "note": ""
+   },
+   {
+    "id": "OE-10",
+    "fn": "official_ledger",
+    "config": "nope",
+    "compressor_P_W": null,
+    "compressor_source": "",
+    "note": ""
+   },
+   {
+    "id": "OE-11",
+    "fn": "official_ledger",
+    "config": "hall_c1_reference",
+    "compressor_P_W": null,
+    "compressor_source": "",
+    "note": ""
+   },
+   {
+    "id": "BE-01",
+    "fn": "bus_power",
+    "supplied": null,
+    "compressor_P_W": null,
+    "note": ""
+   },
+   {
+    "id": "BE-02",
+    "fn": "bus_power",
+    "supplied": null,
+    "compressor_P_W": 37.5,
+    "note": ""
+   },
+   {
+    "id": "BE-03",
+    "fn": "bus_power",
+    "supplied": null,
+    "compressor_P_W": {
+     "$float": "nan"
+    },
+    "note": ""
+   },
+   {
+    "id": "BE-04",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-01",
+     "startup": [
+      "LE-01"
+     ]
+    },
+    "compressor_P_W": null,
+    "note": ""
+   },
+   {
+    "id": "BE-05",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-12",
+     "startup": [
+      "LE-01",
+      "LE-12"
+     ]
+    },
+    "compressor_P_W": null,
+    "note": ""
+   },
+   {
+    "id": "BE-06",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-09",
+     "startup": [
+      "LE-01"
+     ]
+    },
+    "compressor_P_W": null,
+    "note": "assumed-class not-installed record does not enter the classes"
+   },
+   {
+    "id": "BE-07",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-04",
+     "startup": [
+      "LE-01"
+     ]
+    },
+    "compressor_P_W": null,
+    "note": ""
+   },
+   {
+    "id": "BE-08",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-01",
+     "startup": [
+      "LE-01"
+     ],
+     "synthetic": true
+    },
+    "compressor_P_W": null,
+    "note": ""
+   },
+   {
+    "id": "BE-09",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-01",
+     "startup": [
+      "LE-01"
+     ],
+     "synthetic": "x"
+    },
+    "compressor_P_W": null,
+    "note": ""
+   },
+   {
+    "id": "BE-10",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-01",
+     "startup": [
+      "LE-01"
+     ],
+     "source": "custom ledgers"
+    },
+    "compressor_P_W": 37.5,
+    "note": ""
+   },
+   {
+    "id": "BE-11",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-01",
+     "startup": []
+    },
+    "compressor_P_W": null,
+    "note": "DIV-A04"
+   },
+   {
+    "id": "BE-12",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-01",
+     "startup": {
+      "raw": "abc"
+     }
+    },
+    "compressor_P_W": null,
+    "note": "DIV-A04"
+   },
+   {
+    "id": "BE-13",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-01",
+     "startup": {
+      "raw": {
+       "a": 1
+      }
+     }
+    },
+    "compressor_P_W": null,
+    "note": "DIV-A04"
+   },
+   {
+    "id": "BE-14",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-01",
+     "startup": [
+      "LE-01",
+      {
+       "raw": "x"
+      }
+     ]
+    },
+    "compressor_P_W": null,
+    "note": ""
+   },
+   {
+    "id": "BE-15",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": {
+      "raw": "x"
+     },
+     "startup": [
+      "LE-01"
+     ]
+    },
+    "compressor_P_W": null,
+    "note": ""
+   },
+   {
+    "id": "BE-16",
+    "fn": "bus_power",
+    "supplied": {},
+    "compressor_P_W": null,
+    "note": ""
+   },
+   {
+    "id": "BE-17",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-01"
+    },
+    "compressor_P_W": null,
+    "note": ""
+   },
+   {
+    "id": "BE-18",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-FE-ASSUMED",
+     "startup": [
+      "LE-01"
+     ]
+    },
+    "compressor_P_W": null,
+    "note": "ledger LE-01 with front_end evidence_class 'assumed'"
+   },
+   {
+    "id": "BE-19",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-81",
+     "startup": [
+      "LE-81"
+     ]
+    },
+    "compressor_P_W": null,
+    "note": ""
+   },
+   {
+    "id": "BE-20",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-EFF-ASSUMED",
+     "startup": [
+      "LE-01"
+     ]
+    },
+    "compressor_P_W": null,
+    "note": "ledger LE-01 with efficiencies.hall_discharge.evidence_class 'assumed'"
+   },
+   {
+    "id": "BE-21",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-02",
+     "startup": [
+      "LE-03",
+      "LE-10"
+     ]
+    },
+    "compressor_P_W": null,
+    "note": ""
+   },
+   {
+    "id": "BE-22",
+    "fn": "bus_power",
+    "supplied": {
+     "steady": "LE-83",
+     "startup": [
+      "LE-83"
+     ]
+    },
+    "compressor_P_W": null,
+    "note": ""
+   }
+  ],
+  "registered_case_notes": {
+   "p_bus_1ms_max samples": "{'const': [x, n]} n samples equal to x; {'ramp': [x0, dx, n]} x0 + i dx; {'wave': [n]} 700.0 + 600.0 * math.sin(i / 37.0) + (450.0 if i % 997 == 0 else 0.0) evaluated in Python (inputs, exact through JSON); {'raw': v} v as given",
+   "p_bus_1ms_max args": "fs = sample_rate_Sa_s, bw = bandwidth_Hz, aa = anti_alias_documented, sync = synchronized",
+   "rf_power_planes args": "[P_dc_in_W, P_forward_W, P_reflected_W, P_delivered_W, u_W]",
+   "allocation on ledgers": "E5 and E6 are also applied to every registered E2 ledger case and every randomized E2 ledger that RETURNED (flight-restricted reference and Rust each on their own ledger)",
+   "bus_power supplied": "'LE-xx' names the ledger of that registered case (built by the same implementation); {'raw': v} passes v unchanged; LE-FE-ASSUMED / LE-EFF-ASSUMED are LE-01 with front_end.evidence_class = 'assumed' / efficiencies.hall_discharge.evidence_class = 'assumed'; config 'hall_icp_neutralizer'"
+  },
+  "edge_cases": "registered_cases (every raise branch of E1-E9 reachable in the flight-restricted reference, each GROUND_REFERENCE_ONLY input class, the fsum overflow)",
+  "randomized_domain": {
+   "count": {
+    "E2 ledger": 400,
+    "E7 sequence": 150,
+    "E3 p_bus_1ms_max": 40,
+    "E4 rf_power_planes": 200,
+    "E9 bus_power (supplied)": 150
+   },
+   "draw": {
+    "rng": "Python random.Random(master_seed * 1000 + k) with k = 2 (E2), 7 (E7), 3 (E3), 4 (E4), 9 (E9); draws in the order written here",
+    "E2": "variant = choice of [[], ['icp_assist_magnet'], ['active_cooling'], ['flow_control_icp_feed'], ['icp_assist_magnet', 'active_cooling', 'flow_control_icp_feed'], ['flow_control_icp_feed', 'icp_assist_magnet']]; p_tbd = choice([0.0, 0.0, 0.1, 0.3]); p_off = choice([0.0, 0.15]); p_eff_tbd = choice([0.0, 0.0, 0.1]); for every installed slot in ALL_SLOTS order: u = random(); u < p_tbd -> TBD load (tbd_requires 'tbd:' + slot); u < p_tbd + p_off -> 0.0 W; else P_W = round(uniform(0, 900), choice([0, 3, 6, 17])) with evidence_class = choice(EVIDENCE_CLASSES), source 'src:' + slot (rf plane added); efficiency: random() < p_eff_tbd -> TBD with path choice(PATHS), else value = 1.0 if random() < 0.1 else uniform(0.5, 1.0), evidence_class choice, path choice(PATHS); every declared variant option not installed is passed as the exactly-0 W / efficiency-1 record with probability 0.3; front_end TBD with probability 0.15 else uniform(0.85, 1.0) with evidence_class choice; power_basis = choice([None] + POWER_BASES); gate_measurement = choice([None, GM_OK, GM_OK with sample_rate 50000.0, GM_OK with anti_alias_documented False]); label 'R2-<n>'",
+    "E7": "variant = choice([[], ['active_cooling']]); n = randint(2, 7) steps; efficiencies and front_end drawn once as in E2; loads start at 0.0 W for every installed slot; per step: each installed slot changes with probability 0.3 to uniform(0, 600) (rounded to 3 decimals), to 0.0, or to TBD (equal thirds); event = choice([None, None, one flight event whose slot is installed, a list of two such events]); power_basis choice as E2; step_id 'S<i>'; the last step carries phase 'steady'",
+    "E3": "fs = choice([100000.0, 200000.0, 1000000.0, 100000]); bw = choice([20000.0, 50000.0]); n1 = round(fs * 1e-3); length = n1 + randint(0, 3 n1) (one draw in ten: 10000 + randint(0, 500) at 100000.0 Sa/s); samples uniform(0, 1500) rounded to 2 decimals with a spike of uniform(1500, 4000) at a random index",
+    "E4": "dc = uniform(0, 600); fw = uniform(0, dc); rf = uniform(0, fw); delivered = 'TBD' with probability 0.2 else uniform(0, fw - rf); u = choice([0.0, 0.5, 2.0]); with probability 0.2 one of: rf = fw + u + uniform(0.1, 5), fw = dc + u + uniform(0.1, 5), delivered = fw - rf + u + uniform(0.1, 5)",
+    "E9": "steady = one E2 draw (same rules, its own stream), startup = randint(1, 3) E2 draws; synthetic = choice([absent, True, False]); source = choice([absent, 'random source <n>']); compressor_P_W = choice([None, uniform(0, 200)])"
+   },
+   "domain_note": "numerical parity domain only; not a physics, design or evidence claim; magnitudes stay below 1e300 except the registered overflow cases"
+  },
+  "vector_totals": {
+   "registered": "201 calls (E1 7, E2 94, E7 25, E3 21, E4 16, E5/E6 refusals 5, E8 11, E9 22) plus E5 and E6 on every RETURNED registered ledger",
+   "randomized": "940 calls plus E5 and E6 on every RETURNED randomized ledger"
+  }
+ },
+ "campaign_seeds": {
+  "applicable": "true (input generation only; the component is deterministic)",
+  "scoring_master_seed": 3254949622,
+  "development_master_seed": 5051,
+  "derivation": "random.Random(master_seed * 1000 + k) per entry point as in inputs.randomized_domain.draw",
+  "rng_stream_roles": {
+   "rule": "A9.29 sec. 7 (RM-OQ-03): design / UQ sampling uses exact registered stream parity; TPMC particle tracing uses the existing admitted stochastic / statistical parity contract; the roles are registered separately and never merged",
+   "design_uq_sampling_stream": "NOT_APPLICABLE",
+   "tpmc_particle_tracing_stream": "NOT_APPLICABLE",
+   "other_streams": "NOT_APPLICABLE: the harness's random.Random only generates input cases",
+   "migration_parity_dataset": "seeds and the generated case file stay exactly reproducible (immutable)",
+   "after_rust_authority": "NOT_APPLICABLE"
+  },
+  "rng_streams_v3": "NOT_APPLICABLE (deterministic component)",
+  "development_rule": "development comparisons use development_master_seed (and the registered deterministic cases) only and are never scored or reported as a verdict; every execution with scoring_master_seed is appended to campaign_history and the report is committed whatever its verdict"
+ },
+ "observables": {
+  "every call": {
+   "list": [
+    {
+     "name": "outcome",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "RETURNED or RAISED"
+    },
+    {
+     "name": "value_structure",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "returned value as JSON (tuples as lists): object keys and their order, list lengths, strings, booleans, nulls, integers and the int / float type of every number equal"
+    },
+    {
+     "name": "value_floats",
+     "units": "W, -, s (as the field)",
+     "tolerance_class": "ULP_BOUNDED",
+     "tolerance": "|rust - py| <= 4 ulp(py) OR <= 1e-12 * max(1, |py|); NaN equals NaN; infinities equal with sign",
+     "definition": "every float leaf of the returned value"
+    },
+    {
+     "name": "error_class",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "Python exception class name; Rust reports the mapped class name"
+    },
+    {
+     "name": "error_message",
+     "units": "-",
+     "tolerance_class": "EXACT_VALUE",
+     "tolerance": "equal",
+     "definition": "str(exception) character for character for BoundaryA9Error and OverflowError (except the registered Rust messages of DIV-A03 / DIV-A04); class only for KeyError and RuntimeError"
+    }
+   ],
+   "replicates_per_implementation": "NOT_APPLICABLE",
+   "se_method": "NOT_APPLICABLE"
+  },
+  "E7": "compared without the field transient_gate (DIV-A05)",
+  "E9": "compared without the field gate_verdict (DIV-A05)"
+ },
+ "tolerance_classes": {
+  "EXACT_VALUE": "integers, strings, enums, booleans, statuses, error codes, schema shape: equal",
+  "ULP_BOUNDED": "|rust - py| <= k_ulp ulp(py) OR <= r_rel * max(1, |py|) with k_ulp = 4, r_rel = 1e-12 (template proposal); bit-identical results are expected because every operation is ported in the reference order"
+ },
+ "exact_invariants": [
+  {
+   "id": "INV-A01",
+   "statement": "restriction inertness: for every call whose inputs contain no GROUND_REFERENCE_ONLY slot key, no C1 event and no booked_W key, the unrestricted Python observation equals the flight-restricted one after (i) removing the group-'c1' rows from every ledger 'items' list and (ii) replacing, in a refusal message, the list ALL_SLOTS by the flight slot list and sorted(PEAK_EVENTS) by the sorted flight event list (outcome, class, every value bit for bit)",
+   "required_in_both": false,
+   "evaluated_on": "Python (both reference runs)"
+  },
+  {
+   "id": "INV-A02",
+   "statement": "every removed group-'c1' row of an unrestricted ledger is exactly {slot, group: 'c1', state: 'NOT_INSTALLED', P_W: 0.0, efficiency: 1.0, path: null, P_bus_W: 0.0, P_loss_W: 0.0, evidence_class: null, source: null}",
+   "required_in_both": false,
+   "evaluated_on": "Python"
+  },
+  {
+   "id": "INV-A03",
+   "statement": "determinism: every Rust call evaluated in two separate processes gives byte-identical output",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-A04",
+   "statement": "the Rust flight taxonomy equals the pinned boundary record bus_power_boundary_a9_v2.json: configurations, variant_options, the slots rows without the group-'c1' rows (slot, group, rows, common_allocation, controls_thermal, configurations.hall_icp_neutralizer: INSTALLED / VARIANT_ONLY), sequencing.peak_events without the C1 events and sequencing.enforced_order.hall_icp_neutralizer",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-A05",
+   "statement": "layer separation: crates/abep-subsystems/src contains no rfp_power_gate, no P_BUS_REQUIREMENT and no 1500 literal; `cargo metadata --locked` shows no abep-assess / abep-evidence / abep-groundtest node in the dependency closure of abep-subsystems, and its direct workspace dependencies stay abep-types and abep-provenance",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-A06",
+   "statement": "the existing forbidden_identifier_scan_of_this_crate test of abep-subsystems passes with the new module (no heater token; keeper only in comments)",
+   "required_in_both": false
+  },
+  {
+   "id": "INV-A07",
+   "statement": "excluded assessment fields are inert: in the flight-restricted reference, check_startup_sequence and bus_power never raise from rfp_power_gate on a registered or randomized call except the DIV-A04 refusals (the harness records the raising function of every RAISED Python call)",
+   "required_in_both": false,
+   "evaluated_on": "Python"
+  }
+ ],
+ "conservation_checks": {
+  "applicable": "true",
+  "checks": [
+   {
+    "id": "CONS-A1",
+    "statement": "ledger closure (plan admission criterion 'sum of slot loads / efficiencies = P_bus' exact): for every COMPLETE ledger, P_bus_W equals fsum over items of P_W / efficiency / eta_fe (eta_fe = front-end efficiency for internal_bus items, 1 for direct, 0 W items 0) and the reported residual_W satisfies |residual_W| <= 1e-12 * max(sum of P_bus_W items, 1) (the reference's own bookkeeping identity)",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "|fsum(P_W / eta / eta_fe) - P_bus_W| <= 1e-12 * max(1, P_bus_W); residual as stated"
+   },
+   {
+    "id": "CONS-A2",
+    "statement": "source power balance per slot: for every ON item with known P_bus_W, P_bus_W = P_W + P_loss_W and P_loss_W >= 0 (eta <= 1)",
+    "evaluated_on": "Rust outputs (and Python outputs, recorded)",
+    "tolerance": "|P_W + P_loss_W - P_bus_W| <= 1e-12 * max(1, P_bus_W)"
+   },
+   {
+    "id": "CONS-L1",
+    "statement": "system energy ledger (CLAUDE.md rule 4; NP-THERMAL-CATHODELESS prereg CONS-L1 / EB-05 assign it to this work package)",
+    "evaluated_on": "Rust outputs on the registered system cases SYS-01..SYS-08 (Rust-only, no Python reference: there is no active Python system energy ledger; archengine's ledger is class H)",
+    "tolerance": "relative residual < 0.02",
+    "definition": {
+     "inputs": "one COMPLETE bus_power_boundary_a9_v2 ledger L of one evaluated step and a set of downstream accounts a = {account_id, slot_planes [(slot, plane)], deposited_W, exported_W, booked_W, status, source}; plane LOAD = P_W (the slot's load plane), SUPPLY_INPUT = P_W / eta_slot, BUS = P_bus_W (spacecraft side); the plane is declared by the account, never defaulted",
+     "coverage": "every installed item of L with P_W > 0 appears in exactly one account; a slot in two accounts -> MODEL_ERROR (CONS-L1_DOUBLE_COUNT); an ON slot in no account -> NOT_EVALUATED (CONS-L1_UNCOVERED_LOAD, never zero-filled); a slot not installed in L -> MODEL_ERROR (CONS-L1_SLOT_NOT_INSTALLED); a negative or non-finite account amount -> MODEL_ERROR",
+     "status": "L not COMPLETE -> INCOMPLETE_EVIDENCE (P_bus unknown; no residual); any account status other than EVALUATED -> that status (worst of MODEL_ERROR > OUT_OF_DOMAIN > NOT_EVALUATED > INCOMPLETE_EVIDENCE)",
+     "computation": "V_a = fsum over the account's slots of the ledger value at the declared plane; X_a = fsum over its slots of (P_bus_W - plane value) (supply / front-end loss booked outside the account, at the PPU); C_a = deposited_W + exported_W + booked_W; S = fsum over accounts of (C_a + X_a); R = P_bus_W(L) - S; r = |R| / P_bus_W(L) (P_bus_W(L) = 0: r = 0 if R = 0 else infinity)",
+     "criterion": "r < 0.02 -> EVALUATED with R, r and the per-account mismatch V_a - C_a reported; r >= 0.02 -> MODEL_ERROR (CONS-L1_RESIDUAL: conservation is a gate, rule 4), the same numbers reported",
+     "thermal_accounts": "from a CONVERGED steady NP-THERMAL ThermalOutput: HALL_DISCHARGE = hall_discharge @ LOAD, deposited = sum over nodes of Q_source_node_W for Q_hall_anode_W, Q_hall_wall_inner_W, Q_hall_wall_outer_W, Q_hall_pole_W, Q_hall_plasma_radiation_W, Q_hall_return_to_icp_W, Q_hall_plume_to_icp_W, exported = P_exported_W['P_hall_exported_W'] (it already holds the jet, the unattributed remainder and the EXPORT share of Q_hall_plasma_radiation_W; 'Q_hall_plasma_radiation_W.EXPORT' and 'P_hall_unattributed_W' are subsets and are not added); HALL_MAGNET_X = hall_magnet_X @ LOAD, deposited = Q_source_node_W 'Q_hall_coil_X_W'; ICP = the ICP slots at the planes the case declares, deposited = Q_source_node_W of Q_icp_plasma_wall_W, Q_icp_coil_ohmic_W, Q_icp_match_W, Q_icp_radiation_W, exported = P_exported_W['Q_icp_extraction_W'] + P_exported_W['Q_icp_radiation_W.EXPORT'] (when present), booked = B_PPU_RF_booked['Q_icp_boundary_W'] + B_PPU_RF_booked['Q_icp_match_W'] (when present) (their sum is P_icp_bus_W by E-13 / CONS-I2); THERMAL_CONTROL = thermal_control @ LOAD, deposited = Q_source_node_W 'Q_thermal_control_W'. Slots outside the thermal control volume (compressor, flow controls, housekeeping, reserved port, active cooling) need caller-declared external accounts (no default)",
+     "cases": {
+      "SYS-01": "registered VS-NET (vs_net_v1.json) solved steady exactly as the NP-THERMAL verification's vs_net_loaded_steady helper does, paired with the synthetic ledger LS-01 = {hall_discharge 600.0 W eta 0.95, hall_magnet_inner 6.0 / outer 9.0 / trim 2.0 W eta 0.9, icp_rf_source 45.0 W eta 1.0, icp_matching_network 2.0 W eta 1.0, icp_collector_bias 6.4 W eta 0.8, flow_control_atmospheric 3.0 W eta 0.9, flow_control_xe 2.0 W eta 0.9, compressor 40.0 W eta 0.92, thermal_control 0.0 W, housekeeping_controls 25.0 W eta 0.85, reserved_dc_port 0.0 W (thermal_control and reserved_dc_port efficiency 0.9); all internal_bus, evidence_class 'assumed', source SYNTHETIC_TEST_DATA_NOT_EVIDENCE; front end 0.96}; ICP planes icp_rf_source @ LOAD, icp_matching_network @ LOAD, icp_collector_bias @ SUPPLY_INPUT (45 + 2 + 6.4 / 0.8 = 55 W = VS-NET P_icp_bus_W); external accounts GAS_PATH (compressor @ LOAD, deposited 40.0), VALVES (flow_control_atmospheric, flow_control_xe @ LOAD, deposited 5.0), PPU_HOUSEKEEPING (housekeeping_controls @ LOAD, deposited 25.0). Expected EVALUATED, r of order 1e-15",
+      "SYS-02": "SYS-01 with LS-01 hall_discharge 640.0 W (thermal still 600 W): expected MODEL_ERROR CONS-L1_RESIDUAL (r about 0.047)",
+      "SYS-03": "SYS-01 with the GAS_PATH account status NOT_EVALUATED: NOT_EVALUATED",
+      "SYS-04": "SYS-01 without PPU_HOUSEKEEPING: NOT_EVALUATED (CONS-L1_UNCOVERED_LOAD)",
+      "SYS-05": "SYS-01 with compressor also in VALVES: MODEL_ERROR (CONS-L1_DOUBLE_COUNT)",
+      "SYS-06": "the official ledger (E8, PARTIAL_BOUNDARY) with any accounts: INCOMPLETE_EVIDENCE",
+      "SYS-07": "VS-NET with Q_icp_radiation_W status NOT_EVALUATED (thermal run NOT_EVALUATED): the thermal accounts carry NOT_EVALUATED and CONS-L1 is NOT_EVALUATED",
+      "SYS-08": "SYS-01 with GAS_PATH deposited -1.0: MODEL_ERROR"
+     },
+     "labels": "SYS cases are SYNTHETIC_TEST_DATA_NOT_EVIDENCE; flight CONS-L1 stays INCOMPLETE_EVIDENCE while the official ledger is PARTIAL_BOUNDARY"
+    }
+   }
+  ]
+ },
+ "rust_only_registered_interfaces": {
+  "IF-ICP-BUS-v1 consumer (abep_subsystems::power::icp_bus)": {
+   "producer": "NP-ICP-NEUTRALIZER (crates/abep-icp, BusRecord serialized as JSON: interface, target_boundary, keys {key: {value, unit, status, reasons}}, slots, checks, status, reasons)",
+   "why_not_typed_wiring": "abep-icp is NOT_ADMITTED; linking its types would put its sources into this contract's provenance and couple the two admission records; the consumer reads the serialized interface record instead (versioned by interface id)",
+   "rule": "interface must be 'IF-ICP-BUS-v1' and target_boundary 'bus_power_boundary_a9_v2' (else MODEL_ERROR); load records: icp_rf_source <- P_icp_rf_source_DC_W (plane generator_dc_input), icp_matching_network <- P_icp_matching_DC_W, icp_collector_bias <- P_icp_collector_bias_W (the bias-supply OUTPUT, the slot's load plane), icp_assist_magnet <- P_icp_assist_magnet_W and flow_control_icp_feed <- P_icp_flow_control_W only when declared in the ledger variant; evidence_class and source are caller inputs (required, no default); a key with status CONVERGED and a finite value >= 0 -> known load; any other status -> TBD load with tbd_requires 'IF-ICP-BUS-v1 <key>: <status> (<reasons>)'; a missing key, or CONVERGED with a null value -> MODEL_ERROR",
+   "finding_registered_now": "the producer's P_icp_bus_W = P_RF,DC + P_match,DC + P_bias / eta_bias (+ variants) is a supply-input-plane sum for the bias slot and a load-plane value for the RF and match slots; it equals the ledger's ICP bus draw only when the RF / match slot efficiencies and the front end are 1, while the NP-THERMAL prereg calls it the demand 'at the spacecraft DC boundary' (IK-07). CONS-L1 therefore takes per-slot planes; the alignment is reported for the owner / NP-ICP lane, not resolved here",
+   "tests": "registered synthetic records: all CONVERGED, one key NOT_EVALUATED, wrong interface id, wrong boundary, missing key, CONVERGED null, variant handling"
+  },
+  "typed flight load inputs and bus demand (abep_subsystems::power::demand)": {
+   "rule": "upstream values that are not admitted (Hall discharge power from an admitted Hall member, ICP demand, compressor load row 22, magnet power) enter as explicit typed inputs {EVALUATED value + evidence_class + source | NOT_EVALUATED | INCOMPLETE_EVIDENCE | OUT_OF_DOMAIN | MODEL_ERROR with a reason}; a non-EVALUATED input becomes a TBD load whose tbd_requires names the status and reason (the reference's TBD semantics; never a placeholder value); bus demand status = worst of the input statuses of installed ON-or-TBD slots and the ledger (COMPLETE -> EVALUATED, INCOMPLETE_EVIDENCE / PARTIAL_BOUNDARY -> INCOMPLETE_EVIDENCE); no requirement threshold",
+   "tests": "today's flight inputs (Hall discharge NOT_EVALUATED: credible set empty; compressor TBD row 22) give NOT_EVALUATED with ledger PARTIAL_BOUNDARY"
+  }
+ },
+ "domain_and_error_parity": {
+  "cases": "all registered and randomized calls; refusal classes: BoundaryA9Error (every validation branch), OverflowError (math.fsum intermediate overflow), KeyError (unknown configuration in the mass / power record E8, missing supplied keys E9), RuntimeError (bookkeeping identity; unreachable)",
+  "mapping": {
+   "BoundaryA9Error": "abep_subsystems::power::PowerError class 'BoundaryA9Error' (MODEL_ERROR)",
+   "OverflowError": "PowerError class 'OverflowError' (MODEL_ERROR)",
+   "KeyError": "PowerError class 'KeyError' (MODEL_ERROR)",
+   "RuntimeError": "PowerError class 'RuntimeError' (MODEL_ERROR)"
+  },
+  "mapping_rule": "every Python exception class maps to exactly one Rust class name; no Rust path may return a value where the flight-restricted reference fails, or fail where it returns, except the registered divergences",
+  "documented_divergence": [
+   {
+    "id": "DIV-A01",
+    "statement": "flight-restricted reference (comparison_reference): the scored observation is the restricted reference's; the unrestricted outputs differ only by the C1 rows and the enumerations (INV-A01 / INV-A02)",
+    "disposition": "scored against the restricted reference"
+   },
+   {
+    "id": "DIV-A02",
+    "statement": "a GROUND_REFERENCE_ONLY slot key (c1_heater, c1_keeper, c1_common_tie, filter_getter) in loads / efficiencies, or a C1 event (c1_heater_preheat, c1_keeper_ignition) in a step: the unrestricted reference accepts a 0 W record / refuses the event as 'needs slot ... not installed'; Rust and the restricted reference refuse the key as an unknown slot / the event as an unknown event (A9.30 sec. 5: never in active flight bus closure)",
+    "disposition": "scored against the restricted reference; the unrestricted outcome is recorded"
+   },
+   {
+    "id": "DIV-A03",
+    "statement": "a TBD load record carrying booked_W (the A9.1 SEQ-heater branch, C1 only): the reference raises \"load of <slot>: 'booked_W' is defined only for c1_heater (A9.1 SEQ-heater)\"; Rust has no booking branch and raises the generic schema refusal",
+    "disposition": "scored on class BoundaryA9Error and the registered Rust message f\"load of {slot!r}: unexpected key(s) {extra}; allowed {sorted(allowed)} (schema parity)\" with allowed = {'P_W', 'tbd_requires'} (plus 'plane' for icp_rf_source) and extra = sorted keys of the record outside allowed; the reference message is recorded"
+   },
+   {
+    "id": "DIV-A04",
+    "statement": "E9 supplied path, startup not a non-empty sequence: the reference raises from rfp_power_gate with a text naming the 1.5 kW limit; Rust (no gate in the physics crate) raises 'bus_power needs a non-empty sequence of start-up step ledgers (row 108)'",
+    "disposition": "scored on class BoundaryA9Error and that registered Rust message; the 'not a bus_power_boundary_a9_v2 ledger: ...' refusal keeps the reference text and is scored normally"
+   },
+   {
+    "id": "DIV-A05",
+    "statement": "E7 transient_gate and E9 gate_verdict are assessment outputs (rfp_power_gate, SC-WP-11) and are absent from the Rust output",
+    "disposition": "removed from the reference observation before comparison (INV-A07)"
+   },
+   {
+    "id": "DIV-A06",
+    "statement": "the Rust mass/power loader pins mass_power_a9_v5.json at sha256 3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a and refuses other bytes (MODEL_ERROR, hash mismatch); the reference reads whatever file is present",
+    "disposition": "no scored vector (the pinned file is present at scoring); a Rust unit test covers the refusal"
+   }
+  ]
+ },
+ "schema_parity": {
+  "schemas": [
+   "schemas/interfaces/bus_power_boundary_a9_v2.json (instance schema of the boundary record; context)"
+  ],
+  "rules": [
+   "ledger / sequence / allocation / plane / objective record field names, order and types identical (EXACT_VALUE structure)",
+   "status labels identical: COMPLETE, PARTIAL_BOUNDARY, INCOMPLETE_EVIDENCE, NOT_INSTALLED, OFF, ON, RULES_SATISFIED, RULES_NOT_EVALUABLE, SEQUENCE_RULE_VIOLATION, WITHIN_ALLOCATION, EXCEEDS_ALLOCATION, WITHIN_ALLOWANCE, EXCEEDS_ALLOWANCE, WITHIN_AVAILABLE, EXCEEDS_AVAILABLE, NOT_EVALUABLE, NOT_EVALUATED, INCOMPLETE_EVIDENCE, EVALUATED, PARAMETRIC_SENSITIVITY_ONLY, SYNTHETIC_TEST_ONLY_NOT_EVIDENCE; no PASS / FAIL of the RFP gate in any compared output"
+  ]
+ },
+ "golden_and_reference_cases": {
+  "references": [
+   "tests/test_bus_boundary_a9.py / tests/test_bus_boundary_a9_v2.py patterns (FULL ledgers, templates, allocation and plane cases) re-expressed as registered cases; the committed mass_power_a9_v5 record (E8 / E9)"
+  ],
+  "rule": "references are read as committed; they are never regenerated to make Rust pass (RM-R11)",
+  "captured_reference_outputs": {
+   "path": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/reference_outputs/",
+   "captured_at_python_commit": "fa4fcb3bd21fec8c07a26fe264e1045d5a6bec73",
+   "sha256_manifest": "FILL at scoring",
+   "purpose": "lets CI check Rust against the Python reference after Python is retired from active execution"
+  },
+  "historical_golden_rule": "RM-R28: not applicable (no golden case involved)"
+ },
+ "julia_bridge": {
+  "applicable": "false",
+  "hallthruster_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "julia_version": "NOT_APPLICABLE",
+  "launch_equivalence": "NOT_APPLICABLE",
+  "record_comparison": "NOT_APPLICABLE",
+  "execution_provenance": "NOT_APPLICABLE"
+ },
+ "performance_measurement": {
+  "status": "reported, not a decision criterion (A9.24 items 1 and 6)",
+  "workloads": [
+   {
+    "id": "PERF-A01",
+    "description": "LE-01 ledger, 1000 repeats"
+   },
+   {
+    "id": "PERF-A02",
+    "description": "PE-15 p_bus_1ms_max (100000 samples), 10 repeats"
+   }
+  ],
+  "repeats": 3,
+  "statistic": "median wall-clock per implementation in one session on one machine (Rust measured inside the harness binary, Python in-process)",
+  "machine_manifest": "recorded in the report"
+ },
+ "decision_rules": {
+  "per_test": "every scored observable of every call meets its tolerance class",
+  "aggregate": "NOT_APPLICABLE",
+  "exact_invariants_required": true,
+  "conservation_required": "true: CONS-A1 and CONS-A2 on every Rust COMPLETE ledger, CONS-L1 SYS-01..SYS-08 give their registered statuses",
+  "domain_error_parity_required": true,
+  "schema_parity_required": true,
+  "verdict": "ADMITTED (= PARITY_PASS) iff every call, every invariant INV-A01..INV-A07, CONS-A1 / CONS-A2 / CONS-L1 and the registered divergence outcomes pass and every reference file matches sha256_at_registration; otherwise NOT_ADMITTED (PARITY_FAIL)",
+  "verdict_vocabulary": [
+   "ADMITTED",
+   "NOT_ADMITTED",
+   "REFUSED_REFERENCE_CHANGED",
+   "INPUT_MISMATCH",
+   "NOT_RUN_RUST_UNAVAILABLE",
+   "REFUSED_CLASSIFICATION"
+  ],
+  "meaning_of_ADMITTED": "A9.24 item 1: Rust becomes authoritative for the bus_power_boundary_a9_v2 ledger, start-up sequence rules, RF power planes, P_bus,1ms,max evaluation, owner-allocation arithmetic, the official A9-02 ledger and the raw P_bus objective within the registered domain; it is NOT physics validation, not a gate PASS and no RFP gate verdict (that is abep-assess, SC-WP-11)",
+  "no_retuning": "tolerances, observables, inputs, n, seeds and rules are fixed; after NOT_ADMITTED only a code fix plus a new contract version with a fresh scoring_master_seed may follow; the failed report stays",
+  "disagreement_rule": "never rewrite a Python result, budget record, boundary record or configuration file to make Rust pass (RM-R11)",
+  "observable_scope": "restricted to the retained flight boundary physics and bookkeeping (RM-R20)"
+ },
+ "bid_boundary": {
+  "statement": "this contract and its Rust implementation are post-bid-freeze work; no output of it may be cited by the bid package unless the owner re-freezes (PROGRAMME.md section 4; bid_source_guard)",
+  "bid_freeze_sha": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b (technical source) / 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 (package / freeze record, terminal state A9.29 sec. 3; lineage b5849af -> 2de86ab)",
+  "bid_record": "docs/bid/bid_technical_baseline_v2.json"
+ },
+ "what_this_is_not": [
+  "not physics evidence or validation: parity shows the Rust code reproduces the Python reference, not that either is right",
+  "not a change of any frozen dataset, golden, threshold or requirement",
+  "not authority before admission: until ADMITTED the Python reference is authoritative",
+  "not a promotion of any provisional input (RM-R27): every TBD load / efficiency of the official ledger stays TBD with its mass/power v5 text",
+  "not a gate PASS: the official flight ledger stays PARTIAL_BOUNDARY, the bus demand NOT_EVALUATED, CONS-L1 INCOMPLETE_EVIDENCE for flight (RM-R31)",
+  "not an RFP power-gate implementation (abep-assess, SC-WP-11)"
+ ],
+ "outputs": {
+  "report": "docs/rust_migration/contracts/C-ABEP_SIM_BUS_BOUNDARY_A9_V2_PY/parity_report_v1.json (+ .md generated from it)",
+  "runner": "scripts/rust_migration/parity_bus_boundary_v1.py (Python harness calling the Rust example power_eval), committed with the implementation; its sha256 is recorded in the report",
+  "report_fields": [
+   "contract_sha256",
+   "python_commit",
+   "reference_sha256",
+   "rust_commit",
+   "build_provenance (rustc, Cargo.lock sha256, source sha256)",
+   "environment",
+   "per-test results",
+   "invariants",
+   "conservation",
+   "domain/error",
+   "schema",
+   "performance",
+   "verdicts",
+   "campaign_history",
+   "ledger_update_requested"
+  ]
+ },
+ "classification_gate": {
+  "rule": "LaB6 / conventional hollow-cathode paths are NOT ported into the active Rust simulator (A9.25 message 3)",
+  "checks": [
+   "component.migration_class ACTIVE_SELECTED_ARCHITECTURE_PHYSICS: PASS (all four coupled inventory rows are class A)",
+   "no observable, input or code path of the Rust side belongs to excluded_legacy_paths: the C1 slots, C1 events, C1 start-up rule and booked-power branch are removed by the flight restriction (DIV-A01..A03)",
+   "the Python harness traverses the v2 module whose SLOTS table carries the C1 rows; INV-A01 / INV-A02 register that they cannot influence the scored observables",
+   "forbidden identifiers: none in crates/abep-subsystems (INV-A06)",
+   "not a GROUND_TEST_PROGRAMME_ONLY contract"
+  ],
+  "failure": "REFUSED_CLASSIFICATION (not a verdict)"
+ },
+ "value_status_preservation": {
+  "rule": "RM-R27: no provisional / analog / allocation input is promoted by migration to CBE, measured or frozen truth",
+  "inputs": [
+   {
+    "id": "mass_power_a9_v5 power.configurations.hall_icp_neutralizer.slots[*].status / efficiency",
+    "value": "TBD texts as committed",
+    "value_status": "TBD",
+    "open_action": "row 22 / row 111 / row 113 owner inputs",
+    "committed_labels": [
+     "TBD - requires ..."
+    ]
+   },
+   {
+    "id": "owner allocations 1350 / 1300 / 300 / 50 W",
+    "value": "as committed in the reference",
+    "value_status": "OWNER_ALLOCATION (not a gate, not a prediction)",
+    "open_action": "none",
+    "committed_labels": [
+     "OWNER_ALLOCATION_CHECK (not a gate, not a prediction)"
+    ]
+   }
+  ],
+  "check": "VS-A01: E8 reproduces every tbd_requires text verbatim (EXACT_VALUE) and reserved_dc_port stays 0 W 'assumed'; E5 / E6 keep the kind label verbatim; any CBE / measured / frozen label on them fails"
+ },
+ "new_physics_verification": {
+  "applies_when": "NOT_APPLICABLE (contract_kind EXISTING_PHYSICS_PARITY); the Rust-only CONS-L1 / IF-ICP-BUS-v1 / demand items above are bookkeeping and interface checks, not new physics"
+ }
+}

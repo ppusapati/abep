@@ -40,7 +40,17 @@ class Reservoir:
         """Molecular-flow orifice conductance [m^3/s] = K * A * c_bar / 4."""
         return K * area * self._cbar(s) / 4.0
 
+    # G-04 (owner decision A9.9 S2.4): steady-state convergence is reported explicitly; the iteration limit is
+    # not convergence.
+    SS_MAX_ITER = 200
+    SS_RTOL = 1e-6
+
     def steady_state(self, mdot_in: dict) -> dict:
+        """Damped fixed-point steady state. G-04: the result carries ``converged`` (bool), ``iterations``,
+        ``residual`` (final fixed-point step max_s |n_new - n| / max(n_new, 1e-30), compared with SS_RTOL),
+        ``balance_residual_rel`` (max per-species |inflow + recombination source - outflow - recombination sink|
+        evaluated at the returned state, relative to the total inflow) and ``solver_status``
+        ('CONVERGED' / 'MODEL_NOT_CONVERGED'). Non-converged results keep the raw last iterate for diagnostics."""
         # upstream (compressor channel) recombination first: O survival through N collisions at gamma(T)
         g_up = DB[self.upstream_material].gamma_O(self.T_K)
         surv_up = (1.0 - g_up) ** self.upstream_collisions
@@ -53,7 +63,9 @@ class Reservoir:
         n = {s: 1e14 for s in species}
         C = {s: self.conductance(s, self.anode_orifice_area_m2, self.anode_orifice_K) + self.conductance(s, self.leak_area_m2)
              for s in species}
-        for _ in range(200):
+        converged = False; it = 0; resid = float("nan")
+        for _ in range(self.SS_MAX_ITER):
+            it += 1
             new = {}
             k_rec = gam * (self._cbar("O") / 4.0) * self.wall_area_m2          # 1/s per unit n_O * V ... (mass rate = k n_O m_O)
             # O balance: mdot_in,O = n_O C_O m_O + k_rec n_O m_O
@@ -61,8 +73,9 @@ class Reservoir:
             rec_mass = k_rec * new["O"] * M_SPECIES["O"]
             new["O2"] = (m_in["O2"] + rec_mass) / (M_SPECIES["O2"] * C["O2"])
             new["N2"] = m_in["N2"] / (M_SPECIES["N2"] * C["N2"])
-            if all(abs(new[s] - n[s]) <= 1e-6 * max(new[s], 1e-30) for s in species):
-                n = new; break
+            resid = max(abs(new[s] - n[s]) / max(new[s], 1e-30) for s in species)
+            if all(abs(new[s] - n[s]) <= self.SS_RTOL * max(new[s], 1e-30) for s in species):
+                n = new; converged = True; break
             n = {s: 0.5 * (n[s] + new[s]) for s in species}
         p = {s: n[s] * K_B * self.T_K for s in species}
         p_tot = sum(p.values())
@@ -73,7 +86,13 @@ class Reservoir:
         tau = (sum(n[s] * M_SPECIES[s] for s in species) * self.volume_m3) / max(sum(out.values()), 1e-30)
         coll = tau * (self._cbar("O") / 4.0) * self.wall_area_m2 / self.volume_m3
         O_in_total = mdot_in.get("O", 0.0)
-        return {"p_total_Pa": p_tot, "p_species_Pa": p, "n_species": n, "T_K": self.T_K,
+        k_rec_f = gam * (self._cbar("O") / 4.0) * self.wall_area_m2
+        rec_f = k_rec_f * n["O"] * M_SPECIES["O"]
+        bal = {"O": m_in["O"] - out["O"] - rec_f, "O2": m_in["O2"] + rec_f - out["O2"], "N2": m_in["N2"] - out["N2"]}
+        bal_rel = max(abs(v) for v in bal.values()) / max(sum(m_in[s] for s in species), 1e-30)
+        return {"converged": converged, "iterations": it, "residual": resid, "balance_residual_rel": bal_rel,
+                "solver_status": "CONVERGED" if converged else "MODEL_NOT_CONVERGED",
+"p_total_Pa": p_tot, "p_species_Pa": p, "n_species": n, "T_K": self.T_K,
                 "mdot_anode": anode, "mdot_leak": {s: out[s] - anode[s] for s in species},
                 "composition_anode_mass": {s: anode[s] / mtot_out for s in species} if mtot_out > 0 else {},
                 "O_survival": (anode["O"] / O_in_total) if O_in_total > 0 else 0.0,
@@ -81,19 +100,50 @@ class Reservoir:
                 "upstream_survival": surv_up, "volume_m3": self.volume_m3, "wall_area_m2": self.wall_area_m2}
 
 
-def size_orifice_for_pressure(res: Reservoir, mdot_in: dict, p_target_Pa: float) -> float:
-    """Anode feed area that puts the reservoir at p_target for the given inflow (bisection)."""
-    lo, hi = 1e-8, 3e-2      # up to 300 cm^2: at 0.1 Pa, 1 mg/s is ~1.5 m^3/s, so the "orifice" is the thruster channel itself
-    for _ in range(60):
+ORIFICE_BRACKET_M2 = (1e-8, 3e-2)   # up to 300 cm^2: at 0.1 Pa, 1 mg/s is ~1.5 m^3/s, so the "orifice" is the thruster channel itself
+ORIFICE_BISECTION_STEPS = 60
+ORIFICE_P_RTOL = 1e-6               # G-05 acceptance on the final relative pressure residual
+
+
+def size_orifice_for_pressure(res: Reservoir, mdot_in: dict, p_target_Pa: float, report: bool = False):
+    """Anode feed area that puts the reservoir at p_target for the given inflow (bisection).
+
+    Returns the area (float; unchanged legacy interface) or, with ``report=True``, a dict (G-05, owner decision
+    A9.9 S2.4) with the area, the final pressure and relative pressure residual, whether the target is
+    bracketed (p(hi) <= p_target <= p(lo); p falls monotonically with area) and therefore reachable inside the
+    area bracket, whether every steady state used converged, ``converged`` and ``solver_status``
+    ('CONVERGED' / 'MODEL_NOT_CONVERGED'). A bracket endpoint is not convergence. The same record is also left
+    on ``res.orifice_sizing`` for diagnostics. The bisection itself (and therefore every converged area) is
+    unchanged."""
+    lo, hi = 1e-8, 3e-2      # == ORIFICE_BRACKET_M2 (literal kept: design-layer builders read this bracket from source)
+    assert (lo, hi) == ORIFICE_BRACKET_M2
+    # endpoints first (the bisection below sets the area itself, so the returned area is unaffected)
+    res.anode_orifice_area_m2 = lo; r_lo = res.steady_state(mdot_in)
+    res.anode_orifice_area_m2 = hi; r_hi = res.steady_state(mdot_in)
+    p_lo, p_hi = r_lo["p_total_Pa"], r_hi["p_total_Pa"]
+    bracketed = p_hi <= p_target_Pa <= p_lo
+    inner_ok = r_lo["converged"] and r_hi["converged"]
+    for _ in range(ORIFICE_BISECTION_STEPS):
         mid = math.sqrt(lo * hi)
         res.anode_orifice_area_m2 = mid
-        p = res.steady_state(mdot_in)["p_total_Pa"]
+        r = res.steady_state(mdot_in)
+        inner_ok = inner_ok and r["converged"]
+        p = r["p_total_Pa"]
         if p > p_target_Pa:
             lo = mid
         else:
             hi = mid
-    return res.anode_orifice_area_m2
-
+    area = res.anode_orifice_area_m2
+    r_fin = res.steady_state(mdot_in)
+    p_fin = r_fin["p_total_Pa"]
+    resid = (p_fin - p_target_Pa) / p_target_Pa if p_target_Pa > 0 else float("nan")
+    converged = bool(bracketed and inner_ok and r_fin["converged"] and math.isfinite(resid) and abs(resid) <= ORIFICE_P_RTOL)
+    rec = {"area_m2": area, "p_target_Pa": p_target_Pa, "p_final_Pa": p_fin, "p_residual_rel": resid,
+           "bracket_m2": ORIFICE_BRACKET_M2, "p_at_bracket_Pa": (p_lo, p_hi), "bracketed": bracketed,
+           "reachable": bracketed, "inner_steady_states_converged": bool(inner_ok and r_fin["converged"]),
+           "converged": converged, "solver_status": "CONVERGED" if converged else "MODEL_NOT_CONVERGED"}
+    res.orifice_sizing = rec
+    return rec if report else area
 
 
 def startup_transient(res: Reservoir, mdot_captured: dict, p_ignite_Pa: float, spinup_s: float = 60.0,

@@ -1,0 +1,2011 @@
+{
+  "cases": [
+    {
+      "argv": [
+        "config",
+        "check"
+      ],
+      "det_run": true,
+      "det_threads": true,
+      "expected": {
+        "exit": 0,
+        "payload_checks": [
+          "build_check.exit == 0",
+          "manifest_files_verified == 11"
+        ],
+        "status": "EVALUATED"
+      },
+      "id": "CMD-01",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "config",
+            "check"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "config-check.result.json",
+            "config-check.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "6890f089c9faca2479349019e7e64a4add4f3eea399d2abbbe573691eaca2466",
+          "run": "R1",
+          "sidecar_sha256": "840f880e8ce18c361ab48af6a2e67b2efb3a35061ba8ff6c4ca4e24d46346034",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "1",
+            "config",
+            "check"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "config-check.result.json",
+            "config-check.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "6890f089c9faca2479349019e7e64a4add4f3eea399d2abbbe573691eaca2466",
+          "run": "R2",
+          "sidecar_sha256": "840f880e8ce18c361ab48af6a2e67b2efb3a35061ba8ff6c4ca4e24d46346034",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "config",
+            "check"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "config-check.result.json",
+            "config-check.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "6890f089c9faca2479349019e7e64a4add4f3eea399d2abbbe573691eaca2466",
+          "run": "R3",
+          "sidecar_sha256": "ff7c4b724358d7a9149028a822b5d94928cc2c8d2c975b7cfc864acc1f21559f",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "4",
+            "config",
+            "check"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "config-check.result.json",
+            "config-check.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "6890f089c9faca2479349019e7e64a4add4f3eea399d2abbbe573691eaca2466",
+          "run": "R4",
+          "sidecar_sha256": "a8d0fe315be33752f09d0a9a5879cb6ba70c4182cc2fcc9eced3b0646732dbcd",
+          "status": "EVALUATED"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "provenance",
+        "verify"
+      ],
+      "det_run": true,
+      "det_threads": true,
+      "expected": {
+        "exit": 0,
+        "payload_checks": [
+          "4 checks, each status EVALUATED with no finding"
+        ],
+        "status": "EVALUATED"
+      },
+      "id": "CMD-02",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "provenance",
+            "verify"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "provenance-verify.result.json",
+            "provenance-verify.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "206f132a6a34c01582f24a3b8ca8186a9eb317676f040cf1e0e3434450df86a2",
+          "run": "R1",
+          "sidecar_sha256": "8cf182fc2cd25aa5c353b75568bfde7ac6ba1b726e8fead08f5126ab893db472",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "1",
+            "provenance",
+            "verify"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "provenance-verify.result.json",
+            "provenance-verify.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "206f132a6a34c01582f24a3b8ca8186a9eb317676f040cf1e0e3434450df86a2",
+          "run": "R2",
+          "sidecar_sha256": "8cf182fc2cd25aa5c353b75568bfde7ac6ba1b726e8fead08f5126ab893db472",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "provenance",
+            "verify"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "provenance-verify.result.json",
+            "provenance-verify.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "206f132a6a34c01582f24a3b8ca8186a9eb317676f040cf1e0e3434450df86a2",
+          "run": "R3",
+          "sidecar_sha256": "952449b1d4724b33583799fbac1d7c7c147842dd0ae6d8e678c3fc358e3c55cc",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "4",
+            "provenance",
+            "verify"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "provenance-verify.result.json",
+            "provenance-verify.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "206f132a6a34c01582f24a3b8ca8186a9eb317676f040cf1e0e3434450df86a2",
+          "run": "R4",
+          "sidecar_sha256": "1ef417b0838904701416a7cb9235ade48aa566f7918be53578acc4c2143beb8c",
+          "status": "EVALUATED"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "env",
+        "run-design-states"
+      ],
+      "det_run": true,
+      "det_threads": true,
+      "expected": {
+        "exit": 0,
+        "payload_checks": [
+          "n_states == 196",
+          "n_evaluated == 196",
+          "len(records) == 196"
+        ],
+        "status": "EVALUATED"
+      },
+      "id": "CMD-03",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "env",
+            "run-design-states"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "env-run-design-states.result.json",
+            "env-run-design-states.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "1d8870146dc80dd99228585c1dadf8735228115cd3f9795ed4cbed0b89a705b5",
+          "run": "R1",
+          "sidecar_sha256": "216138ada520291803b1ee23a4a645ac330ad383e98f7128f3c6e6dc3cc5c3ca",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "1",
+            "env",
+            "run-design-states"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "env-run-design-states.result.json",
+            "env-run-design-states.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "1d8870146dc80dd99228585c1dadf8735228115cd3f9795ed4cbed0b89a705b5",
+          "run": "R2",
+          "sidecar_sha256": "216138ada520291803b1ee23a4a645ac330ad383e98f7128f3c6e6dc3cc5c3ca",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "env",
+            "run-design-states"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "env-run-design-states.result.json",
+            "env-run-design-states.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "1d8870146dc80dd99228585c1dadf8735228115cd3f9795ed4cbed0b89a705b5",
+          "run": "R3",
+          "sidecar_sha256": "60b6cdb3a975177507095b292265aacae447c6575e2c67f0bec89d4f2cf81bd6",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "4",
+            "env",
+            "run-design-states"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "env-run-design-states.result.json",
+            "env-run-design-states.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "1d8870146dc80dd99228585c1dadf8735228115cd3f9795ed4cbed0b89a705b5",
+          "run": "R4",
+          "sidecar_sha256": "c709fcff22b8bb302c567e6b58393a20fd1e7d41f993636e9610681a03f1c84a",
+          "status": "EVALUATED"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "intake",
+        "surface-v1",
+        "--state",
+        "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47",
+        "--scattering",
+        "maxwell",
+        "--l-over-d",
+        "10",
+        "--phi",
+        "0.9",
+        "--alpha",
+        "0.5",
+        "--theta-deg",
+        "0"
+      ],
+      "det_run": true,
+      "det_threads": true,
+      "expected": {
+        "exit": 0,
+        "payload_checks": [
+          "surface_v1 present with finite eta_c and c_d",
+          "surface_v2_gate.status == NOT_EVALUATED"
+        ],
+        "status": "EVALUATED"
+      },
+      "id": "CMD-04",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "intake",
+            "surface-v1",
+            "--state",
+            "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47",
+            "--scattering",
+            "maxwell",
+            "--l-over-d",
+            "10",
+            "--phi",
+            "0.9",
+            "--alpha",
+            "0.5",
+            "--theta-deg",
+            "0"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "intake-surface-v1.result.json",
+            "intake-surface-v1.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "c5d8487a14ab4dad399cc14592a46e618bc51fdd19ebddd1728e6861a4f90c77",
+          "run": "R1",
+          "sidecar_sha256": "dc12a596797ba66e8721f943f27694e3761c3a71f5acbdcbaa3d1b9fc8736a7c",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "1",
+            "intake",
+            "surface-v1",
+            "--state",
+            "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47",
+            "--scattering",
+            "maxwell",
+            "--l-over-d",
+            "10",
+            "--phi",
+            "0.9",
+            "--alpha",
+            "0.5",
+            "--theta-deg",
+            "0"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "intake-surface-v1.result.json",
+            "intake-surface-v1.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "c5d8487a14ab4dad399cc14592a46e618bc51fdd19ebddd1728e6861a4f90c77",
+          "run": "R2",
+          "sidecar_sha256": "dc12a596797ba66e8721f943f27694e3761c3a71f5acbdcbaa3d1b9fc8736a7c",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "intake",
+            "surface-v1",
+            "--state",
+            "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47",
+            "--scattering",
+            "maxwell",
+            "--l-over-d",
+            "10",
+            "--phi",
+            "0.9",
+            "--alpha",
+            "0.5",
+            "--theta-deg",
+            "0"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "intake-surface-v1.result.json",
+            "intake-surface-v1.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "c5d8487a14ab4dad399cc14592a46e618bc51fdd19ebddd1728e6861a4f90c77",
+          "run": "R3",
+          "sidecar_sha256": "574025c4eaafc763066571bf5ef2cd009029b2f771a315ffe531dd28e2a5c05a",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "4",
+            "intake",
+            "surface-v1",
+            "--state",
+            "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47",
+            "--scattering",
+            "maxwell",
+            "--l-over-d",
+            "10",
+            "--phi",
+            "0.9",
+            "--alpha",
+            "0.5",
+            "--theta-deg",
+            "0"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "intake-surface-v1.result.json",
+            "intake-surface-v1.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "c5d8487a14ab4dad399cc14592a46e618bc51fdd19ebddd1728e6861a4f90c77",
+          "run": "R4",
+          "sidecar_sha256": "277755d695f8b477ed18b31858d592a83c56b74bd8191a4dd3b3d16691cad5d2",
+          "status": "EVALUATED"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "drag",
+        "statewise",
+        "--area-m2",
+        "0.5",
+        "--l-over-d",
+        "10",
+        "--phi",
+        "0.9",
+        "--scenario",
+        "maxwell_a0.5"
+      ],
+      "det_run": true,
+      "det_threads": true,
+      "expected": {
+        "exit": 10,
+        "payload_checks": [
+          "n_states == 196",
+          "n_t_minus_d_evaluated == 0",
+          "credible_set == EMPTY",
+          "every state thrust.status == NOT_EVALUATED",
+          "every drag_intake.status == INCOMPLETE_EVIDENCE"
+        ],
+        "status": "NOT_EVALUATED"
+      },
+      "id": "CMD-05",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "drag",
+            "statewise",
+            "--area-m2",
+            "0.5",
+            "--l-over-d",
+            "10",
+            "--phi",
+            "0.9",
+            "--scenario",
+            "maxwell_a0.5"
+          ],
+          "checks_passed": true,
+          "exit": 10,
+          "files": [
+            "drag-statewise.result.json",
+            "drag-statewise.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "d5921d78143a72005785ed12cf2f5099a631f98b9f8ab9a9307b94a7238ff87d",
+          "run": "R1",
+          "sidecar_sha256": "fe728f6a9f801eb7cb6cdac2efea85477667a549568e7c1c63f580487d2436fc",
+          "status": "NOT_EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "1",
+            "drag",
+            "statewise",
+            "--area-m2",
+            "0.5",
+            "--l-over-d",
+            "10",
+            "--phi",
+            "0.9",
+            "--scenario",
+            "maxwell_a0.5"
+          ],
+          "checks_passed": true,
+          "exit": 10,
+          "files": [
+            "drag-statewise.result.json",
+            "drag-statewise.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "d5921d78143a72005785ed12cf2f5099a631f98b9f8ab9a9307b94a7238ff87d",
+          "run": "R2",
+          "sidecar_sha256": "fe728f6a9f801eb7cb6cdac2efea85477667a549568e7c1c63f580487d2436fc",
+          "status": "NOT_EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "drag",
+            "statewise",
+            "--area-m2",
+            "0.5",
+            "--l-over-d",
+            "10",
+            "--phi",
+            "0.9",
+            "--scenario",
+            "maxwell_a0.5"
+          ],
+          "checks_passed": true,
+          "exit": 10,
+          "files": [
+            "drag-statewise.result.json",
+            "drag-statewise.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "d5921d78143a72005785ed12cf2f5099a631f98b9f8ab9a9307b94a7238ff87d",
+          "run": "R3",
+          "sidecar_sha256": "c5dff8fba16dd13778e1894f0be7c1a0570e55b6f390b40f98b060e21864db70",
+          "status": "NOT_EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "4",
+            "drag",
+            "statewise",
+            "--area-m2",
+            "0.5",
+            "--l-over-d",
+            "10",
+            "--phi",
+            "0.9",
+            "--scenario",
+            "maxwell_a0.5"
+          ],
+          "checks_passed": true,
+          "exit": 10,
+          "files": [
+            "drag-statewise.result.json",
+            "drag-statewise.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "d5921d78143a72005785ed12cf2f5099a631f98b9f8ab9a9307b94a7238ff87d",
+          "run": "R4",
+          "sidecar_sha256": "4f8805c239704d95b3f24214358b078a336b2e1b9986aa0f99e58964331c924e",
+          "status": "NOT_EVALUATED"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "mass",
+        "rollup"
+      ],
+      "det_run": true,
+      "det_threads": true,
+      "expected": {
+        "exit": 11,
+        "payload_checks": [
+          "record.reproduced == true",
+          "mass_gates statuses == [NOT_EVALUATED, INCOMPLETE_EVIDENCE, INCOMPLETE_EVIDENCE]"
+        ],
+        "status": "INCOMPLETE_EVIDENCE"
+      },
+      "id": "CMD-06",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "mass",
+            "rollup"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "mass-rollup.result.json",
+            "mass-rollup.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "db77c80310b4f571993ea6f0cbfd4daa14ad80742f0a3bc4ed40aaadb82f7751",
+          "run": "R1",
+          "sidecar_sha256": "42f7e56aaa7490c0561643f960ce72bd9530c3546f29b6f9fad9565d321cd964",
+          "status": "INCOMPLETE_EVIDENCE"
+        },
+        {
+          "argv_tail": [
+            "1",
+            "mass",
+            "rollup"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "mass-rollup.result.json",
+            "mass-rollup.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "db77c80310b4f571993ea6f0cbfd4daa14ad80742f0a3bc4ed40aaadb82f7751",
+          "run": "R2",
+          "sidecar_sha256": "42f7e56aaa7490c0561643f960ce72bd9530c3546f29b6f9fad9565d321cd964",
+          "status": "INCOMPLETE_EVIDENCE"
+        },
+        {
+          "argv_tail": [
+            "mass",
+            "rollup"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "mass-rollup.result.json",
+            "mass-rollup.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "db77c80310b4f571993ea6f0cbfd4daa14ad80742f0a3bc4ed40aaadb82f7751",
+          "run": "R3",
+          "sidecar_sha256": "4e7a0169616164473415681ed08af9e4c5056d8eae585e7d859d1b06618d49ac",
+          "status": "INCOMPLETE_EVIDENCE"
+        },
+        {
+          "argv_tail": [
+            "4",
+            "mass",
+            "rollup"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "mass-rollup.result.json",
+            "mass-rollup.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "db77c80310b4f571993ea6f0cbfd4daa14ad80742f0a3bc4ed40aaadb82f7751",
+          "run": "R4",
+          "sidecar_sha256": "2847d8476312d9ff2655316e1ba24b9f1d9dfa76db6a3be5332b1a3f10604f02",
+          "status": "INCOMPLETE_EVIDENCE"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "power",
+        "ledger"
+      ],
+      "det_run": true,
+      "det_threads": true,
+      "expected": {
+        "exit": 11,
+        "payload_checks": [
+          "no key of the ledger payload starts with p_bus_max or contains limit (case-insensitive): the 1.5 kW limit is assessment only"
+        ],
+        "status": "INCOMPLETE_EVIDENCE"
+      },
+      "id": "CMD-07",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "power",
+            "ledger"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "power-ledger.result.json",
+            "power-ledger.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "ceb890c459ea524375aa988d5aaaf794bdabc4cdee0a15d53caf1979b055d1af",
+          "run": "R1",
+          "sidecar_sha256": "8c1c2eddbe73e8cb65416a62f64efc60160893fa216a8a985a0f2e58011df79f",
+          "status": "INCOMPLETE_EVIDENCE"
+        },
+        {
+          "argv_tail": [
+            "1",
+            "power",
+            "ledger"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "power-ledger.result.json",
+            "power-ledger.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "ceb890c459ea524375aa988d5aaaf794bdabc4cdee0a15d53caf1979b055d1af",
+          "run": "R2",
+          "sidecar_sha256": "8c1c2eddbe73e8cb65416a62f64efc60160893fa216a8a985a0f2e58011df79f",
+          "status": "INCOMPLETE_EVIDENCE"
+        },
+        {
+          "argv_tail": [
+            "power",
+            "ledger"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "power-ledger.result.json",
+            "power-ledger.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "ceb890c459ea524375aa988d5aaaf794bdabc4cdee0a15d53caf1979b055d1af",
+          "run": "R3",
+          "sidecar_sha256": "0a86a3a3bcc071aeb86058de9e940412611dd2463100f990a9e0120e51d335f1",
+          "status": "INCOMPLETE_EVIDENCE"
+        },
+        {
+          "argv_tail": [
+            "4",
+            "power",
+            "ledger"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "power-ledger.result.json",
+            "power-ledger.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "ceb890c459ea524375aa988d5aaaf794bdabc4cdee0a15d53caf1979b055d1af",
+          "run": "R4",
+          "sidecar_sha256": "2e5bf0f4390834ef7a64e6a88b70f9e5dd29594c88ec0808ca03961e88d5a016",
+          "status": "INCOMPLETE_EVIDENCE"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "hall",
+        "status"
+      ],
+      "det_run": true,
+      "det_threads": true,
+      "expected": {
+        "exit": 10,
+        "payload_checks": [
+          "gate.reason == 'credible Hall transport set EMPTY'",
+          "gate.admitted_members == []",
+          "hall_response_status.credible_set == EMPTY"
+        ],
+        "status": "NOT_EVALUATED"
+      },
+      "id": "CMD-08",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "hall",
+            "status"
+          ],
+          "checks_passed": true,
+          "exit": 10,
+          "files": [
+            "hall-status.result.json",
+            "hall-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "63e0b8736728d866563fdff4bb6c43e060933d31137e9859f477b5d3cd126d6a",
+          "run": "R1",
+          "sidecar_sha256": "e3829802a668d3e5c3abf78a603acaf78512333dee4ce9c8c7c6f9d44075c1e5",
+          "status": "NOT_EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "1",
+            "hall",
+            "status"
+          ],
+          "checks_passed": true,
+          "exit": 10,
+          "files": [
+            "hall-status.result.json",
+            "hall-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "63e0b8736728d866563fdff4bb6c43e060933d31137e9859f477b5d3cd126d6a",
+          "run": "R2",
+          "sidecar_sha256": "e3829802a668d3e5c3abf78a603acaf78512333dee4ce9c8c7c6f9d44075c1e5",
+          "status": "NOT_EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "hall",
+            "status"
+          ],
+          "checks_passed": true,
+          "exit": 10,
+          "files": [
+            "hall-status.result.json",
+            "hall-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "63e0b8736728d866563fdff4bb6c43e060933d31137e9859f477b5d3cd126d6a",
+          "run": "R3",
+          "sidecar_sha256": "92f7e5635504c6134e0df4a6ff66e4340cbe36727ff93f869d2648ea10d63ffb",
+          "status": "NOT_EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "4",
+            "hall",
+            "status"
+          ],
+          "checks_passed": true,
+          "exit": 10,
+          "files": [
+            "hall-status.result.json",
+            "hall-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "63e0b8736728d866563fdff4bb6c43e060933d31137e9859f477b5d3cd126d6a",
+          "run": "R4",
+          "sidecar_sha256": "d83660fd00cf7fa4d7cd24e7d88db9f1f5ed7af8f7e610bad19d6fc20518ce4c",
+          "status": "NOT_EVALUATED"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "hall",
+        "pin-check"
+      ],
+      "det_run": true,
+      "det_threads": true,
+      "expected": {
+        "exit": 0,
+        "payload_checks": [
+          "pin_report.commit == bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+          "pin_report.version == 0.23.1",
+          "pin_report.verify_pin_ok == true",
+          "julia_check_pin == NOT_EXECUTED_PLATFORM_TEST"
+        ],
+        "status": "EVALUATED"
+      },
+      "id": "CMD-09",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "hall",
+            "pin-check"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "hall-pin-check.result.json",
+            "hall-pin-check.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "7c280b5f4d64444fb5ec998b618af5b8b9d1b52219b90a1070cdb88d15a87e61",
+          "run": "R1",
+          "sidecar_sha256": "fcb380b71edbbac68b7c25d3bcd13a8f630f9a671144a6701d13f9b2c9f51754",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "1",
+            "hall",
+            "pin-check"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "hall-pin-check.result.json",
+            "hall-pin-check.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "7c280b5f4d64444fb5ec998b618af5b8b9d1b52219b90a1070cdb88d15a87e61",
+          "run": "R2",
+          "sidecar_sha256": "fcb380b71edbbac68b7c25d3bcd13a8f630f9a671144a6701d13f9b2c9f51754",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "hall",
+            "pin-check"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "hall-pin-check.result.json",
+            "hall-pin-check.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "7c280b5f4d64444fb5ec998b618af5b8b9d1b52219b90a1070cdb88d15a87e61",
+          "run": "R3",
+          "sidecar_sha256": "48a8375f431455da7cbd423041aab5c8d7dfb4903584a30c07dabf5c32cfa3bb",
+          "status": "EVALUATED"
+        },
+        {
+          "argv_tail": [
+            "4",
+            "hall",
+            "pin-check"
+          ],
+          "checks_passed": true,
+          "exit": 0,
+          "files": [
+            "hall-pin-check.result.json",
+            "hall-pin-check.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": "7c280b5f4d64444fb5ec998b618af5b8b9d1b52219b90a1070cdb88d15a87e61",
+          "run": "R4",
+          "sidecar_sha256": "a262075e53bc556d690c822438a80923f7d7f8c140048dca5640dfd9f9776fe3",
+          "status": "EVALUATED"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "icp",
+        "status",
+        "--supply-mode",
+        "AIR_PRIMARY"
+      ],
+      "det_run": true,
+      "det_threads": true,
+      "expected": {
+        "exit": 11,
+        "payload_checks": [
+          "payload status == INCOMPLETE_EVIDENCE (crate status verbatim)",
+          "the payload contains the reason code NP_ICP_CHEM_AIR_NOT_ADMITTED",
+          "components[0].admission == NOT_ADMITTED"
+        ],
+        "status": "INCOMPLETE_EVIDENCE"
+      },
+      "id": "CMD-10",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "icp",
+            "status",
+            "--supply-mode",
+            "AIR_PRIMARY"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "icp-status.result.json",
+            "icp-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "4c30e585423c3168bffb534ef49c4dc507c0c3f0ba263021e799a1a2a0c82792",
+          "run": "R1",
+          "sidecar_sha256": "247c8ddbeec0d477cb16ac52f529edaa60eadb11ff90b3d11c43fef23f064e5f",
+          "status": "INCOMPLETE_EVIDENCE"
+        },
+        {
+          "argv_tail": [
+            "1",
+            "icp",
+            "status",
+            "--supply-mode",
+            "AIR_PRIMARY"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "icp-status.result.json",
+            "icp-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "4c30e585423c3168bffb534ef49c4dc507c0c3f0ba263021e799a1a2a0c82792",
+          "run": "R2",
+          "sidecar_sha256": "247c8ddbeec0d477cb16ac52f529edaa60eadb11ff90b3d11c43fef23f064e5f",
+          "status": "INCOMPLETE_EVIDENCE"
+        },
+        {
+          "argv_tail": [
+            "icp",
+            "status",
+            "--supply-mode",
+            "AIR_PRIMARY"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "icp-status.result.json",
+            "icp-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "4c30e585423c3168bffb534ef49c4dc507c0c3f0ba263021e799a1a2a0c82792",
+          "run": "R3",
+          "sidecar_sha256": "8c67124e525a1bd3f9d06797a160fa39c797c608b532ecf335dfa563a1b5891d",
+          "status": "INCOMPLETE_EVIDENCE"
+        },
+        {
+          "argv_tail": [
+            "4",
+            "icp",
+            "status",
+            "--supply-mode",
+            "AIR_PRIMARY"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "icp-status.result.json",
+            "icp-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "4c30e585423c3168bffb534ef49c4dc507c0c3f0ba263021e799a1a2a0c82792",
+          "run": "R4",
+          "sidecar_sha256": "a21973df22225fd5872319f7cbb759c321a704a6719374e441f8dd8bb34783b3",
+          "status": "INCOMPLETE_EVIDENCE"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "icp",
+        "status",
+        "--supply-mode",
+        "XE_CONTINGENCY"
+      ],
+      "det_run": true,
+      "det_threads": true,
+      "expected": {
+        "exit": 11,
+        "payload_checks": [
+          "payload status == INCOMPLETE_EVIDENCE (crate status verbatim)",
+          "the payload contains the reason code CHG-04_NO_XE_RATE_SET",
+          "components[0].admission == NOT_ADMITTED"
+        ],
+        "status": "INCOMPLETE_EVIDENCE"
+      },
+      "id": "CMD-11",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "icp",
+            "status",
+            "--supply-mode",
+            "XE_CONTINGENCY"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "icp-status.result.json",
+            "icp-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "4e65d32e3809d8a498559991de1e6ddf3d0f25d4911212e9a173331a160a7f79",
+          "run": "R1",
+          "sidecar_sha256": "6b47b0561318d7bf010e89e2af30eed6272e2df1b39b46667d320ddde4d0a99b",
+          "status": "INCOMPLETE_EVIDENCE"
+        },
+        {
+          "argv_tail": [
+            "1",
+            "icp",
+            "status",
+            "--supply-mode",
+            "XE_CONTINGENCY"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "icp-status.result.json",
+            "icp-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "4e65d32e3809d8a498559991de1e6ddf3d0f25d4911212e9a173331a160a7f79",
+          "run": "R2",
+          "sidecar_sha256": "6b47b0561318d7bf010e89e2af30eed6272e2df1b39b46667d320ddde4d0a99b",
+          "status": "INCOMPLETE_EVIDENCE"
+        },
+        {
+          "argv_tail": [
+            "icp",
+            "status",
+            "--supply-mode",
+            "XE_CONTINGENCY"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "icp-status.result.json",
+            "icp-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "4e65d32e3809d8a498559991de1e6ddf3d0f25d4911212e9a173331a160a7f79",
+          "run": "R3",
+          "sidecar_sha256": "d4f0e9f8735e71fb1e58dbf6b0eb55936ac404494f4437d06f3b2d6da2360ffb",
+          "status": "INCOMPLETE_EVIDENCE"
+        },
+        {
+          "argv_tail": [
+            "4",
+            "icp",
+            "status",
+            "--supply-mode",
+            "XE_CONTINGENCY"
+          ],
+          "checks_passed": true,
+          "exit": 11,
+          "files": [
+            "icp-status.result.json",
+            "icp-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_STATUS",
+          "result_sha256": "4e65d32e3809d8a498559991de1e6ddf3d0f25d4911212e9a173331a160a7f79",
+          "run": "R4",
+          "sidecar_sha256": "9dc6292a4c645a43ffe025a111d357d1bf4d3901f970b3393675f425410b1c9f",
+          "status": "INCOMPLETE_EVIDENCE"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "env",
+        "run-design-states"
+      ],
+      "expected": {
+        "exit": 4,
+        "payload": null,
+        "reason_code": "CONFIG_MANIFEST_UNVERIFIED",
+        "sidecar": false,
+        "status": "MODEL_ERROR"
+      },
+      "id": "REF-01",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "env",
+            "run-design-states"
+          ],
+          "checks_passed": true,
+          "exit": 4,
+          "files": [
+            "env-run-design-states.result.json"
+          ],
+          "problems": [],
+          "reason_code": "CONFIG_MANIFEST_UNVERIFIED",
+          "result_sha256": "a252f4a7813e13e05619bfbba7409b7dffbe3fb678260fcdeabe0e68884e7c27",
+          "run": "R1",
+          "sidecar_sha256": null,
+          "status": "MODEL_ERROR"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "config",
+        "check"
+      ],
+      "expected": {
+        "exit": 13,
+        "payload_checks": [
+          "build_check.exit != 0"
+        ],
+        "reason_code": "CONFIG_BUILD_STALE",
+        "sidecar": true,
+        "status": "MODEL_ERROR"
+      },
+      "id": "REF-02",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "config",
+            "check"
+          ],
+          "checks_passed": true,
+          "exit": 13,
+          "files": [
+            "config-check.result.json",
+            "config-check.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CONFIG_BUILD_STALE",
+          "result_sha256": "50bf052f14c3634da768477990e25ebffd5e5bd2c17b99dda40b9f928f488196",
+          "run": "R1",
+          "sidecar_sha256": "d058b375afa463caf2169d69fd766cb3b90836a6bd8dc80abbb7746de0417df9",
+          "status": "MODEL_ERROR"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "env",
+        "run-design-states"
+      ],
+      "expected": {
+        "exit": 13,
+        "payload": null,
+        "reason_code": "CRATE_ERROR",
+        "reason_message_contains": "atmosphere_msis21_orbit_v1",
+        "sidecar": true,
+        "status": "MODEL_ERROR"
+      },
+      "id": "REF-03",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "env",
+            "run-design-states"
+          ],
+          "checks_passed": true,
+          "exit": 13,
+          "files": [
+            "env-run-design-states.result.json",
+            "env-run-design-states.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_ERROR",
+          "result_sha256": "bab2deb6dd2265774590f766ed56d94a7f1d52749d71e771c247687cbf003885",
+          "run": "R1",
+          "sidecar_sha256": "a4368e9d84571b50f2eebd57a549cf7d3f8aee1ce87904701e4dc92e8a2b8a02",
+          "status": "MODEL_ERROR"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "hall",
+        "status"
+      ],
+      "expected": {
+        "exit": 4,
+        "payload": null,
+        "reason_code": "RUN_RECORD_UNAVAILABLE",
+        "sidecar": false,
+        "status": "MODEL_ERROR"
+      },
+      "id": "REF-04",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "hall",
+            "status"
+          ],
+          "checks_passed": true,
+          "exit": 4,
+          "files": [
+            "hall-status.result.json"
+          ],
+          "problems": [],
+          "reason_code": "RUN_RECORD_UNAVAILABLE",
+          "result_sha256": "159199fa5ad027a8bdae0f7f2e6285dc04542643142b1efebaf3b03d6ecfb003",
+          "run": "R1",
+          "sidecar_sha256": null,
+          "status": "MODEL_ERROR"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "intake",
+        "surface-v1",
+        "--state",
+        "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47",
+        "--scattering",
+        "maxwell",
+        "--l-over-d",
+        "10",
+        "--phi",
+        "0.9",
+        "--alpha",
+        "0.5",
+        "--theta-deg",
+        "0"
+      ],
+      "expected": {
+        "exit": 13,
+        "payload": null,
+        "reason_code": "CRATE_ERROR",
+        "reason_message_contains": "intake_surface_v1.csv",
+        "sidecar": true,
+        "status": "MODEL_ERROR"
+      },
+      "id": "REF-05",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "intake",
+            "surface-v1",
+            "--state",
+            "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47",
+            "--scattering",
+            "maxwell",
+            "--l-over-d",
+            "10",
+            "--phi",
+            "0.9",
+            "--alpha",
+            "0.5",
+            "--theta-deg",
+            "0"
+          ],
+          "checks_passed": true,
+          "exit": 13,
+          "files": [
+            "intake-surface-v1.result.json",
+            "intake-surface-v1.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_ERROR",
+          "result_sha256": "207807928800239e7d5e57fb797c618d4e619fa64e450186ab7fe3929d4e585f",
+          "run": "R1",
+          "sidecar_sha256": "a103dd4458e191cd431605c08a5b9fbd4671d81e81fcda6c2912bd60580ced58",
+          "status": "MODEL_ERROR"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "intake",
+        "surface-v1",
+        "--state",
+        "ds2:NOT_A_REGISTERED_STATE",
+        "--scattering",
+        "maxwell",
+        "--l-over-d",
+        "10",
+        "--phi",
+        "0.9",
+        "--alpha",
+        "0.5",
+        "--theta-deg",
+        "0"
+      ],
+      "expected": {
+        "exit": 3,
+        "payload": null,
+        "reason_code": "UNREGISTERED_INPUT",
+        "sidecar": true,
+        "status": "NOT_EVALUATED"
+      },
+      "id": "REF-06",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "intake",
+            "surface-v1",
+            "--state",
+            "ds2:NOT_A_REGISTERED_STATE",
+            "--scattering",
+            "maxwell",
+            "--l-over-d",
+            "10",
+            "--phi",
+            "0.9",
+            "--alpha",
+            "0.5",
+            "--theta-deg",
+            "0"
+          ],
+          "checks_passed": true,
+          "exit": 3,
+          "files": [
+            "intake-surface-v1.result.json",
+            "intake-surface-v1.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "UNREGISTERED_INPUT",
+          "result_sha256": "c625ab433548dc2583d76e5ef11e5506e5058c2a49616f6b98ee127ad3f99afb",
+          "run": "R1",
+          "sidecar_sha256": "bd8ecd5d9db1e722c09d9aa3456c9fbc98b38fedc0cc15c22514b5b5692284e4",
+          "status": "NOT_EVALUATED"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "icp",
+        "status",
+        "--supply-mode",
+        "EM_N2"
+      ],
+      "expected": {
+        "exit": 3,
+        "payload": null,
+        "reason_code": "UNREGISTERED_INPUT",
+        "sidecar": true,
+        "status": "NOT_EVALUATED"
+      },
+      "id": "REF-07",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "icp",
+            "status",
+            "--supply-mode",
+            "EM_N2"
+          ],
+          "checks_passed": true,
+          "exit": 3,
+          "files": [
+            "icp-status.result.json",
+            "icp-status.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "UNREGISTERED_INPUT",
+          "result_sha256": "c2437d867076707e5621a124d7eb68ebfe0e2eeb438cad56e4c3bab3118034bd",
+          "run": "R1",
+          "sidecar_sha256": "ed3ac3974b7f1566ec45836cf26a64b66dffdb044d182dbc0be914a4023727b8",
+          "status": "NOT_EVALUATED"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "intake",
+        "surface-v1",
+        "--state",
+        "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47",
+        "--scattering",
+        "maxwell",
+        "--l-over-d",
+        "25",
+        "--phi",
+        "0.9",
+        "--alpha",
+        "0.5",
+        "--theta-deg",
+        "0"
+      ],
+      "expected": {
+        "exit": 12,
+        "payload": null,
+        "reason_code": "CRATE_ERROR",
+        "reason_message_contains": "OUT_OF_BOUNDS",
+        "sidecar": true,
+        "status": "OUT_OF_DOMAIN"
+      },
+      "id": "REF-08",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "intake",
+            "surface-v1",
+            "--state",
+            "ds2:ECSS_LT_HIGH:alt180:lat+37.0000:lst21:lon240:doy47",
+            "--scattering",
+            "maxwell",
+            "--l-over-d",
+            "25",
+            "--phi",
+            "0.9",
+            "--alpha",
+            "0.5",
+            "--theta-deg",
+            "0"
+          ],
+          "checks_passed": true,
+          "exit": 12,
+          "files": [
+            "intake-surface-v1.result.json",
+            "intake-surface-v1.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_ERROR",
+          "result_sha256": "e932c91ca39a0c3649764bb8cf7bf1232efa2f07fd12d687f19a7523e6b6417a",
+          "run": "R1",
+          "sidecar_sha256": "a82a102df89927c22f8cd27b7642b6a1fa9876c981fd305d241f683f40d17923",
+          "status": "OUT_OF_DOMAIN"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "drag",
+        "statewise",
+        "--area-m2",
+        "0.5",
+        "--l-over-d",
+        "7",
+        "--phi",
+        "0.9",
+        "--scenario",
+        "maxwell_a0.5"
+      ],
+      "expected": {
+        "exit": 12,
+        "payload": null,
+        "reason_code": "CRATE_ERROR",
+        "sidecar": true,
+        "status": "OUT_OF_DOMAIN"
+      },
+      "id": "REF-09",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "drag",
+            "statewise",
+            "--area-m2",
+            "0.5",
+            "--l-over-d",
+            "7",
+            "--phi",
+            "0.9",
+            "--scenario",
+            "maxwell_a0.5"
+          ],
+          "checks_passed": true,
+          "exit": 12,
+          "files": [
+            "drag-statewise.result.json",
+            "drag-statewise.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "CRATE_ERROR",
+          "result_sha256": "46a599c3060ead609e38fe6af8a6d324e1c40b92bd73aa2aa92b36c0d649808f",
+          "run": "R1",
+          "sidecar_sha256": "4416c24e5e3872393d30132e806bcb7117235079b7d0fcc82cf431afb1baef70",
+          "status": "OUT_OF_DOMAIN"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "hall",
+        "pin-check"
+      ],
+      "expected": {
+        "exit": 10,
+        "payload": null,
+        "reason_code": "COMPONENT_ADMISSION_UNVERIFIED",
+        "sidecar": true,
+        "status": "NOT_EVALUATED"
+      },
+      "id": "REF-10",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "hall",
+            "pin-check"
+          ],
+          "checks_passed": true,
+          "exit": 10,
+          "files": [
+            "hall-pin-check.result.json",
+            "hall-pin-check.run_record.json"
+          ],
+          "problems": [],
+          "reason_code": "COMPONENT_ADMISSION_UNVERIFIED",
+          "result_sha256": "609a74f7dd09e05fe95fb0fbf692354bcde75e2c394250cab6427c90108fe41f",
+          "run": "R1",
+          "sidecar_sha256": "77f720512f06775456955095b6432d4aa80c978ca19d6e41d486d4d22ea4af32",
+          "status": "NOT_EVALUATED"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "hall",
+        "status"
+      ],
+      "expected": {
+        "exit": 4,
+        "payload": null,
+        "reason_code": "REPOSITORY_NOT_FOUND",
+        "sidecar": false,
+        "status": "MODEL_ERROR"
+      },
+      "id": "REF-11",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "hall",
+            "status"
+          ],
+          "checks_passed": true,
+          "exit": 4,
+          "files": [
+            "hall-status.result.json"
+          ],
+          "problems": [],
+          "reason_code": "REPOSITORY_NOT_FOUND",
+          "result_sha256": "8a240e33b6b325a5c0f2fbf5bf40f42b261a75ebe5e3ea998b2eb08066b73e8c",
+          "run": "R1",
+          "sidecar_sha256": null,
+          "status": "MODEL_ERROR"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "sweep"
+      ],
+      "expected": {
+        "exit": 2,
+        "files_written": 0
+      },
+      "id": "REF-12",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "sweep"
+          ],
+          "checks_passed": true,
+          "exit": 2,
+          "files": [],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": null,
+          "run": "R1",
+          "sidecar_sha256": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "argv": [
+        "drag",
+        "statewise",
+        "--area-m2",
+        "abc",
+        "--l-over-d",
+        "10",
+        "--phi",
+        "0.9",
+        "--scenario",
+        "maxwell_a0.5"
+      ],
+      "expected": {
+        "exit": 2,
+        "files_written": 0
+      },
+      "id": "REF-13",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "drag",
+            "statewise",
+            "--area-m2",
+            "abc",
+            "--l-over-d",
+            "10",
+            "--phi",
+            "0.9",
+            "--scenario",
+            "maxwell_a0.5"
+          ],
+          "checks_passed": true,
+          "exit": 2,
+          "files": [],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": null,
+          "run": "R1",
+          "sidecar_sha256": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "argv": [
+        "hall",
+        "status"
+      ],
+      "expected": {
+        "exit": 2,
+        "files_written": 0
+      },
+      "id": "REF-14",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "hall",
+            "status"
+          ],
+          "checks_passed": true,
+          "exit": 2,
+          "files": [],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": null,
+          "run": "R1",
+          "sidecar_sha256": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "argv": [
+        "hall",
+        "status"
+      ],
+      "expected": {
+        "exit": 5,
+        "files_written": 0
+      },
+      "id": "REF-15",
+      "meets_expectation": true,
+      "problems": [],
+      "runs": [
+        {
+          "argv_tail": [
+            "1",
+            "hall",
+            "status"
+          ],
+          "checks_passed": true,
+          "exit": 5,
+          "files": [],
+          "problems": [],
+          "reason_code": null,
+          "result_sha256": null,
+          "run": "R1",
+          "sidecar_sha256": null,
+          "status": null
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "cases": 26,
+    "cases_meeting_expectation": 26,
+    "runs": 59
+  },
+  "decision_rules_applied": [
+    "per_case: every run meets EXIT, STATUS, PAYLOAD, FILES, PROV and NO_VERDICT",
+    "determinism: DET-RUN and DET-THREADS for every command case, DET-ENV-CRATE",
+    "static: STATIC-DEP, STATIC-NOPY",
+    "verdict: ACCEPTED iff all hold"
+  ],
+  "determinism": {
+    "DET-ENV-CRATE": {
+      "cli_payload_sha256": [
+        {
+          "run": "R1",
+          "sha256": "ac339a6eef4c8bfa8940bfc7531e00c5674dceb674a884ee2534fbd2f9ef3f40"
+        },
+        {
+          "run": "R4",
+          "sha256": "ac339a6eef4c8bfa8940bfc7531e00c5674dceb674a884ee2534fbd2f9ef3f40"
+        }
+      ],
+      "crate_payload_sha256": "ac339a6eef4c8bfa8940bfc7531e00c5674dceb674a884ee2534fbd2f9ef3f40",
+      "holds": true
+    },
+    "DET-RUN": [
+      {
+        "case": "CMD-01",
+        "holds": true
+      },
+      {
+        "case": "CMD-02",
+        "holds": true
+      },
+      {
+        "case": "CMD-03",
+        "holds": true
+      },
+      {
+        "case": "CMD-04",
+        "holds": true
+      },
+      {
+        "case": "CMD-05",
+        "holds": true
+      },
+      {
+        "case": "CMD-06",
+        "holds": true
+      },
+      {
+        "case": "CMD-07",
+        "holds": true
+      },
+      {
+        "case": "CMD-08",
+        "holds": true
+      },
+      {
+        "case": "CMD-09",
+        "holds": true
+      },
+      {
+        "case": "CMD-10",
+        "holds": true
+      },
+      {
+        "case": "CMD-11",
+        "holds": true
+      }
+    ],
+    "DET-THREADS": [
+      {
+        "case": "CMD-01",
+        "holds": true
+      },
+      {
+        "case": "CMD-02",
+        "holds": true
+      },
+      {
+        "case": "CMD-03",
+        "holds": true
+      },
+      {
+        "case": "CMD-04",
+        "holds": true
+      },
+      {
+        "case": "CMD-05",
+        "holds": true
+      },
+      {
+        "case": "CMD-06",
+        "holds": true
+      },
+      {
+        "case": "CMD-07",
+        "holds": true
+      },
+      {
+        "case": "CMD-08",
+        "holds": true
+      },
+      {
+        "case": "CMD-09",
+        "holds": true
+      },
+      {
+        "case": "CMD-10",
+        "holds": true
+      },
+      {
+        "case": "CMD-11",
+        "holds": true
+      }
+    ]
+  },
+  "id": "ACCEPT-NI-ABEP-CLI-V2-REPORT",
+  "item": "NI-ABEP-CLI",
+  "ledger_update_requested": {
+    "admission_evidence": "docs/rust_migration/contracts/NI-ABEP-CLI/acceptance_report_v2.json",
+    "contract": {
+      "id": "ACCEPT-NI-ABEP-CLI-V2",
+      "path": "docs/rust_migration/contracts/NI-ABEP-CLI/acceptance_v2.json",
+      "sha256": "9d0c778def95ff2779a2fdf3f923a1e8ee697349198b716a0ee3049fff563f85"
+    },
+    "implementation": [
+      "crates/abep-cli"
+    ],
+    "item": "NI-ABEP-CLI",
+    "text": "NI-ABEP-CLI -> ACCEPTED in docs/rust_migration/migration_state_v1.json (evidence: this report); ADMITTED after the CI determinism job (CI_PLAN § 5) lands",
+    "to": "ACCEPTED"
+  },
+  "prereg": {
+    "id": "ACCEPT-NI-ABEP-CLI-V2",
+    "path": "docs/rust_migration/contracts/NI-ABEP-CLI/acceptance_v2.json",
+    "sha256": "9d0c778def95ff2779a2fdf3f923a1e8ee697349198b716a0ee3049fff563f85"
+  },
+  "problems": [],
+  "provenance": {
+    "abep_binary": {
+      "name": "abep",
+      "profile": "dev",
+      "sha256": "c76186bac4c73c97d2bbae7f6be51b286071a3a5103a1cc94f66285c36f4d97a"
+    },
+    "commands": [
+      "cargo build --locked -p abep-cli (CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0)",
+      "cargo run --locked -q -p abep-cli --example cli_acceptance -- --abep target/debug/abep --work <scratch> --report-dir docs/rust_migration/contracts/NI-ABEP-CLI"
+    ],
+    "git_dirty": false,
+    "git_head": "58477abe3159cd4e727e9e5c6ac71c310a7a1185",
+    "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+    "source_sha256": {
+      "crates/abep-cli/Cargo.toml": "bbae5b189cc81e5778817176891f5da858148b1ff28d28e596c52bc9c557a164",
+      "crates/abep-cli/examples/cli_acceptance.rs": "98e3aa54ec7171bf6a449fb60a6100b8901162771f068791ed979894d54ae8d9",
+      "crates/abep-cli/src/acceptance.rs": "19d270fd48ac6e0435c8d9fce00c6e6fa32f383139654d4fa40fe488a3826997",
+      "crates/abep-cli/src/args.rs": "2b16f21599316041d2a979b4e8140a0afa3b99d83040df12f5d8746e2bbebc36",
+      "crates/abep-cli/src/commands.rs": "c15bc6726fe02490060d3f8b89446610dedefc77a32bf92a8adbf08e6fcfa6d5",
+      "crates/abep-cli/src/lib.rs": "bff56559f841a9695e6a2912f3f2e55b992df2d9b790d58acc8b36f4b49e1078",
+      "crates/abep-cli/src/main.rs": "b43bf34a02e36a9fbfc4208b8c938d4ec6531fbde1f179091430cbc801661027",
+      "crates/abep-cli/src/output.rs": "755d38eec438f51464c453cde69b3726a43bc2dc4eea042f3eb206d85e1b0a46",
+      "crates/abep-cli/src/registry.rs": "66e6289ce63a04dc5b42d8569e9e49c149a869f49c4545ab8329e6897f282db0",
+      "crates/abep-cli/tests/acceptance_cases.rs": "6dc652dcc76f0674daed2216c5c47832ac39dfe6bea4d15791b09dcbcf94565b"
+    },
+    "utc": "2026-10-06T14:06:14Z"
+  },
+  "schema": "abep_new_infrastructure_acceptance_report_v1",
+  "simulation_completion_wp": "SC-WP-13",
+  "static": {
+    "STATIC-DEP": {
+      "holds": true,
+      "note": "48 packages in the closure; forbidden []; dependents []"
+    },
+    "STATIC-NOPY": {
+      "holds": true,
+      "offending_files": []
+    }
+  },
+  "verdict": "ACCEPTED",
+  "what_this_is_not": [
+    "not physics and not a gate verdict: the CLI never relabels a crate status",
+    "not admission of any component the CLI calls: NP-ICP-NEUTRALIZER stays NOT_ADMITTED; Hall thrust stays NOT_EVALUATED"
+  ]
+}

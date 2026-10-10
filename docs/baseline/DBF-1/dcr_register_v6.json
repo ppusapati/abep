@@ -1,0 +1,94 @@
+{
+ "schema": "abep_dcr_register_v1",
+ "id": "dcr_register_v6",
+ "baseline": "DBF-1",
+ "process": "docs/baseline/DBF-1/DCR_PROCESS.md",
+ "supersedes": {
+  "path": "docs/baseline/DBF-1/dcr_register_v5.json",
+  "sha256": "432bb04a981dac1e415ddd36a28e41d0b230edfa7f4cef34a2016a2d6d901368"
+ },
+ "maintained_by": "coordinator (single writer; lanes submit request drafts under docs/baseline/DCR-NNN/ or their closure directory)",
+ "date": "2026-10-10",
+ "governance": [
+  "A9.37",
+  "A9.38"
+ ],
+ "dcrs": [
+  {
+   "id": "DCR-DBF1-001",
+   "status": "APPROVED_OWNER_WITH_MASS_RISK",
+   "date_opened": "2026-10-08",
+   "requested_by": "lane L-INTAKE-DCR001 (A9.38 P1)",
+   "items": [
+    "DBF-1 intake geometry",
+    "filter",
+    "compressor",
+    "plenum",
+    "valve",
+    "feed controller (SR-INTAKE-01 / SR-CTRL-01 selections)"
+   ],
+   "physical_or_evidence_reason": "BD-01 worst-state delivered flow 1.43e-9 kg/s vs 4.80e-8 kg/s required for 12 mN (x33.6); BD-02 Pareto member in 6 of 10 surface scenarios, F8 robust set EMPTY; BD-03 compressor 10.9 kg vs 5.5 kg AL-02 (docs/baseline/DBF-1/dbf1_v1.json)",
+   "evaluation_method": "preregistered by the lane before any replacement comparison (docs/baseline/DCR-001/)",
+   "approved_by": "owner (A9.41)",
+   "new_baseline": "DBF-1.2 (built and frozen; lock docs/baseline/DBF-1.2/dbf1_2_lock_v1.json sha256 103f4c9a5c0ab61d9d12e989c47e5f4fd713caa6bcbe7c45e9207e2e6ce19ee5)",
+   "scope_update": "A9.39 item 3: evaluate a density-adaptive / variable-effective-capture intake + active compressor / plenum / feed; deliver the admissible flux window and altitude schedule over 180-230 km",
+   "approval_record": {
+    "path": "docs/baseline/DCR-001/dcr001_approval_v1.json",
+    "sha256": "b3d0c3074c4dee3228af98f417d8d005b71a835ce79df8190db1de70eff4ed29"
+   },
+   "owner_record": {
+    "path": "docs/decisions/OD_2026_10_10_A9_41_dcr_dbf1_001_approval_mass_risk.json",
+    "sha256": "3482cd6e945a479233ed5374ebeeb74bdf87d61c8fb86967d0afe25c589d3c49"
+   },
+   "open_risk": "MR-DCR001-01 (0.052 kg wet margin carried as mass risk)"
+  },
+  {
+   "id": "DCR-DBF1-002",
+   "status": "APPROVED_OWNER_RATIFIED",
+   "date_opened": "2026-10-08",
+   "requested_by": "lane L-H1-BZ (A9.38 P3)",
+   "items": [
+    "DBF-1 magnetic target simulation shape BZ-P5B16 (SOURCED_SURROGATE_P5_SHAPE_NOT_H1_BZ)"
+   ],
+   "physical_or_evidence_reason": "BD-05: no H1-specific B(z) registered; replace the P5-shape surrogate with an FE-derived H1 field of the frozen electromagnet",
+   "evaluation_method": "preregistered by the lane before the production solve (docs/hardware/h1_bz/)",
+   "approved_by": "owner (A9.39 item 1), ratifying the coordinator approval",
+   "new_baseline": "DBF-1.1 (built, lock 257e141c...; governing analysis baseline)",
+   "approval_record": {
+    "path": "docs/baseline/DCR-002/dcr002_approval_v1.json",
+    "sha256": "1718ac8061720959ea52e66e18723c23c3ece8d8c44fcfa41249d4f852c9bb55"
+   },
+   "request_draft": {
+    "path": "docs/baseline/DCR-002/dcr002_request_v1.json",
+    "sha256": "ab55635ac29e2900e4baa459bfbaae9e4334412066bebc1cc03f77f765fcfca9"
+   },
+   "owner_record": {
+    "path": "docs/decisions/OD_2026_10_09_A9_39_architecture_closed_owner_decisions.json",
+    "sha256": "dd17ada07ab660187d8c762483a340299470d6e04e60f24f06938b9e450ea857"
+   }
+  },
+  {
+   "id": "DCR-DBF1-003",
+   "status": "REQUESTED_EVALUATION_TO_BE_PREREGISTERED",
+   "date_opened": "2026-10-09",
+   "requested_by": "lane L-THERMAL (A9.38 P7)",
+   "request_draft": {
+    "path": "docs/closure/thermal/dcr_request_P7_match_v1.json",
+    "sha256": "d1205b3b28d783d94339f321220b0b899bace20690dcc076b04b4bd13f27407a"
+   },
+   "items": [
+    "DBF1-RF-03 (co-located adjustable match)",
+    "DBF1-TH-01 (N_MATCH node, follows DBF1-RF-03)"
+   ],
+   "physical_or_evidence_reason": "co-located match N_MATCH 147-184 degC in every preregistered hot case vs 60 degC ceiling (margin -124 K), fails at P_fwd = 0 W and at every radiator grid point: conduction from the ICP bracket (docs/closure/thermal/thermal_closure_v2.json sha 06b26333...)",
+   "routes": [
+    "R-1 no-DCR: thermal isolation + dedicated radiator for the match (if it closes, DCR-DBF1-003 is withdrawn)",
+    "R-2 DCR: relocate the match to the generator side"
+   ],
+   "evaluation_method": "both routes evaluated under one preregistration committed before comparison",
+   "results_seen_before_request": "P7 thermal_closure_v1 / v2; M2 v1 record (no thermal content)",
+   "approved_by": null,
+   "new_baseline": "pending"
+  }
+ ]
+}

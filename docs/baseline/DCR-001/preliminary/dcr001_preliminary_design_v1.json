@@ -1,0 +1,234 @@
+{
+ "label": "PROPOSAL-LEVEL PRELIMINARY DESIGN / PARAMETRIC / NOT_VALIDATED",
+ "inputs": {
+  "A4_sha256": "5146fe583343bf5de090a8baeecb812640754b7e579f0df69c78e54dd642689f",
+  "U_m_s": 7787.556377412715,
+  "K_D_intake": 1.0520857482904975
+ },
+ "assumptions": {
+  "W_fwd": {
+   "value": 0.72,
+   "low": 0.68,
+   "high": 0.92,
+   "basis": "TPMC transmission into the collection chamber, unfavourable-scenario band (A5 record, all 10 surface scenarios)"
+  },
+  "eta_filter": {
+   "value": 0.9,
+   "low": 0.7,
+   "high": 0.9,
+   "basis": "F4 filter transmission (DBF-1 F4-FIL-T0.9)"
+  },
+  "LD": {
+   "value": 20.0,
+   "low": 15.0,
+   "high": 30.0,
+   "basis": "honeycomb collimator length / cell diameter"
+  },
+  "H_stage": {
+   "value": 0.3,
+   "low": 0.25,
+   "high": 0.4,
+   "basis": "first-stage pumping probability (Ho coefficient), axial molecular stage at blade-speed ratio ~0.66 (turbomolecular stage theory; verify)"
+  },
+  "S_over_Cback": {
+   "value": 2.0,
+   "low": 1.5,
+   "high": 3.0,
+   "basis": "compressor inlet speed / intake back-conductance (sizing choice)"
+  },
+  "eta_deliv": {
+   "value": 0.98,
+   "low": 0.95,
+   "high": 0.99,
+   "basis": "compressor + plenum delivery (leakage) efficiency"
+  },
+  "v_eff_12": {
+   "value": 26800.0,
+   "low": 22000.0,
+   "high": 30000.0,
+   "basis": "air-Hall effective exhaust velocity at 350 V: mean ion 22 amu, mass util 0.6, voltage util 0.8, cos 0.9 (literature-planning, NOT H1 performance)"
+  },
+  "eta_T": {
+   "value": 0.27,
+   "low": 0.22,
+   "high": 0.32,
+   "basis": "air-Hall total efficiency (literature-planning, NOT H1 performance)"
+  },
+  "hub_ratio": {
+   "value": 0.4,
+   "low": 0.35,
+   "high": 0.5,
+   "basis": "axial rotor hub / tip diameter"
+  },
+  "v_tip": {
+   "value": 300.0,
+   "low": 250.0,
+   "high": 350.0,
+   "basis": "rotor tip speed m/s (Al-alloy / CFRP blisk)"
+  },
+  "T_gas": {
+   "value": 300.0,
+   "low": 280.0,
+   "high": 330.0,
+   "basis": "chamber gas temperature K"
+  },
+  "m_mix_amu": {
+   "value": 24.0,
+   "low": 21.0,
+   "high": 28.9,
+   "basis": "captured-gas mean molecular mass (O/N2 mixture)"
+  }
+ },
+ "intake": {
+  "A_face_m2": 0.7000000000000001,
+  "D_equiv_m": 0.9440697438826297,
+  "LD": 20.0,
+  "cell_mm": 3.2,
+  "depth_mm": 64.0,
+  "W_rev": 0.0625,
+  "eta_retention": 0.6666666666666666,
+  "eta_path": 0.42336,
+  "effective_capture_m2_max": 0.29635200000000006,
+  "mass_kg": {
+   "honeycomb": 1.4336000000000002,
+   "chamber_shroud_CFRP": 1.26,
+   "filter": 0.28,
+   "frame_mounts": 0.5,
+   "launch_cover": 0.3
+  },
+  "mass_total_kg": 3.7736,
+  "drag_N_at": {
+   "phi_lo": 0.008665407104237202,
+   "phi_hi": 0.01866421360299752,
+   "densest_registered": 0.049280000000000004
+  }
+ },
+ "thrust_over_intake_drag": 1.3848166457329225,
+ "flows": {
+  "0.012": {
+   "lower_bound_kg_s": 1.846977348448613e-07,
+   "engineering_kg_s": 4.4776119402985074e-07
+  },
+  "0.025": {
+   "lower_bound_kg_s": 3.84786947593461e-07,
+   "engineering_kg_s": 1.3148148148148148e-06
+  }
+ },
+ "v_eff_25_mode_m_s": 19014.084507042255,
+ "window": {
+  "phi_lo": 1.5109099787747364e-06,
+  "phi_hi_with_ref_host": 3.2543129525862606e-06,
+  "host_CDA_ref_m2": 0.5,
+  "schedule_km_intake_only": {
+   "ECSS_LT_LOW": [
+    180.0,
+    183.0
+   ],
+   "ECSS_LT_MODERATE": [
+    180.0,
+    196.0
+   ],
+   "ECSS_LT_HIGH": [
+    185.0,
+    212.0
+   ],
+   "ECSS_ST_HIGH": [
+    194.0,
+    221.5
+   ]
+  },
+  "phi_hi_no_host": 4.3590276850234e-06,
+  "host_CDA_max_flow_margin_m2": 0.5668041521527856,
+  "phi_hi_intake_only": 4.3590276850234e-06,
+  "host_CDA_max_m2": 0.5600000000000003,
+  "ratio": 2.1538761397454844,
+  "rho_lo": 1.940159281744694e-10,
+  "rho_hi": 4.1788627842556326e-10,
+  "schedule_km": {
+   "ECSS_LT_LOW": [
+    180.0,
+    183.0
+   ],
+   "ECSS_LT_MODERATE": [
+    183.0,
+    196.0
+   ],
+   "ECSS_LT_HIGH": [
+    195.5,
+    212.0
+   ],
+   "ECSS_ST_HIGH": [
+    206.0,
+    221.5
+   ]
+  },
+  "flux_margin_LT_LOW_180": 0.17452730723050425
+ },
+ "compressor": {
+  "C_back_m3_s": 5.626783720622013,
+  "S_inlet_m3_s": 11.253567441244027,
+  "rotor_annulus_m2": 0.2916666666666667,
+  "rotor_D_m": 0.6649038006690545,
+  "hub_ratio": 0.4,
+  "rpm_front": 8617.153256670947,
+  "v_tip": 300.0,
+  "p_chamber_Pa_12": 0.004135237259590123,
+  "p_chamber_Pa_25": 0.01214279237275939,
+  "p_front_exit_Pa": 2.0,
+  "finishing_speed_needed_m3_s": 0.06832486644593569,
+  "PR_front": 483.6481861740229,
+  "PR_front_per_stage_6": 2.8016997663033663,
+  "phi_for_25mN_air": 4.436665906809519e-06,
+  "PR_total": 4836.481861740229,
+  "P_isothermal_W_25": 1.012130652213606,
+  "P_nom_W": 25.0,
+  "P_worst_W": 40.0,
+  "mass_kg": {
+   "front_axial_rotors_6": 1.7999999999999998,
+   "front_stators_6": 1.2000000000000002,
+   "shaft_hub_bearings": 0.6,
+   "front_motor": 0.5,
+   "housing": 0.9,
+   "finishing_turbodrag": 1.6,
+   "motor_drives_2": 0.8
+  },
+  "mass_total_kg": 7.3999999999999995,
+  "turndown_speed": ">= 3:1 (30-100 % speed)"
+ },
+ "plenum": {
+  "V_m3": 0.004653617138634257,
+  "p_set_Pa": 20.0,
+  "p_band_Pa": [
+   10.0,
+   30.0
+  ],
+  "tau_s": 2.0,
+  "mass_kg": {
+   "plenum_vessel_5L": 0.5,
+   "PFCV_valves_2": 0.3,
+   "pressure_transducers_2": 0.1,
+   "lines_fittings": 0.2
+  },
+  "mass_total_kg": 1.1,
+  "power_W": 5.0
+ },
+ "power": {
+  "nondischarge_bus_nom_W": 445.9294117647059,
+  "nondischarge_bus_worst_W": 461.9647058823529,
+  "Pd_12_W": 595.5555555555555,
+  "bus_12_W": 1142.485617092841,
+  "Pd_25_W": 880.2816901408451,
+  "bus_25_W": 1491.5339341172596,
+  "Pd_ceiling_1500_W": 887.5201764705882,
+  "Pd_ceiling_1350_W": 772.9803529411764
+ },
+ "mass": {
+  "nonharness_kg": 35.3932,
+  "harness_kg": 1.8628,
+  "nominal_dry_kg": 37.256,
+  "dry_with_10pct_kg": 40.9816,
+  "wet_2kgXe_kg": 42.9816,
+  "over_34_nominal_kg": 3.2560000000000002,
+  "over_40_wet_kg": 2.9816000000000003
+ }
+}

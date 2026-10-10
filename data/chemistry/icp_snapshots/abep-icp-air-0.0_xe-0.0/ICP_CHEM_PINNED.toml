@@ -1,0 +1,38 @@
+# Reaction-set labels of the active RF/ICP neutralizer chemistry (NP-ICP-CHEM-AIR v1, interface IF-CHEM-REG-v1; build
+# plan BP-S1). Separate from the Hall label hallthruster_bridge/PINNED.toml [reaction_set] (abep-n2n-*): one label never
+# names two chemistry definitions (AD-AIR-09, AD-XE-04). [files] pins every registry file; each registry pins its data
+# files. Any change is a new label with a history line, one table per commit (build plan per_table_commit), and a new
+# sha256 of this file in abep_chem::registry::ICP_CHEM_PINNED_SHA256.
+
+[contract]
+id = "NP-ICP-CHEM-AIR"
+version = "1"
+prereg = "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_v1.json"
+lock = "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json"
+lock_sha256 = "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef"
+interface = "IF-CHEM-REG-v1"
+provider = "abep-chem (abep_chem::registry, abep_chem::checked)"
+consumer = "abep-icp (NP-ICP-NEUTRALIZER, addendum_02_chem_air)"
+
+[files]
+"registry_air.toml" = "76b62384435baa1c7ccdec7330d2f2fc077008ab461aa1ec85a5b7ca33490809"
+"registry_xe.toml" = "30a9888c746e95430c57e4f8fa8b44b075eb34fd330aa62dd5e9e1e61a4a382d"
+"rate_validity_icp.toml" = "1f0ee2b3f22b1f7755ad00ff64b0af361e381ad9eca9eddc4b45443ac9dedd5f"
+"reuse_pins.json" = "e20a24622eeed8543a372f39062ad766da9a51a3d23b9aff9e8a3f0f5dbac3bc"
+"registry_schema_v1.json" = "b82fff321f6a49d5e73b4ec0ffb3a5f952b995139fb6511b8d36d42438495e51"
+
+[air]
+label = "abep-icp-air-0.0"
+registry = "registry_air.toml"
+status = "NOT_ADMITTED"
+history = [
+  "abep-icp-air-0.0 (2026-10-06, BP-S1): skeleton; the 54 AIR processes with their contract statuses; 43 abep-n2n-0.11 channels reused by reference (reuse_pins.json) with mirrored validity entries; direct-rate cross-section representations of 32 of them (xs/, extracted from the C-ABEP_SIM_RATE_TABLES_PY v1 capture); ionization_N and the 10 vibrational rate fits without a registered representation; no new table; scenario EM-N2-NOMINAL = n2_n.toml",
+]
+
+[xe]
+label = "abep-icp-xe-0.0"
+registry = "registry_xe.toml"
+status = "NOT_ADMITTED"
+history = [
+  "abep-icp-xe-0.0 (2026-10-06, BP-S1): skeleton; the 10 XE processes with their contract statuses; no Xe data (BP-X1..X4)",
+]

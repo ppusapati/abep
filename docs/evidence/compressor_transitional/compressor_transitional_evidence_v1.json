@@ -1,0 +1,621 @@
+{
+  "schema": "compressor_transitional_evidence_v1",
+  "version": "1.0.0",
+  "module": "abep_sim/compressor_transitional.py",
+  "model_id": "skovorodko2002_plane_couette_poiseuille_slip_eq1",
+  "evidence_status": "CANDIDATE_NOT_ADMITTED",
+  "valid_design_evidence": false,
+  "owner_decision": {
+    "json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+    "json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+    "verbatim_md": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+    "verbatim_md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+    "questions": {
+      "OQ-F3-03": {
+        "sequenced_no": "S6.8",
+        "status": "OWNER_DECIDED",
+        "answer": "MODEL_AND_TEST_PARALLEL_FAIL_CLOSED",
+        "summary": "open-literature transitional-regime model now + T-1/T-2 characterization in parallel; until admitted/validated, > 0.1 Pa results are NOT_EVALUATED_OUT_OF_DOMAIN and never valid architecture points"
+      },
+      "OQ-F4-02": {
+        "sequenced_no": "S6.11",
+        "status": "OWNER_DECIDED",
+        "answer": "HIGHER_PRESSURE_COMPRESSION_PRIMARY",
+        "summary": "primary direction: compressor/feed chain producing the H-1-required pressure/flow state (extend compressor regime per S6.8, measure the H-1 inlet requirement, design valve/line/isolator/distributor to the admitted feed state); <= 0.1 Pa high-conductance branch kept as sensitivity/fallback only"
+      }
+    },
+    "binding_text_S6_8": "until the transitional model has an admitted evidence basis and/or has been validated against the project hardware: production/design evidence above the current 0.1 Pa free-molecular domain remains NOT_EVALUATED_OUT_OF_DOMAIN; no extrapolated >0.1 Pa result may be treated as a valid architecture point."
+  },
+  "source_register": [
+    {
+      "id": "CT-S01",
+      "citation": "P. A. Skovorodko, 'Continuum model for Couette-Poiseuille flow in a drag molecular pump', 23rd Int. Symp. Rarefied Gas Dynamics, Whistler BC, 21-25 July 2002, abstract #151; arXiv:physics/0401020 (submitted 7 Jan 2004), 2 pages",
+      "url": "https://arxiv.org/abs/physics/0401020",
+      "access": "OPEN (arXiv; license: arXiv assumed 1991-2003)",
+      "retrieved": "2026-10-01",
+      "retrieved_pdf_sha256": "1d46f7245f235113c051beec51c378b7e0c720acb5139c48d6bf7d8298abab42",
+      "quantities": "closed-form stage relation L(p1, p2, g) (Eq. 1); continuum limit dp = 6 mu w L/delta^2; free-molecular compression exp[sigma w L/((2-sigma) c0 delta)]; maximum throughput at u = w/2; tapered-channel effective gap (not implemented)",
+      "regime": "continuum to free molecular (author: 'good qualitative representation'; quantitative only with sigma fitted to the free-molecular compression)",
+      "validation_in_source": "Fig. 1: inlet pressure vs flow rate (1e-9 to 1e-5 kg/s) at outlet 0.1/0.5/1 Torr, helium, Holweck pump at 400 rps, experimental data of Kanki (RGD-1994, ref. 3) with sigma = 0.6 fitted; channel geometry not given in the source",
+      "evidence_level": 6,
+      "quantity_type": "model-derived",
+      "use": "IMPLEMENTED (abep_sim/compressor_transitional.py)"
+    },
+    {
+      "id": "CT-S02",
+      "citation": "F. Sharipov, 'Rarefied gas dynamics and its applications to vacuum technology', CERN Accelerator School lecture notes (CERN CDS record 1046845; series/year: verify)",
+      "url": "https://fisica.ufpr.br/sharipov/CERN.pdf",
+      "access": "OPEN (author's institutional site; the CDS copy returned a bot-check page from this environment and was not used)",
+      "retrieved": "2026-10-01",
+      "retrieved_pdf_sha256": "0359f860acb46723b018c13ade7890879737dbdcdc4e80b80752008fd7a4d8a4",
+      "quantities": "Kn = l/a and l = mu v_m/P, v_m = (2 k_B T/m)^1/2 (Eqs. 1-2); rarefaction delta = 1/Kn (Eq. 3); Holweck-pump methodology (Sec. 5: four linearized flows + superposition), no tabulated coefficients",
+      "regime": "whole range of rarefaction (methodology)",
+      "validation_in_source": "Fig. 3: limit compression K0 vs fore-vacuum rarefaction delta_f, theory vs experiment (graph only; details deferred to Sharipov, Fahrenbach & Zipp 2005)",
+      "evidence_level": 4,
+      "quantity_type": "model-derived",
+      "use": "Kn definition for reporting; methodology reference for a future kinetic model"
+    },
+    {
+      "id": "CT-S03",
+      "citation": "F. Sharipov, P. Fahrenbach, A. Zipp, 'Numerical modeling of the Holweck pump', J. Vac. Sci. Technol. A 23(5), 1331-1339 (2005)",
+      "url": "https://doi.org/10.1116/1.1991882",
+      "access": "ABSTRACT_ONLY (Crossref metadata); full text not open",
+      "retrieved": "2026-10-01",
+      "quantities": "kinetic-equation Holweck model; pumping speed, torque",
+      "regime": "arbitrary rarefaction",
+      "validation_in_source": "abstract: 'comparison of the numerical results with experimental data confirms that the groove curvature is not a predominant factor, while the gas rarefaction significantly affects the main characteristics of the pump'",
+      "evidence_level": 4,
+      "quantity_type": "model-derived",
+      "use": "NOT IMPLEMENTED (full text and groove solutions not accessible); best-supported candidate if lawfully accessed later"
+    },
+    {
+      "id": "CT-S04",
+      "citation": "F. Sharipov, 'Numerical simulation of turbomolecular pump over a wide range of gas rarefaction', J. Vac. Sci. Technol. A 28(6), 1312-1315 (2010)",
+      "url": "https://doi.org/10.1116/1.3484139",
+      "access": "ABSTRACT_ONLY (Crossref metadata)",
+      "retrieved": "2026-10-01",
+      "quantities": "DSMC turbomolecular pump: maximum pumping speed and compression ratio vs rarefaction and rotor speed",
+      "regime": "free molecular, transitional, hydrodynamic",
+      "validation_in_source": "abstract only: 'in the range between the free-molecular and transitional regimes, the pump characteristics change slightly, but they vary significantly in the hydrodynamic regime ... The compression ratio always decreases when approaching the hydrodynamic regime'",
+      "evidence_level": 4,
+      "quantity_type": "model-derived",
+      "use": "GAP MEMO (qualitative only; no coefficients accessible)"
+    },
+    {
+      "id": "CT-S05",
+      "citation": "S. Giors (Agilent Technologies), 'Solved and Unsolved Gas Dynamics Problems for Turbo-Molecular-Drag Pumps: an Industrial Overview', 64th IUVSTA Workshop, Leinsweiler, 16-19 May 2011 (slides)",
+      "url": "https://www.itep.kit.edu/downloads/6_Giors.pdf",
+      "access": "OPEN (publicly hosted workshop slides; footer carries a template 'Confidentiality Label' field)",
+      "retrieved": "2026-10-01",
+      "retrieved_pdf_sha256": "6be731e2aadf67d8ad1fe6bc5d2b547fd269efc4956f6e522704213c328d27ee",
+      "quantities": "stage regime map (slide 8: inlet TMP stages Kn 1e7..1e-1, intermediate 1e3..1e-1, outlet MDP 1e1..1e-3); model survey (Helmer & Levi 1992 Gaede 1-D; Sawada 1999 Holweck 2-D; Giors 2005/2006 slip CFD; Sharipov & Zipp 2005); industry wish for +/-15 % predictive simple models (slide 9)",
+      "regime": "molecular to viscous",
+      "validation_in_source": "secondary summary of others' validation",
+      "evidence_level": 5,
+      "quantity_type": "secondary",
+      "use": "CONTEXT (selection memo); the Helmer-Levi equation on slide 14 is garbled in text extraction and its primary paper was not accessed -> not implemented"
+    },
+    {
+      "id": "CT-S06",
+      "citation": "H. Barfuss (Pfeiffer Vacuum), 'Mechanical Vacuum Pumps', CERN Accelerator School 'Vacuum for Particle Accelerators', Lund, 8-9 June 2017 (slides)",
+      "url": "https://indico.cern.ch/event/565314/contributions/2285745/attachments/1466629/2274675/Barfuss.pdf",
+      "access": "OPEN (CERN Indico)",
+      "retrieved": "2026-10-01",
+      "retrieved_pdf_sha256": "90ca7c268d0e81fa4922cdd783203ef49c07d8e7b415a6b579f00d5c25baa5c3",
+      "quantities": "flow-regime boundaries (slide 23): molecular Kn > 10, Knudsen 0.1-10, viscous Kn < 0.1; commercial TMP speed vs inlet pressure curve (HiPace 300, Ar/H2; not digitized)",
+      "regime": "all",
+      "validation_in_source": "manufacturer curve, no uncertainty",
+      "evidence_level": 5,
+      "quantity_type": "secondary",
+      "use": "KN_FREE_MOLECULAR_MIN = 10 for the overlap-regime flag (Kn definition not stated on the slide)"
+    },
+    {
+      "id": "CT-S07",
+      "citation": "NIST Chemistry WebBook, NIST Standard Reference Database 69, 'Thermophysical Properties of Fluid Systems' (section authors not read: verify); isobaric data at 0.001 bar, 200-500 K step 50 K, N2 (C7727379) and O2 (C7782447)",
+      "url": "https://webbook.nist.gov/chemistry/fluid/",
+      "access": "OPEN (US Government SRD; Standard Reference Data Act)",
+      "retrieved": "2026-10-01",
+      "quantities": "dynamic viscosity (uPa s), low-density state",
+      "regime": "dilute gas",
+      "validation_in_source": "evaluated correlations; the underlying viscosity-correlation reference and its uncertainty were not read (verify)",
+      "evidence_level": 4,
+      "quantity_type": "model-derived (evaluated correlation output), transcribed",
+      "use": "VISCOSITY_TABLE_uPa_s (snapshots committed under sources/)"
+    },
+    {
+      "id": "CT-S08",
+      "citation": "Heo & Hwang, DSMC calculations of blade rows of a turbomolecular pump in the molecular and transition flow regions, Vacuum 56, 133 (2000) (as listed by ADS 2000Vacuu..56..133H and Giors slide 11)",
+      "url": "https://ui.adsabs.harvard.edu/abs/2000Vacuu..56..133H/abstract",
+      "access": "NOT_OPEN (paywalled)",
+      "retrieved": null,
+      "quantities": "TMP blade-row performance, molecular + transition",
+      "regime": "transition",
+      "validation_in_source": "not read",
+      "evidence_level": null,
+      "quantity_type": null,
+      "use": "GAP MEMO only"
+    },
+    {
+      "id": "CT-S09",
+      "citation": "T. Kanki, 'Flow of a rarefied gas in a rectangular channel with a moving plate', Rarefied Gas Dynamics 1994 (19th Symp.), Oxford Univ. Press 1995, Vol. 1, 375-381 (as cited by CT-S01)",
+      "url": null,
+      "access": "NOT_ACCESSED (proceedings volume; no open copy found)",
+      "retrieved": null,
+      "quantities": "Holweck helium measurements used in CT-S01 Fig. 1",
+      "regime": "transition",
+      "validation_in_source": "-",
+      "evidence_level": null,
+      "quantity_type": null,
+      "use": "already used by CT-S01 to fit sigma -> NOT held-out for this model"
+    },
+    {
+      "id": "CT-S10",
+      "citation": "Helmer & Levi, Couette-Poiseuille Gaede pump 1-D model, J. Vac. Sci. Technol. A (1992) (as cited by CT-S05 slide 14; full reference not read)",
+      "url": null,
+      "access": "NOT_ACCESSED",
+      "retrieved": null,
+      "quantities": "Gaede stage 1-D model",
+      "regime": "molecular to viscous (per CT-S05)",
+      "validation_in_source": "not read",
+      "evidence_level": null,
+      "quantity_type": null,
+      "use": "not implemented (primary not read)"
+    },
+    {
+      "id": "CT-S11",
+      "citation": "'An experimental study on the pumping performance of molecular drag pumps', Springer, doi:10.1007/BF02915971 (authors/journal not read: access redirected to a login)",
+      "url": "https://doi.org/10.1007/BF02915971",
+      "access": "NOT_OPEN",
+      "retrieved": null,
+      "quantities": "N2 drag-pump measurements (per search snippet only)",
+      "regime": "molecular-transition",
+      "validation_in_source": "not read",
+      "evidence_level": null,
+      "quantity_type": null,
+      "use": "candidate held-out dataset only if lawfully accessible later"
+    }
+  ],
+  "model_selection_memo": {
+    "question": "Which open-literature transitional-regime model of molecular-drag / turbomolecular compression can be implemented with every coefficient cited?",
+    "criteria": [
+      "full text openly and lawfully accessible",
+      "closed-form or reproducible relation with all coefficients stated",
+      "covers free molecular -> transitional (Kn dependence of compression and speed)",
+      "states its own validation",
+      "reduces to the production free-molecular model in the overlap"
+    ],
+    "candidates": [
+      {
+        "source": "CT-S01 Skovorodko Eq. (1)",
+        "verdict": "SELECTED",
+        "why": "only accessed model meeting all criteria: closed form, every factor stated, explicit continuum and free-molecular limits, reduces exactly to DragCompressor's linear Gaede characteristic in the free-molecular limit (with xi <-> sigma mapping)",
+        "limitations": [
+          "author calls it approximate/qualitative",
+          "sigma is a fitting parameter (no a-priori value)",
+          "plane channel: no groove side walls, land leakage, curvature, centrifugal effects",
+          "inertia neglected, isothermal",
+          "single validation dataset (helium) not reconstructible",
+          "single gas; not a mixture model"
+        ]
+      },
+      {
+        "source": "CT-S02/CT-S03 Sharipov kinetic Holweck model",
+        "verdict": "NOT_IMPLEMENTABLE_NOW",
+        "why": "best physics basis (linearized kinetic equation, experimentally compared), but the groove-flow solutions (Couette/Poiseuille coefficients vs rarefaction and groove shape) are in the non-open paper"
+      },
+      {
+        "source": "CT-S05 survey: Helmer-Levi, Sawada, Giors slip CFD",
+        "verdict": "NOT_IMPLEMENTABLE_NOW",
+        "why": "primary papers not open; secondary equation incomplete"
+      },
+      {
+        "source": "CT-S04/CT-S08 TMP DSMC",
+        "verdict": "GAP",
+        "why": "no open coefficients; see gap memo"
+      }
+    ],
+    "result": "Skovorodko Eq. (1) implemented as CANDIDATE_NOT_ADMITTED for drag-channel stages only."
+  },
+  "gap_memo": [
+    {
+      "id": "GAP-01",
+      "gap": "turbomolecular blade rows in the transitional regime",
+      "status": "NO_ADEQUATELY_DOCUMENTED_OPEN_MODEL_FOUND",
+      "consequence": "abep_sim.compressor_transitional.turbomolecular_row_transitional raises NotEvaluatedError; the DragCompressor turbo rows remain free-molecular only (<= 0.1 Pa)",
+      "closure": "T-1 (bladed rotor stage CR vs inlet pressure, outlet 0.05-1 Pa) or lawful access to CT-S04/CT-S08"
+    },
+    {
+      "id": "GAP-02",
+      "gap": "groove-resolved Holweck/Gaede/Siegbahn transitional coefficients (side walls, land leakage)",
+      "status": "OPEN_ONLY_AS_METHODOLOGY (CT-S02)",
+      "consequence": "plane-channel approximation only; the candidate cannot represent leakage-limited compression"
+    },
+    {
+      "id": "GAP-03",
+      "gap": "atomic oxygen and gas mixtures",
+      "status": "NO_VISCOSITY_SOURCE_FOR_O; single-gas model",
+      "consequence": "refused (OutOfModelDomainError); T-3 (AO facility) is the closure path"
+    },
+    {
+      "id": "GAP-04",
+      "gap": "accommodation/fit parameter sigma for Vyovrinda geometry and surfaces",
+      "status": "TBD",
+      "consequence": "no default; caller must supply sigma with an evidence class"
+    },
+    {
+      "id": "GAP-05",
+      "gap": "open held-out transitional dataset with reconstructible geometry",
+      "status": "NONE FOUND",
+      "consequence": "admission must go through T-1/T-2 hardware data"
+    }
+  ],
+  "coefficient_register": {
+    "eq1_continuum_factor_6": {
+      "value": 6.0,
+      "source": "P. A. Skovorodko, 'Continuum model for Couette-Poiseuille flow in a drag molecular pump', RGD-23 (Whistler 2002) abstract #151; arXiv:physics/0401020, Eq. (1) and bullet list",
+      "level": 6,
+      "evidence_class": "model-derived",
+      "note": "from the assumed parabolic profile, a = 3(w - 2u)/(6 lambda delta + delta^2)"
+    },
+    "eq1_slip_factor_3(2-sigma)/sigma": {
+      "value": "3*(2-sigma)/sigma",
+      "source": "P. A. Skovorodko, 'Continuum model for Couette-Poiseuille flow in a drag molecular pump', RGD-23 (Whistler 2002) abstract #151; arXiv:physics/0401020, Eq. (1) and bullet list",
+      "level": 6,
+      "evidence_class": "model-derived",
+      "note": "first-order slip lambda = (2-sigma)/sigma * mu c0 / p"
+    },
+    "c0": {
+      "value": "sqrt(pi R T / 2)",
+      "source": "P. A. Skovorodko, 'Continuum model for Couette-Poiseuille flow in a drag molecular pump', RGD-23 (Whistler 2002) abstract #151; arXiv:physics/0401020, Eq. (1) and bullet list",
+      "level": 6,
+      "evidence_class": "model-derived"
+    },
+    "R_specific": {
+      "value": "k_B / m",
+      "source": "abep_sim.constants (K_B exact SI; M_SPECIES project masses)",
+      "level": 4,
+      "evidence_class": "model-derived"
+    },
+    "mu_T": {
+      "value": "VISCOSITY_TABLE_uPa_s, linear in T between 50 K nodes",
+      "source": "NIST Chemistry WebBook, SRD 69, Thermophysical Properties of Fluid Systems (isobaric, 0.001 bar), retrieved 2026-10-01; underlying viscosity correlation reference not read (verify)",
+      "level": 4,
+      "evidence_class": "model-derived",
+      "note": "evaluated correlation output transcribed; uncertainty not stated in the served table (TBD)",
+      "snapshots": {
+        "N2": {
+          "snapshot": "docs/evidence/compressor_transitional/sources/nist_webbook_N2_isobar_0.001bar_200-500K.tsv",
+          "sha256": "bdc4a67e1c0a89166d50dfc4415b72feb3113c29b2b66f1457ae16e270821ddd",
+          "rows_T_K_uPa_s": [
+            [
+              200.0,
+              12.889
+            ],
+            [
+              250.0,
+              15.483
+            ],
+            [
+              300.0,
+              17.877
+            ],
+            [
+              350.0,
+              20.107
+            ],
+            [
+              400.0,
+              22.2
+            ],
+            [
+              450.0,
+              24.177
+            ],
+            [
+              500.0,
+              26.056
+            ]
+          ],
+          "matches_module_table": true
+        },
+        "O2": {
+          "snapshot": "docs/evidence/compressor_transitional/sources/nist_webbook_O2_isobar_0.001bar_200-500K.tsv",
+          "sha256": "0355e601fb0ac102fd64d26fbfda442962a1142b316135832b344de5ea412ed5",
+          "rows_T_K_uPa_s": [
+            [
+              200.0,
+              14.693
+            ],
+            [
+              250.0,
+              17.772
+            ],
+            [
+              300.0,
+              20.631
+            ],
+            [
+              350.0,
+              23.304
+            ],
+            [
+              400.0,
+              25.821
+            ],
+            [
+              450.0,
+              28.203
+            ],
+            [
+              500.0,
+              30.47
+            ]
+          ],
+          "matches_module_table": true
+        }
+      }
+    },
+    "sigma": {
+      "value": null,
+      "source": "CALLER-SUPPLIED (fitting parameter per the source; no default)",
+      "level": null,
+      "evidence_class": "caller-declared",
+      "note": "source example sigma = 0.6 for Kanki RGD-1994 helium Holweck data (not used as a default)"
+    },
+    "mean_free_path": {
+      "value": "mu v_m / p, v_m = sqrt(2 k_B T / m)",
+      "source": "F. Sharipov, 'Rarefied gas dynamics and its applications to vacuum technology', CERN Accelerator School (open copy fisica.ufpr.br/sharipov/CERN.pdf), Eqs. (1)-(3)",
+      "level": 4,
+      "evidence_class": "model-derived",
+      "note": "Kn = l / gap (reporting only)"
+    }
+  },
+  "applicability_domain": {
+    "geometry_class": "single long plane drag channel of constant gap (Gaede/Holweck/Siegbahn channels only as their plane-channel approximation): groove side walls, land/clearance leakage, curvature, tapering, centrifugal/Coriolis effects NOT modelled",
+    "gas": "single-component N2 or O2 (mixtures and atomic O refused)",
+    "temperature_K": [
+      200.0,
+      500.0
+    ],
+    "isothermal": true,
+    "inertia": "neglected (source: small for typical drag pumps; not checked here)",
+    "knudsen_author_claim": "continuum to free molecular, qualitative ('good qualitative representation')",
+    "knudsen_quantitatively_validated": "NONE ESTABLISHED: the source's only comparison (Kanki, helium Holweck, sigma fitted) has unpublished-in-source geometry; validated Kn range not reconstructible",
+    "pressure_production_domain_Pa": [
+      0.0,
+      0.1
+    ]
+  },
+  "consistency_check_vs_DragCompressor": {
+    "label": "CONSISTENCY_CHECK_CONFIGURATION_NOT_A_DESIGN_POINT",
+    "configuration": {
+      "DragCompressor": "defaults except L_per_stage_m = 0.005 (chosen so outlet stays <= 0.1 Pa)",
+      "xi": 0.6,
+      "sigma_mapped": 0.970387,
+      "T_K": 350.0,
+      "u_mps": 376.991
+    },
+    "rows": [
+      {
+        "gas": "N2",
+        "p_in_Pa": 0.0001,
+        "throughput_fraction_of_plane_capacity": 1e-09,
+        "K_DragCompressor": 4.33019,
+        "K_candidate": 4.33011,
+        "lnK_rel_diff": -1.31792e-05,
+        "kn_in": 30557.2,
+        "comparable": true
+      },
+      {
+        "gas": "N2",
+        "p_in_Pa": 0.0001,
+        "throughput_fraction_of_plane_capacity": 0.1,
+        "K_DragCompressor": 3.77516,
+        "K_candidate": 3.9971,
+        "lnK_rel_diff": 0.0430028,
+        "kn_in": 30557.2,
+        "comparable": true
+      },
+      {
+        "gas": "N2",
+        "p_in_Pa": 0.0001,
+        "throughput_fraction_of_plane_capacity": 0.3,
+        "K_DragCompressor": 2.6651,
+        "K_candidate": 3.33109,
+        "lnK_rel_diff": 0.227555,
+        "kn_in": 30557.2,
+        "comparable": true
+      },
+      {
+        "gas": "N2",
+        "p_in_Pa": 0.001,
+        "throughput_fraction_of_plane_capacity": 1e-09,
+        "K_DragCompressor": 4.33019,
+        "K_candidate": 4.32936,
+        "lnK_rel_diff": -0.000131766,
+        "kn_in": 3055.72,
+        "comparable": true
+      },
+      {
+        "gas": "N2",
+        "p_in_Pa": 0.001,
+        "throughput_fraction_of_plane_capacity": 0.1,
+        "K_DragCompressor": 3.77516,
+        "K_candidate": 3.99646,
+        "lnK_rel_diff": 0.0428824,
+        "kn_in": 3055.72,
+        "comparable": true
+      },
+      {
+        "gas": "N2",
+        "p_in_Pa": 0.001,
+        "throughput_fraction_of_plane_capacity": 0.3,
+        "K_DragCompressor": 2.6651,
+        "K_candidate": 3.33065,
+        "lnK_rel_diff": 0.22742,
+        "kn_in": 3055.72,
+        "comparable": true
+      },
+      {
+        "gas": "N2",
+        "p_in_Pa": 0.01,
+        "throughput_fraction_of_plane_capacity": 1e-09,
+        "K_DragCompressor": 4.33019,
+        "K_candidate": 4.32186,
+        "lnK_rel_diff": -0.00131469,
+        "kn_in": 305.572,
+        "comparable": true
+      },
+      {
+        "gas": "N2",
+        "p_in_Pa": 0.01,
+        "throughput_fraction_of_plane_capacity": 0.1,
+        "K_DragCompressor": 3.77516,
+        "K_candidate": 3.99009,
+        "lnK_rel_diff": 0.041681,
+        "kn_in": 305.572,
+        "comparable": true
+      },
+      {
+        "gas": "N2",
+        "p_in_Pa": 0.01,
+        "throughput_fraction_of_plane_capacity": 0.3,
+        "K_DragCompressor": 2.6651,
+        "K_candidate": 3.32628,
+        "lnK_rel_diff": 0.226081,
+        "kn_in": 305.572,
+        "comparable": true
+      },
+      {
+        "gas": "O2",
+        "p_in_Pa": 0.0001,
+        "throughput_fraction_of_plane_capacity": 1e-09,
+        "K_DragCompressor": 4.79132,
+        "K_candidate": 4.79122,
+        "lnK_rel_diff": -1.29457e-05,
+        "kn_in": 33128.4,
+        "comparable": true
+      },
+      {
+        "gas": "O2",
+        "p_in_Pa": 0.0001,
+        "throughput_fraction_of_plane_capacity": 0.1,
+        "K_DragCompressor": 4.15943,
+        "K_candidate": 4.4121,
+        "lnK_rel_diff": 0.0413737,
+        "kn_in": 33128.4,
+        "comparable": true
+      },
+      {
+        "gas": "O2",
+        "p_in_Pa": 0.0001,
+        "throughput_fraction_of_plane_capacity": 0.3,
+        "K_DragCompressor": 2.89566,
+        "K_candidate": 3.65386,
+        "lnK_rel_diff": 0.218746,
+        "kn_in": 33128.4,
+        "comparable": true
+      },
+      {
+        "gas": "O2",
+        "p_in_Pa": 0.001,
+        "throughput_fraction_of_plane_capacity": 1e-09,
+        "K_DragCompressor": 4.79132,
+        "K_candidate": 4.79034,
+        "lnK_rel_diff": -0.000129431,
+        "kn_in": 3312.84,
+        "comparable": true
+      },
+      {
+        "gas": "O2",
+        "p_in_Pa": 0.001,
+        "throughput_fraction_of_plane_capacity": 0.1,
+        "K_DragCompressor": 4.15943,
+        "K_candidate": 4.41136,
+        "lnK_rel_diff": 0.0412559,
+        "kn_in": 3312.84,
+        "comparable": true
+      },
+      {
+        "gas": "O2",
+        "p_in_Pa": 0.001,
+        "throughput_fraction_of_plane_capacity": 0.3,
+        "K_DragCompressor": 2.89566,
+        "K_candidate": 3.65336,
+        "lnK_rel_diff": 0.218616,
+        "kn_in": 3312.84,
+        "comparable": true
+      },
+      {
+        "gas": "O2",
+        "p_in_Pa": 0.01,
+        "throughput_fraction_of_plane_capacity": 1e-09,
+        "K_DragCompressor": 4.79132,
+        "K_candidate": 4.78163,
+        "lnK_rel_diff": -0.00129133,
+        "kn_in": 331.284,
+        "comparable": true
+      },
+      {
+        "gas": "O2",
+        "p_in_Pa": 0.01,
+        "throughput_fraction_of_plane_capacity": 0.1,
+        "K_DragCompressor": 4.15943,
+        "K_candidate": 4.40398,
+        "lnK_rel_diff": 0.0400807,
+        "kn_in": 331.284,
+        "comparable": true
+      },
+      {
+        "gas": "O2",
+        "p_in_Pa": 0.01,
+        "throughput_fraction_of_plane_capacity": 0.3,
+        "K_DragCompressor": 2.89566,
+        "K_candidate": 3.64833,
+        "lnK_rel_diff": 0.21732,
+        "kn_in": 331.284,
+        "comparable": true
+      }
+    ],
+    "interpretation": [
+      "zero-throughput: the two free-molecular compressions coincide by construction (sigma mapped from xi); the residual lnK difference is the Eq. (1) viscous/slip correction and grows ~linearly with pressure",
+      "finite throughput: DragCompressor applies xi to the pumping speed (S0 = xi u h w/2) while the plane-channel model has S0 = u h w/2, so DragCompressor loses compression 1/xi times faster with throughput; this is a structural model difference, not a numerical error, and is unresolved without T-2 data"
+    ],
+    "default_geometry_finding": {
+      "lnK0_free_molecular": 102.593,
+      "K_DragCompressor_one_stage_near_zero_flow": "3.593e+44",
+      "K_candidate_one_stage_near_zero_flow": "1.523e+06",
+      "note": "with the default 0.35 m drag stage DragCompressor's free-molecular characteristic implies outlet pressures far above 0.1 Pa (outside its own domain), where the candidate saturates through the viscous term; both are out of the production domain -> NOT_EVALUATED_OUT_OF_DOMAIN",
+      "architecture_point_status": "NOT_EVALUATED_OUT_OF_DOMAIN"
+    }
+  },
+  "admission_plan": {
+    "current_status": "CANDIDATE_NOT_ADMITTED",
+    "rule": "Admission is a separate owner-gated step. No code path in abep_sim/compressor_transitional.py returns an admitted result; admission requires a new module version, a docs/HISTORY.md entry and an owner decision record.",
+    "routes": [
+      {
+        "route": "A_HARDWARE",
+        "data": "T-1 (and T-2 for pumping speed) on the project compressor",
+        "definition_source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json",
+        "T-1": "compression ratio vs inlet pressure (1e-3 - 1e-1 Pa) and throughput for N2 and O2 on a throat-scale bladed rotor stage (and the back stage), outlet 0.05 - 1 Pa",
+        "T-2": "inlet pumping speed vs rpm at throat scale against the per-case S_required(b)",
+        "note": "T-1 covers a bladed rotor stage (and back stage): only drag-channel stages are within this model's geometry class; blade rows stay a gap (GAP-01)"
+      },
+      {
+        "route": "B_HELD_OUT_PUBLISHED",
+        "data": "a published, lawfully accessible transitional-regime drag-stage dataset with reconstructible geometry, not used to fit sigma",
+        "status": "NONE FOUND (GAP-05); Kanki 1994 is not held-out (used by the source to fit sigma)"
+      }
+    ],
+    "pre_registration_before_any_comparison": [
+      "freeze the module version and the dataset hash",
+      "fit sigma ONLY on free-molecular-regime points (as the source prescribes), with the Kn threshold pre-registered",
+      "predict the transitional-regime points blind (no refit, no geometry retuning)",
+      "acceptance tolerance on compression ratio and pumping speed: TBD by the owner at pre-registration (CT-S05's +/-15 % industry wish is context, not a criterion)",
+      "declare the admitted domain (gas, Kn range, geometry class, T) as exactly the validated span",
+      "a failed prediction is recorded as such and is never converted into a recalibration"
+    ],
+    "until_admitted": "any result above 0.1 Pa is NOT_EVALUATED_OUT_OF_DOMAIN and never a valid architecture point (A9.13 S6.8); results <= 0.1 Pa are CANDIDATE_RESULT_NOT_DESIGN_EVIDENCE (the production free-molecular DragCompressor remains the model of record there)"
+  },
+  "access_policy": "open/lawful access only; no paywall or bot-check bypass; no contact with authors, labs or suppliers; LXCat not used"
+}

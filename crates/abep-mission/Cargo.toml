@@ -1,0 +1,40 @@
+[package]
+name = "abep-mission"
+description = "Spacecraft interaction (SC-WP-04: reference spacecraft drag, F1 intake-face drag, statewise T - D, statewise quantifier) and mission layer (SC-WP-09: mission_env state propagation, NP-MISSION-INTEGRATION) of the ABEP Rust simulator."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "abep-mission-parity"
+path = "src/bin/abep_mission_parity.rs"
+
+[[bin]]
+name = "abep-reference-drag-record"
+path = "src/bin/abep_reference_drag_record.rs"
+
+[[bin]]
+name = "abep-mission-env-parity"
+path = "src/bin/abep_mission_env_parity.rs"
+
+[[bin]]
+name = "abep-mission-integration"
+path = "src/bin/abep_mission_integration.rs"
+
+[dependencies]
+abep-types.workspace = true
+abep-provenance.workspace = true
+abep-data.workspace = true
+abep-atmos.workspace = true
+serde_json.workspace = true
+# SC-WP-09 (mission): numpy float64 add.reduce of the admitted rate-table port (propagate mean), the admitted
+# configuration loaders (operating scenario horizons, P_cap_W), the Hall gate, the NP-ICP crate status, and the admitted
+# power / mass layers consumed by the mission integration. None of them depends on abep-mission (no cycle).
+abep-chem.workspace = true
+abep-config.workspace = true
+abep-hall.workspace = true
+abep-icp = { path = "../abep-icp" }
+abep-subsystems = { path = "../abep-subsystems" }
+serde.workspace = true

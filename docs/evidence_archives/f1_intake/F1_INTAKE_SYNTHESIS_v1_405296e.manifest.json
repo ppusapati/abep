@@ -1,0 +1,697 @@
+{
+ "schema": "evidence_archive_manifest_v1",
+ "id": "F1_INTAKE_SYNTHESIS_v1_405296e",
+ "run_id": "INTAKE_SYNTHESIS_v1_405296e",
+ "decision": {
+  "md": "docs/decisions/OD_2026_10_03_A9_22_LAYER_SEPARATION_OWNER_DECISIONS.md",
+  "json": "docs/decisions/OD_2026_10_03_A9_22_layer_separation_owner_decisions.json",
+  "item": 9
+ },
+ "deliverable": {
+  "id": "F1_INTAKE_SYNTHESIS_v1",
+  "schema": "f1_intake_synthesis_v1",
+  "lane": "fo_a9_7_f1_intake_synthesis",
+  "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json"
+ },
+ "archive": {
+  "file_name": "F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst",
+  "path": "docs/evidence_archives/f1_intake/F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst",
+  "sha256": "c29623c08099c688584439b881c07c7a59b14fba3645642e652e3a2c7ce04dd2",
+  "size_bytes": 2011661,
+  "tar_sha256": "a03f5e101d86d64500cbdb11c8808d1bc7ee89367a5c2ffb10ec9d0b90f9bebf",
+  "tar_size_bytes": 36730880,
+  "tar": {
+   "format": "ustar",
+   "entry_order": "sorted by path",
+   "mtime": 1791020893,
+   "uid": 0,
+   "gid": 0,
+   "uname": "",
+   "gname": "",
+   "mode": "0644",
+   "entries": "regular files only"
+  },
+  "compression": {
+   "codec": "zstd",
+   "level": 19,
+   "threads": "single",
+   "frame_checksum": true,
+   "content_size": true,
+   "python_zstandard": "0.25.0",
+   "libzstd": "1.5.7",
+   "determinism": "archive bytes reproduce for the same libzstd version; tar_sha256 for any"
+  },
+  "builder": "python scripts/evidence/f1_archive.py build"
+ },
+ "generating_commit": {
+  "sha": "405296ee4aeb42d8421c98aa3b7f164733fb7960",
+  "basis": "first commit carrying the archived f1_intake_synthesis_v1.json bytes (git log); the builder run that produced them is that commit's F1 rebuild",
+  "deliverable_base_commit": "1c9d7a648cd4ce739e587248693271e5115698e1",
+  "integrated_by": {
+   "633f136": "merge of the design-state set v2 lane 405296e",
+   "32c9e639268df6bba10852d94e64983e73d0cac6": "integration (F4 -> F7/F8 / F9 rebuilt on this F1 output)"
+  }
+ },
+ "generated_timestamp": {
+  "value": "2026-10-03T09:48:13+00:00",
+  "basis": "author time of the generating commit (the F1 JSON records no wall-clock time; deterministic)"
+ },
+ "command": {
+  "generate": "python docs/design_synthesis/f1_intake/build_f1_intake.py",
+  "verify_full_rebuild": "python docs/design_synthesis/f1_intake/build_f1_intake.py --check",
+  "verify_core_view": "python docs/design_synthesis/f1_intake/build_f1_intake.py --check-core",
+  "archive": "python scripts/evidence/f1_archive.py build",
+  "verify_archive": "python scripts/evidence/f1_archive.py verify",
+  "verify_download": "python scripts/evidence/f1_archive.py verify-download <downloaded file>",
+  "as_recorded_in_output": "python docs/design_synthesis/f1_intake/build_f1_intake.py  (verify: --check)"
+ },
+ "architecture": {
+  "id": "hall_icp_neutralizer",
+  "sha256": "12280dfdc89af604e1ffc620c602b31a780f2923e578ab2ae0c8a625f30ec999",
+  "hash_rule": "sha256 of canonical JSON (sorted keys, compact separators) of abep_sim/design/a9_19_architecture.py FLIGHT_ARCHITECTURE",
+  "source": "abep_sim/design/a9_19_architecture.py (no config/ architecture record existed at the generating commit; see config_crosscheck)",
+  "module_git_blob": "2c6685bb70eb4d02773ab6d7dafc147df838394c",
+  "module_git_blob_rule": "blob at the commit that first committed this manifest (3b2072e)",
+  "module_git_blob_at_generating_commit": "2c6685bb70eb4d02773ab6d7dafc147df838394c",
+  "decision_records": [
+   {
+    "decision": "A9.19",
+    "md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+    "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+    "json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+    "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY"
+   }
+  ],
+  "note": "the F1 intake screening takes no architecture record as an input (its pins are the frozen data, the design-state set and the A9.7 directive); the id records the flight architecture in force when the output was generated",
+  "config_crosscheck": {
+   "path": "config/architecture/hall_icp_neutralizer_v1.json",
+   "at_commit": "4b5563b643aa2103d999484ce4ccf5e2eca040e3",
+   "sha256_at_commit": "7ab04af49340bf24be316fe7cd83eca20f2aeb692b00a43c02fa44043a5825f3",
+   "role": "INFORMATIONAL (config/ postdates the generating commit; the module constants load from this file since 2cbe2dd with values unchanged)"
+  }
+ },
+ "design_state_set": {
+  "id": "atmosphere_msis21_orbit_v1_design_states_v2",
+  "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+  "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+  "as_recorded_in_output": {
+   "design_state_set_id": "atmosphere_msis21_orbit_v1_design_states_v2",
+   "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+   "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+   "dataset_id": "atmosphere_msis21_orbit_v1",
+   "dataset_sha256": "c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164",
+   "manifest": "abep_sim/data/atmosphere_msis21_orbit_v1.json",
+   "producer": "python -m abep_sim.atmosphere_orbit design-states-v2",
+   "n_required_states": 196,
+   "n_nominal_mission_scenario_states": 47,
+   "nominal_scenario": "ECSS_LT_MODERATE",
+   "label_counts": {
+    "ENVELOPE_MAX_T_K": 1,
+    "ENVELOPE_MAX_rho_kg_m3": 1,
+    "ENVELOPE_MAX_x_N2": 1,
+    "ENVELOPE_MAX_x_O": 1,
+    "ENVELOPE_MAX_x_O2": 1,
+    "ENVELOPE_MIN_T_K": 1,
+    "ENVELOPE_MIN_rho_kg_m3": 1,
+    "ENVELOPE_MIN_x_N2": 1,
+    "ENVELOPE_MIN_x_O": 1,
+    "ENVELOPE_MIN_x_O2": 1,
+    "LST_PEAK": 16,
+    "LST_TROUGH": 16,
+    "MAX_T_K": 16,
+    "MAX_rho_kg_m3": 16,
+    "MAX_x_N2": 16,
+    "MAX_x_O": 16,
+    "MAX_x_O2": 16,
+    "MIN_T_K": 16,
+    "MIN_rho_kg_m3": 16,
+    "MIN_x_N2": 16,
+    "MIN_x_O": 16,
+    "MIN_x_O2": 16,
+    "NOMINAL_MEDIAN_RHO": 16
+   },
+   "scenarios": [
+    "ECSS_LT_HIGH",
+    "ECSS_LT_LOW",
+    "ECSS_LT_MODERATE",
+    "ECSS_ST_HIGH"
+   ],
+   "altitudes_km": [
+    180.0,
+    195.0,
+    215.0,
+    230.0
+   ],
+   "orbit_basis_label": "BROAD_ENVELOPE_ALL_INCLINATIONS_ALL_LTAN_NOT_MISSION_ICD",
+   "orbit_basis_note": "inclination and LTAN are not specified (A9.21 EXTERNAL_INPUTS: not in the RFP; the old 96.3 deg dawn-dusk code default is never mission truth; A9.17 ORBIT: TBD from DRDO / spacecraft ICD / PDR mission definition). The design-state set v2 covers every latitude -90..90 deg and every local time, so it does not depend on an orbit assumption; it is a broad design envelope, not a mission trajectory. A registered orbit narrows it in a new version.",
+   "orbit_basis_in_set": {
+    "status": "BROAD_ENVELOPE (inclination / LTAN TBD from the official mission ICD)",
+    "requirement_input": false,
+    "inclination_deg": "any (0-180): every geodetic latitude -90..90 deg (1 deg step) is in the pool",
+    "local_time": "all local times (LTAN-agnostic)",
+    "code_default_orbit": "mission_env 96.3 deg / dawn-dusk is CODE_DEFAULT / PARAMETRIC; not used to bound this set",
+    "real_orbit": "TBD from DRDO / spacecraft ICD / PDR mission definition; once supplied, a new dataset / design-state version narrows the envelope"
+   },
+   "v_rel_basis": "V_ORB_INERTIAL_CIRCULAR: free-stream speed = circular inertial orbital speed sqrt(mu / (R_E + h)) at the state altitude (abep_sim.atmosphere.orbital_velocity, the F1 convention since A9.7); Earth co-rotation and thermospheric winds are NOT included (they depend on the TBD inclination / LTAN; the set carries no relative velocity)",
+   "composition_basis": "rho = total NRLMSIS 2.1 mass density of the state (all species); mass fractions of O, N2, O2 renormalised over those three (He, Ar, N dropped from the composition, as abep_sim.atmosphere does); n = rho / m_mean",
+   "surface_coverage": "NOT_COVERED: intake_surface_v1 was built at one orbit-averaged state (200 km, F10.7 150); every design-state point is direct TPMC with registered seeds",
+   "authority": {
+    "A9.14 S9.8 OD3": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+    "A9.13 S6.14 OQ-F4-05": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+    "A9.17 ORBIT": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+    "A9.21 EXTERNAL_INPUTS": "docs/decisions/OD_2026_10_02_A9_21_open_items_and_hardware_programme_owner_decisions.json"
+   },
+   "design_case_reference_point": {
+    "state_id": "h200_f150",
+    "role": "DESIGN_CASE_REFERENCE_POINT: frozen intake surface build state (200 km, F10.7 150, orbit-averaged atmosphere_msis21_v1); design-case view, off-axis node and downstream transient reference only; NOT a member of the required design-state set (A9.14 S9.8)"
+   },
+   "evaluated_state_order": "index 0 = design-case reference point, then the required states in file order",
+   "subset_used": false,
+   "subset_note": "no subsampling: the set designates no design subset; every required state is evaluated",
+   "history": {
+    "state_ids": [
+     "h200_f150",
+     "h180_f70",
+     "h180_f230",
+     "h230_f70",
+     "h230_f230"
+    ],
+    "basis": "h200_f150 (surface build state) + 180 / 230 km x F10.7 70 / 230 corners of the orbit-averaged atmosphere_msis21_v1 (hand-picked; no local time, latitude or season)",
+    "status": "SUPERSEDED_BY_DESIGN_STATE_SET_V2 (A9.14 S9.8 OD3; A9.13 S6.14 OQ-F4-05)"
+   }
+  },
+  "config_crosscheck": {
+   "path": "config/environment/design_state_set_ref_v1.json",
+   "at_commit": "4b5563b643aa2103d999484ce4ccf5e2eca040e3",
+   "id": "atmosphere_msis21_orbit_v1_design_states_v2",
+   "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+   "same_as_output": true
+  }
+ },
+ "input_manifest": {
+  "sha256": "29e4635dcc60fbf4fb432af7a7966e37ffb07f9e3598916b3b7300c148a32dde",
+  "hash_rule": "sha256 of canonical JSON (sorted keys, compact separators) of the output's pins list [{path, sha256}]",
+  "pins": [
+   {
+    "path": "abep_sim/data/intake_surface_v1.csv",
+    "sha256": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a"
+   },
+   {
+    "path": "abep_sim/data/intake_surface_v1.json",
+    "sha256": "5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425"
+   },
+   {
+    "path": "abep_sim/data/atmosphere_msis21_v1.csv",
+    "sha256": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7"
+   },
+   {
+    "path": "abep_sim/data/atmosphere_msis21_v1.json",
+    "sha256": "38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160"
+   },
+   {
+    "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+    "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+   },
+   {
+    "path": "abep_sim/data/atmosphere_msis21_orbit_v1.json",
+    "sha256": "f06416b1e11f07ec32434515b616935ed5eeaae1faac75586bce0961b6bcf97b"
+   },
+   {
+    "path": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
+    "sha256": "fb51328d6fe07a6eaf257ef9ef9592cb0c0039ae3e8cf04ef0420007c985b129"
+   }
+  ],
+  "referenced_not_pinned": [
+   {
+    "path": "abep_sim/intake_tpmc.py",
+    "use": "called (intake_response, clausing_transmission, IntakeGeometry defaults); not modified"
+   },
+   {
+    "path": "abep_sim/intake.py",
+    "use": "IntakeSurface recombination convention examined (finding F1-01, since fixed in abep_sim/intake_tpmc.py by A9.9 S2.1); not modified, not called"
+   },
+   {
+    "path": "abep_sim/atmosphere.py",
+    "use": "frozen dataset lookups (atmosphere()); not modified"
+   },
+   {
+    "path": "abep_sim/constants.py",
+    "use": "species masses, RFP thrust envelope; not modified"
+   },
+   {
+    "path": "abep_sim/materials.py",
+    "use": "Al6061 density cross-check (2700, literature-class prior)"
+   },
+   {
+    "path": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
+    "use": "setpoint ladder (p_ref sweep), DI-1.x owner questions, LIT-01..03 comparables, FC-01 backflow finding"
+   },
+   {
+    "path": "docs/interfaces/UPSTREAM_ICD.md",
+    "use": "IF-A1 intake -> filter interface; G-07 two-temperature gap"
+   },
+   {
+    "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
+    "use": "M16 rows 1 (intake) and 2 (filter)"
+   }
+  ]
+ },
+ "model_set": {
+  "model_set_id": "NOT_REGISTERED_AT_GENERATING_COMMIT (no config/model_set record existed at 405296e; config/ was introduced later by 2cbe2dd, A9.22 Phase A)",
+  "sha256": "a96501dbafa69e54925788aeefe3cb0c5546df865dcc0992595f66ba1359c3f2",
+  "hash_rule": "sha256 of canonical JSON (sorted keys, compact separators) of {model_sources: {path: sha256 of the file content at the generating commit}, frozen_data: {path: sha256 pinned by the output}} (A9.24 item 11 model-set hash; computed from git, not from the working tree)",
+  "hash_basis": {
+   "model_sources": {
+    "abep_sim/design/intake_synthesis.py": "eae4d6d3d999cff4afc10d06f3292c5dd25678ab97f8c35aa0c35e81d41ebe57",
+    "abep_sim/intake_tpmc.py": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433",
+    "abep_sim/atmosphere.py": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b",
+    "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+    "docs/design_synthesis/f1_intake/build_f1_intake.py": "ce82491760b6a19eb56ad7a1cbec39abf165644ab58f75b798c51a2d0b394e00"
+   },
+   "frozen_data": {
+    "abep_sim/data/intake_surface_v1.csv": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a",
+    "abep_sim/data/intake_surface_v1.json": "5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425",
+    "abep_sim/data/atmosphere_msis21_v1.csv": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7",
+    "abep_sim/data/atmosphere_msis21_v1.json": "38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160",
+    "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+    "abep_sim/data/atmosphere_msis21_orbit_v1.json": "f06416b1e11f07ec32434515b616935ed5eeaae1faac75586bce0961b6bcf97b"
+   }
+  },
+  "output_schema": "f1_intake_synthesis_v1",
+  "model_sources_at_generating_commit": {
+   "abep_sim/design/intake_synthesis.py": "18c4fb672dd61920e64e501f2389e4feafead70b",
+   "abep_sim/intake_tpmc.py": "5954d0bc49d25d3ea55f6b0fcd4a340d2338b0d2",
+   "abep_sim/atmosphere.py": "61a848f113a1605d68e9b932959ff9bfd2488fb0",
+   "abep_sim/constants.py": "72397afe8d13acf9d7ac03c48eaf620455da110d",
+   "docs/design_synthesis/f1_intake/build_f1_intake.py": "11fb4cb3b4ed353ce472cbca422b1eddc963516b"
+  },
+  "model_sources_content_at_generating_commit": {
+   "abep_sim/design/intake_synthesis.py": {
+    "git_blob": "18c4fb672dd61920e64e501f2389e4feafead70b",
+    "sha256": "eae4d6d3d999cff4afc10d06f3292c5dd25678ab97f8c35aa0c35e81d41ebe57",
+    "size_bytes": 74606
+   },
+   "abep_sim/intake_tpmc.py": {
+    "git_blob": "5954d0bc49d25d3ea55f6b0fcd4a340d2338b0d2",
+    "sha256": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433",
+    "size_bytes": 29933
+   },
+   "abep_sim/atmosphere.py": {
+    "git_blob": "61a848f113a1605d68e9b932959ff9bfd2488fb0",
+    "sha256": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b",
+    "size_bytes": 8383
+   },
+   "abep_sim/constants.py": {
+    "git_blob": "72397afe8d13acf9d7ac03c48eaf620455da110d",
+    "sha256": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+    "size_bytes": 1036
+   },
+   "docs/design_synthesis/f1_intake/build_f1_intake.py": {
+    "git_blob": "11fb4cb3b4ed353ce472cbca422b1eddc963516b",
+    "sha256": "ce82491760b6a19eb56ad7a1cbec39abf165644ab58f75b798c51a2d0b394e00",
+    "size_bytes": 49632
+   }
+  },
+  "frozen_data": [
+   {
+    "path": "abep_sim/data/intake_surface_v1.csv",
+    "sha256": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a"
+   },
+   {
+    "path": "abep_sim/data/intake_surface_v1.json",
+    "sha256": "5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425"
+   },
+   {
+    "path": "abep_sim/data/atmosphere_msis21_v1.csv",
+    "sha256": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7"
+   },
+   {
+    "path": "abep_sim/data/atmosphere_msis21_v1.json",
+    "sha256": "38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160"
+   },
+   {
+    "path": "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json",
+    "sha256": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049"
+   },
+   {
+    "path": "abep_sim/data/atmosphere_msis21_orbit_v1.json",
+    "sha256": "f06416b1e11f07ec32434515b616935ed5eeaae1faac75586bce0961b6bcf97b"
+   }
+  ],
+  "config_model_set_crosscheck": {
+   "path": "config/model_set/physics_model_set_v1.json",
+   "id": "physics_model_set_v1",
+   "at_commit": "4b5563b643aa2103d999484ce4ccf5e2eca040e3",
+   "sha256_at_commit": "1ee761e0dcb2a571d51e531bf12e8b95704013e6dd62c569790e1b9927403e2e",
+   "role": "INFORMATIONAL (postdates the generating commit; not the model set the output was generated with)",
+   "per_file": {
+    "abep_sim/design/intake_synthesis.py": "NOT_IN_PHYSICS_MODEL_SET (design layer / builder; physics_model_set_v1 lists abep_sim/*.py only)",
+    "abep_sim/intake_tpmc.py": "SAME_CONTENT",
+    "abep_sim/atmosphere.py": "SAME_CONTENT",
+    "abep_sim/constants.py": "SAME_CONTENT",
+    "docs/design_synthesis/f1_intake/build_f1_intake.py": "NOT_IN_PHYSICS_MODEL_SET (design layer / builder; physics_model_set_v1 lists abep_sim/*.py only)",
+    "abep_sim/data/intake_surface_v1.csv": "SAME_CONTENT",
+    "abep_sim/data/intake_surface_v1.json": "SAME_CONTENT",
+    "abep_sim/data/atmosphere_msis21_v1.csv": "SAME_CONTENT",
+    "abep_sim/data/atmosphere_msis21_v1.json": "SAME_CONTENT",
+    "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json": "SAME_CONTENT",
+    "abep_sim/data/atmosphere_msis21_orbit_v1.json": "SAME_CONTENT"
+   }
+  }
+ },
+ "numerical_methods": [
+  {
+   "id": "TPMC_DIRECT",
+   "description": "abep_sim.intake_tpmc.intake_response at phi = 1 (pure channel response; phi applied exactly, pinned by a test), deterministic crc32 seeds, n per point = F1-P-12; converged iff unresolved fraction <= 1e-3, else MODEL_ERROR (fail closed)",
+   "particles_per_point": {
+    "item": "F1-P-12",
+    "value": 3000
+   }
+  },
+  {
+   "id": "FROZEN_SURFACE_EXACT_NODE",
+   "description": "used only at an exact grid node (L/d, phi, alpha, theta, kernel, species) AND at its build state (200.0, 150.0) (alt km, F10.7); never interpolated across the atmosphere, never extrapolated"
+  },
+  {
+   "id": "PARETO_NONDOMINATED_FILTER",
+   "description": "non-dominated filter over feasible candidates per (view, scenario): a dominates b iff no worse in every objective and strictly better in one; ties never dominate; O(N^2); no weights, no scalarisation",
+   "noise_rule": "NONDOMINATED_WITHIN_NOISE: dominated on the means but no dominator is better by > 2 combined SE in any objective"
+  },
+  {
+   "id": "UNCERTAINTY_CALIBRATION",
+   "description": {
+    "state": "h200_f150",
+    "scattering": "maxwell",
+    "n_per_run": 3000,
+    "replicates": 5,
+    "nodes": [
+     {
+      "L_over_d": 3.0,
+      "alpha": 0.0,
+      "species": "O",
+      "C_D_mean_phi1": 1.54666,
+      "rel_sd": 0.00215639
+     },
+     {
+      "L_over_d": 3.0,
+      "alpha": 1.0,
+      "species": "N2",
+      "C_D_mean_phi1": 2.71894,
+      "rel_sd": 0.000746058
+     },
+     {
+      "L_over_d": 20.0,
+      "alpha": 1.0,
+      "species": "O",
+      "C_D_mean_phi1": 1.62957,
+      "rel_sd": 0.00183207
+     },
+     {
+      "L_over_d": 20.0,
+      "alpha": 0.5,
+      "species": "O2",
+      "C_D_mean_phi1": 3.14534,
+      "rel_sd": 0.00104574
+     }
+    ],
+    "rel_sd_max": 0.00215639,
+    "applied_as": "C_D SE = |C_D| * rel_sd_max * sqrt(n_per_run / n) for every point (estimate; the frozen surface carries no C_D variance)"
+   }
+  }
+ ],
+ "files": [
+  {
+   "path": "F1_INTAKE_SYNTHESIS_v1_405296e/F1_INTAKE_SYNTHESIS.md",
+   "size_bytes": 37140,
+   "sha256": "a6f8003c24db6dc534925d5315b56f54122b68c019d23f4bacfd47a1c5c75142",
+   "source_path": "docs/design_synthesis/f1_intake/F1_INTAKE_SYNTHESIS.md",
+   "git_blob_at_generating_commit": "4823c2fcbd65503b92fee1b0ad4b4e2f5970514c"
+  },
+  {
+   "path": "F1_INTAKE_SYNTHESIS_v1_405296e/f1_intake_synthesis_v1.json",
+   "size_bytes": 36690882,
+   "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e",
+   "source_path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+   "git_blob_at_generating_commit": "a04f61933040e1c3504e4f72107e3f8d72ee782a"
+  }
+ ],
+ "evidence_classification": {
+  "status": "INVESTIGATION_HYPOTHESIS",
+  "deliverable_status": "DESIGN_SYNTHESIS_SCREENING_NOT_A_SELECTION",
+  "evidence_class": "model-derived",
+  "what_this_is_not": [
+   "not a selected intake, a winner, an optimum or a PASS",
+   "not a flight design or a freeze candidate (that is F9; status stays INVESTIGATION_HYPOTHESIS)",
+   "not a model change: no existing module or frozen dataset is modified; not wired into archengine; goldens unaffected",
+   "not a Hall or thrust prediction (no admitted Hall response map; T and T - D are NOT_EVALUATED)",
+   "no filter: intake_tpmc's placeholder filter fields are never used (the filter is F2's model)"
+  ]
+ },
+ "committed_in_git": {
+  "manifest": "docs/evidence_archives/f1_intake/F1_INTAKE_SYNTHESIS_v1_405296e.manifest.json",
+  "core_view": {
+   "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json",
+   "sha256": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854",
+   "size_bytes": 9448841,
+   "rule": "abep_sim/design/intake_synthesis.py core_from_full (lossless consumer view)"
+  },
+  "summary": {
+   "n_orbit_states": 197,
+   "n_candidates": 144,
+   "n_scenarios": 10,
+   "direct_runs": 23543,
+   "n_if_a1_records_per_unit_area": 15760,
+   "n_species_table_rows": 47520,
+   "species_table_columns_full": [
+    "state_id",
+    "species",
+    "L_over_d",
+    "phi",
+    "alpha",
+    "theta_deg",
+    "scattering",
+    "source",
+    "eta_c",
+    "eta_c_se",
+    "C_D_row",
+    "C_D_species",
+    "C_D_species_se",
+    "K_back",
+    "K_back_se",
+    "CR_passive",
+    "CR_passive_se",
+    "unresolved_fraction",
+    "converged",
+    "n_particles",
+    "seed"
+   ],
+   "feasible_per_view_and_scenario": {
+    "design_case": {
+     "maxwell_a0": {
+      "feasible": 120,
+      "candidates": 144
+     },
+     "maxwell_a0.2": {
+      "feasible": 120,
+      "candidates": 144
+     },
+     "maxwell_a0.5": {
+      "feasible": 120,
+      "candidates": 144
+     },
+     "maxwell_a0.8": {
+      "feasible": 120,
+      "candidates": 144
+     },
+     "maxwell_a1": {
+      "feasible": 120,
+      "candidates": 144
+     },
+     "cll_a0": {
+      "feasible": 120,
+      "candidates": 144
+     },
+     "cll_a0.2": {
+      "feasible": 120,
+      "candidates": 144
+     },
+     "cll_a0.5": {
+      "feasible": 120,
+      "candidates": 144
+     },
+     "cll_a0.8": {
+      "feasible": 120,
+      "candidates": 144
+     },
+     "cll_a1": {
+      "feasible": 120,
+      "candidates": 144
+     }
+    },
+    "envelope": {
+     "maxwell_a0": {
+      "feasible": 24,
+      "candidates": 144
+     },
+     "maxwell_a0.2": {
+      "feasible": 24,
+      "candidates": 144
+     },
+     "maxwell_a0.5": {
+      "feasible": 24,
+      "candidates": 144
+     },
+     "maxwell_a0.8": {
+      "feasible": 24,
+      "candidates": 144
+     },
+     "maxwell_a1": {
+      "feasible": 24,
+      "candidates": 144
+     },
+     "cll_a0": {
+      "feasible": 24,
+      "candidates": 144
+     },
+     "cll_a0.2": {
+      "feasible": 24,
+      "candidates": 144
+     },
+     "cll_a0.5": {
+      "feasible": 24,
+      "candidates": 144
+     },
+     "cll_a0.8": {
+      "feasible": 24,
+      "candidates": 144
+     },
+     "cll_a1": {
+      "feasible": 24,
+      "candidates": 144
+     }
+    }
+   },
+   "infeasible_candidate_scenario_records": {
+    "design_case": 240,
+    "envelope": 1200
+   },
+   "infeasibility_reasons": {
+    "design_case": 240,
+    "envelope": 68832
+   }
+  },
+  "markdown": "docs/design_synthesis/f1_intake/F1_INTAKE_SYNTHESIS.md"
+ },
+ "storage": {
+  "preferred": {
+   "kind": "GitHub Release asset on a tagged engineering-evidence release",
+   "repository": "ppusapati/abep",
+   "tag": "evidence-f1-intake-synthesis-v1-405296e",
+   "asset_name": "F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst",
+   "status": "AUTHORIZED_TO_UPLOAD (A9.24 item 11); upload is a manual owner step (docs/evidence_archives/f1_intake/UPLOAD_STEPS.md)",
+   "download_url": "https://github.com/ppusapati/abep/releases/download/evidence-f1-intake-synthesis-v1-405296e/F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst",
+   "download_url_rule": "standard GitHub release-asset URL for this repository, tag and asset name; valid only once the owner has published the release",
+   "authoritative": false,
+   "authoritative_rule": "the uploaded asset becomes the authoritative copy only after a downloaded copy is verified with `python scripts/evidence/f1_archive.py verify-download <path>` (sha256, size, zstd decode, tar sha256, per-member hashes) and that record is committed at docs/evidence_archives/f1_intake/F1_INTAKE_SYNTHESIS_v1_405296e.download_verification.json",
+   "download_verification": "PENDING (no downloaded copy verified yet)"
+  },
+  "git_lfs": {
+   "path": "docs/evidence_archives/f1_intake/F1_INTAKE_SYNTHESIS_v1_405296e.tar.zst",
+   "gitattributes": "docs/evidence_archives/**/*.tar.zst filter=lfs diff=lfs merge=lfs -text",
+   "lfs_oid": "sha256:c29623c08099c688584439b881c07c7a59b14fba3645642e652e3a2c7ce04dd2",
+   "status": "NOT_USED_LFS_UPLOAD_REFUSED_BY_ENVIRONMENT (2026-10-03: the LFS verify call was refused (403) from the remote execution environment; no pointer is committed; the archive is reproduced byte-for-byte by `python scripts/evidence/f1_archive.py build` from the committed full JSON and uploaded by the owner as the release asset)"
+  },
+  "original_full_file": {
+   "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
+   "sha256": "ec67aff2bf38af58e9aaa9b9c22248233787e28ef613c25d4c2b2e8f7e80eb3e",
+   "size_bytes": 36690882,
+   "removal_rule": "remove from the working tree / index only after the archive is stored retrievably and re-downloaded and hash-verified byte for byte (python scripts/evidence/f1_archive.py verify); never rewrite history"
+  }
+ },
+ "verification": {
+  "rule": "archive sha256 / size; zstd decode; tar sha256; every member re-extracted and compared by size, sha256 and byte for byte with the original; deterministic member metadata",
+  "result_at_build": "VERIFIED"
+ },
+ "upload_authorization": {
+  "md": "docs/decisions/OD_2026_10_04_A9_24_RUST_MIGRATION_AND_OPEN_ITEMS_OWNER_DECISIONS.md",
+  "md_sha256": "9a2c950befd20dc38c63a3c56d4443ce7a30f1630903ada618b054638325b1d7",
+  "json": "docs/decisions/OD_2026_10_04_A9_24_rust_migration_and_open_items_owner_decisions.json",
+  "json_sha256": "fdbb4561ca8dc524e11200750c2c9c497865f8142f1697ae0146d2dae3e5cc3c",
+  "item": 11,
+  "json_item_key": "11_f1_archive",
+  "answer": "AUTHORIZED TO KEEP AND UPLOAD as a GitHub Release asset or equivalent controlled store; never an ordinary Git blob; repository keeps filename, sha256, size, manifest, per-file hashes, generating commit, config/design-state/model-set hashes, command, classification, release reference; verify downloaded hash before authoritative",
+  "quotes": [
+   "AUTHORIZED TO KEEP AND UPLOAD.",
+   "Do NOT store the 36.7 MB generated archive as an ordinary Git blob.",
+   "Verify the uploaded/downloaded archive hash against the original before treating the upload as authoritative."
+  ]
+ },
+ "a9_24_item_11_checklist": [
+  {
+   "field": "archive filename",
+   "pointer": "/archive/file_name",
+   "status": "PRESENT"
+  },
+  {
+   "field": "SHA-256",
+   "pointer": "/archive/sha256",
+   "status": "PRESENT"
+  },
+  {
+   "field": "byte size (compressed)",
+   "pointer": "/archive/size_bytes",
+   "status": "PRESENT"
+  },
+  {
+   "field": "byte size (tar)",
+   "pointer": "/archive/tar_size_bytes",
+   "status": "PRESENT"
+  },
+  {
+   "field": "complete file manifest",
+   "pointer": "/files",
+   "status": "PRESENT"
+  },
+  {
+   "field": "per-file hashes",
+   "pointer": "/files/*/sha256",
+   "status": "PRESENT"
+  },
+  {
+   "field": "generating commit",
+   "pointer": "/generating_commit/sha",
+   "status": "PRESENT"
+  },
+  {
+   "field": "architecture/config hash",
+   "pointer": "/architecture/sha256",
+   "status": "PRESENT"
+  },
+  {
+   "field": "design-state-set hash",
+   "pointer": "/design_state_set/sha256",
+   "status": "PRESENT"
+  },
+  {
+   "field": "model-set hash",
+   "pointer": "/model_set/sha256",
+   "status": "PRESENT"
+  },
+  {
+   "field": "generation command",
+   "pointer": "/command/generate",
+   "status": "PRESENT"
+  },
+  {
+   "field": "evidence classification",
+   "pointer": "/evidence_classification/evidence_class",
+   "status": "PRESENT"
+  },
+  {
+   "field": "release/download reference",
+   "pointer": "/storage/preferred/download_url",
+   "status": "PRESENT"
+  }
+ ]
+}

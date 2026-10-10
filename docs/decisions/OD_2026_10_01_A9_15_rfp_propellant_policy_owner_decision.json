@@ -1,0 +1,41 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_15_rfp_propellant_policy_owner_decision",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "A9_15_RFP_COMPLIANT_PROPELLANT_POLICY",
+ "applies_to": "all further ABEP decisions; amends A9.13 owner_statements.xenon and A9.14 OQ-A907-07, XA9Q-07, MPQ-01, XV2Q-01, XA9Q-05, OD6",
+ "parents": [
+  "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+  "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+  "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903"
+ },
+ "governing_rule": "The official RFP is the sole governing basis for propellant capability. The system shall support both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability. C1-specific Xe requirements, if any, are derived from the selected C1 hardware and integrated into that RFP-compliant Xe architecture; no independent policy shall restrict or override the RFP.",
+ "rules": [
+  "Xe is an RFP-required system capability, not a contingency",
+  "C1 is an internal architecture element, not an RFP requirement",
+  "a selected C1 that requires Xe has its Xe booked within the system Xe architecture and accounting; a C1 that does not require Xe gets no invented Xe consumption",
+  "presence or absence of C1 never removes system Xe capability",
+  "two separate propellant tanks/paths: ambient air and Xenon (owner-stated RFP content, pending RFP registration)"
+ ],
+ "amendments": {
+  "OQ-A907-07": "S8.17: flight C1 integration may still be deferred until C1 is selected, but not because Xe is contingency-only",
+  "XA9Q-07": "S8.21: YES, Xe capability applies to hall_icp_neutralizer because the RFP requires it",
+  "MPQ-01": "S8.33: a selected C1 requiring Xe books its C1-specific branch within the RFP-compliant Xe system; C1 Xe neither assumed nor excluded in advance",
+  "XV2Q-01": "S8.35: NOT APPLICABLE, the system is not Xe-free under the RFP",
+  "XA9Q-05": "S9.3: an ICP Xe-path getter/filter is an engineering/vendor requirement, not a policy choice",
+  "OD6": "S9.10: 'air + Xe' = the system provides both ambient-air and Xenon operating capability; never a contingency interpretation",
+  "A9.13 owner_statements.xenon": "replaced by governing_rule"
+ },
+ "recorder_notes": [
+  "this policy concerns system propellant capability; it does not by itself change the A9.1 ICP gas-mode baseline (G-REUSE primary, G-XE declared contingency ICP feed variant), which is a separate ICP-feed choice - flagged to the owner"
+ ],
+ "execution": {
+  "instruction": "apply in the A9.16 decision-application step",
+  "merge": "no merge to main is authorized by this addendum"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

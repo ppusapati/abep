@@ -1,0 +1,53 @@
+{
+  "schema": "abep_new_physics_verification_report_v1",
+  "id": "np_thermal_cathodeless_model_v2_verification_report_v1",
+  "model_id": "NP-THERMAL-CATHODELESS",
+  "model_version": "2.0.0",
+  "date": "2026-10-07",
+  "lane": "A9.31: RF/ICP + thermal v2 implementation lane (branch lane-icp-thermal-v2-impl)",
+  "prereg": {
+    "lock_v2_sha256": "727689fee6bd003295c53abfbc4185c93fab80620329c75062a956dbbb9742de",
+    "prereg_v2_json_sha256": "6828f3e257e38a588c9513f2531658035fa904b6c51e3b28831681d871adfa78",
+    "PREREG_v2_md_sha256": "b94b95fa9941b239c88294a286386da8b27b57b0fec8bb036d42527aff194ca0",
+    "producer_anchor_sha256": "a180ceef37223467687d7d245ab790a172e8dad9ea4e90aa463d434383142287",
+    "matched_key_table_sha256": "33e495adadbe94a5113c5f6b9040156ec8309295cca15b812714038beaa51161"
+  },
+  "implementation": {
+    "where": "crates/abep-subsystems/src/thermal (run_case_v2, GovernedContextV2, assemble_icp_v2.rs, vocab model 2.0.0 rows), src/power/icp_bus.rs (icp_upstream_loads_v2), src/power/system_ledger.rs (accounts_from_thermal_v2)",
+    "v1_changes": "additive only: optional case fields model_version and IF-ICP-THERMAL-v2 and optional output fields, all skipped when absent; the v1 entry run_case, IF-ICP-BUS-v1 consumer and CONS-L1 v1 accounts are unchanged and byte-identical to base 1c9e87f (tests/v1_byte_identity.rs); vs_net_v1.json bytes unchanged",
+    "commits": ["a18ceb5 (AL-10 v2 record registration, committed alone)", "2f4b7fc"]
+  },
+  "verdict": "IMPLEMENTED_UNVERIFIED",
+  "validation_status": "NOT_VALIDATED",
+  "verdict_rule": "admission_rule_v2: AL-01..AL-11 (AL-10 v2), every CONS criterion incl. CONS-I3, FT-01..FT-23, DET, IV-01 / IV-02 and the producer key table hash equal to key_table_sha256. The inherited v1 cases are unchanged and pass; the v2 additions pass; the producer (NP-ICP model_version 2) is IMPLEMENTED_UNVERIFIED, so no ICP heat is admitted for flight or bench (NP_ICP_NEUTRALIZER_NOT_ADMITTED stays).",
+  "vs_net_v2": {
+    "record": "verification/al10_v2_icp_record_v1.json sha256 3419b51859e00861410c8f49f19c1c4164a3c6f11b98ddb24e07c56a9cc8f300, registered in al10_v2_registration_v1.json and committed alone (a18ceb5) before the scored run",
+    "network": "the registered VS-NET (vs_net_v1.json 64c4bf33, unchanged) with the registered transformation"
+  },
+  "cases": {
+    "AL-10 v2 consistent": "match_colocated true and false: every key on its receivers with its weights (1e-12 relative + 1e-12 W): TK-07 / TK-12 producer shares, TK-06 = PART.ohmic, TK-08 = PART.icp_rad, TK-10 exactly f_up; TK-09 / TK-11 / TK-13 on no node; TK-01 / TK-02 at RF_SOURCE; TK-04 / TK-05 on N_MATCH iff co-located, else RF_CHAIN; CONS-I2 and CONS-I3 met; no Q_icp_boundary_W",
+    "AL-10 v2 signed TK-12": "TK-12 = -1 W with a positive N_COLLECTOR node total: CONVERGED",
+    "AL-10 v2 refusals": "IFI2-02, IFI2-03, IFI2-04, IFI2-05, IFI2-06, IFI2-07, IFI2-08 (partition sum; negative node total FT-22), IFI2-09, missing key, IF-ICP-THERMAL-v1 record, P_icp_bus_W, Hall-powered key: MODEL_ERROR; INCOMPLETE_EVIDENCE key, missing f_up (FT-20), missing TK-06 split (FT-20): INCOMPLETE_EVIDENCE; NOT_EVALUATED key and CFG-FLIGHT-HALL-ON (FT-21): NOT_EVALUATED; TK-10 = 0 needs no f_up",
+    "FT-19": "the v1 entry refuses a 2.0.0 case and the v2 entry refuses a v1 case (MODEL_VERSION_MISMATCH, INTERFACE_VERSION / INTERFACE_VERSION_MISMATCH)",
+    "FT-23": "scenario_member_id, the producer lock sha256 and the IF-ICP-THERMAL-v2 record sha256 in provenance",
+    "DET": "two runs give identical JSON",
+    "lock": "GovernedContextV2 verifies the v2 lock, its v1 predecessor, the producer anchor and the key table read from both preregistrations; a changed prereg_v2 byte in a copied root is refused",
+    "LC-18 (power lane)": "IF-ICP-BUS-v2 BK-01..BK-03 enter the bus_power_boundary_a9_v2 ledger exactly at the load planes; P_bus = P_W / (eta_slot eta_front_end) to 1e-12 with eta_slot 0.9 / 0.85 / 0.8 and eta_front_end 0.96; the CONS-L1 v2 ICP account closes (mismatch <= 1e-9 W, relative residual < 1e-12) with the ledger P_loss as supply loss outside the account; refusals: v1 / v2 cross-reads, P_icp_bus_W, a LOAD key off its plane, BUS2-04 (flight ledger, ground-facility supply), an undeclared installed variant"
+  },
+  "test_counts": "abep-subsystems tests/thermal_v2.rs 9, tests/v1_byte_identity.rs 3; workspace 455 passed, 0 failed, 2 ignored (registered PT-01 / PT-02); abep-ci test-register 0 violations; fmt and clippy -D warnings clean on the changed crates",
+  "implementation_interpretations": [
+    "The receivers of an IF-ICP-THERMAL-v2 key are the nodes registered for it in prereg v2 nodes_receives_interface_keys that also declare it (E-07 rule kept); the VS-NET 2.0.0 transformation adds those declarations.",
+    "The producer partitions of TK-07 / TK-12 travel in W per node (node_shares_w); IFI2-08 checks that they sum to their key within eps_if and that TK-07 + TK-12 per node >= -eps_if.",
+    "A 'registered co-located segment' of TK-03 is a registered partition over N_MATCH and BOUNDARY (booked RF_CHAIN); without it TK-03 is booked RF_CHAIN.",
+    "TK-01 / TK-02 'or a registered electronics node' is not implemented: both are always booked at RF_SOURCE; a partition registered for them is refused.",
+    "B_PPU_RF booking by key and sub-account is reported as B_PPU_RF_booked['<RF_SOURCE|RF_CHAIN>:<key>'] and IF_ICP_THERMAL_v2.B_PPU_RF_sub_account_W; 2.0.0 outputs carry schema abep_np_thermal_output_v2.",
+    "CONS-L1 v2 ICP account: deposited = Q_source_node_W of TK-03..TK-08, TK-10, TK-12; exported = TK-09, TK-11, TK-13 and the TK-08 / TK-10 EXPORT shares; booked = RF_SOURCE + RF_CHAIN."
+  ],
+  "preregistration_consistency": "No conflict with prereg v2 found. Nothing in the frozen records was edited.",
+  "open": [
+    "A producer -> consumer record adapter for orchestration (NP-ICP ThermalMemberV2 -> InterfaceRecordV2: status vocabulary and value-record evidence attributes)",
+    "RI-PART f_up (RX-H1-FACE) and TK-06 split: TBD for every real configuration (NE-10)",
+    "CFG-FLIGHT-HALL-ON: NOT_EVALUATED (CPL-HALL-ON, NE-13)"
+  ],
+  "ledger_update_requested": "NP-THERMAL-CATHODELESS 2.0.0: RUST_IMPL (IMPLEMENTED_UNVERIFIED pending the producer's verification), commits a18ceb5 + 2f4b7fc; the power lane's IF-ICP-BUS-v2 consumer path and CONS-L1 v2 ICP account: RUST_IMPL; v1 paths unchanged."
+}

@@ -1,0 +1,44 @@
+# ABEP Rust workspace (A9.29 lane A, ES-1; plan docs/rust_migration/programme_v3_1.json, cargo_workspace_proposal).
+# Target simulator = Rust; Hall solver = HallThruster.jl (pinned, CLAUDE.md rule 7); Python = migration reference.
+# abep_core/ stays a standalone crate outside the workspace while parity_report_v2 binds its Cargo.toml / Cargo.lock /
+# src sha256 (excluded below); workspace crates consume it as a path dependency only after the registered
+# build-equivalence addendum (ES-3).
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+exclude = ["abep_core"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.94.1"
+publish = false
+license = "LicenseRef-Proprietary"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["float_roundtrip"] }
+sha2 = "0.10"
+# TOML 1.0.0 reader (toml_edit 0.22), the spec level of Python's tomllib; 0.9+ implement TOML 1.1 (provenance verifier).
+toml = { version = "=0.8.23", default-features = false, features = ["parse"] }
+# gzip decompression of the frozen .csv.gz datasets (A9.17 DATA_SIZE canonical storage); default pure-Rust backend.
+flate2 = "1"
+abep-types = { path = "crates/abep-types" }
+abep-provenance = { path = "crates/abep-provenance" }
+abep-data = { path = "crates/abep-data" }
+abep-atmos = { path = "crates/abep-atmos" }
+abep-config = { path = "crates/abep-config" }
+abep-hall = { path = "crates/abep-hall" }
+# IF-CHEM-REG-v1 provider (admitted rate integrator C-ABEP_SIM_RATE_TABLES_PY, ICP chemistry registry).
+abep-chem = { path = "crates/abep-chem" }
+# Admitted Kernel-1 TPMC library (parity_report_v2), consumed as a plain rlib: no `python` / `extension-module` feature
+# (A9.29 secs. 5, 11; build equivalence: docs/rust_migration/contracts/C-ABEP_CORE_BUILD_EQUIVALENCE/).
+abep_core = { path = "abep_core", default-features = false }
+
+[profile.release]
+opt-level = 3
+
+# sha256 of large frozen files (the 36.7 MB f1 intake record read by the bid guard's history part) stays fast in
+# test builds; it changes no result.
+[profile.dev.package.sha2]
+opt-level = 3

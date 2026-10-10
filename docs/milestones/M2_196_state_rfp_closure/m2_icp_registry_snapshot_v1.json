@@ -1,0 +1,23 @@
+{
+ "schema": "abep_icp_registry_snapshot_pin_v1",
+ "id": "M2-V1-ICP-REGISTRY-SNAPSHOT",
+ "date": "2026-10-09",
+ "decision": "coordinator decision 2026-10-09 (A9.38 P4 follow-up): frozen records regenerate from pinned snapshots of their inputs; live results go into new versions",
+ "record": {
+  "path": "docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json",
+  "sha256": "600cf229ecdb5f91f0471f03cfdd6d287486ad21e9d9ebadde3cdafa54a37394",
+  "note": "the record and its run manifest are not edited; this file sits beside them"
+ },
+ "icp_registry": {
+  "labels": ["abep-icp-air-0.0", "abep-icp-xe-0.0"],
+  "snapshot_dir": "data/chemistry/icp_snapshots/abep-icp-air-0.0_xe-0.0",
+  "icp_chem_pinned_sha256": "074daff90b00dd1dd6ca776c845c7897bbd84b4217ec014e70fb374a16f16eb2",
+  "byte_identity": "every file of the snapshot equals data/chemistry/icp at 42bb83a (the M2 run's input state); the registry loader verifies every file through the pinned ICP_CHEM_PINNED.toml",
+  "consumer": "abep_assess::closure_m1::gather::icp_path (P-ICP / P-ICP-DBF1) through abep_chem::registry::RegistrySource::snapshot_0_0"
+ },
+ "also_pins": [
+  "harness v2 M1 records, conservation_bounds_v1 (A4), intake_closure_a5_v1 (A5): same gather path, same snapshot",
+  "docs/closure/icp/icp_closure_v1.json: provenance.icp_chem_pinned names the same pin"
+ ],
+ "test": "crates/abep-assess/tests/m2_dbf1.rs committed_m2_record_is_the_a8_record_of_today (byte-identical regeneration and this pin)"
+}

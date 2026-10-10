@@ -1,0 +1,50 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_05_A9_26_mass_budget_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-05",
+ "decision": "A9_26_MASS_BUDGET_POLICY_FOR_THE_BID_BASELINE",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_05_A9_26_MASS_BUDGET_OWNER_DECISIONS.md",
+  "sha256": "5f40294de9ab736cedd7a24a393b0333823c2624e3469f6b1f775250a85803e5",
+  "method": "exact text extracted from the session transcript; per-message text sha256"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "MASS_CLOSURE_CHECK_REQUEST",
+   "utc": "2026-10-04T17:22:28.839Z",
+   "text_sha256": "3fee21eb93db05e67ffe412cd643006c860176a357bc0f2d3fc623cc37c01859",
+   "chars": 6609
+  },
+  {
+   "n": 2,
+   "key": "MASS_BUDGET_DECISIONS_PRE_BID_FREEZE",
+   "utc": "2026-10-05T02:42:08.598Z",
+   "text_sha256": "c240fca3b8109078ac0113cdb3526d729e3f13c41a8e8639b802b463f535633f",
+   "chars": 6286
+  }
+ ],
+ "supersedes": [
+  {
+   "what": "A9.14 MQ-02 20 % system margin as the ACTIVE proposal / bid mass-margin policy",
+   "status": "SUPERSEDED_FOR_THE_PROPOSAL_BID_BASELINE_ONLY; preserved as HISTORICAL / CONSERVATIVE SENSITIVITY"
+  },
+  {
+   "what": "row-54 owner budget reference 24 kg + 20 % = 28.8 kg as the active bid mass basis",
+   "status": "HISTORICAL / INTERNAL ALLOCATION PROVENANCE"
+  }
+ ],
+ "owner_decision_summary": {
+  "requirement": "complete flight wet mass < 40 kg (HARD_40_WET); not relaxed",
+  "system_margin": "10 % system-level mass margin for the proposal / bid baseline (replaces 20 % for the active bid basis; 20 % kept as historical / conservative sensitivity)",
+  "line_uplift": "keep the 20 % line-level planning uplift on floor-derived lines AL-04, AL-07, AL-08 (MEV / planning floors, not CBEs); effective 1.20 x 1.10 = 1.32 (not 1.44); line-floor values unchanged",
+  "AL-09": "controls / electronics / valve drivers / flight sensors = 1.0 kg, PROVISIONAL_OWNER_ALLOCATION, NOT_CBE, NOT_MEASURED; harness separate (5/95 rule); MPV3Q-01 closed; no compensating reduction",
+  "expected_rollup": "non-harness ~33.1196, harness ~1.7431, nominal dry ~34.8627, 10 % margin ~3.4863, dry planning ~38.3490; wet ~40.349 / 43.349 / 48.349 kg (2 / 5 / 10 kg Xe); recompute from the builder; stop if materially different",
+  "status": "MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED (2 kg case ~0.35 kg above 40 kg); no PASS",
+  "proposal_target": "nominal dry <= 34.0 kg, 10 % system margin, 2 kg Xe planning reference -> ~39.4 kg wet; DESIGN TARGET, not achieved evidence; 2 kg not the selected Xe load; 5 / 10 kg sensitivities",
+  "internal_allocation_target": "if shown: regenerated with AL-09 1.0 kg, harness separate, 10 % margin; label INTERNAL ALLOCATION TARGET, NOT EVIDENCE OF MASS COMPLIANCE",
+  "bid_wording": "requirement < 40 kg wet; proposal design target <= 34 kg nominal dry + 10 % + 2 kg -> ~39.4 kg; current provisional planning / evidence roll-up ~38.35 kg dry, ~40.35 / 43.35 / 48.35 kg wet; MASS INCOMPLETE_EVIDENCE / NOT_YET_CLOSED; closure actions AL-07 cathodeless PPU CBE / requote, AL-08 quote / design rebase, AL-04 completed Hall-head CBE, AL-09 design-derived CBE, routed harness, integration / structural optimisation",
+  "technical_source": "b0937e8 is not the final technical source; narrow successor implementing only this governed mass-policy correction, full validation, GitHub CI"
+ }
+}

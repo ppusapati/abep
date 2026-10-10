@@ -1,6 +1,6 @@
 """Phase 5 mission run: the complete chain on the real mission profile.
 
-For a design (full physics), propagate 26,000 h with: J2, co-rotation, full spacecraft drag (intake + bus +
+For a design (full physics), propagate the mission-duration basis (A9.22 G1: 26,280 h) with: J2, co-rotation, full spacecraft drag (intake + bus +
 arrays with pointing), solar-cycle density, altitude-hold controller with flow throttling, eclipse and array power,
 AO-fluence-driven intake ageing (alpha -> eta_c through the TPMC ROM), radiation dose, plume erosion, debris,
 and the life/reliability model on the actual firing hours. Reports the mission-level closure and the limiting item.
@@ -9,10 +9,10 @@ from __future__ import annotations
 import math
 import numpy as np
 import pandas as pd
-from .constants import RFP
+from . import operating_inputs as OI
 from .atmosphere import atmosphere
 from .intake import IntakeParams, CompressorParams, collection, compress
-from .system import Config, evaluate
+from .system import Config, physics_closure
 from .mission_env import Spacecraft, spacecraft_drag, propagate, plume_interaction
 from .radiation import RadEnv, electronics_margins, uv_contamination_ageing, debris_puncture, shielding_mass
 from .materials import surface_ageing_alpha
@@ -20,12 +20,20 @@ from .life import LifeInputs, reliability, hall_channel_life, blade_life
 from .transient import _atm_at
 
 
-def run_phase5(cfg: Config, sc: Spacecraft, hours: float = RFP.mission_hours, dt_h: float = 4.0,
+def run_phase5(cfg: Config, sc: Spacecraft, hours: float | None = None, dt_h: float = 4.0,
                f107_mean: float = 150.0, f107_amp: float = 80.0, phase_yr: float = 0.0, shield_mm: float = 2.0,
-               intake_phi_c: float = 1.0e26, alpha_inf: float = 0.95, thrust_cap_mN: float = RFP.thrust_max_mN) -> dict:
+               intake_phi_c: float = 1.0e26, alpha_inf: float = 0.95, thrust_cap_mN: float | None = None,
+               mission_hours: float | None = None, firing_hours: float | None = None) -> dict:
     """intake_phi_c: characteristic AO fluence for accommodation drift (atoms/m^2); 1e26 = fast ageing prior,
-    1e28 = a surface that keeps its scattering character over the mission. Coupon data decides."""
-    base = evaluate(cfg)                                   # design point (mean solar) for masses, life rates
+    1e28 = a surface that keeps its scattering character over the mission. Coupon data decides.
+    Operating inputs are caller-supplied (A9.22); a None takes its default from abep_sim.operating_inputs:
+    hours (propagation length) and mission_hours (life/reliability mission basis) -> MISSION_HOURS, firing_hours
+    (subsystem firing-life assumption) -> FIRING_HOURS, thrust_cap_mN -> THRUST_MAX_mN."""
+    hours = OI.MISSION_HOURS if hours is None else hours
+    mission_hours = OI.MISSION_HOURS if mission_hours is None else mission_hours
+    firing_hours = OI.FIRING_HOURS if firing_hours is None else firing_hours
+    thrust_cap_mN = OI.THRUST_MAX_mN if thrust_cap_mN is None else thrust_cap_mN
+    base = physics_closure(cfg)                            # design point (mean solar) for masses, life rates (raw keys)
     alpha0 = cfg.intake.accommodation
     ao_flux = base["ao_flux_m2s"]
     fluence = 0.0; fired_h = 0.0; energy = 0.0
@@ -35,8 +43,10 @@ def run_phase5(cfg: Config, sc: Spacecraft, hours: float = RFP.mission_hours, dt
         f107 = f107_mean + f107_amp * math.sin(2 * math.pi * (t_h / 8766.0 + phase_yr) / 11.0)
         atm = _atm_at(alt, f107)
         # AO ageing of the intake surface
+        # AO-aged alpha goes to the intake unclipped (review fix D-08, 2026-10-01): IntakeSurface refuses an
+        # out-of-domain value instead of a silent min(alpha, 1) substitution.
         alpha = surface_ageing_alpha(alpha0, state["fluence"], phi_c=intake_phi_c, alpha_inf=alpha_inf)
-        ip = IntakeParams(area_m2=cfg.intake.area_m2, accommodation=min(alpha, 1.0), use_tpmc=cfg.intake.use_tpmc,
+        ip = IntakeParams(area_m2=cfg.intake.area_m2, accommodation=alpha, use_tpmc=cfg.intake.use_tpmc,
                           L_over_d=cfg.intake.L_over_d, phi=cfg.intake.phi, off_axis_deg=sc.pointing_sigma_deg * 0.8)
         col = collection(ip, atm)
         d = spacecraft_drag(sc, atm["rho"], atm.get("V_rel", atm["V"]), cfg.intake.area_m2, col["C_D"])
@@ -82,7 +92,7 @@ def run_phase5(cfg: Config, sc: Spacecraft, hours: float = RFP.mission_hours, dt
                            n_neutral_exit_m3=base["p_in_Pa"] / (1.380649e-23 * 900) * 0.3, hours=fired_h)
     li = LifeInputs(hall_sputter_um_per_kh=base.get("pl_wall_erosion_um_per_kh", 150.0), hall_wall_thickness_mm=cfg.hall_wall_mm,
                     blade_coating_um=cfg.blade_coating_um, blade_tip_mps=base.get("comp_tip_mps", 400.0),
-                    ao_flux_ram_m2_s=ao_flux, intake_alpha0=alpha0, mission_h=RFP.mission_hours, firing_h=RFP.ignition_hours,
+                    ao_flux_ram_m2_s=ao_flux, intake_alpha0=alpha0, mission_h=mission_hours, firing_h=firing_hours,
                     cathode_starts=int(hours / 24 * 0.5))
     rel = reliability(li, {"hall_channel": hall_channel_life(li)["life_h"], "blade_coating": blade_life(li)["coating_life_h"]})
     alpha_end = min(surface_ageing_alpha(alpha0, state["fluence"], phi_c=intake_phi_c, alpha_inf=alpha_inf) + uv["delta_accommodation"], 1.0)
@@ -101,7 +111,9 @@ def run_phase5(cfg: Config, sc: Spacecraft, hours: float = RFP.mission_hours, dt
             "uv_alpha_s_end": uv["alpha_s_end"], "contamination_um": uv["contamination_deposit_um"],
             "debris_P_intake": deb_int["P_at_least_one"], "debris_P_radiator": deb_rad["P_at_least_one"],
             "plume_direct_frac": pl["f_beam_direct"], "coverglass_erosion_um": pl["coverglass_erosion_cex_um"] + pl["coverglass_erosion_direct_um"],
-            "R_15000h": rel["R_15000h"], "R_26000h": rel["R_26000h"], "D_mean_mN": float(df.D_mN.mean()),
+            "R_firing": rel["R_firing"], "R_mission": rel["R_mission"], "firing_hours": firing_hours,
+            "mission_hours": mission_hours, f"R_{int(firing_hours)}h": rel["R_firing"],
+            f"R_{int(mission_hours)}h": rel["R_mission"], "D_mean_mN": float(df.D_mN.mean()),
             "D_intake_frac": float(base["drag_mN"] / df.D_mN.mean()) if df.D_mN.mean() > 0 else 0.0,
             "T_mean_mN": float(df.T_mN.mean()), "P_bus_mean_W": float(df.P_bus_W.mean()), "P_avail_mean_W": float(df.P_avail_W.mean())}
 
@@ -115,13 +127,17 @@ if __name__ == "__main__":
     print(json.dumps({k: v for k, v in r.items() if k != "df"}, indent=1, default=float))
 
 
-def run_mission_generic(arch_result: dict, sc: Spacecraft, gas: dict, hours: float = RFP.mission_hours, dt_h: float = 6.0,
+def run_mission_generic(arch_result: dict, sc: Spacecraft, gas: dict, hours: float | None = None, dt_h: float = 6.0,
                         f107_mean: float = 150.0, f107_amp: float = 80.0, phase_yr: float = 0.0, intake_phi_c: float = 1.0e28,
                         alpha0: float = 0.8, L_over_d: float = 5.0, thrust_cap_mN: float | None = None, pmap: dict | None = None,
-                        alt0_km: float = 200.0, P_bus_max_W: float = RFP.power_max_W) -> dict:
-    """Item 10: every architecture from archengine goes through the same 26,000 h propagator. The propulsion is
+                        alt0_km: float = 200.0, P_bus_max_W: float | None = None) -> dict:
+    """Item 10: every architecture from archengine goes through the same mission-duration (26,280 h) propagator. The propulsion is
     represented by its optimised design point (thrust ∝ collected flow near the point, power ∝ flow), the intake by
-    the TPMC ROM with AO ageing, the spacecraft by `sc`. Returns the same summary fields as run_phase5."""
+    the TPMC ROM with AO ageing, the spacecraft by `sc`. Returns the same summary fields as run_phase5.
+    Operating inputs are caller-supplied (A9.22): hours None -> operating_inputs.MISSION_HOURS, P_bus_max_W None ->
+    operating_inputs.P_BUS_MAX_W."""
+    hours = OI.MISSION_HOURS if hours is None else hours
+    P_bus_max_W = OI.P_BUS_MAX_W if P_bus_max_W is None else P_bus_max_W
     import numpy as np
     T0 = arch_result["T_mN"] * 1e-3; P0 = arch_result["P_bus_W"]; md0 = arch_result["mdot_air_mgps"] * 1e-6
     area = arch_result["x_area"]
@@ -130,8 +146,8 @@ def run_mission_generic(arch_result: dict, sc: Spacecraft, gas: dict, hours: flo
     def drag_fn(alt, t_h):
         f107 = f107_mean + f107_amp * math.sin(2 * math.pi * (t_h / 8766.0 + phase_yr) / 11.0)
         atm = _atm_at(alt, f107)
-        alpha = surface_ageing_alpha(alpha0, state["fluence"], phi_c=intake_phi_c)
-        ip = IntakeParams(area_m2=area, accommodation=min(alpha, 1.0), use_tpmc=True, L_over_d=L_over_d, off_axis_deg=sc.pointing_sigma_deg * 0.8)
+        alpha = surface_ageing_alpha(alpha0, state["fluence"], phi_c=intake_phi_c)   # unclipped (review fix D-08)
+        ip = IntakeParams(area_m2=area, accommodation=alpha, use_tpmc=True, L_over_d=L_over_d, off_axis_deg=sc.pointing_sigma_deg * 0.8)
         col = collection(ip, atm)
         d = spacecraft_drag(sc, atm["rho"], atm.get("V_rel", atm["V"]), area, col["C_D"])
         atm["_col"] = col; atm["_drag"] = d
@@ -171,4 +187,9 @@ def run_mission_generic(arch_result: dict, sc: Spacecraft, gas: dict, hours: flo
             "hours_throttled": float((df.P_bus_W < 0.9 * df.P_bus_W.max()).sum() * dt_h), "mean_eclipse": prop["mean_eclipse"],
             "alpha_end": min(surface_ageing_alpha(alpha0, state["fluence"], phi_c=intake_phi_c), 1.0),
             "ao_fluence_m2": state["fluence"], "fired_hours": state["fired_h"], "P_bus_peak_W": state.get("P_peak", 0.0),
-            "xe_cathode_kg_actual": 0.05e-6 * state["fired_h"] * 3600 if "lab6" in arch_result["architecture"] else 0.0}
+            "xe_cathode_kg_actual": 0.05e-6 * state["fired_h"] * 3600 if "lab6" in arch_result["architecture"] else 0.0,
+            # evidence label of the architecture result the mission propagates (review fix D-02, 2026-10-01): a mission
+            # built on a non-admissible design is a diagnostic, never a successful mission closure
+            "architecture_status": arch_result.get("status"),
+            "evidence_class": arch_result.get("evidence_class", "NOT_REPORTED"),
+            "evidence_admissible": bool(arch_result.get("evidence_admissible", False))}

@@ -1,0 +1,16 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-HALL-CHEM-AIR/addendum_02_erratum_o2_double_ionization_header",
+ "amends": "NP-HALL-CHEM-AIR v1 (lock 1884e42ff98ee07a634500ce338eef9dc3749bf4e5c053b058aec9b764674518) and addendum 01 (lock bf1f743cd1c9efc1ed6a3b9c6c8c6183553887d9bee7b8934547f4821dddca42)",
+ "date": "2026-10-08",
+ "lane": "lane-hall-chem-air",
+ "drafted_by": "agent session; not reviewed by the owner",
+ "registered_before": "any CA-HALL-AIR-v1 audit run (none has been possible: no Julia in the authoring container); found while writing the audit reader, before any metric was computed",
+ "erratum": {
+  "id": "E-02",
+  "where": "prereg_v1.json processes[HA-O2-DI-02].threshold.value_eV (53.888) and addendum_01 audit_implementation.processes[HA-O2-DI-02].metrics.F_P ('E = 53.888 eV')",
+  "correct": "53.89 eV = 5.12 eV + 48.77 eV (D0(O2), SONG2026 Sec. II.G, + O^2+ above the O ground state, Itikawa & Ichimura 1990 Table 2.1, verify VER-HA-02): the header of the bound table hallthruster_bridge/audit_air/bound_tables/dissociative_ionization_O2_to_O_Z2plus_song2026.dat ('Ionization energy (eV): 53.89'), of its v0 source table and of manifest_song2026_v0.json. The value 53.888 is an arithmetic slip copied from the v0 builder's docstring ('53.888 eV = 5.12 + 48.77'); the v0 builder computes round(5.12 + 48.77, 3) = 53.89.",
+  "rule": "the audit uses the bound table's header energy for F_P of every bound process (Julia air_state_envelope.jl records it under 'headers'; the Rust reader reads it from there); no number other than the header enters",
+  "effect": "F_P of HA-O2-DI-02 changes by 0.004 % relative (53.89 / 53.888); no threshold, member, eligibility or verdict rule changes"
+ }
+}

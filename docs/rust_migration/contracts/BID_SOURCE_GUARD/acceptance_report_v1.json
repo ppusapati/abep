@@ -1,0 +1,1925 @@
+{
+  "cases": [
+    {
+      "expected": {
+        "files": "PASS",
+        "history": "PASS",
+        "overall": "PASS",
+        "required_codes": {
+          "files": [],
+          "history": []
+        }
+      },
+      "id": "BASE-00",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "BASE-00",
+        "overall": "PASS"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "BASE-00",
+        "overall": "PASS"
+      },
+      "rust_findings": {
+        "files": [],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "the current repository tree itself (no copy), its own manifest, HEAD: the recorded lineage passes"
+    },
+    {
+      "expected": {
+        "files": "PASS",
+        "history": "PASS",
+        "overall": "PASS",
+        "required_codes": {
+          "files": [],
+          "history": []
+        }
+      },
+      "id": "BASE-01",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "BASE-01",
+        "overall": "PASS"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "BASE-01",
+        "overall": "PASS"
+      },
+      "rust_findings": {
+        "files": [],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "untampered copy, repository history: the recorded lineage passes"
+    },
+    {
+      "expected": {
+        "files": "PASS",
+        "history": "PASS",
+        "overall": "PASS",
+        "required_codes": {
+          "files": [],
+          "history": []
+        }
+      },
+      "id": "CTRL-01",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "CTRL-01",
+        "overall": "PASS"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "CTRL-01",
+        "overall": "PASS"
+      },
+      "rust_findings": {
+        "files": [],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "Python bytecode under __pycache__ (the one ignored generated-artifact pattern) is not a bid file"
+    },
+    {
+      "expected": {
+        "files": "PASS",
+        "history": "NOT_EVALUATED",
+        "overall": "NOT_EVALUATED",
+        "required_codes": {
+          "files": [],
+          "history": [
+            "HISTORY_NOT_AVAILABLE"
+          ]
+        }
+      },
+      "id": "CTRL-02",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [
+            "HISTORY_NOT_AVAILABLE"
+          ],
+          "status": "NOT_EVALUATED"
+        },
+        "id": "CTRL-02",
+        "overall": "NOT_EVALUATED"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [
+            "HISTORY_NOT_AVAILABLE"
+          ],
+          "status": "NOT_EVALUATED"
+        },
+        "id": "CTRL-02",
+        "overall": "NOT_EVALUATED"
+      },
+      "rust_findings": {
+        "files": [],
+        "history": [
+          {
+            "code": "HISTORY_NOT_AVAILABLE",
+            "detail": "no git repository given",
+            "path": ""
+          }
+        ]
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "a valid owner_change_authorizations entry admits exactly the authorized bytes (no history: the overall result stays NOT_EVALUATED, never PASS)"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "PASS",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "BID_FILE_MODIFIED"
+          ],
+          "history": []
+        }
+      },
+      "id": "TC-01",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "BID_FILE_MODIFIED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-01",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "BID_FILE_MODIFIED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-01",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 0904d6a6d7080114c82300e5d46fcc6c364bf7455b337102f7b5be78ac21a76b != 825443b67087656084740c2a6926e513999c44c87979f74691d624d65c57a17f",
+            "path": "docs/bid/package/README.md"
+          }
+        ],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "modified protected text file (one LF appended)"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "PASS",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "BID_FILE_MODIFIED"
+          ],
+          "history": []
+        }
+      },
+      "id": "TC-02",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "BID_FILE_MODIFIED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-02",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "BID_FILE_MODIFIED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-02",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 43549993d02b88e3c6191364fc584e85506ee3bf53d1b2ba26454251b4994bd0 != c4289b7a3ac4bbf36ad47cf0ff25d94b6d2ea65eae44ed7d0fe9c460f9ef539e",
+            "path": "docs/bid/package/docx/README.docx"
+          }
+        ],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "modified protected binary file (one NUL byte appended to a .docx)"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "PASS",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "BID_FILE_MISSING"
+          ],
+          "history": []
+        }
+      },
+      "id": "TC-03",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "BID_FILE_MISSING"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-03",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "BID_FILE_MISSING"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-03",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "BID_FILE_MISSING",
+            "detail": "absent from the working tree",
+            "path": "docs/bid/package/06_SUBMISSION_CHECKLIST.md"
+          }
+        ],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "deleted protected file"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "PASS",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "BID_FILE_UNLISTED"
+          ],
+          "history": []
+        }
+      },
+      "id": "TC-04",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "BID_FILE_UNLISTED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-04",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "BID_FILE_UNLISTED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-04",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "BID_FILE_UNLISTED",
+            "detail": "not a file of the terminal package state",
+            "path": "docs/bid/package/UNLISTED_NOTE.md"
+          }
+        ],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "added unlisted file beside the protected files"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "PASS",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "BID_FILE_UNLISTED"
+          ],
+          "history": []
+        }
+      },
+      "id": "TC-05",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "BID_FILE_UNLISTED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-05",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "BID_FILE_UNLISTED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-05",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "BID_FILE_UNLISTED",
+            "detail": "not a file of the terminal package state",
+            "path": "docs/bid/bid_source_manifest_v2.json"
+          }
+        ],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "added unlisted file at docs/bid/ top level (a second manifest)"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "PASS",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "BID_FILE_UNLISTED"
+          ],
+          "history": []
+        }
+      },
+      "id": "TC-06",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "BID_FILE_UNLISTED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-06",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "BID_FILE_UNLISTED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-06",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "BID_FILE_UNLISTED",
+            "detail": "not a file of the terminal package state",
+            "path": "docs/bid/package/__pycache__/notes.txt"
+          }
+        ],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "added non-bytecode file inside __pycache__ (the ignore pattern covers *.pyc only)"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "PASS",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "MISSION_SCENARIO_CHANGED"
+          ],
+          "history": []
+        }
+      },
+      "id": "TC-07",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "MISSION_SCENARIO_CHANGED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-07",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "MISSION_SCENARIO_CHANGED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-07",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "MISSION_SCENARIO_CHANGED",
+            "detail": "sha256 8cb82718605fef50cf80b1d6b6437bb5af4dd24dbc170c33b0ef45b951b9e6a0",
+            "path": "config/mission/mission_scenario_v2.json"
+          }
+        ],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "modified mission scenario v2 (one space appended)"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "PASS",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "MISSION_SCENARIO_CHANGED"
+          ],
+          "history": []
+        }
+      },
+      "id": "TC-08",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "MISSION_SCENARIO_CHANGED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-08",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "MISSION_SCENARIO_CHANGED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-08",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "MISSION_SCENARIO_CHANGED",
+            "detail": "unreadable: No such file or directory (os error 2)",
+            "path": "config/mission/mission_scenario_v2.json"
+          }
+        ],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "deleted mission scenario v2"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "PASS",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "BID_FILE_MODIFIED",
+            "TECHNICAL_SOURCE_PIN_CHANGED"
+          ],
+          "history": []
+        }
+      },
+      "id": "TC-09",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "BID_FILE_MODIFIED",
+            "TECHNICAL_SOURCE_PIN_CHANGED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-09",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "BID_FILE_MODIFIED",
+            "TECHNICAL_SOURCE_PIN_CHANGED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-09",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 61e3c6e276d9b00faf3bf6470fb29efb0c1797ffa5e2fc9bc82a5fedec22a021 != 259aa09e1c5bc1b2745f573c70e876537a7312e360f10831c76163d91e374dfb",
+            "path": "docs/bid/bid_technical_baseline_v2.json"
+          },
+          {
+            "code": "TECHNICAL_SOURCE_PIN_CHANGED",
+            "detail": "bid_technical_source.commit = Some(\"0000000000000000000000000000000000000000\")",
+            "path": "docs/bid/bid_technical_baseline_v2.json"
+          }
+        ],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "technical-source pin changed in bid_technical_baseline_v2.json"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "FAIL",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "BID_FILE_MODIFIED"
+          ],
+          "history": [
+            "LINEAGE_FILES_MISMATCH"
+          ]
+        }
+      },
+      "id": "TC-10",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "BID_FILE_MODIFIED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [
+            "BID_FILE_MODIFIED",
+            "LINEAGE_FILES_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-10",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "BID_FILE_MODIFIED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [
+            "BID_FILE_MODIFIED",
+            "LINEAGE_FILES_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-10",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 825443b67087656084740c2a6926e513999c44c87979f74691d624d65c57a17f != 0000000000000000000000000000000000000000000000000000000000000000",
+            "path": "docs/bid/package/README.md"
+          }
+        ],
+        "history": [
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 825443b67087656084740c2a6926e513999c44c87979f74691d624d65c57a17f != 0000000000000000000000000000000000000000000000000000000000000000",
+            "path": "docs/bid/package/README.md"
+          },
+          {
+            "code": "LINEAGE_FILES_MISMATCH",
+            "detail": "at 2de86abefacbd36ce7516d3cf017f6258bd7e7a2: sha256 825443b67087656084740c2a6926e513999c44c87979f74691d624d65c57a17f != 0000000000000000000000000000000000000000000000000000000000000000",
+            "path": "docs/bid/package/README.md"
+          }
+        ]
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "manifest tampered: a protected file's recorded sha256 altered"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "FAIL",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "LINEAGE_RECORD_MISMATCH"
+          ],
+          "history": [
+            "LINEAGE_ANCESTRY_BROKEN"
+          ]
+        }
+      },
+      "id": "TC-11",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "BID_FILE_MODIFIED",
+            "BID_FILE_UNLISTED",
+            "LINEAGE_RECORD_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [
+            "BID_FILE_MODIFIED",
+            "BID_FILE_UNLISTED",
+            "LINEAGE_ANCESTRY_BROKEN"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-11",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "BID_FILE_MODIFIED",
+            "BID_FILE_UNLISTED",
+            "LINEAGE_RECORD_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [
+            "BID_FILE_MODIFIED",
+            "BID_FILE_UNLISTED",
+            "LINEAGE_ANCESTRY_BROKEN"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-11",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 259aa09e1c5bc1b2745f573c70e876537a7312e360f10831c76163d91e374dfb != 987a0d4eb9a4dc7b93b71ca2b338c9245bae63610c79ce0ecfff4ce721b60d1d",
+            "path": "docs/bid/bid_technical_baseline_v2.json"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 19c2966f385a1bfdc1a01bc4413575f775fe8bd72a6d06f2c1ba0a4984481eba != e321568a9c031af0565bc37f8dbddb3f9845468633a532415110aa2630231520",
+            "path": "docs/bid/package/01_COMPLIANCE_MATRIX.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 131d3763022bc27983a758aea677379e058e2fbd4add96f2a382ba7537fb657f != 57b69348f0221fa188216d20dbb8235ca19a9cd144fc6c941d72cbf330f796e0",
+            "path": "docs/bid/package/02_TECHNICAL_APPROACH.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 2f9683b35ef6cd66546a59b1371875dea41ea487f23a9c79559073b9cf00a45d != 48aa0c60011c04ebc19ac567f2fae950460d5a941a1c616f085dca6f99accc01",
+            "path": "docs/bid/package/04_RISK_REGISTER.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 dcd0bd8efb9d47b7dc062b9047c206d062133e08ea5648723a25effba176c5da != 0be415f4ebea1b4ce1fcd7232fe10c615217b01695e1be0062a41c00cb5c72af",
+            "path": "docs/bid/package/05_PROGRAMMATIC_SECTIONS.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 825443b67087656084740c2a6926e513999c44c87979f74691d624d65c57a17f != 513e45b518080ab0b976377f745fd85b82a963d0ea611402a4e6918c7c8ad00f",
+            "path": "docs/bid/package/README.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 fd2e863dc16a5d1d41efd29eda0c95d8749d4e347c2783ab17a64a2730a85041 != 750793d330c46cbc8b8ef3774549ac44984f932470e0f9cc05402ee9bc7e212f",
+            "path": "docs/bid/package/build_package.py"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 50985899f7f43f5cd63bc4d5aec2b21e68b729ee8ec1410b74a96f62e77a8072 != 95b418f921886bbb4358c40f7cfae437a978cb330d29e097bf69cc8deb0691fe",
+            "path": "docs/bid/package/compliance_data.py"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 9c60b1e6bfa831f8bd88fb33c2a65be93293c68cc36f75094cf326fd09be77a1 != 82c20ee322fba6eab8eb600053b0bd95934ff6e7df5ba5563068b08d4d41108c",
+            "path": "docs/bid/package/compliance_matrix_v1.json"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 e5ea25e8da3792dc64105564bc04079f50a76bde9c29e67c1c4adf581dacc777 != eb16527af3e585ca583719adfdb931ff8cf58453f15024ad98ee0effd5df89e2",
+            "path": "docs/bid/package/docx/01_COMPLIANCE_MATRIX.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 cf6e1a1c70cec0950565739a28a407ea0e40b16df22fcf6638009101c5a10709 != b6ff5c01e4e6e17aec74125902b5cc7afc3a7b28c42759e8f459a1669197d065",
+            "path": "docs/bid/package/docx/02_TECHNICAL_APPROACH.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 5f9247a5af4d434b08fc930d50e2716e041de8f29eafa728b53281e0e64fa8bd != e25d46d569d7cdc6628e08a78f8b309b3c313bb8ad29613e18d12bdd955d1619",
+            "path": "docs/bid/package/docx/03_DEVELOPMENT_AND_TEST_PLAN.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 18888bbe6b2eba07be5b47ded2d04f754bc58b4dc63c1ebe4f6835e09c021322 != ddd56eb96500431ef3e0b4c08ba2abc4f6e2e9cf923f3bda42be300ee8c9796f",
+            "path": "docs/bid/package/docx/04_RISK_REGISTER.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 bc5a34e2dd43a658c257dbca1f9ecdde1b7bd1e9c11b3612a48b035de8157e1d != 3a98c730b89df2f9558a28250d59d939995483f495adc75dd3187a10ee939883",
+            "path": "docs/bid/package/docx/05_PROGRAMMATIC_SECTIONS.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 c4289b7a3ac4bbf36ad47cf0ff25d94b6d2ea65eae44ed7d0fe9c460f9ef539e != 48d4efc2d1d11728a59450cc51ca8dfe15f18b524d874a529189758c4c183221",
+            "path": "docs/bid/package/docx/README.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 e86e1b1a84d5ac7f3fc03c356cabf3f433d3c7d72a654d4c3b93b911aad12bf6 != d206e26875be3156459bbeffbd41f9ac5e66a127399349a37186bf81cf187358",
+            "path": "docs/bid/package/templates/02_TECHNICAL_APPROACH.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 83c0601c5e3389cc2cf028a9639ef655ac83d2a8fc54b75bfeb38ce183ef6bc7 != 29a25dbb9ca2d263d4f8c64044e334d0a913f6c2fdf72a14e741303c27666aa6",
+            "path": "docs/bid/package/templates/04_RISK_REGISTER.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 76d9c6b8a420b9f2f8a6b0973fe861e64578039a134336d4c9555718c1f74afe != 959b1c0c7253fdf09a3d70ac3738908fd22d96953c2134a8a56aff781870b71b",
+            "path": "docs/bid/package/templates/05_PROGRAMMATIC_SECTIONS.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 e2d8b9efa291118ed652b90b2a56eb942fae03b817ece740cc72527b6ad9408e != 03be7b4cf6e228ee50349a11ccca344199c0e43b190656ad862aa6ea51517fcc",
+            "path": "docs/bid/package/templates/README.md"
+          },
+          {
+            "code": "BID_FILE_UNLISTED",
+            "detail": "not a file of the terminal package state",
+            "path": "docs/bid/package/06_SUBMISSION_CHECKLIST.md"
+          },
+          {
+            "code": "BID_FILE_UNLISTED",
+            "detail": "not a file of the terminal package state",
+            "path": "docs/bid/package/docx/06_SUBMISSION_CHECKLIST.docx"
+          },
+          {
+            "code": "BID_FILE_UNLISTED",
+            "detail": "not a file of the terminal package state",
+            "path": "docs/bid/package/templates/06_SUBMISSION_CHECKLIST.md"
+          },
+          {
+            "code": "LINEAGE_RECORD_MISMATCH",
+            "detail": "[\"2de86abefacbd36ce7516d3cf017f6258bd7e7a2\", \"b5849affae22a6709ad217a184f6fe896d15410a\"] != [\"b5849affae22a6709ad217a184f6fe896d15410a\", \"2de86abefacbd36ce7516d3cf017f6258bd7e7a2\"]",
+            "path": "package_lineage"
+          },
+          {
+            "code": "LINEAGE_RECORD_MISMATCH",
+            "detail": "last lineage entry b5849affae22a6709ad217a184f6fe896d15410a != terminal 2de86abefacbd36ce7516d3cf017f6258bd7e7a2",
+            "path": "terminal_package_state.commit"
+          }
+        ],
+        "history": [
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 259aa09e1c5bc1b2745f573c70e876537a7312e360f10831c76163d91e374dfb != 987a0d4eb9a4dc7b93b71ca2b338c9245bae63610c79ce0ecfff4ce721b60d1d",
+            "path": "docs/bid/bid_technical_baseline_v2.json"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 19c2966f385a1bfdc1a01bc4413575f775fe8bd72a6d06f2c1ba0a4984481eba != e321568a9c031af0565bc37f8dbddb3f9845468633a532415110aa2630231520",
+            "path": "docs/bid/package/01_COMPLIANCE_MATRIX.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 131d3763022bc27983a758aea677379e058e2fbd4add96f2a382ba7537fb657f != 57b69348f0221fa188216d20dbb8235ca19a9cd144fc6c941d72cbf330f796e0",
+            "path": "docs/bid/package/02_TECHNICAL_APPROACH.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 2f9683b35ef6cd66546a59b1371875dea41ea487f23a9c79559073b9cf00a45d != 48aa0c60011c04ebc19ac567f2fae950460d5a941a1c616f085dca6f99accc01",
+            "path": "docs/bid/package/04_RISK_REGISTER.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 dcd0bd8efb9d47b7dc062b9047c206d062133e08ea5648723a25effba176c5da != 0be415f4ebea1b4ce1fcd7232fe10c615217b01695e1be0062a41c00cb5c72af",
+            "path": "docs/bid/package/05_PROGRAMMATIC_SECTIONS.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 825443b67087656084740c2a6926e513999c44c87979f74691d624d65c57a17f != 513e45b518080ab0b976377f745fd85b82a963d0ea611402a4e6918c7c8ad00f",
+            "path": "docs/bid/package/README.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 fd2e863dc16a5d1d41efd29eda0c95d8749d4e347c2783ab17a64a2730a85041 != 750793d330c46cbc8b8ef3774549ac44984f932470e0f9cc05402ee9bc7e212f",
+            "path": "docs/bid/package/build_package.py"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 50985899f7f43f5cd63bc4d5aec2b21e68b729ee8ec1410b74a96f62e77a8072 != 95b418f921886bbb4358c40f7cfae437a978cb330d29e097bf69cc8deb0691fe",
+            "path": "docs/bid/package/compliance_data.py"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 9c60b1e6bfa831f8bd88fb33c2a65be93293c68cc36f75094cf326fd09be77a1 != 82c20ee322fba6eab8eb600053b0bd95934ff6e7df5ba5563068b08d4d41108c",
+            "path": "docs/bid/package/compliance_matrix_v1.json"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 e5ea25e8da3792dc64105564bc04079f50a76bde9c29e67c1c4adf581dacc777 != eb16527af3e585ca583719adfdb931ff8cf58453f15024ad98ee0effd5df89e2",
+            "path": "docs/bid/package/docx/01_COMPLIANCE_MATRIX.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 cf6e1a1c70cec0950565739a28a407ea0e40b16df22fcf6638009101c5a10709 != b6ff5c01e4e6e17aec74125902b5cc7afc3a7b28c42759e8f459a1669197d065",
+            "path": "docs/bid/package/docx/02_TECHNICAL_APPROACH.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 5f9247a5af4d434b08fc930d50e2716e041de8f29eafa728b53281e0e64fa8bd != e25d46d569d7cdc6628e08a78f8b309b3c313bb8ad29613e18d12bdd955d1619",
+            "path": "docs/bid/package/docx/03_DEVELOPMENT_AND_TEST_PLAN.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 18888bbe6b2eba07be5b47ded2d04f754bc58b4dc63c1ebe4f6835e09c021322 != ddd56eb96500431ef3e0b4c08ba2abc4f6e2e9cf923f3bda42be300ee8c9796f",
+            "path": "docs/bid/package/docx/04_RISK_REGISTER.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 bc5a34e2dd43a658c257dbca1f9ecdde1b7bd1e9c11b3612a48b035de8157e1d != 3a98c730b89df2f9558a28250d59d939995483f495adc75dd3187a10ee939883",
+            "path": "docs/bid/package/docx/05_PROGRAMMATIC_SECTIONS.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 c4289b7a3ac4bbf36ad47cf0ff25d94b6d2ea65eae44ed7d0fe9c460f9ef539e != 48d4efc2d1d11728a59450cc51ca8dfe15f18b524d874a529189758c4c183221",
+            "path": "docs/bid/package/docx/README.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 e86e1b1a84d5ac7f3fc03c356cabf3f433d3c7d72a654d4c3b93b911aad12bf6 != d206e26875be3156459bbeffbd41f9ac5e66a127399349a37186bf81cf187358",
+            "path": "docs/bid/package/templates/02_TECHNICAL_APPROACH.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 83c0601c5e3389cc2cf028a9639ef655ac83d2a8fc54b75bfeb38ce183ef6bc7 != 29a25dbb9ca2d263d4f8c64044e334d0a913f6c2fdf72a14e741303c27666aa6",
+            "path": "docs/bid/package/templates/04_RISK_REGISTER.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 76d9c6b8a420b9f2f8a6b0973fe861e64578039a134336d4c9555718c1f74afe != 959b1c0c7253fdf09a3d70ac3738908fd22d96953c2134a8a56aff781870b71b",
+            "path": "docs/bid/package/templates/05_PROGRAMMATIC_SECTIONS.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at HEAD: sha256 e2d8b9efa291118ed652b90b2a56eb942fae03b817ece740cc72527b6ad9408e != 03be7b4cf6e228ee50349a11ccca344199c0e43b190656ad862aa6ea51517fcc",
+            "path": "docs/bid/package/templates/README.md"
+          },
+          {
+            "code": "BID_FILE_UNLISTED",
+            "detail": "committed at HEAD, not a terminal package file",
+            "path": "docs/bid/package/06_SUBMISSION_CHECKLIST.md"
+          },
+          {
+            "code": "BID_FILE_UNLISTED",
+            "detail": "committed at HEAD, not a terminal package file",
+            "path": "docs/bid/package/docx/06_SUBMISSION_CHECKLIST.docx"
+          },
+          {
+            "code": "BID_FILE_UNLISTED",
+            "detail": "committed at HEAD, not a terminal package file",
+            "path": "docs/bid/package/templates/06_SUBMISSION_CHECKLIST.md"
+          },
+          {
+            "code": "LINEAGE_ANCESTRY_BROKEN",
+            "detail": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2 is not an ancestor of b5849affae22a6709ad217a184f6fe896d15410a",
+            "path": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2..b5849affae22a6709ad217a184f6fe896d15410a"
+          }
+        ]
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "wrong lineage: package lineage recorded in reverse order (2de86ab -> b5849af)"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "PASS",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "LINEAGE_RECORD_MISMATCH"
+          ],
+          "history": []
+        }
+      },
+      "id": "TC-12",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "LINEAGE_RECORD_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-12",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "LINEAGE_RECORD_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-12",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "LINEAGE_RECORD_MISMATCH",
+            "detail": "b5849affae22a6709ad217a184f6fe896d15410a != 2de86abefacbd36ce7516d3cf017f6258bd7e7a2",
+            "path": "terminal_package_state.commit"
+          },
+          {
+            "code": "LINEAGE_RECORD_MISMATCH",
+            "detail": "last lineage entry 2de86abefacbd36ce7516d3cf017f6258bd7e7a2 != terminal b5849affae22a6709ad217a184f6fe896d15410a",
+            "path": "terminal_package_state.commit"
+          }
+        ],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "wrong lineage: terminal package state recorded as b5849af"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "FAIL",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "LINEAGE_RECORD_MISMATCH"
+          ],
+          "history": [
+            "LINEAGE_ANCESTRY_BROKEN",
+            "TREE_HASH_MISMATCH"
+          ]
+        }
+      },
+      "id": "TC-13",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "LINEAGE_RECORD_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [
+            "LINEAGE_ANCESTRY_BROKEN",
+            "TREE_HASH_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-13",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "LINEAGE_RECORD_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [
+            "LINEAGE_ANCESTRY_BROKEN",
+            "TREE_HASH_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-13",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "LINEAGE_RECORD_MISMATCH",
+            "detail": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2 != 5eee4b8c82a9403b6bb82d5f8d324526f5d6399b",
+            "path": "technical_source.commit"
+          }
+        ],
+        "history": [
+          {
+            "code": "LINEAGE_ANCESTRY_BROKEN",
+            "detail": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2 is not an ancestor of b5849affae22a6709ad217a184f6fe896d15410a",
+            "path": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2..b5849affae22a6709ad217a184f6fe896d15410a"
+          },
+          {
+            "code": "TREE_HASH_MISMATCH",
+            "detail": "46d58c985d840e0fe49830f1697d1e198a5d767b != recorded ea963c1d26ebb6b1cdd76f7896f0e4821119eeeb",
+            "path": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2^{tree}"
+          }
+        ]
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "wrong lineage: technical source recorded as 2de86ab"
+    },
+    {
+      "expected": {
+        "files": "PASS",
+        "history": "FAIL",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [],
+          "history": [
+            "LINEAGE_ANCESTRY_BROKEN"
+          ]
+        }
+      },
+      "id": "TC-14",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [
+            "BID_FILE_MISSING",
+            "BID_FILE_MODIFIED",
+            "LINEAGE_ANCESTRY_BROKEN"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-14",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [
+            "BID_FILE_MISSING",
+            "BID_FILE_MODIFIED",
+            "LINEAGE_ANCESTRY_BROKEN"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-14",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [],
+        "history": [
+          {
+            "code": "BID_FILE_MISSING",
+            "detail": "not committed at b5849affae22a6709ad217a184f6fe896d15410a",
+            "path": "docs/bid/package/06_SUBMISSION_CHECKLIST.md"
+          },
+          {
+            "code": "BID_FILE_MISSING",
+            "detail": "not committed at b5849affae22a6709ad217a184f6fe896d15410a",
+            "path": "docs/bid/package/docx/06_SUBMISSION_CHECKLIST.docx"
+          },
+          {
+            "code": "BID_FILE_MISSING",
+            "detail": "not committed at b5849affae22a6709ad217a184f6fe896d15410a",
+            "path": "docs/bid/package/templates/06_SUBMISSION_CHECKLIST.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 987a0d4eb9a4dc7b93b71ca2b338c9245bae63610c79ce0ecfff4ce721b60d1d != 259aa09e1c5bc1b2745f573c70e876537a7312e360f10831c76163d91e374dfb",
+            "path": "docs/bid/bid_technical_baseline_v2.json"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 e321568a9c031af0565bc37f8dbddb3f9845468633a532415110aa2630231520 != 19c2966f385a1bfdc1a01bc4413575f775fe8bd72a6d06f2c1ba0a4984481eba",
+            "path": "docs/bid/package/01_COMPLIANCE_MATRIX.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 57b69348f0221fa188216d20dbb8235ca19a9cd144fc6c941d72cbf330f796e0 != 131d3763022bc27983a758aea677379e058e2fbd4add96f2a382ba7537fb657f",
+            "path": "docs/bid/package/02_TECHNICAL_APPROACH.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 48aa0c60011c04ebc19ac567f2fae950460d5a941a1c616f085dca6f99accc01 != 2f9683b35ef6cd66546a59b1371875dea41ea487f23a9c79559073b9cf00a45d",
+            "path": "docs/bid/package/04_RISK_REGISTER.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 0be415f4ebea1b4ce1fcd7232fe10c615217b01695e1be0062a41c00cb5c72af != dcd0bd8efb9d47b7dc062b9047c206d062133e08ea5648723a25effba176c5da",
+            "path": "docs/bid/package/05_PROGRAMMATIC_SECTIONS.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 513e45b518080ab0b976377f745fd85b82a963d0ea611402a4e6918c7c8ad00f != 825443b67087656084740c2a6926e513999c44c87979f74691d624d65c57a17f",
+            "path": "docs/bid/package/README.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 750793d330c46cbc8b8ef3774549ac44984f932470e0f9cc05402ee9bc7e212f != fd2e863dc16a5d1d41efd29eda0c95d8749d4e347c2783ab17a64a2730a85041",
+            "path": "docs/bid/package/build_package.py"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 95b418f921886bbb4358c40f7cfae437a978cb330d29e097bf69cc8deb0691fe != 50985899f7f43f5cd63bc4d5aec2b21e68b729ee8ec1410b74a96f62e77a8072",
+            "path": "docs/bid/package/compliance_data.py"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 82c20ee322fba6eab8eb600053b0bd95934ff6e7df5ba5563068b08d4d41108c != 9c60b1e6bfa831f8bd88fb33c2a65be93293c68cc36f75094cf326fd09be77a1",
+            "path": "docs/bid/package/compliance_matrix_v1.json"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 eb16527af3e585ca583719adfdb931ff8cf58453f15024ad98ee0effd5df89e2 != e5ea25e8da3792dc64105564bc04079f50a76bde9c29e67c1c4adf581dacc777",
+            "path": "docs/bid/package/docx/01_COMPLIANCE_MATRIX.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 b6ff5c01e4e6e17aec74125902b5cc7afc3a7b28c42759e8f459a1669197d065 != cf6e1a1c70cec0950565739a28a407ea0e40b16df22fcf6638009101c5a10709",
+            "path": "docs/bid/package/docx/02_TECHNICAL_APPROACH.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 e25d46d569d7cdc6628e08a78f8b309b3c313bb8ad29613e18d12bdd955d1619 != 5f9247a5af4d434b08fc930d50e2716e041de8f29eafa728b53281e0e64fa8bd",
+            "path": "docs/bid/package/docx/03_DEVELOPMENT_AND_TEST_PLAN.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 ddd56eb96500431ef3e0b4c08ba2abc4f6e2e9cf923f3bda42be300ee8c9796f != 18888bbe6b2eba07be5b47ded2d04f754bc58b4dc63c1ebe4f6835e09c021322",
+            "path": "docs/bid/package/docx/04_RISK_REGISTER.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 3a98c730b89df2f9558a28250d59d939995483f495adc75dd3187a10ee939883 != bc5a34e2dd43a658c257dbca1f9ecdde1b7bd1e9c11b3612a48b035de8157e1d",
+            "path": "docs/bid/package/docx/05_PROGRAMMATIC_SECTIONS.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 48d4efc2d1d11728a59450cc51ca8dfe15f18b524d874a529189758c4c183221 != c4289b7a3ac4bbf36ad47cf0ff25d94b6d2ea65eae44ed7d0fe9c460f9ef539e",
+            "path": "docs/bid/package/docx/README.docx"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 d206e26875be3156459bbeffbd41f9ac5e66a127399349a37186bf81cf187358 != e86e1b1a84d5ac7f3fc03c356cabf3f433d3c7d72a654d4c3b93b911aad12bf6",
+            "path": "docs/bid/package/templates/02_TECHNICAL_APPROACH.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 29a25dbb9ca2d263d4f8c64044e334d0a913f6c2fdf72a14e741303c27666aa6 != 83c0601c5e3389cc2cf028a9639ef655ac83d2a8fc54b75bfeb38ce183ef6bc7",
+            "path": "docs/bid/package/templates/04_RISK_REGISTER.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 959b1c0c7253fdf09a3d70ac3738908fd22d96953c2134a8a56aff781870b71b != 76d9c6b8a420b9f2f8a6b0973fe861e64578039a134336d4c9555718c1f74afe",
+            "path": "docs/bid/package/templates/05_PROGRAMMATIC_SECTIONS.md"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "committed at b5849affae22a6709ad217a184f6fe896d15410a: sha256 03be7b4cf6e228ee50349a11ccca344199c0e43b190656ad862aa6ea51517fcc != e2d8b9efa291118ed652b90b2a56eb942fae03b817ece740cc72527b6ad9408e",
+            "path": "docs/bid/package/templates/README.md"
+          },
+          {
+            "code": "LINEAGE_ANCESTRY_BROKEN",
+            "detail": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2 is not an ancestor of b5849affae22a6709ad217a184f6fe896d15410a",
+            "path": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2..b5849affae22a6709ad217a184f6fe896d15410a"
+          }
+        ]
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "wrong lineage: the evaluated head (b5849af) does not descend from the terminal state 2de86ab"
+    },
+    {
+      "expected": {
+        "files": "PASS",
+        "history": "FAIL",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [],
+          "history": [
+            "TREE_HASH_MISMATCH"
+          ]
+        }
+      },
+      "id": "TC-15",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [
+            "TREE_HASH_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-15",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [
+            "TREE_HASH_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-15",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [],
+        "history": [
+          {
+            "code": "TREE_HASH_MISMATCH",
+            "detail": "37dfe52cb6d1f32c23aab5ccb21866093183ce61 != recorded 0000000000000000000000000000000000000000",
+            "path": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2:docs/bid"
+          }
+        ]
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "wrong lineage: recorded docs/bid tree hash at 2de86ab altered"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "FAIL",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "LINEAGE_RECORD_MISMATCH"
+          ],
+          "history": [
+            "LINEAGE_COMMIT_MISSING"
+          ]
+        }
+      },
+      "id": "TC-16",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "LINEAGE_RECORD_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [
+            "LINEAGE_COMMIT_MISSING"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-16",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "LINEAGE_RECORD_MISMATCH"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [
+            "LINEAGE_COMMIT_MISSING"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-16",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "LINEAGE_RECORD_MISMATCH",
+            "detail": "[\"ffffffffffffffffffffffffffffffffffffffff\", \"2de86abefacbd36ce7516d3cf017f6258bd7e7a2\"] != [\"b5849affae22a6709ad217a184f6fe896d15410a\", \"2de86abefacbd36ce7516d3cf017f6258bd7e7a2\"]",
+            "path": "package_lineage"
+          }
+        ],
+        "history": [
+          {
+            "code": "LINEAGE_COMMIT_MISSING",
+            "detail": "ffffffffffffffffffffffffffffffffffffffff is not a commit of this repository",
+            "path": "package_lineage[0].commit"
+          }
+        ]
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "wrong lineage: a lineage commit that is not in the history"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "PASS",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "AUTHORIZATION_INVALID",
+            "BID_FILE_MODIFIED"
+          ],
+          "history": []
+        }
+      },
+      "id": "TC-17",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "AUTHORIZATION_INVALID",
+            "BID_FILE_MODIFIED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-17",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "AUTHORIZATION_INVALID",
+            "BID_FILE_MODIFIED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-17",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "AUTHORIZATION_INVALID",
+            "detail": "decision record docs/decisions/OD_ACCEPTANCE_FIXTURE_MISSING.json: No such file or directory (os error 2)",
+            "path": "owner_change_authorizations[0]"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 0904d6a6d7080114c82300e5d46fcc6c364bf7455b337102f7b5be78ac21a76b != 825443b67087656084740c2a6926e513999c44c87979f74691d624d65c57a17f",
+            "path": "docs/bid/package/README.md"
+          }
+        ],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "owner authorization naming a decision record that does not exist grants nothing"
+    },
+    {
+      "expected": {
+        "files": "FAIL",
+        "history": "PASS",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [
+            "AUTHORIZATION_INVALID",
+            "BID_FILE_MODIFIED"
+          ],
+          "history": []
+        }
+      },
+      "id": "TC-18",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [
+            "AUTHORIZATION_INVALID",
+            "BID_FILE_MODIFIED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-18",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [
+            "AUTHORIZATION_INVALID",
+            "BID_FILE_MODIFIED"
+          ],
+          "status": "FAIL"
+        },
+        "history": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "id": "TC-18",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [
+          {
+            "code": "AUTHORIZATION_INVALID",
+            "detail": "decision record docs/decisions/OD_ACCEPTANCE_FIXTURE_CTRL_02.json: sha256 differs from the authorization",
+            "path": "owner_change_authorizations[0]"
+          },
+          {
+            "code": "BID_FILE_MODIFIED",
+            "detail": "sha256 0904d6a6d7080114c82300e5d46fcc6c364bf7455b337102f7b5be78ac21a76b != 825443b67087656084740c2a6926e513999c44c87979f74691d624d65c57a17f",
+            "path": "docs/bid/package/README.md"
+          }
+        ],
+        "history": []
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "owner authorization whose decision-record sha256 does not match grants nothing"
+    },
+    {
+      "expected": {
+        "files": "PASS",
+        "history": "NOT_EVALUATED",
+        "overall": "NOT_EVALUATED",
+        "required_codes": {
+          "files": [],
+          "history": [
+            "HISTORY_NOT_AVAILABLE"
+          ]
+        }
+      },
+      "id": "TC-19",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [
+            "HISTORY_NOT_AVAILABLE"
+          ],
+          "status": "NOT_EVALUATED"
+        },
+        "id": "TC-19",
+        "overall": "NOT_EVALUATED"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [
+            "HISTORY_NOT_AVAILABLE"
+          ],
+          "status": "NOT_EVALUATED"
+        },
+        "id": "TC-19",
+        "overall": "NOT_EVALUATED"
+      },
+      "rust_findings": {
+        "files": [],
+        "history": [
+          {
+            "code": "HISTORY_NOT_AVAILABLE",
+            "detail": "no git repository given",
+            "path": ""
+          }
+        ]
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "no git history available: never a silent pass"
+    },
+    {
+      "expected": {
+        "files": "PASS",
+        "history": "NOT_EVALUATED",
+        "overall": "NOT_EVALUATED",
+        "required_codes": {
+          "files": [],
+          "history": [
+            "HISTORY_NOT_AVAILABLE"
+          ]
+        }
+      },
+      "id": "TC-20",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [
+            "HISTORY_NOT_AVAILABLE"
+          ],
+          "status": "NOT_EVALUATED"
+        },
+        "id": "TC-20",
+        "overall": "NOT_EVALUATED"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [
+            "HISTORY_NOT_AVAILABLE"
+          ],
+          "status": "NOT_EVALUATED"
+        },
+        "id": "TC-20",
+        "overall": "NOT_EVALUATED"
+      },
+      "rust_findings": {
+        "files": [],
+        "history": [
+          {
+            "code": "HISTORY_NOT_AVAILABLE",
+            "detail": "shallow clone: the lineage cannot be verified; fetch full history (actions/checkout fetch-depth: 0)",
+            "path": ""
+          }
+        ]
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "shallow clone: history NOT_EVALUATED, never a silent pass"
+    },
+    {
+      "expected": {
+        "files": "PASS",
+        "history": "FAIL",
+        "overall": "FAIL",
+        "required_codes": {
+          "files": [],
+          "history": [
+            "LINEAGE_COMMIT_MISSING"
+          ]
+        }
+      },
+      "id": "TC-21",
+      "implementations_agree": true,
+      "python": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [
+            "LINEAGE_COMMIT_MISSING"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-21",
+        "overall": "FAIL"
+      },
+      "python_meets_expectation": true,
+      "python_problems": [],
+      "rust": {
+        "files": {
+          "codes": [],
+          "status": "PASS"
+        },
+        "history": {
+          "codes": [
+            "LINEAGE_COMMIT_MISSING"
+          ],
+          "status": "FAIL"
+        },
+        "id": "TC-21",
+        "overall": "FAIL"
+      },
+      "rust_findings": {
+        "files": [],
+        "history": [
+          {
+            "code": "LINEAGE_COMMIT_MISSING",
+            "detail": "b5849affae22a6709ad217a184f6fe896d15410a is not a commit of this repository",
+            "path": "package_lineage[0].commit"
+          },
+          {
+            "code": "LINEAGE_COMMIT_MISSING",
+            "detail": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2 is not a commit of this repository",
+            "path": "package_lineage[1].commit"
+          },
+          {
+            "code": "LINEAGE_COMMIT_MISSING",
+            "detail": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b is not a commit of this repository",
+            "path": "technical_source.commit"
+          },
+          {
+            "code": "LINEAGE_COMMIT_MISSING",
+            "detail": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2 is not a commit of this repository",
+            "path": "terminal_package_state.commit"
+          }
+        ]
+      },
+      "rust_meets_expectation": true,
+      "rust_problems": [],
+      "title": "full-history repository that does not contain the bid lineage"
+    }
+  ],
+  "counts": {
+    "cases": 25,
+    "implementations_agree": 25,
+    "python_cases": 25,
+    "python_meets_expectation": 25,
+    "rust_meets_expectation": 25
+  },
+  "current_tree_result": {
+    "case": "BASE-00",
+    "overall": "PASS"
+  },
+  "decision_rules_applied": [
+    "per_case: overall / files / history equal the expected values and every required code is reported, in each implementation",
+    "agreement: Rust and Python report the same statuses and finding-code sets per part for every case",
+    "verdict: ACCEPTED iff per_case and agreement hold for all cases"
+  ],
+  "id": "ACCEPT-NI-BID-SOURCE-GUARD-V1-REPORT",
+  "item": "NI-BID-SOURCE-GUARD",
+  "ledger_update": "NI-BID-SOURCE-GUARD -> ADMITTED in docs/rust_migration/migration_state_v1.json (admission evidence: this report)",
+  "manifest": {
+    "path": "docs/bid/bid_source_manifest_v1.json",
+    "sha256": "931ba34c2cd386bf5b64f291548b4cfc1de7f78ae824ae0a8aa9fcc8d4b87f11"
+  },
+  "prereg": {
+    "id": "ACCEPT-NI-BID-SOURCE-GUARD-V1",
+    "path": "docs/rust_migration/contracts/BID_SOURCE_GUARD/acceptance_v1.json",
+    "sha256": "8d23e1f16d63dcbe2ce27f1ad48712d118808270d0ae5ab2ab2a2a6eb60ab1c6"
+  },
+  "provenance": {
+    "commands": [
+      "python3 scripts/ci_checks.py --bid-guard-acceptance > python_results.json",
+      "cargo run --locked -q -p abep-ci -- bid-guard-acceptance --python-results python_results.json"
+    ],
+    "git_dirty_tracked": false,
+    "git_head": "ec6879fe6c69431fe8e48c84f7258c0bacaaf6ed",
+    "python": "3.11.15",
+    "python_results_sha256": "decff74e67189d01e3f321b4e467cd378fa190b730cb9e67f8dd5db982d35d1f",
+    "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+    "source_sha256": {
+      "crates/abep-provenance/src/bid_guard.rs": "6f13a31a479deea38caafd78491be295c12f40a41dc39139a4af4e86a3553c7d",
+      "crates/abep-provenance/src/bid_guard/acceptance.rs": "187739f27b297b6183928a3f951dc68127708072cb915173539b4582118a6693",
+      "crates/abep-provenance/src/git.rs": "68fdacdf9514432ec890fcb153c6ba5d02fbb2e44e6accb0ff5e3d2b918ef69e",
+      "docs/bid/bid_source_manifest_v1.json": "931ba34c2cd386bf5b64f291548b4cfc1de7f78ae824ae0a8aa9fcc8d4b87f11",
+      "scripts/ci_checks.py": "c07b2c49c57fdb4e67b271f61746712cd6de36067ee16a05f821d768b98cc300"
+    },
+    "utc": "2026-10-05T11:23:49Z"
+  },
+  "schema": "abep_new_infrastructure_acceptance_report_v1",
+  "verdict": "ACCEPTED",
+  "what_this_is_not": [
+    "not physics and not a gate verdict; it protects the frozen bid record only",
+    "not a re-freeze: the bid record stays 5eee4b8 / 2de86ab"
+  ]
+}
