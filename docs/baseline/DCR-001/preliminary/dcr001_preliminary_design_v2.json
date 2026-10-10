@@ -1,0 +1,408 @@
+{
+ "label": "PROPOSAL-LEVEL PRELIMINARY DESIGN v2 / PARAMETRIC / NOT_VALIDATED",
+ "supersedes": "dcr001_preliminary_design_v1.json (kept)",
+ "inputs": {
+  "A4_sha256": "5146fe583343bf5de090a8baeecb812640754b7e579f0df69c78e54dd642689f",
+  "U_m_s": 7787.556377412715,
+  "K_D_intake": 1.0520857482904975
+ },
+ "intake": {
+  "A_face_m2": 0.7,
+  "LD": 20.0,
+  "W_fwd": 0.72,
+  "eta_filter": 0.9,
+  "eta_retention": 0.6666666666666666,
+  "eta_path": 0.42336,
+  "delivered_flow_control": "active retention control (front-rotor speed) + plenum relief/bypass; does NOT change exposed frontal drag",
+  "drag_mN_by_condition_alt": {
+   "ECSS_LT_LOW": {
+    "180": {
+     "min": 10.1777572721958,
+     "max": 19.769543694160614
+    },
+    "195": {
+     "min": 5.065419298426822,
+     "max": 11.078302279488037
+    },
+    "215": {
+     "min": 2.0219247076408378,
+     "max": 5.539663660405778
+    },
+    "230": {
+     "min": 1.0652473604860495,
+     "max": 3.4303659146559182
+    }
+   },
+   "ECSS_LT_MODERATE": {
+    "180": {
+     "min": 15.019173146995756,
+     "max": 26.976002674914515
+    },
+    "195": {
+     "min": 8.953040156030415,
+     "max": 16.858504149452735
+    },
+    "215": {
+     "min": 4.870652176416007,
+     "max": 9.761968908980924
+    },
+    "230": {
+     "min": 3.218082649845448,
+     "max": 6.751956769006659
+    }
+   },
+   "ECSS_LT_HIGH": {
+    "180": {
+     "min": 20.218654376736065,
+     "max": 39.07878912897427
+    },
+    "195": {
+     "min": 13.237349340770573,
+     "max": 26.040783142000432
+    },
+    "215": {
+     "min": 8.063036496083656,
+     "max": 16.687257639754698
+    },
+    "230": {
+     "min": 5.600930009100604,
+     "max": 12.405999269158492
+    }
+   },
+   "ECSS_ST_HIGH": {
+    "180": {
+     "min": 25.217813821994504,
+     "max": 49.279999999999994
+    },
+    "195": {
+     "min": 16.753989183495158,
+     "max": 33.42804493366263
+    },
+    "215": {
+     "min": 10.095311162579545,
+     "max": 21.360613278391977
+    },
+    "230": {
+     "min": 7.12640963266307,
+     "max": 15.832287377947496
+    }
+   }
+  }
+ },
+ "cases": {
+  "conservative": {
+   "v_eff": 22000.0,
+   "eta_T": 0.22,
+   "flow_12_mg_s": 0.5454545454545455,
+   "flow_25_mg_s": 1.63759557678237,
+   "v_eff_25_mode": 15266.284517647058,
+   "flow_lower_bound_12_mg_s": 0.1846977348448613,
+   "T_over_D_intake": 1.136789783810608,
+   "host_CDA_cap_m2": 0.20148041488243046,
+   "required_effective_capture_m2": 0.33810340343331485,
+   "required_aperture_m2": 0.7986191502109667,
+   "phi_lo": 1.840563065052861e-06,
+   "phi_hi_host_ref": 3.254312952586261e-06,
+   "phi_hi_no_host": 4.359027685023401e-06,
+   "Pd_12_W": 600.0,
+   "bus_12_W": 1147.6837977296182,
+   "Pd_25_W": 867.4025294117647,
+   "bus_25_W": 1500.0,
+   "window_all_state_host_ref": {
+    "ECSS_LT_LOW": null,
+    "ECSS_LT_MODERATE": null,
+    "ECSS_LT_HIGH": null,
+    "ECSS_ST_HIGH": null
+   },
+   "window_nominal_host_ref": {
+    "ECSS_LT_LOW": null,
+    "ECSS_LT_MODERATE": null,
+    "ECSS_LT_HIGH": null,
+    "ECSS_ST_HIGH": null
+   },
+   "window_all_state_no_host": {
+    "ECSS_LT_LOW": null,
+    "ECSS_LT_MODERATE": [
+     182.5,
+     190.0
+    ],
+    "ECSS_LT_HIGH": [
+     197.0,
+     204.0
+    ],
+    "ECSS_ST_HIGH": [
+     208.0,
+     213.0
+    ]
+   },
+   "max_host_all_state": {
+    "ECSS_LT_LOW": null,
+    "ECSS_LT_MODERATE": [
+     0.2,
+     [
+      186.5,
+      190.0
+     ]
+    ],
+    "ECSS_LT_HIGH": [
+     0.2,
+     [
+      203.0,
+      204.0
+     ]
+    ],
+    "ECSS_ST_HIGH": [
+     0.17,
+     [
+      213.0,
+      213.0
+     ]
+    ]
+   },
+   "max_host_nominal": {
+    "ECSS_LT_LOW": [
+     0.2,
+     [
+      180.0,
+      184.5
+     ]
+    ],
+    "ECSS_LT_MODERATE": [
+     0.2,
+     [
+      180.0,
+      201.0
+     ]
+    ],
+    "ECSS_LT_HIGH": [
+     0.2,
+     [
+      189.5,
+      218.5
+     ]
+    ],
+    "ECSS_ST_HIGH": [
+     0.2,
+     [
+      199.0,
+      230.0
+     ]
+    ]
+   },
+   "flux_margin_LT_LOW_180": -0.035835792571974334
+  },
+  "reference": {
+   "v_eff": 26800.0,
+   "eta_T": 0.27,
+   "flow_12_mg_s": 0.44776119402985076,
+   "flow_25_mg_s": 1.3343371366374868,
+   "v_eff_25_mode": 18735.894635294117,
+   "flow_lower_bound_12_mg_s": 0.1846977348448613,
+   "T_over_D_intake": 1.3848166457329225,
+   "host_CDA_cap_m2": 0.5668041521527855,
+   "required_effective_capture_m2": 0.2775475699825719,
+   "required_aperture_m2": 0.6555828845015398,
+   "phi_lo": 1.5109099787747366e-06,
+   "phi_hi_host_ref": 3.254312952586261e-06,
+   "phi_hi_no_host": 4.359027685023401e-06,
+   "Pd_12_W": 595.5555555555555,
+   "bus_12_W": 1142.485617092841,
+   "Pd_25_W": 867.4025294117647,
+   "bus_25_W": 1500.0,
+   "window_all_state_host_ref": {
+    "ECSS_LT_LOW": [
+     181.5,
+     183.0
+    ],
+    "ECSS_LT_MODERATE": [
+     192.0,
+     196.0
+    ],
+    "ECSS_LT_HIGH": [
+     210.0,
+     212.0
+    ],
+    "ECSS_ST_HIGH": null
+   },
+   "window_nominal_host_ref": {
+    "ECSS_LT_LOW": [
+     180.0,
+     189.0
+    ],
+    "ECSS_LT_MODERATE": [
+     183.0,
+     208.0
+    ],
+    "ECSS_LT_HIGH": [
+     195.5,
+     228.0
+    ],
+    "ECSS_ST_HIGH": [
+     206.0,
+     230.0
+    ]
+   },
+   "window_all_state_no_host": {
+    "ECSS_LT_LOW": [
+     180.0,
+     183.0
+    ],
+    "ECSS_LT_MODERATE": [
+     182.5,
+     196.0
+    ],
+    "ECSS_LT_HIGH": [
+     197.0,
+     212.0
+    ],
+    "ECSS_ST_HIGH": [
+     208.0,
+     221.5
+    ]
+   },
+   "max_host_all_state": {
+    "ECSS_LT_LOW": [
+     0.56,
+     [
+      182.5,
+      183.0
+     ]
+    ],
+    "ECSS_LT_MODERATE": [
+     0.56,
+     [
+      193.0,
+      196.0
+     ]
+    ],
+    "ECSS_LT_HIGH": [
+     0.56,
+     [
+      211.5,
+      212.0
+     ]
+    ],
+    "ECSS_ST_HIGH": [
+     0.48,
+     [
+      221.5,
+      221.5
+     ]
+    ]
+   },
+   "max_host_nominal": {
+    "ECSS_LT_LOW": [
+     0.56,
+     [
+      180.0,
+      189.0
+     ]
+    ],
+    "ECSS_LT_MODERATE": [
+     0.56,
+     [
+      184.0,
+      208.0
+     ]
+    ],
+    "ECSS_LT_HIGH": [
+     0.56,
+     [
+      196.5,
+      228.0
+     ]
+    ],
+    "ECSS_ST_HIGH": [
+     0.56,
+     [
+      207.0,
+      230.0
+     ]
+    ]
+   },
+   "flux_margin_LT_LOW_180": 0.17452730723050403
+  }
+ },
+ "compressor_design_values": {
+  "rotor_D_m": 0.6649038006690545,
+  "hub_ratio": 0.4,
+  "front_stages": 6,
+  "finishing_stages": "1 turbo-drag",
+  "rpm_front": 8617.153256670947,
+  "tip_speed_m_s": 300.0,
+  "required_inlet_speed_m3_s": 11.253567441244025,
+  "intake_back_conductance_m3_s": 5.626783720622012,
+  "inlet_pressure_Pa": {
+   "conservative": [
+    0.005037470843500696,
+    0.015123789947725973
+   ],
+   "reference": [
+    0.004135237259590124,
+    0.012323088105554495
+   ]
+  },
+  "front_exit_Pa": 2.0,
+  "plenum_Pa": 20.0,
+  "target_pressure_ratio": {
+   "conservative": [
+    1322.4198477450568,
+    3970.2463044136202
+   ],
+   "reference": [
+    1622.9698131416606,
+    4836.481861740228
+   ]
+  },
+  "finishing_speed_m3_s": {
+   "conservative": 0.08509829507197134,
+   "reference": 0.06933935154012479
+  }
+ },
+ "compressor_targets": {
+  "mass_component_estimate_kg": 7.4,
+  "mass_target_kg": 6.0,
+  "mass_conservative_allowance_kg": 9.0,
+  "power_target_W": 25.0,
+  "power_conservative_allowance_W": 60.0,
+  "spin_up_transient_W": 100.0,
+  "status": "PROPOSAL TARGET / ESTIMATE (no component-level structural / motor / bearing roll-up; no flight analog) -- not a CBE"
+ },
+ "mass": {
+  "conservative": {
+   "intake": 4.5,
+   "compressor": 9.0,
+   "plenum_feed": 1.3,
+   "ppu": 6.0,
+   "xe_hardware": 5.9148,
+   "nonharness": 37.9196,
+   "harness": 1.995768421052631,
+   "nominal_dry": 39.915368421052634,
+   "dry_10pct": 43.9069052631579,
+   "wet_2kg": 45.9069052631579,
+   "margin_to_40": -5.906905263157903,
+   "over_34": 5.915368421052634
+  },
+  "target": {
+   "intake": 3.8,
+   "compressor": 6.0,
+   "plenum_feed": 1.1,
+   "ppu": 5.3,
+   "xe_hardware": 3.5,
+   "nonharness": 30.9048,
+   "harness": 1.6265684210526317,
+   "nominal_dry": 32.53136842105263,
+   "dry_10pct": 35.7845052631579,
+   "wet_2kg": 37.7845052631579,
+   "margin_to_40": 2.2154947368421034,
+   "over_34": -1.4686315789473667
+  },
+  "actions": {
+   "MCA-02 Xe hardware single-branch re-base / 2 kg tank": "5.91 -> 3.5 kg TARGET (not supported by a component roll-up)",
+   "MCA-01 cathodeless PPU requote": "6.0 -> 5.3 kg TARGET",
+   "compressor lightweighting (CFRP blisks, integrated drive)": "9.0 allowance -> 6.0 kg TARGET",
+   "intake": "4.5 allowance -> 3.8 kg estimate",
+   "plenum/feed": "1.3 allowance -> 1.1 kg estimate"
+  }
+ }
+}

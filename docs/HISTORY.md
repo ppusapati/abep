@@ -5781,3 +5781,10 @@ stays EMPTY and nothing enters layer (b).
 - Owner instruction: focus exclusively on DCR-001 and produce one specific preliminary upstream design using lightweight deterministic sizing (no simulation campaign). Other lanes stopped.
 - `docs/baseline/DCR-001/preliminary/` (script, record, note). Intake 0.70 m² face, L/D 20 honeycomb, η_path 0.42; full-aperture 6-stage axial molecular front compressor (rotor Ø 0.66 m, 8617 rpm) plus a compact turbo-drag finishing stage to a 4.7 L plenum at 20 Pa; flux window 1.51e-06–3.25e-06 kg m⁻² s⁻¹ (reference host C_D·A 0.5 m²); altitude schedule LT-low 180–183 km, LT-moderate 183–196 km, LT-high 196–212 km, ST-high 206–222 km; bus 1142 W at 12 mN; nominal dry 37.26 kg (needs ≈ 3.3 kg reduction to 34 kg).
 - Classification: PRELIMINARY DESIGN CLOSES WITH CONTROLLED MARGIN RISK. Proposal-level analysis, not a DBF baseline change; a DBF-1.2 build follows the owner's acceptance.
+
+## 2026-10-10 — DCR-DBF1-001 preliminary design correction pass v2 (owner instruction; DBF-1.2 not built)
+
+- `docs/baseline/DCR-001/preliminary/dcr001_preliminary_sizing_v2.py` / `dcr001_preliminary_design_v2.json` (v1 kept). The all-state window now uses orbit-minimum flux for the flow constraint and orbit-maximum flux for the drag constraint; the nominal window uses orbit-median for both. Two Hall planning cases: conservative (v_eff 22 km/s, η_T 0.22) and reference (26.8 km/s, 0.27).
+- Reference case: all-state AIR closes for LT-low / LT-moderate / LT-high with host C_D·A 0.50 m²; ST-high closes only up to host C_D·A 0.48 m² (221.5 km). Conservative case: T/D_intake 1.14 and host cap 0.20 m²; LT-low all-state needs a 0.80 m² aperture.
+- Compressor numbers split into design values and proposal targets / allowances (7.4 kg is a component estimate, not a CBE). Terminology: active retention control (delivered-flow regulation); altitude scheduling is the drag-management mechanism.
+- Mass: conservative allowances give a 45.9 kg wet (2 kg Xe); targets after the identified mass-closure actions give 37.8 kg wet.
