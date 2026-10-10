@@ -1,0 +1,12 @@
+{
+ "files": {
+  "docs/baseline/DCR-003/dcr003_eval_prereg_v1.json": "13b27c04265660c08a457bab0d03d86d1798028f5672fda008d19bc455f77b9b",
+  "docs/closure/thermal/thermal_cases_prereg_v1.json": "5666c528486f8cb7935863b3826c66e60271242637b31826468adde09394ecba",
+  "docs/closure/thermal/thermal_load_inputs_v2.json": "c748b8fe394b503c2791f88b9113a2dd500cc5942cf38f0771ac1f91c886d12f",
+  "docs/closure/thermal/thermal_closure_v2.json": "06b26333b265a706e0c9bfcdbee1567fe800dbd19b3a05d9f4922ef85eb9dc4d",
+  "docs/closure/power/power_ledger_v1.json": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a"
+ },
+ "id": "DCR003-EVAL-PREREG-LOCK-v1",
+ "rule": "committed alone before either route is evaluated; the harness refuses any listed file whose sha256 differs; a change is a v2 preregistration, never an edit",
+ "schema": "abep_closure_prereg_lock_v1"
+}

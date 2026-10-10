@@ -1,0 +1,145 @@
+{
+ "schema": "abep_dcr_eval_prereg_v1",
+ "id": "DCR003-EVAL-PREREG-v1",
+ "dcr": "DCR-DBF1-003",
+ "date": "2026-10-09",
+ "lane": "L-DCR003-MATCH (A9.38 design-closure programme)",
+ "status": "PREREGISTERED_BEFORE_EVALUATION",
+ "authority": [
+  {"path": "docs/decisions/OD_2026_10_08_A9_38_ARCHITECTURE_FROZEN_DESIGN_CLOSURE_PROGRAMME.md", "note": "priority 7: 'Do not change the thermal topology unless the present one demonstrably fails; use DCR if a physical architecture change is required'; sec. 1 freeze boundary (preregister the evaluation method before comparing replacements)"},
+  {"path": "docs/baseline/DBF-1/DCR_PROCESS.md", "note": "design completion values that are not DBF-1 values are not a design change; a DBF-1 value change is a DCR"},
+  {"path": "docs/baseline/DBF-1/dcr_register_v2.json", "sha256": "c69fcef13fd2f46c24aeae57e354d4002c085429277e54d5e21f06910d194dd2", "pointer": "/dcrs (DCR-DBF1-003, status REQUESTED_EVALUATION_TO_BE_PREREGISTERED)"},
+  {"path": "docs/closure/thermal/dcr_request_P7_match_v1.json", "sha256": "d1205b3b28d783d94339f321220b0b899bace20690dcc076b04b4bd13f27407a", "pointer": "/resolution_paths_to_evaluate, /evaluation_method"}
+ ],
+ "base_commit": "777394c10b85bb5d73678e535d4419928ac1374b",
+ "question": "Can the co-located adjustable match (DBF1-RF-03) meet its 60 degC design ceiling in every governing hot case by thermal isolation from the ICP bracket plus its own radiator (R-1, no DCR), or must it move to the RF-generator side (R-2, DCR), and at what RF-chain power cost?",
+ "results_seen_before_prereg": [
+  "P7 thermal_closure_v1 and v2 records in full (docs/closure/thermal/thermal_closure_v2.json sha256 06b26333b265a706e0c9bfcdbee1567fe800dbd19b3a05d9f4922ef85eb9dc4d): N_MATCH 143.0 / 146.0 / 180.6 / 183.5 degC in TC1-TC4, N_MOUNT 178.7-210.9 degC, N_ANTENNA 394.8-612.2 degC, RF_GENERATOR boundary unit 400 W / 1.099 m^2, Q into the spacecraft 89.6 W",
+  "P6 power_ledger_v1 (docs/closure/power/power_ledger_v1.json sha256 23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a): RF trade line and slot efficiencies",
+  "hand order-of-magnitude estimates made while writing this file (textbook energy balance of a zenith radiator; textbook mismatched-line loss) that informed which quantities need a registered range; no harness run of either route and no route result exists before this file is committed"
+ ],
+ "common": {
+  "harness": "crates/abep-assess/src/thermal_closure (NP-THERMAL-CATHODELESS 2.0.0 via abep_subsystems::thermal::run_case_v2, case class PARAMETRIC); the evaluation is an additive module of the same harness and uses its case builder, run rule (solver_initial), limits, margin rule, heater bisection and boundary-unit rule unchanged",
+  "p7_preregistration": {"path": "docs/closure/thermal/thermal_cases_prereg_v1.json", "sha256": "5666c528486f8cb7935863b3826c66e60271242637b31826468adde09394ecba", "lock": {"path": "docs/closure/thermal/thermal_cases_prereg_lock_v1.json", "sha256": "ac2010a9396124b0d9fd6c660f8fc94a15ef6d6427a72eb79c7cd6edd89117b5"}},
+  "load_inputs": {"path": "docs/closure/thermal/thermal_load_inputs_v2.json", "sha256": "c748b8fe394b503c2791f88b9113a2dd500cc5942cf38f0771ac1f91c886d12f", "note": "the same loads as P7 v2 (from the P6 power ledger); the only load edit is the R-1 match-dissipation fraction defined below"},
+  "reference_record": {"path": "docs/closure/thermal/thermal_closure_v2.json", "sha256": "06b26333b265a706e0c9bfcdbee1567fe800dbd19b3a05d9f4922ef85eb9dc4d", "use": "verdicts, temperatures, Q into the spacecraft and boundary units against which 'no other node made worse' is judged"},
+  "power_ledger": {"path": "docs/closure/power/power_ledger_v1.json", "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a", "use": "RF-chain and heater power penalties: dP_bus / dP_fwd and dP_d,max / dP_fwd from /rf_trade_line (P_fwd 200 -> 300 W), heater bus factor 1 / (ETA-TH x ETA-H-LV x ETA-FE) from /terms, P-NOM margin to the 1,500 W RFP ceiling from /points"},
+  "cases": ["TC1-HOT-H-BSTAR", "TC2-HOT-H-B0", "TC3-HOT-I-BSTAR", "TC4-HOT-I-B0", "TC5-COLD-OP-B0", "TC6-COLD-NONOP-B0", "TC7-HOT-H-BSTAR-XE", "S1-BAND-1350-BSTAR"],
+  "governing_hot": ["TC1-HOT-H-BSTAR", "TC2-HOT-H-B0", "TC3-HOT-I-BSTAR", "TC4-HOT-I-B0"],
+  "cold": {"operating": "TC5-COLD-OP-B0", "non_operating": "TC6-COLD-NONOP-B0"},
+  "margin_rule": "P7 prereg /margin_rule unchanged (DBF1-TH-03: T_max with 1.2 x heat loads <= T_limit - 50 K; N_MATCH limit 110 degC DERATED_ELECTRONICS -> design ceiling 60 degC; lower limits -20 / -40 degC operating / non-operating)",
+  "hall_radiator": {"A_RH_m2": 0.02, "G_RH_W_K": 2.0, "source": "thermal_closure_v2.json /design_lever_search/selected (FEASIBLE_CONFIRMED); fixed, not re-searched"},
+  "t_sc_sensitivity": "SENS-TSC-20 and SENS-TSC-40 (T_SC 293.15 / 313.15 K) on TC1 and TC3 at the selected route design, as P7 /sensitivities/icd_rule"
+ },
+ "routes": {
+  "R-1": {
+   "name": "co-located match, thermally isolated from the ICP bracket, with its own radiator",
+   "dcr_needed": false,
+   "why_no_dcr": "DBF1-RF-03 (match on / immediately adjacent to the ICP module, match_colocated = true) and the DBF1-TH-01 node set are unchanged; the match mounting conductance, the match radiator area and the match-to-antenna lead are design-completion values that are not DBF-1 values (DCR_PROCESS.md 'What is not a design change')",
+   "network_edits": {
+    "L_MA_MO": "G_W_K replaced by G_iso (thermal isolator standoffs, below)",
+    "S_MA": "area_m2 replaced by A_MA (design lever, grid below); surface, enclosure E_MATCH (zenith, views SPACE only), optics (Z-93 class alpha 0.17 / eps 0.92) unchanged",
+    "L_MA_ANT": "NEW LUMPED_G link N_MATCH - N_ANTENNA with G_lead (the RF output lead from the match to the antenna terminals). The P7 v1 network has no such link; a co-located match needs one, so R-1 carries it (conservative for the match). It adds no node",
+    "N_MATCH mass": "unchanged (0.8 kg): the radiator mass is reported, not added to the node; less thermal mass is conservative for both the hot-orbit maximum and the cold-orbit minimum"
+   },
+   "frozen_assumptions": {
+    "G_iso": {
+     "quantity": "match box to ICP bracket conductance through thermal-isolator standoffs",
+     "nominal_W_K": 0.022,
+     "range_W_K": [0.012, 0.04],
+     "design": "four Ti-6Al-4V tubular standoffs, OD 8 mm, wall 1 mm (A = 22.0 mm^2 each), free length 30 mm (assumed design values)",
+     "derivation": "G = 4 k A / L with k = 7.37 W/(m K) at 293.15 K -> 0.0216 W/K (nominal 0.022). Upper end 0.04: k(T) rise of Ti-6Al-4V toward the 480 K bracket side (factor ~1.4, from memory, verify) and +25 % geometry / tolerance. Lower end 0.012: series contact resistance at both standoff ends (factor ~0.55, assumed)",
+     "sources": [{"path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json", "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083", "pointer": "/material_properties (Ti6Al4V k 7.37 W/(m K) at 293.15 K, EXT-NIST-CRYO curve fit, measured)"}],
+     "evidence_class": "assumed (geometry) on measured material data",
+     "validation_status": "NOT_VALIDATED; EM verification: measured standoff conductance"
+    },
+    "G_lead": {
+     "quantity": "conductance of the RF output lead pair, match to antenna terminals",
+     "nominal_W_K": 0.0123,
+     "range_W_K": [0.010, 0.025],
+     "design": "two conductors, each a copper-plated 304 stainless tube, OD 6.35 mm, wall 0.5 mm, copper plating 60 um (>= 3 skin depths: delta_Cu = 17.7 um at 13.56 MHz), length 0.10 m (assumed design values; a plated-stainless thermal-break RF lead)",
+     "derivation": "per conductor (k_Cu A_Cu + k_SS A_SS) / L = (396.9 x 1.197e-6 + 15.13 x 9.19e-6) / 0.10 = 6.14e-3 W/K; pair 0.0123 W/K. Upper end 0.025: plating up to 2x nominal thickness and k_SS(T) x 1.3 toward the antenna end (from memory, verify). Lower end 0.010 (0.8 x nominal, tolerance)",
+     "sources": [{"path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json", "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083", "pointer": "/material_properties (OFHC copper 396.9, SS304 15.13 W/(m K) at 293.15 K, EXT-NIST-CRYO)"}],
+     "evidence_class": "assumed (geometry) on measured material data",
+     "validation_status": "NOT_VALIDATED; EM verification: lead conductance and RF resistance"
+    },
+    "f_lead": {
+     "quantity": "RF ohmic loss of the lead pair as a fraction of the power delivered to the antenna",
+     "derivation": "f_lead = 2 R_lead / R_A with R_lead = rho_Cu L / (pi d delta_Cu) = 1.68e-8 x 0.10 / (pi x 6.35e-3 x 17.7e-6) = 4.76 mOhm per conductor; R_A from R-2 R_A range; at R_A = 0.5 Ohm f_lead = 0.019, at the reference 1 Ohm 0.0095. The uniformly generated lead loss splits half to each end; half is deposited on N_MATCH",
+     "evidence_class": "model-derived on assumed geometry; rho_Cu 1.68e-8 Ohm m from memory (verify)"
+    },
+    "Q_match_frac_R1": {
+     "hot_corner": 0.06,
+     "nominal": 0.055,
+     "cold_corners": 0.05,
+     "derivation": "the P7 registered match loss 0.05 of P_fwd (thermal_load_inputs_v2 /icp/Q_match_frac, assumed, verify P2) plus half the lead loss: 0.05 + 0.019 / 2 = 0.0595 -> 0.06 at the hot corner; 0.05 + 0.0095 / 2 -> 0.055 nominal; 0.05 (lead loss neglected, less heat) in the cold corners. Applied by editing icp.Q_match_frac of the load inputs in the R-1 runs only"
+    }
+   },
+   "design_lever": {
+    "A_MA_m2_grid": [0.02, 0.05, 0.08, 0.10, 0.12, 0.15, 0.20, 0.25, 0.30, 0.40],
+    "mass_basis": "radiator mass reported at 4 kg/m^2 (the R_HALL basis of P7 prereg nodes / R_HALL) plus standoffs 4 x 30 mm x 22.0 mm^2 Ti-6Al-4V (density 4430 kg/m^3, from memory, verify)"
+   },
+   "corners": {
+    "HOT": {"G_iso": 0.04, "G_lead": 0.025, "Q_match_frac": 0.06, "use": "every hot case (TC1-TC4, TC7, S1), the grid search, the confirmation, the allowable and the T_SC sensitivity"},
+    "NOMINAL": {"G_iso": 0.022, "G_lead": 0.0123, "Q_match_frac": 0.055, "use": "TC1 and TC3 reported only (never used to select or to pass)"},
+    "COLD": {"G_iso": [0.012, 0.04], "G_lead": [0.010, 0.025], "Q_match_frac": 0.05, "use": "TC5 and TC6 at each of the four (G_iso, G_lead) combinations; the governing cold result is the lowest T_min and the largest heater over the four"}
+   },
+   "procedure": [
+    "1. Grid: for each A_MA in ascending order, steady TC1 and TC3 at the HOT corner; record N_MATCH T and every node T.",
+    "2. Selection: the smallest A_MA whose N_MATCH T <= 60 degC in TC1 and TC3 (and every node with a registered upper limit still passes); confirmed with periodic TC2 and TC4 at the HOT corner; if a confirmation fails, the next grid point in order. No feasible confirmed point -> R-1 not admissible, and the point that maximises the N_MATCH margin is carried and reported.",
+    "3. At the selected A_MA: every registered case at the HOT corner (hot) and the four COLD corners (TC5, TC6); heater sizing on N_MATCH per P7 prereg /solver_initial/heater_sizing (bisection, [0, 200] W) at each cold corner.",
+    "4. Reported: AL-QMATCH = the largest Q_match_frac keeping N_MATCH <= 60 degC in TC3 (steady) at the HOT corner and the selected A_MA (bisection on [0, 0.5], 0.0005); T_SC sensitivity; NOMINAL-corner TC1 / TC3."
+   ]
+  },
+  "R-2": {
+   "name": "match relocated to the RF-generator side (match_colocated = false)",
+   "dcr_needed": true,
+   "dbf1_items": ["DBF1-RF-03 -> remote match at the RF generator (match_colocated = false)", "DBF1-TH-01 -> N_MATCH ABSENT (follows DBF1-RF-03)"],
+   "network_edits": "N_MATCH, its surface S_MA, enclosure E_MATCH and links L_MA_MO, L_MA_PPU removed; model.match_colocated = false; the N_MATCH limit is not evaluated. The thermal model books Q_icp_match_W and P_icp_matching_DC_W at B_PPU_RF RF_CHAIN (NP-THERMAL 2.0.0 deposition rule TK-04 / TK-05)",
+   "module_loads": "identical to P7 v2 (the same power delivered to the antenna; Q_line_frac 0 on the module): the line loss of the remote match is carried by the RF-chain penalty and the RF_GENERATOR unit below, never as reduced module heating",
+   "rf_penalty_model": {
+    "relation": "a 50-Ohm coaxial line of matched loss ML [dB] = alpha l terminated by the unmatched antenna Z_A = R_A + j X_A delivers P_L / P_in = a (1 - |G|^2) / (a^2 - |G|^2), a = 10^(ML / 10), G = (Z_A - 50) / (Z_A + 50) (standard transmission-line relation for loss with load mismatch, e.g. ARRL Antenna Book transmission-line chapter; from memory, verify). With the match at the generator: P_delivered = P_fwd (1 - f_match) eta_line, so the same delivered power needs P_fwd,R2 = P_fwd,R1 / eta_line with P_fwd,R1 the co-located forward power",
+    "X_A": {"derivation": "X_A = 2 pi f L_A, L_A from Wheeler's single-layer coil formula L[uH] = r^2 N^2 / (9 r + 10 l) (r, l in inches; H. A. Wheeler, Proc. IRE 16 (1928) 1398, from memory, verify) for the P7 antenna geometry (3 turns, 6 mm copper tube, r = 75 mm; thermal_cases_prereg_v1 /nodes N_ANTENNA, assumed) with an assumed 12 mm pitch (l = 36 mm): L_A = 1.926 uH, X_A = 164.1 Ohm", "range_factor": [0.7, 1.3], "range_basis": "geometry not frozen (F6-X-06 N_ant, F6-X-09 d_ant TBD) and plasma loading lowers the effective inductance (from memory, verify)"},
+    "R_A_Ohm": {"reference": 1.0, "range": [0.5, 5.0], "evidence_class": "assumed (plasma-loaded 13.56 MHz ICP antenna resistance class; from memory, verify); the antenna impedance is TBD_AFTER_IMPEDANCE_MAP (P2)"},
+    "alpha_dB_per_m": {"reference": 0.05, "range": [0.02, 0.10], "evidence_class": "assumed (flexible 50-Ohm space-qualified coax at 13.56 MHz; from memory, verify)"},
+    "length_m": {"reference": 1.0, "range": [0.5, 2.0], "evidence_class": "assumed (RF generator on the spacecraft-side radiator to the ICP module; REFERENCE_PENDING_ICD)"},
+    "corners": {
+     "REFERENCE": {"R_A": 1.0, "X_factor": 1.0, "alpha": 0.05, "length": 1.0},
+     "CONSERVATIVE": {"R_A": 0.5, "X_factor": 1.3, "alpha": 0.10, "length": 2.0},
+     "FAVOURABLE": {"R_A": 5.0, "X_factor": 0.7, "alpha": 0.02, "length": 0.5}
+    },
+    "operating_points": {"anchor": "P_fwd,R1 = 200 W (icp.P_fwd_anchor_W, HOT_H / COLD_OP / P6 reference)", "envelope_end": "P_fwd,R1 = 500 W (icp.P_fwd_max_W, HOT_I)"},
+    "power": "dP_fwd = P_fwd,R2 - P_fwd,R1; dP_bus = dP_fwd x (dP_bus / dP_fwd of the P6 RF trade line); dP_d,max = dP_fwd x (dP_d,max / dP_fwd of the trade line, design allocation 1,350 W)"
+   },
+   "rf_generator_unit": "the P7 boundary-unit rule (prereg /boundary_units) for RF_GENERATOR with the relocated match and line booked there: dissipation = P_fwd,R2 (1 / eta_RF - 1) + P_refl + f_match P_fwd,R2 + P_matching_DC + (1 - f_match) P_fwd,R2 (1 - eta_line) (the whole line loss on the generator side: conservative for the unit); reported at the REFERENCE and CONSERVATIVE corners against the v2 400 W / 1.099 m^2"
+  }
+ },
+ "criteria": {
+  "R-1 admissible iff": [
+   "R1-a: a feasible, confirmed A_MA exists and at it every governing hot case (TC1-TC4) converges with N_MATCH T_max <= 60 degC at the HOT corner",
+   "R1-b: TC5 and TC6 converge at all four COLD corners and N_MATCH reaches its -20 / -40 degC lower limits with a sized heater (<= 200 W bisection range); the operating heater (TC5) bus power is compared with the P6 thermal_control slot (4.0 W at P-NOM) and any excess is reported as a P6 penalty (not a gate)",
+   "R1-c: no node with a registered upper limit that PASSES in thermal_closure_v2 FAILS (HOT corner, every governing hot case); no P8 materials DCR trigger fires; REQUIREMENT_ONLY capabilities and Q into the spacecraft are reported with their change from v2",
+   "R1-d: the RF-chain power penalty is reported against the P6 margins: the lead loss at the reference R_A (1 Ohm) and the conservative R_A (0.5 Ohm) as dP_fwd for the same delivered power at the anchor, converted with the P6 trade-line slopes; plus the operating heater"
+  ],
+  "R-2 admissible iff": [
+   "R2-a: every governing case converges with N_MATCH absent; no node with a registered upper limit that PASSES in v2 FAILS; no P8 trigger fires",
+   "R2-b: at the CONSERVATIVE corner the forward power for the anchor delivered power, P_fwd,R2 = 200 W / eta_line, stays within the DBF1-RF-02 envelope end 500 W (otherwise R-2 also needs a DBF1-RF-02 change)",
+   "R2-c: at the CONSERVATIVE corner the bus penalty dP_bus at the anchor stays within the P-NOM margin to the 1,500 W RFP ceiling (150 W in power_ledger_v1); the REFERENCE-corner dP_bus and dP_d,max are reported"
+  ],
+  "no_retuning": "the ranges, corners, grid and criteria above are not changed after any route result is seen; a change is a v2 preregistration with the reason"
+ },
+ "selection_rule": "R-1 if R-1 is admissible (DCR-DBF1-003 is then WITHDRAWN: no DBF-1 value changes; the match isolation, radiator and lead become registered design-completion values for a P7 load-input / network version); otherwise R-2 if R-2 is admissible (DCR-DBF1-003 proceeds as DBF-1.1 for the coordinator); otherwise BLOCKED with the residual (the N_MATCH shortfall of R-1 and the failed R-2 criterion with its quantity)",
+ "p7_state_rule": "the P7 closure-state precedence of thermal_cases_prereg_v1 /closure_state_rule is applied to the selected route: DCR REQUIRED only if a limited node still fails; REFERENCE/ICD DEPENDENT when Q into the spacecraft exceeds the 50 W governing allocation or the T_SC sensitivity changes a verdict; FROZEN FOR EM when every limited node passes and the rest are EM verification requirements; CLOSED is not reachable (NOT_VALIDATED model, PARAMETRIC cases)",
+ "outputs": {
+  "record": "docs/closure/thermal/dcr003_evaluation_v1.json (+ .md): both routes, every case, corners, grid, selection, penalties, verdicts against v2, run provenance (rust commit, input sha256, case document sha256)",
+  "resolution": "docs/baseline/DCR-003/dcr003_resolution_v1.json (items, old / new, reason, results seen, impact, new baseline)",
+  "statement": "docs/closure/statements/P7_thermal_v2.md (P7_thermal.md stays as history)",
+  "harness": "abep-assess binary abep-assess-dcr003 --out docs/closure/thermal/dcr003_evaluation_v1.json --md docs/closure/thermal/dcr003_evaluation_v1.md"
+ },
+ "what_this_is_not": [
+  "not an approval of DCR-DBF1-003 or a change to the DCR register (coordinator-maintained)",
+  "not a change to DBF-1, the P7 preregistration v1, the P7 records v1 / v2 or the P6 ledger",
+  "not a validation: NP-THERMAL-CATHODELESS 2.0.0 is NOT_VALIDATED and every case is PARAMETRIC",
+  "not an antenna impedance: R-2's penalty is evaluated on registered assumptions until the P2 impedance map exists"
+ ]
+}
