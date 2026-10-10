@@ -21,10 +21,16 @@
 //!
 //! New, under preregistration `docs/closure/thermal/thermal_cases_prereg_v1.json` (A9.38 priority 7): the DBF-1
 //! frozen-topology thermal closure ([`thermal_closure`]) on the admitted NP-THERMAL-CATHODELESS 2.0.0 network.
+//!
+//! New, under the DCR-DBF1-001 evaluation preregistration (A9.38 P1): the intake / compressor redesign search and
+//! record ([`dcr001`]); its amendment v3 (A9.39 item 3) variable-effective-capture window and altitude schedule
+//! ([`dcr001_window`]).
 
 pub mod closure;
 pub mod closure_icp;
 pub mod closure_m1;
+pub mod dcr001;
+pub mod dcr001_window;
 pub mod envelope_summary;
 pub mod error;
 pub mod gates;

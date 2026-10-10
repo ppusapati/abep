@@ -1,0 +1,100 @@
+{
+ "schema": "abep_dcr_register_v1",
+ "id": "dcr_register_v2",
+ "baseline": "DBF-1",
+ "process": "docs/baseline/DBF-1/DCR_PROCESS.md",
+ "previous_register": {
+  "path": "docs/baseline/DBF-1/dcr_register_v1.json",
+  "sha256": "d925ae55af3314b9eb88fec678ac7ba8ef57b72c827b6882b12e7232534d2944",
+  "note": "empty register at the freeze, pinned by the DBF-1 lock; never edited (DCR_PROCESS.md)"
+ },
+ "dcrs": [
+  {
+   "id": "DCR-DBF1-001",
+   "alias": "DCR-001",
+   "title": "Intake / compressor / plenum / feed implementation redesign inside the frozen concept (atmospheric intake + active compression + plenum / feed)",
+   "date": "2026-10-08",
+   "status": "OPEN",
+   "status_note": "opened; the evaluation method is preregistered and hash-locked in a separate commit (docs/baseline/DCR-001/dcr001_eval_prereg_v1.json) before any replacement design is compared; the resolution is recorded in a later register version, this entry is never edited",
+   "requested_by": "lane L-INTAKE-DCR001 (A9.38 design-closure programme, priority P1, critical path)",
+   "approved_by": "owner (A9.38 sec. 2 Priority 1: 'Open the appropriate DCR and redesign the implementation, while retaining the frozen architectural concept of an atmospheric intake + active compression/plenum/feed system')",
+   "approval_scope": "opening the DCR and evaluating replacements by the preregistered method; the resolution (selected design, DBF-1.1) is recorded by the coordinator under A9.38 / A9.34 lane governance and carries an owner note at the next milestone audit",
+   "approval_record": [
+    {
+     "path": "docs/decisions/OD_2026_10_08_A9_38_ARCHITECTURE_FROZEN_DESIGN_CLOSURE_PROGRAMME.md",
+     "sha256": "7bc06a0044283ba054b60a55a99bae84b6f7aea2cb5e4283d3a627ff543b9bcf"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_08_A9_38_architecture_frozen_design_closure_programme.json",
+     "sha256": "2a66ce271f1b697d0373a66c3da0d459e157437209f2a13e983f7f8f02edc91d"
+    }
+   ],
+   "items": [
+    {"id": "DBF1-IN-01", "name": "upstream design vector", "old_value": "A0.25_Ld20_phi0.9|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.02", "new_value": "TO_BE_DETERMINED_BY_THE_PREREGISTERED_EVALUATION"},
+    {"id": "DBF1-IN-02", "name": "intake geometry (area, L/d, phi; d collapsed)", "old_value": {"area_m2": 0.25, "L_over_d": 20.0, "phi": 0.9}, "new_value": "TO_BE_DETERMINED_BY_THE_PREREGISTERED_EVALUATION"},
+    {"id": "DBF1-IN-03", "name": "TPMC surface-scenario basis", "old_value": "10 admitted scenarios (Maxwell / CLL, alpha 0, 0.2, 0.5, 0.8, 1)", "new_value": "UNCHANGED (every admitted scenario carried, none chosen; A9.13 S6.16)"},
+    {"id": "DBF1-IN-04", "name": "filter case", "old_value": "F4-FIL-T0.9", "new_value": "TO_BE_DETERMINED_BY_THE_PREREGISTERED_EVALUATION"},
+    {"id": "DBF1-IN-05", "name": "compressor design (F3 design grid) and its model coefficients", "old_value": {"id": "T6-A1-U2-D0-Ti6Al4V-H0.5", "coefficients": "DragCompressor code defaults, uncited (F3 FIXED_CODE_DEFAULT_UNCITED)"}, "new_value": "TO_BE_DETERMINED_BY_THE_PREREGISTERED_EVALUATION (design from the F3 grid; coefficients frozen as engineering assumptions with evidence class and uncertainty band)"},
+    {"id": "DBF1-IN-06", "name": "plenum volume / wall / target pressure", "old_value": {"V_m3": 0.001, "wall_case": "WALL-G0", "P_set_Pa": 0.02}, "new_value": "TO_BE_DETERMINED_BY_THE_PREREGISTERED_EVALUATION (wall case WALL-G0 retained)"},
+    {"id": "DBF1-IN-07", "name": "feed-loop controller", "old_value": {"Kp": 0.3, "Ti_s": 3.0, "f_valve_hz": 1.0, "authority": 3.0}, "new_value": "TO_BE_DETERMINED_BY_THE_PREREGISTERED_EVALUATION (registered grid only)"},
+    {"id": "DBF1-IN-08", "name": "registered F7 performance of the frozen design", "old_value": "F7 per-scenario values of the DBF-1 vector", "new_value": "REPLACED_BY_THE_DCR-001_EVALUATION_RECORD (computed, not chosen)"}
+   ],
+   "physical_or_evidence_reason": {
+    "summary": "the frozen DBF-1 upstream implementation cannot remain: on the admitted Rust chain and the registered conservation bound it delivers 33.6 x less than the necessary 12 mN flow at its worst state, is out of model domain (dead-head) in four of the ten admitted surface scenarios, and its compressor model mass is about twice the AL-02 allocation; its compressor coefficients are uncited code defaults",
+    "BD-01": {
+     "finding": "worst-state delivered flow 1.428e-9 kg/s (worst covered scenario maxwell_a0.5) against the A4 necessary flow 4.796e-8 kg/s for 12 mN at the ideal 1.5 kW (k = 33.59); 2.082e-7 kg/s for 25 mN (k = 145.8); A_eff 0.25 m^2 < A_req 0.2511 m^2",
+     "source": {"path": "docs/baseline/DBF-1/dbf1_v1.json", "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f", "pointer": "/baseline_deficiencies/0"}
+    },
+    "BD-02": {
+     "finding": "F7 Pareto member in 6 of 10 admitted scenarios; out of domain in maxwell_a0, maxwell_a0.2, cll_a0, cll_a0.2 (TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE); F8 robust set EMPTY (reasons over the F8 survivors: GAEDE_CHARACTERISTIC_OUTSIDE_K_1_TO_K0, TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE); M2 feed-loop classes R 44 / S 1916",
+     "source": [
+      {"path": "docs/baseline/DBF-1/dbf1_v1.json", "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f", "pointer": "/baseline_deficiencies/1"},
+      {"path": "docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json", "sha256": "600cf229ecdb5f91f0471f03cfdd6d287486ad21e9d9ebadde3cdafa54a37394"}
+     ]
+    },
+    "BD-03": {
+     "finding": "compressor model mass 10.907 kg against the AL-02 compressor+drive allocation 5.5 kg (excess 5.41 kg)",
+     "source": [
+      {"path": "docs/baseline/DBF-1/dbf1_v1.json", "sha256": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f", "pointer": "/baseline_deficiencies/2"},
+      {"path": "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json", "sha256": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a", "pointer": "/lines/hall_icp_neutralizer (AL-02)"}
+     ]
+    },
+    "compressor_coefficients": {
+     "finding": "every fixed DragCompressor coefficient (turbo kS, kK, blade fraction, disc thicknesses, stator / motor / bearing mass factors, leak conductance, bearing loss, motor efficiency, control power, sink conductance) is an uncited code default (F3 coefficients FIXED_CODE_DEFAULT_UNCITED; compressor_downselect CD-01)",
+     "source": [
+      {"path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json", "sha256": "6871975696f7b40dac897c52b529266eb053ecbf4ea7ab17cb3e3fbdac73a27b", "pointer": "/coefficients"},
+      {"path": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json", "sha256": "d086b981e7cb8ff6c6096e7768d89de0b9d8c5ad760308672a90ec75b97b718d", "pointer": "/findings (CD-01)"}
+     ]
+    },
+    "not_a_reason": "improving an M2 result is not a reason (DCR_PROCESS.md); the reason is that the registered necessary conditions (A4 / A8 flow, scenario robustness, AL-02 mass) are not met by the frozen implementation"
+   },
+   "results_seen_before_request": [
+    "DBF-1 record and its deficiencies BD-01..BD-06 (dbf1_v1.json d20f1e8a...)",
+    "M2 closure record v1 and report (m2_closure_record_v1.json 600cf229..., M2_REPORT_v1.md 6d13413f...): NOT_DETERMINABLE at C1; A8-NH-INTAKE-DBF1 L-DEL T12 fails in every scenario at 11 states (k_fav up to 3.696), T25 at 54 states; dead-head class R at 44 (state, scenario) rows",
+    "A4 conservation-bound record (conservation_bounds_v1.json 5146fe58...): A_req(12 mN) up to 0.2511 m^2, mdot_req 4.796e-8 / 2.082e-7 kg/s at 1.5 kW; T_max at the F1 grid areas (0.25 m^2 gives 11.97 mN at the worst state)",
+    "A5 intake-closure record (intake_closure_a5_v1.json f971eece...): DS-F1-ADMISSIBLE = the eight A = 0.25 m^2 F1 candidates in every scenario (larger F1 grid areas fail C-DRAG-RFP at some state); worst-state capture multipliers at A = 0.25 m^2 (L-CAP T12 k_fav 1.139, k_unfav 1.346); F8 robust set EMPTY with its infeasibility decomposition",
+    "F1 intake synthesis (F1_INTAKE_SYNTHESIS.md): F1-05 eta_c / CR_passive trade at the design case; envelope view: only A = 0.25 m^2 candidates pass C-DRAG-RFP at every state",
+    "F3 compressor synthesis (F3-01..F3-08): drag-stage designs out of the Gaede domain at code-default channel coefficients; fronts' mass 1.99-10.91 kg",
+    "F4 plenum / feed v1 and F7 / F8 committed records; A6 / A3 Hall numerics results (not used here)",
+    "No replacement design had been evaluated by this lane before this request: no new comparison was computed"
+   ],
+   "impact": {
+    "items": ["DBF1-IN-01", "DBF1-IN-02", "DBF1-IN-04", "DBF1-IN-05", "DBF1-IN-06", "DBF1-IN-07", "DBF1-IN-08", "DBF1-BD-01", "DBF1-BD-02", "DBF1-BD-03", "DBF1-DRAG-02 (intake-face term geometry), DBF-1 host-drag intake fields"],
+    "records_becoming_history": "the M2 record v1 (computed on DBF-1) stays immutable history; an M2 rerun against the successor baseline is a new run manifest / addendum and a new record",
+    "downstream_lanes": "P5 mass (compressor CBE vs AL-02, intake vs AL-01), P6 power (compressor slot in the 300 W common group), P7 thermal (compressor / motor node), P9 host-drag interface (intake-face drag term)",
+    "unchanged": "architecture (A9.38), H-1 geometry, B(z) target, ICP, RF, power / mass allocations, thermal topology, materials, host-drag reference case, the 10 admitted surface scenarios, every admitted / scored record"
+   },
+   "new_baseline": {
+    "id": "DBF-1.1",
+    "location": "docs/baseline/DBF-1.1/ (new files with their own lock; DBF-1 never edited)",
+    "status": "PROPOSED_ON_RESOLUTION"
+   },
+   "evaluation_method": {
+    "prereg": "docs/baseline/DCR-001/dcr001_eval_prereg_v1.json",
+    "lock": "docs/baseline/DCR-001/dcr001_eval_prereg_lock_v1.json",
+    "rule": "committed alone and hash-locked before any replacement design is compared"
+   }
+  }
+ ],
+ "rule": "append-only by new register versions; this v2 adds DCR-DBF1-001 (OPEN); its resolution is a later version"
+}
