@@ -5925,3 +5925,22 @@ stays EMPTY and nothing enters layer (b).
 - **Location:** the annexure is outside `docs/bid/`. The historical bid package (`docs/bid/package/`, 5eee4b8 / 2de86ab)
   and the bid-source guard are unchanged (guard PASS). The programmatic skeletons and the Part IV submission checklist
   of that package are reused as they are.
+
+## 2026-10-10 — `main` becomes the single authoritative branch; lane consolidation
+Owner instruction (2026-10-10): `main` is the only authoritative source of the simulation and the version released to the
+scientific community for evaluation. Every other branch is development.
+- **Baseline pointer:** CLAUDE.md, `.github/workflows/rust-workspace.yml` (push trigger) and `docs/ci/BRANCH_PROTECTION.md` now
+  name `main`. `integration/simulation-complete` (CA-02) is fully contained in `main` and is history.
+- **Lanes merged (merge commits):**
+  - `lane-hall-chem-air`: the NP-HALL-CHEM-AIR audit materiality reader.
+  - `lane-hall-air-localpkg`: the Hall air RP-1 HallThruster.jl local-run package and prereg addendum A9-LP. All 55 pinned
+    files match.
+  - `lane-dcr001-final` at `a854a95`: the DCR-DBF1-001 Rust evaluator and evaluation preregistrations v1–v3. This is
+    supporting tooling and history; the A9.41 approval on the preliminary-closure evidence is unchanged.
+- **Deliberately not merged (preserved on `wip/*`):**
+  - The DCR-003 evaluation harness and its v1 evaluation outputs (`wip/lane-dcr003-match`). The harness test reproduces
+    the committed record, so the two land together. Prereg v1 lacks the R-2 RF-generator unit gate, and a v2 is pending.
+  - The DCR-001 lane's divergent DBF-1.2 builder and window-search outputs. The frozen DBF-1.2 stays as built.
+  - The unfinished NP-ICP-CHEM-AIR own-table work (`wip/lane-icp-closure`).
+- **F1 evidence archive:** a local copy verifies against its manifest (`verify-download` → VERIFIED). The release-asset upload
+  is still the owner's manual step (`docs/evidence_archives/f1_intake/UPLOAD_STEPS.md`).

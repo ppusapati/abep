@@ -2,7 +2,7 @@
 //! verdict reader applies the preregistered rules literally. No test spawns Julia. Records built here are
 //! SYNTHETIC_TEST_DATA_NOT_EVIDENCE: they exist only in memory and never in a record.
 
-use abep_julia_bridge::air_audit::{ambiguity_verdict, ineligible, metric, verdicts, METRICS, SUM_KEYS};
+use abep_julia_bridge::air_audit::{ambiguity_verdict, ineligible, materiality, metric, verdicts, METRICS, SUM_KEYS};
 use abep_julia_bridge::air_cases::{
     check_audit, check_snapshots, composition_points, inlet_velocity, v1_n2_rows, AUDIT_CASES_REL, AUDIT_MANIFEST_REL,
     V1_FIELDS,
@@ -222,4 +222,34 @@ fn ineligible_runs_are_named() {
         d.insert("audit_domain_fraction_max", Value::Float(1e-9));
     }
     assert!(ineligible(first).unwrap().contains("DOM-AIR-02"));
+}
+
+#[test]
+fn materiality_stratifies_the_same_records_by_operating_point_and_design_flow_band() {
+    let r = repo();
+    let recs = synthetic_records(1e-6, 10.0, None);
+    let m = materiality(&r, &recs).unwrap();
+    let d = m.as_dict().unwrap();
+    assert_eq!(d.get("n_cases").unwrap().to_f64().unwrap(), 576.0);
+    assert_eq!(d.get("n_eligible").unwrap().to_f64().unwrap(), 576.0);
+    let ops = d.get("operating_points").unwrap().as_dict().unwrap();
+    assert_eq!(ops.len(), 8, "BP-LO/HI x VD-180/350 x MF-LO/HI");
+    for (_, op) in ops.iter() {
+        assert_eq!(op.as_dict().unwrap().get("n_cases").unwrap().to_f64().unwrap(), 72.0);
+    }
+    let band = d.get("design_flow_band").unwrap().as_dict().unwrap();
+    assert_eq!(band.get("n_eligible").unwrap().to_f64().unwrap(), 288.0, "MF-LO half of the grid");
+    let crossing: Vec<&str> =
+        band.get("crossing").unwrap().as_list().unwrap().iter().map(|v| v.as_str().unwrap()).collect();
+    assert_eq!(crossing, vec!["HA-WALL-02|F_S(O destruction)", "HA-WALL-03|F_S(N destruction)"]);
+    let row = band.get("rows").unwrap().as_dict().unwrap().get("HA-WALL-02|F_S(O destruction)").unwrap();
+    let w = row.as_dict().unwrap().get("window").unwrap().as_dict().unwrap();
+    assert_eq!(w.get("ambiguity_rule").unwrap().as_str(), Some("UNCERTAINTY VARIANT"));
+    // an ineligible run leaves its stratum and every group
+    let mut recs = recs;
+    if let Some(Value::Dict(x)) = recs.values_mut().next() {
+        x.insert("sustained", Value::Bool(false));
+    }
+    let m = materiality(&r, &recs).unwrap();
+    assert_eq!(m.as_dict().unwrap().get("n_eligible").unwrap().to_f64().unwrap(), 575.0);
 }

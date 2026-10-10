@@ -1,0 +1,159 @@
+{
+ "schema": "abep_dcr_eval_prereg_v1",
+ "id": "DCR-001/dcr001_eval_prereg_v3",
+ "dcr": "DCR-DBF1-001 (alias DCR-001)",
+ "status": "PREREGISTERED_AMENDMENT_BEFORE_WINDOW_EVALUATION",
+ "label": "ACTUAL_DESIGN_EVALUATION / PARAMETRIC (compressor coefficients, surface accommodation and the closed-shutter drag are engineering assumptions or bounds) / NOT_VALIDATED / NOT_A_PERFORMANCE_PREDICTION",
+ "date": "2026-10-09",
+ "lane": "L-DCR001-FINAL (A9.39 item 3)",
+ "base_commit": "origin/integration/simulation-complete 8060e55 + merge of lane-intake-dcr001 (92697ec)",
+ "authority": {
+  "owner_decision": "A9.39 item 3 (variable effective capture) and item 2 (operating concept: AIR operating free-stream-flux window and altitude scheduling inside 180-230 km)",
+  "records": {
+   "docs/decisions/OD_2026_10_09_A9_39_ARCHITECTURE_CLOSED_OWNER_DECISIONS.md": "7c3880c3f2b5dedefcd66c0c8fbe0362b3aa199099183ec3d65c020bf48f2949",
+   "docs/decisions/OD_2026_10_09_A9_39_architecture_closed_owner_decisions.json": "dd17ada07ab660187d8c762483a340299470d6e04e60f24f06938b9e450ea857",
+   "docs/closure/conclusion/ARCHITECTURE_CLOSURE_CONCLUSION_v2.md": "4ef4573e346eac88ed87610b569f1eedb9f7107a6ebc9ebe56a42ac2080babf9"
+  },
+  "quote": "The sizing requirement is no longer 'close all x46 atmospheric states at one fixed geometry.' The requirement is to establish a physically defensible atmospheric operating window and altitude schedule covering the RFP 180-230 km functional range as atmosphere/solar activity changes."
+ },
+ "amends": {
+  "v1": {"path": "docs/baseline/DCR-001/dcr001_eval_prereg_v1.json", "sha256": "98f9931cbf537c3acca9753fafc9c9a9f93b22e7beb27dbae950f0c2c9e556f5", "lock_sha256": "39e76c68ee48f3d2c15b492f865be6929f8300f8b94afa680476e8bc80c1998d"},
+  "v2": {"path": "docs/baseline/DCR-001/dcr001_eval_prereg_v2.json", "sha256": "7ebb61eb16dd724aed3ac2dd1de9e3e77390a9e9e3d8f404a3d697fa2c75954c", "lock_sha256": "038ce60a733e9c3a176b502d4cf4487ba260270a8a16b8555352b7b6063c176e"},
+  "replaced": "the v1 fixed-geometry all-states admissibility (C-FLOW-T12 / C-FLOW-T25 / C-DOMAIN / C-STAB / C-DRAG / C-POWER / C-MASS 'at every required state in every scenario'), the v1 selection rule and the v1 / v2 non-closure rules. The v1 / v2 records are history and are never edited; no v1 / v2 search record was committed",
+  "retained_from_v1": "the frozen concept, the admitted models (F1 IF-A1 unit-area records x area, F1-02; the abep-gaspath steady sweep with its fail-closed reason bits; the contract-v8 stability class with the governed Python reference and Rust R2 agreement), the 10 admitted surface scenarios (none chosen), the 196-state design-state set v2, the L/d / phi F1 nodes, the 4 filter cases, the F3 compressor grid without R1 / R2 / R3, the plenum volumes, set pressures and controller grid, the compressor-coefficient provenance, bands and the 8 unfavourable corners, the determinism and fail-closed rules",
+  "why": "owner decision A9.39 items 2 / 3 replace the sizing requirement; the v1 criteria quantified every criterion over the complete 196-state set at one fixed geometry, which A9.39 retires as the sizing requirement (the 196-state set stays the conservative verification set)"
+ },
+ "registered_before": {
+  "rule": "registered before any computation of a window, a modulated operating point, an altitude schedule or a ranking of this amendment",
+  "results_seen": [
+   "everything listed in v1 registered_before and v2 why (v1 development executions: S0 C_mass 494 of 1050, S1 I_drag 132 of 360, S2 I_cap 3 intakes, no steady-admissible fixed design; every I_cap design fails C-DOMAIN at some state and scenario)",
+   "committed records: ARCHITECTURE_CLOSURE_CONCLUSION_v2 and fixed_intake_window_v1.json (free-stream flux span x46.3 over the 196 states; one fixed area serves at most a x17.4 flux span at 12 mN with capture drag <= 25 mN under ideal assumptions, x8.3 at 25 mN), host_drag_cda_envelope_v1.json (IR-HOST-DRAG-01 governing value 0.22106 m^2 at 25 mN), power_ledger_v1.json (P6 ceilings and compressor headroom), the design-state set v2 (density span x1.8-x3.2 across the location / season states of one ECSS scenario and altitude node)",
+   "a release build of the existing v1 evaluator binary (no execution)"
+  ]
+ },
+ "concept": {
+  "frozen_architecture": "atmospheric variable-effective-capture intake -> filter -> active compressor (turbo rows / Gaede drag stages of the admitted DragCompressor family) -> plenum -> pressure-regulated feed -> H-1 (A9.39 item 5)",
+  "operating_concept": "the spacecraft altitude is scheduled inside 180-230 km per solar / atmospheric condition so that the free-stream flux stays inside an AIR operating window; inside the window the intake effective capture area is modulated and the feed loop regulates the plenum (A9.39 item 2). Xe is not the routine solution for states outside the window"
+ },
+ "mechanism": {
+  "candidates": [
+   {"id": "VC-0", "name": "fixed aperture (no modulation)", "complexity_rank": 0, "model": "admitted (F1 x A)", "role": "reference: the simplest candidate; selected only if no modulated candidate attains a better coverage objective"},
+   {"id": "VC-1", "name": "segmented frontal aperture shutter: the intake face is divided into N equal segments of whole channels of the same F1 geometry, each with a two-position (open / closed) frontal shutter; A_eff = (j / N) A_max, j = 1..N", "complexity_rank": "1 + log2(N) for N in {2, 4, 8}", "model": "admitted: the open segments are an intake of area A_eff with the F1 unit-area records (F1-02: flows and backflow conductance proportional to the open area, p_passive and K_back intensive); a closed segment seals its channels (no inflow, no backflow). Drag: open part F1 intake-face drag per unit area x A_eff; closed part the closed-shutter bound below"},
+   {"id": "VC-2", "name": "bypass / spillage duct", "complexity_rank": 5, "model": "NOT ADMITTED (no registered bypass-duct conductance / spill-drag model)", "role": "not evaluated; named as the follow-on route only if VC-1 leaves a registered condition uncovered AND the residual is attributed to compressor domain / flow excess rather than drag"},
+   {"id": "VC-3", "name": "variable throat / conductance (channel exit or compressor inlet throttle)", "complexity_rank": 5, "model": "NOT ADMITTED (the F1 TPMC records do not cover a throttled channel exit; face drag of a throttled intake not registered)", "role": "as VC-2"},
+   {"id": "VC-4", "name": "shutters / vanes / louvres at the face", "complexity_rank": "as VC-1", "model": "represented by VC-1 (same face-level open-area modulation and the same closed-area drag bound)", "role": "equivalent implementation of VC-1"}
+  ],
+  "closed_shutter_drag": {
+   "rule": "d_closed(s) = C_closed q(s) per unit closed area, C_closed = 4.1",
+   "basis": "free-molecular normal flat plate: the incident normal momentum flux is rho U^2 (1 + 1/(2 S^2)); its specular reflection (the upper bound over every accommodation / kernel of the admitted scenario set, which includes the fully specular maxwell_a0 / cll_a0) doubles it: C_D = 4 (1 + 1/(2 S^2)) per q. For O, N2, O2 at T <= 1500 K and U >= 7.3 km/s, S >= 5.8 and 1/(2 S^2) <= 0.015, so C_closed = 4.1 bounds it (fully diffuse plate ~2.1). Analytic bound (Bird 1994 free-molecular flat plate, verify); evidence class model-derived, used as a conservative bound",
+   "applies": "to every closed segment in every state and scenario (never the scenario's own accommodation, which is TBD)"
+  },
+  "selection_rule": "the candidate is part of the design: the design ranking below puts complexity (N) after the coverage objective, so the lowest-complexity candidate that attains the best coverage is selected; VC-2 / VC-3 are not evaluated (no admitted model) and are not needed unless VC-1 leaves a condition uncovered"
+ },
+ "design_space": {
+  "id": "DS-DCR001-W",
+  "variables": {
+   "A_max_m2": {"values": [0.25, 0.5, 0.75, 1.0, 1.25, 1.5], "basis": "physical maximum aperture: the F1 frontal-area design grid F1-P-16 (A9.38 F1 grid; LIT-01 range context)"},
+   "N_segments": {"values": [1, 2, 4, 8], "basis": "VC-0 (N = 1) and VC-1 (N = 2, 4, 8); effective-area set {j A_max / N, j = 1..N}"},
+   "L_over_d_phi": "the 8 F1 nodes {3, 5, 10, 20} x {0.8, 0.9} (never interpolated; d collapsed, 5-20 mm)",
+   "filter": "F4-FIL-T0.9 / T0.7 / T0.5 / PLACEHOLDER (v1)",
+   "compressor": "F3 grid without R1 / R2 / R3 whose v1 S0 mass lower bound is <= 5.5 kg (C_mass; mass-relaxed set: all S0 compressors, used only as registered under mass_transfer)",
+   "plenum_volume_m3": [0.001, 0.01, 0.1],
+   "plenum_wall": "WALL-G0",
+   "plenum_set_pressure_Pa": [0.002, 0.005, 0.01, 0.02, 0.05, 0.1],
+   "controller": "Kp {0.3, 3} x Ti {0.3, 3} s, f_valve 1 Hz, authority 3 (v1 K9 order)"
+  },
+  "effective_area_evaluation": "the steady chain depends on (geometry, filter, compressor, scenario, state, A_eff) only (intake side = A_eff x unit side); it is evaluated once per distinct A_eff = j A_max / N of the grid (27 values, 1/32 ... 1.5 m^2) and shared by every (A_max, N) containing it. Rows whose captured flow is below the sustained necessary flow at that A_eff (evaluated with P_comp = 0, the favourable end of P_d_max_1350), or whose total drag at (A_max, A_eff) exceeds the limit, cannot satisfy C-OP and are not swept (exact pruning: delivered <= captured by mass conservation of the chain)"
+ },
+ "inputs": {
+  "flux_coordinate": "Phi(s) = rho(s) V(s), the free-stream mass flux of the envelope atmosphere that drives the F1 capture and drag (abep_mission::intake_drag::EnvelopeAtmospheres: frozen NRLMSIS 2.1 design-state set v2, V circular inertial); the A4 admitted flux Phi_adm(s) is reported alongside",
+  "q": "q(s) = 1/2 rho V^2 (same atmosphere)",
+  "host_drag": {"CDA_host_m2": 0.22106, "source": "docs/closure/icd/host_drag_cda_envelope_v1.json results.governing.T25_capability.CDA_host_max_m2_all_states_unfavourable (IR-HOST-DRAG-01 governing value, INTERFACE_CONSTRAINT_REGISTERED_PENDING_CUSTOMER_ICD)", "sha256": "9c83354100795212bbe555968f502c20c38bf325c21968049cafd5699a5e08f9", "sensitivity": "information: windows also at C_D A_host = 0 (propulsion only) and 1.1 m^2 (RC-DIAMANT reference body)"},
+  "power": {
+   "source": "docs/closure/power/power_ledger_v1.json (P6)",
+   "sha256": "23e3366967f3d04d332564f95e6f4ddb3f4aa3b3d774cb6e09b5aa6a9138472a",
+   "P_d_max_1350": "points[P-12].P_d_max_W.design_allocation_1350 - dPd_max_per_W_compressor x (P_comp - CP-NOM): the Hall discharge ceiling at the 1,350 W internal design target with the compressor at its operating-point input (CP-NOM 9.76239 W is the P-12 compressor term; dPd_max_per_W_compressor = 0.9)",
+   "P_d_max_1500": "points[P-12].P_d_max_W.rfp_1500_supremum - 0.9 (P_comp - CP-NOM): the ceiling at HC-03 < 1,500 W",
+   "compressor_headroom_W": "compressor_headroom.inside_common_300W_W (231.33 W, inside the 300 W common allocation)"
+  },
+  "requirement_thresholds": "HC-01 12 mN, HC-02 25 mN (abep-config); the A4 K-MDOT-REQ(T, P) = (T - P/c)^2 / (2P) (abep_mission::conservation_bounds::mdot_required)",
+  "mass": "AL-02 compressor + drive 5.5 kg (mass_power_a9_v5, v1 pin)"
+ },
+ "operating_point": {
+  "definition": "for a design (geometry, A_max, N, filter, compressor, P_set) at state s and scenario k, j is admissible if every condition C-OP holds at A_eff = j A_max / N; the selected operating point is the smallest admissible j (minimum capture: least compressor load and least excess flow)",
+  "C-OP": {
+   "DOMAIN": "steady chain with no fail-closed reason bit, in domain, dead-head margin p_dead / P_set - 1 > 0 (v1 C-DOMAIN, per point)",
+   "DRAG": "D_tot = d_F1(s, k) A_eff + 4.1 q(s) (A_max - A_eff) + q(s) CDA_host <= HC-02 (25 mN thrust capability; with D_intake = the first two terms <= HC-09 implied)",
+   "FLOW_SUSTAINED": "mdot_del >= K-MDOT-REQ(max(HC-01, D_tot), P_d_max_1350(P_comp) + q_max(s) A_eff): the necessary (conservation) flow for 12 mN sustained, raised to the drag-compensation thrust where the total drag exceeds 12 mN, at the 1,350 W internal design target (q_max from the A4 record, as v1)",
+   "POWER": "P_comp <= 231.33 W (P6 compressor headroom) and P_d_max_1350(P_comp) > 0",
+   "MASS": "compressor model mass <= 5.5 kg (AL-02) at the point"
+  },
+  "capability_point": "CAP25(s, k): some j has DOMAIN, DRAG, POWER, MASS and mdot_del >= K-MDOT-REQ(HC-02, P_d_max_1500(P_comp) + q_max(s) A_eff)",
+  "state_served": "s is served if every admitted scenario k has an admissible j (all 10 scenarios, none chosen)"
+ },
+ "window": {
+  "definition": "states sorted by Phi (ties by state id). A run is a maximal set of consecutive served states. A run is admissible if C-FLOW-CAP holds on it: for every scenario k some state of the run has CAP25(s, k) (the v1 / A4 existence form of the 25 mN capability, restricted to the window). The design's window is the admissible run with the best (O1, O2, log width); [Phi_lo, Phi_hi] = the flux of its first and last states (closed interval spanned by evaluated states; no interpolation)",
+  "altitude_schedule": "registered condition c = the ECSS atmosphere scenario of the design-state set (ECSS_LT_LOW, ECSS_LT_MODERATE, ECSS_LT_HIGH, ECSS_ST_HIGH). Altitude node (c, h), h in {180, 195, 215, 230} km, is admissible if every required state of (c, h) has Phi in [Phi_lo, Phi_hi] (the window must hold at every location / local time / season state of the node at a fixed altitude). Per condition: the admissible nodes and the band [min, max]; a condition with no admissible node is reported as UNCOVERED (a finding, A9.39 item 3; not a reason to reopen the architecture). Altitudes between nodes are reported only as an exponential (log-linear in Phi) interpolation, labelled information",
+  "coverage_objective": {"O1": "number of conditions with at least one admissible node (maximise)", "O2": "number of admissible (condition, node) pairs (maximise)"}
+ },
+ "ranking": {
+  "keys": [
+   "O1 (max)",
+   "R: robust before conditional (evaluated lazily in this order, see robustness)",
+   "O2 (max)",
+   "N (min): mechanism complexity (VC-0 before VC-1 N = 2, 4, 8)",
+   "W: log(Phi_hi / Phi_lo) in bins of 0.1 (max)",
+   "r_sus: min over window operating points of mdot_del / mdot_req,sustained in bins of 0.05 (max)",
+   "m_comp: max compressor model mass over window operating points in bins of 0.1 kg (min)",
+   "A_max (min)",
+   "P_set (max)",
+   "D_tot max over window operating points (min)",
+   "P_comp max over window operating points (min)",
+   "V (min), controller in v1 K9 order",
+   "design id (lexicographic)"
+  ],
+  "stability": "designs are taken in the order of the keys other than R; for each, (V, controller) pairs in key order; the first pair with class S (Rust screen, contract-v8 input-only class) at every window operating point (all scenarios) completes it; a design with no such pair is set aside (reported). Cap: 200 designs screened",
+  "robustness": "for each completed design the 8 v1 corners are evaluated: robust if at every corner every window state stays served (j re-chosen per corner: the shutter is a feedback actuator), C-FLOW-CAP holds on the window, and the Rust class is S at every corner operating point with the same (V, controller). Selection: among the completed designs with the maximum O1, the first robust one in order; if none, the first completed one (CONDITIONAL_ON_COMPRESSOR_COEFFICIENTS, failing corners listed)",
+  "governed_stability": "the governed Python reference (new script scripts/dcr001/dcr001_window_stability_reference.py: the v1 method applied per operating point with its own A_eff) is run on the selected design at nominal and the 8 corners; Rust must agree on every row (class and equilibrium kinds) or the result is MODEL_ERROR and nothing is selected; a Python non-S row sets the design aside and the next is taken"
+ },
+ "mass_transfer": "the primary evaluation uses C_mass and the 5.5 kg AL-02 limit. If the selected design has O1 < 4, the evaluation is repeated with the mass criterion removed over all S0 compressors; if that raises O1, the mass-relaxed best design is selected instead and the resolution carries an explicit MASS_TRANSFER_REQUEST to the roll-up (kg above AL-02 and the coverage gained). Otherwise the mass-relaxed information is evaluated on the selected (geometry, A_max, N, filter, P_set) only",
+ "information_never_gating": [
+  "realistic-efficiency planning value: mdot_plan(T, P_d) = T^2 / (2 eta_a,plan P_d_max_1350(P_comp)), eta_a,plan = 0.20 nominal, band [0.10, 0.30] (anode efficiency of the atmospheric H-1 discharge; evidence class assumed, level 7; no H-1 atmospheric measurement exists, A9.39 item 4 makes it an EM verification item; published atmospheric-propellant Hall tests are context only, REF-ANDREUSSI2022, performance values not used, verify). The window and schedule of the selected hardware are reported at 0.10 / 0.20 / 0.30",
+  "V_d bound: mdot >= T / v_max(O+, 350 V) (fixed_intake_window_v1, single ionisation; not a strict bound with multiply charged ions) on the selected hardware",
+  "host-drag sensitivity windows (C_D A 0 and 1.1 m^2) on the selected hardware",
+  "capture efficiency eta_c = mdot_cap / (Phi A_eff) of every window operating point, by scenario (min / max)",
+  "delivered composition (x_O, x_N2, x_O2), compression ratio, Gaede K_min, dead-head margin, Kn of the feed, compressor temperature at window operating points",
+  "the 196-state verification-set view: per state served / not served and the reason (drag, flow, domain, power, mass), and the states outside the window",
+  "intake mass: structural mass TBD (F1Q-02, PARAMETRIC_SENSITIVITY); wall area 2 phi A_max L/d reported; shutter mechanism mass and power are not registered and go to the roll-up as an allocation request inside AL-01 (verification at PDR / EM)"
+ ],
+ "outputs": {
+  "record": "docs/baseline/DCR-001/dcr001_window_record_v1.json (schema abep_dcr001_window_record_v1) + DCR001_WINDOW_REPORT_v1.md",
+  "stability_reference": "docs/baseline/DCR-001/dcr001_window_stability_python_reference_v1.json",
+  "resolution": "docs/baseline/DCR-001/dcr001_resolution_v1.json (proposes DBF-1.2 on top of DBF-1.1, lock 257e141c...; DBF-1 and DBF-1.1 never edited; the DCR register is coordinator-maintained and not written by the lane)",
+  "producer": "abep-assess module abep_assess::dcr001_window (additive) and binary abep-dcr001-eval subcommands window-search / window-record",
+  "cross_checks": [
+   "the window harness at (N = 1, A_max = 0.25, L/d 20, phi 0.9, F4-FIL-T0.9, the DBF-1 compressor, P_set 0.02) reproduces the v1 harness delivered flows and reason bits of the DBF-1 design exactly at every (scenario, state)",
+   "side(A_eff) = A_eff x side(1) holds to 1e-12 relative on the F1 records (F1-02 scaling)",
+   "a failed cross-check is MODEL_ERROR: no record"
+  ]
+ },
+ "p1_closure_state": {
+  "O1 = 4, robust, governed-stable": "FROZEN FOR EM (EM verification: effective-area modulation and capture efficiency, surface accommodation DI-1.3, compressor coefficients, closed-shutter drag)",
+  "O1 = 4, conditional": "FROZEN FOR EM with the coefficient condition as an EM verification requirement",
+  "1 <= O1 < 4": "FROZEN FOR EM with the uncovered registered conditions reported as a finding (A9.39 item 3), not a reopening",
+  "O1 = 0 (no admissible window)": "DCR REQUIRED (a mechanism with a non-admitted model, VC-2 / VC-3, or an allocation change; the record names the residual)",
+  "MODEL_ERROR": "no record; nothing selected"
+ },
+ "determinism": "pure functions of pinned inputs; BTreeMap / sorted keys; workers partition independent work, results merged in index order; the record is produced twice and must be byte-identical",
+ "fail_closed": [
+  "any pin that does not verify -> no record",
+  "a producer MODEL_ERROR, a Python / Rust stability disagreement or a failed cross-check -> no record, nothing selected",
+  "a missing quantity is NOT_EVALUATED with its reason, never a pass"
+ ],
+ "not": [
+  "not a performance prediction, a validation, a qualification or a flight acceptance",
+  "not an architecture change (A9.39 froze the architecture), not a change of an RFP requirement, owner allocation or admitted / scored record",
+  "not an area limit (A4-REG-01 stays open); the 196-state set stays the conservative verification set"
+ ],
+ "change_control": "any change after the lock is a new dated version; v1, v2 and v3 are never edited"
+}

@@ -1,0 +1,47 @@
+{
+ "schema": "abep_dcr_eval_prereg_v1",
+ "id": "DCR-001/dcr001_eval_prereg_v2",
+ "dcr": "DCR-DBF1-001 (alias DCR-001)",
+ "status": "PREREGISTERED_AMENDMENT_AFTER_PARTIAL_V1_EXECUTION",
+ "date": "2026-10-09",
+ "amends": {
+  "path": "docs/baseline/DCR-001/dcr001_eval_prereg_v1.json",
+  "sha256": "98f9931cbf537c3acca9753fafc9c9a9f93b22e7beb27dbae950f0c2c9e556f5",
+  "lock_sha256": "39e76c68ee48f3d2c15b492f865be6929f8300f8b94afa680476e8bc80c1998d",
+  "scope": "ONLY the non_closure_rule.best_design (set and keys) and an information block; everything else of v1 is retained verbatim and governs: design space DS-DCR001, compressor-coefficient provenance and corners, every criterion and the admissibility / robustness definitions, procedure S0-S5, the selection rule for admissible designs, resolution and P1 closure-state mapping, outputs, cross-checks and fail-closed rules"
+ },
+ "why": {
+  "v1_results_seen_before_this_amendment": [
+   "development executions of the v1 search (abep-dcr001-eval, not a record): S0 C_mass 494 of 1050 compressors; S1 I_drag 132 of 360 intakes; S2 I_cap 3 intakes (A 0.34, 0.35, 0.36 m^2, L/d 3, phi 0.9); S3 (5,928 triples, admissible mode): no steady-admissible design; v1 non-closure set I_drag x filters x C_mass x P_set (260,832 triples, early termination): no design meets every non-flow steady criterion, so v1 widens to I_all x filters x all S0 compressors (1,512,000 triples, no early termination)",
+   "a development diagnostic over I_cap x 4 filters x all 1,050 S0 compressors x 6 P_set (75,600 designs, full evaluation): every design fails C-DOMAIN (out-of-domain rows, dead-head and / or Gaede K outside [1, K0], in some state and scenario); 31,075 meet C-POWER and C-MASS; criteria pattern counts only, plus one design summary (the max-r12 design within mass and power has r12 = 0 because it is out of domain at some row). No per-design ranking by the v2 keys below was computed or seen"
+  ],
+  "defects_of_v1_non_closure_rule": [
+   "the widened set (1.512 M triples x 10 scenarios, about 15 M steady sweeps; about 26 CPU-hours on the shared 4-core host at the measured rate) cannot be executed within the lane; nothing in it can change the minimum failed-criteria count found (the N1' = 0 subset lies inside I_drag x C_mass, which is empty)",
+   "v1 key N2 scores every C-DOMAIN-failing design r12 = 0, so with C-DOMAIN failing everywhere N2 never discriminates and the v1 best design would be decided by compressor-mass bins alone (the lightest compressor), which is not informative about the residual"
+  ],
+  "integrity": "the admissibility criteria are unchanged, so this amendment cannot turn a non-admissible design into an admissible one; it only defines which non-admissible design is reported as best and proposed as the DBF-1.1 implementation with its residual deficiency"
+ },
+ "non_closure_rule_v2": {
+  "set": "I_cap x the 4 architecture-context filters x all S0 compressors (F3 grid without R1 / R2 / R3, mass not pre-filtered) x the 6 set pressures, full evaluation (no early termination) at nominal coefficients. Rationale: S2 is a necessary condition of C-FLOW-T12 (delivered <= captured), so only I_cap intakes can close the principal deficiency (BD-01)",
+  "keys": [
+   "M1: minimise the number of failed non-flow steady criteria among C-DOMAIN, C-DRAG, C-POWER, C-MASS",
+   "M2: minimise the number of out-of-domain (state, scenario) rows",
+   "M3: maximise r12_in = min over the in-domain rows of mdot_del / mdot_req,in(HC-01), exact",
+   "M4: minimise the number of rows failing T12 (out-of-domain rows count as failing)",
+   "M5-M10: v1 K3 (compressor mass, 0.1 kg bins), K4 (intake wall area), K5 (higher P_set), K6 (drag), K7 (compressor power), K10 (design id)"
+  ],
+  "stability": "for the best design, (V, controller) in K8 / K9 order: the first pair with the fewest non-S rows of the Rust screen (S5 classes; R rows at dead-head states are expected where C-DOMAIN fails); the governed Python reference with Rust R2 agreement on every row is then run on it at nominal and at the 8 corners, as v1",
+  "corners": "the 8 v1 corners are evaluated on the best design and reported (no robustness label is claimed for a non-admissible design)",
+  "residual_report": "per criterion as v1, plus the out-of-domain rows by reason (dead-head, Gaede K, other) and by scenario and altitude, and the delivered-flow ratio over the in-domain rows",
+  "classification": "unchanged from v1: DESIGN_VARIABLE_LIMIT within DS-DCR001; FUNDAMENTAL_NON_CLOSURE not reachable"
+ },
+ "information_added": {
+  "rule": "information only, never a criterion; values relayed by the coordinator from the P6 power ledger and the P9 host-drag ICD lane (2026-10-08), received after the v1 lock",
+  "items": [
+   "flow ratio of the best design against K-MDOT-REQ(12 mN) at the P6 Hall discharge ceiling P_jet = 911 W (electric only, and with the q_max A inflow credit)",
+   "compressor power against the P6 compressor headroom of 231 W inside the 300 W common allocation",
+   "intake-face drag of the best design at the states where the DBF-1 intake-face drag alone exceeds 12 mN, and whether D_intake + q (C_D A)_host <= 25 mN holds at every 180 km state with the IR-HOST-DRAG-01 governing value 0.221 m^2"
+  ]
+ },
+ "change_control": "any further change is a new dated version; v1 and this v2 are never edited"
+}

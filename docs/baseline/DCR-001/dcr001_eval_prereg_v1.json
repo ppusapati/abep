@@ -1,0 +1,190 @@
+{
+ "schema": "abep_dcr_eval_prereg_v1",
+ "id": "DCR-001/dcr001_eval_prereg_v1",
+ "dcr": "DCR-DBF1-001 (alias DCR-001), docs/baseline/DBF-1/dcr_register_v2.json",
+ "status": "PREREGISTERED_BEFORE_EVALUATION",
+ "label": "ACTUAL_DESIGN_EVALUATION / PARAMETRIC (compressor coefficients and surface accommodation are engineering assumptions) / NOT_VALIDATED / NOT_A_PERFORMANCE_PREDICTION",
+ "date": "2026-10-08",
+ "lane": "L-INTAKE-DCR001 (A9.38 P1)",
+ "base_commit": "00a7290 (DCR-DBF1-001 opened; origin/integration/simulation-complete 42bb83a)",
+ "registered_before": "any evaluation code of this DCR and any computation on any replacement design. Results seen before registration: those listed in dcr_register_v2.json results_seen_before_request (DBF-1, M2 v1, A4, A5, F1, F3, F4, F7, F8 committed records). The registrant's only additional reasoning was a back-of-envelope reading of committed numbers: at fixed geometry the necessary-flow and drag-filter conditions both scale with A, so closure requires a sufficiently high ratio of worst-state capture efficiency to densest-state intake C_D; no candidate value was computed.",
+ "governing_records": {
+  "docs/decisions/OD_2026_10_08_A9_38_ARCHITECTURE_FROZEN_DESIGN_CLOSURE_PROGRAMME.md": "7bc06a0044283ba054b60a55a99bae84b6f7aea2cb5e4283d3a627ff543b9bcf",
+  "docs/decisions/OD_2026_10_08_A9_37_DBF_1_DESIGN_BASELINE_FREEZE.md": "fbe62372e719daaabd41f3a65ae20b14e7909a28b46eed288488b42f3700cb43",
+  "docs/decisions/OD_2026_10_08_A9_35_A4_REG_01_OPEN_INTAKE_CLOSURE_RULE.md": "7175987a80ffc730c0b910091ec02929cb7930b47b7c4436a5edc772da59ade5",
+  "docs/baseline/DBF-1/DCR_PROCESS.md": "14f05a7b64968acf9b2a3bc53e5ff33bc83b4304ad284d58f35f27fcc5a04a91",
+  "docs/baseline/DBF-1/dbf1_lock_v1.json": "517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907",
+  "docs/baseline/DBF-1/dbf1_v1.json": "d20f1e8aa95c2d6ee0b307669500d7aaa5ea6abf4d21ddb944b7999525943e4f",
+  "docs/baseline/DBF-1/dbf1_config_v1.json": "5bd76159fb9761b5c47619fb42217f05c24841d7009067ac71dcedf731759864",
+  "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a4_conservation_bounds.json": "7cd43c80188450b4563c5807b46b5866a39c19fe9b383dd3444cfe583b7668e1",
+  "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a4_lock.json": "5a03333e9a18f9bd85fe7bf0359b81d541bf45a4c7c91f0b4e12076f5cb92dcc",
+  "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a8_m2_dbf1_v1.json": "816495c61e41c87be1ece60c3ce7950b191f4e4a322fd641698a3f39f7da4568",
+  "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a8_m2_dbf1_lock_v1.json": "67e37fad110bc14bc36fbe3ff9c906d91e0e5873abdf614921e1196bda54b59c"
+ },
+ "pinned_inputs": {
+  "docs/rust_migration/new_physics/NP-HALL-PARAMETRIC-ENVELOPE/conservation_bounds_v1.json": "5146fe583343bf5de090a8baeecb812640754b7e579f0df69c78e54dd642689f",
+  "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1_core.json": "d397cb9348d06eafbe2e7cc3ee9ca035f97e8f423d63df8f42286ce75bc20854",
+  "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json": "74a52aa749e1d071f76957e4f9ef4929c9d8ab302b183da3c5a5d9ba8d6d6923",
+  "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json": "6871975696f7b40dac897c52b529266eb053ecbf4ea7ab17cb3e3fbdac73a27b",
+  "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json": "fffb223023f944f166112acf017af277a50ede84695cb78f933dd5ca918fd3a9",
+  "abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json": "60073e214cf5edb92d7eacf70be1491ad29ff72f19db0ef3b96a4b30da6f4049",
+  "docs/rust_migration/contracts/C-ABEP_SIM_DESIGN_ARCHITECTURE_OPTIMIZER_PY/reference_outputs/f7_pareto_blocks_v1.json.gz": "de6ee69f21d4e5b4daba6e1b8bed263598b950b19cae9da49d309ec4d7664f00",
+  "docs/milestones/M2_196_state_rfp_closure/m2_closure_record_v1.json": "600cf229ecdb5f91f0471f03cfdd6d287486ad21e9d9ebadde3cdafa54a37394",
+  "docs/milestones/M2_196_state_rfp_closure/dbf1_feed_stability_python_reference_v1.json": "fb1cc1d9dba4078f86ba018d7a45f5a97f6975ec4c9529d25035b6cd178aaaf0",
+  "docs/budgets/mass_power_a9_v5/mass_power_a9_v5.json": "3ff23429f5225a8a8363a784281b2f32b1df9ad69ec9934320306b080436b73a",
+  "config/constraints/engineering_constraints_v1.json": "5821cc439ba15b67776072a90d64bafca8be0740150acec51da5c59a238ae74e",
+  "config/assessment/gate_thresholds_v1.json": "504af5968d692286770ff89a3800b04ff83b6f96aff8e1fe21ee779e9cef3a3b",
+  "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json": "d086b981e7cb8ff6c6096e7768d89de0b9d8c5ad760308672a90ec75b97b718d",
+  "abep_sim/design/plenum_feed.py": "dbc28212e4c3d79a60c0cae7f875c62291ea3e90dbdc491b2bcfaa5f967d616b",
+  "abep_sim/compressor.py": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75"
+ },
+ "frozen_concept_retained": "atmospheric intake (multichannel TPMC-ROM intake) -> filter -> active compressor (turbomolecular rows and Gaede / Holweck drag stages of the admitted DragCompressor family) -> plenum -> pressure-regulated feed orifice -> H-1. No new propulsion or compression family, no new physics; only implementation parameters of the existing registered models are varied (A9.38 sec. 1; CLAUDE.md rule 8).",
+ "models": {
+  "intake": "F1 IF-A1 unit-area records (direct TPMC, theta 0) scaled by A (d-invariant at fixed L/d, F1-02; flows and the intake backflow term are proportional to A, p_passive and K_back are intensive) through abep_design::f1view::load_f1_records; intake-face drag = F1 drag per unit frontal area (abep_mission::intake_drag::drag_table) x A",
+  "chain": "admitted steady chain abep_gaspath::plenum_feed (intake_side, steady_sweep with its fail-closed reason bits; steady_operating_point for the detailed record of the selected design)",
+  "stability": "contract-v8 input-only stability class (event_sequence equilibria; S / U / R). Screening by abep_gaspath::transient::stability_class_events (Rust). Authoritative class of the selected design: the governed Python reference (A9.34: plenum / feed v8 PARITY_FAIL stands, the Python reference governs the transient path) by a new script scripts/dcr001/dcr001_feed_stability_reference.py that applies the M2 reference method (scripts/m2/dbf1_feed_stability_reference.py: TransientRun, event_sequence, the v7 / v8 harness _py_equilibrium) to the selected design and coefficient set; Rust must agree on every row (class and equilibrium kinds) or the result is MODEL_ERROR and nothing is selected",
+  "requirement": "A4 K-MDOT-REQ (abep_mission::conservation_bounds::mdot_required) at P_avail(s) + q_max(s) A, with P_avail(s) and q_max(s) read per state from the committed A4 record (AIR_PRIMARY), exactly the A8 mdot_req,in"
+ },
+ "design_space": {
+  "id": "DS-DCR001",
+  "variables": {
+   "intake_area_m2": {"values": "0.20, 0.21, ..., 0.60 (41 values, step 0.01) and 0.75, 1.0, 1.25, 1.5 (F1 grid)", "n": 45, "basis": "continuous aperture scan around and above the A4 area (0.2511 m^2) and the F1 grid; A4-REG-01 open: no area limit is invented (A9.35)"},
+   "L_over_d": {"values": [3.0, 5.0, 10.0, 20.0], "basis": "F1 / intake_surface_v1 grid nodes; never interpolated (F1 coverage rule)"},
+   "phi": {"values": [0.8, 0.9], "basis": "F1 grid nodes (open-area fraction)"},
+   "channel_diameter": "collapsed (F1-02); set with the mechanical design inside the F1 grid 5-20 mm",
+   "pointing_theta_deg": 0.0,
+   "filter": {"values": ["F4-FIL-T0.9", "F4-FIL-T0.7", "F4-FIL-T0.5", "F4-FIL-PLACEHOLDER"], "basis": "every architecture-context filter case; F4-FIL-NONE is a reference bound only, never admissible (A9.13 S6.5)"},
+   "compressor": {"values": "every design of the F3 design grid (f3_compressor_designs_v1.json, 2160 designs: N_turbo 1-6, A_turbo 3 values, hub ratio 0-0.75, turbo tip speed 6 points to 500 m/s, N_drag 0-4, Ti6Al4V) that carries none of the F3 inlet-independent gate codes R1 / R2 / R3 (rotor allowable, rotor stress with the cited Ti-6Al-4V A-basis Fty and safety factor 2, tip speed <= 500 m/s); the codes must be identical in every F3 case, else MODEL_ERROR", "basis": "topology (turbo rows, drag stages), speed and size of the existing DragCompressor family"},
+   "plenum_volume_m3": {"values": [0.001, 0.01, 0.1], "basis": "F4 decade grid"},
+   "plenum_wall": "WALL-G0 (unchanged; inert-lining bound, owner H1F-IN-02)",
+   "plenum_set_pressure_Pa": {"values": [0.002, 0.005, 0.01, 0.02, 0.05, 0.1], "basis": "F7 target grid; the free-molecular model domain ends at 0.1 Pa (A9.13 S6.8); single fixed setpoint (an orbit-scheduled setpoint, OQ-F4-01, is not a registered control mode and is excluded)"},
+   "controller": {"values": "Kp in {0.3, 3.0}, Ti in {0.3, 3.0} s, f_valve 1 Hz, authority 3", "basis": "registered F4 grid (definition one-decade grid; f_valve / authority the only registered values)"}
+  },
+  "scenarios": "all 10 admitted TPMC surface scenarios (maxwell / cll x alpha 0, 0.2, 0.5, 0.8, 1); none chosen (A9.13 S6.16)",
+  "states": "all 196 required design states of atmosphere_msis21_orbit_v1_design_states_v2 (the F1 design-case reference h200_f150 is not a required state)",
+  "size": "360 intake geometries x 4 filters x N_C compressors x 3 volumes x 6 set pressures x 4 controllers; the record states N_C and the total. The steady chain is independent of V (WALL-G0: no recombination, fixed leak area; asserted by a test) and of the controller, so steady evaluation is per (intake, filter, compressor, P_set, scenario)"
+ },
+ "compressor_model_provenance": {
+  "rule": "no repository source gives a value for any fixed DragCompressor coefficient (F3 coefficients, compressor_downselect CD-01). Each is frozen at its code default as a FROZEN_ENGINEERING_ASSUMPTION (evidence class assumed, level 7) with the uncertainty band below; cited relations bound or cross-check a band where the repository has them. The admissibility evaluation uses the nominal values; the robustness check repeats every criterion at the unfavourable corners. A result that closes only at nominal is labelled CONDITIONAL_ON_COMPRESSOR_COEFFICIENTS.",
+  "coefficients": [
+   {"name": "turbo_kS", "role": "turbo pumping speed S = kS u_t A_turbo", "nominal": 0.20, "band": [0.10, 0.30], "unfavourable": 0.10, "evidence": "assumed (7)", "bound": "upper physical limit S <= A c_bar / 4 (orifice limit, compressor_downselect EV-20 form; Chiggiato 2013 Eq. 46 EV-01 for the drag-stage analogue) -> kS <= c_bar / (4 u_t), >= 0.24 for O2 at 350 K up to 500 m/s: the band upper end is a plausibility bound only"},
+   {"name": "turbo_kK", "role": "per-row ln K0 = kK u_t / c_bar", "nominal": 1.2, "band": [0.6, 1.8], "unfavourable": 0.6, "evidence": "assumed (7)", "bound": "cross-check only: classical TMP K0(H2) ~ 1e3 (Chiggiato 2013 Sec. 4.1.2, EV-03) with an unstated row count; the form ln K0 ~ sqrt(m) is cited (EV-02)"},
+   {"name": "leak_conductance_m3_s", "nominal": 2e-4, "band": [1e-4, 3e-4], "unfavourable": 3e-4, "evidence": "assumed (7)"},
+   {"name": "xi", "role": "drag-stage geometric efficiency", "nominal": 0.6, "band": [0.3, 0.9], "unfavourable": 0.3, "evidence": "assumed (7)", "bound": "xi <= 1 (ideal S = u b h / 2, EV-01)"},
+   {"name": "turbo_blade_area_frac", "nominal": 0.35, "band": [0.175, 0.525], "unfavourable": 0.525, "evidence": "assumed (7)"},
+   {"name": "turbo_disc_thickness_m", "nominal": 0.002, "band": [0.001, 0.003], "unfavourable": 0.003, "evidence": "assumed (7)"},
+   {"name": "rotor_disc_thickness_m", "nominal": 0.004, "band": [0.002, 0.006], "unfavourable": 0.006, "evidence": "assumed (7)"},
+   {"name": "stator_mass_factor", "nominal": 1.2, "band": [0.6, 1.8], "unfavourable": 1.8, "evidence": "assumed (7)"},
+   {"name": "motor_kg_per_Nm", "nominal": 4.0, "band": [2.0, 6.0], "unfavourable": 6.0, "evidence": "assumed (7)"},
+   {"name": "bearing_kg", "nominal": 0.6, "band": [0.3, 0.9], "unfavourable": 0.9, "evidence": "assumed (7)"},
+   {"name": "k_bear_W_per_rads", "nominal": 3e-4, "band": [1.5e-4, 4.5e-4], "unfavourable": 4.5e-4, "evidence": "assumed (7)"},
+   {"name": "eta_motor", "nominal": 0.8, "band": [0.5, 0.9], "unfavourable": 0.5, "evidence": "assumed (7)", "bound": "power cross-check: P_el >= P_pneumatic / 0.01 (TMP thermodynamic efficiency 1-10 %, Singh 2014 citing Hablanian 1993, EV-05, verify) reported for the selected design"},
+   {"name": "P_ctrl_W", "nominal": 8.0, "band": [4.0, 12.0], "unfavourable": 12.0, "evidence": "assumed (7)"},
+   {"name": "conductance_to_sink_W_K", "nominal": 0.4, "band": [0.2, 0.6], "unfavourable": 0.2, "evidence": "assumed (7)"},
+   {"name": "T_sink_K", "nominal": 293.0, "band": [273.0, 333.0], "unfavourable": 333.0, "evidence": "assumed (7)"},
+   {"name": "stress_safety", "nominal": 2.0, "band": "not varied", "evidence": "assumed (code default); the rotor gate uses the cited Ti-6Al-4V A-basis Fty 827 MPa (NASA-HDBK-6025 quoting MMPDS-06); flight rotor acceptance only through a registered strength basis (A9.9 S2.3)"},
+   {"name": "h_mm, w_mm, L_per_stage_m, rotor_radius_m", "nominal": "3, 12, 0.35, 0.06", "band": "not varied", "evidence": "frozen drag-stage geometry assumptions (design dimensions of a drag stage, not model coefficients); they become design values only if a drag-stage design is selected"}
+  ],
+  "cited_parameters_retained": "molecular-regime limit 0.1 Pa (Chiggiato 2013 Sec. 4.1.2), drag-channel Kn >= 0.5 (Chiggiato Table 7), tip speed <= 500 m/s (Chiggiato Sec. 4.1.2), Ti-6Al-4V A-basis Fty 827 MPa (NASA-HDBK-6025); rotor density 4430 kg/m^3 and T_max 700 K stay uncited DB priors (verify)",
+  "corners": {
+   "rule": "monotone coefficients (mass: m increases with every mass coefficient; power: P_el increases with blade fraction, k_bear, P_ctrl and decreases with eta_motor; thermal: T_comp increases as the sink conductance falls and T_sink rises) are set to their unfavourable end in every corner; the flow-path coefficients (kS, kK, leak; xi for drag stages) whose effect on flow, domain and stability is not shown monotone are taken at all 2^3 combinations of their band ends (xi at its unfavourable end throughout)",
+   "n_corners": 8,
+   "applied_to": "every criterion (flow, domain, power, mass, stability) of the admissible designs (steady) and of the selected design (stability, Rust screen and Python reference)"
+  }
+ },
+ "criteria": {
+  "quantifier": "every criterion is evaluated over the COMPLETE governed set: all 196 required states x all 10 admitted surface scenarios (never a nominal state, never a chosen scenario)",
+  "C-FLOW-T12": "12 mN sustained (HC-01): at every required state in every scenario the steady point is in domain and mdot_del(s, sc) >= mdot_req,in(s, HC-01, A) = K-MDOT-REQ(HC-01, P_avail(s) + q_max(s) A) (A4 / A8; P_avail = 1500 W, the A4 value: HC-03 minus the eligible non-Hall lower bound 0 W)",
+  "C-FLOW-T25": "25 mN capability (HC-02), A4 existence form: in every scenario at least one required state has an in-domain steady point with mdot_del >= mdot_req,in(s, HC-02, A); the per-state T25 counts are reported",
+  "C-DOMAIN": "at every required state in every scenario the steady chain carries no fail-closed reason (no dead-head TARGET_AT_OR_ABOVE_DEAD_HEAD_PRESSURE, Gaede K inside [1, K0], stage / inlet pressure <= 0.1 Pa, feed-orifice Kn >= 0.5, compressor temperature <= the material limit, orifice bisection converged) and the dead-head margin p_dead / P_set - 1 > 0",
+  "C-STAB": "feed-loop input-only class S at every required state in every scenario for the design's (V, controller); U (UNSTABLE_EQUILIBRIUM) and R (refused, dead-head) fail",
+  "C-DRAG": "intake-face drag <= HC-09 (engineering constraint intake_drag_generation_limit_mN, 25 mN; C-DRAG-RFP) at every required state in every scenario (F1 mean drag; its SE margin is reported)",
+  "C-POWER": "compressor electrical power (shaft / eta_motor + bearing + P_ctrl) <= 250 W at every required state in every scenario: the frozen 300 W common-load allocation (DBF1-PWR-03) minus its 50 W controls / thermal allowance; the flow-control valve load is not registered (P6 power lane) and is reported as such",
+  "C-MASS": "compressor model mass <= 5.5 kg (AL-02 compressor+drive, mass_power_a9_v5) at every required state in every scenario (torque-dependent motor term); an explicit DCR mass transfer from the mass lane would replace the 5.5 kg (none registered)",
+  "admissible": "C-FLOW-T12 and C-FLOW-T25 and C-DOMAIN and C-STAB and C-DRAG and C-POWER and C-MASS at the nominal coefficients",
+  "robust": "admissible and every criterion also holds at all 8 unfavourable coefficient corners -> ADMISSIBLE_ROBUST; admissible only at nominal -> ADMISSIBLE_CONDITIONAL_ON_COMPRESSOR_COEFFICIENTS (the failing corners and criteria listed)",
+  "information_never_gating": [
+   "L-AREA: A >= A_req(s, HC-01) (A4 K-AREQ; implied by C-FLOW-T12 since mdot_del <= mdot_cap <= Phi_max A)",
+   "INFO-ALLOC: margin against K-MDOT-REQ at the DBF-1 design allocation for Hall + ICP (1350 W - 300 W common = 1050 W, DBF1-PWR-04) + q_max A",
+   "delivered composition (x_O, x_N2, x_O2 of the delivered flow), passive and active compression ratios, dead-head margin, Gaede K_min",
+   "T_required = D_body(RC-DIAMANT, REFERENCE_PENDING_CUSTOMER_ICD) + D_intake per state (host-drag reference only)",
+   "intake geometric wall area 2 phi A L/d and the F1 PARAMETRIC_SENSITIVITY intake mass case vs AL-01 3.5 kg (structural definition TBD, F1Q-02)",
+   "TPMC statistical SE margins of the captured flow and drag"
+  ]
+ },
+ "procedure": {
+  "rule": "staged evaluation; every pruning stage applies a necessary condition exactly, so no admissible design is lost; the record gives the count surviving each stage",
+  "S0": "compressors: F3 inlet-independent gates R1 / R2 / R3 (design space); C-MASS lower bound m_LB = m_rotor (1 + stator) + motor_kg_per_Nm x 0.01 + 0.25 + bearing (torque floor 0.01 N m) <= 5.5 kg at nominal -> C_mass",
+  "S1": "intakes: C-DRAG at every state and scenario -> I_drag",
+  "S2": "intakes: captured flow mdot_cap(s, sc) >= mdot_req,in(s, HC-01, A) at every state and scenario (necessary: the delivered flow never exceeds the captured flow by mass conservation of the chain) -> I_cap",
+  "S3": "steady chain at nominal coefficients for I_cap x filters x C_mass x P_set x scenarios: C-DOMAIN, C-FLOW-T12, C-FLOW-T25, C-POWER, C-MASS -> D_steady (a (intake, filter, compressor) triple stops being evaluated once every P_set has failed in some scenario)",
+  "S4": "the 8 unfavourable corners on D_steady (steady criteria) -> steady-robust flag",
+  "S5": "C-STAB lazily in ranking order: designs of D_steady are taken in the order of the selection keys K1-K7; for each, (V, controller) pairs in the order of K8-K9; the first pair that is S at every (state, scenario) by the Rust screen completes the design; the first design so completed is the candidate selection; then the authoritative Python reference with Rust R2 agreement is run on it at nominal and at the 8 corners. If the Python reference finds a non-S row the candidate is not admissible (or not robust, for a corner) and the next design in order is taken. Stability evaluation stops after 200 designs; reaching the cap is reported",
+  "determinism": "pure functions of pinned inputs; deterministic ordering (BTreeMap / sorted keys); worker threads only partition independent work and results are merged in index order; the record is produced twice and must be byte-identical"
+ },
+ "selection_rule": {
+  "applies_to": "admissible designs",
+  "keys": [
+   "K1: ADMISSIBLE_ROBUST before ADMISSIBLE_CONDITIONAL (steady corners S4)",
+   "K2: maximise the robust worst-state T12 flow ratio r12 = min over states, scenarios and the nominal + 8 corner coefficient sets of mdot_del / mdot_req,in(HC-01), in bins of 0.05 (floor(20 r12) / 20)",
+   "K2b: maximise the nominal worst-state T12 flow ratio (min over states and scenarios, nominal coefficients), in bins of 0.05",
+   "K3: minimise the compressor model mass (max over states and scenarios, nominal), in bins of 0.1 kg",
+   "K4: minimise the intake geometric wall area 2 phi A L/d (mass and surface proxy)",
+   "K5: maximise P_set (feed-pressure margin to the H-1 inlet, whose requirement is pending, H1F-IN-04 / H23-07)",
+   "K6: minimise the maximum intake-face drag",
+   "K7: minimise the maximum compressor electrical power",
+   "K8: minimise the plenum volume V",
+   "K9: controller order (Kp 0.3, Ti 3), (0.3, 0.3), (3, 3), (3, 0.3) (SR-CTRL-01: lowest gain, slowest integral first)",
+   "K10: lexicographic design id"
+  ]
+ },
+ "non_closure_rule": {
+  "trigger": "no design of DS-DCR001 is admissible",
+  "best_design": {
+   "set": "designs evaluated on the steady chain with the flow criteria relaxed: I_drag x filters x C_mass x P_set (S2 not applied); if no design of that set meets every non-flow criterion (C-DOMAIN, C-STAB, C-DRAG, C-POWER, C-MASS), the set is widened to I_all x filters x all S0 compressors x P_set",
+   "keys": [
+    "N1: minimise the number of failed non-flow criteria (C-DOMAIN, C-STAB, C-DRAG, C-POWER, C-MASS)",
+    "N2: maximise r12 at nominal (a state out of domain counts as ratio 0), exact",
+    "N3-N11: K2b (nominal ratio bins are superseded by N2 and skipped), K3-K10"
+   ],
+   "early_termination": "when at least one design of the set meets every non-flow steady criterion (C-DOMAIN, C-DRAG, C-POWER, C-MASS), a (intake, filter, compressor, P_set) that fails one of them in some scenario is not evaluated further (it cannot rank first unless every design meeting them fails C-STAB, in which case the set is re-evaluated without early termination); otherwise the set is evaluated without early termination",
+   "stability": "as S5, in the N-order; a design whose stability fails gains one N1 count and is re-ranked; capped at 200 designs (reported)"
+  },
+  "report": "the best design and its residual shortfall per criterion: k12 = 1 / r12 worst (per scenario and overall, with its state), C-FLOW-T25 per scenario, drag margin, dead-head / Gaede domain counts, stability class counts, power and mass margins; the captured-flow frontier (best min-over-states-and-scenarios mdot_cap / mdot_req,in over I_drag, the compression-independent upper bound of the explored space) per (L/d, phi); the count of states failing T12 per scenario",
+  "classification": "DESIGN_VARIABLE_LIMIT within the explored space (DS-DCR001). FUNDAMENTAL_NON_CLOSURE only if a registered conservation / physics bound proves that no design of the frozen concept can close: the only registered route is A4 CA4 on a FROZEN intake_effective_collection_area_max_m2, and A4-REG-01 stays OPEN (A9.35); this preregistration registers no new bound, so this evaluation cannot conclude FUNDAMENTAL_NON_CLOSURE"
+ },
+ "resolution_rule": {
+  "selected": "the first design by selection_rule; if none, the best design by non_closure_rule",
+  "successor_baseline": "DBF-1.1 in docs/baseline/DBF-1.1/ (new record, config subset and lock; DBF-1 never edited): the DCR items take the selected design's values, compressor coefficients frozen as above with their bands; every other DBF-1 item is carried unchanged by reference; deficiencies re-stated from this evaluation",
+  "dcr_status": "APPROVED_BY_COORDINATOR_PENDING_OWNER_NOTE only if the selection rule produced an admissible design (ROBUST, or CONDITIONAL with the condition stated); otherwise CLOSED_WITH_RESIDUAL_DEFICIENCY with the residuals of the non-closure rule",
+  "p1_closure_state": {
+   "ADMISSIBLE_ROBUST": "FROZEN FOR EM (design + analysis evidence at the parametric model level; verification by EM test: surface accommodation DI-1.3, compressor coefficients T-1..T-9)",
+   "ADMISSIBLE_CONDITIONAL": "FROZEN FOR EM with the stated coefficient condition as an EM verification requirement",
+   "NOT_ADMISSIBLE, best design closes in at least one admitted scenario at every state": "BLOCKED BY SPECIFIC MISSING EVIDENCE (surface accommodation DI-1.3 decides between the admitted scenarios) together with the DESIGN_VARIABLE_LIMIT classification",
+   "NOT_ADMISSIBLE otherwise": "DCR REQUIRED (a change outside DS-DCR001 or of a registered filter / allocation is needed; the record names what the residual requires)",
+   "FUNDAMENTAL NON-CLOSURE": "not reachable by this evaluation (see non_closure_rule.classification)"
+  }
+ },
+ "outputs": {
+  "record": "docs/baseline/DCR-001/dcr001_eval_record_v1.json (schema abep_dcr001_eval_record_v1) + DCR001_EVAL_REPORT_v1.md",
+  "stability_reference": "docs/baseline/DCR-001/dcr001_feed_stability_python_reference_v1.json",
+  "producer": "abep-assess binary abep-dcr001-eval (additive module abep_assess::dcr001) and scripts/dcr001/dcr001_feed_stability_reference.py",
+  "cross_checks": [
+   "the DBF-1 design re-evaluated by this harness reproduces the M2 v1 per-(scenario, state) delivered flows and steady reason bits exactly, and its covered-scenario minima equal the committed F7 values within the A5.1 tolerance",
+   "C-DRAG on the F1 grid areas reproduces the F1 envelope feasibility (A5 DS-F1-ADMISSIBLE: only A = 0.25 m^2 at every state)",
+   "steady results independent of V (asserted)",
+   "a failed cross-check is MODEL_ERROR: no record"
+  ]
+ },
+ "fail_closed": [
+  "any pin that does not verify -> no record",
+  "a producer MODEL_ERROR, a Python / Rust stability disagreement or a failed cross-check -> no record, nothing selected",
+  "a missing quantity is NOT_EVALUATED with its reason, never a pass"
+ ],
+ "not": [
+  "not a performance prediction, a validation, a qualification or a flight acceptance",
+  "not an architecture change, not a change of an RFP requirement, owner allocation or admitted / scored record",
+  "not an area limit (A4-REG-01 stays open)"
+ ],
+ "change_control": "any change after the lock is a new, dated version of this preregistration; the record of v1 is never rewritten"
+}

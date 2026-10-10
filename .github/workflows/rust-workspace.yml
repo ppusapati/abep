@@ -9,7 +9,7 @@ name: Rust workspace
 on:
   pull_request:
   push:
-    branches: [main, integration/simulation-complete]
+    branches: [main]
 
 permissions:
   contents: read
