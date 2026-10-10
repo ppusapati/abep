@@ -5775,3 +5775,9 @@ stays EMPTY and nothing enters layer (b).
 - **Test plan:** TM-0..TM-9 (readiness, ignition, η_p map, CFG-CAP-OFF capacity ICP-45A/N/O/X, collector window, stability, Hall-ON consistency, VC-06 partition, facility effects, collector witness); criteria C-01..C-09 (owner Kirchhoff rule, I_on − I_off, HC-05 M_n,LB > 0, necessary-condition screen, η_p adequacy, power-budget mapping, E* window with the pre-declared DBF1-ICP-04 DCR trigger, VALIDATED_BENCH, stability, GNG-ICP-01 pending owner acceptance).
 - **Xe rate set:** not quick; not built here. The remaining addendum_01 steps are listed in the design page, sec. 10.
 - **Statement:** `docs/closure/statements/P4_rf_icp_neutralizer_v2.md` (v1 kept). **P4 closure state: FROZEN FOR EM** (bench / EM verification). The analysis capacity in `icp_closure_v1.json` stays BLOCKED BY SPECIFIC MISSING EVIDENCE (unchanged). No DCR register file written.
+
+## 2026-10-10 — DCR-DBF1-001 proposal-level preliminary upstream design v1
+
+- Owner instruction: focus exclusively on DCR-001 and produce one specific preliminary upstream design using lightweight deterministic sizing (no simulation campaign). Other lanes stopped.
+- `docs/baseline/DCR-001/preliminary/` (script, record, note). Intake 0.70 m² face, L/D 20 honeycomb, η_path 0.42; full-aperture 6-stage axial molecular front compressor (rotor Ø 0.66 m, 8617 rpm) plus a compact turbo-drag finishing stage to a 4.7 L plenum at 20 Pa; flux window 1.51e-06–3.25e-06 kg m⁻² s⁻¹ (reference host C_D·A 0.5 m²); altitude schedule LT-low 180–183 km, LT-moderate 183–196 km, LT-high 196–212 km, ST-high 206–222 km; bus 1142 W at 12 mN; nominal dry 37.26 kg (needs ≈ 3.3 kg reduction to 34 kg).
+- Classification: PRELIMINARY DESIGN CLOSES WITH CONTROLLED MARGIN RISK. Proposal-level analysis, not a DBF baseline change; a DBF-1.2 build follows the owner's acceptance.
