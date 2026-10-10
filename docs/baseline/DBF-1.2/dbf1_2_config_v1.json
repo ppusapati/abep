@@ -1,0 +1,175 @@
+{
+ "schema": "abep_dbf1_2_config_v1",
+ "id": "dbf1_2_config_v1",
+ "baseline": "DBF-1.2",
+ "status": "DBF-1.2 — RFP-CONFORMING PRELIMINARY DESIGN BASELINE / COMPLIANCE VERIFICATION ON EM/QM",
+ "authoritative_record": "docs/baseline/DBF-1.2/dbf1_2_v1.json",
+ "h1": {
+  "geometry_id": "G-RP1",
+  "d_mean_mm": 70.0,
+  "h_mm": 12.0,
+  "L_mm": 103.2,
+  "bz_shape_id": "BZ-H1FE-V1",
+  "B_peak_band_G": [
+   69.93,
+   268.6
+  ],
+  "V_d_band_V": [
+   180.0,
+   350.0
+  ],
+  "items": [
+   "DBF1-H1-01",
+   "DBF1-H1-02",
+   "DBF1-H1-03",
+   "DBF1-BZ-02",
+   "DBF1-BZ-04",
+   "DBF1-H1-05"
+  ],
+  "bz_profiles": {
+   "nominal": {
+    "BP-LO": {
+     "file": "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-LO.csv",
+     "sha256": "1d3930d78921986f9acb6132de09f08bbe435b3df3b7216cd17dc2ddc8f996cc",
+     "NI_total_A": 153.68879629516994
+    },
+    "BP-HI": {
+     "file": "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-HI.csv",
+     "sha256": "ab86134579ce64d1802d85230376be17b613e1e48e8b2306d3ff94ab67690e62",
+     "NI_total_A": 587.0966999118853
+    }
+   },
+   "envelope": {
+    "CORNER-A": {
+     "file": "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_envelope_maxFWHM_CORNER-A_BP-HI.csv",
+     "sha256": "8fb762c381446fe2b9f614bdcac403a9b18e76dfd92401a64edb0786e1ef8702",
+     "NI_total_A": 783.4224530728288
+    },
+    "CORNER-B": {
+     "file": "hallthruster_bridge/bfield/h1_fe_v1/h1_fe_v1_Br_centerline_envelope_minFWHM_CORNER-B_BP-HI.csv",
+     "sha256": "c6bcf7beabfb80ee3a9867c0e5fab37c778282551ed19bad0f94097f676b2b84",
+     "NI_total_A": 497.5063173744757
+    }
+   }
+  }
+ },
+ "rf": {
+  "f_rf_hz": 13560000.0,
+  "p_fwd_envelope_W": [
+   0.0,
+   500.0
+  ],
+  "match_colocated": true,
+  "items": [
+   "DBF1-RF-01",
+   "DBF1-RF-02",
+   "DBF1-RF-03"
+  ]
+ },
+ "icp": {
+  "topology": "OPEN_TUBE_COAXIAL_UNMAGNETIZED",
+  "volume_mode": "ASSUMED_GEOMETRIC_TUBE",
+  "radius_m": 0.06,
+  "length_m": 0.15,
+  "collector_axial_length_m": 0.1,
+  "L_standoff_m": 0.05,
+  "r_module_m": 0.09,
+  "vessel_material": "borosilicate glass (pyrex class)",
+  "collector_material": "INCONEL alloy 600 (chromia-forming Ni alloy)",
+  "gas_mode": "G-REUSE",
+  "items": [
+   "DBF1-ICP-01",
+   "DBF1-ICP-02",
+   "DBF1-ICP-03",
+   "DBF1-ICP-04",
+   "DBF1-ICP-05",
+   "DBF1-ICP-07",
+   "DBF1-MAT-03"
+  ]
+ },
+ "thermal": {
+  "topology_item": "DBF1-TH-01",
+  "spacecraft_interface": "SCI-A (REFERENCE_PENDING_ICD)"
+ },
+ "materials": {
+  "anode_primary": "CAND-02A",
+  "anode_backup": "CAND-03A",
+  "collector_primary": "CAND-02A",
+  "collector_backup": "CAND-03A",
+  "anode_primary_name": "INCONEL alloy 600 (chromia-forming Ni alloy)",
+  "wall_primary": "BN-SiO2",
+  "wall_backup": "BN",
+  "items": [
+   "DBF1-MAT-01",
+   "DBF1-MAT-02",
+   "DBF1-MAT-03",
+   "DBF1-MAT-04"
+  ]
+ },
+ "upstream": {
+  "aperture_m2": 0.7,
+  "collimator_L_over_D": 20.0,
+  "S_eff_inlet_m3_s": 11.253567441244025,
+  "compressor": {
+   "blade_rows": 7,
+   "rpm": 8602.969896859207,
+   "tip_speed_m_s": 300.0,
+   "governing_mev_kg": 7.767,
+   "power_allowance_W": 77.0,
+   "power_estimate_W": 38.5
+  },
+  "plenum_setpoint_Pa": 5.026905185354923,
+  "plenum_band_Pa": [
+   4.775559926087176,
+   5.278250444622669
+  ],
+  "plenum_V_L": 9.257419758367076,
+  "distributor_holes": 186
+ },
+ "air_design_point": {
+  "thrust_mN": 12.0,
+  "v_eff_km_s": 26.8,
+  "hall_feed_mg_s": 0.44776119402985076,
+  "P_d_W": 650.0
+ },
+ "power": {
+  "air_12mN_P_bus_W": {
+   "reference": 1222.3365718806567,
+   "conservative": 1263.0665374982182
+  },
+  "xe_25mN_P_d_max_W": {
+   "1450W_design_ceiling_le": {
+    "nominal_ICP_P_d_max_W": 876.0866831287905,
+    "RF_plus_100W_P_d_max_W": 747.5152545573619
+   },
+   "1500W_rfp_supremum_lt": {
+    "nominal_ICP_P_d_max_W": 918.6229331287905,
+    "RF_plus_100W_P_d_max_W": 790.0515045573619
+   }
+  },
+  "rfp_P_bus_lt_W": 1500.0,
+  "design_allocation_W": 1350.0,
+  "xe_design_ceiling_W": 1450.0
+ },
+ "mass": {
+  "nonharness_kg": 32.773399999999995,
+  "harness_kg": 1.7249157894736842,
+  "nominal_dry_kg": 34.49831578947368,
+  "dry_10pct_kg": 37.94814736842105,
+  "xe_reference_kg": 2.0,
+  "wet_kg": 39.94814736842105,
+  "open_mass_risk": "MR-DCR001-01"
+ },
+ "host_drag": {
+  "requirement": "IR-HOST-DRAG-01",
+  "reference_CdA_m2": 0.5,
+  "label": "REFERENCE_PENDING_ICD"
+ },
+ "lineage": {
+  "parent": "DBF-1.1",
+  "parent_lock_sha256": "257e141ca252c3015b5bbd2fc953a1de688bc1606be36ebdf9fff8889307cfb8",
+  "dcr": "DCR-DBF1-001",
+  "dcr_approval_sha256": "b3d0c3074c4dee3228af98f417d8d005b71a835ce79df8190db1de70eff4ed29",
+  "source_checkpoint": "6f4e3bb7025ec387143865fb737cbaaa841404fa"
+ }
+}

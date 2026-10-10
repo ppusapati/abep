@@ -5882,3 +5882,24 @@ stays EMPTY and nothing enters layer (b).
 - **Xe 25 mN:** allocations come from the P6 ledger (P-XE non-discharge, chain 0.850725, RF trade line). The DCR-001 v4 terms
   412.5 W / 0.855 / +129 W are superseded for the active roll-up.
 - **Scope:** no architecture, mass or design value change and no DCR. DCR-001 records are not edited.
+
+## 2026-10-10 — DBF-1.2 FROZEN: RFP-CONFORMING PRELIMINARY DESIGN BASELINE / COMPLIANCE VERIFICATION ON EM/QM
+- **What:** `docs/baseline/DBF-1.2/` holds the builder, JSON, MD, config, requirement trace, risk register, source manifest and lock.
+  - Lock sha256 `103f4c9a5c0ab61d9d12e989c47e5f4fd713caa6bcbe7c45e9207e2e6ce19ee5`; validation record `validation/dbf1_2_validation_v1.json`; test `tests/test_dbf1_2.py`.
+  - Parent DBF-1.1 (lock 257e141c…); change authority DCR-DBF1-001 (approved, A9.41); build directions A9.42 / A9.43; source
+    checkpoint 6f4e3bb.
+  - Register `dcr_register_v6.json` supersedes v5 (v5 unchanged).
+- **Frozen mass:** non-harness 32.773, harness 1.725, nominal dry 34.498, + 10 % 37.948, + 2 kg Xe = wet 39.948 kg.
+  MR-DCR001-01 is OPEN; the ~0.05 kg headroom is not design margin.
+- **Frozen power:**
+  - AIR 12 mN at P_d 650 W: 1,222.34 W (reference) / 1,263.07 W (conservative).
+  - Xe 25 mN discharge allocation at 1,450 W: <= 876.09 W (nominal ICP) / <= 747.52 W (+100 W RF).
+  - Xe 25 mN discharge allocation at 1,500 W: < 918.62 / < 790.05 W.
+  - Xe 25 mN remains a design capability, PARAMETRIC / NOT_VALIDATED support.
+- **Validation:**
+  - Every mandatory DBF-1.2 gate passes.
+  - Rust workspace: 720 passed, 0 failed, 2 ignored (registered platform tests PT-01 / PT-02).
+  - Python suite: 4,238 passed, 5 skipped, 1 xfailed, 2 failed. Both failures are pre-existing and unrelated to DBF-1.2: each
+    reproduces on the clean 79ffe54 tree, and they are recorded as PRE_EXISTING_UNRELATED_REPOSITORY_TEST_FAILURE with remediation
+    deferred.
+- **Unchanged:** DBF-1 and DBF-1.1 are byte-for-byte unchanged. No proposal or bid document was regenerated.
