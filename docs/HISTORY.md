@@ -5796,3 +5796,10 @@ stays EMPTY and nothing enters layer (b).
 - **IR-HOST-DRAG-01:** host C_D·A provided at PDR, within the drag-compensation envelope; reference sizing 0.50 m².
 - **Aperture:** retained at 0.70 m²; 26.8 km/s design basis, 22 km/s sensitivity.
 - **Gates:** mass < 40 kg wet on a component roll-up (≤ 39.4 preferred); power < 1500 W with margin (25 mN in Xe mode, compressor off); operating concept; host interface. Then DBF-1.2 as RFP-COMPLIANT PRELIMINARY DESIGN BASELINE / EM VERIFICATION OPEN.
+
+## 2026-10-10 — DBF-1.2 freeze gates v3: component mass BOM and power reroll (A9.40)
+
+- `docs/baseline/DCR-001/preliminary/dcr001_gate_closure_v3.py` / `.json` / `DBF1_2_FREEZE_GATES_v3.md`.
+- Mass: component-level BOM gives nominal dry 33.76 kg, 39.13 kg wet at 2 kg Xe. This follows the DCR-001 design change (finishing pump deleted; 7-stage tapered contra-rotating stack; 5 Pa plenum; low-pressure metering valve). Owner floors and allocations are unchanged.
+- Power: AIR 12 mN 1142–1189 W; Xe 25 mN with the compressor off 1182 W (1311 W with +100 W RF).
+- All four A9.40 gates closed at proposal level; DBF-1.2 is not built pending owner approval of DCR-001.
