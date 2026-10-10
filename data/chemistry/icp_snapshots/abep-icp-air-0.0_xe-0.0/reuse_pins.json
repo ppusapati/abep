@@ -1,0 +1,483 @@
+{
+ "schema": "icp_chem_reuse_pins_v1",
+ "id": "data/chemistry/icp/reuse_pins.json",
+ "contract": "NP-ICP-CHEM-AIR",
+ "contract_lock": "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json",
+ "contract_lock_sha256": "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef",
+ "rule": "RU-02: reuse is by reference (path + sha256); the referenced files are never copied, moved or edited. hall_propellant_tables, o_o2_v0_files and excluded are the contract's reuse_pins verbatim (abep_chem::registry refuses any difference); a changed byte is MODEL_ERROR (FC-CHEM-04).",
+ "hall_propellant_tables": [
+  {
+   "path": "hallthruster_bridge/propellants/dissociation_N2.dat",
+   "sha256": "fb78ba1d30ec0d88a13e992df7749591f65af5770e973e3696a7a932705eb7fc",
+   "source_file": "hallthruster_bridge/propellants/dissociation_N2.dat.source",
+   "source_file_sha256": "2c50e48968db4f4f4a3a5f232dbe76acc9aaf674b40e7d79ccfaee9784598e31"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/dissociative_ionization_N2_lower.dat",
+   "sha256": "8c0a7e5e2139dfddd69c9783d7c2016d070b65a2117645fb3995efce046d7ed2",
+   "source_file": "hallthruster_bridge/propellants/dissociative_ionization_N2_lower.dat.source",
+   "source_file_sha256": "0efcfc8b8fb2dd310c8c57452bd3dda268a89b973abfb05f8963fc3ffa9cc167"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/dissociative_ionization_N2_to_N_Z2plus.dat",
+   "sha256": "ce68675e69dd3d2e572a0e4c525d712b66ac2329a678d5580a92eaf884b3d94e",
+   "source_file": "hallthruster_bridge/propellants/dissociative_ionization_N2_to_N_Z2plus.dat.source",
+   "source_file_sha256": "9f1c4007cbf68a29ccf21d07bdca555047a4f4a6be37fd4c84257ab257d6b179"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/dissociative_ionization_N2_upper.dat",
+   "sha256": "473a1ed2fbdb8d74da3a21bd013c033de4f618dcb7a0830086343efef13f2e6c",
+   "source_file": "hallthruster_bridge/propellants/dissociative_ionization_N2_upper.dat.source",
+   "source_file_sha256": "fba09157ff5ee82cb6ae6e7dd5766785289c34f46b31bc8de183ebc7c0e8c86d"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/elastic_N2_song2023.dat",
+   "sha256": "d70d9252e961ec6bfe16a0a480020dfdcf3a3aa1032cf2d23b7b3a51a455c47d",
+   "source_file": "hallthruster_bridge/propellants/elastic_N2_song2023.dat.source",
+   "source_file_sha256": "1058dbba2487c5c89f497ea2789094fa7742dc3cf0277fe0e72de6747bbd3157"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/elastic_N_ragimkhanov2026.dat",
+   "sha256": "421945464418c0b4929e948abfa917de25df8edc919c3c1fee37fbd63cf4cf80",
+   "source_file": "hallthruster_bridge/propellants/elastic_N_ragimkhanov2026.dat.source",
+   "source_file_sha256": "de2b4f7c62044ba78c75d79f9b80e3e0a8c6974c4bd0d7823a39c6287b9f6c6d"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/elastic_N_wang2014_bsr.dat",
+   "sha256": "f4edd85b629eebbe0aa030d225159f6edda2ef90796be85798758b27dd1cf112",
+   "source_file": "hallthruster_bridge/propellants/elastic_N_wang2014_bsr.dat.source",
+   "source_file_sha256": "e9f3e1af42f13d63ed895f41da9c29dcf498391929cf6f50a6e3afe38ffb5415"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_A3Sigma_u.dat",
+   "sha256": "1de3f096d8d649fcb9fc77a5046625135ee646984b3ad5841d0f6229a750e169",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_A3Sigma_u.dat.source",
+   "source_file_sha256": "d6418db29bd71011915916d87f11020192c1f4be76c66c021d7fcb3652a407c2"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_A3Sigma_u_johnsonlow.dat",
+   "sha256": "89f10b6aa1b12d41b3dcf63d9377b43850a0acd58889d8bdc339e36e4e13a36f",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_A3Sigma_u_johnsonlow.dat.source",
+   "source_file_sha256": "b9c56b491aa89d237725ca2a74282459e59b892f5be11cf931c9a83579e66fd3"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_B3Pi_g.dat",
+   "sha256": "bb354c8b80562a1896cde8d408706865a61a8fc4d8a0a08c9a9cec23c50fcbb1",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_B3Pi_g.dat.source",
+   "source_file_sha256": "114affd43f2c7b9393f68642e9022af8fc9283cbcc4da9cdc67385b651ee3abf"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_B3Pi_g_johnsonlow.dat",
+   "sha256": "31bc9edb4d64d8dc66fd06b7c58e96d6df639dc659862f7af60d8980f06f7233",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_B3Pi_g_johnsonlow.dat.source",
+   "source_file_sha256": "642a2afcef887a88f53b3693a370478c2acd3c235b407c72d8e36f90cf3b61e1"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_Bprime3Sigma_u.dat",
+   "sha256": "0cfb818937e548921784fa5952185020a5b1ad09d046edc47f5e557ba349fe22",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_Bprime3Sigma_u.dat.source",
+   "source_file_sha256": "7effb1a0247b287a83501a04def96885a8acfae086938bb8896b2acea0d6992e"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_Bprime3Sigma_u_johnsonlow.dat",
+   "sha256": "968c00f2f06a472bdf05fbe5add9bf313dd35f8a734b29255c217e6a91ed32b5",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_Bprime3Sigma_u_johnsonlow.dat.source",
+   "source_file_sha256": "8828c73345b60035d3649ad3485d7510c198e19b5994025bd393f66982ab7689"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_C3Pi_u.dat",
+   "sha256": "85545796dd44642dad62479b343c514ae3efc1e7a2f6c7bc9fc994ea9458dcb3",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_C3Pi_u.dat.source",
+   "source_file_sha256": "8cef0e85e74d54263c1ed1880acdf020eba3b788b48e9fb72eb336fd822ddb93"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_C3Pi_u_johnsonlow.dat",
+   "sha256": "7d3db15c03ea4893c5e8ba7b42741d1a907477c7d4c0b1263d50b64ab307e6ab",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_C3Pi_u_johnsonlow.dat.source",
+   "source_file_sha256": "2300645df525794ad7710d87bf8a7240334cc09b975682baf95e49de94068f56"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_W3Delta_u.dat",
+   "sha256": "7608747ff9606f2da2add27b1be3e83fa68547cf128319a266013d997ff89f9e",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_W3Delta_u.dat.source",
+   "source_file_sha256": "7488df28a9db21c16aeea14268e09f85e66204804584f3a916a25d38dbb6fab8"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_W3Delta_u_johnsonlow.dat",
+   "sha256": "1f0817ed306a2ab5f8c2e4e6241bac5c5e1a5c3adfb265ea5c104e3abf3fe0cc",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_W3Delta_u_johnsonlow.dat.source",
+   "source_file_sha256": "15ac99dc513f4c3376e3e6fce809ca50d2f026e204b2a36148151b782dae9e83"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_a1Pi_g.dat",
+   "sha256": "218ca2f91f7cf60526a28a940885421f30a2d9559094f3ccee06256ed0d29903",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_a1Pi_g.dat.source",
+   "source_file_sha256": "88f927b4f934a31041188789754f622914a7388cbaebb5b7b2696212fd6f613c"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_a1Pi_g_johnsonlow.dat",
+   "sha256": "edb85fa292dbacd6d06a5a80b3b247a4cd56805d1bcf26b70d89263c607c9ef2",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_a1Pi_g_johnsonlow.dat.source",
+   "source_file_sha256": "3fee83d769ebc6a4b7117b43b5d7b63fd8a5d912a8bbebf01ecd88402f81ff41"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_aprime1Sigma_u.dat",
+   "sha256": "8a3bbaa8d6904ffc4060a8cc8f9d92b125298bdb3d1dc5f250146d2fb1d01361",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_aprime1Sigma_u.dat.source",
+   "source_file_sha256": "0331535cc01214ac2c04e299f1962a3919e5e68cc57ccb4c21f49fcf06c04387"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_aprime1Sigma_u_johnsonlow.dat",
+   "sha256": "5c4c081e0c0302614ef24ecf6c5b7e5587054797a2a38508cc5c0d09f6f53c12",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_aprime1Sigma_u_johnsonlow.dat.source",
+   "source_file_sha256": "8ba74fc8c0f294d95d11c0b1ab42adeb56f945cddb44e6e61ca2d5c01e1d9bc6"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_rot_j0_to_j2.dat",
+   "sha256": "a697d52ca71da5deb9f953a1190b4e582afc8dc03c1109c612b86c01d5b1ba05",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_rot_j0_to_j2.dat.source",
+   "source_file_sha256": "d74a8a537e4a87d8df47f1f607743b89a198d9ac12743135e878f3adeef0813f"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_rot_j0_to_j4.dat",
+   "sha256": "d6341cbea08a2c7e8ca0fe9f54b2a2ead06db942875043231c27845e1e3296dc",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_rot_j0_to_j4.dat.source",
+   "source_file_sha256": "6113a751c3350368a16bcfd34f1719a0ca7157350196e6ade959ee77d477ba79"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_1.dat",
+   "sha256": "d284b6047ddba521bf2ca6abad1994baaabdb6b9debf67aa085723331433e152",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_1.dat.source",
+   "source_file_sha256": "8a059e4ec0efc29b866a72fecfb338275e41453dae15888d3b337f83c21572a2"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_10.dat",
+   "sha256": "95c17bb7f4dd923e48a81438d2bf56a28044fe8095c62d1bc5bd4beba3244dbc",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_10.dat.source",
+   "source_file_sha256": "93765bb4fd0ee847487b7d26e912fcc374188e91f739b49666f3a390ab46367b"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_2.dat",
+   "sha256": "b5e911ef0ea89ba3b92fd6b3ad4ffb445de90616e9ee5d2262a06af2b42739f8",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_2.dat.source",
+   "source_file_sha256": "e957d6199388db1b8b8a47513e8882b12980f47ed0689e30f14b164de1338900"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_3.dat",
+   "sha256": "00f2a35a4355c83711f27ee0a29d32e8b0bf21bf4e152fb088fa1725a584e82b",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_3.dat.source",
+   "source_file_sha256": "d09c4f19d14a85e69cbe032557bfe08309acda5047cdeea77e934b32a4a1186b"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_4.dat",
+   "sha256": "5b83ed3ed871ed8039ce503e0ec8e867b402d511d5ccee965ec261fe49aa2bfd",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_4.dat.source",
+   "source_file_sha256": "c34d1cce3b06a9794db9cae23b7cc5eb33d383775e6a820a268a7e6c90f930cc"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_5.dat",
+   "sha256": "696be5f39b2cd645ac3803f31cb92e1c4080a71ee72a313089e27b69ec902f22",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_5.dat.source",
+   "source_file_sha256": "97413578e16b9c8af696dbb174b9ac1e193a47ce189afe4c7f85a0d7500b4877"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_6.dat",
+   "sha256": "883f8986a0574fd24c34bc9a2766b321c457befa62916aada02f0b0fc1b0b8ee",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_6.dat.source",
+   "source_file_sha256": "c19efb47a64d2c7acf741b033f5240ea4bd1a291bc5506e9d9391c3fb70861c1"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_7.dat",
+   "sha256": "1fa14674da496716f222c3a40780df80078ca4b0921fc8804198b0af00086d12",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_7.dat.source",
+   "source_file_sha256": "dbc0729a67af495267b54ff5a525e2feb31b203ec404b90204c994d0b0da708f"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_8.dat",
+   "sha256": "2d3b6daf646b0355f2be2563e949e23af127fec493b04a7704b58bb873bb3929",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_8.dat.source",
+   "source_file_sha256": "3834d2f11d693635cd66788f6ad857ede97b23244a0a71873a55701d11cbef50"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_9.dat",
+   "sha256": "05ce506e85cd26f02976fe8242ae159505b08d9bb3a57b8515ce033e3a1fae90",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_vib_0_to_9.dat.source",
+   "source_file_sha256": "9ff57bc2c7e82ac0a8a25a5fbd528a6fac07c7e9ed48bf89a1e801e2d82092e9"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_w1Delta_u.dat",
+   "sha256": "ed070fa87591b84b51d6d7d14b3ce63afc59386a8d87a743dd5e6ed97f7fa9bf",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_w1Delta_u.dat.source",
+   "source_file_sha256": "f43cf86635f1f03ce45c86e077265ba068f987b00ccc6955d99929ab5ce97958"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/excitation_N2_w1Delta_u_johnsonlow.dat",
+   "sha256": "fc0d99f8980627f636b3c080c732e25430ed89dff9e5c7a17d7b1ef726b1363c",
+   "source_file": "hallthruster_bridge/propellants/excitation_N2_w1Delta_u_johnsonlow.dat.source",
+   "source_file_sha256": "c0c4a8cb2768547a1ee52d0e7b0beeceab243cfc243d942830ed8405951993f7"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/ionization_N.dat",
+   "sha256": "ff4b4c8172ce45c6f11d09a41a3a663d64c5a586288286b692346ae89c0f61a7",
+   "source_file": "hallthruster_bridge/propellants/ionization_N.dat.source",
+   "source_file_sha256": "7a963f6988f7926a4ad144560b474bb17012cb6e1793a278baa86f9d050cabed"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat",
+   "sha256": "116a0829dc4f0c74510176d85eb3373a10a94d806e705b55ea73cfe614b6ddbd",
+   "source_file": "hallthruster_bridge/propellants/ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat.source",
+   "source_file_sha256": "b33410aa8aa77d93629705f2aaa9702e7e2287a6cce56d4a97e2889065e46396"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/ionization_N2_song2023.dat",
+   "sha256": "ef922b52eaa0a27efb330b8f7140f534d923c3b759d4df29ffd13ebb832067a8",
+   "source_file": "hallthruster_bridge/propellants/ionization_N2_song2023.dat.source",
+   "source_file_sha256": "fc45a730d6dd3d50b8dbc071075d3ebaebf1fcce41e2cabd1694c7207c68cffa"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/ionization_N2_to_N2_Z2plus_upper.dat",
+   "sha256": "048b979c879d3f08ef6f323e40a4da8d7df75e8bfee600bbf3f2fff498ff94fe",
+   "source_file": "hallthruster_bridge/propellants/ionization_N2_to_N2_Z2plus_upper.dat.source",
+   "source_file_sha256": "ecd2356a7ec230570b56ff1a36ecb547588a4bc10f051fa588a797a1e6d6410a"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/ionization_N_Z1plus_to_N_Z2plus.dat",
+   "sha256": "12e9c03ac8f5e37b39bcba8e81e1c8d65e57dcb8672dcab04d35e028c8c32523",
+   "source_file": "hallthruster_bridge/propellants/ionization_N_Z1plus_to_N_Z2plus.dat.source",
+   "source_file_sha256": "80a95217ee8c915a7ee033a04b366c5542314f1b901227ea3744c44b3d71812b"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/ionization_N_to_N_Z2plus_hms2017.dat",
+   "sha256": "a7a6f8fd84f2a3b316002e2aba22d605f152166a5364358b5317d163054133c1",
+   "source_file": "hallthruster_bridge/propellants/ionization_N_to_N_Z2plus_hms2017.dat.source",
+   "source_file_sha256": "f2c38c609cf04ee04a9c0e2341b1ce83967a707fcaf7099c09c21d0f4c87d71a"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/ionization_N_to_N_Z2plus_hms2017_x0p5.dat",
+   "sha256": "4aba747e5d4108f32339f30441c0f4357e0505ca9e48dd7d4605fc4430eb56d0",
+   "source_file": "hallthruster_bridge/propellants/ionization_N_to_N_Z2plus_hms2017_x0p5.dat.source",
+   "source_file_sha256": "e3b368e58a87719a24c945615c96d3e35c2d121d8466bb3b1115a30a7139664c"
+  },
+  {
+   "path": "hallthruster_bridge/propellants/ionization_N_to_N_Z2plus_hms2017_x1p3.dat",
+   "sha256": "6418f0966288a031f80dd0fe01cac2ee4b6a1bc2aa960570554282a65d4aa84c",
+   "source_file": "hallthruster_bridge/propellants/ionization_N_to_N_Z2plus_hms2017_x1p3.dat.source",
+   "source_file_sha256": "66679e4edc4e2a8fdf96efcbc5921b26419ddf439368ab612dfaa77d9041c6de"
+  }
+ ],
+ "o_o2_v0_files": [
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/attachment_O2_song2026.dat",
+   "sha256": "dd5841d5294935400bb4c7d08e4085ae7981ca1b35dc9e2338abd20ffa367149"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/attachment_O2_song2026.dat.source",
+   "sha256": "ae66ebfe900948e2e99a846cf92c1251921872f488220cf9f3063effb6ede344"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/dissociation_O2_song2026.dat",
+   "sha256": "e908da8e19ea0d5e9364fea28332ef685602048fe3c023eaf41eb048eda5984b"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/dissociation_O2_song2026.dat.source",
+   "sha256": "54b4213547234dfaee4a9265309c1b7dc48dfd1b7ba6dcf3bec5e6f6a6dfeefc"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/dissociative_ionization_O2_lower_song2026.dat",
+   "sha256": "7559f280516ffdde81854f62fee442693dfadc92987bacf0bb07ba9d896e83f0"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/dissociative_ionization_O2_lower_song2026.dat.source",
+   "sha256": "0a13b284549af08b771c8b1b084b8f2aae1153109643b1461f974e7650dbade7"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/dissociative_ionization_O2_to_O_Z2plus_song2026.dat",
+   "sha256": "c9868d1a4d3bfc1c6e0aba9be4e6b963238cdb5cbc0816c4f011c2c4a2c79b5e"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/dissociative_ionization_O2_to_O_Z2plus_song2026.dat.source",
+   "sha256": "0c9a19695688dd7a2d9dfcc0976483d0aa021909631ca6f22575a490ef3159a7"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/dissociative_ionization_O2_upper_song2026.dat",
+   "sha256": "1657e407cef90ba8a951ef7a862a93788afe20906057a924ab5c5470db749c04"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/dissociative_ionization_O2_upper_song2026.dat.source",
+   "sha256": "1508f7ed6167d1be53b630337138cda9e8668686b367c5a716f91b942aa16dd3"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/elastic_O2_song2026.dat",
+   "sha256": "b66353da4be23ff8534dadf1d69036b89c224cd4b96942e91568b6b19b81df64"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/elastic_O2_song2026.dat.source",
+   "sha256": "8d07b167013a35164dcca9ba2d34d214aac93590f5eaa2e49928f17858278fd7"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/ionization_O2_song2026.dat",
+   "sha256": "fa6fca7a8192c0d1ccea8776f78e341a50187c28c632173047b4d8164f1e1d31"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/ionization_O2_song2026.dat.source",
+   "sha256": "5a5f43ec1dc278dac482bddefc7afeb326961ac8e0023a8510aa7705e273d3c8"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/ionization_O_beb_kd2002.dat",
+   "sha256": "1e3a377ede12d2fb20a9f4384c001b04e0d4ec260c4723cea5e1e261103e134e"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/ionization_O_beb_kd2002.dat.source",
+   "sha256": "a92c2f9ded0f494909c83cb4b7c690e7d6faba7e82caf642b47220f897532c89"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/ionization_O_thompson1995.dat",
+   "sha256": "a1fe0dcdf786ee84a5de58ac996bac8130318298103575b383450fcd1e40e6b4"
+  },
+  {
+   "path": "docs/chemistry/o_o2/v0/tables/ionization_O_thompson1995.dat.source",
+   "sha256": "9d844006aa7df990e6ebb1b938430b23adf0ce4806dc2f9cd192dd19193eb484"
+  }
+ ],
+ "excluded": [
+  "hallthruster_bridge/propellants/ionization_N2_N2+.dat (unresolved)",
+  "hallthruster_bridge/propellants/elastic_N2.dat (unresolved)"
+ ],
+ "hall_isolation": {
+  "test": "FC-CHEM-10",
+  "rule": "build plan hall_isolation: no ICP chemistry commit creates, edits or renames a file under hallthruster_bridge/; these files and config/model_set/physics_model_set_v1.json keep their bytes (cargo test: crates/abep-chem/tests/icp_registry.rs)",
+  "recorded_at": "integration/simulation-complete def19d64cc6ca8e079f5fe16292e0dd16b2a8ee9",
+  "files": [
+   {
+    "path": "hallthruster_bridge/PINNED.toml",
+    "sha256": "26a00c8a156a5a5e9a58f9796f657ea12f59d87ac2da3d6507ac7347b4765280",
+    "pinned_by": "NP-ICP-CHEM-AIR prereg_v1.json evidence_records_used"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/rate_validity.toml",
+    "sha256": "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a",
+    "pinned_by": "NP-ICP-CHEM-AIR prereg_v1.json evidence_records_used"
+   },
+   {
+    "path": "hallthruster_bridge/audit/configs/MANIFEST.json",
+    "sha256": "19e833c902aa9f62f9418105b7540318a9c3d88bd7e4dc07c9f377bcc4dcdcf2",
+    "pinned_by": "NP-ICP-CHEM-AIR prereg_v1.json evidence_records_used"
+   },
+   {
+    "path": "config/model_set/physics_model_set_v1.json",
+    "sha256": "a7423d11b208a847ed4026d169ad04b6b10d0d72a5f90af1ce46bdcd8030a0c1",
+    "pinned_by": "NP-ICP-CHEM-AIR prereg_v1.json evidence_records_used"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n.toml",
+    "sha256": "4f10db747cfb11cfefb8080a9cad52e502c2ab11f0e485ac644a532b929607de",
+    "pinned_by": "NP-ICP-CHEM-AIR prereg_v1.json evidence_records_used"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_di_lower.toml",
+    "sha256": "8b679aca9b223719d521890c391e227727ff2dfacdea6e3ebbbdee93d1b84372",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_di_lower_nel_wang.toml",
+    "sha256": "29325bda79f18006e9f3c62df2a1ccc6aa74b66a44040f08d1bbe4ccd4305749",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_exc_johnsonlow.toml",
+    "sha256": "95c9bec9f69993691e2539fc55ec20713fccca93376f3ff4ded9133d62721f9e",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_exc_johnsonlow_di_lower.toml",
+    "sha256": "10aed98243c7972d5c86a7b460873bfa210ab43492ba6229bdbc44c9640a1405",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_exc_johnsonlow_di_lower_nel_wang.toml",
+    "sha256": "793cc6e73e3cc4017fad8579aba26c0834b68666e9c87cfc882492ef674c7f4c",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_exc_johnsonlow_nel_wang.toml",
+    "sha256": "58c4b5ea1bd3c2d86ec83108486a44e788060a896f117b39aca695547205e6d3",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_n2dication.toml",
+    "sha256": "fb87c2c4328951bf7ead8d92bc2ffe94f17ce912e2977740d495d4d4cae2581f",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_n2dication_nel_wang.toml",
+    "sha256": "cf54add54566f0af51125e70b680b689ec3953521dc0ef460d192e11c9a1b018",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_ndd_hmshigh.toml",
+    "sha256": "333d6071c035d83376f20a70a257579d7b838c591c374e2cdb5052331e0285d3",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_ndd_hmshigh_di_lower.toml",
+    "sha256": "103541265e687fdeed302fb628efa176ca0c051ebca4ea3835df6d6e6ed4de91",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_ndd_hmshigh_di_lower_nel_wang.toml",
+    "sha256": "88b6f77c52df50eb3becddbf649f08b7b8877b9c8a632dae23e0c1da42c2212f",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_ndd_hmshigh_nel_wang.toml",
+    "sha256": "2ce2cda701c8607eedbe42436c2a9630a24b3dea6da550f2046e5d634c237836",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_ndd_hmslow.toml",
+    "sha256": "f9b64716cdd6294a4338c5708a94ba4db888ec671c2c6a26647566db04085b71",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_ndd_hmslow_di_lower.toml",
+    "sha256": "674438532bb897f0b724bf3b53059f0128cbbe27604fcaea05788e2a07fcf227",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_ndd_hmslow_di_lower_nel_wang.toml",
+    "sha256": "2eec1906e39a1dd6e47a299430e94138db2ca9642a8e996e8fcc1e49aa9ea6a1",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_ndd_hmslow_nel_wang.toml",
+    "sha256": "b7182f02dae5b4a49d1f16dab486fe52e2c42b2cae8596e35978017b636c288a",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_nel_wang.toml",
+    "sha256": "398c795be786194d2caf9c8720f28b4c3cfab80033f43431d21c6e8b14ab1318",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_rot_off.toml",
+    "sha256": "5fa1fafaba358ef8fdea716bd28c085bf48a2db2607c8f3808bed6f05412fbd0",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_rot_off_di_lower.toml",
+    "sha256": "0d9150d125528fae84dc64fc451741aa3c56c39860c86c2973d38787fc637392",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_rot_off_di_lower_nel_wang.toml",
+    "sha256": "022caef866c283c6965c5bda6ea1fac7ecc3e2b4e349ce5067af481d6f70adee",
+    "pinned_by": "this record (no earlier frozen pin)"
+   },
+   {
+    "path": "hallthruster_bridge/propellants/n2_n_rot_off_nel_wang.toml",
+    "sha256": "2011dc1084eb3c4e51cac879b16bdd39658e72d204933ee8793065819aadf93c",
+    "pinned_by": "this record (no earlier frozen pin)"
+   }
+  ]
+ }
+}

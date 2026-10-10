@@ -1,0 +1,1578 @@
+# IF-CHEM-REG-v1 species and process registry, mode AIR (NP-ICP-CHEM-AIR v1, build plan BP-S1; label abep-icp-air-0.0).
+# Every contract process of this mode appears once, with the status, tier, class and reaction text the contract
+# records (prereg_v1.json processes[]); abep_chem::registry refuses any difference (MODEL_ERROR). A channel is one
+# registered representation of a process (one table or one variant member); a process without a channel has no
+# usable data. Schema: registry_schema_v1.json. Maintained by hand, one table per commit (build plan per_table_commit).
+schema = "IF-CHEM-REG-v1"
+mode = "AIR"
+label = "abep-icp-air-0.0"
+contract = "NP-ICP-CHEM-AIR"
+contract_lock = "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json"
+contract_lock_sha256 = "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef"
+evidence_modes = ["AIR_PRIMARY", "EM-O2B", "EM-N2"]
+
+[domain]  # D-CHEM (contract domain); table validity is the separate rate_validity_icp.toml check
+id = "D-CHEM"
+t_e_eV = [2.0, 30.0]
+mean_energy_eV = [3.0, 45.0]
+low_threshold_window_t_e_eV = [0.2, 30.0]
+low_threshold_kinds = ["EXCITATION_VIBRATIONAL", "EXCITATION_ROTATIONAL"]
+p_icp_max_Pa = 13.3322
+eedf = "MAXWELLIAN"
+
+[admission]
+status = "NOT_ADMITTED"
+gate = "G-A930-AIR (NP-ICP-NEUTRALIZER addendum_01; A9.30 sec. 4)"
+reason_code = "NP_ICP_CHEM_AIR_NOT_ADMITTED"
+today = "NOT ADMITTED: tier-1 gaps (AIR-EL-04, AIR-EXC-04/05/09, AIR-DIS-02 envelope inputs, SONG2026 version-of-record checks), SB-NO, SB-He, SB-Ar, NEG-CRIT"
+
+[completeness_audit]
+id = "CA-ICP-v1"
+status = "NOT_RUN"
+note = "no stage-R or stage-E verdict exists; every process ca_verdict is NOT_EVALUATED (BP-S9)"
+
+[neg_crit]
+status = "NOT_EVALUABLE"
+scope = "O2_BEARING_COMPOSITION"
+note = "AIR-NEG-02 to acquire, AIR-NEG-03 no source (contract completeness_audit NEG-CRIT; SP-05; parent DOM-12)"
+
+[[species_bound]]
+id = "SB-He"
+species = "He"
+status = "UNRESOLVED"
+x_screen = 0.01
+scope = "COMPOSITION_ABOVE_SCREEN"
+note = "x_He > 0.01 in 14 ECSS_LT_LOW states"
+
+[[species_bound]]
+id = "SB-Ar"
+species = "Ar"
+status = "UNRESOLVED"
+x_screen = 0.01
+scope = "COMPOSITION_ABOVE_SCREEN"
+note = "x_Ar > 0.01 in 6 ECSS_ST_HIGH states"
+
+[[species_bound]]
+id = "SB-NO"
+species = "NO"
+status = "UNRESOLVED"
+x_screen = 0.01
+scope = "EVERY_AIR_COMPOSITION"
+note = "NO not resolved per design state; MR-5 low-IE exception"
+
+[[species]]
+id = "O"
+charge = 0
+elements = { "O" = 1 }
+role = "feed"
+status = "RETAINED"
+retention = "MR-2; MR-3 (product of O2 dissociation / DI)"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "O2"
+charge = 0
+elements = { "O" = 2 }
+role = "feed"
+status = "RETAINED"
+retention = "MR-2"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "N2"
+charge = 0
+elements = { "N" = 2 }
+role = "feed"
+status = "RETAINED"
+retention = "MR-2"
+mass_amu = 28.0134
+mass_source = "hallthruster_bridge/propellants/n2_n.toml species mass (abep-n2n-0.11, reused by reference)"
+
+[[species]]
+id = "N"
+charge = 0
+elements = { "N" = 1 }
+role = "feed"
+status = "RETAINED"
+retention = "MR-2; MR-3 (product of N2 dissociation / DI)"
+mass_amu = 14.0067
+mass_source = "hallthruster_bridge/propellants/n2_n.toml species mass (abep-n2n-0.11, reused by reference)"
+
+[[species]]
+id = "O^+"
+charge = 1
+elements = { "O" = 1 }
+role = "ion"
+status = "RETAINED"
+retention = "MR-3 (ion of retained ionization channels)"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "O2^+"
+charge = 1
+elements = { "O" = 2 }
+role = "ion"
+status = "RETAINED"
+retention = "MR-3 (ion of retained ionization channels)"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "N2^+"
+charge = 1
+elements = { "N" = 2 }
+role = "ion"
+status = "RETAINED"
+retention = "MR-3 (ion of retained ionization channels)"
+mass_amu = 28.0134
+mass_source = "hallthruster_bridge/propellants/n2_n.toml species mass (abep-n2n-0.11, reused by reference); ion mass = neutral mass (HallThruster.jl convention; Z m_e / M <= 8e-5)"
+
+[[species]]
+id = "N^+"
+charge = 1
+elements = { "N" = 1 }
+role = "ion"
+status = "RETAINED"
+retention = "MR-3 (ion of retained ionization channels)"
+mass_amu = 14.0067
+mass_source = "hallthruster_bridge/propellants/n2_n.toml species mass (abep-n2n-0.11, reused by reference); ion mass = neutral mass (HallThruster.jl convention; Z m_e / M <= 8e-5)"
+
+[[species]]
+id = "N^2+"
+charge = 2
+elements = { "N" = 1 }
+role = "ion"
+status = "RETAINED"
+retention = "MR-3 (product of the reused nominal N2/N channels AIR-ION-07..09; kept unless an ICP-domain bound excludes it)"
+mass_amu = 14.0067
+mass_source = "hallthruster_bridge/propellants/n2_n.toml species mass (abep-n2n-0.11, reused by reference); ion mass = neutral mass (HallThruster.jl convention; Z m_e / M <= 8e-5)"
+
+[[species]]
+id = "O^2+"
+charge = 2
+elements = { "O" = 1 }
+role = "ion"
+status = "CONDITIONAL_ON_CA"
+retention = "AIR-ION-11..13"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "N2^2+"
+charge = 2
+elements = { "N" = 2 }
+role = "ion"
+status = "CONDITIONAL_ON_CA"
+retention = "variant AIR-ION-10"
+mass_amu = 28.0134
+mass_source = "hallthruster_bridge/propellants/n2_n.toml species mass (abep-n2n-0.11, reused by reference); ion mass = neutral mass (HallThruster.jl convention; Z m_e / M <= 8e-5)"
+
+[[species]]
+id = "NO"
+charge = 0
+elements = { "N" = 1, "O" = 1 }
+role = "feed"
+status = "MATERIALITY_BOUND_REQUIRED"
+retention = "MR-5 (F_ion; SB-NO); AIR-IM-01, AIR-WALL-05"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "NO^+"
+charge = 1
+elements = { "N" = 1, "O" = 1 }
+role = "ion"
+status = "CONDITIONAL_ON_CA"
+retention = "AIR-IM-01, SB-NO, AIR-WALL-05"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "O^-"
+charge = -1
+elements = { "O" = 1 }
+role = "ion"
+status = "CONDITIONAL_ON_CA"
+retention = "NEG-CRIT"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "He"
+charge = 0
+elements = { "He" = 1 }
+role = "feed"
+status = "MATERIALITY_BOUND_REQUIRED"
+retention = "MR-4 (SB-He)"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "Ar"
+charge = 0
+elements = { "Ar" = 1 }
+role = "feed"
+status = "MATERIALITY_BOUND_REQUIRED"
+retention = "MR-4 (SB-Ar)"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "He^+"
+charge = 1
+elements = { "He" = 1 }
+role = "ion"
+status = "MATERIALITY_BOUND_REQUIRED"
+retention = "SB-He"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "Ar^+"
+charge = 1
+elements = { "Ar" = 1 }
+role = "ion"
+status = "MATERIALITY_BOUND_REQUIRED"
+retention = "SB-Ar"
+mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+
+[[species]]
+id = "H"
+charge = 0
+elements = { "H" = 1 }
+role = "feed"
+status = "EXCLUDED_BY_SCREEN"
+retention = "MR-1 (grid max share 0.164 %; MR-5 does not apply)"
+mass_source = "NOT_REGISTERED: excluded species"
+
+[[species]]
+id = "O_ANOMALOUS"
+charge = 0
+elements = { "O" = 1 }
+role = "feed"
+status = "EXCLUDED_BY_SCREEN"
+retention = "MR-1 (grid max share 8.76e-13)"
+mass_source = "NOT_REGISTERED: excluded species"
+
+[[process]]
+id = "AIR-ION-01"
+class = "electron-impact ionization"
+reaction = "e + O -> O+ + 2e"
+target = "O"
+tier = "1"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-02"
+class = "electron-impact ionization"
+reaction = "e + O2 -> O2+ + 2e"
+target = "O2"
+tier = "1"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-03"
+class = "electron-impact ionization"
+reaction = "e + N2 -> N2+ + 2e"
+target = "N2"
+tier = "1"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-04"
+class = "electron-impact ionization"
+reaction = "e + N -> N+ + 2e"
+target = "N"
+tier = "1"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-05"
+class = "dissociative ionization"
+reaction = "e + O2 -> O+ + O + 2e (upper / lower variants)"
+target = "O2"
+tier = "1"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-06"
+class = "dissociative ionization"
+reaction = "e + N2 -> N+ + N + 2e (upper / lower variants)"
+target = "N2"
+tier = "2"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-07"
+class = "electron-impact ionization (multiply charged / dissociative)"
+reaction = "e + N2 -> N^2+ + N + 3e"
+target = "N2"
+tier = "3"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-08"
+class = "electron-impact ionization (multiply charged / dissociative)"
+reaction = "e + N -> N^2+ + 3e (nominal; x0.5 / x1.3 sensitivities)"
+target = "N"
+tier = "3"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-09"
+class = "electron-impact ionization (multiply charged / dissociative)"
+reaction = "e + N+ -> N^2+ + 2e (energy link)"
+target = "N^+"
+tier = "3"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-10"
+class = "electron-impact ionization (multiply charged / dissociative)"
+reaction = "e + N2 -> N2^2+ + 3e; e + N2+ -> N2^2+ + 2e (uncertainty variant only)"
+tier = "3"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-11"
+class = "dissociative double ionization"
+reaction = "e + O2 -> O^2+ + O + 3e"
+target = "O2"
+tier = "3"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-12"
+class = "electron-impact ionization of an ion"
+reaction = "e + O+ -> O^2+ + 2e (energy link)"
+target = "O^+"
+tier = "3"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-13"
+class = "direct double ionization"
+reaction = "e + O -> O^2+ + 3e"
+target = "O"
+tier = "3"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-14"
+class = "molecular double ionization"
+reaction = "e + O2 -> O2^2+ + 3e; e + O2+ -> O2^2+ + 2e"
+tier = "3"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-ION-15"
+class = "stepwise ionization from metastable states"
+reaction = "e + X* -> X+ + 2e for X* in {O(1D), O(1S), O(5S), O2(a1Delta_g), O2(b1Sigma_g+), N2(A3Sigma_u+), N(2D), N(2P)}"
+tier = "2"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-DIS-01"
+class = "dissociation into neutrals"
+reaction = "e + N2 -> N + N + e"
+target = "N2"
+tier = "1"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-DIS-02"
+class = "dissociation into neutrals"
+reaction = "e + O2 -> O + O + e"
+target = "O2"
+tier = "1"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-DIS-03"
+class = "dissociative excitation of a molecular ion"
+reaction = "e + O2+ -> O+ + O + e"
+target = "O2^+"
+tier = "2"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-DIS-04"
+class = "dissociative excitation of a molecular ion"
+reaction = "e + N2+ -> N+ + N + e"
+target = "N2^+"
+tier = "3"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EXC-01"
+class = "electronic excitation"
+reaction = "e + N2(X) -> e + N2(A, B, W, B', a, a', w, C) (8 states; Johnson-low variants)"
+target = "N2"
+tier = "1"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EXC-02"
+class = "vibrational excitation"
+reaction = "e + N2(v=0) -> e + N2(v_f), v_f = 1..10"
+target = "N2"
+tier = "1"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EXC-03"
+class = "rotational excitation"
+reaction = "e + N2(j=0) -> e + N2(j=2), N2(j=4)"
+target = "N2"
+tier = "3"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EXC-04"
+class = "electronic excitation (low-lying metastables)"
+reaction = "e + O2(X) -> e + O2(a1Delta_g), O2(b1Sigma_g+)"
+target = "O2"
+tier = "1"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EXC-05"
+class = "electronic excitation (dissociative states)"
+reaction = "e + O2(X) -> e + O2(c1Sigma_u-, A'3Delta_u, A3Sigma_u+) (Herzberg)"
+target = "O2"
+tier = "1"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EXC-06"
+class = "electronic excitation"
+reaction = "e + O2(X) -> e + O2(B3Sigma_u-) (Schumann-Runge) and higher states"
+target = "O2"
+tier = "2"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EXC-07"
+class = "vibrational excitation"
+reaction = "e + O2(v=0) -> e + O2(v_f)"
+target = "O2"
+tier = "2"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EXC-08"
+class = "rotational excitation"
+reaction = "e + O2(N) -> e + O2(N')"
+target = "O2"
+tier = "3"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EXC-09"
+class = "electronic excitation (atomic O, incl. metastables)"
+reaction = "e + O(3P) -> e + O(1D), O(1S), O(3s 5S), O(3s 3S), allowed 3D (3s or 3d; verify), lumped remainder"
+target = "O"
+tier = "1"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EXC-10"
+class = "fine-structure excitation"
+reaction = "e + O(3P_2) -> e + O(3P_1, 3P_0)"
+target = "O"
+tier = "3"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EXC-11"
+class = "electronic excitation (atomic N, incl. metastables)"
+reaction = "e + N(4S) -> e + N(2D), N(2P) and higher"
+target = "N"
+tier = "2"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EXC-12"
+class = "excited-state energy disposition (bookkeeping)"
+reaction = "X* -> X + h nu (RADIATED) | X* + wall -> X (WALL_QUENCHED) | X* carried out (CARRIED_OUT)"
+tier = "2"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-SUP-01"
+class = "superelastic / excited-target collisions"
+reaction = "e + N2(v>0) / O2(v>0) / X* -> e (gains energy) + ..."
+tier = "3"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EL-01"
+class = "elastic momentum transfer"
+reaction = "e + N2 -> e + N2"
+target = "N2"
+tier = "1"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EL-02"
+class = "elastic momentum transfer"
+reaction = "e + N -> e + N (nominal OPM; Wang BSR variant)"
+target = "N"
+tier = "1"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EL-03"
+class = "elastic momentum transfer"
+reaction = "e + O2 -> e + O2"
+target = "O2"
+tier = "1"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-EL-04"
+class = "elastic momentum transfer"
+reaction = "e + O -> e + O"
+target = "O"
+tier = "1"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-NEG-01"
+class = "dissociative attachment"
+reaction = "e + O2 -> O- + O"
+target = "O2"
+tier = "2"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-NEG-02"
+class = "electron-impact detachment"
+reaction = "e + O- -> O + 2e"
+target = "O^-"
+tier = "2"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-NEG-03"
+class = "heavy-particle detachment and mutual neutralization"
+reaction = "O- + O -> O2 + e; O- + N -> NO + e; O- + O2(a) -> products; O- + X+ -> O + X"
+tier = "2"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-NEG-04"
+class = "three-body attachment"
+reaction = "e + O2 + M -> O2- + M"
+tier = "3"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-REC-01"
+class = "dissociative recombination"
+reaction = "e + O2+ -> O + O"
+target = "O2^+"
+tier = "2"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-REC-02"
+class = "dissociative recombination"
+reaction = "e + N2+ -> N + N"
+target = "N2^+"
+tier = "2"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-REC-03"
+class = "radiative and three-body recombination of atomic ions"
+reaction = "e + O+ -> O + h nu; e + N+ -> N + h nu; e + e + X+ -> X + e"
+tier = "3"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-IM-01"
+class = "ion-molecule charge transfer and interchange"
+reaction = "O+ + N2 -> NO+ + N; O+ + O2 -> O2+ + O; N2+ + O -> NO+ + N; N2+ + O -> O+ + N2; N2+ + O2 -> O2+ + N2; N+ + O2 -> O2+ + N / NO+ + O / O+ + NO; O2+ + N -> NO+ + O; (complete list fixed at build from the source)"
+tier = "2"
+status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-IM-02"
+class = "resonant charge exchange / ion-neutral momentum transfer"
+reaction = "O+ + O, O2+ + O2, N2+ + N2, N+ + N (fast neutral + slow ion)"
+tier = "n/a"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-HN-01"
+class = "neutral-neutral gas-phase reactions"
+reaction = "N + O2 -> NO + O; O + N2 -> NO + N; O + O + M -> O2 + M; N + N + M -> N2 + M; ..."
+tier = "3"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-WALL-01"
+class = "ion wall neutralization"
+reaction = "X+ + wall -> X (atomic ions); O2+ / N2+ + wall -> O2 / N2 or 2 O / 2 N; N^2+ + wall -> N"
+tier = "1 (structural)"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-WALL-02"
+class = "surface recombination of O atoms"
+reaction = "O + wall -> 1/2 O2 (probability gamma_O)"
+tier = "1 (structural)"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-WALL-03"
+class = "surface recombination of N atoms"
+reaction = "N + wall -> 1/2 N2 (probability gamma_N)"
+tier = "1 (structural)"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-WALL-04"
+class = "recombination energy accommodation"
+reaction = "fraction beta of the recombination energy deposited in the wall"
+tier = "2"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-WALL-05"
+class = "heterogeneous NO formation"
+reaction = "O + N(ads) -> NO; N + O(ads) -> NO"
+tier = "3"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-WALL-06"
+class = "metastable wall quenching"
+reaction = "X* + wall -> X"
+tier = "2"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-NL-01"
+class = "neutral loss / residence"
+reaction = "X(volume) -> X(out) through the open ends, per species"
+tier = "1 (structural)"
+status = "IN_REPO_VERIFIED"
+ca_verdict = "NOT_EVALUATED"
+
+[[process]]
+id = "AIR-NL-02"
+class = "feed and background inflow composition"
+reaction = "delivered feed x_s (IF-ICP-FEED-v1) and background (parent IN-13)"
+tier = "1 (input)"
+status = "INCOMPLETE_EVIDENCE"
+ca_verdict = "NOT_EVALUATED"
+
+[[channel]]
+id = "AIR-ION-03/ionization_N2_song2023"
+process = "AIR-ION-03"
+kind = "IONIZATION"
+target = "N2"
+data_target = "N2"
+products = { "N2^+" = 1 }
+electrons_out = 2
+threshold_eV = 15.58
+table = "hallthruster_bridge/propellants/ionization_N2_song2023.dat"
+table_sha256 = "ef922b52eaa0a27efb330b8f7140f534d923c3b759d4df29ffd13ebb832067a8"
+validity_entry = "ionization_N2_song2023.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/ionization_N2_song2023.json"
+representation_sha256 = "f01c21ca4b9399773771d8e668736e93df83de9d2384f535a4a014eb93faafa6"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-ION-04/ionization_N"
+process = "AIR-ION-04"
+kind = "IONIZATION"
+target = "N"
+data_target = "N"
+products = { "N^+" = 1 }
+electrons_out = 2
+threshold_eV = 14.534
+table = "hallthruster_bridge/propellants/ionization_N.dat"
+table_sha256 = "ff4b4c8172ce45c6f11d09a41a3a663d64c5a586288286b692346ae89c0f61a7"
+validity_entry = "ionization_N.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "INCOMPLETE_EVIDENCE"
+representation_gap = "the Kim & Desclaux 2002 BEB cross section (NIST SRD 107) is fetched at build time and not committed (scripts/build_n_ionization_table.py; NIST SRD copyright); no registered source representation, so no direct rate (EQ-06, IX-01); lawful acquisition and registration is a later table commit"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-ION-06/dissociative_ionization_N2_upper"
+process = "AIR-ION-06"
+kind = "DISSOCIATIVE_IONIZATION"
+target = "N2"
+data_target = "N2"
+products = { "N^+" = 1, "N" = 1 }
+electrons_out = 2
+threshold_eV = 24.284
+table = "hallthruster_bridge/propellants/dissociative_ionization_N2_upper.dat"
+table_sha256 = "473a1ed2fbdb8d74da3a21bd013c033de4f618dcb7a0830086343efef13f2e6c"
+validity_entry = "dissociative_ionization_N2_upper.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/dissociative_ionization_N2_upper.json"
+representation_sha256 = "d444f40748b66b9c4790ce752bb97c2a81abce559943f99e93ef28316d94961b"
+variant_role = "NOMINAL"
+variant_group = "DI"
+
+[[channel]]
+id = "AIR-ION-06/dissociative_ionization_N2_lower"
+process = "AIR-ION-06"
+kind = "DISSOCIATIVE_IONIZATION"
+target = "N2"
+data_target = "N2"
+products = { "N^+" = 1, "N" = 1 }
+electrons_out = 2
+threshold_eV = 24.284
+table = "hallthruster_bridge/propellants/dissociative_ionization_N2_lower.dat"
+table_sha256 = "8c0a7e5e2139dfddd69c9783d7c2016d070b65a2117645fb3995efce046d7ed2"
+validity_entry = "dissociative_ionization_N2_lower.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/dissociative_ionization_N2_lower.json"
+representation_sha256 = "d67178b20550adf9e1b8a98a43edf680083ea8361ff18c42d69690c958db13be"
+variant_role = "VARIANT"
+variant_group = "DI"
+
+[[channel]]
+id = "AIR-ION-07/dissociative_ionization_N2_to_N_Z2plus"
+process = "AIR-ION-07"
+kind = "DISSOCIATIVE_IONIZATION"
+target = "N2"
+data_target = "N2"
+products = { "N^2+" = 1, "N" = 1 }
+electrons_out = 3
+threshold_eV = 53.885
+table = "hallthruster_bridge/propellants/dissociative_ionization_N2_to_N_Z2plus.dat"
+table_sha256 = "ce68675e69dd3d2e572a0e4c525d712b66ac2329a678d5580a92eaf884b3d94e"
+validity_entry = "dissociative_ionization_N2_to_N_Z2plus.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/dissociative_ionization_N2_to_N_Z2plus.json"
+representation_sha256 = "f90c875ff533ecc843e0b7c5093dfb5eb54224ef5d77758abe178df10e0872ea"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-ION-08/ionization_N_to_N_Z2plus_hms2017"
+process = "AIR-ION-08"
+kind = "IONIZATION"
+target = "N"
+data_target = "N"
+products = { "N^2+" = 1 }
+electrons_out = 3
+threshold_eV = 44.1354
+table = "hallthruster_bridge/propellants/ionization_N_to_N_Z2plus_hms2017.dat"
+table_sha256 = "a7a6f8fd84f2a3b316002e2aba22d605f152166a5364358b5317d163054133c1"
+validity_entry = "ionization_N_to_N_Z2plus_hms2017.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/ionization_N_to_N_Z2plus_hms2017.json"
+representation_sha256 = "4f68acc6baf9c9b508e8e6d80f16f54e16dc86fdc576e0fae4b8e73cd9f39b15"
+variant_role = "NOMINAL"
+variant_group = "HMS"
+
+[[channel]]
+id = "AIR-ION-08/ionization_N_to_N_Z2plus_hms2017_x0p5"
+process = "AIR-ION-08"
+kind = "IONIZATION"
+target = "N"
+data_target = "N"
+products = { "N^2+" = 1 }
+electrons_out = 3
+threshold_eV = 44.1354
+table = "hallthruster_bridge/propellants/ionization_N_to_N_Z2plus_hms2017_x0p5.dat"
+table_sha256 = "4aba747e5d4108f32339f30441c0f4357e0505ca9e48dd7d4605fc4430eb56d0"
+validity_entry = "ionization_N_to_N_Z2plus_hms2017_x0p5.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/ionization_N_to_N_Z2plus_hms2017_x0p5.json"
+representation_sha256 = "ca53c10db5abbb7df31b1cb46b345c8dd71c4fb217d06dc9edca148789514863"
+variant_role = "SENSITIVITY"
+variant_group = "HMS"
+
+[[channel]]
+id = "AIR-ION-08/ionization_N_to_N_Z2plus_hms2017_x1p3"
+process = "AIR-ION-08"
+kind = "IONIZATION"
+target = "N"
+data_target = "N"
+products = { "N^2+" = 1 }
+electrons_out = 3
+threshold_eV = 44.1354
+table = "hallthruster_bridge/propellants/ionization_N_to_N_Z2plus_hms2017_x1p3.dat"
+table_sha256 = "6418f0966288a031f80dd0fe01cac2ee4b6a1bc2aa960570554282a65d4aa84c"
+validity_entry = "ionization_N_to_N_Z2plus_hms2017_x1p3.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/ionization_N_to_N_Z2plus_hms2017_x1p3.json"
+representation_sha256 = "b354565c7498b23e78c21c540f60c7ff806a975c7f5d33faed22063e954d6d5b"
+variant_role = "SENSITIVITY"
+variant_group = "HMS"
+
+[[channel]]
+id = "AIR-ION-09/ionization_N_Z1plus_to_N_Z2plus"
+process = "AIR-ION-09"
+kind = "IONIZATION"
+target = "N^+"
+data_target = "N^+"
+products = { "N^2+" = 1 }
+electrons_out = 2
+threshold_eV = 29.60125
+table = "hallthruster_bridge/propellants/ionization_N_Z1plus_to_N_Z2plus.dat"
+table_sha256 = "12e9c03ac8f5e37b39bcba8e81e1c8d65e57dcb8672dcab04d35e028c8c32523"
+validity_entry = "ionization_N_Z1plus_to_N_Z2plus.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/ionization_N_Z1plus_to_N_Z2plus.json"
+representation_sha256 = "db250c2b80a02fc9a21353b5c639c95af091d2d4f74771f3f3be913cef9b003f"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-ION-10/ionization_N2_to_N2_Z2plus_upper"
+process = "AIR-ION-10"
+kind = "IONIZATION"
+target = "N2"
+data_target = "N2"
+products = { "N2^2+" = 1 }
+electrons_out = 3
+threshold_eV = 42.9
+table = "hallthruster_bridge/propellants/ionization_N2_to_N2_Z2plus_upper.dat"
+table_sha256 = "048b979c879d3f08ef6f323e40a4da8d7df75e8bfee600bbf3f2fff498ff94fe"
+validity_entry = "ionization_N2_to_N2_Z2plus_upper.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/ionization_N2_to_N2_Z2plus_upper.json"
+representation_sha256 = "a2ce0ede707694d47e95fffc6cdf52426c134aeea1a049bb3a9996bee6b1a96e"
+variant_role = "UNCERTAINTY_VARIANT"
+variant_group = "N2_DICATION"
+
+[[channel]]
+id = "AIR-ION-10/ionization_N2_Z1plus_to_N2_Z2plus_tabata2006"
+process = "AIR-ION-10"
+kind = "IONIZATION"
+target = "N2^+"
+data_target = "N2^+"
+products = { "N2^2+" = 1 }
+electrons_out = 2
+threshold_eV = 27.32
+table = "hallthruster_bridge/propellants/ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat"
+table_sha256 = "116a0829dc4f0c74510176d85eb3373a10a94d806e705b55ea73cfe614b6ddbd"
+validity_entry = "ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.json"
+representation_sha256 = "be68831212acccd07353374f75dfda97c8c4338dcc50d4da11de4a171da39db3"
+variant_role = "UNCERTAINTY_VARIANT"
+variant_group = "N2_DICATION"
+
+[[channel]]
+id = "AIR-DIS-01/dissociation_N2"
+process = "AIR-DIS-01"
+kind = "DISSOCIATION"
+target = "N2"
+data_target = "N2"
+products = { "N" = 2 }
+electrons_out = 1
+threshold_eV = 12.14
+table = "hallthruster_bridge/propellants/dissociation_N2.dat"
+table_sha256 = "fb78ba1d30ec0d88a13e992df7749591f65af5770e973e3696a7a932705eb7fc"
+validity_entry = "dissociation_N2.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/dissociation_N2.json"
+representation_sha256 = "a1bcb5ad0b2762643bfa1b31f92dfe2e20aa703ee14a23f8eaddf274e7307733"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_A3Sigma_u"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 7.75
+table = "hallthruster_bridge/propellants/excitation_N2_A3Sigma_u.dat"
+table_sha256 = "1de3f096d8d649fcb9fc77a5046625135ee646984b3ad5841d0f6229a750e169"
+validity_entry = "excitation_N2_A3Sigma_u.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_A3Sigma_u.json"
+representation_sha256 = "70d2eaad93dcacb52129e7ac493e28dda2b11d248645265a9f6b16e0679f8abc"
+variant_role = "NOMINAL"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_B3Pi_g"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 8.04
+table = "hallthruster_bridge/propellants/excitation_N2_B3Pi_g.dat"
+table_sha256 = "bb354c8b80562a1896cde8d408706865a61a8fc4d8a0a08c9a9cec23c50fcbb1"
+validity_entry = "excitation_N2_B3Pi_g.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_B3Pi_g.json"
+representation_sha256 = "e6feaaeb37123cf9788ada27fc746bb731af12483b509a85abea591bc948942c"
+variant_role = "NOMINAL"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_W3Delta_u"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 8.88
+table = "hallthruster_bridge/propellants/excitation_N2_W3Delta_u.dat"
+table_sha256 = "7608747ff9606f2da2add27b1be3e83fa68547cf128319a266013d997ff89f9e"
+validity_entry = "excitation_N2_W3Delta_u.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_W3Delta_u.json"
+representation_sha256 = "01864b382275ce8948bb90982291c47d4624a88ad888ce983d613dc0db17cebc"
+variant_role = "NOMINAL"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_Bprime3Sigma_u"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 9.67
+table = "hallthruster_bridge/propellants/excitation_N2_Bprime3Sigma_u.dat"
+table_sha256 = "0cfb818937e548921784fa5952185020a5b1ad09d046edc47f5e557ba349fe22"
+validity_entry = "excitation_N2_Bprime3Sigma_u.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_Bprime3Sigma_u.json"
+representation_sha256 = "ef53100e0aa1c634fc030b235c59fd277ff7dd128596fcbba9194b73ab678660"
+variant_role = "NOMINAL"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_a1Pi_g"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 9.31
+table = "hallthruster_bridge/propellants/excitation_N2_a1Pi_g.dat"
+table_sha256 = "218ca2f91f7cf60526a28a940885421f30a2d9559094f3ccee06256ed0d29903"
+validity_entry = "excitation_N2_a1Pi_g.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_a1Pi_g.json"
+representation_sha256 = "d95c5501b1b30fcc7f3eb36c7e9a4dfbea7148c3b6ea2111b974719e69fa5122"
+variant_role = "NOMINAL"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_aprime1Sigma_u"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 9.92
+table = "hallthruster_bridge/propellants/excitation_N2_aprime1Sigma_u.dat"
+table_sha256 = "8a3bbaa8d6904ffc4060a8cc8f9d92b125298bdb3d1dc5f250146d2fb1d01361"
+validity_entry = "excitation_N2_aprime1Sigma_u.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_aprime1Sigma_u.json"
+representation_sha256 = "1064f191234ea3cbb479aae7a5078b4588391e3c8ffa9223c3b1f589c89458c1"
+variant_role = "NOMINAL"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_w1Delta_u"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 10.27
+table = "hallthruster_bridge/propellants/excitation_N2_w1Delta_u.dat"
+table_sha256 = "ed070fa87591b84b51d6d7d14b3ce63afc59386a8d87a743dd5e6ed97f7fa9bf"
+validity_entry = "excitation_N2_w1Delta_u.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_w1Delta_u.json"
+representation_sha256 = "930829323b3fb1819da8bbd96b83283019c619faab8b13a3945de717a348cd60"
+variant_role = "NOMINAL"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_C3Pi_u"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 11.19
+table = "hallthruster_bridge/propellants/excitation_N2_C3Pi_u.dat"
+table_sha256 = "85545796dd44642dad62479b343c514ae3efc1e7a2f6c7bc9fc994ea9458dcb3"
+validity_entry = "excitation_N2_C3Pi_u.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_C3Pi_u.json"
+representation_sha256 = "75402297a3187e942b8921c5bdda364222c0b6b22dc45228fdc90484e9f806d6"
+variant_role = "NOMINAL"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_A3Sigma_u_johnsonlow"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 7.75
+table = "hallthruster_bridge/propellants/excitation_N2_A3Sigma_u_johnsonlow.dat"
+table_sha256 = "89f10b6aa1b12d41b3dcf63d9377b43850a0acd58889d8bdc339e36e4e13a36f"
+validity_entry = "excitation_N2_A3Sigma_u_johnsonlow.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_A3Sigma_u_johnsonlow.json"
+representation_sha256 = "389dd60d0c2a78de61ecbb20481684341ff2a32c1ffdaaa904e6c38f1ff75211"
+variant_role = "SENSITIVITY"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_B3Pi_g_johnsonlow"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 8.04
+table = "hallthruster_bridge/propellants/excitation_N2_B3Pi_g_johnsonlow.dat"
+table_sha256 = "31bc9edb4d64d8dc66fd06b7c58e96d6df639dc659862f7af60d8980f06f7233"
+validity_entry = "excitation_N2_B3Pi_g_johnsonlow.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_B3Pi_g_johnsonlow.json"
+representation_sha256 = "af03c5f5bec4da2a1ba6997f3c54ac2a9a646911b389b5f68664ad4784a5bb16"
+variant_role = "SENSITIVITY"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_W3Delta_u_johnsonlow"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 8.88
+table = "hallthruster_bridge/propellants/excitation_N2_W3Delta_u_johnsonlow.dat"
+table_sha256 = "1f0817ed306a2ab5f8c2e4e6241bac5c5e1a5c3adfb265ea5c104e3abf3fe0cc"
+validity_entry = "excitation_N2_W3Delta_u_johnsonlow.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_W3Delta_u_johnsonlow.json"
+representation_sha256 = "c6ddda4ef34b5200b6389cccce01320e7c1a5eece4f74856b49927b7db3fe333"
+variant_role = "SENSITIVITY"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_Bprime3Sigma_u_johnsonlow"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 9.67
+table = "hallthruster_bridge/propellants/excitation_N2_Bprime3Sigma_u_johnsonlow.dat"
+table_sha256 = "968c00f2f06a472bdf05fbe5add9bf313dd35f8a734b29255c217e6a91ed32b5"
+validity_entry = "excitation_N2_Bprime3Sigma_u_johnsonlow.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_Bprime3Sigma_u_johnsonlow.json"
+representation_sha256 = "593c839eae61a32a442b0eaeac58511592e204c048bf17ac46da27c7c742d92a"
+variant_role = "SENSITIVITY"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_a1Pi_g_johnsonlow"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 9.31
+table = "hallthruster_bridge/propellants/excitation_N2_a1Pi_g_johnsonlow.dat"
+table_sha256 = "edb85fa292dbacd6d06a5a80b3b247a4cd56805d1bcf26b70d89263c607c9ef2"
+validity_entry = "excitation_N2_a1Pi_g_johnsonlow.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_a1Pi_g_johnsonlow.json"
+representation_sha256 = "288e335074dbfed61f3107cbadfb877dd373dbe16768e5ba9f1c16fea999aa7b"
+variant_role = "SENSITIVITY"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_aprime1Sigma_u_johnsonlow"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 9.92
+table = "hallthruster_bridge/propellants/excitation_N2_aprime1Sigma_u_johnsonlow.dat"
+table_sha256 = "5c4c081e0c0302614ef24ecf6c5b7e5587054797a2a38508cc5c0d09f6f53c12"
+validity_entry = "excitation_N2_aprime1Sigma_u_johnsonlow.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_aprime1Sigma_u_johnsonlow.json"
+representation_sha256 = "9e15cdf3b0dcde35caab48b51a70c756bbc43b053d7a11f91a2793d6966df495"
+variant_role = "SENSITIVITY"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_w1Delta_u_johnsonlow"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 10.27
+table = "hallthruster_bridge/propellants/excitation_N2_w1Delta_u_johnsonlow.dat"
+table_sha256 = "fc0d99f8980627f636b3c080c732e25430ed89dff9e5c7a17d7b1ef726b1363c"
+validity_entry = "excitation_N2_w1Delta_u_johnsonlow.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_w1Delta_u_johnsonlow.json"
+representation_sha256 = "fb8c5efbe669cf3d54e1d75390af30ae24901eb2c5059cb50c5ed73bb8af1b88"
+variant_role = "SENSITIVITY"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-01/excitation_N2_C3Pi_u_johnsonlow"
+process = "AIR-EXC-01"
+kind = "EXCITATION_ELECTRONIC"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 11.19
+table = "hallthruster_bridge/propellants/excitation_N2_C3Pi_u_johnsonlow.dat"
+table_sha256 = "7d3db15c03ea4893c5e8ba7b42741d1a907477c7d4c0b1263d50b64ab307e6ab"
+validity_entry = "excitation_N2_C3Pi_u_johnsonlow.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_C3Pi_u_johnsonlow.json"
+representation_sha256 = "c208b3a94cb2976f48fbc35dcd6c29db5c3c648d8c258db96f8a1de367b55d17"
+variant_role = "SENSITIVITY"
+variant_group = "EXC_JOHNSONLOW"
+
+[[channel]]
+id = "AIR-EXC-02/excitation_N2_vib_0_to_1"
+process = "AIR-EXC-02"
+kind = "EXCITATION_VIBRATIONAL"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 0.288
+table = "hallthruster_bridge/propellants/excitation_N2_vib_0_to_1.dat"
+table_sha256 = "d284b6047ddba521bf2ca6abad1994baaabdb6b9debf67aa085723331433e152"
+validity_entry = "excitation_N2_vib_0_to_1.dat"
+representation_kind = "RATE_FIT"
+representation_status = "INCOMPLETE_EVIDENCE"
+representation_gap = "Laporta et al. 2014 Eq. (10) rate fit: the fit parameters are not registered here and abep-chem has no admitted rate-fit evaluator (IX-01 'for rate-fit sources the representation is the published fit'); the .dat is a cross-check only"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-EXC-02/excitation_N2_vib_0_to_2"
+process = "AIR-EXC-02"
+kind = "EXCITATION_VIBRATIONAL"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 0.573
+table = "hallthruster_bridge/propellants/excitation_N2_vib_0_to_2.dat"
+table_sha256 = "b5e911ef0ea89ba3b92fd6b3ad4ffb445de90616e9ee5d2262a06af2b42739f8"
+validity_entry = "excitation_N2_vib_0_to_2.dat"
+representation_kind = "RATE_FIT"
+representation_status = "INCOMPLETE_EVIDENCE"
+representation_gap = "Laporta et al. 2014 Eq. (10) rate fit: the fit parameters are not registered here and abep-chem has no admitted rate-fit evaluator (IX-01 'for rate-fit sources the representation is the published fit'); the .dat is a cross-check only"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-EXC-02/excitation_N2_vib_0_to_3"
+process = "AIR-EXC-02"
+kind = "EXCITATION_VIBRATIONAL"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 0.855
+table = "hallthruster_bridge/propellants/excitation_N2_vib_0_to_3.dat"
+table_sha256 = "00f2a35a4355c83711f27ee0a29d32e8b0bf21bf4e152fb088fa1725a584e82b"
+validity_entry = "excitation_N2_vib_0_to_3.dat"
+representation_kind = "RATE_FIT"
+representation_status = "INCOMPLETE_EVIDENCE"
+representation_gap = "Laporta et al. 2014 Eq. (10) rate fit: the fit parameters are not registered here and abep-chem has no admitted rate-fit evaluator (IX-01 'for rate-fit sources the representation is the published fit'); the .dat is a cross-check only"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-EXC-02/excitation_N2_vib_0_to_4"
+process = "AIR-EXC-02"
+kind = "EXCITATION_VIBRATIONAL"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 1.133
+table = "hallthruster_bridge/propellants/excitation_N2_vib_0_to_4.dat"
+table_sha256 = "5b83ed3ed871ed8039ce503e0ec8e867b402d511d5ccee965ec261fe49aa2bfd"
+validity_entry = "excitation_N2_vib_0_to_4.dat"
+representation_kind = "RATE_FIT"
+representation_status = "INCOMPLETE_EVIDENCE"
+representation_gap = "Laporta et al. 2014 Eq. (10) rate fit: the fit parameters are not registered here and abep-chem has no admitted rate-fit evaluator (IX-01 'for rate-fit sources the representation is the published fit'); the .dat is a cross-check only"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-EXC-02/excitation_N2_vib_0_to_5"
+process = "AIR-EXC-02"
+kind = "EXCITATION_VIBRATIONAL"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 1.408
+table = "hallthruster_bridge/propellants/excitation_N2_vib_0_to_5.dat"
+table_sha256 = "696be5f39b2cd645ac3803f31cb92e1c4080a71ee72a313089e27b69ec902f22"
+validity_entry = "excitation_N2_vib_0_to_5.dat"
+representation_kind = "RATE_FIT"
+representation_status = "INCOMPLETE_EVIDENCE"
+representation_gap = "Laporta et al. 2014 Eq. (10) rate fit: the fit parameters are not registered here and abep-chem has no admitted rate-fit evaluator (IX-01 'for rate-fit sources the representation is the published fit'); the .dat is a cross-check only"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-EXC-02/excitation_N2_vib_0_to_6"
+process = "AIR-EXC-02"
+kind = "EXCITATION_VIBRATIONAL"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 1.679
+table = "hallthruster_bridge/propellants/excitation_N2_vib_0_to_6.dat"
+table_sha256 = "883f8986a0574fd24c34bc9a2766b321c457befa62916aada02f0b0fc1b0b8ee"
+validity_entry = "excitation_N2_vib_0_to_6.dat"
+representation_kind = "RATE_FIT"
+representation_status = "INCOMPLETE_EVIDENCE"
+representation_gap = "Laporta et al. 2014 Eq. (10) rate fit: the fit parameters are not registered here and abep-chem has no admitted rate-fit evaluator (IX-01 'for rate-fit sources the representation is the published fit'); the .dat is a cross-check only"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-EXC-02/excitation_N2_vib_0_to_7"
+process = "AIR-EXC-02"
+kind = "EXCITATION_VIBRATIONAL"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 1.947
+table = "hallthruster_bridge/propellants/excitation_N2_vib_0_to_7.dat"
+table_sha256 = "1fa14674da496716f222c3a40780df80078ca4b0921fc8804198b0af00086d12"
+validity_entry = "excitation_N2_vib_0_to_7.dat"
+representation_kind = "RATE_FIT"
+representation_status = "INCOMPLETE_EVIDENCE"
+representation_gap = "Laporta et al. 2014 Eq. (10) rate fit: the fit parameters are not registered here and abep-chem has no admitted rate-fit evaluator (IX-01 'for rate-fit sources the representation is the published fit'); the .dat is a cross-check only"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-EXC-02/excitation_N2_vib_0_to_8"
+process = "AIR-EXC-02"
+kind = "EXCITATION_VIBRATIONAL"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 2.211
+table = "hallthruster_bridge/propellants/excitation_N2_vib_0_to_8.dat"
+table_sha256 = "2d3b6daf646b0355f2be2563e949e23af127fec493b04a7704b58bb873bb3929"
+validity_entry = "excitation_N2_vib_0_to_8.dat"
+representation_kind = "RATE_FIT"
+representation_status = "INCOMPLETE_EVIDENCE"
+representation_gap = "Laporta et al. 2014 Eq. (10) rate fit: the fit parameters are not registered here and abep-chem has no admitted rate-fit evaluator (IX-01 'for rate-fit sources the representation is the published fit'); the .dat is a cross-check only"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-EXC-02/excitation_N2_vib_0_to_9"
+process = "AIR-EXC-02"
+kind = "EXCITATION_VIBRATIONAL"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 2.471
+table = "hallthruster_bridge/propellants/excitation_N2_vib_0_to_9.dat"
+table_sha256 = "05ce506e85cd26f02976fe8242ae159505b08d9bb3a57b8515ce033e3a1fae90"
+validity_entry = "excitation_N2_vib_0_to_9.dat"
+representation_kind = "RATE_FIT"
+representation_status = "INCOMPLETE_EVIDENCE"
+representation_gap = "Laporta et al. 2014 Eq. (10) rate fit: the fit parameters are not registered here and abep-chem has no admitted rate-fit evaluator (IX-01 'for rate-fit sources the representation is the published fit'); the .dat is a cross-check only"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-EXC-02/excitation_N2_vib_0_to_10"
+process = "AIR-EXC-02"
+kind = "EXCITATION_VIBRATIONAL"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 2.728
+table = "hallthruster_bridge/propellants/excitation_N2_vib_0_to_10.dat"
+table_sha256 = "95c17bb7f4dd923e48a81438d2bf56a28044fe8095c62d1bc5bd4beba3244dbc"
+validity_entry = "excitation_N2_vib_0_to_10.dat"
+representation_kind = "RATE_FIT"
+representation_status = "INCOMPLETE_EVIDENCE"
+representation_gap = "Laporta et al. 2014 Eq. (10) rate fit: the fit parameters are not registered here and abep-chem has no admitted rate-fit evaluator (IX-01 'for rate-fit sources the representation is the published fit'); the .dat is a cross-check only"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-EXC-03/excitation_N2_rot_j0_to_j2"
+process = "AIR-EXC-03"
+kind = "EXCITATION_ROTATIONAL"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 0.0014801
+table = "hallthruster_bridge/propellants/excitation_N2_rot_j0_to_j2.dat"
+table_sha256 = "a697d52ca71da5deb9f953a1190b4e582afc8dc03c1109c612b86c01d5b1ba05"
+validity_entry = "excitation_N2_rot_j0_to_j2.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_rot_j0_to_j2.json"
+representation_sha256 = "78a8992bbe73ce5cb4ad4a14d07fb72ff2839e18802a5d9847ab3df77ab9f4e6"
+variant_role = "NOMINAL"
+variant_group = "ROT_OFF"
+
+[[channel]]
+id = "AIR-EXC-03/excitation_N2_rot_j0_to_j4"
+process = "AIR-EXC-03"
+kind = "EXCITATION_ROTATIONAL"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 0.0049335
+table = "hallthruster_bridge/propellants/excitation_N2_rot_j0_to_j4.dat"
+table_sha256 = "d6341cbea08a2c7e8ca0fe9f54b2a2ead06db942875043231c27845e1e3296dc"
+validity_entry = "excitation_N2_rot_j0_to_j4.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/excitation_N2_rot_j0_to_j4.json"
+representation_sha256 = "5aee6baa7375a66c998e9313b2049c0660c165e6c7dbddd51c29da6e3822955c"
+variant_role = "NOMINAL"
+variant_group = "ROT_OFF"
+
+[[channel]]
+id = "AIR-EL-01/elastic_N2_song2023"
+process = "AIR-EL-01"
+kind = "ELASTIC_MOMENTUM_TRANSFER"
+target = "N2"
+data_target = "N2"
+products = { "N2" = 1 }
+electrons_out = 1
+threshold_eV = 0.0
+table = "hallthruster_bridge/propellants/elastic_N2_song2023.dat"
+table_sha256 = "d70d9252e961ec6bfe16a0a480020dfdcf3a3aa1032cf2d23b7b3a51a455c47d"
+validity_entry = "elastic_N2_song2023.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/elastic_N2_song2023.json"
+representation_sha256 = "5c527cf582a05450b7474343bd3db9265ff98c83552fda53bb80b4ec1a72d0ae"
+variant_role = "NOMINAL"
+
+[[channel]]
+id = "AIR-EL-02/elastic_N_ragimkhanov2026"
+process = "AIR-EL-02"
+kind = "ELASTIC_MOMENTUM_TRANSFER"
+target = "N"
+data_target = "N"
+products = { "N" = 1 }
+electrons_out = 1
+threshold_eV = 0.0
+table = "hallthruster_bridge/propellants/elastic_N_ragimkhanov2026.dat"
+table_sha256 = "421945464418c0b4929e948abfa917de25df8edc919c3c1fee37fbd63cf4cf80"
+validity_entry = "elastic_N_ragimkhanov2026.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/elastic_N_ragimkhanov2026.json"
+representation_sha256 = "afe889e0c3f4534f713d25626e8e0cba061db0189e6dbc7323bb3bc5df3d365c"
+variant_role = "NOMINAL"
+variant_group = "N_ELASTIC"
+
+[[channel]]
+id = "AIR-EL-02/elastic_N_wang2014_bsr"
+process = "AIR-EL-02"
+kind = "ELASTIC_MOMENTUM_TRANSFER"
+target = "N"
+data_target = "N"
+products = { "N" = 1 }
+electrons_out = 1
+threshold_eV = 0.0
+table = "hallthruster_bridge/propellants/elastic_N_wang2014_bsr.dat"
+table_sha256 = "f4edd85b629eebbe0aa030d225159f6edda2ef90796be85798758b27dd1cf112"
+validity_entry = "elastic_N_wang2014_bsr.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/elastic_N_wang2014_bsr.json"
+representation_sha256 = "82740b15efced1a84550f00277b3b538c03b612eedc7809911ccd0db3223f02a"
+variant_role = "VARIANT"
+variant_group = "N_ELASTIC"
+
+[[variant_group]]
+id = "DI"
+process = "AIR-ION-06"
+members = ["AIR-ION-06/dissociative_ionization_N2_upper", "AIR-ION-06/dissociative_ionization_N2_lower"]
+note = "primary chemistry dimension: dissociative ionization upper (nominal) / lower; Hall configs n2_n.toml / n2_n_di_lower.toml"
+
+[[variant_group]]
+id = "N_ELASTIC"
+process = "AIR-EL-02"
+members = ["AIR-EL-02/elastic_N_ragimkhanov2026", "AIR-EL-02/elastic_N_wang2014_bsr"]
+note = "primary chemistry dimension: atomic-N momentum transfer OPM (nominal) / Wang BSR; Hall configs n2_n.toml / n2_n_nel_wang.toml"
+
+[[variant_group]]
+id = "EXC_JOHNSONLOW"
+process = "AIR-EXC-01"
+members = ["AIR-EXC-01/excitation_N2_A3Sigma_u", "AIR-EXC-01/excitation_N2_B3Pi_g", "AIR-EXC-01/excitation_N2_W3Delta_u", "AIR-EXC-01/excitation_N2_Bprime3Sigma_u", "AIR-EXC-01/excitation_N2_a1Pi_g", "AIR-EXC-01/excitation_N2_aprime1Sigma_u", "AIR-EXC-01/excitation_N2_w1Delta_u", "AIR-EXC-01/excitation_N2_C3Pi_u", "AIR-EXC-01/excitation_N2_A3Sigma_u_johnsonlow", "AIR-EXC-01/excitation_N2_B3Pi_g_johnsonlow", "AIR-EXC-01/excitation_N2_W3Delta_u_johnsonlow", "AIR-EXC-01/excitation_N2_Bprime3Sigma_u_johnsonlow", "AIR-EXC-01/excitation_N2_a1Pi_g_johnsonlow", "AIR-EXC-01/excitation_N2_aprime1Sigma_u_johnsonlow", "AIR-EXC-01/excitation_N2_w1Delta_u_johnsonlow", "AIR-EXC-01/excitation_N2_C3Pi_u_johnsonlow"]
+note = "sensitivity branch: Johnson 2005 at all energies (n2_n_exc_johnsonlow.toml)"
+
+[[variant_group]]
+id = "HMS"
+process = "AIR-ION-08"
+members = ["AIR-ION-08/ionization_N_to_N_Z2plus_hms2017", "AIR-ION-08/ionization_N_to_N_Z2plus_hms2017_x0p5", "AIR-ION-08/ionization_N_to_N_Z2plus_hms2017_x1p3"]
+note = "sensitivity branches: direct N -> N^2+ x0.5 / x1.3 (n2_n_ndd_hmslow.toml / n2_n_ndd_hmshigh.toml)"
+
+[[variant_group]]
+id = "N2_DICATION"
+process = "AIR-ION-10"
+members = ["AIR-ION-10/ionization_N2_to_N2_Z2plus_upper", "AIR-ION-10/ionization_N2_Z1plus_to_N2_Z2plus_tabata2006"]
+note = "uncertainty variant only (n2_n_n2dication.toml, on DI lower); never in the nominal scenario"
+
+[[variant_group]]
+id = "ROT_OFF"
+process = "AIR-EXC-03"
+members = ["AIR-EXC-03/excitation_N2_rot_j0_to_j2", "AIR-EXC-03/excitation_N2_rot_j0_to_j4"]
+note = "lower-bound sensitivity branch: the rotational channels removed (n2_n_rot_off.toml)"
+
+[[scenario]]
+id = "EM-N2-NOMINAL"
+evidence_mode = "EM-N2"
+note = "the N2/N subset (CG-N2) as the nominal Hall configuration abep-n2n-0.11 n2_n.toml; NP-ICP-NEUTRALIZER addendum_02 IN-16 / sec. 8 IDENTICAL: same tables"
+hall_config = "hallthruster_bridge/propellants/n2_n.toml"
+hall_config_sha256 = "4f10db747cfb11cfefb8080a9cad52e502c2ab11f0e485ac644a532b929607de"
+channels = [
+  "AIR-ION-03/ionization_N2_song2023",
+  "AIR-ION-04/ionization_N",
+  "AIR-ION-06/dissociative_ionization_N2_upper",
+  "AIR-ION-07/dissociative_ionization_N2_to_N_Z2plus",
+  "AIR-ION-08/ionization_N_to_N_Z2plus_hms2017",
+  "AIR-ION-09/ionization_N_Z1plus_to_N_Z2plus",
+  "AIR-DIS-01/dissociation_N2",
+  "AIR-EXC-01/excitation_N2_A3Sigma_u",
+  "AIR-EXC-01/excitation_N2_B3Pi_g",
+  "AIR-EXC-01/excitation_N2_W3Delta_u",
+  "AIR-EXC-01/excitation_N2_Bprime3Sigma_u",
+  "AIR-EXC-01/excitation_N2_a1Pi_g",
+  "AIR-EXC-01/excitation_N2_aprime1Sigma_u",
+  "AIR-EXC-01/excitation_N2_w1Delta_u",
+  "AIR-EXC-01/excitation_N2_C3Pi_u",
+  "AIR-EXC-02/excitation_N2_vib_0_to_1",
+  "AIR-EXC-02/excitation_N2_vib_0_to_2",
+  "AIR-EXC-02/excitation_N2_vib_0_to_3",
+  "AIR-EXC-02/excitation_N2_vib_0_to_4",
+  "AIR-EXC-02/excitation_N2_vib_0_to_5",
+  "AIR-EXC-02/excitation_N2_vib_0_to_6",
+  "AIR-EXC-02/excitation_N2_vib_0_to_7",
+  "AIR-EXC-02/excitation_N2_vib_0_to_8",
+  "AIR-EXC-02/excitation_N2_vib_0_to_9",
+  "AIR-EXC-02/excitation_N2_vib_0_to_10",
+  "AIR-EXC-03/excitation_N2_rot_j0_to_j2",
+  "AIR-EXC-03/excitation_N2_rot_j0_to_j4",
+  "AIR-EL-01/elastic_N2_song2023",
+  "AIR-EL-02/elastic_N_ragimkhanov2026",
+]

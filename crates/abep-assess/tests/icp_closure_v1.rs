@@ -37,6 +37,11 @@ fn strs(v: &Value) -> Vec<String> {
 fn committed_icp_closure_record_is_the_record_of_today() {
     let committed = std::fs::read_to_string(repo().join(RECORD_REL)).expect("committed record");
     assert_eq!(record().1, committed, "byte-identical regeneration of {RECORD_REL}");
+    // The record names the ICP registry it was run on; it regenerates from that pinned snapshot, not the live registry.
+    let snap = abep_chem::registry::RegistrySource::snapshot_0_0();
+    assert_eq!(at(&record().0, &["provenance", "icp_chem_pinned"]).as_str(), Some(snap.pinned_sha256.as_str()));
+    let toml = std::fs::read(repo().join(&snap.dir).join("ICP_CHEM_PINNED.toml")).unwrap();
+    assert_eq!(abep_provenance::sha256_hex(&toml), snap.pinned_sha256);
     // Deterministic: a second build renders the same bytes.
     assert_eq!(render(&build(&repo()).unwrap()).unwrap(), record().1);
 }
