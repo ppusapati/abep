@@ -4,6 +4,7 @@
 //!   audit-check                                          regenerate in memory: byte-equal to the committed files
 //!   audit-freeze --name NAME --out DIR FILE...           freeze audit shard outputs (sorted gzip JSONL + sha manifest)
 //!   audit-verdicts --manifest M --manifest-sha256 H --out F   verdicts from a frozen record file only
+//!   audit-materiality --manifest M --manifest-sha256 H --out F   materiality over the RP-1 operating envelope (A9.38 P4)
 //!   generate                                             write the AIR family case file (NP-HALL-PARAMETRIC-ENVELOPE A1)
 //!   check                                                regenerate in memory: byte-equal to the committed AIR case file
 //!   launch-manifest --path complete|bounded              write the AIR launch manifest for an explicitly requested path:
@@ -23,7 +24,7 @@ fn opt(args: &[String], name: &str) -> Option<String> {
 
 fn usage() -> ExitCode {
     eprintln!(
-        "usage: abep-air-cases audit-generate|audit-check|audit-freeze --name NAME --out DIR FILE...|audit-verdicts --manifest M --manifest-sha256 H --out F|generate|check|launch-manifest --path complete|bounded|freeze --name NAME --out DIR FILE... [--root PATH]"
+        "usage: abep-air-cases audit-generate|audit-check|audit-freeze --name NAME --out DIR FILE...|audit-verdicts --manifest M --manifest-sha256 H --out F|audit-materiality --manifest M --manifest-sha256 H --out F|generate|check|launch-manifest --path complete|bounded|freeze --name NAME --out DIR FILE... [--root PATH]"
     );
     ExitCode::from(2)
 }
@@ -109,6 +110,23 @@ fn main() -> ExitCode {
                     std::fs::write(&out, t)
                         .map_err(|e| abep_types::AbepError::Io { path: out.clone(), message: e.to_string() })?;
                     Ok(format!("verdicts written: {out}"))
+                })
+        }
+        "audit-materiality" => {
+            let (Some(m), Some(h), Some(out)) =
+                (opt(&args, "--manifest"), opt(&args, "--manifest-sha256"), opt(&args, "--out"))
+            else {
+                return usage();
+            };
+            air_audit::read_frozen(&root, &PathBuf::from(m), &h)
+                .and_then(|recs| air_audit::materiality(&root, &recs))
+                .and_then(|v| {
+                    let mut t = pyjson::dumps(&v, &DumpOptions::config_writer())
+                        .map_err(|e| abep_types::AbepError::Model { message: e.to_string() })?;
+                    t.push('\n');
+                    std::fs::write(&out, t)
+                        .map_err(|e| abep_types::AbepError::Io { path: out.clone(), message: e.to_string() })?;
+                    Ok(format!("materiality written: {out}"))
                 })
         }
         _ => return usage(),

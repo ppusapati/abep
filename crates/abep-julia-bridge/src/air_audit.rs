@@ -396,3 +396,158 @@ pub fn verdicts(repo: &Path, records: &BTreeMap<String, Value>) -> AbepResult<Va
     );
     Ok(Value::Dict(out))
 }
+
+// ------------------------------------------------------------------------- materiality over the operating envelope
+
+/// Mass-flow levels of the audit grid inside the H2-1 design flow band for the RFP 12-25 mN points
+/// (h2_1_hall_chamber_magnet_v1.json /channel/flows_kgps design_case_min .. design_case_max = 3.77e-7 .. 1.287e-6 kg/s;
+/// MF-LO = design_case_min). MF-HI (3.2e-6 kg/s, delivered_max_A5) lies above that band.
+pub const DESIGN_FLOW_LEVELS: [&str; 1] = ["MF-LO"];
+
+/// One eligible record (key, record).
+type Rec<'a> = (&'a String, &'a Value);
+/// One operating point: case count, eligible records, composition corners with an eligible run.
+type Stratum<'a> = (usize, Vec<Rec<'a>>, BTreeSet<String>);
+
+/// Key fields of an audit case key `AIR_AUDIT|geom|shape|bpk|vd|mdot|corner|transport|chem`: (B_peak, V_d, mdot).
+fn operating_point(key: &str) -> AbepResult<(String, String, String)> {
+    let f: Vec<&str> = key.split('|').collect();
+    if f.len() != 9 || f[0] != "AIR_AUDIT" {
+        return Err(model(format!("not an audit case key: {key}")));
+    }
+    Ok((f[3].to_string(), f[4].to_string(), f[5].to_string()))
+}
+
+/// Per (process, metric): the window and frame-max bounds over a subset of eligible records, the ambiguity-rule outcome
+/// of each form, and whether the upper member crosses the promotion threshold anywhere in the subset.
+fn subset_rows(subset: &[(&String, &Value)]) -> AbepResult<Dict> {
+    let mut rows = Dict::new();
+    for (process, metric_id, threshold) in METRICS {
+        let mut d = Dict::new();
+        d.insert("threshold", Value::Float(threshold));
+        let mut crosses = false;
+        for form in ["window", "frame_max"] {
+            let (mut lo, mut hi) = (f64::INFINITY, f64::NEG_INFINITY);
+            let mut worst = String::new();
+            for (k, r) in subset {
+                let (l, u) = if form == "window" {
+                    let s = num_map(get(r, "sums")).unwrap_or_default();
+                    let h = num_map(get(r, "headers")).unwrap_or_default();
+                    (metric(process, metric_id, "lower", &s, &h)?, metric(process, metric_id, "upper", &s, &h)?)
+                } else {
+                    let fm = num_map(get(r, "frame_max")).unwrap_or_default();
+                    let at = |m: &str| fm.get(&format!("{process}|{metric_id}|{m}")).copied();
+                    (at("lower"), at("upper"))
+                };
+                let (Some(l), Some(u)) = (l, u) else {
+                    return Err(model(format!("{k}: {process} {metric_id} {form} lower / upper missing")));
+                };
+                lo = lo.min(l);
+                if u > hi {
+                    hi = u;
+                    worst = (*k).clone();
+                }
+            }
+            let fin = |x: f64| if x.is_finite() { Value::Float(x) } else { Value::Null };
+            let outcome = if subset.is_empty() { "NO_ELIGIBLE_RUN" } else { ambiguity_verdict(lo, hi, threshold) };
+            crosses |= !subset.is_empty() && hi >= threshold;
+            let mut f = Dict::new();
+            f.insert("lower_min", fin(lo));
+            f.insert("upper_max", fin(hi));
+            f.insert("worst_case", Value::str(&worst));
+            f.insert("ambiguity_rule", Value::str(outcome));
+            d.insert(form, Value::Dict(f));
+        }
+        d.insert("upper_crosses_threshold", Value::Bool(crosses));
+        rows.insert(format!("{process}|{metric_id}").as_str(), Value::Dict(d));
+    }
+    Ok(rows)
+}
+
+fn crossing_list(rows: &Dict) -> Vec<Value> {
+    rows.iter()
+        .filter(|(_, v)| matches!(get(v, "upper_crosses_threshold"), Some(Value::Bool(true))))
+        .map(|(k, _)| Value::str(k))
+        .collect()
+}
+
+/// Materiality of the bound omitted processes over the RP-1 operating envelope (A9.38 P4): the frozen records stratified
+/// by operating point (B_peak x V_d x mdot) and by the design-flow band of the RFP thrust points. Derived information on
+/// the same frozen records with the preregistered thresholds and ambiguity rule; it never replaces the verdict document
+/// (whose rule is "anywhere in the domain") and changes no chemistry.
+pub fn materiality(repo: &Path, records: &BTreeMap<String, Value>) -> AbepResult<Value> {
+    let doc = pyjson::loads(&std::fs::read_to_string(repo.join(AUDIT_CASES_REL)).map_err(|e| model(e.to_string()))?)
+        .map_err(|e| model(e.to_string()))?;
+    let keys: Vec<String> = get(&doc, "cases")
+        .and_then(Value::as_list)
+        .ok_or_else(|| model("audit cases"))?
+        .iter()
+        .filter_map(|c| get(c, "key").and_then(Value::as_str).map(str::to_string))
+        .collect();
+    let mut strata: BTreeMap<String, Stratum> = BTreeMap::new();
+    let (mut band, mut above): (Vec<Rec>, Vec<Rec>) = (Vec::new(), Vec::new());
+    let mut all = Vec::new();
+    for k in &keys {
+        let (bp, vd, mf) = operating_point(k)?;
+        let e = strata.entry(format!("{bp}|{vd}|{mf}")).or_default();
+        e.0 += 1;
+        let Some(r) = records.get(k) else { continue };
+        if ineligible(r).is_some() {
+            continue;
+        }
+        e.1.push((k, r));
+        if let Some(c) = get(r, "composition_id").and_then(Value::as_str) {
+            e.2.insert(c.to_string());
+        }
+        all.push((k, r));
+        if DESIGN_FLOW_LEVELS.contains(&mf.as_str()) {
+            band.push((k, r));
+        } else {
+            above.push((k, r));
+        }
+    }
+    let mut sd = Dict::new();
+    for (id, (n, elig, corners)) in &strata {
+        let rows = subset_rows(elig)?;
+        let mut d = Dict::new();
+        d.insert("n_cases", Value::int(*n as i64));
+        d.insert("n_eligible", Value::int(elig.len() as i64));
+        d.insert("corners_with_eligible_run", Value::List(corners.iter().map(Value::str).collect()));
+        d.insert("crossing", Value::List(crossing_list(&rows)));
+        d.insert("rows", Value::Dict(rows));
+        sd.insert(id.as_str(), Value::Dict(d));
+    }
+    let group = |subset: &[(&String, &Value)], what: &str| -> AbepResult<Value> {
+        let rows = subset_rows(subset)?;
+        let mut d = Dict::new();
+        d.insert("definition", Value::str(what));
+        d.insert("n_eligible", Value::int(subset.len() as i64));
+        d.insert("crossing", Value::List(crossing_list(&rows)));
+        d.insert("rows", Value::Dict(rows));
+        Ok(Value::Dict(d))
+    };
+    let mut out = Dict::new();
+    out.insert("schema", Value::str("np_hall_chem_air_audit_materiality_v1"));
+    out.insert("audit", Value::str("CA-HALL-AIR-v1 (NP-HALL-CHEM-AIR v1 + addendum 01)"));
+    out.insert(
+        "basis",
+        Value::str("A9.38 P4: materiality of the bound omitted processes in the required operating envelope, judged by the preregistered criteria (F_P, F_ion, F_e_loss 1 %; F_S 5 %) and the ambiguity rule on the upper / lower members; derived from the same frozen records as the verdict document, which stays the governing result (rule: anywhere in the audited domain)"),
+    );
+    out.insert(
+        "envelope",
+        Value::str("DBF-1 RP-1 Hall configuration (G-RP1: d_mean 70 mm, h 12 mm, L 103.2 mm; DBF1-H1-01..04), simulation B(z) BZ-P5B16 surrogate (DBF1-BZ-04), B_peak BP-LO / BP-HI (DBF1-BZ-03), V_d band ends 180 / 350 V (DBF1-H1-05), mdot MF-LO 3.77e-7 / MF-HI 3.2e-6 kg/s; four CE-AIR composition corners; nine transport candidates; no thrust is recorded by the blind audit and no Hall closure is admitted, so the RFP thrust points enter through the H2-1 design flow band (design_case_min .. design_case_max 3.77e-7 .. 1.287e-6 kg/s for 12-25 mN), which contains MF-LO and not MF-HI"),
+    );
+    out.insert("n_cases", Value::int(keys.len() as i64));
+    out.insert("n_eligible", Value::int(all.len() as i64));
+    out.insert("audited_domain", group(&all, "every eligible run (the verdict-document population)")?);
+    out.insert(
+        "design_flow_band",
+        group(
+            &band,
+            "eligible runs at mass-flow levels inside the H2-1 design flow band of the RFP 12-25 mN points (MF-LO)",
+        )?,
+    );
+    out.insert("above_design_flow_band", group(&above, "eligible runs at MF-HI (above the design flow band)")?);
+    out.insert("operating_points", Value::Dict(sd));
+    Ok(Value::Dict(out))
+}
