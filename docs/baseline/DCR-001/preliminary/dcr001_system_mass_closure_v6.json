@@ -1,0 +1,439 @@
+{
+ "label": "PROPOSAL-LEVEL / PARAMETRIC / NOT_VALIDATED",
+ "supersedes": "v5 (0757093) roll-up for AL-01 / 02 / 05 / 07 / 08 only",
+ "ppu": {
+  "bom": [
+   {
+    "item": "input front end: EMI filter, inrush limiter, 4 latching current limiters (discharge, RF-generator feed, compressor drive, AL-09)",
+    "cbe_kg": 0.35,
+    "mga": 0.2,
+    "mev_kg": 0.42,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "discharge converter: 3 x 500 W phase-shifted full-bridge modules, N+1 (power stage, magnetics, switches, capacitors, PCB)",
+    "cbe_kg": 1.2,
+    "mga": 0.2,
+    "mev_kg": 1.44,
+    "basis": "estimate (~0.8 kg/kW power stage; verify)",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "discharge output section: OR-ing, output filter, current sensing, ignition / arc protection",
+    "cbe_kg": 0.25,
+    "mga": 0.2,
+    "mev_kg": 0.3,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "magnet supplies: 3 per-coil channels (inner, outer, trim; ~15 W each) + 1 cross-strapped spare",
+    "cbe_kg": 0.32,
+    "mga": 0.2,
+    "mev_kg": 0.384,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "collector / bias supply: floating 100 W class with V/I readback, 2 cold-redundant",
+    "cbe_kg": 0.36,
+    "mga": 0.2,
+    "mev_kg": 0.432,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "auxiliary (internal rails) supply, 2 redundant",
+    "cbe_kg": 0.16,
+    "mga": 0.2,
+    "mev_kg": 0.192,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "PPU-internal converter control / protection / telemetry boards, 2 redundant (system 1553 / discrete interface is in AL-09)",
+    "cbe_kg": 0.24,
+    "mga": 0.2,
+    "mev_kg": 0.288,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "enclosure: Al box ~250 x 200 x 100 mm, 1.5 mm walls + partitions",
+    "cbe_kg": 0.85,
+    "mga": 0.2,
+    "mev_kg": 1.02,
+    "basis": "geometry",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "output EMI filters",
+    "cbe_kg": 0.1,
+    "mga": 0.2,
+    "mev_kg": 0.12,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "connectors (8) + internal wiring",
+    "cbe_kg": 0.34,
+    "mga": 0.2,
+    "mev_kg": 0.408,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "cold plate / thermal interface: thickened baseplate + interface filler (~50 W dissipation)",
+    "cbe_kg": 0.28,
+    "mga": 0.2,
+    "mev_kg": 0.336,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "potting, conformal coat, fasteners",
+    "cbe_kg": 0.1,
+    "mga": 0.2,
+    "mev_kg": 0.12,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   }
+  ],
+  "cbe_kg": 4.55,
+  "mev_kg": 5.46,
+  "crosscheck": {
+   "analog_floor_kg": 5.0,
+   "analog": "SETS PPU 100-500 W (lowest admissible measured analog, mass_power_a9_v5 AL-07)",
+   "analog_scope_note": "the analogs contain functions not in AL-07 now: cathode heater / keeper supplies (no C1 in flight, A9.20) and the controller / valve drivers (A9B-26 'inside the PPU analog in H2-7 v1', now booked in AL-09); they are single-string",
+   "ng_em1_1kW_kg": 6.1,
+   "governance": "the 6.0 kg floor (owner 2026-10-04: do not reduce) is replaced only by a PPU CBE x 1.20 (rebase rule); this preliminary CBE governs only if the owner accepts it as the AL-07 rebase"
+  },
+  "discharge_rating_W": 1000.0
+ },
+ "xe": {
+  "bom": [
+   {
+    "item": "Ti-6Al-4V spherical shell, 1.25 L, R 66.8 mm, t 1.20 mm (MEOP 150 bar, burst factor 2)",
+    "cbe_kg": 0.2983,
+    "mga": 0.2,
+    "mev_kg": 0.358,
+    "basis": "thin-shell sizing",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "girth-weld land",
+    "cbe_kg": 0.03,
+    "mga": 0.2,
+    "mev_kg": 0.036,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "2 port bosses (inlet / outlet)",
+    "cbe_kg": 0.12,
+    "mga": 0.2,
+    "mev_kg": 0.144,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "tank mounting tabs / skirt",
+    "cbe_kg": 0.08,
+    "mga": 0.2,
+    "mev_kg": 0.096,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "Xe pressure regulator: Moog XFC (A9B-09)",
+    "cbe_kg": 0.974,
+    "mga": 0.05,
+    "mev_kg": 1.0227,
+    "basis": "measured analog AN-MOOG-XFC",
+    "evidence_class": "measured"
+   },
+   {
+    "item": "series isolation latch #1 (A9B-10, owner row 55)",
+    "cbe_kg": 0.17,
+    "mga": 0.05,
+    "mev_kg": 0.1785,
+    "basis": "measured analog AN-MOOG-LATCH-18",
+    "evidence_class": "measured"
+   },
+   {
+    "item": "series isolation latch #2 (A9B-10, owner row 55; omitted in the DCR v3 BOM)",
+    "cbe_kg": 0.17,
+    "mga": 0.05,
+    "mev_kg": 0.1785,
+    "basis": "measured analog AN-MOOG-LATCH-18",
+    "evidence_class": "measured"
+   },
+   {
+    "item": "anode-feed proportional flow control valve (A9B-11; omitted in the DCR v3 BOM)",
+    "cbe_kg": 0.115,
+    "mga": 0.05,
+    "mev_kg": 0.1208,
+    "basis": "measured analog AN-MOOG-PFCV",
+    "evidence_class": "measured"
+   },
+   {
+    "item": "pressure transducers: 2 high-pressure (sensor redundancy, RFP-P18-02) + 1 low-pressure",
+    "cbe_kg": 0.18,
+    "mga": 0.2,
+    "mev_kg": 0.216,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "filter",
+    "cbe_kg": 0.03,
+    "mga": 0.2,
+    "mev_kg": 0.036,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "fill / drain service valve (omitted in the DCR v3 BOM)",
+    "cbe_kg": 0.06,
+    "mga": 0.2,
+    "mev_kg": 0.072,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "plumbing: 1/8 in SS tube ~2.5 m (0.034 kg/m), welded fittings, clamps",
+    "cbe_kg": 0.184,
+    "mga": 0.2,
+    "mev_kg": 0.2208,
+    "basis": "geometry + estimate",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "tank strap / bracket to module structure",
+    "cbe_kg": 0.12,
+    "mga": 0.2,
+    "mev_kg": 0.144,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "tank thermal: 2 redundant heaters + 2 thermostats / RTDs, MLI ~0.06 m2",
+    "cbe_kg": 0.08,
+    "mga": 0.2,
+    "mev_kg": 0.096,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   }
+  ],
+  "cbe_kg": 2.6113,
+  "mev_kg": 2.9193,
+  "tank": {
+   "V_L": 1.25,
+   "R_mm": 66.8252308785988,
+   "t_required_mm": 1.1199759365128292,
+   "t_mm": 1.2,
+   "MEOP_bar": 150.0,
+   "burst_factor": 2.0
+  },
+  "double_count_check": [
+   "AL-09: valve / XFC drivers and housekeeping are AL-09 (A9B-26); none are in AL-08 -> no double count",
+   "AL-10: Xe tank mounting / thermal are mapped to AL-08 (MQ-07, A9B-08); AL-10 thermal (A9B-30) excludes them -> no double count",
+   "PPU: no Xe electronics in AL-07 -> no double count",
+   "AL-09 flight sensors (A9B-29, row-62 ICP list) do not include the Xe transducers (A9B-12, AL-08) -> no double count",
+   "finding: the DCR v3 AL-08 BOM omitted the second series latch, the PFCV and a fill / drain valve; added here (mass increases)"
+  ]
+ },
+ "integration": {
+  "booked": [
+   {
+    "line": "AL-02",
+    "item": "housing front flange (share of 'Al flanges / inserts' 0.25)",
+    "cbe_kg": 0.1
+   },
+   {
+    "line": "AL-02",
+    "item": "housing aft flange to plenum / closure (share)",
+    "cbe_kg": 0.05
+   },
+   {
+    "line": "AL-02",
+    "item": "bearing / motor carrier inserts (share)",
+    "cbe_kg": 0.1
+   },
+   {
+    "line": "AL-02",
+    "item": "mounts: brackets to intake shroud / module structure",
+    "cbe_kg": 0.25
+   },
+   {
+    "line": "AL-01",
+    "item": "collimator support ring (share of 'frame, mounts' 0.50)",
+    "cbe_kg": 0.2
+   },
+   {
+    "line": "AL-01",
+    "item": "shroud aft interface ring to the compressor (share)",
+    "cbe_kg": 0.1
+   },
+   {
+    "line": "AL-01",
+    "item": "intake mount feet to module structure (share)",
+    "cbe_kg": 0.2
+   }
+  ],
+  "integrated": [
+   {
+    "item": "collimator support ring (retained)",
+    "cbe_kg": 0.2
+   },
+   {
+    "item": "co-cured shroud-housing overlap joint (CFRP 30 mm x 1 mm band) replacing the bolted flange pair",
+    "cbe_kg": 0.11344636289740469
+   },
+   {
+    "item": "housing aft flange (retained)",
+    "cbe_kg": 0.05
+   },
+   {
+    "item": "bearing / motor carrier inserts (retained)",
+    "cbe_kg": 0.1
+   },
+   {
+    "item": "one set of 4 Ti mount feet at the compressor station for the whole assembly (replaces intake feet + compressor brackets)",
+    "cbe_kg": 0.25
+   },
+   {
+    "item": "local shell reinforcement at the mount station",
+    "cbe_kg": 0.05
+   }
+  ],
+  "booked_cbe": 1.0,
+  "integrated_cbe": 0.7634,
+  "saving_cbe": 0.2366,
+  "saving_mev": 0.2839,
+  "shell_overlap": "none (shroud ends at the rotor face; housing starts there)"
+ },
+ "al10_audit": [
+  {
+   "item": "ICP open-frame support / Hall-to-ICP axial spacer",
+   "finding": "DOUBLE-BOOKED: owner mapping MPQ-02 (MPV2-N04) and A9B-31 put it in AL-10; the DCR v3 AL-05 BOM also carries 'mount / spacer' 0.20 kg CBE (0.24 MEV)",
+   "action": "remove the AL-05 duplicate (AL-10 keeps it per MQ-02)",
+   "saving_mev": 0.24
+  },
+  {
+   "item": "intake / compressor mounts vs AL-10 module structure (A9B-31)",
+   "finding": "AL-10 is an unitemized owner allocation; no specific bracket can be shown to be in both",
+   "action": "none",
+   "saving_mev": 0.0
+  },
+  {
+   "item": "Hall radiator (AL-10) vs anode heat-removal hardware (MPV2-N03 -> AL-04)",
+   "finding": "the AL-04 floor (H2 head analog) does not contain the radiator; no double booking",
+   "action": "none",
+   "saving_mev": 0.0
+  },
+  {
+   "item": "Xe tank thermal",
+   "finding": "in AL-08 by MQ-07; excluded from AL-10",
+   "action": "none",
+   "saving_mev": 0.0
+  }
+ ],
+ "rows": [
+  {
+   "line": "AL-07 PPU",
+   "current_mev": 6.0,
+   "new_cbe": 4.55,
+   "new_mev": 5.46,
+   "saving": 0.54,
+   "evidence": "preliminary component CBE, mostly assumed; enclosure model-derived; governs only on owner acceptance as the AL-07 rebase"
+  },
+  {
+   "line": "AL-08 Xe hardware",
+   "current_mev": 3.143,
+   "new_cbe": 2.6113,
+   "new_mev": 2.9193,
+   "saving": 0.2237,
+   "evidence": "tank model-derived; XFC / latches / PFCV measured analogs; omitted latch #2, PFCV and fill / drain valve added"
+  },
+  {
+   "line": "AL-01 + AL-02 integration",
+   "current_mev": 12.396,
+   "new_cbe": null,
+   "new_mev": 12.1121,
+   "saving": 0.2839,
+   "evidence": "one assembly: bolted flange pair -> co-cured joint; two mount sets -> one; shell area unchanged; itemization assumed"
+  },
+  {
+   "line": "AL-10 audit (duplicate removed from AL-05)",
+   "current_mev": 1.583,
+   "new_cbe": null,
+   "new_mev": 1.343,
+   "saving": 0.24,
+   "evidence": "ICP mount / spacer booked in AL-05 and (MQ-02) AL-10; AL-10 value unchanged at 2.5 kg"
+  },
+  {
+   "line": "AL-10 structure / thermal",
+   "current_mev": 2.5,
+   "new_cbe": null,
+   "new_mev": 2.5,
+   "saving": 0.0,
+   "evidence": "owner allocation; no other duplicated hardware identified"
+  }
+ ],
+ "total_nonharness_saving_kg": 1.2876,
+ "subtotals_old_mev_kg": {
+  "AL-01 intake": 4.629,
+  "AL-02 compressor": 7.767,
+  "AL-03 plenum/feed": 1.734,
+  "AL-04 Hall head + magnets": 4.205,
+  "AL-05 ICP neutralizer": 1.583,
+  "AL-06 RF generator / match": 1.5,
+  "AL-07 PPU": 6.0,
+  "AL-08 Xe hardware (single branch, 2 kg Xe)": 3.143,
+  "AL-09 controls / FDIR": 1.0,
+  "AL-10 structure / thermal": 2.5
+ },
+ "subtotals_new_mev_kg": {
+  "AL-01 intake": 4.269,
+  "AL-02 compressor": 7.8431,
+  "AL-03 plenum/feed": 1.734,
+  "AL-04 Hall head + magnets": 4.205,
+  "AL-05 ICP neutralizer": 1.343,
+  "AL-06 RF generator / match": 1.5,
+  "AL-07 PPU": 5.46,
+  "AL-08 Xe hardware (single branch, 2 kg Xe)": 2.9193,
+  "AL-09 controls / FDIR": 1.0,
+  "AL-10 structure / thermal": 2.5
+ },
+ "rollup_old": {
+  "nonharness_kg": 34.061,
+  "harness_kg": 1.7927,
+  "nominal_dry_kg": 35.8537,
+  "dry_10pct_kg": 39.4391,
+  "wet_2kgXe_kg": 41.4391,
+  "margin_to_40_kg": -1.4391,
+  "margin_to_39_4_kg": -2.0391
+ },
+ "rollup_new": {
+  "nonharness_kg": 32.7734,
+  "harness_kg": 1.7249,
+  "nominal_dry_kg": 34.4983,
+  "dry_10pct_kg": 37.9481,
+  "wet_2kgXe_kg": 39.9481,
+  "margin_to_40_kg": 0.0519,
+  "margin_to_39_4_kg": -0.5481
+ },
+ "convention_check": {
+  "builder": "docs/budgets/mass_power_a9_v5/build_mass_power_a9_v5.py (A9.26): harness = 0.05/0.95 x non-harness (row 60 / MQ-06), nominal = non-harness + harness, dry = 1.10 x nominal, wet = dry + loaded Xe (2 kg planning reference, residual inside)",
+  "reproduces_v5_rollup": true,
+  "v5_wet": 41.439,
+  "recomputed_v5_wet": 41.4391,
+  "line_uplift": "AL-07 governed as CBE x 1.20 (the floor rebase rule); AL-08 components carry maturity MGA (measured 5 %, new 20 %) as in the accepted DCR BOMs v3-v5 (the v5 builder's AL-08 is a 1.2 x analog floor of 5.91 kg for a 7 L-class tank, superseded by the DCR component BOM since v3)",
+  "nonharness_limit_strict_40_kg": 32.8182,
+  "nonharness_limit_39_4_kg": 32.3
+ },
+ "required_saving_strict_40_kg": 1.2428,
+ "required_saving_39_4_kg": 1.761
+}

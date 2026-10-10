@@ -5837,3 +5837,19 @@ stays EMPTY and nothing enters layer (b).
   - CBE 6.47 kg, MEV 7.77 kg (v4: 10.42 kg); power 38.5 W estimate / 77 W allowance.
 - **Mass:** nominal dry 35.85 kg, dry + 10 % 39.44 kg, wet 41.44 kg; margin −1.44 kg.
 - **Verdict:** DCR-DBF1-001 NOT READY — MASS SHORTFALL 1.44 kg.
+
+## 2026-10-10 — DCR-DBF1-001 final system mass closure v6 (DBF-1.2 not built)
+- **What:** `docs/baseline/DCR-001/preliminary/dcr001_system_mass_closure_v6.{py,json}` and `DCR001_SYSTEM_MASS_CLOSURE_v6.md`.
+  Builds on v5 (`0757093`). The roll-up uses the `mass_power_a9_v5` convention and reproduces the v5 41.439 kg exactly.
+- **AL-07 PPU:** cathodeless component CBE with N+1 / redundant electronics: 4.55 kg CBE → 5.46 kg MEV (6.0 floor). It governs only
+  if the owner accepts it as the AL-07 rebase (the 2026-10-04 "do not reduce" floor stands until then).
+- **AL-08:** component rebuild for 2 kg Xe gives 2.92 kg MEV (v5: 3.143).
+  - The tank is 1.25 L Ti with a 1.2 mm wall.
+  - The DCR v3 BOM had omitted the second series latch (owner row 55), the PFCV and a fill / drain valve; these are added.
+  - No double count with AL-09, AL-10 or the PPU.
+- **AL-01 + AL-02 integration:** −0.284 kg MEV. The flange pair becomes one co-cured joint and the two mount sets become one; there is no shell overlap.
+- **AL-10 audit:** the ICP mount / spacer was booked in both AL-05 and AL-10 (MQ-02). The AL-05 duplicate is removed (−0.24 kg); AL-10 is unchanged.
+- **Mass:** non-harness 32.773 kg; nominal dry 34.498 kg; dry + 10 % 37.948 kg; wet 39.948 kg.
+  Margin to 40 kg +0.052 kg; to 39.4 kg −0.548 kg.
+- **Verdict:** DCR-DBF1-001 READY FOR OWNER APPROVAL, conditional on the AL-07 CBE rebase and the AL-05 duplicate removal.
+  Without the PPU rebase: NOT READY, 0.57 kg shortfall.
