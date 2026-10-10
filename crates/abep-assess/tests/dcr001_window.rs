@@ -126,3 +126,23 @@ fn ranking_puts_coverage_before_complexity_and_complexity_before_width() {
     assert!(cmp_keys(&more_cov.keys(inp), &base.keys(inp)).is_lt());
     assert!(cmp_keys(&simpler.keys(inp), &base.keys(inp)).is_lt());
 }
+
+#[test]
+fn a_development_subset_search_is_refused_as_a_record() {
+    assert!(search_is_full_evaluation(&serde_json::json!({"label": LABEL})).is_ok());
+    for label in [serde_json::json!("DEVELOPMENT_SUBSET_NOT_A_RECORD"), serde_json::Value::Null] {
+        let e = search_is_full_evaluation(&serde_json::json!({"label": label})).unwrap_err();
+        assert_eq!(e.class, "ValueError");
+    }
+}
+
+#[test]
+fn a_python_non_s_row_sets_the_design_aside() {
+    let row =
+        |c: &str| serde_json::json!({"coefficient_set": "nominal", "scenario": "s1", "state_id": "x1", "class": c});
+    assert!(python_reference_all_s(&serde_json::json!({"rows": [row("S"), row("S")]})).is_ok());
+    let e = python_reference_all_s(&serde_json::json!({"rows": [row("S"), row("U")]})).unwrap_err();
+    assert_eq!(e.class, "ValueError");
+    assert!(e.message.contains("set aside") && e.message.contains("\"U\""));
+    assert!(python_reference_all_s(&serde_json::json!({})).is_err());
+}

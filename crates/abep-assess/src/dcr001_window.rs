@@ -15,7 +15,7 @@ use crate::dcr001::{coefficient_sets, Coeffs, Intake};
 use crate::dcr001::{
     controller, de, f, jread, par_map, Comp, Inputs, CTRL_ORDER, FILTERS, GEOMS, NOMINAL, TARGETS_PA, VOLUMES_M3, WALL,
 };
-use crate::error::{model_error, AssessResult};
+use crate::error::{model_error, AssessError, AssessResult};
 use abep_gaspath::plenum_feed::{
     f1_candidate_id, intake_side, solve_pressures, steady_operating_point, steady_sweep, Chain, CompressorPlant,
     FilterCase, IntakeState, Node, Plenum, Sp3,
@@ -1543,6 +1543,46 @@ fn verification_view(w: &WInputs, e: &WEval) -> Value {
     json!({"counts": counts, "states_in_flux_order": rows})
 }
 
+/// A record is written only from a full search: a development subset (`DCR001_W_DEV_*`) carries
+/// `DEVELOPMENT_SUBSET_NOT_A_RECORD` and is refused, so a partial design space is never presented as the evaluation.
+pub fn search_is_full_evaluation(search: &Value) -> AssessResult<()> {
+    match search["label"].as_str() {
+        Some(LABEL) => Ok(()),
+        other => Err(AssessError::new(
+            "ValueError",
+            format!("DCR-001 v3 record: the search is not a full evaluation (label {other:?}); rerun without DCR001_W_DEV_*"),
+        )),
+    }
+}
+
+/// Prereg v3: "a Python non-S row sets the design aside and the next is taken". The record cannot take the next
+/// design itself, so a selection with any non-S governed-reference row is refused (rows listed) and the search
+/// moves on to the next ranked design.
+pub fn python_reference_all_s(py: &Value) -> AssessResult<()> {
+    let rows = py["rows"].as_array().ok_or_else(|| model_error("Python rows"))?;
+    let non_s: Vec<Value> = rows
+        .iter()
+        .filter(|r| r["class"].as_str() != Some("S"))
+        .map(|r| {
+            json!({"coefficient_set": r["coefficient_set"], "scenario": r["scenario"], "state_id": r["state_id"],
+            "class": r["class"]})
+        })
+        .collect();
+    if non_s.is_empty() {
+        Ok(())
+    } else {
+        Err(AssessError::new(
+            "ValueError",
+            format!(
+                "DCR-001 v3 record: the governed Python reference has {} non-S rows, so the design is set aside \
+                 (prereg v3) and the next ranked design is taken: {}",
+                non_s.len(),
+                Value::Array(non_s)
+            ),
+        ))
+    }
+}
+
 /// The window record: pinned search, spec and Python reference (R2 on every row), selected-design detail and the
 /// information items.
 #[allow(clippy::too_many_arguments)]
@@ -1564,6 +1604,7 @@ pub fn window_record(
     if srch["schema"].as_str() != Some(SEARCH_SCHEMA) || spec["schema"].as_str() != Some(SPEC_SCHEMA) {
         return Err(model_error("DCR-001 v3 record: search / spec schema"));
     }
+    search_is_full_evaluation(&srch)?;
     if py["schema"].as_str() != Some(PY_SCHEMA) || py["spec"]["sha256"].as_str() != Some(spec_sha) {
         return Err(model_error("DCR-001 v3 record: Python reference schema or spec pin differs"));
     }
@@ -1640,7 +1681,8 @@ pub fn window_record(
             Value::Array(disagreements)
         )));
     }
-    let py_all_s = py["rows"].as_array().map(|a| a.iter().all(|r| r["class"].as_str() == Some("S"))).unwrap_or(false);
+    python_reference_all_s(&py)?;
+    let py_all_s = true;
     // Selected-design detail.
     let nominal = eval_at(w, &d, &NOMINAL, o)?;
     let ops = window_ops(w, &nominal);

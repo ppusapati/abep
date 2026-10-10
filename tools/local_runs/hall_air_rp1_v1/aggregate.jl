@@ -45,9 +45,10 @@ function run_status(r, c)
     ood = String[]
     isempty(r["chemistry_unresolved_rate_files"]) || push!(ood, "DOM-AIR-01 unresolved tables $(r["chemistry_unresolved_rate_files"])")
     fx = r["chemistry_extrapolated_fraction_max"]
-    (fx === nothing || num(fx) > CHEM_FOUT_TOL) && push!(ood, "DOM-AIR-01 table-limit activity share $(fx) ($(r["chemistry_limiting_rate_file"]))")
+    # a missing or non-finite share ("NaN" / "Inf" / null -> NaN) is out of domain, never a pass
+    (!fin(num(fx)) || num(fx) > CHEM_FOUT_TOL) && push!(ood, "DOM-AIR-01 table-limit activity share $(fx) ($(r["chemistry_limiting_rate_file"]))")
     fa = r["audit_domain_fraction_max"]
-    num(fa) > CHEM_FOUT_TOL && push!(ood, "DOM-AIR-02 activity share above 45 eV $(fa) ($(r["audit_domain_limiting_rate_file"]))")
+    (!fin(num(fa)) || num(fa) > CHEM_FOUT_TOL) && push!(ood, "DOM-AIR-02 activity share above 45 eV $(fa) ($(r["audit_domain_limiting_rate_file"]))")
     isempty(ood) || return "OUT_OF_DOMAIN", ood
     r["sustained_v1"] == true || return "NOT_SUSTAINED", ["min I_d <= 0.01 x mean I_d over the window"]
     for (nm, s) in (("thrust", T), ("I_d", I))
