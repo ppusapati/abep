@@ -123,8 +123,21 @@ def test_no_other_workflows_unaccounted_for():
     found = sorted(f for f in os.listdir(wf_dir) if f.endswith((".yml", ".yaml")))
     # rust-parity.yml: optional, not required (owner A9.14 S10.4 RUST-OQ-02; docs/ci/BRANCH_PROTECTION.md, RUST_PARITY.md).
     # rust-workspace.yml: not required until the first non-Kernel-1 admission (CI_PLAN.md v3.1 § 1 principle 4, A9.29).
-    assert found == ["ci.yml", "julia-smoke.yml", "rust-parity.yml", "rust-workspace.yml"], (
+    # h1-parametric-envelope.yml: manual-only (workflow_dispatch), never required (BRANCH_PROTECTION.md § 2 notes).
+    assert found == ["ci.yml", "h1-parametric-envelope.yml", "julia-smoke.yml", "rust-parity.yml",
+                     "rust-workspace.yml"], (
         f"new workflow(s) {found}: decide (owner) whether they are required and update docs/ci/BRANCH_PROTECTION.md")
+
+
+def test_manual_h1_envelope_workflow_is_not_required():
+    path = os.path.join(os.path.dirname(CI_YML), "h1-parametric-envelope.yml")
+    wf = _load_workflow(path)
+    triggers = set(wf["on"]) if isinstance(wf["on"], dict) else {wf["on"]} if isinstance(wf["on"], str) else set(wf["on"])
+    assert triggers == {"workflow_dispatch"}, f"h1-parametric-envelope.yml must stay manual-only, has {sorted(triggers)}"
+    # its shard matrix is dynamic (fromJSON of the prepare job), so contexts are not expanded here; manual-only means it
+    # never reports on a PR, which is what keeps it out of the required set
+    with open(SPEC_MD, encoding="utf-8") as fh:
+        assert "h1-parametric-envelope.yml" in fh.read()
 
 
 def test_rust_workspace_workflow_is_not_required_and_runs_the_es1_gates():

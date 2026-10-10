@@ -635,8 +635,12 @@ def test_only_the_builder_writes_the_engineering_constraints():
     assert {"scripts/config/build_config.py", "abep_sim/configuration.py"} <= named
     # the C-ABEP_SIM_CONFIGURATION_PY v1 parity harness writes mutated copies of config/ into temporary case trees
     # only (refusal cases); it never writes the repository and derives no constraint (A9.29 lane A2)
+    # the DBF-1 baseline builder and the host-drag C_D*A envelope builder pin the constraints file as a hash-checked
+    # INPUT (source list) and write only their own outputs (OUT = docs/baseline/DBF-1/, HERE = docs/closure/icd/);
+    # neither writes or derives a constraint (2026-10-10 integrity fix before the main promotion)
     assert writers <= {"scripts/config/build_config.py", "scripts/config/build_result_schemas.py",
-                       "scripts/rust_migration/parity_config_v1.py"}, writers
+                       "scripts/rust_migration/parity_config_v1.py", "docs/baseline/DBF-1/build_dbf1.py",
+                       "docs/closure/icd/build_host_drag_cda_envelope.py"}, writers
 
 
 def test_physics_seams_read_values_only_from_constraints_and_scenario(cfg_copy):

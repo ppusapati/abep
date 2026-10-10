@@ -100,6 +100,11 @@ Everything else (signed commits, linear history, merge queue, code owners, conve
   request and on pushes to `main` / `integration/simulation-complete`. Under `docs/rust_migration/CI_PLAN.md` v3.1 § 1
   principle 4 (plan structure approved by the owner, A9.29) the Rust jobs become required status checks only when the
   first non-Kernel-1 component is admitted; that PR updates this file.
+* **The manual H-1 parametric envelope workflow is not a required check.** `.github/workflows/h1-parametric-envelope.yml`
+  (`H-1 parametric Hall envelope (manual, PARAMETRIC / NOT_VALIDATED)`, jobs prepare / shard / freeze; A9.32,
+  NP-HALL-PARAMETRIC-ENVELOPE v1) runs on `workflow_dispatch` only, so it never reports on a PR and requiring it would
+  block every merge forever. Its outputs are PARAMETRIC / NOT_VALIDATED and must never become a merge gate (same reason as
+  the scientific outcomes above). Accounted for 2026-10-10 (repository-integrity fix before the DBF-1.2 main promotion).
 * No other workflow exists today. Any future workflow becomes required only by a new owner decision, recorded here.
 
 ## 3. Preconditions (in this order)
