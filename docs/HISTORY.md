@@ -5819,3 +5819,21 @@ stays EMPTY and nothing enters layer (b).
   - AIR 12 mN bus 1,166 / 1,224 W.
   - Xe 25 mN discharge allocation ≤ 887.0 W (nominal ICP) / ≤ 776.8 W (+100 W RF) at the 1,450 W design ceiling.
 - **Verdict:** DCR-DBF1-001 NOT READY — compressor mass.
+
+## 2026-10-10 — DCR-DBF1-001 compressor / feed mass-closure design v5 (DBF-1.2 not built)
+- **What:** `docs/baseline/DCR-001/preliminary/dcr001_mass_closure_v5.{py,json}` and `DCR001_MASS_CLOSURE_v5.md` (deterministic,
+  PROPOSAL-LEVEL / PARAMETRIC / NOT_VALIDATED; builds on v4 `c68fdca`).
+- **AIR sizing flow:** 0.448 mg/s, i.e. 12 mN at the A9.40 26.8 km/s design basis.
+  - The RFP gives no propellant split for 12–25 mN, and A9.40 maps 25 mN to Xe.
+  - 0.545 mg/s (22 km/s) and 1.33 mg/s are sensitivities only.
+- **Feed:** a co-designed chain replaces the p_dist ≥ 3 p_anode rule.
+  - The new rule is the physical uniformity check plus the 50 % open-area cap on the anode face.
+  - The plenum required with the valve fully open is 3.82 Pa; the minimum controllable is 4.78 Pa; the setpoint is 5.03 Pa (v4: 12 Pa).
+  - 1.33 mg/s needs 14.2 Pa, above the Holweck Kn domain, so it is not supported.
+- **Compressor:** an integrated contra-rotating machine at ±8,603 rpm with a 300 m/s tip speed.
+  - Five admitted free-molecular rows reach 0.0965 Pa.
+  - Two rows above 0.1 Pa are not admitted (transitional derating assumed).
+  - A Holweck on the shaft-A drum skin takes 0.78 → 5.03 Pa with Kn ≥ 0.68.
+  - CBE 6.47 kg, MEV 7.77 kg (v4: 10.42 kg); power 38.5 W estimate / 77 W allowance.
+- **Mass:** nominal dry 35.85 kg, dry + 10 % 39.44 kg, wet 41.44 kg; margin −1.44 kg.
+- **Verdict:** DCR-DBF1-001 NOT READY — MASS SHORTFALL 1.44 kg.

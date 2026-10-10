@@ -1,0 +1,585 @@
+{
+ "label": "PROPOSAL-LEVEL / PARAMETRIC / NOT_VALIDATED",
+ "supersedes": "v4 compressor / feed design (c68fdca); v4 mass roll-up retained for the other lines",
+ "sizing": {
+  "rfp": [
+   "RFP-P18-06 thrust 12 mN to 25 mN (from expected drag to compensate); no propellant split (DISC-07)",
+   "RFP-P18-08 / RFP-P17-05 ambient air AND Xe; Xe 'an extra input system to take care any problems on board' (DISC-06)",
+   "RFP-P18-05 intake decided by air density, solar activity and altitude",
+   "RFP-P18-10 < 1500 W",
+   "RFP-P18-11 < 40 kg"
+  ],
+  "a9_40": [
+   "AIR 12 mN is the nominal atmospheric drag-compensation point (compressor ON, ~1.15 kW)",
+   "25 mN is a capability point established in Xe mode (compressor OFF) at <= ~1450 W",
+   "the 196 states are a conservative verification set; AIR uses a density / altitude window; outside it Xe",
+   "26.8 km/s is the design / reference air-Hall basis; 22 km/s is a sensitivity / risk case"
+  ],
+  "mandatory_air_point": "12 mN AIR inside the admissible density / altitude window (RFP lower bound of the thrust range, A9.40 power gate)",
+  "nominal_air_operation": "drag compensation T >= D in the AIR window; with host C_D A 0.50 m2 the window is chosen where 12 mN covers drag",
+  "system_12_25mN": "met as a system: 12 mN AIR + 25 mN capability in Xe; the RFP does not map 25 mN to air",
+  "xe_contingency": "25 mN in Xe, compressor OFF, <= 1450 W design ceiling",
+  "sizing_flow_mg_s": 0.44776119402985076,
+  "sizing_flow_rule": "12 mN / 26.8 km/s = Hall anode flow (ICP dedicated flow 0, DBF1-ICP-05 G-REUSE)",
+  "carried_not_guaranteed": {
+   "22 km/s sensitivity 0.545 mg/s": "checked against the selected plenum and compressor; reported, not a sizing guarantee",
+   "1.33 mg/s high AIR capability": "sensitivity only; needs a higher plenum setpoint and compressor loading (reported)"
+  }
+ },
+ "flows_mg_s": {
+  "SIZING_AIR_12mN_design_basis": 0.44776119402985076,
+  "AIR_12mN_22kms_sensitivity": 0.5454545454545455,
+  "AIR_high_capability_1.33": 1.33
+ },
+ "feed_design": {
+  "C_channel_m3_s": 0.13144889910766594,
+  "ring": {
+   "radial_mm": 12.0,
+   "axial_mm": 20.0,
+   "n_inlets": 8,
+   "cL_m4_s": 0.0007969806497894424
+  },
+  "uniformity_rule": "+/-5 % azimuthal flux: outlet dp >= 10 x ring azimuthal dp (assumed H1 requirement)",
+  "outlet": {
+   "n_holes": 186,
+   "d_mm": 3.0,
+   "t_mm": 2.0,
+   "C_m3_s": 0.14553270972634438,
+   "open_fraction_of_channel_base": 0.49821428571428555,
+   "uniformity_ratio_outlet_to_ring": 12.749971373241646
+  },
+  "C_contraction_m3_s": 7.919323955220143,
+  "C_distributor_outlet_m3_s": 0.14553270972634438,
+  "tree": [
+   {
+    "count": 2,
+    "d_mm": 28.0,
+    "L_mm": 60.0,
+    "T_K": 300.0,
+    "C_m3_s": 0.09855158699829399
+   },
+   {
+    "count": 4,
+    "d_mm": 22.0,
+    "L_mm": 50.0,
+    "T_K": 300.0,
+    "C_m3_s": 0.1147278387417457
+   },
+   {
+    "count": 8,
+    "d_mm": 18.0,
+    "L_mm": 30.0,
+    "T_K": 500.0,
+    "C_m3_s": 0.27040916387862696
+   }
+  ],
+  "C_manifold_m3_s": 0.08619672332212301,
+  "C_isolation_valve_m3_s": 0.09697131373738839,
+  "C_metering_valve_full_m3_s": 0.1,
+  "control_authority": 0.25,
+  "control_band": 0.05
+ },
+ "feed": {
+  "SIZING_AIR_12mN_design_basis": {
+   "mdot_mg_s": 0.44776119402985076,
+   "dp_full_open_Pa": {
+    "channel (p_anode)": 0.59,
+    "distributor outlet holes": 0.5329,
+    "distributor ring (azimuthal, max)": 0.0418,
+    "branch 2 x 28 mm x 60 mm": 0.4722,
+    "branch 4 x 22 mm x 50 mm": 0.4056,
+    "branch 8 x 18 mm x 30 mm": 0.2868,
+    "contraction manifold -> branch 2": 0.0059,
+    "main manifold 40 mm x 100 mm": 0.5399,
+    "isolation valve 40 mm": 0.4799,
+    "metering valve": 0.4654
+   },
+   "p_anode_Pa": 0.5900413481620485,
+   "p_distributor_Pa": 1.1647812751357847,
+   "p_plenum_required_full_open_Pa": 3.820447940869741,
+   "p_plenum_min_controllable_Pa": 4.775559926087176,
+   "met_at_setpoint": true,
+   "valve_opening_at_setpoint": 0.27835652391638244
+  },
+  "AIR_12mN_22kms_sensitivity": {
+   "mdot_mg_s": 0.5454545454545455,
+   "dp_full_open_Pa": {
+    "channel (p_anode)": 0.7188,
+    "distributor outlet holes": 0.6492,
+    "distributor ring (azimuthal, max)": 0.0509,
+    "branch 2 x 28 mm x 60 mm": 0.5752,
+    "branch 4 x 22 mm x 50 mm": 0.4941,
+    "branch 8 x 18 mm x 30 mm": 0.3494,
+    "contraction manifold -> branch 2": 0.0072,
+    "main manifold 40 mm x 100 mm": 0.6577,
+    "isolation valve 40 mm": 0.5846,
+    "metering valve": 0.5669
+   },
+   "p_anode_Pa": 0.7187776423064954,
+   "p_distributor_Pa": 1.4189153715290472,
+   "p_plenum_required_full_open_Pa": 4.654000218877684,
+   "p_plenum_min_controllable_Pa": 5.817500273597105,
+   "met_at_setpoint": true,
+   "valve_opening_at_setpoint": 0.6032082263571151
+  },
+  "AIR_high_capability_1.33": {
+   "mdot_mg_s": 1.33,
+   "dp_full_open_Pa": {
+    "channel (p_anode)": 1.7526,
+    "distributor outlet holes": 1.583,
+    "distributor ring (azimuthal, max)": 0.1242,
+    "branch 2 x 28 mm x 60 mm": 1.4026,
+    "branch 4 x 22 mm x 50 mm": 1.2048,
+    "branch 8 x 18 mm x 30 mm": 0.852,
+    "contraction manifold -> branch 2": 0.0175,
+    "main manifold 40 mm x 100 mm": 1.6036,
+    "isolation valve 40 mm": 1.4255,
+    "metering valve": 1.3823
+   },
+   "p_anode_Pa": 1.7526194844906713,
+   "p_distributor_Pa": 3.4597886475783266,
+   "p_plenum_required_full_open_Pa": 11.348003867030089,
+   "p_plenum_min_controllable_Pa": 14.18500483378761,
+   "met_at_setpoint": false,
+   "valve_opening_at_setpoint": null
+  }
+ },
+ "plenum_min_controllable_Pa": 4.775559926087176,
+ "plenum_setpoint_Pa": 5.026905185354923,
+ "plenum_band_Pa": [
+  4.775559926087176,
+  5.278250444622669
+ ],
+ "plenum_V_L": 9.257419758367076,
+ "compressor": {
+  "rpm_both_shafts": 8602.969896859207,
+  "omega_rad_s": 900.9009009009009,
+  "S_eff_inlet_m3_s": 11.253567441244025,
+  "p_inlet_Pa": 0.004135237259590124,
+  "rows": [
+   {
+    "row": "F1",
+    "shaft": "A",
+    "r_tip_m": 0.333,
+    "r_hub_m": 0.1332,
+    "blade_height_mm": 199.8,
+    "r_mean_m": 0.2331,
+    "rpm": 8602.969896859207,
+    "u_tip_m_s": 300.0,
+    "u_mean_m_s": 210.0,
+    "u_rel_m_s": 210.0,
+    "annulus_m2": 0.2926291769216916,
+    "S_max_m3_s": 12.290425430711048,
+    "p_in_Pa": 0.004135237259590124,
+    "p_out_Pa": 0.004355739470373424,
+    "K": 1.0533227471463527,
+    "K0": 1.6320626876779738,
+    "throughput_Pa_m3_s": 0.04653617138634258,
+    "Kn_in": 8.230249414372759,
+    "Kn_out": 7.813606453169304,
+    "domain": "free molecular, admitted (<= 0.1 Pa)"
+   },
+   {
+    "row": "F2",
+    "shaft": "B",
+    "r_tip_m": 0.333,
+    "r_hub_m": 0.200264,
+    "blade_height_mm": 132.73600000000002,
+    "r_mean_m": 0.266632,
+    "rpm": 8602.969896859207,
+    "u_tip_m_s": 300.0,
+    "u_mean_m_s": 240.20900900900898,
+    "u_rel_m_s": 450.209009009009,
+    "annulus_m2": 0.22237239047966623,
+    "S_max_m3_s": 20.022810709762982,
+    "p_in_Pa": 0.004355739470373424,
+    "p_out_Pa": 0.008130607517275906,
+    "K": 1.866642294053197,
+    "K0": 2.8580931664541915,
+    "throughput_Pa_m3_s": 0.04653617138634258,
+    "Kn_in": 11.761380253610374,
+    "Kn_out": 6.300821689876051,
+    "domain": "free molecular, admitted (<= 0.1 Pa)"
+   },
+   {
+    "row": "F3",
+    "shaft": "A",
+    "r_tip_m": 0.333,
+    "r_hub_m": 0.27902693000000006,
+    "blade_height_mm": 53.97306999999996,
+    "r_mean_m": 0.30601346500000004,
+    "rpm": 8602.969896859207,
+    "u_tip_m_s": 300.0,
+    "u_mean_m_s": 275.68780630630636,
+    "u_rel_m_s": 515.8968153153153,
+    "annulus_m2": 0.1037761432131643,
+    "S_max_m3_s": 10.707556357875507,
+    "p_in_Pa": 0.008130607517275906,
+    "p_out_Pa": 0.01695360603222179,
+    "K": 2.085158580856201,
+    "K0": 3.3313500345052725,
+    "throughput_Pa_m3_s": 0.04653617138634258,
+    "Kn_in": 15.495614161421397,
+    "Kn_out": 7.431384022148875,
+    "domain": "free molecular, admitted (<= 0.1 Pa)"
+   },
+   {
+    "row": "F4",
+    "shaft": "B",
+    "r_tip_m": 0.333,
+    "r_hub_m": 0.3095239,
+    "blade_height_mm": 23.4761,
+    "r_mean_m": 0.32126195,
+    "rpm": 8602.969896859207,
+    "u_tip_m_s": 300.0,
+    "u_mean_m_s": 289.4251801801802,
+    "u_rel_m_s": 565.1129864864865,
+    "annulus_m2": 0.04738764324800331,
+    "S_max_m3_s": 5.3558745196870685,
+    "p_in_Pa": 0.01695360603222179,
+    "p_out_Pa": 0.03957113755093241,
+    "K": 2.3340838212073614,
+    "K0": 3.736610683376126,
+    "throughput_Pa_m3_s": 0.04653617138634258,
+    "Kn_in": 17.08523178996181,
+    "Kn_out": 7.319887844098101,
+    "domain": "free molecular, admitted (<= 0.1 Pa)"
+   },
+   {
+    "row": "F5",
+    "shaft": "A",
+    "r_tip_m": 0.333,
+    "r_hub_m": 0.32336957000000005,
+    "blade_height_mm": 9.630429999999969,
+    "r_mean_m": 0.32818478500000003,
+    "rpm": 8602.969896859207,
+    "u_tip_m_s": 300.0,
+    "u_mean_m_s": 295.6619684684685,
+    "u_rel_m_s": 585.0871486486487,
+    "annulus_m2": 0.019858387918134934,
+    "S_max_m3_s": 2.323777512756069,
+    "p_in_Pa": 0.03957113755093241,
+    "p_out_Pa": 0.09654153410893683,
+    "K": 2.439695699540536,
+    "K0": 3.9148247709491217,
+    "throughput_Pa_m3_s": 0.04653617138634258,
+    "Kn_in": 17.843691197260352,
+    "Kn_out": 7.313900336267684,
+    "domain": "free molecular, admitted (<= 0.1 Pa)"
+   },
+   {
+    "row": "F6",
+    "shaft": "B",
+    "r_tip_m": 0.333,
+    "r_hub_m": 0.328,
+    "blade_height_mm": 5.000000000000004,
+    "r_mean_m": 0.3305,
+    "rpm": 8602.969896859207,
+    "u_tip_m_s": 300.0,
+    "u_mean_m_s": 297.7477477477477,
+    "u_rel_m_s": 593.4097162162162,
+    "annulus_m2": 0.010382963720114283,
+    "S_max_m3_s": 1.232270310927257,
+    "p_in_Pa": 0.09654153410893683,
+    "p_out_Pa": 0.272376694256768,
+    "K": 2.821342096650546,
+    "K0": 3.9915664121411445,
+    "throughput_Pa_m3_s": 0.04653617138634258,
+    "Kn_in": 14.087201043080418,
+    "Kn_out": 4.993085049772776,
+    "domain": "crosses 0.1 Pa: booster rule applied to outlet"
+   },
+   {
+    "row": "B7",
+    "shaft": "A",
+    "r_tip_m": 0.333,
+    "r_hub_m": 0.328,
+    "blade_height_mm": 5.000000000000004,
+    "r_mean_m": 0.3305,
+    "rpm": 8602.969896859207,
+    "u_tip_m_s": 300.0,
+    "u_mean_m_s": 297.7477477477477,
+    "u_rel_m_s": 595.4954954954954,
+    "annulus_m2": 0.010382963720114283,
+    "S_max_m3_s": 1.2366016250442415,
+    "p_in_Pa": 0.272376694256768,
+    "p_out_Pa": 0.7844125349143677,
+    "K": 2.8798812506877196,
+    "K0": 3.1812484872410964,
+    "throughput_Pa_m3_s": 0.04653617138634258,
+    "Kn_in": 4.993085049772776,
+    "Kn_out": 1.733781574702228,
+    "domain": "transitional booster, NOT admitted; ln K0 derated by Kn/(1+Kn)"
+   }
+  ],
+  "holweck": {
+   "p_out_domain_limit_Pa": 6.8,
+   "p_out_deliverable_in_domain_Pa": 6.8,
+   "stage": "H Holweck (outer surface of the shaft-A drum, stationary grooved Al band in the housing)",
+   "r_m": 0.337,
+   "rpm": 8602.969896859207,
+   "u_m_s": 303.60360360360363,
+   "u_channel_m_s": 214.68016690078068,
+   "helix_deg": 45.0,
+   "groove_depth_mm": 2.0,
+   "axial_length_m": 0.04,
+   "total_channel_width_m": 1.2726638176354639,
+   "unwrapped_length_m": 0.05656854249492381,
+   "S0_m3_s": 0.1639294084671397,
+   "ln_K0": 14.16367678285953,
+   "loading": 0.3619005585700341,
+   "p_in_Pa": 0.7844125349143677,
+   "p_out_capability_Pa": 708989.3861672687,
+   "p_out_required_Pa": 5.026905185354923,
+   "PR_required": 6.408496755987839,
+   "PR_capability": 903847.5988207753,
+   "throughput_Pa_m3_s": 0.04653617138634258,
+   "Kn_in": 4.3344539367555734,
+   "Kn_out": 0.6763604791881397,
+   "domain": "molecular-drag channel; repository drag-channel bound Kn >= 0.5 met",
+   "closes": true
+  },
+  "recheck": {
+   "SIZING_AIR_12mN_design_basis": {
+    "p_booster_out_Pa": 0.7844125349143677,
+    "holweck_loading": 0.3619005585700341,
+    "p_plenum_deliverable_in_domain_Pa": 6.8,
+    "p_plenum_required_min_controllable_Pa": 4.775559926087176,
+    "closes": true
+   },
+   "AIR_12mN_22kms_sensitivity": {
+    "p_booster_out_Pa": 0.8440803054359295,
+    "holweck_loading": 0.40969637801145553,
+    "p_plenum_deliverable_in_domain_Pa": 6.8,
+    "p_plenum_required_min_controllable_Pa": 5.817500273597105,
+    "closes": true
+   },
+   "AIR_high_capability_1.33": {
+    "p_booster_out_Pa": 1.2814138630997105,
+    "holweck_loading": 0.658035841733144,
+    "p_plenum_deliverable_in_domain_Pa": 6.8,
+    "p_plenum_required_min_controllable_Pa": 14.18500483378761,
+    "closes": false
+   }
+  },
+  "kinematics": {
+   "outer_drum_hoop_stress_MPa": 144.0,
+   "outer_drum_growth_mm": 0.3425142857142857,
+   "holweck_growth_mm": 0.3550059990492424,
+   "holweck_running_clearance_mm": 0.3
+  },
+  "bom": [
+   {
+    "item": "rotor blade rows: 7 bladed rows, annulus sum 0.707 m2 x 1.74 kg/m2",
+    "cbe_kg": 1.23,
+    "mga": 0.2,
+    "mev_kg": 1.476,
+    "basis": "geometry (v3 areal basis)",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "rotating drums: shaft-A outer CFRP drum + shaft-B inner conical drum (1.0 mm) + 2 Ti web discs",
+    "cbe_kg": 1.013,
+    "mga": 0.2,
+    "mev_kg": 1.216,
+    "basis": "geometry",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "stators: none in the contra-rotating blade section (rows alternate between shafts); Holweck stator sleeve",
+    "cbe_kg": 0.812,
+    "mga": 0.2,
+    "mev_kg": 0.974,
+    "basis": "geometry",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "Holweck rotor: shared shaft-A drum, local +2 mm CFRP hoop under the 40 mm band",
+    "cbe_kg": 0.271,
+    "mga": 0.2,
+    "mev_kg": 0.325,
+    "basis": "geometry",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "shafts: coaxial Ti inner shaft 16 mm + outer tube 30/26 mm, ~0.25 m",
+    "cbe_kg": 0.418,
+    "mga": 0.2,
+    "mev_kg": 0.501,
+    "basis": "geometry",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "bearings: 4 hybrid-ceramic angular-contact (2 per shaft) + preload springs + housings + dampers",
+    "cbe_kg": 0.36,
+    "mga": 0.2,
+    "mev_kg": 0.432,
+    "basis": "estimate (small-bore bearing class; verify)",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "motors: 2 frameless BLDC (~0.05 N m, ~25 W each)",
+    "cbe_kg": 0.4,
+    "mga": 0.2,
+    "mev_kg": 0.48,
+    "basis": "estimate (frameless motor class; verify)",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "housing: stationary CFRP 0.8 mm shell + aft closure + Al flanges / inserts",
+    "cbe_kg": 0.989,
+    "mga": 0.2,
+    "mev_kg": 1.187,
+    "basis": "geometry",
+    "evidence_class": "model-derived"
+   },
+   {
+    "item": "drive electronics: one dual-axis sensorless BLDC drive (contra-rotation speed matching)",
+    "cbe_kg": 0.35,
+    "mga": 0.2,
+    "mev_kg": 0.42,
+    "basis": "estimate (verify)",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "isolation hardware: launch lock / caging (2 shafts) + 4 elastomer isolators",
+    "cbe_kg": 0.3,
+    "mga": 0.2,
+    "mev_kg": 0.36,
+    "basis": "estimate (verify)",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "sensors: 2 speed pick-offs, 3 RTDs, 1 accelerometer, inter-stage gauge",
+    "cbe_kg": 0.08,
+    "mga": 0.2,
+    "mev_kg": 0.096,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   },
+   {
+    "item": "mounts: brackets to intake shroud / module structure",
+    "cbe_kg": 0.25,
+    "mga": 0.2,
+    "mev_kg": 0.3,
+    "basis": "estimate",
+    "evidence_class": "assumed"
+   }
+  ],
+  "cbe_kg": 6.473,
+  "mev_kg": 7.767,
+  "target_mev_kg": 6.5,
+  "power_W": {
+   "rows_shear": 2.090593923589141,
+   "holweck_shear": 19.184221535138832,
+   "gas_isothermal": 0.33054712792441077,
+   "bearings": 4.0,
+   "shaft": 25.605362586652383,
+   "estimate": 38.5,
+   "allowance": 76.9
+  }
+ },
+ "feed_bom": [
+  {
+   "item": "plenum vessel 9.3 L (thin Al/CFRP)",
+   "cbe_kg": 0.545,
+   "mga": 0.2,
+   "mev_kg": 0.654,
+   "basis": "geometry",
+   "evidence_class": "model-derived"
+  },
+  {
+   "item": "metering valves x2 (redundant), ~30 mm effective bore",
+   "cbe_kg": 0.3,
+   "mga": 0.2,
+   "mev_kg": 0.36,
+   "basis": "estimate",
+   "evidence_class": "assumed"
+  },
+  {
+   "item": "isolation valve 40 mm",
+   "cbe_kg": 0.15,
+   "mga": 0.2,
+   "mev_kg": 0.18,
+   "basis": "estimate",
+   "evidence_class": "assumed"
+  },
+  {
+   "item": "pressure sensors x2",
+   "cbe_kg": 0.2,
+   "mga": 0.2,
+   "mev_kg": 0.24,
+   "basis": "estimate",
+   "evidence_class": "assumed"
+  },
+  {
+   "item": "manifold 40 mm, branch tree 2/4/8 (thin SS), fittings",
+   "cbe_kg": 0.25,
+   "mga": 0.2,
+   "mev_kg": 0.3,
+   "basis": "geometry estimate",
+   "evidence_class": "assumed"
+  }
+ ],
+ "bom_subtotals_mev_kg": {
+  "AL-01 intake": 4.629,
+  "AL-02 compressor": 7.767,
+  "AL-03 plenum/feed": 1.734,
+  "AL-04 Hall head + magnets": 4.205,
+  "AL-05 ICP neutralizer": 1.583,
+  "AL-06 RF generator / match": 1.5,
+  "AL-07 PPU": 6.0,
+  "AL-08 Xe hardware (single branch, 2 kg Xe)": 3.143,
+  "AL-09 controls / FDIR": 1.0,
+  "AL-10 structure / thermal": 2.5
+ },
+ "v4_subtotals_mev_kg": {
+  "AL-01 intake": 4.629,
+  "AL-02 compressor": 10.424,
+  "AL-03 plenum/feed": 1.44,
+  "AL-04 Hall head + magnets": 4.205,
+  "AL-05 ICP neutralizer": 1.583,
+  "AL-06 RF generator / match": 1.5,
+  "AL-07 PPU": 6.0,
+  "AL-08 Xe hardware (single branch, 2 kg Xe)": 3.143,
+  "AL-09 controls / FDIR": 1.0,
+  "AL-10 structure / thermal": 2.5
+ },
+ "nonharness_kg": 34.061,
+ "harness_kg": 1.793,
+ "nominal_dry_kg": 35.854,
+ "dry_10pct_kg": 39.439,
+ "wet_2kgXe_kg": 41.439,
+ "margin_to_40_kg": -1.439,
+ "deficit_kg": 1.439,
+ "bus_12mN_W": {
+  "reference": 1158.4,
+  "conservative": 1208.7
+ },
+ "next_candidates_if_deficit": [
+  {
+   "rank": 1,
+   "line": "AL-07 PPU",
+   "mev_kg": 6.0,
+   "basis": "owner floor 5.0 x 1.2; largest single line; supplier / CAD evidence could replace the floor"
+  },
+  {
+   "rank": 2,
+   "line": "AL-08 Xe hardware",
+   "mev_kg": 3.143,
+   "basis": "XFC 1.02 kg measured; tank / plumbing / mount estimates"
+  },
+  {
+   "rank": 3,
+   "line": "AL-01 intake structure",
+   "mev_kg": 4.629,
+   "basis": "collimator + shroud geometry; shroud could share the compressor housing"
+  },
+  {
+   "rank": 4,
+   "line": "AL-10 structure / thermal",
+   "mev_kg": 2.5,
+   "basis": "owner allocation"
+  }
+ ]
+}
