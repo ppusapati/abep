@@ -1,0 +1,92 @@
+{
+ "schema": "abep_dcr_resolution_v1",
+ "id": "DCR003-RESOLUTION-v1",
+ "dcr": "DCR-DBF1-003",
+ "date": "2026-10-09",
+ "lane": "L-DCR003-MATCH (A9.38 design-closure programme)",
+ "process": "docs/baseline/DBF-1/DCR_PROCESS.md",
+ "register_note": "the DCR register (docs/baseline/DBF-1/dcr_register_v*.json) is maintained by the coordinator and is not written by this lane; this file is the lane's resolution input to the next register version",
+ "resolution": "WITHDRAWN",
+ "resolution_basis": "the preregistered selection rule selects R-1 (no DBF-1 value change): the co-located match closes under the 50 K / 1.2 rule in every governing hot case when isolated from the ICP bracket and given its own radiator, and R-1 meets every preregistered admissibility criterion; R-2 is not admissible (its remote-match line loss exceeds the DBF1-RF-02 envelope and the P6 margin at the conservative corner)",
+ "preregistration": {
+  "path": "docs/baseline/DCR-003/dcr003_eval_prereg_v1.json",
+  "sha256": "13b27c04265660c08a457bab0d03d86d1798028f5672fda008d19bc455f77b9b",
+  "lock": {"path": "docs/baseline/DCR-003/dcr003_eval_prereg_lock_v1.json", "sha256": "57f94f7c5c93fe0ddbd2eb67813a6f868d9317beaeb8b9cefae575d0e53f9580"},
+  "commit": "99af82a (committed alone, before either route was evaluated)"
+ },
+ "evaluation_record": {
+  "path": "docs/closure/thermal/dcr003_evaluation_v1.json",
+  "sha256": "1a2773df5b8f5586cce9833001b1eb02b7024c72b9d1dd50c31af185bc534ee9",
+  "markdown": "docs/closure/thermal/dcr003_evaluation_v1.md",
+  "rust_commit": "1849fef3d1e71f8f83af7eb84882bcfe2117852e",
+  "harness": "crates/abep-assess/src/thermal_closure/dcr003.rs, bin abep-assess-dcr003; tests crates/abep-assess/tests/dcr003_match.rs"
+ },
+ "items": [
+  {
+   "id": "DBF1-RF-03",
+   "old_value": "adjustable local match, on / immediately adjacent to the ICP module (match_colocated = true)",
+   "new_value": "unchanged (match_colocated = true)",
+   "changed": false
+  },
+  {
+   "id": "DBF1-TH-01",
+   "old_value": "N_MATCH PRESENT (match_colocated = true)",
+   "new_value": "unchanged (node set unchanged; R-1 adds one link L_MA_ANT between existing nodes and edits the values of L_MA_MO and S_MA, none of which is a DBF-1 value)",
+   "changed": false
+  }
+ ],
+ "design_completion_values_registered_by_R1": {
+  "status": "design-completion values inside the frozen topology (not DBF-1 values; no DCR); FROZEN FOR EM, each verified at engineering-model level",
+  "values": [
+   {"id": "DC-003-01", "what": "match radiator (zenith-facing, Z-93-class white coating, dedicated to the match box)", "value": 0.15, "units": "m^2", "basis": "smallest grid area passing TC1 / TC3 and confirmed in TC2 / TC4 at the HOT corner (prereg procedure step 2)", "mass_kg": 0.6},
+   {"id": "DC-003-02", "what": "match-to-ICP-bracket thermal isolation: four Ti-6Al-4V tubular standoffs OD 8 mm, wall 1 mm, free length 30 mm", "value": 0.022, "range": [0.012, 0.04], "units": "W/K", "basis": "NIST k(293 K) 7.37 W/(m K) (h2_5 /material_properties); governing hot cases evaluated at 0.04", "mass_kg": 0.0117},
+   {"id": "DC-003-03", "what": "RF output lead pair match -> antenna: copper-plated (60 um) 304 stainless tubes, OD 6.35 mm, wall 0.5 mm, length 0.10 m", "value": 0.0123, "range": [0.010, 0.025], "units": "W/K", "basis": "NIST k(293 K) copper 396.9, SS304 15.13 W/(m K); governing hot cases at 0.025; RF resistance 4.76 mOhm per conductor"},
+   {"id": "DC-003-04", "what": "operating thermostatic heater on the match box (cold operating case)", "value": 11.5, "units": "W", "basis": "TC5 worst cold corner (G_iso 0.012, G_lead 0.010), P7 heater-sizing rule"},
+   {"id": "DC-003-05", "what": "non-operating survival heater on the match box", "value": 17.2, "units": "W", "basis": "TC6 worst cold corner, P7 heater-sizing rule; a spacecraft survival-power demand (REFERENCE_PENDING_ICD)"}
+  ]
+ },
+ "physical_or_evidence_reason": {
+  "request": "N_MATCH 143.0-183.5 degC in TC1-TC4 of P7 v2 against the 60 degC ceiling, failing at P_fwd = 0 W and at every R_HALL grid point, heated by conduction (0.5 W/K) from the ICP bracket at 179-211 degC (docs/closure/thermal/thermal_closure_v2.json sha256 06b26333b265a706e0c9bfcdbee1567fe800dbd19b3a05d9f4922ef85eb9dc4d; request docs/closure/thermal/dcr_request_P7_match_v1.json sha256 d1205b3b28d783d94339f321220b0b899bace20690dcc076b04b4bd13f27407a)",
+  "finding": "the failure is a mounting / heat-rejection deficiency of the match installation, not a location constraint: with the bracket conductance reduced to the isolator range and a 0.15 m^2 dedicated radiator, N_MATCH is 54.4 degC at the worst governing hot case (TC4, HOT corner incl. the RF lead from the 592 degC antenna and the lead RF loss), margin 5.6 K beyond the 50 K rule; relocating the match instead puts a VSWR 60-1900 line between match and antenna (antenna X_A ~ 164 Ohm against R_A 0.5-5 Ohm), whose loss needs P_fwd 214-9044 W for the 200 W anchor delivery (reference corner 878 W, outside the 500 W DBF1-RF-02 envelope)"
+ },
+ "results_seen_before_request": [
+  "P7 thermal_closure_v1 and v2 (all governing, cold, sensitivity and allowable results)",
+  "M2 DBF-1 record and the A9.38 closure board (no Hall thrust value)",
+  "P6 power_ledger_v1",
+  "no R-1 or R-2 result was computed before the preregistration commit 99af82a; hand order-of-magnitude estimates written into that preregistration are declared there"
+ ],
+ "results": {
+  "R-1": {
+   "admissible": true,
+   "criteria": {"R1-a": true, "R1-b": true, "R1-c": true, "R1-d": "reported"},
+   "N_MATCH_T_max_hot_C": {"TC1": 4.6, "TC2": 26.3, "TC3": 35.6, "TC4": 54.4},
+   "N_MATCH_margin_K": 5.6,
+   "N_MATCH_cold_T_min_C": {"TC5_without_heater": -40.5, "TC6_without_heater": -80.1},
+   "AL_QMATCH": "match loss may rise to 0.107 of P_fwd (registered 0.05 + lead 0.01) before TC3 reaches the ceiling",
+   "other_nodes": "no limited node changes verdict; H1 nodes +0.2..+0.8 K, N_MOUNT +3.2 K (REQUIREMENT_ONLY 264 degC capability), N_ANTENNA -20.2 K, N_VESSEL -5.2 K; no P8 trigger",
+   "spacecraft_interface": "Q into the spacecraft 90.5 W (v2 89.6 W) against the 50 W provisional allocation: unchanged REFERENCE/ICD DEPENDENT finding (R_HALL / host ICD, not the match)"
+  },
+  "R-2": {
+   "admissible": false,
+   "criteria": {"R2-a": true, "R2-b": false, "R2-c": false},
+   "eta_line": {"FAVOURABLE": 0.933, "REFERENCE": 0.228, "CONSERVATIVE": 0.022},
+   "P_fwd_for_anchor_delivery_W": {"FAVOURABLE": 214.5, "REFERENCE": 877.5, "CONSERVATIVE": 9044.1},
+   "dP_bus_anchor_W": {"FAVOURABLE": 21.9, "REFERENCE": 1023.8, "CONSERVATIVE": 13366.2}
+  }
+ },
+ "impact": {
+  "P7_thermal": "N_MATCH closes under the rule with the R-1 design-completion values; P7 closure state moves from DCR REQUIRED to REFERENCE/ICD DEPENDENT (the spacecraft-interface heat, unchanged); statement docs/closure/statements/P7_thermal_v2.md. P7 v1 / v2 records and the P7 preregistration v1 stay immutable; a later P7 load-input or network version that carries the R-1 values needs its own preregistration version (P7 rerun_rule)",
+  "P6_power": "R-1 RF-chain penalty: the lead loss, 1.9 W (R_A 1 Ohm) to 3.9 W (R_A 0.5 Ohm) more forward power for the same delivered power = 2.9-5.9 W bus, -2.5 to -5.0 W P_d,max; operating heater 11.5 W = 12.6 W bus against the 4.0 W thermal_control slot (excess 8.7 W, -7.4 W P_d,max); conservative total 14.5 W bus (-12.4 W P_d,max) against the 150 W P-NOM margin to 1,500 W. For the L-POWER-ICD ledger owner: the thermal_control slot and RF-PFWD reference need these terms",
+  "P5_mass": "+0.61 kg (0.60 kg match radiator at 4 kg/m^2, 0.012 kg standoffs) against the dry-mass roll-up",
+  "P4_icp": "the match stays local (A9.2 LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT unchanged); the RF lead loss (0.95-1.9 % of delivered power) belongs to the P2 impedance-map line / match loss characterization",
+  "spacecraft_ICD": "non-operating survival heater 17.2 W on the match (REFERENCE_PENDING_ICD); match radiator needs a zenith field of view",
+  "procurement": "match unit specification gains the isolator mounting, the radiator interface and the plated-stainless RF lead (RFQ RF-chain package)",
+  "records_becoming_history": "none: DBF-1 and every M2 record are unaffected"
+ },
+ "new_baseline": "none (DBF-1 unchanged; lock docs/baseline/DBF-1/dbf1_lock_v1.json sha256 517e0cf693712ec6d355c4b23791b9ae8626577fd338e3030563eb027e86b907 still governs)",
+ "not": [
+  "not an approval or a register entry (coordinator)",
+  "not a validation: NP-THERMAL-CATHODELESS 2.0.0 NOT_VALIDATED, PARAMETRIC cases, registered engineering assumptions",
+  "not a measurement of the antenna impedance (P2 impedance map pending)"
+ ]
+}
