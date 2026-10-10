@@ -876,9 +876,46 @@ pub fn evaluate_space(
                 .flat_map(move |fi| comps.iter().map(move |&c| (g, fi, c)))
         })
         .collect();
+    // Optional resume checkpoint (DCR001_W_CHECKPOINT_DIR): every evaluated triple is appended as one JSON line keyed by
+    // (opts, triple); a restarted run reloads them. Results are pure functions of the pinned inputs, so a reloaded line
+    // equals a recomputed one (f64 round-trips exactly through serde_json).
+    let ck = std::env::var("DCR001_W_CHECKPOINT_DIR").ok().map(|d| {
+        let tag = format!(
+            "mass{}_host{}",
+            o.mass_limit as u8,
+            if o.cda_host.is_nan() { "gov".into() } else { py_format_g(o.cda_host) }
+        );
+        std::path::PathBuf::from(d).join(format!("triples_{tag}.jsonl"))
+    });
+    let mut done: HashMap<(usize, usize, usize), Value> = HashMap::new();
+    if let Some(path) = &ck {
+        if let Ok(text) = std::fs::read_to_string(path) {
+            for line in text.lines() {
+                if let Ok(v) = serde_json::from_str::<Value>(line) {
+                    let key = |i: usize| v["t"][i].as_u64().map(|x| x as usize);
+                    if let (Some(a), Some(b), Some(c)) = (key(0), key(1), key(2)) {
+                        done.insert((a, b, c), v);
+                    }
+                }
+            }
+            eprintln!("DCR-001 v3: checkpoint {} triples reloaded from {}", done.len(), path.display());
+        }
+    }
+    let writer = std::sync::Mutex::new(
+        ck.as_ref().map(|p| std::fs::OpenOptions::new().create(true).append(true).open(p).expect("checkpoint file")),
+    );
     let res = par_map(triples.len(), threads, |k| {
         let (g, fi, c) = triples[k];
-        eval_triple_w(w, g, fi, c, &NOMINAL, o)
+        if let Some(v) = done.get(&(g, fi, c)) {
+            return triple_from_value(v);
+        }
+        let r = eval_triple_w(w, g, fi, c, &NOMINAL, o)?;
+        if let Some(f) = writer.lock().expect("lock").as_mut() {
+            use std::io::Write;
+            let line = triple_to_value((g, fi, c), &r).to_string();
+            writeln!(f, "{line}").map_err(|e| model_error(format!("checkpoint write: {e}")))?;
+        }
+        Ok(r)
     })?;
     let mut all = vec![];
     let mut mech = MechBest::new();
@@ -892,6 +929,68 @@ pub fn evaluate_space(
     }
     eprintln!("DCR-001 v3: {} of {} triples removed by the node-extreme screen", out, triples.len());
     Ok((all, mech, sw, pr, out))
+}
+
+type TripleOut = (Vec<WDesign>, MechBest, usize, usize, usize);
+
+fn triple_to_value(t: (usize, usize, usize), r: &TripleOut) -> Value {
+    let ds: Vec<Value> =
+        r.0.iter()
+            .map(|d| {
+                json!([
+                    d.g,
+                    d.filter,
+                    d.comp,
+                    d.a_max,
+                    d.n,
+                    d.target,
+                    d.o1,
+                    d.o2,
+                    d.log_width,
+                    d.r_sus,
+                    d.m_max,
+                    d.d_max,
+                    d.p_max
+                ])
+            })
+            .collect();
+    let mech: Vec<Value> = r.1.iter().map(|(n, v)| json!([n, v.0, v.1, v.2, v.3])).collect();
+    json!({"t": [t.0, t.1, t.2], "d": ds, "m": mech, "s": [r.2, r.3, r.4]})
+}
+
+fn triple_from_value(v: &Value) -> AssessResult<TripleOut> {
+    let bad = || model_error("checkpoint line malformed");
+    let u = |x: &Value| x.as_u64().map(|y| y as usize).ok_or_else(bad);
+    let fl = |x: &Value| x.as_f64().ok_or_else(bad);
+    let mut ds = vec![];
+    for d in v["d"].as_array().ok_or_else(bad)? {
+        let a = d.as_array().ok_or_else(bad)?;
+        if a.len() != 13 {
+            return Err(bad());
+        }
+        ds.push(WDesign {
+            g: u(&a[0])?,
+            filter: u(&a[1])?,
+            comp: u(&a[2])?,
+            a_max: fl(&a[3])?,
+            n: u(&a[4])?,
+            target: u(&a[5])?,
+            o1: u(&a[6])?,
+            o2: u(&a[7])?,
+            log_width: fl(&a[8])?,
+            r_sus: fl(&a[9])?,
+            m_max: fl(&a[10])?,
+            d_max: fl(&a[11])?,
+            p_max: fl(&a[12])?,
+        });
+    }
+    let mut mech = MechBest::new();
+    for m in v["m"].as_array().ok_or_else(bad)? {
+        let a = m.as_array().ok_or_else(bad)?;
+        mech.insert(u(&a[0])?, (u(&a[1])?, u(&a[2])?, fl(&a[3])?, u(&a[4])?));
+    }
+    let s = v["s"].as_array().ok_or_else(bad)?;
+    Ok((ds, mech, u(&s[0])?, u(&s[1])?, u(&s[2])?))
 }
 
 // ------------------------------------------------------------------------------------------------ stability
