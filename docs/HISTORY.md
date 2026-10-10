@@ -5873,3 +5873,12 @@ stays EMPTY and nothing enters layer (b).
   - Discharge chain: 0.855 used versus the ledger's 0.850725.
   - RF +100 W: booked as +129 W bus, but 1.29 is dP_d,max per W of RF; the ledger trade line gives +151.13 W bus.
 - **Unchanged:** no design value changed. DBF-1 and DBF-1.1 are unchanged.
+
+## 2026-10-10 — A9.43 owner decision recorded: power reconciliation; the A9.42 hold is resolved
+- **What:** the owner's decision is recorded verbatim as `docs/decisions/OD_2026_10_10_A9_43_POWER_RECONCILIATION_AND_DBF_1_2_FREEZE.md`,
+  with its companion `.json`.
+- **AIR 12 mN:** the governing discharge power is the DBF1-H1-06 lower bound of 650 W (= P6 P-12 PD-LOW). The DCR-001 596 / 600 W
+  figures stay as historical model predictions.
+- **Xe 25 mN:** allocations come from the P6 ledger (P-XE non-discharge, chain 0.850725, RF trade line). The DCR-001 v4 terms
+  412.5 W / 0.855 / +129 W are superseded for the active roll-up.
+- **Scope:** no architecture, mass or design value change and no DCR. DCR-001 records are not edited.
