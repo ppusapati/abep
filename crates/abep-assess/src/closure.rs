@@ -617,7 +617,19 @@ pub struct TodayInputs {
     pub states: Vec<StateRef>,
 }
 
+/// The inputs of the frozen closure records (M0 closure, M1 / M2 harness): the ICP chemistry is read from the pinned
+/// snapshot abep-icp-air-0.0 / abep-icp-xe-0.0 they were generated against (coordinator decision 2026-10-09). Later
+/// record versions call [`gather_with`] with the live registry.
 pub fn gather(repo: &Path, rust_commit: &str) -> AssessResult<TodayInputs> {
+    gather_with(repo, rust_commit, &abep_chem::registry::RegistrySource::snapshot_0_0())
+}
+
+/// As [`gather`] with the ICP chemistry registry read from `icp_registry`.
+pub fn gather_with(
+    repo: &Path,
+    rust_commit: &str,
+    icp_registry: &abep_chem::registry::RegistrySource,
+) -> AssessResult<TodayInputs> {
     let t = Thresholds::load(&abep_config::ConfigPaths::repository(repo))?;
     let lim = |id: &str| t.limit(id).ok_or_else(|| model_error(format!("threshold {id} not configured")));
     let ledger = ledger_bound(repo)?;
@@ -628,13 +640,16 @@ pub fn gather(repo: &Path, rust_commit: &str) -> AssessResult<TodayInputs> {
         p_non_hall_lb_w: ledger.p_non_hall_lb_w,
     };
     let gate = abep_hall::status::HallGate::from_repository(&repo.to_string_lossy())?;
-    let run = run_admitted(repo, &TodayOptions { design_point: None, rust_commit: rust_commit.into() })?;
+    let run = run_admitted(
+        repo,
+        &TodayOptions { design_point: None, rust_commit: rust_commit.into(), icp_registry: Some(icp_registry.clone()) },
+    )?;
     let mission_layers =
         run.layers.iter().map(|l| (l.layer.clone(), l.status.as_str().to_string(), l.detail.clone())).collect();
     let mission = run.record;
     let states =
         mission.states.iter().map(|s| StateRef { state_id: s.state_id.clone(), required: s.required }).collect();
-    let matrix = constraint_matrix(&t, &RawPhysics::load_repository(repo), repo)?;
+    let matrix = constraint_matrix(&t, &RawPhysics::load_repository_with(repo, icp_registry), repo)?;
     Ok(TodayInputs {
         thresholds: t,
         limits,

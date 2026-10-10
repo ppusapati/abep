@@ -89,6 +89,7 @@ fn main() {
             .stdout(&["rev-parse", "HEAD"])
             .map(|s| s.trim().to_string())
             .unwrap_or_else(|_| "UNKNOWN".into()),
+        icp_registry: None,
     };
     let mut it = args.iter().skip(1);
     while let Some(a) = it.next() {

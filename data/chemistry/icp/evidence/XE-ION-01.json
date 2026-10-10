@@ -1,0 +1,59 @@
+{
+ "schema": "icp_chem_evidence_v1",
+ "process": "XE-ION-01",
+ "addendum": "NP-ICP-CHEM-AIR addendum_01 (A1-STATUS, A1-XE-SRC)",
+ "date": "2026-10-09",
+ "E1_source": {
+  "citation": "V. Mukundan & A. Bhardwaj, 'Monte Carlo model for electron degradation in xenon gas', arXiv:1604.08449v1 (2016); Proc. R. Soc. A 472 (2016), doi 10.1098/rspa.2015.0727",
+  "document_sha256": "352c3233a4c914d50ebb84ebf8b7a6a333a94a7a3c98f2036a1523741333a5ca",
+  "location": "Table 2, row Xe+ (Eq. 5, Krishnakumar-Srivastava form); fit to Rejoub, Lindsay & Stebbings, PRA 65, 042713 (2002) measured partial cross sections",
+  "parameters": {
+   "I_eV": 12.12,
+   "A": 518100.0,
+   "B": [
+    -552720.0,
+    430840.0,
+    -1013800.0,
+    430570.0
+   ]
+  },
+  "access": "arXiv open access (read 2026-10-09)"
+ },
+ "E2_extraction": {
+  "method": "parameters transcribed from Table 2; sigma = (1/(I E)) [A ln(E/I) + sum_i B_i (1 - I/E)^i] x 1e-22 m^2 evaluated on the A1-XE-SRC grid (I, 0.5 eV to 20 eV, 1 eV to 100 eV, 10 eV to 1000 eV)",
+  "unit_inference": "Table 2 states no unit; 1e-22 m^2 (1e-18 cm^2) inferred and confirmed by the two preregistered cross-checks below (refusal threshold 10 % at 35-100 eV)",
+  "independent_check": {
+   "reference": "GK2008 (D. Goebel & I. Katz, Fundamentals of Electric Propulsion, JPL 2008; document sha256 a373c8a26137b7c7cd989880c303c4f6c1f84f20a11a02770047f6ba4c249e4e) Appendix D Table D-1",
+   "check_1": "sigma(Xe+) / Stephan & Maerk 1984 sigma(Xe+) at 35-100 eV: 0.948 (35 eV) to 1.030 (55 eV); max |dev| 5.2 % <= 10 %: PASS",
+   "check_2": "[sigma(Xe+) + 2 sigma(Xe2+), M&B Table 2] / Rapp & Englander-Golden gross at 40-100 eV: 0.949 (40 eV) to 1.023 (50 eV); max |dev| 5.1 % <= 10 %: PASS",
+   "outside_window_information": "15 eV: 0.65 of Stephan & Maerk, 0.83 of RE gross (near-threshold fit deficit; recorded as uncertainty, not tuned)",
+   "verdict": "unit inference CONFIRMED"
+  }
+ },
+ "E3_representation": {
+  "xs": "data/chemistry/icp/xs/ionization_Xe_mb2016.json",
+  "xs_sha256": "08fb4770bdc7b47d11205eb4031b7ca1d30af13d48ff132cd42c34280fa7245d",
+  "table": "data/chemistry/icp/tables/ionization_Xe_mb2016.dat",
+  "table_sha256": "edba62f9effc6222d456bf31656358fa9200e400c79e0b958139098a372f266d",
+  "source_file": "data/chemistry/icp/tables/ionization_Xe_mb2016.dat.source",
+  "source_file_sha256": "2f2e7d1c75d60268e611c6efc7c66ea17248046c31f911ef57f1295792c79995",
+  "builder": "crates/abep-chem/src/icp_own.rs (KsFit MB2016_XE1) + crates/abep-chem/examples/build_icp_own_tables.rs --write ionization_Xe_mb2016; byte-identical regeneration tested by crates/abep-chem/tests/icp_own_tables.rs"
+ },
+ "E4_threshold": {
+  "table_header_eV": 12.13,
+  "basis": "contract threshold 12.13 eV (GK2008 p. 118); the fit's own I = 12.12 eV is the first point (sigma = 0)"
+ },
+ "E5_uncertainty": {
+  "stated": "NOT_STATED as a number for the fit in M&B 2016",
+  "recorded": "within 5.2 % of Stephan & Maerk and 5.1 % of RE gross at 35-100 eV; down to -35 % at 15 eV (near threshold)"
+ },
+ "E6_applicability": {
+  "fit_range_eV": "9-10000 (paper)",
+  "tail": "hold above 1000 eV",
+  "validity_entry": "rate_validity_icp.toml ionization_Xe_mb2016.dat: verified, max mean energy 255 eV (IX-04 held-tail share < 1 %)",
+  "contract_domain": "D-CHEM T_e 2-30 eV, checked separately"
+ },
+ "E7_conservation": "e + Xe -> Xe+ + 2e: element, charge and electron count close (registry CV-01..CV-03); the ionization energy is the table header",
+ "E8_materiality": "tier 1: the ionization channel of the Xe feed; materiality is judged in CA-12 (F_ion denominator)",
+ "E9_status": "IN_REPO_VERIFIED (addendum_01 A1-STATUS); evidence level 4 (evaluated fit to measurement)"
+}

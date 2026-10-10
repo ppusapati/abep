@@ -16,9 +16,10 @@ consumer = "abep-icp (NP-ICP-NEUTRALIZER, addendum_02_chem_air)"
 
 [files]
 "registry_air.toml" = "76b62384435baa1c7ccdec7330d2f2fc077008ab461aa1ec85a5b7ca33490809"
-"registry_xe.toml" = "30a9888c746e95430c57e4f8fa8b44b075eb34fd330aa62dd5e9e1e61a4a382d"
-"rate_validity_icp.toml" = "1f0ee2b3f22b1f7755ad00ff64b0af361e381ad9eca9eddc4b45443ac9dedd5f"
+"registry_xe.toml" = "ef4cbf9f454e5cc2451a6944c01352c9d7f5b7d01d051c16c2c2ed9a4ae9fd93"
+"rate_validity_icp.toml" = "ace0c628dd5ea8d1759183546eb5d9dffa738a3cf6d5fcb9bc908b29c98d1565"
 "reuse_pins.json" = "e20a24622eeed8543a372f39062ad766da9a51a3d23b9aff9e8a3f0f5dbac3bc"
+"own_tables.json" = "35f58c9e61186e2f3e38d02d1b648410e2cc177ebb06a3db67474558f607c9d4"
 "registry_schema_v1.json" = "b82fff321f6a49d5e73b4ec0ffb3a5f952b995139fb6511b8d36d42438495e51"
 
 [air]
@@ -30,9 +31,10 @@ history = [
 ]
 
 [xe]
-label = "abep-icp-xe-0.0"
+label = "abep-icp-xe-0.1"
 registry = "registry_xe.toml"
 status = "NOT_ADMITTED"
 history = [
   "abep-icp-xe-0.0 (2026-10-06, BP-S1): skeleton; the 10 XE processes with their contract statuses; no Xe data (BP-X1..X4)",
+  "abep-icp-xe-0.1 (2026-10-09, addendum_01): own table ionization_Xe_mb2016 (XE-ION-01 IN_REPO_VERIFIED; Mukundan & Bhardwaj 2016 Table 2 Xe+ fit, unit 1e-22 m^2 confirmed against GK2008 Table D-1 Stephan & Maerk and RE gross within 5.2 %); Xe / Xe^+ masses 131.293 u; own_tables.json pinned",
 ]

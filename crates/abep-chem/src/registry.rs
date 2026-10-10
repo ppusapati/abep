@@ -59,9 +59,9 @@ impl RegistrySource {
 pub const SNAPSHOT_0_0_DIR: &str = "data/chemistry/icp_snapshots/abep-icp-air-0.0_xe-0.0";
 pub const SNAPSHOT_0_0_PINNED_SHA256: &str = "074daff90b00dd1dd6ca776c845c7897bbd84b4217ec014e70fb374a16f16eb2";
 pub const PINNED_FILE: &str = "ICP_CHEM_PINNED.toml";
-/// sha256 of `data/chemistry/icp/ICP_CHEM_PINNED.toml` this build is registered against (labels abep-icp-air-0.0 /
-/// abep-icp-xe-0.0). Every registry change (one table per commit) updates it.
-pub const ICP_CHEM_PINNED_SHA256: &str = "074daff90b00dd1dd6ca776c845c7897bbd84b4217ec014e70fb374a16f16eb2";
+/// sha256 of `data/chemistry/icp/ICP_CHEM_PINNED.toml` this build is registered against (the live labels, see the
+/// file's [air] / [xe] history). Every registry change (one table per commit) updates it.
+pub const ICP_CHEM_PINNED_SHA256: &str = "055edc86e3dd4fd6d40271903dcc3236b988b5dbdd6cf8bfec62df98443c088a";
 pub const CONTRACT_ID: &str = "NP-ICP-CHEM-AIR";
 pub const CONTRACT_LOCK: &str = "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json";
 pub const CONTRACT_LOCK_SHA256: &str = "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef";
@@ -212,7 +212,44 @@ pub struct Process {
     pub tier: String,
     pub status: ProcessStatus,
     pub ca_verdict: String,
+    /// NP-ICP-CHEM-AIR addendum_01 A1-STATUS: (path, sha256) of the E1..E9 evidence record of a status advanced beyond
+    /// the contract's; None while the status is the contract's.
+    pub evidence_record: Option<(String, String)>,
+    /// A1-STATUS: (path, sha256) of the CA record of a verdict other than NOT_EVALUATED.
+    pub ca_record: Option<(String, String)>,
 }
+
+/// NP-ICP-CHEM-AIR addendum_01 A1-CLASS: how one (species, process class) pair of a registry-backed set is addressed.
+#[derive(Debug, Clone, PartialEq)]
+pub struct ClassAddressRow {
+    pub species: String,
+    /// One of the parent's 12 process classes (e.g. IONIZATION, EXCITATION_VIBRATIONAL).
+    pub class: String,
+    /// MODELLED or EXCLUDED.
+    pub address: String,
+    pub by: Option<String>,
+    pub justification: Option<String>,
+    pub basis: Option<String>,
+}
+
+/// The parent's process classes (NP-ICP-NEUTRALIZER process-class gate), as named in `class_address` rows.
+pub const PROCESS_CLASSES: [&str; 12] = [
+    "IONIZATION",
+    "EXCITATION_ELECTRONIC",
+    "EXCITATION_VIBRATIONAL",
+    "EXCITATION_ROTATIONAL",
+    "DISSOCIATION",
+    "DISSOCIATIVE_IONIZATION",
+    "ELASTIC_LOSS",
+    "ION_NEUTRAL_MOMENTUM_TRANSFER",
+    "WALL_ATOM_RECOMBINATION",
+    "WALL_METASTABLE_DEEXCITATION",
+    "VOLUME_RECOMBINATION",
+    "ATTACHMENT_NEGATIVE_IONS",
+];
+
+/// The status basis an advanced process must name (A1-STATUS).
+pub const STATUS_BASIS_ADDENDUM_01: &str = "NP-ICP-CHEM-AIR addendum_01";
 
 impl Process {
     pub fn is_tier1(&self) -> bool {
@@ -310,6 +347,8 @@ pub struct ModeRegistry {
     pub admission_status: String,
     pub admission_reason_code: String,
     pub admission_today: String,
+    /// A1-XE-ADMIT: registered assumptions an admission rests on (empty when none).
+    pub admission_conditions: Vec<String>,
     pub completeness_audit_status: String,
     pub neg_crit_status: Option<String>,
     pub species_bounds: Vec<SpeciesBound>,
@@ -318,6 +357,8 @@ pub struct ModeRegistry {
     pub channels: Vec<Channel>,
     pub variant_groups: Vec<VariantGroup>,
     pub scenarios: Vec<Scenario>,
+    /// A1-CLASS rows (empty in registries without a registry-backed set).
+    pub class_addresses: Vec<ClassAddressRow>,
 }
 
 impl ModeRegistry {
@@ -686,6 +727,35 @@ impl IcpChemRegistry {
             cx.read(p, s, &rp_rel)?;
             table_pins.insert(p.to_string(), s.to_string());
         }
+        // Own tables (addendum_01 A1-OWN): pinned through own_tables.json, itself pinned by ICP_CHEM_PINNED.toml.
+        if file_pins.contains_key("own_tables.json") {
+            let ot_rel = format!("{}/own_tables.json", cx.dir);
+            let ot = json_of(&ot_rel, &cx.read(&ot_rel, &pin("own_tables.json")?, &pinned_rel)?)?;
+            if ot["addendum"].as_str() != Some(STATUS_BASIS_ADDENDUM_01) {
+                return Err(model(format!("{ot_rel}: not an addendum_01 own-table list")));
+            }
+            for e in ot["tables"].as_array().into_iter().flatten() {
+                let (Some(p), Some(s), Some(sf), Some(ss), Some(xs), Some(xss)) = (
+                    e["path"].as_str(),
+                    e["sha256"].as_str(),
+                    e["source_file"].as_str(),
+                    e["source_file_sha256"].as_str(),
+                    e["xs"].as_str(),
+                    e["xs_sha256"].as_str(),
+                ) else {
+                    return Err(schema(&ot_rel, "own table entry without path / sha256 / source_file / xs"));
+                };
+                if !p.starts_with(&format!("{REGISTRY_DIR}/tables/")) || sf != format!("{p}.source") {
+                    return Err(schema(&ot_rel, format!("{p}: own tables live in {REGISTRY_DIR}/tables/ with a .source")));
+                }
+                cx.read(p, s, &ot_rel)?;
+                cx.read(sf, ss, &ot_rel)?;
+                cx.read(&format!("{}/{xs}", cx.dir), xss, &ot_rel)?;
+                if table_pins.insert(p.to_string(), s.to_string()).is_some() {
+                    return Err(model(format!("{ot_rel}: {p} pinned twice")));
+                }
+            }
+        }
 
         // Validity table: mirrored entries must equal their Hall source (FC-CHEM-01 semantics on use).
         let rv_rel = format!("{}/rate_validity_icp.toml", cx.dir);
@@ -845,13 +915,33 @@ fn load_mode(
         };
         let status_s = p.s("status")?;
         let same = |k: &str, ck: &str| c[ck].as_str() == Some(p.s(k).unwrap_or_default().as_str());
-        if !(same("class", "process_class") && same("reaction", "reaction") && same("tier", "tier"))
-            || c["status"].as_str() != Some(status_s.as_str())
-        {
-            return Err(model(format!(
-                "{rel}: process {id} differs from the contract (class, reaction, tier or status)"
-            )));
+        if !(same("class", "process_class") && same("reaction", "reaction") && same("tier", "tier")) {
+            return Err(model(format!("{rel}: process {id} differs from the contract (class, reaction or tier)")));
         }
+        // A1-STATUS: the contract's status, or IN_REPO_VERIFIED with its pinned evidence record.
+        let evidence_record = if c["status"].as_str() == Some(status_s.as_str()) {
+            None
+        } else {
+            let basis = p.opt_s("status_basis")?;
+            let (Some(er), Some(es)) = (p.opt_s("evidence_record")?, p.opt_s("evidence_record_sha256")?) else {
+                return Err(model(format!("{rel}: process {id}: status {status_s} differs from the contract without an evidence record")));
+            };
+            if status_s != "IN_REPO_VERIFIED" || basis.as_deref() != Some(STATUS_BASIS_ADDENDUM_01) {
+                return Err(model(format!("{rel}: process {id}: only IN_REPO_VERIFIED under addendum_01 may differ from the contract")));
+            }
+            cx.read(&er, &es, &rel)?;
+            Some((er, es))
+        };
+        let ca_verdict = p.s("ca_verdict")?;
+        let ca_record = if ca_verdict == "NOT_EVALUATED" {
+            None
+        } else {
+            let (Some(cr), Some(cs)) = (p.opt_s("ca_record")?, p.opt_s("ca_record_sha256")?) else {
+                return Err(model(format!("{rel}: process {id}: verdict {ca_verdict} without a pinned CA record")));
+            };
+            cx.read(&cr, &cs, &rel)?;
+            Some((cr, cs))
+        };
         let target = p.opt_s("target")?;
         if let Some(tg) = &target {
             if !species.iter().any(|s| &s.id == tg) {
@@ -865,7 +955,9 @@ fn load_mode(
             target,
             tier: p.s("tier")?,
             status: ProcessStatus::parse(&status_s).ok_or_else(|| p.err(format!("status {status_s}")))?,
-            ca_verdict: p.s("ca_verdict")?,
+            ca_verdict,
+            evidence_record,
+            ca_record,
         });
     }
     let ids: BTreeSet<&str> = processes.iter().map(|p| p.id.as_str()).collect();
@@ -1024,6 +1116,51 @@ fn load_mode(
         }
         scenarios.push(sc);
     }
+    // A1-STATUS: an advanced non-structural process has a registered representation.
+    for p in processes.iter().filter(|p| p.evidence_record.is_some() && !p.tier.contains("structural")) {
+        let has = channels.iter().any(|c| c.process == p.id && matches!(c.representation, Representation::CrossSection { .. }));
+        if !has {
+            return Err(model(format!("{rel}: process {} is IN_REPO_VERIFIED without a registered representation", p.id)));
+        }
+    }
+    let mut class_addresses = Vec::new();
+    for r in o.array_of("class_address", &["species", "class", "address"])? {
+        let row = ClassAddressRow {
+            species: r.s("species")?,
+            class: r.s("class")?,
+            address: r.s("address")?,
+            by: r.opt_s("by")?,
+            justification: r.opt_s("justification")?,
+            basis: r.opt_s("basis")?,
+        };
+        let ok_species = species.iter().any(|s| s.id == row.species);
+        let ok_class = PROCESS_CLASSES.contains(&row.class.as_str());
+        let ok_addr = match row.address.as_str() {
+            "MODELLED" => row.by.as_ref().is_some_and(|b| {
+                channels.iter().any(|c| &c.id == b) || processes.iter().any(|p| &p.id == b)
+            }),
+            "EXCLUDED" => row.justification.is_some() && row.basis.is_some(),
+            _ => false,
+        };
+        if !(ok_species && ok_class && ok_addr) {
+            return Err(model(format!("{rel}: class_address {} / {} is not a valid A1-CLASS row", row.species, row.class)));
+        }
+        if class_addresses.iter().any(|x: &ClassAddressRow| x.species == row.species && x.class == row.class) {
+            return Err(model(format!("{rel}: class_address {} / {} twice", row.species, row.class)));
+        }
+        class_addresses.push(row);
+    }
+    let admission_conditions = match adm.t.get("conditions") {
+        Some(_) => adm.strings("conditions")?,
+        None => Vec::new(),
+    };
+    let admission_status = adm.s("status")?;
+    let ca_status = ca.s("status")?;
+    if admission_status == "ADMITTED"
+        && (ca_status != "FINAL" || processes.iter().any(|p| p.is_tier1() && p.status != ProcessStatus::InRepoVerified))
+    {
+        return Err(model(format!("{rel}: ADMITTED needs every tier-1 process IN_REPO_VERIFIED and a FINAL CA")));
+    }
     Ok(ModeRegistry {
         mode,
         label: o.s("label")?,
@@ -1031,10 +1168,11 @@ fn load_mode(
         registry_sha256: sha.to_string(),
         evidence_modes: o.strings("evidence_modes")?,
         domain,
-        admission_status: adm.s("status")?,
+        admission_status,
         admission_reason_code: adm.s("reason_code")?,
         admission_today: adm.s("today")?,
-        completeness_audit_status: ca.s("status")?,
+        admission_conditions,
+        completeness_audit_status: ca_status,
         neg_crit_status: neg_crit,
         species_bounds,
         species,
@@ -1042,6 +1180,7 @@ fn load_mode(
         channels,
         variant_groups,
         scenarios,
+        class_addresses,
     })
 }
 

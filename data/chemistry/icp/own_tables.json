@@ -1,0 +1,16 @@
+{
+ "schema": "icp_chem_own_tables_v1",
+ "addendum": "NP-ICP-CHEM-AIR addendum_01",
+ "rule": "A1-OWN: every table built for the ICP registry, listed once; rendered byte for byte by crates/abep-chem/src/icp_own.rs through the admitted abep_chem::reference::hallthruster_table (test crates/abep-chem/tests/icp_own_tables.rs).",
+ "tables": [
+  {
+   "name": "ionization_Xe_mb2016",
+   "path": "data/chemistry/icp/tables/ionization_Xe_mb2016.dat",
+   "sha256": "edba62f9effc6222d456bf31656358fa9200e400c79e0b958139098a372f266d",
+   "source_file": "data/chemistry/icp/tables/ionization_Xe_mb2016.dat.source",
+   "source_file_sha256": "2f2e7d1c75d60268e611c6efc7c66ea17248046c31f911ef57f1295792c79995",
+   "xs": "xs/ionization_Xe_mb2016.json",
+   "xs_sha256": "08fb4770bdc7b47d11205eb4031b7ca1d30af13d48ff132cd42c34280fa7245d"
+  }
+ ]
+}

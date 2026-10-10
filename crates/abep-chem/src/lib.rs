@@ -24,6 +24,7 @@
 pub mod checked;
 pub mod dat;
 pub mod hall_air;
+pub mod icp_own;
 pub mod numpy;
 pub mod reference;
 pub mod registry;

@@ -98,6 +98,12 @@ fn err<E: Into<AssessError>>(e: E) -> AssessError {
 impl RawPhysics {
     /// Today's admitted raw results of the repository at `repo`.
     pub fn load_repository(repo: &Path) -> Self {
+        Self::load_repository_with(repo, &abep_chem::registry::RegistrySource::live())
+    }
+
+    /// As [`RawPhysics::load_repository`] with the ICP chemistry registry read from `icp_registry` (the live registry or
+    /// the pinned snapshot a frozen record regenerates from).
+    pub fn load_repository_with(repo: &Path, icp_registry: &abep_chem::registry::RegistrySource) -> Self {
         use abep_subsystems::mass::{rules::FLIGHT, v5, wet_mass};
         use abep_subsystems::power::{
             objective::bus_power_official, official::official_flight_ledger, official::MassPowerA9V5,
@@ -117,7 +123,7 @@ impl RawPhysics {
         let mass_gates = v5::mass_gates(repo, &v5::MissionXeLoad::NotAdmitted).map_err(err);
         let wet_mass_objective = wet_mass::wet_mass_pinned(repo, &s(FLIGHT), &Value::Null, &Value::Null).map_err(err);
         let rvm = RvmRecord::load(repo);
-        let icp_chemistry_gaps = abep_icp::IcpModel::load(repo)
+        let icp_chemistry_gaps = abep_icp::IcpModel::load_with(repo, icp_registry)
             .map_err(err)
             .map(|m| ["AIR", "XE"].iter().map(|k| (k.to_string(), m.chem_air_tier1_gaps(k).len())).collect());
         RawPhysics {

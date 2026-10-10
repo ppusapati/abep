@@ -1,11 +1,11 @@
-# IF-CHEM-REG-v1 species and process registry, mode XE (NP-ICP-CHEM-AIR v1, build plan BP-S1; label abep-icp-xe-0.0).
+# IF-CHEM-REG-v1 species and process registry, mode XE (NP-ICP-CHEM-AIR v1 + addendum_01; label abep-icp-xe-0.1).
 # Every contract process of this mode appears once, with the status, tier, class and reaction text the contract
 # records (prereg_v1.json processes[]); abep_chem::registry refuses any difference (MODEL_ERROR). A channel is one
 # registered representation of a process (one table or one variant member); a process without a channel has no
 # usable data. Schema: registry_schema_v1.json. Maintained by hand, one table per commit (build plan per_table_commit).
 schema = "IF-CHEM-REG-v1"
 mode = "XE"
-label = "abep-icp-xe-0.0"
+label = "abep-icp-xe-0.1"
 contract = "NP-ICP-CHEM-AIR"
 contract_lock = "docs/rust_migration/new_physics/NP-ICP-CHEM-AIR/prereg_lock_v1.json"
 contract_lock_sha256 = "f42c22699a31acd4e29854823150d7b7c75b35eb8718fb90ade83bdd3d7e46ef"
@@ -24,7 +24,7 @@ eedf = "MAXWELLIAN"
 status = "NOT_ADMITTED"
 gate = "AD-XE-01..06 (NP-ICP-CHEM-AIR admission_criteria.XE_CONTINGENCY)"
 reason_code = "NP_ICP_CHEM_AIR_XE_NOT_ADMITTED"
-today = "NOT ADMITTED: no Xe table registered (XE-ION-01, XE-EXC-01, XE-EL-01 to acquire)"
+today = "NOT ADMITTED: XE-ION-01 registered (abep-icp-xe-0.1); XE-EXC-01 representation REFUSED by its preregistered check (addendum_01 A1-XE-SRC), XE-EL-01 and XE-WALL-01 pending; CA-12 not final"
 
 [completeness_audit]
 id = "CA-ICP-v1 (CA-12, Xe)"
@@ -38,7 +38,8 @@ elements = { "Xe" = 1 }
 role = "feed"
 status = "RETAINED"
 retention = "MR-7 (XE_CONTINGENCY supply mode)"
-mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+mass_amu = 131.293
+mass_source = "NIST standard atomic weight of Xe, 131.293 u (addendum_01 A1-XE-SRC); ion mass = neutral mass (HallThruster.jl convention; Z m_e / M <= 9e-6)"
 
 [[species]]
 id = "Xe^+"
@@ -47,7 +48,8 @@ elements = { "Xe" = 1 }
 role = "ion"
 status = "RETAINED"
 retention = "MR-3 (ion of the retained ionization channel)"
-mass_source = "NOT_REGISTERED: no channel of this species at BP-S1; registered with its first table"
+mass_amu = 131.293
+mass_source = "NIST standard atomic weight of Xe, 131.293 u (addendum_01 A1-XE-SRC); ion mass = neutral mass (HallThruster.jl convention; Z m_e / M <= 9e-6)"
 
 [[species]]
 id = "Xe^2+"
@@ -73,7 +75,10 @@ class = "electron-impact ionization"
 reaction = "e + Xe -> Xe+ + 2e"
 target = "Xe"
 tier = "1"
-status = "SOURCE_IDENTIFIED_TO_ACQUIRE"
+status = "IN_REPO_VERIFIED"
+status_basis = "NP-ICP-CHEM-AIR addendum_01"
+evidence_record = "data/chemistry/icp/evidence/XE-ION-01.json"
+evidence_record_sha256 = "9e77a2dc61541807c080b2d98120a9dfa5b87f5625bdbba985e4accdf6673dbb"
 ca_verdict = "NOT_EVALUATED"
 
 [[process]]
@@ -149,3 +154,21 @@ reaction = "Xe+ + Xe -> Xe + Xe+"
 tier = "n/a"
 status = "INCOMPLETE_EVIDENCE"
 ca_verdict = "NOT_EVALUATED"
+
+[[channel]]
+id = "XE-ION-01/ionization_Xe_mb2016"
+process = "XE-ION-01"
+kind = "IONIZATION"
+target = "Xe"
+data_target = "Xe"
+products = { "Xe^+" = 1 }
+electrons_out = 2
+threshold_eV = 12.13
+table = "data/chemistry/icp/tables/ionization_Xe_mb2016.dat"
+table_sha256 = "edba62f9effc6222d456bf31656358fa9200e400c79e0b958139098a372f266d"
+validity_entry = "ionization_Xe_mb2016.dat"
+representation_kind = "CROSS_SECTION"
+representation_status = "REGISTERED"
+representation = "xs/ionization_Xe_mb2016.json"
+representation_sha256 = "08fb4770bdc7b47d11205eb4031b7ca1d30af13d48ff132cd42c34280fa7245d"
+variant_role = "NOMINAL"

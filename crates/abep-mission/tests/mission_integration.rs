@@ -28,7 +28,7 @@ fn ids() -> &'static Vec<String> {
 
 fn today() -> &'static TodayRun {
     static RUN: OnceLock<TodayRun> = OnceLock::new();
-    RUN.get_or_init(|| run_admitted(&repo(), &TodayOptions { design_point: None, rust_commit: "test".into() }).unwrap())
+    RUN.get_or_init(|| run_admitted(&repo(), &TodayOptions { design_point: None, rust_commit: "test".into(), icp_registry: None }).unwrap())
 }
 
 fn total<'a>(r: &'a MissionRecord, k: &str) -> &'a Quantity {
@@ -444,7 +444,7 @@ fn ft12_parametric_values_never_reach_evidence() {
         scenario: e.scenario.clone(),
     };
     let run =
-        run_admitted(&repo(), &TodayOptions { design_point: Some(p.clone()), rust_commit: "test".into() }).unwrap();
+        run_admitted(&repo(), &TodayOptions { design_point: Some(p.clone()), rust_commit: "test".into(), icp_registry: None }).unwrap();
     let id = &ids()[0];
     let d = q(&run.record, id, Mode::AirPrimary, "drag_intake_N");
     assert_eq!((d.status, d.value), (EvalStatus::IncompleteEvidence, None));
@@ -461,7 +461,7 @@ fn ft12_parametric_values_never_reach_evidence() {
     // A design point outside the committed F1 table is refused, never filled.
     let off = abep_mission::statewise_td::DesignPoint { phi: 0.123456, ..p };
     assert_eq!(
-        run_admitted(&repo(), &TodayOptions { design_point: Some(off), rust_commit: "test".into() })
+        run_admitted(&repo(), &TodayOptions { design_point: Some(off), rust_commit: "test".into(), icp_registry: None })
             .unwrap_err()
             .status(),
         EvalStatus::OutOfDomain
@@ -487,7 +487,7 @@ fn det01_det02_cons_s1() {
     let b = integrate(&tk::al08(ids(), 7)).unwrap().to_json();
     assert_eq!(a, b);
     let r = &today().record;
-    let again = run_admitted(&repo(), &TodayOptions { design_point: None, rust_commit: "test".into() }).unwrap();
+    let again = run_admitted(&repo(), &TodayOptions { design_point: None, rust_commit: "test".into(), icp_registry: None }).unwrap();
     assert_eq!(r.to_json(), again.record.to_json());
     assert_eq!((r.implementation, r.prereg_sha256, r.validation_status), ("rust", PREREG_SHA256, "NOT_VALIDATED"));
     for k in ["design_state_set_sha256", "config_manifest_sha256", "mission_scenario_sha256", "mass_power_a9_v5_sha256"]

@@ -44,6 +44,9 @@ pub struct TodayOptions {
     /// An F1 design point at which the intake-face drag is added as PARAMETRIC_SENSITIVITY_ONLY (None: NOT_EVALUATED).
     pub design_point: Option<DesignPoint>,
     pub rust_commit: String,
+    /// The ICP chemistry registry the RF/ICP layer reads (None: the live registry). Frozen records name the pinned
+    /// snapshot they regenerate from (coordinator decision 2026-10-09).
+    pub icp_registry: Option<abep_chem::registry::RegistrySource>,
 }
 
 /// Status of one admitted layer as read today.
@@ -197,7 +200,10 @@ pub fn run_admitted(repo: &Path, opts: &TodayOptions) -> AbepResult<TodayRun> {
     // RF/ICP (SC-WP-03): ledger admission plus the crate status of the case holding today's registrations.
     let icp_admission = ledger_status(repo, "NP-ICP-NEUTRALIZER")?;
     files.push(LEDGER_REL.to_string());
-    let icp_model = abep_icp::IcpModel::load(repo)?;
+    let icp_model = match &opts.icp_registry {
+        Some(src) => abep_icp::IcpModel::load_with(repo, src)?,
+        None => abep_icp::IcpModel::load(repo)?,
+    };
     files.extend(icp_model.files_read.iter().map(|f| f.path.clone()));
     let mut icp_reasons: BTreeMap<Mode, Vec<Reason>> = BTreeMap::new();
     for (mode, sm, gas) in [

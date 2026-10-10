@@ -25,7 +25,15 @@ fn root() -> PathBuf {
 
 fn registry() -> &'static IcpChemRegistry {
     static R: OnceLock<IcpChemRegistry> = OnceLock::new();
-    R.get_or_init(|| IcpChemRegistry::load(&root(), ICP_CHEM_PINNED_SHA256).expect("the BP-S1 registry verifies"))
+    R.get_or_init(|| IcpChemRegistry::load(&root(), ICP_CHEM_PINNED_SHA256).expect("the live registry verifies"))
+}
+
+/// The BP-S1 state (abep-icp-air-0.0 / abep-icp-xe-0.0) as its pinned snapshot (coordinator decision 2026-10-09).
+fn bp_s1() -> &'static IcpChemRegistry {
+    static R: OnceLock<IcpChemRegistry> = OnceLock::new();
+    R.get_or_init(|| {
+        IcpChemRegistry::load_from(&root(), &RegistrySource::snapshot_0_0()).expect("the BP-S1 snapshot verifies")
+    })
 }
 
 fn json(rel: &str) -> Value {
@@ -38,7 +46,7 @@ fn contract_processes() -> Vec<Value> {
 
 #[test]
 fn every_contract_process_with_its_recorded_status() {
-    let r = registry();
+    let r = bp_s1();
     assert_eq!((r.air.label.as_str(), r.xe.label.as_str()), ("abep-icp-air-0.0", "abep-icp-xe-0.0"));
     assert_eq!((r.air.processes.len(), r.xe.processes.len()), (54, 10));
     for p in contract_processes() {
@@ -203,7 +211,7 @@ fn xs_representations_are_the_captured_points_and_render_the_frozen_tables() {
 
 #[test]
 fn mirrored_validity_entries_equal_the_hall_entries() {
-    let r = registry();
+    let r = bp_s1();
     let hall = RateValidityTable::load(
         &root().join("hallthruster_bridge/propellants/rate_validity.toml"),
         "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a",
@@ -458,4 +466,43 @@ fn files_read_are_pinned() {
         assert!(!Path::new(p).is_absolute());
     }
     assert_eq!(r.contract_lock_sha256, CONTRACT_LOCK_SHA256);
+}
+
+/// NP-ICP-CHEM-AIR addendum_01 on the live registry: only the A1-STATUS progressions differ from the contract, each
+/// with its pinned evidence record and a registered representation; every BP-S1 validity entry is kept and every own
+/// table has an unmirrored entry; nothing is admitted while a tier-1 process or the CA is open.
+#[test]
+fn addendum_01_progressions_carry_their_evidence() {
+    let (r, s1) = (registry(), bp_s1());
+    assert_eq!(r.air.label, s1.air.label, "no AIR table yet");
+    assert_eq!(r.xe.label, "abep-icp-xe-0.1");
+    let mut advanced = Vec::new();
+    for p in contract_processes() {
+        let reg = r.mode(p["mode"].as_str().unwrap()).unwrap();
+        let q = reg.process(p["id"].as_str().unwrap()).unwrap();
+        if q.status.as_str() == p["status"].as_str().unwrap() {
+            assert!(q.evidence_record.is_none(), "{}", q.id);
+            continue;
+        }
+        assert_eq!(q.status, ProcessStatus::InRepoVerified, "{}", q.id);
+        let (path, sha) = q.evidence_record.as_ref().expect("evidence record");
+        assert_eq!(&sha256_hex(&std::fs::read(root().join(path)).unwrap()), sha);
+        let ev: Value = json(path);
+        assert_eq!(ev["process"], q.id.as_str());
+        advanced.push(q.id.clone());
+    }
+    assert_eq!(advanced, ["XE-ION-01"]);
+    let ch = r.xe.channels.iter().find(|c| c.process == "XE-ION-01").unwrap();
+    assert!(matches!(ch.representation, Representation::CrossSection { .. }));
+    assert_eq!(ch.validity, Validity::Verified { max_mean_energy_ev: 255.0 });
+    for f in s1.validity.files() {
+        assert_eq!(r.validity.validity(f), s1.validity.validity(f), "{f}");
+    }
+    let own: Value = json("data/chemistry/icp/own_tables.json");
+    for t in own["tables"].as_array().unwrap() {
+        let f = t["path"].as_str().unwrap().rsplit('/').next().unwrap();
+        assert!(matches!(r.validity.validity(f), Validity::Verified { .. }), "{f}");
+    }
+    assert_eq!(r.xe.admission_status, "NOT_ADMITTED");
+    assert!(r.xe.tier1_gaps().iter().any(|p| p.id == "XE-EXC-01"));
 }

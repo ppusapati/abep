@@ -315,3 +315,8 @@ max_mean_energy_eV = 255.0
 basis = "Wang et al. 2014 BSR MTCS as re-plotted in Ragimkhanov Fig. 1b (0.95-128 eV), OPM above 128 eV; held-tail share 0.0000 % at 255 eV mean energy"
 mirrors = "hallthruster_bridge/propellants/rate_validity.toml"
 mirrors_sha256 = "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a"
+
+["ionization_Xe_mb2016.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "own table (NP-ICP-CHEM-AIR addendum_01 XE-ION-01): Mukundan & Bhardwaj 2016 Table 2 Xe+ fit (fit range 9-10000 eV), evaluated 12.12-1000 eV, held above; IX-04 held-tail share < 1 % at 255 eV mean energy (crates/abep-chem/examples/build_icp_own_tables.rs)"
