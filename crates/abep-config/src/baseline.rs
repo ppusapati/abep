@@ -9,6 +9,10 @@
 //! DBF-1.1 (`docs/baseline/DBF-1.1/`, approved DCR-DBF1-002) is the first successor: DBF-1 with DBF1-BZ-04 = BZ-H1FE-V1
 //! (the FE-derived H-1 B(z) profiles, each sha256-pinned). [`load_dbf1_1`] is additive; [`load_dbf1`] and DBF-1 are
 //! unchanged history.
+//!
+//! DBF-1.2 (`docs/baseline/DBF-1.2/`, proposed by the DCR-DBF1-001 resolution, A9.39 item 3) is DBF-1.1 with the
+//! variable-effective-capture intake / compressor / plenum / feed selection, the AIR operating free-stream-flux window and
+//! the altitude schedule. [`load_dbf1_2`] is additive; DBF-1 and DBF-1.1 and their loaders are unchanged history.
 
 use crate::{ConfigError, ConfigResult};
 use abep_types::pyjson::{self, Value};
@@ -382,4 +386,179 @@ pub fn parse_dbf1_1(raw: Value) -> ConfigResult<Dbf11Config> {
     }
     let base = parse_body(raw).map_err(bad11)?;
     Ok(Dbf11Config { base, bz_profiles, closed_deficiencies, parent_lock_sha256, dcr_approval_sha256 })
+}
+
+// ------------------------------------------------------------------------------------------------------------- DBF-1.2
+
+pub const DBF1_2_DIR: &str = "docs/baseline/DBF-1.2";
+pub const DBF1_2_CONFIG_REL: &str = "docs/baseline/DBF-1.2/dbf1_2_config_v1.json";
+pub const DBF1_2_CONFIG_SHA256: &str = "@CONFIG@";
+pub const DBF1_2_LOCK_REL: &str = "docs/baseline/DBF-1.2/dbf1_2_lock_v1.json";
+pub const DBF1_2_LOCK_SHA256: &str = "@LOCK@";
+pub const DBF1_2_RECORD_REL: &str = "docs/baseline/DBF-1.2/dbf1_2_v1.json";
+pub const DBF1_2_RECORD_SHA256: &str = "@RECORD@";
+/// The DCR-DBF1-001 resolution that proposes DBF-1.2 (lineage pin).
+pub const DCR_DBF1_001_RESOLUTION_SHA256: &str = "@RESOLUTION@";
+
+/// The DBF-1.2 variable-effective-capture mechanism (DBF1-IN-09).
+#[derive(Debug, Clone, PartialEq)]
+pub struct VariableCapture {
+    pub mechanism: String,
+    pub n_segments: usize,
+    pub a_max_m2: f64,
+    pub a_eff_used_m2: [f64; 2],
+    pub open_fraction_used: [f64; 2],
+    /// Closed-segment drag per unit area / q (analysis bound).
+    pub c_closed: f64,
+}
+
+/// The DBF-1.2 AIR operating free-stream-flux window and altitude schedule (DBF1-OP-01 / 02).
+#[derive(Debug, Clone, PartialEq)]
+pub struct OperatingWindow {
+    pub flux_coordinate: String,
+    pub phi_lo_kg_m2_s: f64,
+    pub phi_hi_kg_m2_s: f64,
+    /// Admissible altitude nodes per registered condition (ECSS scenario), km.
+    pub altitude_schedule: Vec<(String, Vec<f64>)>,
+    pub uncovered_conditions: Vec<String>,
+}
+
+/// The machine-readable DBF-1.2 subset: every DBF-1.1 field (same structure, new upstream) plus the variable-capture
+/// mechanism and the operating window.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Dbf12Config {
+    pub base: Dbf1Config,
+    pub bz_profiles: Vec<BzProfile>,
+    pub variable_capture: VariableCapture,
+    pub window: OperatingWindow,
+    pub closed_deficiencies: Vec<String>,
+    pub transferred_deficiencies: Vec<String>,
+    pub parent_lock_sha256: String,
+    pub dcr_resolution_sha256: String,
+}
+
+fn bad12(e: ConfigError) -> ConfigError {
+    ConfigError::configuration(e.message.replace(DBF1_CONFIG_REL, DBF1_2_CONFIG_REL))
+}
+
+/// Verify the DBF-1.2 lock (pinned): config and record sha256, and the lineage to the DBF-1.1 lock and the DCR-DBF1-001
+/// resolution.
+pub fn verify_lock_dbf1_2(repo: &Path) -> ConfigResult<()> {
+    let lock = pyjson::loads(&pyjson::read_text_utf8(&read_pinned(repo, DBF1_2_LOCK_REL, DBF1_2_LOCK_SHA256)?)?)?;
+    for (path, want) in [
+        (&["files", "dbf1_2_config_v1.json"][..], DBF1_2_CONFIG_SHA256),
+        (&["files", "dbf1_2_v1.json"][..], DBF1_2_RECORD_SHA256),
+        (&["lineage", "parent_lock_sha256"][..], DBF1_1_LOCK_SHA256),
+        (&["lineage", "dcr_resolution_sha256"][..], DCR_DBF1_001_RESOLUTION_SHA256),
+    ] {
+        if at(&lock, path).map_err(bad12)?.as_str() != Some(want) {
+            return Err(ConfigError::configuration(format!("{DBF1_2_LOCK_REL}: {} != {want}", path.join("."))));
+        }
+    }
+    read_pinned(repo, DBF1_2_RECORD_REL, DBF1_2_RECORD_SHA256)?;
+    Ok(())
+}
+
+/// `load_dbf1_2(repo)`: the verified DBF-1.2 configuration (lock, record, config and every B(z) profile file pinned;
+/// fail closed).
+pub fn load_dbf1_2(repo: &Path) -> ConfigResult<Dbf12Config> {
+    verify_lock_dbf1_2(repo)?;
+    let raw = pyjson::loads(&pyjson::read_text_utf8(&read_pinned(repo, DBF1_2_CONFIG_REL, DBF1_2_CONFIG_SHA256)?)?)?;
+    let c = parse_dbf1_2(raw)?;
+    for p in &c.bz_profiles {
+        read_pinned(repo, &p.file, &p.sha256)?;
+    }
+    Ok(c)
+}
+
+/// Parse a DBF-1.2 config document (no pin check; [`load_dbf1_2`] is the production entry).
+pub fn parse_dbf1_2(raw: Value) -> ConfigResult<Dbf12Config> {
+    let head = (|| -> ConfigResult<()> {
+        if st(&raw, &["schema"])? != "abep_dbf1_config_v1" || st(&raw, &["baseline"])? != "DBF-1.2" {
+            return Err(bad("schema / baseline id differ"));
+        }
+        if st(&raw, &["h1", "bz_shape_id"])? != "BZ-H1FE-V1" {
+            return Err(bad("h1.bz_shape_id is not BZ-H1FE-V1"));
+        }
+        Ok(())
+    })();
+    head.map_err(bad12)?;
+    let mut bz_profiles = vec![];
+    let groups =
+        at(&raw, &["h1", "bz_profiles"]).map_err(bad12)?.as_dict().ok_or_else(|| bad12(bad("h1.bz_profiles")))?;
+    for (role, d) in groups.iter() {
+        let d = d.as_dict().ok_or_else(|| bad12(bad("h1.bz_profiles entry")))?;
+        for (id, p) in d.iter() {
+            bz_profiles.push(BzProfile {
+                role: role.clone(),
+                id: id.clone(),
+                file: st(p, &["file"]).map_err(bad12)?,
+                sha256: st(p, &["sha256"]).map_err(bad12)?,
+                ni_total_a: num(p, &["NI_total_A"]).map_err(bad12)?,
+            });
+        }
+    }
+    let vc = (|| -> ConfigResult<VariableCapture> {
+        let v = at(&raw, &["variable_capture"])?;
+        let n = num(v, &["N_segments"])?;
+        if !(n >= 1.0 && n.fract() == 0.0) {
+            return Err(bad("variable_capture.N_segments must be a positive integer"));
+        }
+        Ok(VariableCapture {
+            mechanism: st(v, &["mechanism"])?,
+            n_segments: n as usize,
+            a_max_m2: num(v, &["A_max_m2"])?,
+            a_eff_used_m2: pair(v, &["A_eff_used_m2"])?,
+            open_fraction_used: pair(v, &["open_fraction_used"])?,
+            c_closed: num(v, &["C_closed"])?,
+        })
+    })()
+    .map_err(bad12)?;
+    let window = (|| -> ConfigResult<OperatingWindow> {
+        let w = at(&raw, &["operating_window"])?;
+        let sched = at(w, &["altitude_schedule"])?.as_dict().ok_or_else(|| bad("operating_window.altitude_schedule"))?;
+        let mut altitude_schedule = vec![];
+        for (c, l) in sched.iter() {
+            let nodes = l
+                .as_list()
+                .ok_or_else(|| bad("altitude_schedule entry"))?
+                .iter()
+                .map(|x| x.to_f64().map_err(|_| bad("altitude node")))
+                .collect::<ConfigResult<Vec<f64>>>()?;
+            altitude_schedule.push((c.clone(), nodes));
+        }
+        Ok(OperatingWindow {
+            flux_coordinate: st(w, &["flux_coordinate"])?,
+            phi_lo_kg_m2_s: num(w, &["Phi_lo_kg_m2_s"])?,
+            phi_hi_kg_m2_s: num(w, &["Phi_hi_kg_m2_s"])?,
+            altitude_schedule,
+            uncovered_conditions: strs(w, &["uncovered_conditions"])?,
+        })
+    })()
+    .map_err(bad12)?;
+    let up_area = num(&raw, &["upstream", "area_m2"]).map_err(bad12)?;
+    if !(window.phi_lo_kg_m2_s > 0.0 && window.phi_hi_kg_m2_s > window.phi_lo_kg_m2_s)
+        || vc.a_max_m2 != up_area
+        || !(vc.a_eff_used_m2[0] > 0.0 && vc.a_eff_used_m2[1] <= vc.a_max_m2 * (1.0 + 1e-12))
+    {
+        return Err(bad12(bad("variable_capture / operating_window inconsistent with the upstream aperture")));
+    }
+    let closed_deficiencies = strs(&raw, &["closed_deficiencies"]).map_err(bad12)?;
+    let transferred_deficiencies = strs(&raw, &["transferred_deficiencies"]).map_err(bad12)?;
+    let parent_lock_sha256 = st(&raw, &["lineage", "parent_lock_sha256"]).map_err(bad12)?;
+    let dcr_resolution_sha256 = st(&raw, &["lineage", "dcr_resolution_sha256"]).map_err(bad12)?;
+    if parent_lock_sha256 != DBF1_1_LOCK_SHA256 || dcr_resolution_sha256 != DCR_DBF1_001_RESOLUTION_SHA256 {
+        return Err(bad12(bad("lineage does not name the DBF-1.1 lock / DCR-DBF1-001 resolution")));
+    }
+    let base = parse_body(raw).map_err(bad12)?;
+    Ok(Dbf12Config {
+        base,
+        bz_profiles,
+        variable_capture: vc,
+        window,
+        closed_deficiencies,
+        transferred_deficiencies,
+        parent_lock_sha256,
+        dcr_resolution_sha256,
+    })
 }

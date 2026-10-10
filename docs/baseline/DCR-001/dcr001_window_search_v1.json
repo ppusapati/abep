@@ -1,0 +1,4030 @@
+{
+  "dcr": "DCR-DBF1-001",
+  "designs_with_a_window_covering_a_node": 182,
+  "label": "ACTUAL_DESIGN_EVALUATION / PARAMETRIC / NOT_VALIDATED / NOT_A_PERFORMANCE_PREDICTION",
+  "mass_relaxed": {
+    "best_O1_mass_relaxed": 4,
+    "mass_relaxed_selection_taken": true,
+    "mechanisms": {
+      "N1": {
+        "best_O1": 4,
+        "best_O2": 6,
+        "best_log_width": 1.3782314065146202,
+        "designs_with_a_window": 3515,
+        "mechanism": "VC-0 fixed aperture"
+      },
+      "N2": {
+        "best_O1": 4,
+        "best_O2": 6,
+        "best_log_width": 1.3782314065146202,
+        "designs_with_a_window": 3981,
+        "mechanism": "VC-1 segmented frontal shutter"
+      },
+      "N4": {
+        "best_O1": 4,
+        "best_O2": 6,
+        "best_log_width": 1.3870857297200205,
+        "designs_with_a_window": 4222,
+        "mechanism": "VC-1 segmented frontal shutter"
+      },
+      "N8": {
+        "best_O1": 4,
+        "best_O2": 6,
+        "best_log_width": 1.4876832146676517,
+        "designs_with_a_window": 4668,
+        "mechanism": "VC-1 segmented frontal shutter"
+      }
+    },
+    "rule": "evaluated (selected O1 < 4)",
+    "screen_log": [
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.9|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N1|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N1|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N1|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N1|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.9|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N2|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N2|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N2|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N2|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N2|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.9|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N4|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N4|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N4|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.8|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N4|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.5_Ld3_phi0.9|N4|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T5-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T5-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T5-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T5-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T5-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T5-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T5-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T5-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T5-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T5-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T5-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T5-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.7|T5-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N8|F4-FIL-T0.7|T5-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.7|T5-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.9|T5-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.9|T5-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.9|T5-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N8|F4-FIL-T0.5|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "corners": [
+          {
+            "cap25_ok": false,
+            "corner": "U-kS0.1-kK0.6-L0.0001",
+            "non_S_rows": 0,
+            "window_states_unserved": 87
+          },
+          {
+            "cap25_ok": false,
+            "corner": "U-kS0.1-kK0.6-L0.0003",
+            "non_S_rows": 0,
+            "window_states_unserved": 87
+          },
+          {
+            "cap25_ok": false,
+            "corner": "U-kS0.1-kK1.8-L0.0001",
+            "non_S_rows": 0,
+            "window_states_unserved": 49
+          },
+          {
+            "cap25_ok": false,
+            "corner": "U-kS0.1-kK1.8-L0.0003",
+            "non_S_rows": 0,
+            "window_states_unserved": 49
+          },
+          {
+            "cap25_ok": true,
+            "corner": "U-kS0.3-kK0.6-L0.0001",
+            "non_S_rows": 0,
+            "window_states_unserved": 44
+          },
+          {
+            "cap25_ok": true,
+            "corner": "U-kS0.3-kK0.6-L0.0003",
+            "non_S_rows": 0,
+            "window_states_unserved": 44
+          },
+          {
+            "cap25_ok": true,
+            "corner": "U-kS0.3-kK1.8-L0.0001",
+            "non_S_rows": 0,
+            "window_states_unserved": 0
+          },
+          {
+            "cap25_ok": true,
+            "corner": "U-kS0.3-kK1.8-L0.0003",
+            "non_S_rows": 0,
+            "window_states_unserved": 0
+          }
+        ],
+        "robust": false,
+        "selected_design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01"
+      }
+    ],
+    "triples_removed_by_node_extreme_screen": 32136
+  },
+  "mechanisms": {
+    "N1": {
+      "best_O1": 1,
+      "best_O2": 1,
+      "best_log_width": 0.8550866014436415,
+      "designs_with_a_window": 81,
+      "mechanism": "VC-0 fixed aperture"
+    },
+    "N2": {
+      "best_O1": 1,
+      "best_O2": 1,
+      "best_log_width": 0.8550866014436415,
+      "designs_with_a_window": 91,
+      "mechanism": "VC-1 segmented frontal shutter"
+    },
+    "N4": {
+      "best_O1": 1,
+      "best_O2": 1,
+      "best_log_width": 0.8550866014436415,
+      "designs_with_a_window": 112,
+      "mechanism": "VC-1 segmented frontal shutter"
+    },
+    "N8": {
+      "best_O1": 1,
+      "best_O2": 1,
+      "best_log_width": 0.8550866014436415,
+      "designs_with_a_window": 156,
+      "mechanism": "VC-1 segmented frontal shutter"
+    }
+  },
+  "prereg": {
+    "lock": {
+      "path": "docs/baseline/DCR-001/dcr001_eval_prereg_lock_v3.json",
+      "sha256": "65f276e8adcd6aefb63f04bf24067cc181f93c460ae9c56c82a16d5d0094649b"
+    },
+    "path": "docs/baseline/DCR-001/dcr001_eval_prereg_v3.json",
+    "sha256": "c79ea6c110f46799c5c3aaab1b091519d13ee2bf7b7c03112236de05f8c4dbb9"
+  },
+  "rust_commit": "a854a95d398d85c2277f635f429768e60a4fcaec",
+  "schema": "abep_dcr001_window_search_v1",
+  "selection": {
+    "V_m3": 0.001,
+    "controller": {
+      "Kp": 0.3,
+      "Ti_s": 3.0
+    },
+    "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01|V0.001|Kp0.3|Ti3",
+    "label": "ADMISSIBLE_CONDITIONAL_ON_COMPRESSOR_COEFFICIENTS",
+    "mass_relaxed_selection": true,
+    "robust": false,
+    "summary": {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.019453691921452288,
+      "N": 1,
+      "O1": 4,
+      "O2": 6,
+      "P_compressor_max_W": 9.873711193997316,
+      "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.7|T6-A1-U2-D0-Ti6Al4V-H0.5|P0.01",
+      "log_width": 1.3535087675522282,
+      "m_compressor_max_kg": 10.90721502347456,
+      "worst_sustained_flow_ratio": 1.0326995290818832
+    },
+    "window": {
+      "D_tot_max_N": 0.019453691921452288,
+      "O1_conditions_covered": 4,
+      "O2_nodes_admissible": 6,
+      "P_compressor_max_W": 9.873711193997316,
+      "Phi_adm_A4_at_ends": [
+        1.7602296338643998e-6,
+        6.813820948415614e-6
+      ],
+      "Phi_hi_kg_m2_s": 6.813820948415614e-6,
+      "Phi_hi_state": "ds2:ECSS_LT_HIGH:alt180:lat-18.0000:lst6:lon300:doy92",
+      "Phi_lo_kg_m2_s": 1.7602296338643998e-6,
+      "Phi_lo_state": "ds2:ECSS_ST_HIGH:alt215:lat+37.0000:lst6:lon240:doy184",
+      "altitude_schedule": {
+        "ECSS_LT_HIGH": {
+          "admissible_nodes_km": [
+            180.0,
+            195.0
+          ],
+          "band_km": [
+            180.0,
+            195.0
+          ],
+          "status": "COVERED"
+        },
+        "ECSS_LT_LOW": {
+          "admissible_nodes_km": [
+            180.0
+          ],
+          "band_km": [
+            180.0,
+            180.0
+          ],
+          "status": "COVERED"
+        },
+        "ECSS_LT_MODERATE": {
+          "admissible_nodes_km": [
+            180.0
+          ],
+          "band_km": [
+            180.0,
+            180.0
+          ],
+          "status": "COVERED"
+        },
+        "ECSS_ST_HIGH": {
+          "admissible_nodes_km": [
+            195.0,
+            215.0
+          ],
+          "band_km": [
+            195.0,
+            215.0
+          ],
+          "status": "COVERED"
+        }
+      },
+      "m_compressor_max_kg": 10.90721502347456,
+      "n_states_in_window": 114,
+      "ratio_hi_over_lo": 3.8709841132810516,
+      "states_with_25mN_capability_point": 70,
+      "worst_sustained_flow_ratio": 1.0326995290818832
+    }
+  },
+  "space": {
+    "A_eff_grid_m2": [
+      0.03125,
+      0.0625,
+      0.09375,
+      0.125,
+      0.15625,
+      0.1875,
+      0.21875,
+      0.25,
+      0.28125,
+      0.3125,
+      0.375,
+      0.4375,
+      0.46875,
+      0.5,
+      0.5625,
+      0.625,
+      0.65625,
+      0.75,
+      0.78125,
+      0.875,
+      0.9375,
+      1.0,
+      1.09375,
+      1.125,
+      1.25,
+      1.3125,
+      1.5
+    ],
+    "A_max_m2": [
+      0.25,
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5
+    ],
+    "N_segments": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "P_set_Pa": [
+      0.002,
+      0.005,
+      0.01,
+      0.02,
+      0.05,
+      0.1
+    ],
+    "compressors_C_mass": 494,
+    "compressors_S0": 1050,
+    "filters": [
+      "F4-FIL-T0.9",
+      "F4-FIL-T0.7",
+      "F4-FIL-T0.5",
+      "F4-FIL-PLACEHOLDER"
+    ],
+    "geometries": 8,
+    "note": "mechanism statistics count the triples that pass the node-extreme screen",
+    "rows_pruned_by_necessary_conditions": 56767888,
+    "rows_swept": 84308895,
+    "triples_removed_by_node_extreme_screen": 15670
+  },
+  "stability_screen": {
+    "cap": 200,
+    "cap_reached": false,
+    "designs_screened": 182,
+    "log": [
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.25|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.5|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.25|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N2|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N2|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N2|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N2|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.5|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.25|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N4|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N4|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N4|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N4|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.5|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.5|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.9|N8|F4-FIL-T0.5|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T2-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T2-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld20_phi0.8|N8|F4-FIL-T0.9|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.9|T2-A1-U2-D0-Ti6Al4V-H0.5|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.9|T2-A1-U2-D0-Ti6Al4V-H0.25|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.7|T2-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld10_phi0.8|N8|F4-FIL-T0.9|T2-A1-U2-D0-Ti6Al4V|P0.005",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.25|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.9|N8|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.8|N8|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.5|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld5_phi0.8|N8|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "V_m3": 0.001,
+        "controller": {
+          "Kp": 0.3,
+          "Ti_s": 3.0
+        },
+        "design_id": "A0.25_Ld3_phi0.9|N8|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.5|P0.02",
+        "robust": false
+      },
+      {
+        "corners": [
+          {
+            "cap25_ok": false,
+            "corner": "U-kS0.1-kK0.6-L0.0001",
+            "non_S_rows": 0,
+            "window_states_unserved": 45
+          },
+          {
+            "cap25_ok": false,
+            "corner": "U-kS0.1-kK0.6-L0.0003",
+            "non_S_rows": 0,
+            "window_states_unserved": 45
+          },
+          {
+            "cap25_ok": false,
+            "corner": "U-kS0.1-kK1.8-L0.0001",
+            "non_S_rows": 0,
+            "window_states_unserved": 45
+          },
+          {
+            "cap25_ok": false,
+            "corner": "U-kS0.1-kK1.8-L0.0003",
+            "non_S_rows": 0,
+            "window_states_unserved": 45
+          },
+          {
+            "cap25_ok": false,
+            "corner": "U-kS0.3-kK0.6-L0.0001",
+            "non_S_rows": 0,
+            "window_states_unserved": 45
+          },
+          {
+            "cap25_ok": false,
+            "corner": "U-kS0.3-kK0.6-L0.0003",
+            "non_S_rows": 0,
+            "window_states_unserved": 45
+          },
+          {
+            "cap25_ok": false,
+            "corner": "U-kS0.3-kK1.8-L0.0001",
+            "non_S_rows": 0,
+            "window_states_unserved": 45
+          },
+          {
+            "cap25_ok": false,
+            "corner": "U-kS0.3-kK1.8-L0.0003",
+            "non_S_rows": 0,
+            "window_states_unserved": 45
+          }
+        ],
+        "robust": false,
+        "selected_design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02"
+      }
+    ]
+  },
+  "top_20_by_v3_keys_without_R": [
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024527095740381012,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.452251831684652,
+      "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.313520941080561,
+      "worst_sustained_flow_ratio": 1.1071467657241785
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024647294490148897,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.57202750226907,
+      "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.313520941080561,
+      "worst_sustained_flow_ratio": 1.1067222898394882
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024527095740381012,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.444415114612372,
+      "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.288993571161201,
+      "worst_sustained_flow_ratio": 1.0960025470746595
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024586871434258546,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.417977740988526,
+      "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.288993571161201,
+      "worst_sustained_flow_ratio": 1.0715555643818186
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024647294490148897,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.563845721482187,
+      "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.288993571161201,
+      "worst_sustained_flow_ratio": 1.0955806595604303
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024693792648950278,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.525679012296585,
+      "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.288993571161201,
+      "worst_sustained_flow_ratio": 1.0711469442423858
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024527095740381012,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.43118093201801,
+      "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.313520941080561,
+      "worst_sustained_flow_ratio": 1.051930758485089
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024586871434258546,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.425493193986354,
+      "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.313520941080561,
+      "worst_sustained_flow_ratio": 1.0822796362976412
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024647294490148897,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.549747756564178,
+      "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.313520941080561,
+      "worst_sustained_flow_ratio": 1.0515252250403007
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024693792648950278,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.533453508072299,
+      "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.9|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.313520941080561,
+      "worst_sustained_flow_ratio": 1.08186861084795
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024527095740381012,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.423598289372084,
+      "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.288993571161201,
+      "worst_sustained_flow_ratio": 1.0417089174840242
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024586871434258546,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.399083730442637,
+      "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.288993571161201,
+      "worst_sustained_flow_ratio": 1.0196051160537687
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024647294490148897,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.541803612500807,
+      "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.288993571161201,
+      "worst_sustained_flow_ratio": 1.0413057519811273
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024693792648950278,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.506045897295909,
+      "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.7|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.288993571161201,
+      "worst_sustained_flow_ratio": 1.0192140420754199
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024586871434258546,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.406377754971684,
+      "design_id": "A0.25_Ld3_phi0.8|N1|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.313520941080561,
+      "worst_sustained_flow_ratio": 1.029462601889191
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024693792648950278,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.513618541409894,
+      "design_id": "A0.25_Ld5_phi0.8|N1|F4-FIL-T0.7|T4-A2-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.8550866014436415,
+      "m_compressor_max_kg": 5.313520941080561,
+      "worst_sustained_flow_ratio": 1.02906931991949
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024527095740381012,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.389853370757473,
+      "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.7982241558614106,
+      "m_compressor_max_kg": 5.288993571161201,
+      "worst_sustained_flow_ratio": 1.0644176246254833
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024527095740381012,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.396232230854672,
+      "design_id": "A0.25_Ld3_phi0.9|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+      "log_width": 0.7105803738195625,
+      "m_compressor_max_kg": 5.288993571161201,
+      "worst_sustained_flow_ratio": 1.070728697821752
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024647294490148897,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.503273857739003,
+      "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.9|T4-A0-U2-D0-Ti6Al4V-H0.5|P0.02",
+      "log_width": 0.7105803738195625,
+      "m_compressor_max_kg": 5.288993571161201,
+      "worst_sustained_flow_ratio": 1.0718979264956092
+    },
+    {
+      "A_max_m2": 0.25,
+      "D_tot_max_N": 0.024647294490148897,
+      "N": 1,
+      "O1": 1,
+      "O2": 1,
+      "P_compressor_max_W": 9.505586747089541,
+      "design_id": "A0.25_Ld5_phi0.9|N1|F4-FIL-T0.5|T4-A0-U2-D0-Ti6Al4V-H0.75|P0.02",
+      "log_width": 0.7982241558614106,
+      "m_compressor_max_kg": 5.288993571161201,
+      "worst_sustained_flow_ratio": 1.0641873380447768
+    }
+  ]
+}
