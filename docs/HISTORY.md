@@ -5862,3 +5862,14 @@ stays EMPTY and nothing enters layer (b).
 - **Recorder reading:** this accepts the AL-07 preliminary CBE (5.46 kg MEV) as the active AL-07 rebase. The 6.0 kg floor stays
   recorded history in `mass_power_a9_v5`.
 - **Next:** DBF-1.2 is unblocked; it is built as new files with its own lock. DBF-1 and DBF-1.1 are immutable.
+
+## 2026-10-10 — A9.42 owner direction recorded: build and freeze DBF-1.2 (build HELD on power-basis inconsistency)
+- **What:** the owner's direction is recorded verbatim as `docs/decisions/OD_2026_10_10_A9_42_BUILD_AND_FREEZE_DBF_1_2.md` (sha256 `650ab976e9e206c2b3586da51ba9a245deb33836d06ec14741eb409bea61ead6`), with companion `docs/decisions/OD_2026_10_10_A9_42_build_and_freeze_dbf_1_2.json`.
+- **Status:** the DBF-1.2 build is HELD before freeze under the direction's stop rule; no DBF-1.2 files exist.
+- **Inconsistency 1 — AIR 12 mN discharge power:** DCR-001 v5 used a predicted P_d of 596 / 600 W. That is below the FROZEN H1
+  discharge-power band floor of 650 W (DBF1-H1-06) and the approved P6 ledger PD-LOW allocation of 650 W at the 12 mN point.
+- **Inconsistency 2 — Xe 25 mN allocation (DCR-001 v4):** it does not use the P6 ledger basis.
+  - Non-discharge bus: 412.5 W used (the compressor was subtracted twice) versus the ledger's 420.19 W.
+  - Discharge chain: 0.855 used versus the ledger's 0.850725.
+  - RF +100 W: booked as +129 W bus, but 1.29 is dP_d,max per W of RF; the ledger trade line gives +151.13 W bus.
+- **Unchanged:** no design value changed. DBF-1 and DBF-1.1 are unchanged.

@@ -1,0 +1,30 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_10_A9_42_build_and_freeze_dbf_1_2",
+ "decided_by": "owner",
+ "date": "2026-10-10",
+ "decision": "A9_42_BUILD_AND_FREEZE_DBF_1_2",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_10_A9_42_BUILD_AND_FREEZE_DBF_1_2.md",
+  "sha256": "650ab976e9e206c2b3586da51ba9a245deb33836d06ec14741eb409bea61ead6",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "BUILD_AND_FREEZE_DBF_1_2",
+   "utc": "2026-10-10T12:47:50.320Z",
+   "text_sha256": "698c61cb2e3b1f50f4fef82bc5b9a06b3564890599ce11246bf2d8570cf46ef7",
+   "chars": 9583
+  }
+ ],
+ "checkpoint_at_decision": "6f4e3bb7025ec387143865fb737cbaaa841404fa",
+ "owner_decision_summary": {
+  "directive": "build and freeze 'DBF-1.2 — RFP-CONFORMING PRELIMINARY DESIGN BASELINE / COMPLIANCE VERIFICATION ON EM/QM' from A9.40, A9.41, dcr001_approval_v1, dcr_register_v5, DCR-001 v5/v6 and DBF-1.1 for unchanged subsystems; parent DBF-1.1, change authority DCR-DBF1-001, approval A9.41, source checkpoint 6f4e3bb",
+  "stop_rule": "if a check reveals a factual inconsistency, STOP and report it rather than silently modifying the approved design",
+  "not_now": "no proposal / technical annexure / bid package regeneration in this step"
+ },
+ "execution_record": [
+  "build HELD before freeze (stop rule): the power roll-up exposed factual inconsistencies between the DCR-001 v4 / v5 power figures and the approved A9.38 P6 bus-power ledger (docs/closure/power/power_ledger_v1.json) / DBF1-H1-06; reported to the owner, nothing frozen, no design value changed"
+ ]
+}
