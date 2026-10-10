@@ -31,6 +31,7 @@ import hashlib
 import json
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
@@ -103,6 +104,19 @@ A924_REQUIRED = (
 
 def _git(*args) -> str:
     return subprocess.run(["git", *args], cwd=REPO, check=True, capture_output=True, text=True).stdout.strip()
+
+
+def _commit_time_matches(git_at_ai: str) -> bool:
+    """`git show --format="%at %aI"` against the recorded constants, by value: newer git prints UTC as `Z`, older git
+    as `+00:00`, so the ISO text is parsed rather than string-compared."""
+    parts = git_at_ai.split()
+    if len(parts) != 2 or not parts[0].isdigit():
+        return False
+    try:
+        t = datetime.fromisoformat(parts[1].replace("Z", "+00:00"))
+    except ValueError:
+        return False
+    return int(parts[0]) == GENERATING_COMMIT_EPOCH and t == datetime.fromisoformat(GENERATING_COMMIT_TIME)
 
 
 def _canon_sha(obj) -> str:
@@ -183,7 +197,7 @@ def build_manifest(doc: dict, members: list[tuple[str, bytes]], tar_bytes: bytes
     blobs = {}
     for name, rel in MEMBERS:
         blobs[name] = {"source_path": rel, "git_blob_at_generating_commit": _git("rev-parse", f"{GENERATING_COMMIT}:{rel}")}
-    if _git("show", "-s", "--format=%at %aI", GENERATING_COMMIT) != f"{GENERATING_COMMIT_EPOCH} {GENERATING_COMMIT_TIME}":
+    if not _commit_time_matches(_git("show", "-s", "--format=%at %aI", GENERATING_COMMIT)):
         raise SystemExit("REFUSED: generating-commit time differs from the recorded constant")
     files = ea.file_manifest(members, blobs)
     full_entry = next(f for f in files if f["source_path"] == isy.F1_FULL_REL)
