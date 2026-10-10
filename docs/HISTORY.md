@@ -5803,3 +5803,19 @@ stays EMPTY and nothing enters layer (b).
 - Mass: component-level BOM gives nominal dry 33.76 kg, 39.13 kg wet at 2 kg Xe. This follows the DCR-001 design change (finishing pump deleted; 7-stage tapered contra-rotating stack; 5 Pa plenum; low-pressure metering valve). Owner floors and allocations are unchanged.
 - Power: AIR 12 mN 1142–1189 W; Xe 25 mN with the compressor off 1182 W (1311 W with +100 W RF).
 - All four A9.40 gates closed at proposal level; DBF-1.2 is not built pending owner approval of DCR-001.
+
+## 2026-10-10 — DCR-DBF1-001 compressor / feed pressure-domain closure v4 (DBF-1.2 not built)
+- **What:** `docs/baseline/DCR-001/preliminary/dcr001_pressure_domain_closure_v4.{py,json}` and `DCR001_PRESSURE_DOMAIN_CLOSURE_v4.md`
+  (deterministic, PROPOSAL-LEVEL / PARAMETRIC / NOT_VALIDATED).
+- **Feed:** p_anode 0.59 / 0.72 / 1.75 Pa at 0.45 / 0.55 / 1.33 mg/s.
+  - Distributor requirement p_dist ≥ 3 p_anode (C_dist 0.039 m³/s, H1 interface requirement).
+  - The plenum minimum is 11.1 Pa at the capability point, so the **selected plenum is 12 Pa** (band 11.1–14 Pa).
+- **Compressor:** three free-molecular contra-rotating front stages reach 0.1 Pa (the EV-03 limit). A turbo-drag finishing unit is
+  retained above that: turbo rows 0.1 → 1 Pa (transitional, analog evidence, not admitted) and Holweck 1 → 12 Pa (Kn ≥ 1.9).
+  - This supersedes the v3 (7094ad2) finishing-pump deletion, which was outside the admitted model.
+  - Compressor MEV 10.42 kg.
+- **Mass:** wet 44.18 kg at 2 kg Xe (4.18 kg over 40 kg); reported, not designed away.
+- **Power:**
+  - AIR 12 mN bus 1,166 / 1,224 W.
+  - Xe 25 mN discharge allocation ≤ 887.0 W (nominal ICP) / ≤ 776.8 W (+100 W RF) at the 1,450 W design ceiling.
+- **Verdict:** DCR-DBF1-001 NOT READY — compressor mass.
