@@ -1,0 +1,11 @@
+{
+ "id": "dcr001_eval_prereg_lock_v2",
+ "dcr": "DCR-DBF1-001",
+ "locked": "2026-10-09",
+ "note": "sha256 of the DCR-001 preregistration amendment v2 (non-closure best-design rule and information block only), committed alone before the v2 ranking is computed; v1 and its lock stay in force for everything else",
+ "files_relative_to": "docs/baseline/DCR-001/",
+ "files": {
+  "dcr001_eval_prereg_v2.json": "7ebb61eb16dd724aed3ac2dd1de9e3e77390a9e9e3d8f404a3d697fa2c75954c"
+ },
+ "v1_lock": {"path": "docs/baseline/DCR-001/dcr001_eval_prereg_lock_v1.json", "sha256": "39e76c68ee48f3d2c15b492f865be6929f8300f8b94afa680476e8bc80c1998d"}
+}

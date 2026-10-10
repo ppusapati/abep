@@ -31,8 +31,12 @@ air + Xe.
   - Python files stay at their current paths during migration. At cutover, archive them as tag `python-final-reference-<date>`
     plus branch `archive/python-final-reference` and `docs/archive/PYTHON_FINAL_REFERENCE.md` / `python_final_reference.json`
     (A9.29 sec. 8).
-- **Execution baseline is `integration/simulation-complete`** (CA-02).
-  - `main` is never modified directly; it receives this line only through a new owner-authorized PR.
+- **`main` is the single authoritative branch** (owner instruction 2026-10-10, after the DBF-1.2 promotion, PR #38).
+  - `main` is the version released to the scientific community for evaluation. Only finished, validated work reaches it, and
+    only through a reviewed PR (merge commit, so every pinned SHA stays in its ancestry). Nothing is pushed to `main` directly.
+  - Every other branch is development: `wip/*` lanes, `integration/*` lines and feature branches. None of them is a
+    source of record. Unfinished or unreviewed work stays on its branch until it is complete.
+  - `integration/simulation-complete` (CA-02) was the execution baseline until 2026-10-10. It is fully contained in `main`.
   - `claude/nifty-ramanujan-w68f9z` (`dcab602`) is the historical bid-era development branch.
 - Speed never weakens provenance, preregistration, conservation, determinism, model-domain checks, requirement/physics
   separation, uncertainty handling or fail-closed evidence semantics (A9.29 sec. 14).
@@ -229,8 +233,9 @@ air + Xe.
    break-even surfaces, hard-gate eliminations). **Fan-out rule:** whenever a lane finishes, immediately ask whether its result lets
    another lane start, removes a dependency, or creates a new parallel branch; never fall back to a sequential queue.
    **O4 first stage:** Johnson-low trigger FIRED (scored 2026-09-26) → its three pre-registered escalations are running.
-   **Execution baseline:** superseded by CA-02. It is now `integration/simulation-complete` (see "Current phase" above). The
-   2026-09-26 pin of `claude/nifty-ramanujan-w68f9z` at `debce16` is history (`runtime_state.json`).
+   **Execution baseline:** `main` since 2026-10-10 (see "Current phase" above). Before that it was
+   `integration/simulation-complete` (CA-02), and the 2026-09-26 pin of `claude/nifty-ramanujan-w68f9z` at `debce16` is history
+   (`runtime_state.json`).
    **Operating model (binding; owner decisions 2026-09-26): `docs/orchestration/OPERATING_MODEL.md`.** Machine ids in
    `lane_registry_v1.json` (lane_NN_*, ds_*, fo_*; break-even = lane_28_break_even); follow-on work launches ONLY from
    `trigger_registry_v1.json` (incl. T_O4_SCORE / T_O4_ESCALATE / T_O4_DISPOSITION_MATRIX / T_JOHNSONLOW_ESCALATION_ASSESSMENT /
