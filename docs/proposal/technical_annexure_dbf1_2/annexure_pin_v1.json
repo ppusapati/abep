@@ -1,0 +1,16 @@
+{
+ "id": "annexure_dbf1_2_pin_v1",
+ "what": "the one design source of the DBF-1.2 technical annexure (rev 2): the DBF-1.2 freeze commit and its lock hash",
+ "dbf1_2": {
+  "commit": "45492a8ef12fba13d262695bbd19f3631e80f355",
+  "lock_path": "docs/baseline/DBF-1.2/dbf1_2_lock_v1.json",
+  "lock_sha256": "103f4c9a5c0ab61d9d12e989c47e5f4fd713caa6bcbe7c45e9207e2e6ce19ee5"
+ },
+ "historical_bid_package": {
+  "technical_source": "5eee4b8c82a9403b6bb82d5f8d324526f5d6399b",
+  "package_commit": "2de86abefacbd36ce7516d3cf017f6258bd7e7a2",
+  "path": "docs/bid/package/",
+  "rule": "immutable evidence of the 2026-10-05 bid draft; never rewritten; this annexure supersedes it as the current technical description only, by owner direction 2026-10-10 after the DBF-1.2 freeze"
+ },
+ "direction": "owner, 2026-10-10: regenerate the technical annexure from DBF-1.2 (after A9.42 sec. 11 deferred it until DBF-1.2 was frozen)"
+}

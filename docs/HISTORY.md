@@ -5903,3 +5903,25 @@ stays EMPTY and nothing enters layer (b).
     reproduces on the clean 79ffe54 tree, and they are recorded as PRE_EXISTING_UNRELATED_REPOSITORY_TEST_FAILURE with remediation
     deferred.
 - **Unchanged:** DBF-1 and DBF-1.1 are byte-for-byte unchanged. No proposal or bid document was regenerated.
+
+## 2026-10-10 — Technical annexure rev 2 regenerated from DBF-1.2 (owner direction; A9.42 sec. 11 deferral lifted)
+- **What:** a new `docs/proposal/technical_annexure_dbf1_2/` with a generator, templates and clause data. It is pinned by
+  `annexure_pin_v1.json` to the DBF-1.2 freeze `45492a8` and lock `103f4c9a…`.
+  - Every fact is read at that commit with `git show`. The lock and every file and closure record it pins are
+    hash-verified, and any mismatch refuses the build.
+  - Outputs: A1 compliance matrix (+ JSON, all 37 registered clauses), A2 technical description, A3 verification plan,
+    A4 risk register, docx renderings. `--check` reproduces them, and `tests/test_technical_annexure_dbf1_2.py` tests them.
+- **Status changes against the 2026-10-05 bid package** (rule: only where the DBF-1.2 trace gives
+  CONFORMING_BY_DESIGN / ALLOCATION with an EM / QM path; no clause raised to COMPLY; A9.27 rulings kept):
+  - P17-03, P17-04, P17-05, P18-04, P18-06, P18-10, P18-11: NOT_YET_DEMONSTRATED -> COMPLY_PLANNED_WITH_EVIDENCE_PATH;
+  - P18-09: OWNER_INPUT_REQUIRED -> COMPLY_PLANNED (PPU N+1);
+  - P18-02: OWNER_INPUT_REQUIRED -> PARTIAL (sensor-level redundancy still owner).
+  - Counts: COMPLY 2, COMPLY_PLANNED 23, PARTIAL 2, NOT_YET_DEMONSTRATED 3, OWNER_INPUT_REQUIRED 7.
+- **Disclosed with the baseline:**
+  - thermal closure DCR REQUIRED: the RF match is under open DCR-DBF1-003, not applied to DBF-1.2;
+  - ICP closure BLOCKED BY SPECIFIC MISSING EVIDENCE;
+  - gate 3 FAIL and the credible Hall set empty;
+  - MR-DCR001-01.
+- **Location:** the annexure is outside `docs/bid/`. The historical bid package (`docs/bid/package/`, 5eee4b8 / 2de86ab)
+  and the bid-source guard are unchanged (guard PASS). The programmatic skeletons and the Part IV submission checklist
+  of that package are reused as they are.
