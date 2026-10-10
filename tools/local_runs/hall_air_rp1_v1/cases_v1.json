@@ -1,0 +1,1128 @@
+{
+ "schema": "abep_hall_air_rp1_local_cases_v1",
+ "package": "hall_air_rp1_v1",
+ "model_id": "NP-HALL-PARAMETRIC-ENVELOPE",
+ "addendum": "A9-LP (prereg_addendum_a9_local_air_rp1_v1.json)",
+ "owner_decision": "A9.39 item 4",
+ "layer": "PARAMETRIC / NOT_VALIDATED",
+ "labels": [
+  "PARAMETRIC / NOT_VALIDATED",
+  "AIR_CHEMISTRY_BOUNDED_NOT_COMPLETE (BV-AIR-LL-NOM, BOUNDED_ONE_SIDED_LOWER_ELECTRON_IMPACT_LOSS_NOT_COMPLETE)",
+  "B(z) FE-DERIVED NOT MEASURED",
+  "TRANSPORT SCREENING CANDIDATES NOT ADMITTED (credible set EMPTY)",
+  "COMPOSITION_HULL_CORNERS_NOT_INTERIOR_BOUNDS",
+  "NEUTRAL_INLET_EQUAL_T_SCALED_FROM_V1_DEFAULT",
+  "VACUUM MODE (no facility ingestion)"
+ ],
+ "baseline": {
+  "id": "DBF-1.1",
+  "lock": "docs/baseline/DBF-1.1/dbf1_1_lock_v1.json",
+  "lock_sha256": "257e141ca252c3015b5bbd2fc953a1de688bc1606be36ebdf9fff8889307cfb8",
+  "config_sha256": "f16e07ba5b0c80e724dd53bb8d8a9b02298d8fb20ddac85a4f49ee799949d092",
+  "bfield_manifest_sha256": "c797e679613e20948f0f24174db0c95bf0645592e6969363cc661bf1ab2be946"
+ },
+ "sources": {
+  "chem_prereg_sha256": "306712f78bbbf17e8aa50e804559c36a80680dbebc8ecf0f47f2c244443ea70f",
+  "transport_ensemble_sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
+  "a7_rp1_cases_sha256": "cb6e90ff7a87b1996818dc9d0d1e2ce0afb4ecae5cdcf38855ab53c0a7b552ea",
+  "air_cases_v1_sha256": "60bb9d009c53eafec8c0bec020a7fa9dc4f27e2101fb5d85d0a64f0e1bb61666",
+  "air_launch_manifest_sha256": "7b9b661529647b1d44c063fda0de1190b2ee072509b6b9bff5f6bb37f269a767"
+ },
+ "air_chemistry": {
+  "label": "abep-air-0.7",
+  "mode": "BOUNDED_VARIANT",
+  "bound_set": "BV-AIR-LL",
+  "bound_member": "BV-AIR-LL-NOM",
+  "bound_label": "BOUNDED_ONE_SIDED_LOWER_ELECTRON_IMPACT_LOSS_NOT_COMPLETE",
+  "n2n_reaction_set": "abep-n2n-0.11 (referenced in place, ../propellants/)"
+ },
+ "inlet": {
+  "rule": "NI-01 (NP-HALL-CHEM-AIR addendum 01)",
+  "label": "NEUTRAL_INLET_EQUAL_T_SCALED_FROM_V1_DEFAULT",
+  "temperature_K": 500,
+  "velocity_m_s": {
+   "N2": 150,
+   "N": 212.13203435596427,
+   "O2": 140.3516117147642,
+   "O": 198.48715278794208
+  }
+ },
+ "mode": "vacuum",
+ "n_cases": 10,
+ "levels": [
+  "A7-P",
+  "A7-C"
+ ],
+ "cases": [
+  {
+   "case_id": "C01",
+   "key": "AIR|G-RP1|BZ-H1FE-V1|BP-LO|VD-350|MF-A|CP-YLO-REC|sgb-screen-01",
+   "family": "AIR",
+   "thruster": "H-1-RP1",
+   "geometry_id": "G-RP1",
+   "bz_shape_id": "BZ-H1FE-V1",
+   "B_peak_id": "BP-LO",
+   "Vd_id": "VD-350",
+   "mdot_id": "MF-A",
+   "composition_id": "CP-YLO-REC",
+   "transport_id": "sgb-screen-01",
+   "L_m": 0.1032,
+   "r_in_m": 0.029,
+   "r_out_m": 0.041,
+   "domain_m": 0.16923,
+   "Vd": 350,
+   "mdot_kgps": 2.0e-7,
+   "B_ref_T": 0.006993000000000001,
+   "B_profile": {
+    "file": "bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-LO.csv",
+    "align": "anode",
+    "z_ref_in_file_mm": 0,
+    "scale_to": "max"
+   },
+   "B_operating_point": {
+    "profile_id": "BZ-H1FE-V1/NOM/BP-LO",
+    "B_peak_G": 69.93,
+    "fe_file_B_peak_G": 69.91038556485663,
+    "fe_file_z_peak_mm": 98.69778413329131,
+    "coil_NI_total_A_turns": 153.68879629516994,
+    "coil_NI_basis": "NI_total of the FE solution at its own B_peak (fe_file_B_peak_G); the run scales B by B_peak_G / fe_file_B_peak_G",
+    "file_sha256": "1d3930d78921986f9acb6132de09f08bbe435b3df3b7216cd17dc2ddc8f996cc",
+    "evidence": "FE-DERIVED (scikit-fem 10.0.2), NOT MEASURED"
+   },
+   "transport": {
+    "model": "ScaledGaussianBohm",
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.8,
+    "center": 0.9,
+    "width": 0.25
+   },
+   "propellant_config": "propellants_air/air_nominal.toml",
+   "rate_dir": "propellants_air",
+   "feed": [
+    {
+     "species": "N2",
+     "flow_rate_kg_s": 1.820583841564329e-7,
+     "velocity_m_s": 150,
+     "temperature_K": 500
+    },
+    {
+     "species": "N",
+     "flow_rate_kg_s": 0,
+     "velocity_m_s": 212.13203435596427,
+     "temperature_K": 500
+    },
+    {
+     "species": "O2",
+     "flow_rate_kg_s": 1.7941615843567103e-8,
+     "velocity_m_s": 140.3516117147642,
+     "temperature_K": 500
+    },
+    {
+     "species": "O",
+     "flow_rate_kg_s": 0,
+     "velocity_m_s": 198.48715278794208,
+     "temperature_K": 500
+    }
+   ],
+   "composition": {
+    "y_O": 0.07942586082268627,
+    "f_O": 0,
+    "f_N": 0,
+    "mass_fractions": {
+     "O": 0,
+     "O2": 0.08970807921783552,
+     "N": 0,
+     "N2": 0.9102919207821645
+    }
+   },
+   "duration_s": 0.013538399999999999,
+   "average_start_s": 0.0033845999999999998,
+   "num_save": 4000,
+   "numerics": {
+    "CFL": 0.799,
+    "min_dt_s": 1.0e-10,
+    "max_dt_s": 1.0e-7,
+    "max_small_steps": 100,
+    "adaptive": true,
+    "reconstruct": true,
+    "implicit_energy": 1
+   },
+   "levels": {
+    "A7-P": {
+     "cells": 678,
+     "dt_s": 2.5e-9,
+     "dx_mm": 0.2496017699115044
+    },
+    "A7-C": {
+     "cells": 1356,
+     "dt_s": 1.25e-9,
+     "dx_mm": 0.1248008849557522
+    }
+   },
+   "case_sha256": "6ca42b164c4cef0d600911a64b2ccf09a95711c4671c4155cb9a34aa68aabb93"
+  },
+  {
+   "case_id": "C02",
+   "key": "AIR|G-RP1|BZ-H1FE-V1|BP-LO|VD-265|MF-A|CP-YHI-DIS|sgb-screen-01",
+   "family": "AIR",
+   "thruster": "H-1-RP1",
+   "geometry_id": "G-RP1",
+   "bz_shape_id": "BZ-H1FE-V1",
+   "B_peak_id": "BP-LO",
+   "Vd_id": "VD-265",
+   "mdot_id": "MF-A",
+   "composition_id": "CP-YHI-DIS",
+   "transport_id": "sgb-screen-01",
+   "L_m": 0.1032,
+   "r_in_m": 0.029,
+   "r_out_m": 0.041,
+   "domain_m": 0.16923,
+   "Vd": 265,
+   "mdot_kgps": 2.0e-7,
+   "B_ref_T": 0.006993000000000001,
+   "B_profile": {
+    "file": "bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-LO.csv",
+    "align": "anode",
+    "z_ref_in_file_mm": 0,
+    "scale_to": "max"
+   },
+   "B_operating_point": {
+    "profile_id": "BZ-H1FE-V1/NOM/BP-LO",
+    "B_peak_G": 69.93,
+    "fe_file_B_peak_G": 69.91038556485663,
+    "fe_file_z_peak_mm": 98.69778413329131,
+    "coil_NI_total_A_turns": 153.68879629516994,
+    "coil_NI_basis": "NI_total of the FE solution at its own B_peak (fe_file_B_peak_G); the run scales B by B_peak_G / fe_file_B_peak_G",
+    "file_sha256": "1d3930d78921986f9acb6132de09f08bbe435b3df3b7216cd17dc2ddc8f996cc",
+    "evidence": "FE-DERIVED (scikit-fem 10.0.2), NOT MEASURED"
+   },
+   "transport": {
+    "model": "ScaledGaussianBohm",
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.8,
+    "center": 0.9,
+    "width": 0.25
+   },
+   "propellant_config": "propellants_air/air_nominal.toml",
+   "rate_dir": "propellants_air",
+   "feed": [
+    {
+     "species": "N2",
+     "flow_rate_kg_s": 2.6790058335338983e-8,
+     "velocity_m_s": 150,
+     "temperature_K": 500
+    },
+    {
+     "species": "N",
+     "flow_rate_kg_s": 1.8089067186418836e-9,
+     "velocity_m_s": 212.13203435596427,
+     "temperature_K": 500
+    },
+    {
+     "species": "O2",
+     "flow_rate_kg_s": 1.6294412391742523e-9,
+     "velocity_m_s": 140.3516117147642,
+     "temperature_K": 500
+    },
+    {
+     "species": "O",
+     "flow_rate_kg_s": 1.6977159370684486e-7,
+     "velocity_m_s": 198.48715278794208,
+     "temperature_K": 500
+    }
+   ],
+   "composition": {
+    "y_O": 0.8399245094855884,
+    "f_O": 0.9904933990644372,
+    "f_N": 0.06325077551679062,
+    "mass_fractions": {
+     "O": 0.8488579685342243,
+     "O2": 0.008147206195871263,
+     "N": 0.009044533593209418,
+     "N2": 0.13395029167669492
+    }
+   },
+   "duration_s": 0.013538399999999999,
+   "average_start_s": 0.0033845999999999998,
+   "num_save": 4000,
+   "numerics": {
+    "CFL": 0.799,
+    "min_dt_s": 1.0e-10,
+    "max_dt_s": 1.0e-7,
+    "max_small_steps": 100,
+    "adaptive": true,
+    "reconstruct": true,
+    "implicit_energy": 1
+   },
+   "levels": {
+    "A7-P": {
+     "cells": 678,
+     "dt_s": 2.5e-9,
+     "dx_mm": 0.2496017699115044
+    },
+    "A7-C": {
+     "cells": 1356,
+     "dt_s": 1.25e-9,
+     "dx_mm": 0.1248008849557522
+    }
+   },
+   "case_sha256": "00c99e321463dc85293b097eeca7e39283c85822e25f8f3c1eba15366c129404"
+  },
+  {
+   "case_id": "C03",
+   "key": "AIR|G-RP1|BZ-H1FE-V1|BP-HI|VD-265|MF-B|CP-YLO-REC|sgb-screen-01",
+   "family": "AIR",
+   "thruster": "H-1-RP1",
+   "geometry_id": "G-RP1",
+   "bz_shape_id": "BZ-H1FE-V1",
+   "B_peak_id": "BP-HI",
+   "Vd_id": "VD-265",
+   "mdot_id": "MF-B",
+   "composition_id": "CP-YLO-REC",
+   "transport_id": "sgb-screen-01",
+   "L_m": 0.1032,
+   "r_in_m": 0.029,
+   "r_out_m": 0.041,
+   "domain_m": 0.16923,
+   "Vd": 265,
+   "mdot_kgps": 5.0e-7,
+   "B_ref_T": 0.026860000000000002,
+   "B_profile": {
+    "file": "bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-HI.csv",
+    "align": "anode",
+    "z_ref_in_file_mm": 0,
+    "scale_to": "max"
+   },
+   "B_operating_point": {
+    "profile_id": "BZ-H1FE-V1/NOM/BP-HI",
+    "B_peak_G": 268.6,
+    "fe_file_B_peak_G": 268.60732227849013,
+    "fe_file_z_peak_mm": 98.6978535448519,
+    "coil_NI_total_A_turns": 587.0966999118853,
+    "coil_NI_basis": "NI_total of the FE solution at its own B_peak (fe_file_B_peak_G); the run scales B by B_peak_G / fe_file_B_peak_G",
+    "file_sha256": "ab86134579ce64d1802d85230376be17b613e1e48e8b2306d3ff94ab67690e62",
+    "evidence": "FE-DERIVED (scikit-fem 10.0.2), NOT MEASURED"
+   },
+   "transport": {
+    "model": "ScaledGaussianBohm",
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.8,
+    "center": 0.9,
+    "width": 0.25
+   },
+   "propellant_config": "propellants_air/air_nominal.toml",
+   "rate_dir": "propellants_air",
+   "feed": [
+    {
+     "species": "N2",
+     "flow_rate_kg_s": 4.551459603910822e-7,
+     "velocity_m_s": 150,
+     "temperature_K": 500
+    },
+    {
+     "species": "N",
+     "flow_rate_kg_s": 0,
+     "velocity_m_s": 212.13203435596427,
+     "temperature_K": 500
+    },
+    {
+     "species": "O2",
+     "flow_rate_kg_s": 4.485403960891776e-8,
+     "velocity_m_s": 140.3516117147642,
+     "temperature_K": 500
+    },
+    {
+     "species": "O",
+     "flow_rate_kg_s": 0,
+     "velocity_m_s": 198.48715278794208,
+     "temperature_K": 500
+    }
+   ],
+   "composition": {
+    "y_O": 0.07942586082268627,
+    "f_O": 0,
+    "f_N": 0,
+    "mass_fractions": {
+     "O": 0,
+     "O2": 0.08970807921783552,
+     "N": 0,
+     "N2": 0.9102919207821645
+    }
+   },
+   "duration_s": 0.013538399999999999,
+   "average_start_s": 0.0033845999999999998,
+   "num_save": 4000,
+   "numerics": {
+    "CFL": 0.799,
+    "min_dt_s": 1.0e-10,
+    "max_dt_s": 1.0e-7,
+    "max_small_steps": 100,
+    "adaptive": true,
+    "reconstruct": true,
+    "implicit_energy": 1
+   },
+   "levels": {
+    "A7-P": {
+     "cells": 678,
+     "dt_s": 2.5e-9,
+     "dx_mm": 0.2496017699115044
+    },
+    "A7-C": {
+     "cells": 1356,
+     "dt_s": 1.25e-9,
+     "dx_mm": 0.1248008849557522
+    }
+   },
+   "case_sha256": "febb20e0d447eac09435ae8e5180146058ee346ff66627b7d854f4e0e8f45938"
+  },
+  {
+   "case_id": "C04",
+   "key": "AIR|G-RP1|BZ-H1FE-V1|BP-HI|VD-350|MF-B|CP-YHI-DIS|sgb-screen-01",
+   "family": "AIR",
+   "thruster": "H-1-RP1",
+   "geometry_id": "G-RP1",
+   "bz_shape_id": "BZ-H1FE-V1",
+   "B_peak_id": "BP-HI",
+   "Vd_id": "VD-350",
+   "mdot_id": "MF-B",
+   "composition_id": "CP-YHI-DIS",
+   "transport_id": "sgb-screen-01",
+   "L_m": 0.1032,
+   "r_in_m": 0.029,
+   "r_out_m": 0.041,
+   "domain_m": 0.16923,
+   "Vd": 350,
+   "mdot_kgps": 5.0e-7,
+   "B_ref_T": 0.026860000000000002,
+   "B_profile": {
+    "file": "bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-HI.csv",
+    "align": "anode",
+    "z_ref_in_file_mm": 0,
+    "scale_to": "max"
+   },
+   "B_operating_point": {
+    "profile_id": "BZ-H1FE-V1/NOM/BP-HI",
+    "B_peak_G": 268.6,
+    "fe_file_B_peak_G": 268.60732227849013,
+    "fe_file_z_peak_mm": 98.6978535448519,
+    "coil_NI_total_A_turns": 587.0966999118853,
+    "coil_NI_basis": "NI_total of the FE solution at its own B_peak (fe_file_B_peak_G); the run scales B by B_peak_G / fe_file_B_peak_G",
+    "file_sha256": "ab86134579ce64d1802d85230376be17b613e1e48e8b2306d3ff94ab67690e62",
+    "evidence": "FE-DERIVED (scikit-fem 10.0.2), NOT MEASURED"
+   },
+   "transport": {
+    "model": "ScaledGaussianBohm",
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.8,
+    "center": 0.9,
+    "width": 0.25
+   },
+   "propellant_config": "propellants_air/air_nominal.toml",
+   "rate_dir": "propellants_air",
+   "feed": [
+    {
+     "species": "N2",
+     "flow_rate_kg_s": 6.697514583834746e-8,
+     "velocity_m_s": 150,
+     "temperature_K": 500
+    },
+    {
+     "species": "N",
+     "flow_rate_kg_s": 4.522266796604709e-9,
+     "velocity_m_s": 212.13203435596427,
+     "temperature_K": 500
+    },
+    {
+     "species": "O2",
+     "flow_rate_kg_s": 4.073603097935631e-9,
+     "velocity_m_s": 140.3516117147642,
+     "temperature_K": 500
+    },
+    {
+     "species": "O",
+     "flow_rate_kg_s": 4.244289842671122e-7,
+     "velocity_m_s": 198.48715278794208,
+     "temperature_K": 500
+    }
+   ],
+   "composition": {
+    "y_O": 0.8399245094855884,
+    "f_O": 0.9904933990644372,
+    "f_N": 0.06325077551679062,
+    "mass_fractions": {
+     "O": 0.8488579685342243,
+     "O2": 0.008147206195871263,
+     "N": 0.009044533593209418,
+     "N2": 0.13395029167669492
+    }
+   },
+   "duration_s": 0.013538399999999999,
+   "average_start_s": 0.0033845999999999998,
+   "num_save": 4000,
+   "numerics": {
+    "CFL": 0.799,
+    "min_dt_s": 1.0e-10,
+    "max_dt_s": 1.0e-7,
+    "max_small_steps": 100,
+    "adaptive": true,
+    "reconstruct": true,
+    "implicit_energy": 1
+   },
+   "levels": {
+    "A7-P": {
+     "cells": 678,
+     "dt_s": 2.5e-9,
+     "dx_mm": 0.2496017699115044
+    },
+    "A7-C": {
+     "cells": 1356,
+     "dt_s": 1.25e-9,
+     "dx_mm": 0.1248008849557522
+    }
+   },
+   "case_sha256": "db8f967932351a26f805f470097c99b4f95fb066932b520ef5e991076a79df00"
+  },
+  {
+   "case_id": "C05",
+   "key": "AIR|G-RP1|BZ-H1FE-V1|BP-LO|VD-350|MF-C|CP-YLO-REC|sgb-screen-01",
+   "family": "AIR",
+   "thruster": "H-1-RP1",
+   "geometry_id": "G-RP1",
+   "bz_shape_id": "BZ-H1FE-V1",
+   "B_peak_id": "BP-LO",
+   "Vd_id": "VD-350",
+   "mdot_id": "MF-C",
+   "composition_id": "CP-YLO-REC",
+   "transport_id": "sgb-screen-01",
+   "L_m": 0.1032,
+   "r_in_m": 0.029,
+   "r_out_m": 0.041,
+   "domain_m": 0.16923,
+   "Vd": 350,
+   "mdot_kgps": 1.0e-6,
+   "B_ref_T": 0.006993000000000001,
+   "B_profile": {
+    "file": "bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-LO.csv",
+    "align": "anode",
+    "z_ref_in_file_mm": 0,
+    "scale_to": "max"
+   },
+   "B_operating_point": {
+    "profile_id": "BZ-H1FE-V1/NOM/BP-LO",
+    "B_peak_G": 69.93,
+    "fe_file_B_peak_G": 69.91038556485663,
+    "fe_file_z_peak_mm": 98.69778413329131,
+    "coil_NI_total_A_turns": 153.68879629516994,
+    "coil_NI_basis": "NI_total of the FE solution at its own B_peak (fe_file_B_peak_G); the run scales B by B_peak_G / fe_file_B_peak_G",
+    "file_sha256": "1d3930d78921986f9acb6132de09f08bbe435b3df3b7216cd17dc2ddc8f996cc",
+    "evidence": "FE-DERIVED (scikit-fem 10.0.2), NOT MEASURED"
+   },
+   "transport": {
+    "model": "ScaledGaussianBohm",
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.8,
+    "center": 0.9,
+    "width": 0.25
+   },
+   "propellant_config": "propellants_air/air_nominal.toml",
+   "rate_dir": "propellants_air",
+   "feed": [
+    {
+     "species": "N2",
+     "flow_rate_kg_s": 9.102919207821644e-7,
+     "velocity_m_s": 150,
+     "temperature_K": 500
+    },
+    {
+     "species": "N",
+     "flow_rate_kg_s": 0,
+     "velocity_m_s": 212.13203435596427,
+     "temperature_K": 500
+    },
+    {
+     "species": "O2",
+     "flow_rate_kg_s": 8.970807921783552e-8,
+     "velocity_m_s": 140.3516117147642,
+     "temperature_K": 500
+    },
+    {
+     "species": "O",
+     "flow_rate_kg_s": 0,
+     "velocity_m_s": 198.48715278794208,
+     "temperature_K": 500
+    }
+   ],
+   "composition": {
+    "y_O": 0.07942586082268627,
+    "f_O": 0,
+    "f_N": 0,
+    "mass_fractions": {
+     "O": 0,
+     "O2": 0.08970807921783552,
+     "N": 0,
+     "N2": 0.9102919207821645
+    }
+   },
+   "duration_s": 0.013538399999999999,
+   "average_start_s": 0.0033845999999999998,
+   "num_save": 4000,
+   "numerics": {
+    "CFL": 0.799,
+    "min_dt_s": 1.0e-10,
+    "max_dt_s": 1.0e-7,
+    "max_small_steps": 100,
+    "adaptive": true,
+    "reconstruct": true,
+    "implicit_energy": 1
+   },
+   "levels": {
+    "A7-P": {
+     "cells": 678,
+     "dt_s": 2.5e-9,
+     "dx_mm": 0.2496017699115044
+    },
+    "A7-C": {
+     "cells": 1356,
+     "dt_s": 1.25e-9,
+     "dx_mm": 0.1248008849557522
+    }
+   },
+   "case_sha256": "3b73712f972d30bd6b4714ecf085dfaa11decf512a68fad4a9c665d05a2c3285"
+  },
+  {
+   "case_id": "C06",
+   "key": "AIR|G-RP1|BZ-H1FE-V1|BP-HI|VD-350|MF-C|CP-YHI-DIS|sgb-screen-01",
+   "family": "AIR",
+   "thruster": "H-1-RP1",
+   "geometry_id": "G-RP1",
+   "bz_shape_id": "BZ-H1FE-V1",
+   "B_peak_id": "BP-HI",
+   "Vd_id": "VD-350",
+   "mdot_id": "MF-C",
+   "composition_id": "CP-YHI-DIS",
+   "transport_id": "sgb-screen-01",
+   "L_m": 0.1032,
+   "r_in_m": 0.029,
+   "r_out_m": 0.041,
+   "domain_m": 0.16923,
+   "Vd": 350,
+   "mdot_kgps": 1.0e-6,
+   "B_ref_T": 0.026860000000000002,
+   "B_profile": {
+    "file": "bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-HI.csv",
+    "align": "anode",
+    "z_ref_in_file_mm": 0,
+    "scale_to": "max"
+   },
+   "B_operating_point": {
+    "profile_id": "BZ-H1FE-V1/NOM/BP-HI",
+    "B_peak_G": 268.6,
+    "fe_file_B_peak_G": 268.60732227849013,
+    "fe_file_z_peak_mm": 98.6978535448519,
+    "coil_NI_total_A_turns": 587.0966999118853,
+    "coil_NI_basis": "NI_total of the FE solution at its own B_peak (fe_file_B_peak_G); the run scales B by B_peak_G / fe_file_B_peak_G",
+    "file_sha256": "ab86134579ce64d1802d85230376be17b613e1e48e8b2306d3ff94ab67690e62",
+    "evidence": "FE-DERIVED (scikit-fem 10.0.2), NOT MEASURED"
+   },
+   "transport": {
+    "model": "ScaledGaussianBohm",
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.8,
+    "center": 0.9,
+    "width": 0.25
+   },
+   "propellant_config": "propellants_air/air_nominal.toml",
+   "rate_dir": "propellants_air",
+   "feed": [
+    {
+     "species": "N2",
+     "flow_rate_kg_s": 1.3395029167669491e-7,
+     "velocity_m_s": 150,
+     "temperature_K": 500
+    },
+    {
+     "species": "N",
+     "flow_rate_kg_s": 9.044533593209417e-9,
+     "velocity_m_s": 212.13203435596427,
+     "temperature_K": 500
+    },
+    {
+     "species": "O2",
+     "flow_rate_kg_s": 8.147206195871262e-9,
+     "velocity_m_s": 140.3516117147642,
+     "temperature_K": 500
+    },
+    {
+     "species": "O",
+     "flow_rate_kg_s": 8.488579685342243e-7,
+     "velocity_m_s": 198.48715278794208,
+     "temperature_K": 500
+    }
+   ],
+   "composition": {
+    "y_O": 0.8399245094855884,
+    "f_O": 0.9904933990644372,
+    "f_N": 0.06325077551679062,
+    "mass_fractions": {
+     "O": 0.8488579685342243,
+     "O2": 0.008147206195871263,
+     "N": 0.009044533593209418,
+     "N2": 0.13395029167669492
+    }
+   },
+   "duration_s": 0.013538399999999999,
+   "average_start_s": 0.0033845999999999998,
+   "num_save": 4000,
+   "numerics": {
+    "CFL": 0.799,
+    "min_dt_s": 1.0e-10,
+    "max_dt_s": 1.0e-7,
+    "max_small_steps": 100,
+    "adaptive": true,
+    "reconstruct": true,
+    "implicit_energy": 1
+   },
+   "levels": {
+    "A7-P": {
+     "cells": 678,
+     "dt_s": 2.5e-9,
+     "dx_mm": 0.2496017699115044
+    },
+    "A7-C": {
+     "cells": 1356,
+     "dt_s": 1.25e-9,
+     "dx_mm": 0.1248008849557522
+    }
+   },
+   "case_sha256": "181e358ebca4b8dc567bbe41841850989de6ed8e066af2e9480389a9b0d51c68"
+  },
+  {
+   "case_id": "C07",
+   "key": "AIR|G-RP1|BZ-H1FE-V1|BP-HI|VD-265|MF-D|CP-YLO-REC|sgb-screen-01",
+   "family": "AIR",
+   "thruster": "H-1-RP1",
+   "geometry_id": "G-RP1",
+   "bz_shape_id": "BZ-H1FE-V1",
+   "B_peak_id": "BP-HI",
+   "Vd_id": "VD-265",
+   "mdot_id": "MF-D",
+   "composition_id": "CP-YLO-REC",
+   "transport_id": "sgb-screen-01",
+   "L_m": 0.1032,
+   "r_in_m": 0.029,
+   "r_out_m": 0.041,
+   "domain_m": 0.16923,
+   "Vd": 265,
+   "mdot_kgps": 2.0e-6,
+   "B_ref_T": 0.026860000000000002,
+   "B_profile": {
+    "file": "bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-HI.csv",
+    "align": "anode",
+    "z_ref_in_file_mm": 0,
+    "scale_to": "max"
+   },
+   "B_operating_point": {
+    "profile_id": "BZ-H1FE-V1/NOM/BP-HI",
+    "B_peak_G": 268.6,
+    "fe_file_B_peak_G": 268.60732227849013,
+    "fe_file_z_peak_mm": 98.6978535448519,
+    "coil_NI_total_A_turns": 587.0966999118853,
+    "coil_NI_basis": "NI_total of the FE solution at its own B_peak (fe_file_B_peak_G); the run scales B by B_peak_G / fe_file_B_peak_G",
+    "file_sha256": "ab86134579ce64d1802d85230376be17b613e1e48e8b2306d3ff94ab67690e62",
+    "evidence": "FE-DERIVED (scikit-fem 10.0.2), NOT MEASURED"
+   },
+   "transport": {
+    "model": "ScaledGaussianBohm",
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.8,
+    "center": 0.9,
+    "width": 0.25
+   },
+   "propellant_config": "propellants_air/air_nominal.toml",
+   "rate_dir": "propellants_air",
+   "feed": [
+    {
+     "species": "N2",
+     "flow_rate_kg_s": 1.8205838415643288e-6,
+     "velocity_m_s": 150,
+     "temperature_K": 500
+    },
+    {
+     "species": "N",
+     "flow_rate_kg_s": 0,
+     "velocity_m_s": 212.13203435596427,
+     "temperature_K": 500
+    },
+    {
+     "species": "O2",
+     "flow_rate_kg_s": 1.7941615843567104e-7,
+     "velocity_m_s": 140.3516117147642,
+     "temperature_K": 500
+    },
+    {
+     "species": "O",
+     "flow_rate_kg_s": 0,
+     "velocity_m_s": 198.48715278794208,
+     "temperature_K": 500
+    }
+   ],
+   "composition": {
+    "y_O": 0.07942586082268627,
+    "f_O": 0,
+    "f_N": 0,
+    "mass_fractions": {
+     "O": 0,
+     "O2": 0.08970807921783552,
+     "N": 0,
+     "N2": 0.9102919207821645
+    }
+   },
+   "duration_s": 0.013538399999999999,
+   "average_start_s": 0.0033845999999999998,
+   "num_save": 4000,
+   "numerics": {
+    "CFL": 0.799,
+    "min_dt_s": 1.0e-10,
+    "max_dt_s": 1.0e-7,
+    "max_small_steps": 100,
+    "adaptive": true,
+    "reconstruct": true,
+    "implicit_energy": 1
+   },
+   "levels": {
+    "A7-P": {
+     "cells": 678,
+     "dt_s": 2.5e-9,
+     "dx_mm": 0.2496017699115044
+    },
+    "A7-C": {
+     "cells": 1356,
+     "dt_s": 1.25e-9,
+     "dx_mm": 0.1248008849557522
+    }
+   },
+   "case_sha256": "f612a525785d3c5cb4ddf9420df01c40ce83614af8e4a8a959128753bee27152"
+  },
+  {
+   "case_id": "C08",
+   "key": "AIR|G-RP1|BZ-H1FE-V1|BP-LO|VD-265|MF-D|CP-YHI-DIS|sgb-screen-01",
+   "family": "AIR",
+   "thruster": "H-1-RP1",
+   "geometry_id": "G-RP1",
+   "bz_shape_id": "BZ-H1FE-V1",
+   "B_peak_id": "BP-LO",
+   "Vd_id": "VD-265",
+   "mdot_id": "MF-D",
+   "composition_id": "CP-YHI-DIS",
+   "transport_id": "sgb-screen-01",
+   "L_m": 0.1032,
+   "r_in_m": 0.029,
+   "r_out_m": 0.041,
+   "domain_m": 0.16923,
+   "Vd": 265,
+   "mdot_kgps": 2.0e-6,
+   "B_ref_T": 0.006993000000000001,
+   "B_profile": {
+    "file": "bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-LO.csv",
+    "align": "anode",
+    "z_ref_in_file_mm": 0,
+    "scale_to": "max"
+   },
+   "B_operating_point": {
+    "profile_id": "BZ-H1FE-V1/NOM/BP-LO",
+    "B_peak_G": 69.93,
+    "fe_file_B_peak_G": 69.91038556485663,
+    "fe_file_z_peak_mm": 98.69778413329131,
+    "coil_NI_total_A_turns": 153.68879629516994,
+    "coil_NI_basis": "NI_total of the FE solution at its own B_peak (fe_file_B_peak_G); the run scales B by B_peak_G / fe_file_B_peak_G",
+    "file_sha256": "1d3930d78921986f9acb6132de09f08bbe435b3df3b7216cd17dc2ddc8f996cc",
+    "evidence": "FE-DERIVED (scikit-fem 10.0.2), NOT MEASURED"
+   },
+   "transport": {
+    "model": "ScaledGaussianBohm",
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.8,
+    "center": 0.9,
+    "width": 0.25
+   },
+   "propellant_config": "propellants_air/air_nominal.toml",
+   "rate_dir": "propellants_air",
+   "feed": [
+    {
+     "species": "N2",
+     "flow_rate_kg_s": 2.6790058335338983e-7,
+     "velocity_m_s": 150,
+     "temperature_K": 500
+    },
+    {
+     "species": "N",
+     "flow_rate_kg_s": 1.8089067186418835e-8,
+     "velocity_m_s": 212.13203435596427,
+     "temperature_K": 500
+    },
+    {
+     "species": "O2",
+     "flow_rate_kg_s": 1.6294412391742523e-8,
+     "velocity_m_s": 140.3516117147642,
+     "temperature_K": 500
+    },
+    {
+     "species": "O",
+     "flow_rate_kg_s": 1.6977159370684487e-6,
+     "velocity_m_s": 198.48715278794208,
+     "temperature_K": 500
+    }
+   ],
+   "composition": {
+    "y_O": 0.8399245094855884,
+    "f_O": 0.9904933990644372,
+    "f_N": 0.06325077551679062,
+    "mass_fractions": {
+     "O": 0.8488579685342243,
+     "O2": 0.008147206195871263,
+     "N": 0.009044533593209418,
+     "N2": 0.13395029167669492
+    }
+   },
+   "duration_s": 0.013538399999999999,
+   "average_start_s": 0.0033845999999999998,
+   "num_save": 4000,
+   "numerics": {
+    "CFL": 0.799,
+    "min_dt_s": 1.0e-10,
+    "max_dt_s": 1.0e-7,
+    "max_small_steps": 100,
+    "adaptive": true,
+    "reconstruct": true,
+    "implicit_energy": 1
+   },
+   "levels": {
+    "A7-P": {
+     "cells": 678,
+     "dt_s": 2.5e-9,
+     "dx_mm": 0.2496017699115044
+    },
+    "A7-C": {
+     "cells": 1356,
+     "dt_s": 1.25e-9,
+     "dx_mm": 0.1248008849557522
+    }
+   },
+   "case_sha256": "dd58f691581d5eacc4d9ec2ea52a2402fefccba19f9e825c3db3ebe0cf6e9adf"
+  },
+  {
+   "case_id": "C09",
+   "key": "AIR|G-RP1|BZ-H1FE-V1|BP-LO|VD-350|MF-C|CP-YLO-REC|sgb-screen-04",
+   "family": "AIR",
+   "thruster": "H-1-RP1",
+   "geometry_id": "G-RP1",
+   "bz_shape_id": "BZ-H1FE-V1",
+   "B_peak_id": "BP-LO",
+   "Vd_id": "VD-350",
+   "mdot_id": "MF-C",
+   "composition_id": "CP-YLO-REC",
+   "transport_id": "sgb-screen-04",
+   "L_m": 0.1032,
+   "r_in_m": 0.029,
+   "r_out_m": 0.041,
+   "domain_m": 0.16923,
+   "Vd": 350,
+   "mdot_kgps": 1.0e-6,
+   "B_ref_T": 0.006993000000000001,
+   "B_profile": {
+    "file": "bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-LO.csv",
+    "align": "anode",
+    "z_ref_in_file_mm": 0,
+    "scale_to": "max"
+   },
+   "B_operating_point": {
+    "profile_id": "BZ-H1FE-V1/NOM/BP-LO",
+    "B_peak_G": 69.93,
+    "fe_file_B_peak_G": 69.91038556485663,
+    "fe_file_z_peak_mm": 98.69778413329131,
+    "coil_NI_total_A_turns": 153.68879629516994,
+    "coil_NI_basis": "NI_total of the FE solution at its own B_peak (fe_file_B_peak_G); the run scales B by B_peak_G / fe_file_B_peak_G",
+    "file_sha256": "1d3930d78921986f9acb6132de09f08bbe435b3df3b7216cd17dc2ddc8f996cc",
+    "evidence": "FE-DERIVED (scikit-fem 10.0.2), NOT MEASURED"
+   },
+   "transport": {
+    "model": "ScaledGaussianBohm",
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.97,
+    "center": 1.1,
+    "width": 0.1
+   },
+   "propellant_config": "propellants_air/air_nominal.toml",
+   "rate_dir": "propellants_air",
+   "feed": [
+    {
+     "species": "N2",
+     "flow_rate_kg_s": 9.102919207821644e-7,
+     "velocity_m_s": 150,
+     "temperature_K": 500
+    },
+    {
+     "species": "N",
+     "flow_rate_kg_s": 0,
+     "velocity_m_s": 212.13203435596427,
+     "temperature_K": 500
+    },
+    {
+     "species": "O2",
+     "flow_rate_kg_s": 8.970807921783552e-8,
+     "velocity_m_s": 140.3516117147642,
+     "temperature_K": 500
+    },
+    {
+     "species": "O",
+     "flow_rate_kg_s": 0,
+     "velocity_m_s": 198.48715278794208,
+     "temperature_K": 500
+    }
+   ],
+   "composition": {
+    "y_O": 0.07942586082268627,
+    "f_O": 0,
+    "f_N": 0,
+    "mass_fractions": {
+     "O": 0,
+     "O2": 0.08970807921783552,
+     "N": 0,
+     "N2": 0.9102919207821645
+    }
+   },
+   "duration_s": 0.013538399999999999,
+   "average_start_s": 0.0033845999999999998,
+   "num_save": 4000,
+   "numerics": {
+    "CFL": 0.799,
+    "min_dt_s": 1.0e-10,
+    "max_dt_s": 1.0e-7,
+    "max_small_steps": 100,
+    "adaptive": true,
+    "reconstruct": true,
+    "implicit_energy": 1
+   },
+   "levels": {
+    "A7-P": {
+     "cells": 678,
+     "dt_s": 2.5e-9,
+     "dx_mm": 0.2496017699115044
+    },
+    "A7-C": {
+     "cells": 1356,
+     "dt_s": 1.25e-9,
+     "dx_mm": 0.1248008849557522
+    }
+   },
+   "case_sha256": "d230efca0049ad4851fdafac6b5c059b56d167cc231f3959100a8bbb88e20ea3"
+  },
+  {
+   "case_id": "C10",
+   "key": "AIR|G-RP1|BZ-H1FE-V1|BP-HI|VD-350|MF-C|CP-YHI-DIS|sgb-screen-04",
+   "family": "AIR",
+   "thruster": "H-1-RP1",
+   "geometry_id": "G-RP1",
+   "bz_shape_id": "BZ-H1FE-V1",
+   "B_peak_id": "BP-HI",
+   "Vd_id": "VD-350",
+   "mdot_id": "MF-C",
+   "composition_id": "CP-YHI-DIS",
+   "transport_id": "sgb-screen-04",
+   "L_m": 0.1032,
+   "r_in_m": 0.029,
+   "r_out_m": 0.041,
+   "domain_m": 0.16923,
+   "Vd": 350,
+   "mdot_kgps": 1.0e-6,
+   "B_ref_T": 0.026860000000000002,
+   "B_profile": {
+    "file": "bfield/h1_fe_v1/h1_fe_v1_Br_centerline_nominal_BP-HI.csv",
+    "align": "anode",
+    "z_ref_in_file_mm": 0,
+    "scale_to": "max"
+   },
+   "B_operating_point": {
+    "profile_id": "BZ-H1FE-V1/NOM/BP-HI",
+    "B_peak_G": 268.6,
+    "fe_file_B_peak_G": 268.60732227849013,
+    "fe_file_z_peak_mm": 98.6978535448519,
+    "coil_NI_total_A_turns": 587.0966999118853,
+    "coil_NI_basis": "NI_total of the FE solution at its own B_peak (fe_file_B_peak_G); the run scales B by B_peak_G / fe_file_B_peak_G",
+    "file_sha256": "ab86134579ce64d1802d85230376be17b613e1e48e8b2306d3ff94ab67690e62",
+    "evidence": "FE-DERIVED (scikit-fem 10.0.2), NOT MEASURED"
+   },
+   "transport": {
+    "model": "ScaledGaussianBohm",
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.97,
+    "center": 1.1,
+    "width": 0.1
+   },
+   "propellant_config": "propellants_air/air_nominal.toml",
+   "rate_dir": "propellants_air",
+   "feed": [
+    {
+     "species": "N2",
+     "flow_rate_kg_s": 1.3395029167669491e-7,
+     "velocity_m_s": 150,
+     "temperature_K": 500
+    },
+    {
+     "species": "N",
+     "flow_rate_kg_s": 9.044533593209417e-9,
+     "velocity_m_s": 212.13203435596427,
+     "temperature_K": 500
+    },
+    {
+     "species": "O2",
+     "flow_rate_kg_s": 8.147206195871262e-9,
+     "velocity_m_s": 140.3516117147642,
+     "temperature_K": 500
+    },
+    {
+     "species": "O",
+     "flow_rate_kg_s": 8.488579685342243e-7,
+     "velocity_m_s": 198.48715278794208,
+     "temperature_K": 500
+    }
+   ],
+   "composition": {
+    "y_O": 0.8399245094855884,
+    "f_O": 0.9904933990644372,
+    "f_N": 0.06325077551679062,
+    "mass_fractions": {
+     "O": 0.8488579685342243,
+     "O2": 0.008147206195871263,
+     "N": 0.009044533593209418,
+     "N2": 0.13395029167669492
+    }
+   },
+   "duration_s": 0.013538399999999999,
+   "average_start_s": 0.0033845999999999998,
+   "num_save": 4000,
+   "numerics": {
+    "CFL": 0.799,
+    "min_dt_s": 1.0e-10,
+    "max_dt_s": 1.0e-7,
+    "max_small_steps": 100,
+    "adaptive": true,
+    "reconstruct": true,
+    "implicit_energy": 1
+   },
+   "levels": {
+    "A7-P": {
+     "cells": 678,
+     "dt_s": 2.5e-9,
+     "dx_mm": 0.2496017699115044
+    },
+    "A7-C": {
+     "cells": 1356,
+     "dt_s": 1.25e-9,
+     "dx_mm": 0.1248008849557522
+    }
+   },
+   "case_sha256": "d4254c8ee69213b16f57bc73dba837c19fa9887d6883bfdbc3db67038145997d"
+  }
+ ]
+}

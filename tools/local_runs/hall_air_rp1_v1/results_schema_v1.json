@@ -1,0 +1,78 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "abep_hall_air_rp1_results_v1",
+ "title": "hall_air_rp1_v1 result file (NP-HALL-PARAMETRIC-ENVELOPE addendum A9-LP; PARAMETRIC / NOT_VALIDATED)",
+ "description": "One file per local execution of tools/local_runs/hall_air_rp1_v1/run_all.sh. validate.jl checks this schema (subset: type, required, properties, items, enum, const, minimum, minItems) plus the package rules listed in validate.jl.",
+ "type": "object",
+ "required": ["schema", "package", "addendum", "owner_decision", "layer", "labels", "not", "complete", "n_cases", "n_runs_expected",
+              "n_runs_present", "summary", "definitions", "provenance", "cases"],
+ "properties": {
+  "schema": {"const": "abep_hall_air_rp1_results_v1"},
+  "package": {"const": "hall_air_rp1_v1"},
+  "layer": {"const": "PARAMETRIC / NOT_VALIDATED"},
+  "labels": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+  "not": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+  "complete": {"type": "boolean"},
+  "n_cases": {"type": "integer", "minimum": 1},
+  "n_runs_expected": {"type": "integer", "minimum": 2},
+  "n_runs_present": {"type": "integer", "minimum": 0},
+  "summary": {"type": "object", "required": ["by_status_production", "by_outcome", "wall_s_total"]},
+  "definitions": {"type": "object", "required": ["thrust", "Id", "discharge_power_W", "Isp_s", "eta_anode", "eta_total", "oscillation",
+                                                  "convergence", "status_precedence", "case_outcome"]},
+  "provenance": {
+   "type": "object",
+   "required": ["hosts", "hallthruster_commits", "julia_versions", "utc_generated", "os", "cpu", "cpu_threads", "cases_file_sha256", "preflight"],
+   "properties": {
+    "hallthruster_commits": {"type": "array", "items": {"const": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5"}},
+    "cases_file_sha256": {"type": "string"},
+    "preflight": {"type": "object", "required": ["ok", "julia_version", "hallthruster_commit", "manifest_sha256", "package_manifest_sha256",
+                                                 "package_files_sha256", "input_files_sha256", "threads_env", "jobs"],
+                  "properties": {"ok": {"const": true}}}
+   }
+  },
+  "cases": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": ["case_id", "key", "case_sha256", "inputs", "status", "status_reasons", "status_check_level", "outcome", "result",
+                 "check_level_result", "convergence", "runtime_s", "failure", "raw"],
+    "properties": {
+     "case_id": {"type": "string"},
+     "status": {"enum": ["PASS", "NOT_SUSTAINED", "NON_STATIONARY", "STATISTICALLY_UNRESOLVED", "OUT_OF_DOMAIN", "EXTINCT", "NUMERICAL_FAILURE", "NOT_RUN"]},
+     "status_check_level": {"enum": ["PASS", "NOT_SUSTAINED", "NON_STATIONARY", "STATISTICALLY_UNRESOLVED", "OUT_OF_DOMAIN", "EXTINCT", "NUMERICAL_FAILURE", "NOT_RUN"]},
+     "outcome": {"enum": ["CONVERGED_EVALUATED", "PERSISTENT_UNKNOWN", "NOT_CONVERGED", "INCOMPLETE_NOT_RUN"]},
+     "inputs": {
+      "type": "object",
+      "required": ["composition", "feed", "mdot_kg_s", "mdot_mg_s", "Vd_V", "B_operating_point", "transport_id", "geometry"],
+      "properties": {
+       "composition": {"type": "object", "required": ["id", "y_O", "f_O", "f_N", "mass_fractions"]},
+       "B_operating_point": {"type": "object", "required": ["profile_id", "B_peak_G", "coil_NI_total_A_turns", "file_sha256", "evidence"]},
+       "mdot_kg_s": {"type": "number", "minimum": 0},
+       "Vd_V": {"type": "number", "minimum": 0}
+      }
+     },
+     "result": {
+      "type": ["object", "null"],
+      "required": ["status", "retcode", "wall_s"],
+      "properties": {
+       "thrust_mN": {"type": ["number", "string"]},
+       "thrust_se_mN": {"type": ["number", "string"]},
+       "Id_A": {"type": ["number", "string"]},
+       "Id_se_A": {"type": ["number", "string"]},
+       "discharge_power_W": {"type": ["number", "string"]},
+       "Isp_s": {"type": ["number", "string"]},
+       "eta_anode": {"type": ["number", "string"]},
+       "eta_total": {"type": "null"},
+       "oscillation": {"type": "object", "required": ["Id", "thrust", "quiet_class"]}
+      }
+     },
+     "convergence": {"type": "object", "required": ["status_P", "status_C", "outcome"]},
+     "runtime_s": {"type": "object", "required": ["A7-P", "A7-C", "total"]},
+     "failure": {"type": "object", "required": ["A7-P", "A7-C"]},
+     "raw": {"type": "object", "required": ["A7-P", "A7-C"]}
+    }
+   }
+  }
+ }
+}

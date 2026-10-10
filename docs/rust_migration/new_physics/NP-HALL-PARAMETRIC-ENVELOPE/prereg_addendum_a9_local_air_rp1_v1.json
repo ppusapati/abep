@@ -1,0 +1,93 @@
+{
+ "schema": "abep_new_physics_prereg_addendum_v1",
+ "id": "NP-HALL-PARAMETRIC-ENVELOPE/prereg_addendum_a9_local_air_rp1_v1",
+ "addendum": "A9-LP (minimal local Hall AIR run package on DBF-1.1 with the FE-derived H1 B(z))",
+ "amends": "nothing: an additive, information-only run set. v1, A1..A8 and every committed record are not edited. The id A9-LP is distinct from the owner-decision series A9.xx.",
+ "status": "PREREGISTERED_NOT_RUN",
+ "status_label": "PARAMETRIC / NOT_VALIDATED / INFORMATION_ONLY / NOT_A_PERFORMANCE_PREDICTION",
+ "date": "2026-10-09",
+ "lane": "lane-hall-air-localpkg",
+ "base_commit": "8060e55 (integration/simulation-complete)",
+ "drafted_by": "agent session under A9.39 item 4 (lane-level registration; nothing here is an owner decision)",
+ "mandate": "A9.39 item 4 (verbatim, docs/decisions/OD_2026_10_09_A9_39_ARCHITECTURE_CLOSED_OWNER_DECISIONS.md): Hall AIR efficiency is NOT AN ARCHITECTURE BLOCKER; prepare one small reproducible local-run package for the owner's local system; DBF-1.1 with the FE B(z); only the minimum decisive RP-1 atmospheric cases for a preliminary operating map (approximately 6-12 cases, not another 196-state campaign); per case: atmospheric composition, mass flow, V_d, I_d, discharge power, magnetic-field operating point, thrust using true time-mean thrust, Isp, efficiency, oscillation statistics, convergence metrics, runtime, failure / collapse reason; one command, one result file.",
+ "registered_before": "any Hall run on the FE-derived field (DCR-DBF1-002 approval condition: 'a Hall run citing the FE field needs a new NP-HALL-PARAMETRIC-ENVELOPE addendum committed before the run'). Results seen before registration: the v1 XE / AIR records, A3 (incl. the 17 AIR check cases on the surrogate B(z)), the A6 study, the A7 RP-1 demonstration partial (Xe, surrogate B(z)), the Phase 1 numerics diagnosis and the Architecture Closure Conclusion v2. No FE-field Hall result exists.",
+ "governing_records": {
+  "owner_decision": "docs/decisions/OD_2026_10_09_A9_39_ARCHITECTURE_CLOSED_OWNER_DECISIONS.md (item 4)",
+  "baseline": {"id": "DBF-1.1", "lock": "docs/baseline/DBF-1.1/dbf1_1_lock_v1.json", "sha256": "257e141ca252c3015b5bbd2fc953a1de688bc1606be36ebdf9fff8889307cfb8"},
+  "dcr_approval": {"path": "docs/baseline/DCR-002/dcr002_approval_v1.json", "sha256": "1718ac8061720959ea52e66e18723c23c3ece8d8c44fcfa41249d4f852c9bb55"},
+  "a7_numerical_method": {"path": "prereg_addendum_a7_hall_numerical_method_v1.json", "sha256": "58b0c20c977907c0aa23b420f28ff569081a40415907584df1bc3c52bb1adaa4",
+                          "lock_sha256": "26fc6d53548a63ac792b013673d047753b79f3280cf1f6240232c13142e79299"},
+  "a1_air_family_lock_sha256": "35388e247ffdcc7af2a605e46f29d955ec29875893d3f7342e6411110f3d17a6",
+  "a8_lock_sha256": "67e37fad110bc14bc36fbe3ff9c906d91e0e5873abdf614921e1196bda54b59c",
+  "air_chemistry": {"set": "abep-air-0.7 (hallthruster_bridge/propellants_air/AIR_PINNED.toml, status INCOMPLETE_EVIDENCE)",
+                    "launch_path": "LP-BOUNDED: BV-AIR-LL-NOM (air_nominal.toml), label BOUNDED_ONE_SIDED_LOWER_ELECTRON_IMPACT_LOSS_NOT_COMPLETE (NP-HALL-CHEM-AIR addendum 03, sha256 bcf18240f2c5044041a33abfb6de7df1ba8267e4b2df888bb507b114d6205155)",
+                    "n2n": "abep-n2n-0.11 referenced in place"},
+  "bridge": {"hallthruster_bridge/air_bridge_lib.jl": "cb32ad94bfacd8ccefc8aa655c18a18ac4c77ad7cb0e19f7fc11c40e4671cab6",
+             "hallthruster_bridge/bridge_lib.jl": "cf26aab8607b640ebb78be9715f2c7c5d957f145ac17f52c1b23db2e980e21ab",
+             "hallthruster_bridge/a7_numerics.jl": "758e06e7363590c53ee3ccc64429205b947da615c94c0b7e4bfa28beae17eb15"},
+  "hallthruster": "v0.23.1 commit bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 (PINNED.toml, Manifest.toml)"
+ },
+ "bz_family": {
+  "kind": "H1_REGISTERED",
+  "id": "BZ-H1FE-V1",
+  "label": "FE-DERIVED / NOT MEASURED (scikit-fem 10.0.2 axisymmetric nonlinear magnetostatics of MC-1); EM measured B(z) is the verification-by-test item",
+  "profiles": "nominal BP-LO (h1_fe_v1_Br_centerline_nominal_BP-LO.csv, 1d3930d7...) and BP-HI (h1_fe_v1_Br_centerline_nominal_BP-HI.csv, ab861345...); envelope CORNER-A / CORNER-B and CAP-403 are not run here",
+  "registration": "DBF-1.1 DBF1-BZ-04 rule unchanged: B_profile = {file, align: anode, z_ref_in_file_mm: 0.0, scale_to: max}, B_ref_T = B_peak_G x 1e-4 with B_peak_G the DBF1-BZ-03 operating level (69.93 / 268.6 G); the FE file peaks are 69.91 / 268.61 G (scale 1.00028 / 0.99998)",
+  "coil_operating_point": "reported per case: NI_total of the FE solution at its own B_peak (153.7 A-turns BP-LO, 587.1 A-turns BP-HI; MANIFEST.json)",
+  "never": "not retuned (A9.39 item 1); never pooled with surrogate BZ-P5B16 / P5B30 records"
+ },
+ "case_selection": {
+  "geometry": "G-RP1 (DBF-1.1 DBF1-H1-01..04: d_mean 70 mm, h 12 mm, L 103.2 mm, r_in 29 mm, r_out 41 mm); domain 0.16923 m as v1 / A7 for G-RP1",
+  "SR-1_composition": {"levels": ["CP-YLO-REC", "CP-YHI-DIS"],
+                       "rule": "the two registered NP-HALL-CHEM-AIR composition corners (prereg_v1.json /composition/hall_composition_points, from the frozen 196-state design set abep_sim/data/atmosphere_msis21_orbit_v1_design_states_v2.json, sha256 60073e21...) that bracket the O-nuclei share y_O (0.0794 at ECSS_ST_HIGH 180 km .. 0.8399 at ECSS_LT_LOW 230 km), taken on the diagonal: the fully molecular low-O corner and the dissociated O-dominated corner (f_O 0.990, f_N 0.063). Corners are not interior bounds (COMPOSITION_HULL_CORNERS_NOT_INTERIOR_BOUNDS)."},
+  "SR-2_Vd": {"levels": {"VD-265": 265.0, "VD-350": 350.0},
+              "rule": "the two upper registered v1 V_d levels inside DBF1-H1-05 (180-350 V); VD-180 is not run: at the DBF1-H1-06 discharge-power band an AIR feed (ionization cost per ion above Xe) favours the higher voltages, and 180 V is already covered as information by the v1 AIR grid on the surrogate field"},
+  "SR-3_B": {"levels": {"BP-LO": 69.93, "BP-HI": 268.6}, "rule": "the two DBF1-BZ-03 operating levels (ends of the DBF1-BZ-02 band), nominal FE shape"},
+  "SR-4_mdot": {"levels_kg_s": {"MF-A": 2.0e-7, "MF-B": 5.0e-7, "MF-C": 1.0e-6, "MF-D": 2.0e-6},
+                "rule": "total delivered anode flow; MF-A..MF-C cover the conservation requirement (A4 conservation_bounds_v1: mdot_req 0.048 mg/s at 12 mN and 0.208 mg/s at 25 mN for a lossless thruster at 1500 W; a real thruster needs several times that) at 0.2 / 0.5 / 1.0 mg/s; MF-D = 2.0 mg/s is the one higher level. Split by the composition's registered mass fractions; inlet NI-01 (500 K, 150 m/s x sqrt(M_N2 / M_s))."},
+  "SR-5_transport": {"levels": ["sgb-screen-01", "sgb-screen-04"],
+                     "rule": "two of the nine registered screening candidates (hallthruster_bridge/ensemble/transport_ensemble_v0.json, none admitted, credible set EMPTY) at opposite corners of the screening box in every SGB shape parameter: sgb-screen-01 (barrier b 0.8 = lowest, centre 0.9 L = most upstream, width 0.25 L = widest; best in-sample P5 I_d) and sgb-screen-04 (b 0.97 = highest, centre 1.1 L = most downstream, width 0.1 L = narrowest); a = 1/16 for both. sgb-screen-01 carries the map, sgb-screen-04 is the transport-sensitivity replicate."},
+  "SR-6_design": {"rule": "fractional design: the half fraction of composition x V_d x B with defining relation I = comp.Vd.B (coded CP-YLO-REC / VD-265 / BP-LO = -1) gives four rows; each flow level gets two rows that differ in composition (composition is not controllable, so every flow level sees both), and every row appears twice over the four flow levels; plus the two MF-C rows replicated with sgb-screen-04. 10 cases, 20 runs (A7-P + A7-C).",
+                  "cases": [
+                   {"id": "C01", "mdot": "MF-A", "composition": "CP-YLO-REC", "Vd": "VD-350", "B": "BP-LO", "transport": "sgb-screen-01"},
+                   {"id": "C02", "mdot": "MF-A", "composition": "CP-YHI-DIS", "Vd": "VD-265", "B": "BP-LO", "transport": "sgb-screen-01"},
+                   {"id": "C03", "mdot": "MF-B", "composition": "CP-YLO-REC", "Vd": "VD-265", "B": "BP-HI", "transport": "sgb-screen-01"},
+                   {"id": "C04", "mdot": "MF-B", "composition": "CP-YHI-DIS", "Vd": "VD-350", "B": "BP-HI", "transport": "sgb-screen-01"},
+                   {"id": "C05", "mdot": "MF-C", "composition": "CP-YLO-REC", "Vd": "VD-350", "B": "BP-LO", "transport": "sgb-screen-01"},
+                   {"id": "C06", "mdot": "MF-C", "composition": "CP-YHI-DIS", "Vd": "VD-350", "B": "BP-HI", "transport": "sgb-screen-01"},
+                   {"id": "C07", "mdot": "MF-D", "composition": "CP-YLO-REC", "Vd": "VD-265", "B": "BP-HI", "transport": "sgb-screen-01"},
+                   {"id": "C08", "mdot": "MF-D", "composition": "CP-YHI-DIS", "Vd": "VD-265", "B": "BP-LO", "transport": "sgb-screen-01"},
+                   {"id": "C09", "mdot": "MF-C", "composition": "CP-YLO-REC", "Vd": "VD-350", "B": "BP-LO", "transport": "sgb-screen-04"},
+                   {"id": "C10", "mdot": "MF-C", "composition": "CP-YHI-DIS", "Vd": "VD-350", "B": "BP-HI", "transport": "sgb-screen-04"}]},
+  "no_n2_proxy": "AIR runs use the four-neutral AIR feed and the AIR reaction set; no N2_PROXY substitution",
+  "case_file": {"path": "tools/local_runs/hall_air_rp1_v1/cases_v1.json", "sha256": "7e21c5088416c1328956d19dfad88a06e66a6a38124b963a276013ebfe05ff21",
+                "generator": "tools/local_runs/hall_air_rp1_v1/make_cases.jl (generate | check: byte-reproducible from the sha256-checked registered sources)"}
+ },
+ "numerical_method": {
+  "basis": "A7 unchanged (levels, window, observables, SE rule): production A7-P = 678 cells (0.25 mm), dt 2.5 ns; check A7-C = 1356 cells (0.125 mm), dt 1.25 ns; duration 13.5384 ms (4 x v1), window from 3.3846 ms (1 x v1) to the end, 4000 saved frames; pinned solver defaults written into every case (adaptive, CFL 0.799, min / max dt 1e-10 / 1e-7 s, max_small_steps 100, reconstruct on, implicit energy 1.0)",
+  "implementation": "tools/local_runs/hall_air_rp1_v1/hall_air_rp1_lib.jl: the Config of air_bridge_lib.jl run_case_air (AIR propellant config, per-species feed, vacuum mode) with the A7 numerics; a7_simparams and a7_window_stats evaluated from hallthruster_bridge/a7_numerics.jl unchanged. The A7 bridge refuses non-Xe cases, so the AIR path is this package's, not a7_record.",
+  "observables": "thrust = time-mean of the per-frame instantaneous thrust(sol, i); I_d = time-mean of the per-frame discharge current; batch-means SE (10 batches); half-window means; integrated autocorrelation time; reported only: thrust of the time-averaged state",
+  "per_case_outputs": "composition, feed, mass flow, V_d, I_d +- SE, discharge power, B operating point (profile id, B_peak, coil A-turns, file sha256), thrust +- SE, Isp = T / (mdot g0), anode efficiency T^2 / (2 mdot V_d I_d) (time-means) and the frame-mean of the solver's anode_eff, efficiency decomposition (mass, current, voltage, divergence), total efficiency NOT_EVALUATED (needs the non-discharge loads of bus_power_boundary_a9_v2), oscillation statistics (dominant frequency, RMS, peak-to-peak for I_d and thrust), convergence (A7-P vs A7-C, half-window means, stationarity, SE), runtime per level, status and failure / collapse diagnostics (retcode, error, time I_d falls below 1 % of its running maximum, last-frame n_e,min and T_e,max, first non-finite variable / cell / z)"
+ },
+ "run_status_rule": {
+  "precedence": "NUMERICAL_FAILURE > EXTINCT > OUT_OF_DOMAIN > NOT_SUSTAINED > NON_STATIONARY > STATISTICALLY_UNRESOLVED > PASS; NOT_RUN when the record is absent (a partial package run)",
+  "NUMERICAL_FAILURE": "A7 rule",
+  "EXTINCT": "A7 rule with the AIR feed: mean I_d < 1e-3 x e x sum_s(mdot_s / m_s) (air_nominal.toml masses)",
+  "OUT_OF_DOMAIN": "A1 AIR rule: DOM-AIR-01 (per-table activity share beyond its validity limit > 1e-12, or an unresolved table) or DOM-AIR-02 (activity share above 45 eV mean energy > 1e-12), per saved frame over the window. Numbers are still reported, labelled.",
+  "NOT_SUSTAINED / NON_STATIONARY / STATISTICALLY_UNRESOLVED / PASS": "A7 rules",
+  "classes": "PASS and NOT_SUSTAINED are evaluated physics; every other status is an unknown"
+ },
+ "convergence_rule": "A7 unchanged: C-STATUS, C-QUIET, C-T, C-ID; outcomes CONVERGED_EVALUATED / PERSISTENT_UNKNOWN / NOT_CONVERGED; INCOMPLETE_NOT_RUN when a level is missing",
+ "execution": {
+  "where": "the owner's machine (A9.39 item 4); one command tools/local_runs/hall_air_rp1_v1/run_all.sh; one result file hall_air_rp1_v1_results.json (schema results_schema_v1.json, validator validate.jl)",
+  "in_container_reference": "before hand-over, the package is run once end to end in the authoring container on the registered subset C02, C05, C06 (both levels; low-flow and conservation-relevant flow, both compositions, both B levels) with 3 parallel jobs, because the full 20-run set exceeds the container budget; that output is committed as a reference labelled with its host and is never merged with the owner's results",
+  "provenance": "host, OS, CPU, Julia and HallThruster.jl versions and commit, Manifest sha256, thread / BLAS environment, case-file and package / input-file sha256 (package_manifest_v1.json), per-run wall time"
+ },
+ "what_this_is_not": [
+  "not measured or demonstrated H1 performance; atmospheric Hall performance is verified on the Engineering Model (A9.39 item 4)",
+  "not a closure, selection, non-closure or constraint verdict; it changes no M2 record and no architecture item",
+  "not a validation: the transports are unadmitted screening candidates and the AIR chemistry is a bounded variant",
+  "never pooled with surrogate-B(z) records; literature values are never presented as measured"
+ ],
+ "change_control": "any change of a case, rule or level after the lock is a new, dated addendum (v2) with a new case file; package-code fixes that change no rule are recorded by their sha256 in every result file"
+}
