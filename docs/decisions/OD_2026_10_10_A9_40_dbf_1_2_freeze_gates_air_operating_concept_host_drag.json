@@ -1,0 +1,39 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_2026_10_10_A9_40_dbf_1_2_freeze_gates_air_operating_concept_host_drag",
+ "decided_by": "owner",
+ "date": "2026-10-10",
+ "decision": "A9_40_DBF_1_2_FREEZE_GATES_AIR_OPERATING_CONCEPT_HOST_DRAG",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_10_A9_40_DBF_1_2_FREEZE_GATES_AIR_OPERATING_CONCEPT_HOST_DRAG.md",
+  "sha256": "5e3c4f58271838198af1e3af7815cb36ae66f905bd45e2999270c17254409924",
+  "method": "exact text extracted from the session transcript"
+ },
+ "messages": [
+  {
+   "n": 1,
+   "key": "DBF_1_2_FREEZE_GATES",
+   "utc": "2026-10-10T11:08:07.676Z",
+   "text_sha256": "56585c4060018fd204232eeff32db83c43a3d1a99e00f18cc1fa2b6e0bd3380d",
+   "chars": 6215
+  }
+ ],
+ "checkpoint_at_decision": "417ab4d",
+ "owner_decision_summary": {
+  "freeze_gates": {
+   "mass": "component-level preliminary roll-up, nominal dry + 10 % + selected Xe load < 40 kg wet (preferably <= 39.4 kg)",
+   "power": "12 mN AIR and a 25 mN capability mode (Xe, compressor OFF) < 1500 W with real margin (~<= 1450 W); exactly 1500 W is not compliant",
+   "operating_concept": "AIR density window + altitude scheduling + Xe contingency formally mapped to RFP / RVM",
+   "host_interface": "reference C_D*A and host-drag ICD requirement frozen"
+  },
+  "requirement_interpretation": "Nominal AIR operation uses density-aware altitude scheduling within 180-230 km; Xe is the required secondary / contingency mode where AIR cannot meet the necessary thrust / drag margin. The 196 states remain a conservative verification / design set, not 196 mandatory independent AIR operating points; states outside the AIR window invoke the RFP-required Xe capability (the short-term-high exception is recorded, not hidden).",
+  "IR_HOST_DRAG_01": "Host-spacecraft aerodynamic C_D*A shall be provided at PDR and shall remain within the propulsion-system drag-compensation envelope; reference proposal sizing uses C_D*A = 0.50 m2",
+  "aperture": "retain 0.70 m2 physical aperture; 26.8 km/s air-Hall design / reference basis, 22 km/s sensitivity / risk case; EM verification after award; altitude / Xe contingency when the AIR thrust / drag margin is insufficient",
+  "not_required_before_freeze": "full Hall simulation, DSMC, compressor-map testing, ICP bench testing, AO life testing",
+  "freeze_wording": "DBF-1.2 — RFP-COMPLIANT PRELIMINARY DESIGN BASELINE / EM VERIFICATION OPEN (complies by specification and allocation, not by demonstration)",
+  "next": "mass + 25 mN Xe power closure"
+ },
+ "recorder_notes": [
+  "The earlier internal RVM reading (every one of the 196 states as an independent AIR hard-requirement point) is superseded for the active baseline by this explicit requirement-interpretation decision; it is not silently discarded and stays in the historical RVM records."
+ ]
+}

@@ -5788,3 +5788,11 @@ stays EMPTY and nothing enters layer (b).
 - Reference case: all-state AIR closes for LT-low / LT-moderate / LT-high with host C_D·A 0.50 m²; ST-high closes only up to host C_D·A 0.48 m² (221.5 km). Conservative case: T/D_intake 1.14 and host cap 0.20 m²; LT-low all-state needs a 0.80 m² aperture.
 - Compressor numbers split into design values and proposal targets / allowances (7.4 kg is a component estimate, not a CBE). Terminology: active retention control (delivered-flow regulation); altitude scheduling is the drag-management mechanism.
 - Mass: conservative allowances give a 45.9 kg wet (2 kg Xe); targets after the identified mass-closure actions give 37.8 kg wet.
+
+## 2026-10-10 — A9.40 owner decision recorded: DBF-1.2 freeze gates, AIR operating concept, host-drag interface
+
+- Verbatim `docs/decisions/OD_2026_10_10_A9_40_DBF_1_2_FREEZE_GATES_AIR_OPERATING_CONCEPT_HOST_DRAG.md` (sha256 `5e3c4f58271838198af1e3af7815cb36ae66f905bd45e2999270c17254409924`), with companion JSON.
+- **Requirement interpretation:** nominal AIR operation uses density-aware altitude scheduling within 180–230 km, with Xe as the required secondary / contingency mode. The 196 states are a conservative verification set, not 196 mandatory AIR points. The earlier stricter internal RVM reading is superseded for the active baseline, not discarded.
+- **IR-HOST-DRAG-01:** host C_D·A provided at PDR, within the drag-compensation envelope; reference sizing 0.50 m².
+- **Aperture:** retained at 0.70 m²; 26.8 km/s design basis, 22 km/s sensitivity.
+- **Gates:** mass < 40 kg wet on a component roll-up (≤ 39.4 preferred); power < 1500 W with margin (25 mN in Xe mode, compressor off); operating concept; host interface. Then DBF-1.2 as RFP-COMPLIANT PRELIMINARY DESIGN BASELINE / EM VERIFICATION OPEN.
