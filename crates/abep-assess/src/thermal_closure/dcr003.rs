@@ -1,7 +1,8 @@
 //! DCR-DBF1-003 evaluation (co-located RF match thermal failure of P7 v2) under
-//! `docs/baseline/DCR-003/dcr003_eval_prereg_v1.json` (lock `dcr003_eval_prereg_lock_v1.json`): route R-1 (the match
+//! `docs/baseline/DCR-003/dcr003_eval_prereg_v2.json` (lock `dcr003_eval_prereg_lock_v2.json`): route R-1 (the match
 //! stays co-located, isolated from the ICP bracket by standoffs, with its own radiator and its RF lead to the antenna
-//! as a registered link; no DCR) against route R-2 (the match at the RF generator, N_MATCH absent; DBF-1.1).
+//! as a registered link; no DCR) against route R-2 (the match at the RF generator, N_MATCH absent; DBF-1.1). Prereg v2 adds R2-d: the RF_GENERATOR boundary unit,
+//! with the relocated match and line booked there, within the owner area allocation `A_ALLOC_M2`.
 //!
 //! Additive to the P7 harness: the same case builder, run rule, limits, margin rule, heater bisection and boundary-unit
 //! rule; the routes only edit the network section (links, surfaces, nodes) and the match-loss fraction of the loaded
@@ -14,12 +15,14 @@ use serde_json::{json, Map, Value};
 use std::collections::BTreeMap;
 use std::path::Path;
 
-pub const DCR_PREREG_PATH: &str = "docs/baseline/DCR-003/dcr003_eval_prereg_v1.json";
-pub const DCR_LOCK_PATH: &str = "docs/baseline/DCR-003/dcr003_eval_prereg_lock_v1.json";
+pub const DCR_PREREG_PATH: &str = "docs/baseline/DCR-003/dcr003_eval_prereg_v2.json";
+pub const DCR_LOCK_PATH: &str = "docs/baseline/DCR-003/dcr003_eval_prereg_lock_v2.json";
 pub const INPUTS_PATH: &str = "docs/closure/thermal/thermal_load_inputs_v2.json";
 pub const V2_RECORD_PATH: &str = "docs/closure/thermal/thermal_closure_v2.json";
 pub const LEDGER_PATH: &str = "docs/closure/power/power_ledger_v1.json";
-pub const SCHEMA: &str = "abep_dcr003_evaluation_v1";
+pub const SCHEMA: &str = "abep_dcr003_evaluation_v2";
+/// R2-d allocation (prereg v2, owner 2026-10-11): the P7 v2 required RF_GENERATOR radiator area.
+pub const A_ALLOC_M2: f64 = 1.0987;
 const HOT: [&str; 4] = ["TC1-HOT-H-BSTAR", "TC2-HOT-H-B0", "TC3-HOT-I-BSTAR", "TC4-HOT-I-B0"];
 const COLD_OP: &str = "TC5-COLD-OP-B0";
 const COLD_NONOP: &str = "TC6-COLD-NONOP-B0";
@@ -134,7 +137,7 @@ pub fn apply_r1(ctx: &mut Context, base: &Base, p: R1Point) -> Result<(), Closur
     for l in ctx.prereg.links.iter_mut() {
         if l["id"].as_str() == Some("L_MA_MO") {
             l["G_W_K"] = json!(p.g_iso);
-            l["derivation"] = json!("DCR-003 R-1: Ti-6Al-4V isolator standoffs G_iso (dcr003_eval_prereg_v1)");
+            l["derivation"] = json!("DCR-003 R-1: Ti-6Al-4V isolator standoffs G_iso (dcr003_eval_prereg_v2)");
             found = true;
         }
     }
@@ -144,7 +147,7 @@ pub fn apply_r1(ctx: &mut Context, base: &Base, p: R1Point) -> Result<(), Closur
     ctx.prereg.links.push(json!({
         "id": "L_MA_ANT", "type": "LUMPED_G", "a": MATCH, "b": "N_ANTENNA", "G_W_K": p.g_lead,
         "evidence_class": "assumed",
-        "derivation": "DCR-003 R-1: RF output lead pair match -> antenna, copper-plated 304 tube (dcr003_eval_prereg_v1)",
+        "derivation": "DCR-003 R-1: RF output lead pair match -> antenna, copper-plated 304 tube (dcr003_eval_prereg_v2)",
     }));
     let sf = ctx
         .prereg
@@ -269,6 +272,10 @@ pub fn r2_rf_penalty(dcr: &Dcr, ctx: &Context) -> Result<Value, ClosureError> {
     let cons = &out["CONSERVATIVE"]["points"]["anchor"];
     let r2b = cons["within_DBF1_RF_02_envelope_500W"].as_bool() == Some(true);
     let r2c = cons["dP_bus_W"].as_f64().is_some_and(|d| d <= margin_rfp);
+    // R2-d: rejectable (a finite area exists) and within the allocation at the anchor and the envelope end.
+    let r2d = ["anchor", "envelope_end"].iter().all(|pt| {
+        out["CONSERVATIVE"]["points"][*pt]["RF_GENERATOR_radiator_area_m2"].as_f64().is_some_and(|a| a <= A_ALLOC_M2)
+    });
     Ok(json!({
         "antenna_inductance_reference_uH": l_a * 1e6,
         "antenna_reactance_reference_Ohm": x_ref,
@@ -276,6 +283,8 @@ pub fn r2_rf_penalty(dcr: &Dcr, ctx: &Context) -> Result<Value, ClosureError> {
         "corners": out,
         "R2-b_conservative_anchor_within_envelope": r2b,
         "R2-c_conservative_anchor_dP_bus_within_P_NOM_RFP_margin": r2c,
+        "R2-d_A_alloc_m2": A_ALLOC_M2,
+        "R2-d_conservative_rf_generator_area_within_allocation": r2d,
     }))
 }
 
@@ -616,6 +625,7 @@ pub fn evaluate_r2(ctx: &mut Context, base: &Base, dcr: &Dcr) -> Result<Value, C
     let rf = r2_rf_penalty(dcr, ctx)?;
     let r2b = rf["R2-b_conservative_anchor_within_envelope"].as_bool() == Some(true);
     let r2c = rf["R2-c_conservative_anchor_dP_bus_within_P_NOM_RFP_margin"].as_bool() == Some(true);
+    let r2d = rf["R2-d_conservative_rf_generator_area_within_allocation"].as_bool() == Some(true);
     let runs_json: Map<String, Value> = runs.iter().map(|(k, r)| (k.clone(), run_json(r))).collect();
     Ok(json!({
         "runs": runs_json,
@@ -624,8 +634,8 @@ pub fn evaluate_r2(ctx: &mut Context, base: &Base, dcr: &Dcr) -> Result<Value, C
         "materials_triggers_fired": fired,
         "spacecraft_interface": {"Q_into_spacecraft_max_hot_W": q_sc_max(&runs), "v2_W": dcr.v2["spacecraft_interface"]["Q_into_spacecraft_max_hot_W"]},
         "rf_penalty": rf,
-        "criteria": {"R2-a": r2a, "R2-b": r2b, "R2-c": r2c},
-        "admissible": r2a && r2b && r2c,
+        "criteria": {"R2-a": r2a, "R2-b": r2b, "R2-c": r2c, "R2-d": r2d},
+        "admissible": r2a && r2b && r2c && r2d,
     }))
 }
 
@@ -660,13 +670,14 @@ pub fn evaluation_record(ctx: &mut Context, dcr: &Dcr) -> Result<Value, ClosureE
             "R-1_criteria": r1["criteria"],
             "R-2_criteria": r2["criteria"],
             "R-2_conservative_anchor": r2["rf_penalty"]["corners"]["CONSERVATIVE"]["points"]["anchor"],
+            "R-2_conservative_envelope_end": r2["rf_penalty"]["corners"]["CONSERVATIVE"]["points"]["envelope_end"],
         })
     } else {
         Value::Null
     };
     Ok(json!({
         "schema": SCHEMA,
-        "id": "DCR003-EVALUATION-v1",
+        "id": "DCR003-EVALUATION-v2",
         "dcr": "DCR-DBF1-003",
         "lane": "L-DCR003-MATCH",
         "model": {"id": "NP-THERMAL-CATHODELESS", "version": "2.0.0", "case_class": "PARAMETRIC", "validation_status": "NOT_VALIDATED", "label": "PARAMETRIC_NOT_A_PREDICTION"},
@@ -709,9 +720,9 @@ pub fn markdown(rec: &Value) -> String {
     let r1 = &rec["R-1"];
     let r2 = &rec["R-2"];
     let mut m = String::new();
-    m.push_str("# DCR-DBF1-003 evaluation v1 (co-located RF match, P7)\n\n");
+    m.push_str("# DCR-DBF1-003 evaluation v2 (co-located RF match, P7)\n\n");
     m.push_str(&format!(
-        "Companion of `dcr003_evaluation_v1.json` (the JSON governs). Preregistration `{}` (sha256 `{}`, lock `{}`); \
+        "Companion of `dcr003_evaluation_v2.json` (the JSON governs). Preregistration `{}` (sha256 `{}`, lock `{}`); \
 P7 preregistration sha256 `{}`; load inputs `{}` (sha256 `{}`); Rust commit `{}`. Model NP-THERMAL-CATHODELESS 2.0.0, \
 PARAMETRIC, NOT_VALIDATED.\n\n",
         st(&rec["preregistration"]["path"]),

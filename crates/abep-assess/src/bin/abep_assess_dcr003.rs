@@ -1,5 +1,5 @@
 //! `abep-assess-dcr003 [--repo DIR] [--out FILE] [--md FILE]`: the DCR-DBF1-003 evaluation (R-1 isolated co-located
-//! match vs R-2 match at the RF generator) under `docs/baseline/DCR-003/dcr003_eval_prereg_v1.json`. The Rust commit
+//! match vs R-2 match at the RF generator) under `docs/baseline/DCR-003/dcr003_eval_prereg_v2.json`. The Rust commit
 //! and tree state come from git. Exit 0 when the record is written (its statuses are in it, fail closed), 4 when an
 //! input cannot be read or verified, 2 on usage.
 

@@ -11,7 +11,7 @@ use abep_subsystems::thermal::assemble::assemble_v2;
 use abep_subsystems::thermal::RunContext;
 use serde_json::Value;
 
-const RECORD: &str = "docs/closure/thermal/dcr003_evaluation_v1.json";
+const RECORD: &str = "docs/closure/thermal/dcr003_evaluation_v2.json";
 
 fn run_ctx() -> RunContext {
     RunContext { rust_commit: "test".into(), rust_tree_dirty: false }
@@ -139,4 +139,18 @@ fn the_committed_record_reproduces() {
             "BLOCKED"
         }
     );
+}
+
+#[test]
+fn r2d_gates_the_rf_generator_unit_on_the_owner_allocation() {
+    // Prereg v2 R2-d: CONSERVATIVE corner, anchor and envelope end, rejectable and A_req <= A_alloc (1.0987 m^2).
+    assert_eq!(A_ALLOC_M2, 1.0987);
+    let (dcr, ctx) = load();
+    let rf = r2_rf_penalty(&dcr, &ctx).unwrap();
+    assert_eq!(rf["R2-d_A_alloc_m2"].as_f64(), Some(A_ALLOC_M2));
+    let pts = &rf["corners"]["CONSERVATIVE"]["points"];
+    let want = ["anchor", "envelope_end"]
+        .iter()
+        .all(|p| pts[*p]["RF_GENERATOR_radiator_area_m2"].as_f64().is_some_and(|a| a <= A_ALLOC_M2));
+    assert_eq!(rf["R2-d_conservative_rf_generator_area_within_allocation"].as_bool(), Some(want));
 }
