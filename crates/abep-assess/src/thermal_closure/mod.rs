@@ -10,6 +10,7 @@
 
 pub mod assess;
 pub mod build;
+pub mod dcr003;
 pub mod env;
 pub mod loads;
 pub mod record;
