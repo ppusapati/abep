@@ -6,9 +6,9 @@ ICD). The RF matching-network item is closed without a design change (DCR-DBF1-0
 `docs/closure/thermal/thermal_closure_v2.json` / `.md` (lane L-THERMAL; load inputs v2 from the P6 power ledger; v1 on
 the registered-assumption inputs is kept as history), preregistration
 `docs/closure/thermal/thermal_cases_prereg_v1.json` (lock `thermal_cases_prereg_lock_v1.json`), DCR request
-`docs/closure/thermal/dcr_request_P7_match_v1.json`, its evaluation `docs/closure/thermal/dcr003_evaluation_v2.json` / `.md`
-under preregistration `docs/baseline/DCR-003/dcr003_eval_prereg_v2.json` and the resolution
-`docs/baseline/DCR-003/dcr003_resolution_v2.json`. `P7_thermal.md` is kept as history. Design baseline: DBF-1 (`docs/baseline/DBF-1/dbf1_v1.json`, items
+`docs/closure/thermal/dcr_request_P7_match_v1.json`, its evaluation `docs/closure/thermal/dcr003_evaluation_v3.json` / `.md`
+under preregistration `docs/baseline/DCR-003/dcr003_eval_prereg_v3.json` and the resolution
+`docs/baseline/DCR-003/dcr003_resolution_v3.json`. `P7_thermal.md` is kept as history. Design baseline: DBF-1 (`docs/baseline/DBF-1/dbf1_v1.json`, items
 DBF1-TH-01..03).
 
 ## Proposal text
@@ -61,10 +61,10 @@ published RF/ICP neutralizer analog.
 
 **RF matching network.** The matching network stays next to the neutralizer, as in the frozen topology. It is
 mounted on low-conductance titanium-alloy isolator standoffs and rejects its heat through its own small zenith radiator.
-With the full set of hot cases and 120 % loads, it then meets the 50 K design rule. The previous issue was conduction from
-the hot neutralizer bracket, not RF power, and the isolation removes it. No other node gets worse, and the thruster and
-neutralizer architecture is unchanged. A small operating heater keeps the matching network above its lower limit in the
-cold case.
+Its RF lead to the antenna is included as a heat path, with the lead loss shared between both ends. With the full set of
+hot cases and 120 % loads, the matching network then meets the 50 K design rule. No other node gets worse, and the
+thruster and neutralizer architecture is unchanged. A small operating heater keeps the matching network above its lower
+limit in the cold case.
 
 **Verification approach.** Thermal design is verified by analysis now. It is to be verified by test at engineering
 model (EM) level:
@@ -90,13 +90,14 @@ and are to be finalized at PDR/CDR.
   - anode 512 degC: the required stage-2 capability is 562 degC, and the P8 ceilings are 930 / 1150 degC (no trigger);
   - collector 510 degC;
   - walls 454 / 434 degC against 850 degC;
-  - N_MATCH 54.4 degC against the 60 degC design ceiling, 5.6 K inside the 50 K rule (v2: 183.5 degC, FAIL),
-    with A_MA 0.15 m^2 (0.6 kg at 4 kg/m^2) and Ti-6Al-4V standoffs (11.7 g), hot corner
-    G_iso 0.04 W/K, G_lead 0.025 W/K, Q_match_frac 0.06;
+  - N_MATCH 55.2 degC against the 60 degC design ceiling, 4.8 K inside the 50 K rule (P7 v2: 183.5 degC,
+    FAIL), with A_MA 0.15 m^2 (0.6 kg at 4 kg/m^2) and Ti-6Al-4V standoffs (11.7 g),
+    hot corner G_iso 0.04 W/K, G_lead 0.025 W/K, Q_match_frac 0.06, lead loss
+    f_lead 0.019 split match / antenna at the same delivered power (prereg v3); allowable Q_match_frac 0.100;
   - R-1 power penalties against P6: operating heater 11.5 W (12.6 W bus) against the 4.0 W thermal-control slot,
-    RF-lead loss dP_bus 2.9 W (R_A 1 Ohm) / 5.9 W (R_A 0.5 Ohm), non-operating survival heater 17.2 W
-    (outside the firing bus allocation);
-  - heat into the spacecraft 90.5 W (v2 89.6 W) against the 50 W governing allocation;
+    RF-lead loss dP_bus 3.0 W (R_A 1 Ohm) / 6.0 W (R_A 0.5 Ohm), non-operating survival heater
+    17.2 W (outside the firing bus allocation);
+  - heat into the spacecraft 90.6 W (P7 v2 89.6 W) against the 50 W governing allocation;
   - R_HALL 0.02 m^2 node-limited; 0.15 m^2 at 5 W/K holds the TC1 / TC3 heat into the spacecraft within 50 W
     (90 W at 0.02 m^2);
   - PPU 225 W (0.62 m^2 at 30 degC);

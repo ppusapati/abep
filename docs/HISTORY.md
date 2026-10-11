@@ -5980,3 +5980,25 @@ scientific community for evaluation. Every other branch is development.
 - **Records:** resolution `docs/baseline/DCR-003/dcr003_resolution_v2.json` and statement
   `docs/closure/statements/P7_thermal_v2.md`. `P7_thermal.md` is kept as history.
 - **Open:** the coordinator's entry in the DCR register.
+
+## 2026-10-11 — DCR-DBF1-003 preregistration v3 and evaluation v3 (review findings on PR #43)
+- **Why v3:** Codex review of the v2 evaluation found two problems.
+  - **P1:** the v1/v2 R-1 load rule raised `icp.Q_match_frac` at fixed forward power. That took power from the
+    antenna/plasma loads and never deposited the antenna half of the RF-lead loss, contrary to the
+    preregistration's own same-delivered-power premise.
+  - **P2:** heater sizing returned 200 W as a success when the limit was not reached.
+- **Preregistration v3** (`dcr003_eval_prereg_v3.json`, sha256 `2ea878f4…`, committed alone and pushed before the run):
+  - **Load rule:** P_fwd' = k·P_fwd with k = 0.95(1 + f_lead/2)/(1 − q_m). The antenna-end half of the lead loss goes on
+    N_ANTENNA, so the power past the lead equals the P7 v2 delivered power. f_lead is 0.019 hot, 0.0095 nominal and 0
+    cold.
+  - **Heater sizing** fails closed.
+  - Everything else is v2 verbatim. v2 and its record stay in the repository as history.
+- **Result (Rust `bcb74d5`, clean tree):** R-1 is still admissible.
+  - N_MATCH reaches 55.2 °C, with a margin of 4.8 K. Under the superseded v2 rule it
+    was 54.4 °C, so the corrected rule adds 0.8 K.
+  - The heaters are unchanged at 11.5 / 17.2 W, far from the 200 W cap.
+  - R-2 is not admissible.
+  - **DCR-DBF1-003 stays WITHDRAWN.**
+- **Records:** `dcr003_evaluation_v3.json` / `.md`, `dcr003_resolution_v3.json`, and `P7_thermal_v2.md` rewritten from
+  the v3 record. The `P7_thermal_v2.md` file was introduced in this same PR and was never on `main` in its v2-record
+  form.
