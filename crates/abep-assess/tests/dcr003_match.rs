@@ -11,7 +11,7 @@ use abep_subsystems::thermal::assemble::assemble_v2;
 use abep_subsystems::thermal::RunContext;
 use serde_json::Value;
 
-const RECORD: &str = "docs/closure/thermal/dcr003_evaluation_v2.json";
+const RECORD: &str = "docs/closure/thermal/dcr003_evaluation_v3.json";
 
 fn run_ctx() -> RunContext {
     RunContext { rust_commit: "test".into(), rust_tree_dirty: false }
@@ -79,7 +79,8 @@ fn a_changed_preregistration_is_refused() {
 fn both_route_networks_assemble_without_a_reason() {
     let (_, mut ctx) = load();
     let base = Base::of(&ctx);
-    apply_r1(&mut ctx, &base, R1Point { a_ma: 0.2, g_iso: 0.04, g_lead: 0.025, q_match_frac: 0.06 }).unwrap();
+    apply_r1(&mut ctx, &base, R1Point { a_ma: 0.2, g_iso: 0.04, g_lead: 0.025, q_match_frac: 0.06, f_lead: 0.019 })
+        .unwrap();
     assert!(ctx.prereg.links.iter().any(|l| l["id"] == "L_MA_ANT"));
     for id in ["TC1-HOT-H-BSTAR", "TC4-HOT-I-B0", "TC6-COLD-NONOP-B0"] {
         assert_eq!(assembles(&ctx, id), Vec::<String>::new(), "R-1 {id}");
@@ -115,6 +116,7 @@ fn the_committed_record_reproduces() {
         g_iso: hot["G_iso"].as_f64().unwrap(),
         g_lead: hot["G_lead"].as_f64().unwrap(),
         q_match_frac: hot["Q_match_frac"].as_f64().unwrap(),
+        f_lead: dcr.raw["routes"]["R-1"]["load_rule_v3"]["f_lead_by_corner"]["HOT"].as_f64().unwrap(),
     };
     apply_r1(&mut ctx, &base, p).unwrap();
     for id in ["TC1-HOT-H-BSTAR", "TC3-HOT-I-BSTAR"] {
@@ -153,4 +155,26 @@ fn r2d_gates_the_rf_generator_unit_on_the_owner_allocation() {
         .iter()
         .all(|p| pts[*p]["RF_GENERATOR_radiator_area_m2"].as_f64().is_some_and(|a| a <= A_ALLOC_M2));
     assert_eq!(rf["R2-d_conservative_rf_generator_area_within_allocation"].as_bool(), Some(want));
+}
+
+#[test]
+fn r1_load_rule_keeps_the_delivered_power_and_conserves_energy() {
+    // Prereg v3: P_fwd' = k P_fwd, match share q_m, antenna-end lead share q_ant; the power past the lead equals the
+    // P7 v2 delivered power 0.95 P_fwd, and the lead loss splits evenly between match and antenna.
+    let (dcr, _) = load();
+    let rule = &dcr.raw["routes"]["R-1"]["load_rule_v3"];
+    for (corner, q_m) in [("HOT", 0.06), ("NOMINAL", 0.055), ("COLD", 0.05)] {
+        let f = rule["f_lead_by_corner"][corner].as_f64().unwrap();
+        let (k, q_ant) = r1_load_rule(q_m, f);
+        let p_fwd = 500.0;
+        let p2 = k * p_fwd;
+        let past_lead = p2 - q_m * p2 - q_ant * p2;
+        assert!((past_lead - 0.95 * p_fwd).abs() < 1e-9, "{corner}: {past_lead}");
+        assert!((q_ant * p2 - 0.5 * f * 0.95 * p_fwd).abs() < 1e-9, "{corner}: antenna half");
+        assert!((rule["values"][corner]["k"].as_f64().unwrap() - k).abs() < 1e-12, "{corner}: registered k");
+        assert!(
+            (rule["values"][corner]["q_ant"].as_f64().unwrap() - q_ant).abs() < 1e-12,
+            "{corner}: registered q_ant"
+        );
+    }
 }

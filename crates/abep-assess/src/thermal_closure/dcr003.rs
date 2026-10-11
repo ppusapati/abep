@@ -1,8 +1,9 @@
 //! DCR-DBF1-003 evaluation (co-located RF match thermal failure of P7 v2) under
-//! `docs/baseline/DCR-003/dcr003_eval_prereg_v2.json` (lock `dcr003_eval_prereg_lock_v2.json`): route R-1 (the match
+//! `docs/baseline/DCR-003/dcr003_eval_prereg_v3.json` (lock `dcr003_eval_prereg_lock_v3.json`): route R-1 (the match
 //! stays co-located, isolated from the ICP bracket by standoffs, with its own radiator and its RF lead to the antenna
 //! as a registered link; no DCR) against route R-2 (the match at the RF generator, N_MATCH absent; DBF-1.1). Prereg v2 adds R2-d: the RF_GENERATOR boundary unit,
-//! with the relocated match and line booked there, within the owner area allocation `A_ALLOC_M2`.
+//! with the relocated match and line booked there, within the owner area allocation `A_ALLOC_M2`. Prereg v3 makes the
+//! R-1 loads energy-consistent (`r1_load_rule`): same delivered power, lead loss split between match and antenna.
 //!
 //! Additive to the P7 harness: the same case builder, run rule, limits, margin rule, heater bisection and boundary-unit
 //! rule; the routes only edit the network section (links, surfaces, nodes) and the match-loss fraction of the loaded
@@ -15,14 +16,18 @@ use serde_json::{json, Map, Value};
 use std::collections::BTreeMap;
 use std::path::Path;
 
-pub const DCR_PREREG_PATH: &str = "docs/baseline/DCR-003/dcr003_eval_prereg_v2.json";
-pub const DCR_LOCK_PATH: &str = "docs/baseline/DCR-003/dcr003_eval_prereg_lock_v2.json";
+pub const DCR_PREREG_PATH: &str = "docs/baseline/DCR-003/dcr003_eval_prereg_v3.json";
+pub const DCR_LOCK_PATH: &str = "docs/baseline/DCR-003/dcr003_eval_prereg_lock_v3.json";
 pub const INPUTS_PATH: &str = "docs/closure/thermal/thermal_load_inputs_v2.json";
 pub const V2_RECORD_PATH: &str = "docs/closure/thermal/thermal_closure_v2.json";
 pub const LEDGER_PATH: &str = "docs/closure/power/power_ledger_v1.json";
-pub const SCHEMA: &str = "abep_dcr003_evaluation_v2";
+pub const SCHEMA: &str = "abep_dcr003_evaluation_v3";
 /// R2-d allocation (prereg v2, owner 2026-10-11): the P7 v2 required RF_GENERATOR radiator area.
 pub const A_ALLOC_M2: f64 = 1.0987;
+/// The P7 v2 registered match share (thermal_load_inputs_v2 /icp/Q_match_frac): the delivered-power baseline.
+const Q_M0: f64 = 0.05;
+/// Upper end of the registered heater bisection range (P7 prereg /solver_initial/heater_sizing).
+const HEATER_MAX_W: f64 = 200.0;
 const HOT: [&str; 4] = ["TC1-HOT-H-BSTAR", "TC2-HOT-H-B0", "TC3-HOT-I-BSTAR", "TC4-HOT-I-B0"];
 const COLD_OP: &str = "TC5-COLD-OP-B0";
 const COLD_NONOP: &str = "TC6-COLD-NONOP-B0";
@@ -128,6 +133,15 @@ pub struct R1Point {
     pub g_iso: f64,
     pub g_lead: f64,
     pub q_match_frac: f64,
+    /// RF-lead loss fraction of the delivered power at this corner (prereg v3 /routes/R-1/load_rule_v3).
+    pub f_lead: f64,
+}
+
+/// Prereg v3 R-1 load rule: forward-power factor k and antenna-end lead share q_ant (of the raised forward power) that
+/// keep the power past the lead equal to the P7 v2 delivered power (1 - Q_M0) P_fwd, with match share `q_m`.
+pub fn r1_load_rule(q_m: f64, f_lead: f64) -> (f64, f64) {
+    let k = (1.0 - Q_M0) * (1.0 + f_lead / 2.0) / (1.0 - q_m);
+    (k, (f_lead / 2.0) * (1.0 - Q_M0) / k)
 }
 
 /// Apply R-1 to `ctx` (from `base`): L_MA_MO = G_iso, S_MA area = A_MA, new link L_MA_ANT = G_lead, Q_match_frac.
@@ -137,7 +151,7 @@ pub fn apply_r1(ctx: &mut Context, base: &Base, p: R1Point) -> Result<(), Closur
     for l in ctx.prereg.links.iter_mut() {
         if l["id"].as_str() == Some("L_MA_MO") {
             l["G_W_K"] = json!(p.g_iso);
-            l["derivation"] = json!("DCR-003 R-1: Ti-6Al-4V isolator standoffs G_iso (dcr003_eval_prereg_v2)");
+            l["derivation"] = json!("DCR-003 R-1: Ti-6Al-4V isolator standoffs G_iso (dcr003_eval_prereg_v3)");
             found = true;
         }
     }
@@ -147,7 +161,7 @@ pub fn apply_r1(ctx: &mut Context, base: &Base, p: R1Point) -> Result<(), Closur
     ctx.prereg.links.push(json!({
         "id": "L_MA_ANT", "type": "LUMPED_G", "a": MATCH, "b": "N_ANTENNA", "G_W_K": p.g_lead,
         "evidence_class": "assumed",
-        "derivation": "DCR-003 R-1: RF output lead pair match -> antenna, copper-plated 304 tube (dcr003_eval_prereg_v2)",
+        "derivation": "DCR-003 R-1: RF output lead pair match -> antenna, copper-plated 304 tube (dcr003_eval_prereg_v3)",
     }));
     let sf = ctx
         .prereg
@@ -156,7 +170,14 @@ pub fn apply_r1(ctx: &mut Context, base: &Base, p: R1Point) -> Result<(), Closur
         .find(|s| s["id"].as_str() == Some("S_MA"))
         .ok_or_else(|| ClosureError("R-1: surface S_MA not registered".into()))?;
     sf["area_m2"] = json!(p.a_ma);
+    let (k, q_ant) = r1_load_rule(p.q_match_frac, p.f_lead);
     ctx.inputs["icp"]["Q_match_frac"]["value"] = json!(p.q_match_frac);
+    ctx.inputs["icp"]["Q_lead_antenna_frac"] = json!({"value": q_ant, "unit": "1",
+        "derivation": "DCR-003 R-1 antenna-end half of the RF-lead loss (dcr003_eval_prereg_v3 /routes/R-1/load_rule_v3)"});
+    for key in ["P_fwd_anchor_W", "P_fwd_max_W"] {
+        let v = num(&ctx.inputs["icp"][key], "value")?;
+        ctx.inputs["icp"][key]["value"] = json!(k * v);
+    }
     Ok(())
 }
 
@@ -381,7 +402,9 @@ fn case_ids(ctx: &Context) -> Vec<String> {
         .collect()
 }
 
-/// Heater on N_MATCH to reach `low` [degC] in `case` (P7 heater-sizing rule); Some(0) when not needed.
+/// Heater on N_MATCH to reach `low` [degC] in `case` (P7 heater-sizing rule); Some(0) when not needed. Fails closed
+/// (prereg v3 /routes/R-1/heater_rule_v3): a heated run that does not converge counts as the limit not reached, and
+/// a limit not reached at `HEATER_MAX_W` is None, never the range end.
 fn heater(ctx: &Context, base: &Variant, case: &str, low: f64, run: &CaseRun) -> Result<Option<f64>, ClosureError> {
     let t = run.t_min_k.get(MATCH).filter(|_| run.converged()).map(|t| t - K0);
     Ok(match t {
@@ -390,19 +413,25 @@ fn heater(ctx: &Context, base: &Variant, case: &str, low: f64, run: &CaseRun) ->
             |q| {
                 let v = Variant { heater: Some((MATCH.to_string(), q)), ..base.clone() };
                 let rr = run_named(ctx, case, &v)?;
-                Ok(rr.converged() && rr.t_min_k.get(MATCH).is_some_and(|t| t - K0 < low))
+                Ok(!rr.converged() || rr.t_min_k.get(MATCH).is_none_or(|t| t - K0 < low))
             },
-            200.0,
+            HEATER_MAX_W,
             0.05,
             40,
         )?
+        .filter(|&x| x < HEATER_MAX_W)
         .map(|x| x + 0.05),
         None => None,
     })
 }
 
-fn corner(c: &Value, a_ma: f64, gi: f64, gl: f64) -> Result<R1Point, ClosureError> {
-    Ok(R1Point { a_ma, g_iso: gi, g_lead: gl, q_match_frac: num(c, "Q_match_frac")? })
+fn corner(c: &Value, f_lead: f64, a_ma: f64, gi: f64, gl: f64) -> Result<R1Point, ClosureError> {
+    Ok(R1Point { a_ma, g_iso: gi, g_lead: gl, q_match_frac: num(c, "Q_match_frac")?, f_lead })
+}
+
+/// The registered lead-loss fraction of an R-1 corner (prereg v3 /routes/R-1/load_rule_v3/f_lead_by_corner).
+fn f_lead(r1: &Value, name: &str) -> Result<f64, ClosureError> {
+    num(&r1["load_rule_v3"]["f_lead_by_corner"], name)
 }
 
 fn list(v: &Value) -> Vec<f64> {
@@ -417,8 +446,9 @@ pub fn evaluate_r1(ctx: &mut Context, base: &Base, dcr: &Dcr) -> Result<Value, C
     let hv = hall_variant(dcr)?;
     let hot = &r1["corners"]["HOT"];
     let (gi_hot, gl_hot) = (num(hot, "G_iso")?, num(hot, "G_lead")?);
+    let (f_hot, f_cold, f_nom) = (f_lead(r1, "HOT")?, f_lead(r1, "COLD")?, f_lead(r1, "NOMINAL")?);
     let grid = list(&r1["design_lever"]["A_MA_m2_grid"]);
-    apply_r1(ctx, base, corner(hot, grid[0], gi_hot, gl_hot)?)?;
+    apply_r1(ctx, base, corner(hot, f_hot, grid[0], gi_hot, gl_hot)?)?;
     let lims = limits(ctx);
     let limited: Vec<Limit> = lims.iter().filter(|l| l.upper_c.is_some()).cloned().collect();
     let match_lim =
@@ -429,7 +459,7 @@ pub fn evaluate_r1(ctx: &mut Context, base: &Base, dcr: &Dcr) -> Result<Value, C
     let mut feasible = Vec::new();
     let mut best: Option<(f64, f64)> = None;
     for &a in &grid {
-        apply_r1(ctx, base, corner(hot, a, gi_hot, gl_hot)?)?;
+        apply_r1(ctx, base, corner(hot, f_hot, a, gi_hot, gl_hot)?)?;
         let c1 = run_named(ctx, "TC1-HOT-H-BSTAR", &hv)?;
         let c3 = run_named(ctx, "TC3-HOT-I-BSTAR", &hv)?;
         let all_ok = limited.iter().all(|l| node_ok(&c1, l) && node_ok(&c3, l));
@@ -454,7 +484,7 @@ pub fn evaluate_r1(ctx: &mut Context, base: &Base, dcr: &Dcr) -> Result<Value, C
     let mut confirmations = Vec::new();
     let mut selected: Option<f64> = None;
     for &a in &feasible {
-        apply_r1(ctx, base, corner(hot, a, gi_hot, gl_hot)?)?;
+        apply_r1(ctx, base, corner(hot, f_hot, a, gi_hot, gl_hot)?)?;
         let c2 = run_named(ctx, "TC2-HOT-H-B0", &hv)?;
         let c4 = run_named(ctx, "TC4-HOT-I-B0", &hv)?;
         let ok = limited.iter().all(|l| node_ok(&c2, l) && node_ok(&c4, l));
@@ -471,7 +501,7 @@ pub fn evaluate_r1(ctx: &mut Context, base: &Base, dcr: &Dcr) -> Result<Value, C
     };
 
     // 3. Every case at the selected area: HOT corner for hot cases.
-    apply_r1(ctx, base, corner(hot, a_sel, gi_hot, gl_hot)?)?;
+    apply_r1(ctx, base, corner(hot, f_hot, a_sel, gi_hot, gl_hot)?)?;
     let mut runs: BTreeMap<String, CaseRun> = BTreeMap::new();
     for id in case_ids(ctx) {
         if id == COLD_OP || id == COLD_NONOP {
@@ -485,7 +515,7 @@ pub fn evaluate_r1(ctx: &mut Context, base: &Base, dcr: &Dcr) -> Result<Value, C
     let mut worst: BTreeMap<&str, (f64, Option<f64>, bool)> = BTreeMap::new();
     for gi in list(&cold["G_iso"]) {
         for gl in list(&cold["G_lead"]) {
-            apply_r1(ctx, base, corner(cold, a_sel, gi, gl)?)?;
+            apply_r1(ctx, base, corner(cold, f_cold, a_sel, gi, gl)?)?;
             for (case, low) in [(COLD_OP, match_lim.lower_op_c), (COLD_NONOP, match_lim.lower_nonop_c)] {
                 let low = low.ok_or_else(|| ClosureError("N_MATCH lower limit".into()))?;
                 let r = run_named(ctx, case, &hv)?;
@@ -506,7 +536,7 @@ pub fn evaluate_r1(ctx: &mut Context, base: &Base, dcr: &Dcr) -> Result<Value, C
             }
         }
     }
-    apply_r1(ctx, base, corner(hot, a_sel, gi_hot, gl_hot)?)?;
+    apply_r1(ctx, base, corner(hot, f_hot, a_sel, gi_hot, gl_hot)?)?;
     let (nodes, worsened) = verdicts(&lims, &runs, &dcr.v2);
     let fired = triggers_fired(ctx, &nodes);
     let match_row = nodes.get(MATCH).cloned().unwrap_or(Value::Null);
@@ -517,7 +547,11 @@ pub fn evaluate_r1(ctx: &mut Context, base: &Base, dcr: &Dcr) -> Result<Value, C
     // 4. AL-QMATCH, NOMINAL corner, T_SC sensitivity.
     let al_q = bisect(
         |q| {
-            apply_r1(ctx, base, R1Point { a_ma: a_sel, g_iso: gi_hot, g_lead: gl_hot, q_match_frac: q })?;
+            apply_r1(
+                ctx,
+                base,
+                R1Point { a_ma: a_sel, g_iso: gi_hot, g_lead: gl_hot, q_match_frac: q, f_lead: f_hot },
+            )?;
             let r = run_named(ctx, "TC3-HOT-I-BSTAR", &hv)?;
             Ok(node_ok(&r, &match_lim))
         },
@@ -526,12 +560,12 @@ pub fn evaluate_r1(ctx: &mut Context, base: &Base, dcr: &Dcr) -> Result<Value, C
         40,
     )?;
     let nom = &r1["corners"]["NOMINAL"];
-    apply_r1(ctx, base, corner(nom, a_sel, num(nom, "G_iso")?, num(nom, "G_lead")?)?)?;
+    apply_r1(ctx, base, corner(nom, f_nom, a_sel, num(nom, "G_iso")?, num(nom, "G_lead")?)?)?;
     let mut nominal = Map::new();
     for id in ["TC1-HOT-H-BSTAR", "TC3-HOT-I-BSTAR"] {
         nominal.insert(id.into(), run_json(&run_named(ctx, id, &hv)?));
     }
-    apply_r1(ctx, base, corner(hot, a_sel, gi_hot, gl_hot)?)?;
+    apply_r1(ctx, base, corner(hot, f_hot, a_sel, gi_hot, gl_hot)?)?;
     let mut icd_change = false;
     let mut tsc = Map::new();
     for t_sc in [293.15, 313.15] {
@@ -677,7 +711,7 @@ pub fn evaluation_record(ctx: &mut Context, dcr: &Dcr) -> Result<Value, ClosureE
     };
     Ok(json!({
         "schema": SCHEMA,
-        "id": "DCR003-EVALUATION-v2",
+        "id": "DCR003-EVALUATION-v3",
         "dcr": "DCR-DBF1-003",
         "lane": "L-DCR003-MATCH",
         "model": {"id": "NP-THERMAL-CATHODELESS", "version": "2.0.0", "case_class": "PARAMETRIC", "validation_status": "NOT_VALIDATED", "label": "PARAMETRIC_NOT_A_PREDICTION"},
@@ -720,9 +754,9 @@ pub fn markdown(rec: &Value) -> String {
     let r1 = &rec["R-1"];
     let r2 = &rec["R-2"];
     let mut m = String::new();
-    m.push_str("# DCR-DBF1-003 evaluation v2 (co-located RF match, P7)\n\n");
+    m.push_str("# DCR-DBF1-003 evaluation v3 (co-located RF match, P7)\n\n");
     m.push_str(&format!(
-        "Companion of `dcr003_evaluation_v2.json` (the JSON governs). Preregistration `{}` (sha256 `{}`, lock `{}`); \
+        "Companion of `dcr003_evaluation_v3.json` (the JSON governs). Preregistration `{}` (sha256 `{}`, lock `{}`); \
 P7 preregistration sha256 `{}`; load inputs `{}` (sha256 `{}`); Rust commit `{}`. Model NP-THERMAL-CATHODELESS 2.0.0, \
 PARAMETRIC, NOT_VALIDATED.\n\n",
         st(&rec["preregistration"]["path"]),
