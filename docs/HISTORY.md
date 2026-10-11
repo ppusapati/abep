@@ -5958,3 +5958,25 @@ scientific community for evaluation. Every other branch is development.
   builder change.
 - **Builder fix:** `f1_archive.py` now compares the generating-commit time by value, so newer git's `Z` UTC spelling is
   accepted (PR #41).
+
+## 2026-10-11 — DCR-DBF1-003 evaluated under preregistration v2: route R-1 admissible, DCR withdrawn
+- **Preregistration v2** (`docs/baseline/DCR-003/dcr003_eval_prereg_v2.json`, sha256 `b88bbf51…`, committed alone and pushed
+  before any v2 run). It restores the DCR request's R-2 gate as R2-d: the RF_GENERATOR unit, with the relocated match and
+  line, must be rejectable and need at most A_alloc = 1.0987 m² (owner allocation 2026-10-11, equal to the P7 v2 required
+  area). Everything else is v1 verbatim, and v1 is kept. The v1 evaluation outputs (`wip/lane-dcr003-match`) were not used.
+- **Harness:** `abep-assess-dcr003` evaluates under v2 and adds R2-d with a test. Record
+  `docs/closure/thermal/dcr003_evaluation_v2.json` / `.md` (Rust commit `c372a42`, clean tree). It reproduces under
+  `cargo test --test dcr003_match`.
+- **Result: R-1 admissible.**
+  - N_MATCH reaches 54.4 °C in the governing hot cases against the 60 °C ceiling, 5.6 K inside the 50 K / 1.2 rule.
+    In v2 it was 183.5 °C, a FAIL.
+  - The design uses A_MA 0.15 m² and Ti-6Al-4V standoffs, about 0.61 kg. No node is worse than in v2, and no P8 trigger
+    fires.
+  - The penalties against P6 are reported: an operating heater of 12.6 W bus against the 4.0 W slot, and an RF-lead
+    dP_bus of 2.9 / 5.9 W.
+- **R-2 not admissible.** R2-b, R2-c and R2-d fail at the conservative corner. R2-a holds.
+- **Selection:** R-1, so **DCR-DBF1-003 is WITHDRAWN** and no DBF-1 value changes. The P7 closure state is REFERENCE/ICD
+  DEPENDENT, because the heat into the spacecraft is 90.5 W against the 50 W governing allocation, as in v2.
+- **Records:** resolution `docs/baseline/DCR-003/dcr003_resolution_v2.json` and statement
+  `docs/closure/statements/P7_thermal_v2.md`. `P7_thermal.md` is kept as history.
+- **Open:** the coordinator's entry in the DCR register.
