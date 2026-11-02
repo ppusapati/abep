@@ -107,10 +107,34 @@ def test_mass_and_power_read_from_dbf1_2(sources):
     assert "PARAMETRIC / NOT_VALIDATED" in a2 and "MR-DCR001-01" in a2
 
 
-def test_open_thermal_dcr_and_closure_states_disclosed():
+def test_thermal_dcr_withdrawal_and_closure_states_disclosed():
+    # DCR-DBF1-003 was open at the DBF-1.2 freeze (thermal state DCR REQUIRED); it was withdrawn afterwards by
+    # preregistered evaluation. Both the freeze-time state and the post-freeze outcome must be disclosed.
     a2, a4 = _read("A2_TECHNICAL_DESCRIPTION.md"), _read("A4_RISK_REGISTER.md")
     for t in (a2, a4):
         assert "DCR-DBF1-003" in t and "BLOCKED BY SPECIFIC MISSING EVIDENCE" in t and "DCR REQUIRED" in t
+        assert "WITHDRAWN_BY_PREREGISTERED_EVALUATION" in t and "REFERENCE/ICD DEPENDENT" in t
+        assert "PARAMETRIC / NOT_VALIDATED" in t
+
+
+def test_post_freeze_closure_records_are_pinned_and_verified(sources):
+    pf = PIN["post_freeze_closure"]
+    assert _git("cat-file", "-e", pf["commit"] + "^{commit}").returncode == 0, "post-freeze commit missing"
+    for path, want in pf["files"].items():
+        got = hashlib.sha256(_git("show", f"{pf['commit']}:{path}").stdout).hexdigest()
+        assert got == want, f"{path} sha256 differs from the post_freeze_closure pin"
+    reg = json.loads(_git("show", f"{pf['commit']}:docs/baseline/DBF-1/dcr_register_v7.json").stdout)
+    d3 = [x for x in reg["dcrs"] if x["id"] == "DCR-DBF1-003"][0]
+    assert d3["status"] == "WITHDRAWN_BY_PREREGISTERED_EVALUATION"
+    # The DBF-1.2 freeze facts still come only from the dbf1_2 pin.
+    assert pf["commit"] != PIN["dbf1_2"]["commit"]
+    # Post-freeze evidence is never listed as evidence at the freeze commit (review finding on PR #44).
+    pinned = set(pf["files"])
+    for c in _matrix()["clauses"]:
+        assert not pinned & {e["path"] for e in c["evidence_at_dbf1_2"]}, c["id"]
+        for e in c.get("evidence_post_freeze", []):
+            assert e["path"] in pinned and e["commit"] == pf["commit"], c["id"]
+    assert any(c.get("evidence_post_freeze") for c in _matrix()["clauses"])
 
 
 def test_historical_bid_package_untouched(sources):

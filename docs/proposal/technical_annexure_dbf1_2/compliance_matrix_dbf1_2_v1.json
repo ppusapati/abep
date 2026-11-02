@@ -605,7 +605,7 @@
     "RVM-21",
     "RVM-17"
    ],
-   "response": "QM ENTEST qualification (launch vibration / shock, AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life) at Milestone 5 against the specification issued at PDR (no numeric levels assumed, DISC-09). Thermal: cathodeless topology frozen (DBF1-TH-01, 50 K margin rule); thermal closure state DCR REQUIRED (RVM-17 VERIFY_EM_QM); the co-located RF match exceeds its ceiling in the hot cases and is under DCR-DBF1-003 (REQUESTED_EVALUATION_TO_BE_PREREGISTERED).",
+   "response": "QM ENTEST qualification (launch vibration / shock, AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life) at Milestone 5 against the specification issued at PDR (no numeric levels assumed, DISC-09). Thermal: cathodeless topology frozen (DBF1-TH-01, 50 K margin rule); thermal closure state REFERENCE/ICD DEPENDENT after DCR-DBF1-003 (WITHDRAWN_BY_PREREGISTERED_EVALUATION; RVM-17 VERIFY_EM_QM): the co-located RF match on isolator standoffs with its own 0.15 m2 radiator meets the 50 K rule (55.2 degC, PARAMETRIC model value); the heat into the host stays ICD-dependent.",
    "evidence_at_dbf1_2": [
     {
      "path": "docs/closure/thermal/thermal_closure_v2.json",
@@ -614,6 +614,18 @@
     {
      "path": "docs/baseline/DBF-1.2/dbf1_2_v1.json",
      "locator": "#/items[id=DBF1-TH-01]"
+    }
+   ],
+   "evidence_post_freeze": [
+    {
+     "path": "docs/closure/thermal/dcr003_evaluation_v3.json",
+     "locator": "#/R-1/nodes/N_MATCH",
+     "commit": "f7c30914c723edeed7478aa45582e46a7576d3b3"
+    },
+    {
+     "path": "docs/closure/thermal/dcr003_evaluation_v3.json",
+     "locator": "#/p7_closure_state",
+     "commit": "f7c30914c723edeed7478aa45582e46a7576d3b3"
     }
    ],
    "owner_input": []

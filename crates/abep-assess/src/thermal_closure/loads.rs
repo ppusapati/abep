@@ -225,9 +225,15 @@ pub fn icp_keys(inputs: &Value, p_fwd: f64, non_firing: bool) -> Result<IcpKeys,
     let matchl = iv(inputs, "icp.Q_match_frac")? * p_fwd;
     let match_dc = iv(inputs, "icp.P_matching_DC_W")?;
     let eta_p = iv(inputs, "icp.eta_p")?;
-    let delivered = p_fwd - refl - line - matchl;
+    // Antenna-end half of an RF-lead loss (DCR-003 prereg v3 R-1 only). Absent in the P7 load inputs, where no
+    // co-located lead exists, so every P7 record is unchanged; deposited on the antenna with the coil ohmic heat.
+    let lead_ant = match inputs["icp"].get("Q_lead_antenna_frac") {
+        Some(_) => iv(inputs, "icp.Q_lead_antenna_frac")? * p_fwd,
+        None => 0.0,
+    };
+    let delivered = p_fwd - refl - line - matchl - lead_ant;
     let abs = eta_p * delivered;
-    let coil = delivered - abs;
+    let coil = delivered - abs + lead_ant;
     let split = weights(inputs, "icp.abs_split")?;
     let g = |k: &str| split.get(k).copied().unwrap_or(0.0);
     let wall = g("plasma_wall") * abs;

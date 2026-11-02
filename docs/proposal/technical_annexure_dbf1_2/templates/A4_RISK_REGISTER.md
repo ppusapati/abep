@@ -28,11 +28,14 @@ These items are not DBF-1.2 records. They are stated with their governing record
   design allocations and PARAMETRIC / NOT_VALIDATED model values until the EM measurements (VR-HALL-01, VR-XE-02).
 - **ICP neutralizer closure: {{ICP_STATE}}** (`docs/closure/icp/icp_closure_v1.json` `#/closure`). I_e,cap: {{ICP_IECAP}};
   GNG-ICP-01: {{ICP_GNG}}.
-- **Thermal closure: {{THERM_STATE}}** (`docs/closure/thermal/thermal_closure_v2.json` `#/closure`). DCR nodes: {{TH_DCR_NODES}};
-  requirement nodes: {{TH_REQ_NODES}}.
-- **DCR-DBF1-003 (open, not applied to DBF-1.2): {{DCR3_STATUS}}.** Items: {{DCR3_ITEMS}}. Reason: {{DCR3_REASON}}.
-  Routes: {{DCR3_ROUTES}}. Both routes are evaluated under one preregistration; if route R-2 is chosen, DBF1-RF-03
-  changes through a new baseline version.
+- **Thermal closure: {{THERM_STATE}}** (`docs/closure/thermal/dcr003_evaluation_v3.json` `#/p7_closure_state`, post-freeze
+  record at `{{PF_COMMIT}}`). DCR nodes: {{TH_DCR_NODES}} (at the freeze: {{TH_DCR_NODES_FREEZE}}, state
+  {{THERM_STATE_FREEZE}}); requirement nodes: {{TH_REQ_NODES}}. The heat into the host ({{Q_SC}} W against the provisional
+  {{Q_SC_ALLOC}} W allocation) is the open interface item.
+- **DCR-DBF1-003: {{DCR3_STATUS}}** (open at the DBF-1.2 freeze as {{DCR3_FREEZE_STATUS}}). Items: {{DCR3_ITEMS}}.
+  Reason it was opened: {{DCR3_REASON}}. Outcome: {{DCR3_OUTCOME}}. Residual risk: the RF-match margin ({{MATCH_MARGIN}} K
+  inside the 50 K rule) rests on assumed standoff and lead conductances and a PARAMETRIC / NOT_VALIDATED model; it is
+  verified by measured standoff conductance, lead RF loss and EM thermal balance (RVM-17).
 - **Milestone-4 exit criterion** (qualified thruster with O and N2, RFP-P20-03) depends on the items above and on
   atomic-O evidence.
 

@@ -1,0 +1,77 @@
+{
+ "schema": "abep_dcr_resolution_v1",
+ "id": "DCR-DBF1-003-RESOLUTION-v3",
+ "dcr": "DCR-DBF1-003",
+ "date": "2026-10-11",
+ "status": "WITHDRAWN_BY_EVALUATION (route R-1 admissible; pending coordinator entry in the DCR register)",
+ "supersedes": {
+  "path": "docs/baseline/DCR-003/dcr003_resolution_v2.json",
+  "sha256": "7277d65324e88eba749241aa9e86cde0952c337ea07bcccb7cf3a978c4c7d669",
+  "why": "v2 rested on the v1/v2 R-1 load rule (review finding on PR #43); v3 uses the energy-consistent rule of prereg v3"
+ },
+ "preregistration": {
+  "path": "docs/baseline/DCR-003/dcr003_eval_prereg_v3.json",
+  "sha256": "2ea878f48cc479b69211f4e1b17a8ada1fe97345c5fdfc18e4e8f98e0e94177f",
+  "lock": {
+   "path": "docs/baseline/DCR-003/dcr003_eval_prereg_lock_v3.json",
+   "sha256": "b47a99d739b12d4059cd30880965a18faeda4af9abadec6fbcd8865465d6e2bd"
+  }
+ },
+ "evaluation": {
+  "path": "docs/closure/thermal/dcr003_evaluation_v3.json",
+  "sha256": "ffa5a4ac10a78f88cc371aa9da5e3f277e8fb268bfaa8606c05ee94136f7cebf",
+  "rust_commit": "bcb74d5abaebb4858f3123716c2b76e43c53d05a",
+  "rust_tree_dirty": false
+ },
+ "items": [
+  {
+   "item": "DBF1-RF-03 (co-located adjustable match)",
+   "old": "co-located",
+   "new": "co-located (unchanged)"
+  },
+  {
+   "item": "DBF1-TH-01 (N_MATCH node)",
+   "old": "N_MATCH present",
+   "new": "N_MATCH present (unchanged)"
+  }
+ ],
+ "design_completion_values": {
+  "note": "not DBF-1 values (DCR_PROCESS.md 'What is not a design change'); to be registered in a P7 load-input / network version",
+  "A_MA_m2": 0.15,
+  "G_iso_W_K_hot_corner": 0.04,
+  "G_lead_W_K_hot_corner": 0.025,
+  "Q_match_frac_hot_corner": 0.06,
+  "f_lead_hot_corner": 0.019,
+  "radiator_mass_kg": 0.6,
+  "standoff_mass_kg": 0.0116952
+ },
+ "reason": "R-1 admissible (R1-a/b/c true; R1-d reported): N_MATCH 55.23 degC in the governing hot cases, margin 4.77 K under the 50 K / 1.2 rule (P7 v2 183.46 degC FAIL); no node worsened against P7 v2; no P8 trigger. Selection rule: R-1 first, so DCR-DBF1-003 is withdrawn.",
+ "sensitivity_to_the_load_rule": "under the superseded v2 load rule N_MATCH was 54.42 degC (margin 5.58 K); the energy-consistent v3 rule raises it by 0.82 K; the selection is unchanged",
+ "R-2": {
+  "admissible": false,
+  "criteria": {
+   "R2-a": true,
+   "R2-b": false,
+   "R2-c": false,
+   "R2-d": false
+  },
+  "note": "reported for completeness; R-1 governs the selection"
+ },
+ "results_seen": [
+  "prereg v3 /results_seen_before_prereg (v2 evaluation seen in full; v1 outputs on wip/lane-dcr003-match not used)"
+ ],
+ "impact": {
+  "DBF-1": "no value changes",
+  "P7_closure_state": "REFERENCE/ICD DEPENDENT",
+  "power": "operating heater 12.63 W bus against the 3.97 W P6 slot (excess reported as a P6 penalty, not a gate); RF-lead dP_bus 2.96 / 5.99 W",
+  "mass_kg": 0.6117,
+  "spacecraft_interface_W": 90.60487517834767
+ },
+ "statement": "docs/closure/statements/P7_thermal_v2.md",
+ "new_baseline": "none (DBF-1.2 stands)",
+ "approved_by": null,
+ "what_this_is_not": [
+  "not a coordinator ruling: the DCR register entry is coordinator-maintained",
+  "not a validation: NP-THERMAL-CATHODELESS 2.0.0 is NOT_VALIDATED and every case is PARAMETRIC"
+ ]
+}

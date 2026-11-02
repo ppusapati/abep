@@ -3,6 +3,9 @@
 The DESIGN SOURCE is one pin: annexure_pin_v1.json (DBF-1.2 freeze commit + lock sha256). Every fact is read AT THAT
 COMMIT with `git show` (never from the working tree), the DBF-1.2 lock and every file it lists are hash-verified, and the
 closure records the annexure quotes are verified against the lock's `pinned_sources`. Any mismatch refuses the build.
+Closure results reached after the freeze that change no DBF-1.2 value (DCR-DBF1-003 withdrawn by preregistered
+evaluation; the P7 thermal state) come from the pin's `post_freeze_closure` commit, each file sha256-verified; the frozen
+DBF-1.2 records keep their freeze-time statements, which the annexure shows as history.
 The historical bid package (docs/bid/package/, technical source 5eee4b8, package commit 2de86ab) is read only to show
 the previous status of each clause; it is never written.
 
@@ -84,6 +87,22 @@ class Source:
         return json.loads(self.raw(path))
 
 
+class PostFreeze:
+    """Read-only, hash-verified view of the post-freeze closure records (pin `post_freeze_closure`)."""
+
+    def __init__(self, pin: dict):
+        pf = pin["post_freeze_closure"]
+        self.commit, self.files = pf["commit"], pf["files"]
+
+    def js(self, path: str):
+        if path not in self.files:
+            raise BuildError(f"{path} is not pinned in post_freeze_closure")
+        b = git_show(self.commit, path)
+        if sha(b) != self.files[path]:
+            raise BuildError(f"{path} sha256 != post_freeze_closure pin")
+        return json.loads(b)
+
+
 def resolve(doc, locator: str) -> bool:
     """'#/a/b[k=v]/c' -> True when it resolves; non-pointer locators ('whole file', 'section ...') -> True."""
     if not locator.startswith("#/"):
@@ -109,7 +128,7 @@ def n(x: float, nd: int) -> str:
     return f"{x:,.{nd}f}"
 
 
-def facts(src: Source) -> tuple[dict, dict]:
+def facts(src: Source, pf: PostFreeze) -> tuple[dict, dict]:
     d = src.js(DBF_DIR + "dbf1_2_v1.json")
     trace = src.js(DBF_DIR + "dbf1_2_requirement_trace_v1.json")
     items = {i["id"]: i for i in d["items"]}
@@ -129,6 +148,16 @@ def facts(src: Source) -> tuple[dict, dict]:
     if open_dcrs != ["DCR-DBF1-003"]:
         raise BuildError(f"open DCRs changed: {open_dcrs} (templates describe DCR-DBF1-003 only)")
     d3 = [x for x in reg["dcrs"] if x["id"] == "DCR-DBF1-003"][0]
+    reg7 = pf.js(ad.REG7)
+    d3n = [x for x in reg7["dcrs"] if x["id"] == "DCR-DBF1-003"][0]
+    if d3n["status"] != "WITHDRAWN_BY_PREREGISTERED_EVALUATION":
+        raise BuildError(f"DCR-DBF1-003 post-freeze status {d3n['status']} (templates describe the withdrawal)")
+    ev3 = pf.js(ad.DCR3_EVAL)
+    if ev3["selection"]["route"] != "R-1":
+        raise BuildError(f"DCR-003 evaluation selected {ev3['selection']['route']} (templates describe R-1)")
+    r1 = ev3["R-1"]
+    nm, pp = r1["nodes"]["N_MATCH"], r1["power_penalty_vs_P6"]
+    res3 = pf.js(ad.DCR3_RES)
     T = {
         "SRC": src.commit[:7], "SRC_FULL": src.commit, "LOCK": pin_lock(), "STATUS": d["status"],
         "DATE": d["date"], "PARENT_LOCK": d["lineage"]["parent_lock"]["sha256"],
@@ -162,9 +191,17 @@ def facts(src: Source) -> tuple[dict, dict]:
         "H1_D": n(items["DBF1-H1-01"]["value"], 0), "H1_H": n(items["DBF1-H1-02"]["value"], 0),
         "H1_L": n(items["DBF1-H1-03"]["value"], 1),
         "CDA": n(items["DBF12-HOST-01"]["value"]["reference_proposal_sizing_CdA_m2"], 2),
-        "DCR3_STATUS": d3["status"], "DCR3_ITEMS": "; ".join(d3["items"]), "DCR3_REASON": d3["physical_or_evidence_reason"],
+        "DCR3_STATUS": d3n["status"], "DCR3_FREEZE_STATUS": d3["status"],
+        "DCR3_OUTCOME": d3n["outcome"], "PF_COMMIT": pf.commit[:7],
+        "THERM_STATE_FREEZE": therm, "MATCH_T": n(nm["T_max_hot_C"], 1), "MATCH_MARGIN": n(nm["margin_K"], 1),
+        "MATCH_T_V2": n(nm["v2_T_max_hot_C"], 1), "MATCH_A": n(r1["selected"]["A_MA_m2"], 2),
+        "MATCH_MASS": n(res3["impact"]["mass_kg"], 2), "MATCH_HTR_OP": n(pp["operating_heater_W"], 1),
+        "MATCH_HTR_NONOP": n(pp["non_operating_survival_heater_W"], 1),
+        "Q_SC": n(r1["spacecraft_interface"]["Q_into_spacecraft_max_hot_W"], 1),
+        "Q_SC_ALLOC": n(r1["spacecraft_interface"]["governing_allocation_W"], 0), "DCR3_ITEMS": "; ".join(d3["items"]), "DCR3_REASON": d3["physical_or_evidence_reason"],
         "DCR3_ROUTES": "; ".join(d3["routes"]),
-        "THERM_STATE": therm, "ICP_STATE": icp, "TH_DCR_NODES": ", ".join(th_c["dcr_nodes"]) or "none",
+        "THERM_STATE": ev3["p7_closure_state"]["state"], "ICP_STATE": icp,
+        "TH_DCR_NODES_FREEZE": ", ".join(th_c["dcr_nodes"]) or "none", "TH_DCR_NODES": "none",
         "TH_REQ_NODES": ", ".join(th_c["requirement_nodes"]) or "none", "TH_RULE": th_c["rule"],
         "ICP_GNG": icp_c["GNG-ICP-01"], "ICP_IECAP": icp_c["I_e_cap_status"],
         "ICP_CONS": "feasible" if icp_c["conservation_feasible_in_frozen_envelope"] else "NOT feasible", "MAT_STATE": mat, "BZ_STATE": bz,
@@ -305,7 +342,7 @@ VR_MILESTONE = {
 
 
 # ------------------------------------------------------------------------------------------------ matrix
-def build_matrix(src: Source, T: dict, pin: dict) -> dict:
+def build_matrix(src: Source, pf: PostFreeze, T: dict, pin: dict) -> dict:
     reg = {c["id"]: c for c in src.js(REG)["clauses"]}
     hist = pin["historical_bid_package"]
     old = {c["id"]: c["status"] for c in json.loads(git_show(hist["package_commit"], OLD_MATRIX))["clauses"]}
@@ -320,10 +357,17 @@ def build_matrix(src: Source, T: dict, pin: dict) -> dict:
         for r in c["dbf_trace"]:
             if r not in trace_rvms:
                 raise BuildError(f"{c['id']}: {r} not in the DBF-1.2 trace")
+        evidence, post_freeze = [], []
         for e in c["evidence"]:
-            b = git_show(src.commit, e["path"])
-            if e["path"].endswith(".json") and not resolve(json.loads(b), e["locator"]):
-                raise BuildError(f"{c['id']}: {e['path']} {e['locator']} does not resolve at {src.commit[:7]}")
+            if e["path"] in pf.files:  # post-freeze closure record: read at its pinned commit, sha256-verified
+                doc, at = pf.js(e["path"]), pf.commit
+                post_freeze.append(dict(e, commit=pf.commit))
+            else:
+                b = git_show(src.commit, e["path"])
+                doc, at = (json.loads(b) if e["path"].endswith(".json") else None), src.commit
+                evidence.append(e)
+            if doc is not None and not resolve(doc, e["locator"]):
+                raise BuildError(f"{c['id']}: {e['path']} {e['locator']} does not resolve at {at[:7]}")
         if old[c["id"]] == "COMPLY_PLANNED_WITH_EVIDENCE_PATH" and c["status"] == "COMPLY" or \
                 (c["status"] == "COMPLY" and old[c["id"]] != "COMPLY"):
             raise BuildError(f"{c['id']}: raised to COMPLY by regeneration (forbidden by STATUS_RULE)")
@@ -331,7 +375,9 @@ def build_matrix(src: Source, T: dict, pin: dict) -> dict:
         clauses.append({"id": c["id"], "page": reg[c["id"]]["page"], "section": reg[c["id"]]["section"],
                         "rfp_text_verbatim": reg[c["id"]]["text"], "status": c["status"],
                         "previous_status_bid_package_2de86ab": old[c["id"]], "dbf1_2_trace": c["dbf_trace"],
-                        "response": resp, "evidence_at_dbf1_2": c["evidence"], "owner_input": c["owner_input"]})
+                        "response": resp, "evidence_at_dbf1_2": evidence,
+                        **({"evidence_post_freeze": post_freeze} if post_freeze else {}),
+                        "owner_input": c["owner_input"]})
         if old[c["id"]] != c["status"]:
             changes.append({"id": c["id"], "from": old[c["id"]], "to": c["status"]})
     counts = {s: sum(1 for c in clauses if c["status"] == s) for s in ad.STATUSES}
@@ -348,7 +394,9 @@ def matrix_md(j: dict, T: dict) -> str:
     L = ["# A1 - Compliance matrix (DBF-1.2)", "",
          f"**Status: DRAFT_FOR_OWNER_REVIEW.** Design source: DBF-1.2, freeze commit `{T['SRC']}` (`{T['SRC_FULL']}`), "
          f"lock sha256 `{j['design_source']['lock_sha256']}`. Baseline status: **{T['STATUS']}**. Every evidence path "
-         f"is a file at that commit (`git show {T['SRC']}:<path>`).", "",
+         f"under 'Evidence at {T['SRC']}' is a file at that commit (`git show {T['SRC']}:<path>`). Paths under 'Post-freeze evidence' "
+         f"are closure records reached after the freeze (commit `{T['PF_COMMIT']}`, sha256-pinned in `annexure_pin_v1.json` "
+         f"`post_freeze_closure`); they change no DBF-1.2 value.", "",
          "## Status vocabulary", ""]
     L += [f"- **{k}**: {v}" for k, v in j["status_vocabulary"].items()]
     L += ["", f"Status rule: {j['status_rule']}", "", "## Status counts (37 registered clauses)", ""]
@@ -365,6 +413,9 @@ def matrix_md(j: dict, T: dict) -> str:
         if c["evidence_at_dbf1_2"]:
             L += ["Evidence at " + T["SRC"] + ": " + "; ".join(f"`{e['path']}` `{e['locator']}`"
                                                               for e in c["evidence_at_dbf1_2"]), ""]
+        if c.get("evidence_post_freeze"):
+            L += ["Post-freeze evidence (at " + T["PF_COMMIT"] + "): " + "; ".join(
+                f"`{e['path']}` `{e['locator']}`" for e in c["evidence_post_freeze"]), ""]
         if c["owner_input"]:
             L += ["Owner input: " + ", ".join(c["owner_input"]), ""]
     return "\n".join(L).rstrip() + "\n"
@@ -429,9 +480,10 @@ def md_to_docx(md_text: str, out_path: str) -> None:
 # ------------------------------------------------------------------------------------------------ main
 def build_all() -> dict:
     pin = json.load(open(PIN_PATH, encoding="utf-8"))
+    pf = PostFreeze(pin)
     src = Source(pin)
-    T, X = facts(src)
-    j = build_matrix(src, T, pin)
+    T, X = facts(src, pf)
+    j = build_matrix(src, pf, T, pin)
     T.update(blocks(T, X))
     T["COUNTS"] = "\n".join(f"- {k}: {v}" for k, v in j["status_counts"].items())
     T["CHANGES"] = "\n".join(f"- {c['id']}: {c['from']} -> {c['to']}" for c in j["status_changes_vs_bid_package"])

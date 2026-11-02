@@ -17,6 +17,11 @@ VLEO" (DRDO / Directorate of Technology Development Fund). Bidder: Vyovrinda Aer
   compliant, not flight-qualified, not performance validated and not a final flight design.
 - Lineage: DBF-1.1 (lock `257e141ca252c3015b5bbd2fc953a1de688bc1606be36ebdf9fff8889307cfb8`) -> DCR-DBF1-001 (approved A9.41) -> DBF-1.2 (A9.42 / A9.43). A change is
   made only through a new DCR.
+- **Post-freeze closure records, commit `f7c3091`** (pin: `annexure_pin_v1.json` `post_freeze_closure`): results
+  reached after the freeze that change no DBF-1.2 value. Each file is sha256-verified. Today this is DCR-DBF1-003,
+  WITHDRAWN_BY_PREREGISTERED_EVALUATION (DCR register v7, evaluation v3): the co-located RF match closes with isolation and its own radiator,
+  and the thermal state is REFERENCE/ICD DEPENDENT. The frozen DBF-1.2 records keep their freeze-time statements, which the
+  annexure shows as history.
 
 ## Relation to the 2026-10-05 bid package
 

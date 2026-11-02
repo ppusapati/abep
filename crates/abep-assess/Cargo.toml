@@ -36,6 +36,10 @@ name = "abep-dcr001-eval"
 path = "src/bin/abep_dcr001_eval.rs"
 
 [[bin]]
+name = "abep-assess-dcr003"
+path = "src/bin/abep_assess_dcr003.rs"
+
+[[bin]]
 name = "abep-assess-envelope-summary"
 path = "src/bin/abep_assess_envelope_summary.rs"
 
