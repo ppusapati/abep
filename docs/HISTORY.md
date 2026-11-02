@@ -5958,3 +5958,13 @@ scientific community for evaluation. Every other branch is development.
   builder change.
 - **Builder fix:** `f1_archive.py` now compares the generating-commit time by value, so newer git's `Z` UTC spelling is
   accepted (PR #41).
+
+## 2026-11-02 — CI runner image pinned to ubuntu-24.04
+- GitHub moved `ubuntu-latest` to Ubuntu 26.04 (runner image ubuntu26/20261025.179).
+- Its libm returns different last-bit results for some transcendental functions. That broke the byte-identical
+  regeneration test `conservation_bounds_a4::committed_record_is_the_a4_record_of_today`, with ±1 ulp in
+  `r_geocentric_m`, `V_orb_*` and quantities derived from them. The failure first appeared on PR #44, which has no Rust
+  change. The test still passes on glibc 2.39 (Ubuntu 24.04), the platform the committed records were produced on.
+- **Fix:** every workflow now pins `runs-on: ubuntu-24.04`. No record, tolerance or test is changed.
+- **Open:** moving to a newer image is a registered change. It must regenerate or re-baseline the platform-dependent
+  records under a decision, never silently.

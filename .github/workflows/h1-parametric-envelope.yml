@@ -47,7 +47,7 @@ jobs:
   prepare:
     if: ${{ inputs.confirm_preregistered_runs }}
     name: Verify the preregistered case file and build the tool
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # pinned: ubuntu-latest moved to 26.04, whose libm changes last-bit float results of committed records
     timeout-minutes: 30
     outputs:
       julia_version: ${{ steps.pin.outputs.julia_version }}
@@ -88,7 +88,7 @@ jobs:
   run:
     needs: prepare
     name: Shard ${{ matrix.shard }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # pinned: ubuntu-latest moved to 26.04, whose libm changes last-bit float results of committed records
     timeout-minutes: 360
     strategy:
       fail-fast: false
@@ -136,7 +136,7 @@ jobs:
     needs: [prepare, run]
     if: ${{ !cancelled() && needs.prepare.result == 'success' }}
     name: Freeze the raw envelope (sha-pinned)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # pinned: ubuntu-latest moved to 26.04, whose libm changes last-bit float results of committed records
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
