@@ -266,9 +266,9 @@ Evidence at 45492a8: `docs/baseline/DBF-1.2/dbf1_2_v1.json` `#/mass_rollup/lines
 
 **Status: COMPLY_PLANNED_WITH_EVIDENCE_PATH** (bid package: COMPLY_PLANNED_WITH_EVIDENCE_PATH). DBF-1.2 trace: RVM-21, RVM-17.
 
-QM ENTEST qualification (launch vibration / shock, AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life) at Milestone 5 against the specification issued at PDR (no numeric levels assumed, DISC-09). Thermal: cathodeless topology frozen (DBF1-TH-01, 50 K margin rule); thermal closure state DCR REQUIRED (RVM-17 VERIFY_EM_QM); the co-located RF match exceeds its ceiling in the hot cases and is under DCR-DBF1-003 (REQUESTED_EVALUATION_TO_BE_PREREGISTERED).
+QM ENTEST qualification (launch vibration / shock, AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life) at Milestone 5 against the specification issued at PDR (no numeric levels assumed, DISC-09). Thermal: cathodeless topology frozen (DBF1-TH-01, 50 K margin rule); thermal closure state REFERENCE/ICD DEPENDENT after DCR-DBF1-003 (WITHDRAWN_BY_PREREGISTERED_EVALUATION; RVM-17 VERIFY_EM_QM): the co-located RF match on isolator standoffs with its own 0.15 m2 radiator meets the 50 K rule (55.2 degC, PARAMETRIC model value); the heat into the host stays ICD-dependent.
 
-Evidence at 45492a8: `docs/closure/thermal/thermal_closure_v2.json` `#/closure`; `docs/baseline/DBF-1.2/dbf1_2_v1.json` `#/items[id=DBF1-TH-01]`
+Evidence at 45492a8: `docs/closure/thermal/dcr003_evaluation_v3.json` `#/R-1/nodes/N_MATCH` (post-freeze record at f7c3091); `docs/closure/thermal/dcr003_evaluation_v3.json` `#/p7_closure_state` (post-freeze record at f7c3091); `docs/closure/thermal/thermal_closure_v2.json` `#/closure`; `docs/baseline/DBF-1.2/dbf1_2_v1.json` `#/items[id=DBF1-TH-01]`
 
 ### RFP-P19-05 - Part III 3 Indigenous Content (p. 19)
 

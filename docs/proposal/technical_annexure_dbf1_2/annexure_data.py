@@ -35,6 +35,11 @@ RISKS = "docs/baseline/DBF-1.2/dbf1_2_risk_register_v1.json"
 RVM = "docs/requirements/rvm_a9/rvm_a9_v1.json"
 POWER = "docs/closure/power/power_ledger_v1.json"
 THERM = "docs/closure/thermal/thermal_closure_v2.json"
+# Post-freeze closure records (annexure pin `post_freeze_closure`): change no DBF-1.2 value.
+REG7 = "docs/baseline/DBF-1/dcr_register_v7.json"
+DCR3_EVAL = "docs/closure/thermal/dcr003_evaluation_v3.json"
+DCR3_RES = "docs/baseline/DCR-003/dcr003_resolution_v3.json"
+P7_STMT = "docs/closure/statements/P7_thermal_v2.md"
 ICP = "docs/closure/icp/icp_closure_v1.json"
 MAT = "docs/closure/materials/materials_gates_v1.json"
 BZ = "docs/closure/P3_h1_magnetic_field_closure_v1.json"
@@ -216,9 +221,11 @@ CLAUSES = [
      "response": "QM ENTEST qualification (launch vibration / shock, AO erosion, radiation, thermal, ThermoVac, 3-year "
                  "VLEO life) at Milestone 5 against the specification issued at PDR (no numeric levels assumed, "
                  "DISC-09). Thermal: cathodeless topology frozen (DBF1-TH-01, 50 K margin rule); thermal closure "
-                 "state {{THERM_STATE}} (RVM-17 {{T_RVM-17}}); the co-located RF match exceeds its ceiling in the hot "
-                 "cases and is under DCR-DBF1-003 ({{DCR3_STATUS}}).",
-     "evidence": [ev(THERM, "#/closure"), ev(DBF, "#/items[id=DBF1-TH-01]")], "owner_input": []},
+                 "state {{THERM_STATE}} after DCR-DBF1-003 ({{DCR3_STATUS}}; RVM-17 {{T_RVM-17}}): the co-located RF "
+                 "match on isolator standoffs with its own {{MATCH_A}} m2 radiator meets the 50 K rule ({{MATCH_T}} "
+                 "degC, PARAMETRIC model value); the heat into the host stays ICD-dependent.",
+     "evidence": [ev(DCR3_EVAL, "#/R-1/nodes/N_MATCH"), ev(DCR3_EVAL, "#/p7_closure_state"), ev(THERM, "#/closure"),
+                  ev(DBF, "#/items[id=DBF1-TH-01]")], "owner_input": []},
     {"id": "RFP-P19-05", "status": "OWNER_INPUT_REQUIRED", "dbf_trace": [],
      "response": "A detailed plan for >= 75 % project IC (thruster > 80 %, intake > 80 %, compressor and storage > 60 %, "
                  "PSE > 70 %) is required; no supplier is selected, so no IC percentage is stated.",

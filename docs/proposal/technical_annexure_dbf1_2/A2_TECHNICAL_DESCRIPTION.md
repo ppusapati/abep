@@ -224,13 +224,24 @@ Power and mass policy items carried from DBF-1.1:
 | DBF1-MAT-04 | H-1 channel wall ceramic (primary / backup) | primary BN-SiO2 (borosil class); backup BN | FROZEN_ASSUMPTION | INHERITED_UNCHANGED |
 
 - **Thermal:** the cathodeless topology is frozen (NP-THERMAL-CATHODELESS 2.0.0), with a 50 K / x1.2 design-margin rule.
-  The thermal closure state is **DCR REQUIRED** (`docs/closure/thermal/thermal_closure_v2.json` `#/closure`):
-  - DCR nodes: N_MATCH;
+  The thermal closure state is **REFERENCE/ICD DEPENDENT** (`docs/closure/thermal/dcr003_evaluation_v3.json` `#/p7_closure_state`,
+  post-freeze record at `f7c3091`):
+  - DCR nodes: none;
   - requirement nodes: H1_ANODE, N_ANTENNA, N_COLLECTOR, N_HOUSING, N_MOUNT, R_HALL;
   - state rule: DCR REQUIRED > FUNDAMENTAL NON-CLOSURE > BLOCKED BY SPECIFIC MISSING EVIDENCE > REFERENCE/ICD DEPENDENT > FROZEN FOR EM > CLOSED.
 
-  The DCR node is the co-located RF match. **DCR-DBF1-003** (REQUESTED_EVALUATION_TO_BE_PREREGISTERED; open, not applied to DBF-1.2): co-located match N_MATCH 147-184 degC in every preregistered hot case vs 60 degC ceiling (margin -124 K), fails at P_fwd = 0 W and at every radiator grid point: conduction from the ICP bracket (docs/closure/thermal/thermal_closure_v2.json sha 06b26333...).
-  Routes: R-1 no-DCR: thermal isolation + dedicated radiator for the match (if it closes, DCR-DBF1-003 is withdrawn); R-2 DCR: relocate the match to the generator side.
+  **RF matching network (DCR-DBF1-003, WITHDRAWN_BY_PREREGISTERED_EVALUATION).** At the DBF-1.2 freeze the thermal closure was
+  DCR REQUIRED (`docs/closure/thermal/thermal_closure_v2.json`, DCR node N_MATCH): the co-located
+  match reached 183.5 degC against its 60 degC ceiling, by conduction from the ICP bracket. DCR-DBF1-003 (then
+  REQUESTED_EVALUATION_TO_BE_PREREGISTERED) evaluated two routes under one preregistration: R-1 no-DCR: thermal isolation + dedicated radiator for the match (if it closes, DCR-DBF1-003 is withdrawn); R-2 DCR: relocate the match to the generator side. Outcome: route R-1 admissible (R1-a/b/c true): N_MATCH 55.2 degC, 4.8 K inside the 50 K / 1.2 rule, with Ti-6Al-4V isolator standoffs, a 0.15 m^2 match radiator and the RF lead link; R-2 not admissible (R2-b/c/d fail). Selection rule R-1 first: DCR-DBF1-003 WITHDRAWN, no DBF-1 value changes; the isolation, radiator and lead are design-completion values for a P7 load-input / network version.
+  - The match stays co-located, as in DBF-1.2. It sits on Ti-6Al-4V isolator standoffs and rejects heat through its own
+    0.15 m2 zenith radiator, about 0.61 kg with the standoffs.
+  - In the hot cases at 120 % loads it reaches 55.2 degC, 4.8 K inside the 50 K rule. This is a
+    PARAMETRIC / NOT_VALIDATED model value.
+  - Heaters keep it above its lower limit in the cold cases: 11.5 W operating, 17.2 W
+    non-operating survival.
+  - The state stays REFERENCE/ICD DEPENDENT because the heat conducted into the host is 90.6 W against the provisional
+    50 W allocation, which the customer ICD settles.
 
   No thermal pass is claimed. The thermal design is verified at EM / QM (RVM-17).
 - **Materials:** state FROZEN FOR EM. The selections stay frozen, and no gate fails on evidence. The open gates close
@@ -258,5 +269,6 @@ propulsion drag-compensation envelope. Reference proposal sizing is C_D*A = 0.50
 - No measured thrust, Isp, efficiency, power, mass or life; every such value is a design allocation, an estimate or a
   model value with its label.
 - No PASS / GO for any gate. Gate 3 is FAIL, the credible Hall transport set is empty and GNG-ICP-01 is NOT_EVALUATED.
-- No thermal closure (DCR REQUIRED; DCR-DBF1-003 open for the RF match) and no ICP capacity (BLOCKED BY SPECIFIC MISSING EVIDENCE).
+- No thermal closure (REFERENCE/ICD DEPENDENT: the heat into the host depends on the customer ICD; the RF-match item is closed
+  by analysis only, DCR-DBF1-003 WITHDRAWN_BY_PREREGISTERED_EVALUATION) and no ICP capacity (BLOCKED BY SPECIFIC MISSING EVIDENCE).
 - The approximately 0.052 kg below 40 kg is open mass risk MR-DCR001-01 and not design margin.

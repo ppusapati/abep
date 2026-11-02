@@ -151,13 +151,24 @@ Power and mass policy items carried from DBF-1.1:
 {{MAT_TH_TABLE}}
 
 - **Thermal:** the cathodeless topology is frozen (NP-THERMAL-CATHODELESS 2.0.0), with a 50 K / x1.2 design-margin rule.
-  The thermal closure state is **{{THERM_STATE}}** (`docs/closure/thermal/thermal_closure_v2.json` `#/closure`):
+  The thermal closure state is **{{THERM_STATE}}** (`docs/closure/thermal/dcr003_evaluation_v3.json` `#/p7_closure_state`,
+  post-freeze record at `{{PF_COMMIT}}`):
   - DCR nodes: {{TH_DCR_NODES}};
   - requirement nodes: {{TH_REQ_NODES}};
   - state rule: {{TH_RULE}}.
 
-  The DCR node is the co-located RF match. **DCR-DBF1-003** ({{DCR3_STATUS}}; open, not applied to DBF-1.2): {{DCR3_REASON}}.
-  Routes: {{DCR3_ROUTES}}.
+  **RF matching network (DCR-DBF1-003, {{DCR3_STATUS}}).** At the DBF-1.2 freeze the thermal closure was
+  {{THERM_STATE_FREEZE}} (`docs/closure/thermal/thermal_closure_v2.json`, DCR node {{TH_DCR_NODES_FREEZE}}): the co-located
+  match reached {{MATCH_T_V2}} degC against its 60 degC ceiling, by conduction from the ICP bracket. DCR-DBF1-003 (then
+  {{DCR3_FREEZE_STATUS}}) evaluated two routes under one preregistration: {{DCR3_ROUTES}}. Outcome: {{DCR3_OUTCOME}}.
+  - The match stays co-located, as in DBF-1.2. It sits on Ti-6Al-4V isolator standoffs and rejects heat through its own
+    {{MATCH_A}} m2 zenith radiator, about {{MATCH_MASS}} kg with the standoffs.
+  - In the hot cases at 120 % loads it reaches {{MATCH_T}} degC, {{MATCH_MARGIN}} K inside the 50 K rule. This is a
+    PARAMETRIC / NOT_VALIDATED model value.
+  - Heaters keep it above its lower limit in the cold cases: {{MATCH_HTR_OP}} W operating, {{MATCH_HTR_NONOP}} W
+    non-operating survival.
+  - The state stays {{THERM_STATE}} because the heat conducted into the host is {{Q_SC}} W against the provisional
+    {{Q_SC_ALLOC}} W allocation, which the customer ICD settles.
 
   No thermal pass is claimed. The thermal design is verified at EM / QM (RVM-17).
 - **Materials:** state {{MAT_STATE}}. The selections stay frozen, and no gate fails on evidence. The open gates close
@@ -185,5 +196,6 @@ propulsion drag-compensation envelope. Reference proposal sizing is C_D*A = {{CD
 - No measured thrust, Isp, efficiency, power, mass or life; every such value is a design allocation, an estimate or a
   model value with its label.
 - No PASS / GO for any gate. Gate 3 is FAIL, the credible Hall transport set is empty and GNG-ICP-01 is NOT_EVALUATED.
-- No thermal closure ({{THERM_STATE}}; DCR-DBF1-003 open for the RF match) and no ICP capacity ({{ICP_STATE}}).
+- No thermal closure ({{THERM_STATE}}: the heat into the host depends on the customer ICD; the RF-match item is closed
+  by analysis only, DCR-DBF1-003 {{DCR3_STATUS}}) and no ICP capacity ({{ICP_STATE}}).
 - The approximately {{HEADROOM}} kg below 40 kg is open mass risk MR-DCR001-01 and not design margin.

@@ -6002,3 +6002,24 @@ scientific community for evaluation. Every other branch is development.
 - **Records:** `dcr003_evaluation_v3.json` / `.md`, `dcr003_resolution_v3.json`, and `P7_thermal_v2.md` rewritten from
   the v3 record. The `P7_thermal_v2.md` file was introduced in this same PR and was never on `main` in its v2-record
   form.
+
+## 2026-11-02 — DCR register v7 and technical annexure refresh (DCR-DBF1-003 withdrawn)
+- **DCR register v7** (`docs/baseline/DBF-1/dcr_register_v7.json`, coordinator entry; v6 unchanged).
+  - DCR-DBF1-003 is now `WITHDRAWN_BY_PREREGISTERED_EVALUATION`. It pins prereg v3, evaluation v3 and resolution v3 by
+    sha256.
+  - No approval is required, because no DBF-1 value changes. The owner directed the annexure refresh on 2026-11-02.
+- **Technical annexure** (`docs/proposal/technical_annexure_dbf1_2/`, still DRAFT_FOR_OWNER_REVIEW).
+  - **New source:** `annexure_pin_v1.json` gains `post_freeze_closure` (commit `f7c3091`, five files sha256-pinned). It
+    carries closure results reached after the freeze that change no DBF-1.2 value. Every DBF-1.2 fact is still read only
+    at the freeze commit `45492a8`.
+  - **Builder:** `build_annexure.py` reads and hash-verifies the post-freeze records and refuses to build if DCR-003 is
+    not withdrawn or R-1 is not selected. It labels post-freeze evidence with its commit in A1.
+  - **Wording:**
+    - A2 section 8 and A4: the thermal state is REFERENCE/ICD DEPENDENT. The RF match closes with isolation and its own
+      radiator (55.2 °C, 4.8 K inside the 50 K rule, a PARAMETRIC / NOT_VALIDATED model value). The freeze-time state
+      DCR REQUIRED is shown as history.
+    - A3 PDR-1 row: names the R-1 verification items.
+    - Compliance clause RFP-P19-04: the response is updated, and its status is unchanged under the STATUS_RULE.
+  - The docx files are regenerated.
+- **Environment note:** under Python ≥ 3.12, `sum()` uses compensated float summation, so the DBF-1.2 `--check`
+  differs in the last digit. CI and the frozen records use Python 3.11, which is the authoritative interpreter.

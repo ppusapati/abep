@@ -54,11 +54,14 @@ These items are not DBF-1.2 records. They are stated with their governing record
   design allocations and PARAMETRIC / NOT_VALIDATED model values until the EM measurements (VR-HALL-01, VR-XE-02).
 - **ICP neutralizer closure: BLOCKED BY SPECIFIC MISSING EVIDENCE** (`docs/closure/icp/icp_closure_v1.json` `#/closure`). I_e,cap: INCOMPLETE_EVIDENCE in every mode (model withheld; see model_evaluation_M_A);
   GNG-ICP-01: NOT_EVALUATED (criteria PENDING_OWNER_ACCEPTANCE).
-- **Thermal closure: DCR REQUIRED** (`docs/closure/thermal/thermal_closure_v2.json` `#/closure`). DCR nodes: N_MATCH;
-  requirement nodes: H1_ANODE, N_ANTENNA, N_COLLECTOR, N_HOUSING, N_MOUNT, R_HALL.
-- **DCR-DBF1-003 (open, not applied to DBF-1.2): REQUESTED_EVALUATION_TO_BE_PREREGISTERED.** Items: DBF1-RF-03 (co-located adjustable match); DBF1-TH-01 (N_MATCH node, follows DBF1-RF-03). Reason: co-located match N_MATCH 147-184 degC in every preregistered hot case vs 60 degC ceiling (margin -124 K), fails at P_fwd = 0 W and at every radiator grid point: conduction from the ICP bracket (docs/closure/thermal/thermal_closure_v2.json sha 06b26333...).
-  Routes: R-1 no-DCR: thermal isolation + dedicated radiator for the match (if it closes, DCR-DBF1-003 is withdrawn); R-2 DCR: relocate the match to the generator side. Both routes are evaluated under one preregistration; if route R-2 is chosen, DBF1-RF-03
-  changes through a new baseline version.
+- **Thermal closure: REFERENCE/ICD DEPENDENT** (`docs/closure/thermal/dcr003_evaluation_v3.json` `#/p7_closure_state`, post-freeze
+  record at `f7c3091`). DCR nodes: none (at the freeze: N_MATCH, state
+  DCR REQUIRED); requirement nodes: H1_ANODE, N_ANTENNA, N_COLLECTOR, N_HOUSING, N_MOUNT, R_HALL. The heat into the host (90.6 W against the provisional
+  50 W allocation) is the open interface item.
+- **DCR-DBF1-003: WITHDRAWN_BY_PREREGISTERED_EVALUATION** (open at the DBF-1.2 freeze as REQUESTED_EVALUATION_TO_BE_PREREGISTERED). Items: DBF1-RF-03 (co-located adjustable match); DBF1-TH-01 (N_MATCH node, follows DBF1-RF-03).
+  Reason it was opened: co-located match N_MATCH 147-184 degC in every preregistered hot case vs 60 degC ceiling (margin -124 K), fails at P_fwd = 0 W and at every radiator grid point: conduction from the ICP bracket (docs/closure/thermal/thermal_closure_v2.json sha 06b26333...). Outcome: route R-1 admissible (R1-a/b/c true): N_MATCH 55.2 degC, 4.8 K inside the 50 K / 1.2 rule, with Ti-6Al-4V isolator standoffs, a 0.15 m^2 match radiator and the RF lead link; R-2 not admissible (R2-b/c/d fail). Selection rule R-1 first: DCR-DBF1-003 WITHDRAWN, no DBF-1 value changes; the isolation, radiator and lead are design-completion values for a P7 load-input / network version. Residual risk: the RF-match margin (4.8 K
+  inside the 50 K rule) rests on assumed standoff and lead conductances and a PARAMETRIC / NOT_VALIDATED model; it is
+  verified by measured standoff conductance, lead RF loss and EM thermal balance (RVM-17).
 - **Milestone-4 exit criterion** (qualified thruster with O and N2, RFP-P20-03) depends on the items above and on
   atomic-O evidence.
 

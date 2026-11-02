@@ -12,5 +12,18 @@
   "path": "docs/bid/package/",
   "rule": "immutable evidence of the 2026-10-05 bid draft; never rewritten; this annexure supersedes it as the current technical description only, by owner direction 2026-10-10 after the DBF-1.2 freeze"
  },
- "direction": "owner, 2026-10-10: regenerate the technical annexure from DBF-1.2 (after A9.42 sec. 11 deferred it until DBF-1.2 was frozen)"
+ "direction": "owner, 2026-10-10: regenerate the technical annexure from DBF-1.2 (after A9.42 sec. 11 deferred it until DBF-1.2 was frozen)",
+ "post_freeze_closure": {
+  "commit": "f7c30914c723edeed7478aa45582e46a7576d3b3",
+  "files": {
+   "docs/baseline/DBF-1/dcr_register_v7.json": "1f750a7166968dff9e9c0128b5dff036d25de80cdc7fb5dac7dfffff5626d5d0",
+   "docs/baseline/DCR-003/dcr003_resolution_v3.json": "9bd1d268dfa94140aa457fdb8a4225d71d7fba61903b553b5b8ec7a38eca26d9",
+   "docs/closure/thermal/dcr003_evaluation_v3.json": "ffa5a4ac10a78f88cc371aa9da5e3f277e8fb268bfaa8606c05ee94136f7cebf",
+   "docs/baseline/DCR-003/dcr003_eval_prereg_v3.json": "2ea878f48cc479b69211f4e1b17a8ada1fe97345c5fdfc18e4e8f98e0e94177f",
+   "docs/closure/statements/P7_thermal_v2.md": "944b00a3aac761be811363ae7d74cb526f081c21d932996e5784ff53cce986e1"
+  },
+  "what": "closure results reached after the DBF-1.2 freeze that change no DBF-1.2 value but change what the annexure must say: DCR-DBF1-003 withdrawn by preregistered evaluation (route R-1); P7 thermal state REFERENCE/ICD DEPENDENT",
+  "rule": "read at this commit with git show and verified by sha256 (fail closed); DBF-1.2 facts still come only from the dbf1_2 pin; the frozen DBF-1.2 records keep their freeze-time statements, which the annexure shows as history",
+  "direction": "owner, 2026-11-02: \"merged #43, now refresh the technical annexure\""
+ }
 }
