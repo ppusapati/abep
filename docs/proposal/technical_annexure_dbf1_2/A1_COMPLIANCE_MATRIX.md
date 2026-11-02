@@ -1,6 +1,6 @@
 # A1 - Compliance matrix (DBF-1.2)
 
-**Status: DRAFT_FOR_OWNER_REVIEW.** Design source: DBF-1.2, freeze commit `45492a8` (`45492a8ef12fba13d262695bbd19f3631e80f355`), lock sha256 `103f4c9a5c0ab61d9d12e989c47e5f4fd713caa6bcbe7c45e9207e2e6ce19ee5`. Baseline status: **DBF-1.2 — RFP-CONFORMING PRELIMINARY DESIGN BASELINE / COMPLIANCE VERIFICATION ON EM/QM**. Every evidence path is a file at that commit (`git show 45492a8:<path>`).
+**Status: DRAFT_FOR_OWNER_REVIEW.** Design source: DBF-1.2, freeze commit `45492a8` (`45492a8ef12fba13d262695bbd19f3631e80f355`), lock sha256 `103f4c9a5c0ab61d9d12e989c47e5f4fd713caa6bcbe7c45e9207e2e6ce19ee5`. Baseline status: **DBF-1.2 — RFP-CONFORMING PRELIMINARY DESIGN BASELINE / COMPLIANCE VERIFICATION ON EM/QM**. Every evidence path under 'Evidence at 45492a8' is a file at that commit (`git show 45492a8:<path>`). Paths under 'Post-freeze evidence' are closure records reached after the freeze (commit `f7c3091`, sha256-pinned in `annexure_pin_v1.json` `post_freeze_closure`); they change no DBF-1.2 value.
 
 ## Status vocabulary
 
@@ -268,7 +268,9 @@ Evidence at 45492a8: `docs/baseline/DBF-1.2/dbf1_2_v1.json` `#/mass_rollup/lines
 
 QM ENTEST qualification (launch vibration / shock, AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life) at Milestone 5 against the specification issued at PDR (no numeric levels assumed, DISC-09). Thermal: cathodeless topology frozen (DBF1-TH-01, 50 K margin rule); thermal closure state REFERENCE/ICD DEPENDENT after DCR-DBF1-003 (WITHDRAWN_BY_PREREGISTERED_EVALUATION; RVM-17 VERIFY_EM_QM): the co-located RF match on isolator standoffs with its own 0.15 m2 radiator meets the 50 K rule (55.2 degC, PARAMETRIC model value); the heat into the host stays ICD-dependent.
 
-Evidence at 45492a8: `docs/closure/thermal/dcr003_evaluation_v3.json` `#/R-1/nodes/N_MATCH` (post-freeze record at f7c3091); `docs/closure/thermal/dcr003_evaluation_v3.json` `#/p7_closure_state` (post-freeze record at f7c3091); `docs/closure/thermal/thermal_closure_v2.json` `#/closure`; `docs/baseline/DBF-1.2/dbf1_2_v1.json` `#/items[id=DBF1-TH-01]`
+Evidence at 45492a8: `docs/closure/thermal/thermal_closure_v2.json` `#/closure`; `docs/baseline/DBF-1.2/dbf1_2_v1.json` `#/items[id=DBF1-TH-01]`
+
+Post-freeze evidence (at f7c3091): `docs/closure/thermal/dcr003_evaluation_v3.json` `#/R-1/nodes/N_MATCH`; `docs/closure/thermal/dcr003_evaluation_v3.json` `#/p7_closure_state`
 
 ### RFP-P19-05 - Part III 3 Indigenous Content (p. 19)
 

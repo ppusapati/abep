@@ -357,11 +357,11 @@ def build_matrix(src: Source, pf: PostFreeze, T: dict, pin: dict) -> dict:
         for r in c["dbf_trace"]:
             if r not in trace_rvms:
                 raise BuildError(f"{c['id']}: {r} not in the DBF-1.2 trace")
-        evidence = []
+        evidence, post_freeze = [], []
         for e in c["evidence"]:
             if e["path"] in pf.files:  # post-freeze closure record: read at its pinned commit, sha256-verified
                 doc, at = pf.js(e["path"]), pf.commit
-                evidence.append(dict(e, commit=pf.commit[:7], source="post_freeze_closure"))
+                post_freeze.append(dict(e, commit=pf.commit))
             else:
                 b = git_show(src.commit, e["path"])
                 doc, at = (json.loads(b) if e["path"].endswith(".json") else None), src.commit
@@ -375,7 +375,9 @@ def build_matrix(src: Source, pf: PostFreeze, T: dict, pin: dict) -> dict:
         clauses.append({"id": c["id"], "page": reg[c["id"]]["page"], "section": reg[c["id"]]["section"],
                         "rfp_text_verbatim": reg[c["id"]]["text"], "status": c["status"],
                         "previous_status_bid_package_2de86ab": old[c["id"]], "dbf1_2_trace": c["dbf_trace"],
-                        "response": resp, "evidence_at_dbf1_2": evidence, "owner_input": c["owner_input"]})
+                        "response": resp, "evidence_at_dbf1_2": evidence,
+                        **({"evidence_post_freeze": post_freeze} if post_freeze else {}),
+                        "owner_input": c["owner_input"]})
         if old[c["id"]] != c["status"]:
             changes.append({"id": c["id"], "from": old[c["id"]], "to": c["status"]})
     counts = {s: sum(1 for c in clauses if c["status"] == s) for s in ad.STATUSES}
@@ -392,7 +394,9 @@ def matrix_md(j: dict, T: dict) -> str:
     L = ["# A1 - Compliance matrix (DBF-1.2)", "",
          f"**Status: DRAFT_FOR_OWNER_REVIEW.** Design source: DBF-1.2, freeze commit `{T['SRC']}` (`{T['SRC_FULL']}`), "
          f"lock sha256 `{j['design_source']['lock_sha256']}`. Baseline status: **{T['STATUS']}**. Every evidence path "
-         f"is a file at that commit (`git show {T['SRC']}:<path>`).", "",
+         f"under 'Evidence at {T['SRC']}' is a file at that commit (`git show {T['SRC']}:<path>`). Paths under 'Post-freeze evidence' "
+         f"are closure records reached after the freeze (commit `{T['PF_COMMIT']}`, sha256-pinned in `annexure_pin_v1.json` "
+         f"`post_freeze_closure`); they change no DBF-1.2 value.", "",
          "## Status vocabulary", ""]
     L += [f"- **{k}**: {v}" for k, v in j["status_vocabulary"].items()]
     L += ["", f"Status rule: {j['status_rule']}", "", "## Status counts (37 registered clauses)", ""]
@@ -407,9 +411,11 @@ def matrix_md(j: dict, T: dict) -> str:
               f"**Status: {c['status']}** (bid package: {c['previous_status_bid_package_2de86ab']}). "
               f"DBF-1.2 trace: {', '.join(c['dbf1_2_trace']) or 'none'}.", "", c["response"], ""]
         if c["evidence_at_dbf1_2"]:
-            L += ["Evidence at " + T["SRC"] + ": " + "; ".join(
-                f"`{e['path']}` `{e['locator']}`" + (f" (post-freeze record at {e['commit']})" if "commit" in e else "")
-                for e in c["evidence_at_dbf1_2"]), ""]
+            L += ["Evidence at " + T["SRC"] + ": " + "; ".join(f"`{e['path']}` `{e['locator']}`"
+                                                              for e in c["evidence_at_dbf1_2"]), ""]
+        if c.get("evidence_post_freeze"):
+            L += ["Post-freeze evidence (at " + T["PF_COMMIT"] + "): " + "; ".join(
+                f"`{e['path']}` `{e['locator']}`" for e in c["evidence_post_freeze"]), ""]
         if c["owner_input"]:
             L += ["Owner input: " + ", ".join(c["owner_input"]), ""]
     return "\n".join(L).rstrip() + "\n"

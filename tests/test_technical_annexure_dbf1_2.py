@@ -128,6 +128,13 @@ def test_post_freeze_closure_records_are_pinned_and_verified(sources):
     assert d3["status"] == "WITHDRAWN_BY_PREREGISTERED_EVALUATION"
     # The DBF-1.2 freeze facts still come only from the dbf1_2 pin.
     assert pf["commit"] != PIN["dbf1_2"]["commit"]
+    # Post-freeze evidence is never listed as evidence at the freeze commit (review finding on PR #44).
+    pinned = set(pf["files"])
+    for c in _matrix()["clauses"]:
+        assert not pinned & {e["path"] for e in c["evidence_at_dbf1_2"]}, c["id"]
+        for e in c.get("evidence_post_freeze", []):
+            assert e["path"] in pinned and e["commit"] == pf["commit"], c["id"]
+    assert any(c.get("evidence_post_freeze") for c in _matrix()["clauses"])
 
 
 def test_historical_bid_package_untouched(sources):
